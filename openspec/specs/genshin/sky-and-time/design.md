@@ -67,7 +67,7 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 ## Sources
 
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: one in-game minute per real second, dawn, midday, dusk and midnight at six-hour marks, and the twenty-four-minute cycle.
+- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Time.json`, wikitext line 19: one in-game minute per real second, dawn, midday, dusk and midnight at six-hour marks, and the twenty-four-minute cycle.
 - [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi), Zhenzhong Yi, Unity Dojo 2021: ambient light from spherical harmonics probes, which the hemisphere colours simplify.
 - [SkyMesh](https://threejs.org/docs/pages/SkyMesh.html), three.js: the physical sky this page chooses not to use, since the game's skies are painted.
 

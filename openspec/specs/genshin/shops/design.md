@@ -48,6 +48,7 @@ flowchart TD
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ShopGoodsExcelConfigData`, the goods, their prices, limits, refreshes, ranks and dates, and "ShopExcelConfigData", the shops and their refreshes. The table's refresh kinds are none, daily, weekly and monthly.
 - "RefreshPolicyExcelConfigData" row 101000 of the dump ([Original Resin](../original-resin/design.md) cites its file), which holds 14400 seconds: the daily refresh's row, grounding the requirement "Refreshes happen at four in the morning game time".
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102: the shop whose monthly refresh falls on the first of the month. It grounds that day but names no hour, so the monthly hour is unsourced (see the spec's Open), and the requirement "Refreshes happen at four in the morning game time" rests on the daily row alone for its hour.
+- [Blanche](<https://genshin-impact.fandom.com/wiki/Blanche_(Mondstadt)>), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Blanche_(Mondstadt).json`, lines 25 to 32: eight cooking ingredients at 60, 80, 80, 100, 120, 120, 120 and 100, the prices that the shop 1004 goods hold as their `costScoin` (`{data-root}/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json` lines 716 to 926), which `scripts/src/services/genshinAssets/shops/getShopGoodCosts.ts` line 8 takes as the Mora cost.
 
 ## Open
 

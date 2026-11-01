@@ -107,7 +107,7 @@ One-star and two-star weapons SHALL never be refined, and a four-star weapon the
 
 - **GIVEN** a two-star weapon
 - **WHEN** a copy or a refinement material is used on it
-- **THEN** the refinement is refused (the wiki's Refinement Rank page, `{data-root}/cache/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 6, says one-star and two-star weapons cannot be refined)
+- **THEN** the refinement is refused
 
 ### Requirement: Only a bag weapon can be a copy or material
 

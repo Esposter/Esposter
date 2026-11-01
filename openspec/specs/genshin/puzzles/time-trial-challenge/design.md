@@ -25,6 +25,7 @@ stateDiagram-v2
 
 - `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` — a Time Trial Challenge started at its marker and filmed to its end, with its clock in view, 3 minutes at most; the limit the clock is set to is read from it, since the wiki gives none for each challenge. Found: https://www.youtube.com/watch?v=B_l5b_KXt-o at 0–55 s.
 - `{data-root}/genshin-parity/frames/yt-B_l5b_KXt-o-time-trial-limit@0/sheet.png`, the contact sheet of the recording's frames: the banner "Open the chest in 45s" stands over the clock at 2.00 s (`{data-root}/genshin-parity/frames/yt-B_l5b_KXt-o-time-trial-limit@0/0002.png`, which reads "Time Remaining: 42s"), and "Challenge Completed" shows at 44.00 s.
+- [Time Trial Challenge](https://genshin-impact.fandom.com/wiki/Time_Trial_Challenge), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Time_Trial_Challenge.json`, line 11: a challenge gives its reward for "completing the task within an allocated time limit"; its Aiming type blows up X barrels or bubbles and its Battling type defeats all opponents, each "within X second(s)" (lines 64 and 69), and its Traversing type collects particles rather than striking targets (line 75).
 
 ## Open
 

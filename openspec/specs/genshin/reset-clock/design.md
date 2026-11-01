@@ -73,6 +73,10 @@ flowchart TD
 - `checkIsDomainKindOpenOnDay` and `checkIsDomainLevelOpen` take the moment checked, not a date, and read its game day from the reset clock. `checkIsDomainLevelOpen` is called by `useWorldDomains` when a level is entered (`packages/genshin-world/src/composables/useWorldDomains.ts:263`) and by `computeDomainLevelRows` (`packages/genshin-world/src/services/domains/computeDomainLevelRows.ts:21`) ([domains](../domains/design.md)).
 - Gathering's daily points read this module's reset through `computeNextDailyReset` (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts:12`), respawning at the next daily reset after the pick.
 
+## Sources
+
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Reset.json`, line 14: elite enemies with limited spawn points per day respawn at the daily reset, and line 40: a common enemy in an elite's group "will respawn along with the Elite Enemy at daily reset". The page's own stub notice (line 1) asks for its respawn timers to be verified.
+
 ## Open
 
 - [ ] **The daily reset is on the Asia server's clock** — contradicted by `{data-root}/cache/genshin-wiki/Page_Reset.json` line 1: the daily reset is at 04:00 "based on the player's server's time zone", so a player on another server resets on that server's clock. The same page names an Asia server's daily reset only for one boss's rotation.

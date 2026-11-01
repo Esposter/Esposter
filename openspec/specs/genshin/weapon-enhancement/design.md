@@ -70,7 +70,7 @@ A bag weapon's entry holds its level, EXP, ascension and refinement, so the [wea
 ## Sources
 
 - [Weapon EXP](https://genshin-impact.fandom.com/wiki/Weapon_EXP), Genshin Impact Wiki: EXP from ores and fodder, the 80% share recovered, excess returned as ores, and ten points of EXP to the Mora.
-- [Refinement](https://genshin-impact.fandom.com/wiki/Refinement), Genshin Impact Wiki: ranks 1 to 5, a copy's refinements carried over, the excess lost, the Mora per rank and rarity, and one- and two-star weapons never refined.
+- [Refinement](https://genshin-impact.fandom.com/wiki/Refinement), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Refinement_Rank.json`, wikitext line 6: ranks 1 to 5, a copy's refinements carried over, the excess lost, the Mora per rank and rarity, and one- and two-star weapons never refined.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `WeaponExcelConfigData`, `WeaponPromoteExcelConfigData` and `WeaponLevelExcelConfigData`, the tables the stats run reads (`{data-root}/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, `WeaponPromoteExcelConfigData.json`, `WeaponLevelExcelConfigData.json`).
 
 ## Open

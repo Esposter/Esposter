@@ -12,7 +12,7 @@ The world's clock SHALL run at one in-game minute per real second, so that a ful
 
 - **GIVEN** the world's clock is running
 - **WHEN** one real minute passes
-- **THEN** one in-game hour has passed (the wiki's Time page, `{data-root}/cache/genshin-wiki/Page_Time.json`, wikitext line 19)
+- **THEN** one in-game hour has passed
 
 #### Scenario: A region opens at its reference hour
 
