@@ -19,9 +19,7 @@ Each score is read between two ends: the game's segment against itself shifted l
 
 ## Rules the score holds
 
-- **Approval is by ear, since the score is blind to how a mix sounds.** The numbers show what a step changed, and the user's ears decide whether it sounds right. A step is approved by ear once its numbers improve.
-- **A mix that loses pitch agreement is a regression**, whatever it gains in the bands. The recordings' solve holds this rule (see [sampled instruments](../../sampled-instruments/design.md), and `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`, line 159, which drops a mix that falls under the base's pitch agreement).
-- **No equaliser ships.** A fixed gain per octave band, fitted to one half of a segment's frames and scored on the other, left about as much distance as none, so what remains moves within a section rather than across one.
+- **The recordings' solve applies the pitch regression rule.** A mix that loses the base's pitch agreement is tried again at a lower share (see [sampled instruments](../../sampled-instruments/design.md), and `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`).
 - **The band measure is a proxy for the score.** Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` then measured.
 
 ## Other measures

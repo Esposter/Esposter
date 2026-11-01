@@ -17,10 +17,10 @@ The synthesizer is `genshin-engine`'s audio module `packages/genshin-engine/src/
 
 ## Open
 
-- [ ] **The noise loop has no audible seam, and no band leaks into another** — no source yet: no seam or leakage measurement is recorded.
+The noise loop's seam and band levels, and the player's loop, are open in the [spec](spec.md).
+
 - [ ] **The shared noise phases overfill the lowest band** — no source yet: the overfill is recorded only in the music page's narrative, with no checked measurement file.
 - [ ] **Firefox lacks `cancelAndHoldAtTime`** — no source yet: no browser compatibility record is cited.
-- [ ] **The player loops the playlist** — no source yet: the loop is not located in `createMusicPlayer.ts`; the playlist's `isLooping` flag is the only checked source.
 
 ## Key files
 

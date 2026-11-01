@@ -44,22 +44,9 @@ The fit turns each source into the record the player reads. Its parts are on the
 - [Expression](expression/design.md) — the swell each segment carries over its voices.
 - [Scoring](scoring/design.md) — the listening score that judges a render against the game's sound, and what its numbers are worth.
 
-The score's numbers are not kept on these pages: they are the committed snapshot `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`, which the `listen` command rewrites.
-
 ## Recreating another piece
 
-The order, and the rules each step keeps, are the `genshin-parity` skill's `.agents/skills/genshin-parity/references/music.md`:
-
-1. Find the sound with `genshin:assets music <recording>` over a recording of the screen.
-2. Name its playlist in the component's map (`musicPlaylistId`).
-3. Export it with `genshin:assets playlist <component>`.
-4. Fit it through the component's fit, after `fitLoginMusic`.
-5. Fit its expression with `genshin:parity expression`.
-6. Prune its notes with `genshin:parity notes`, then refit its expression.
-7. Layer its recordings with `genshin:parity instruments`, then refit its expression with `genshin:parity expression`.
-8. Play it from a component that renders nothing, after `Login/Music`, with an `isMotionOnly` fixture.
-9. Score it with `listen`.
-10. The user listens.
+The steps for recreating a piece, and the rules each step keeps, are the `genshin-parity` skill's `.agents/skills/genshin-parity/references/music.md`.
 
 ## Not yet
 

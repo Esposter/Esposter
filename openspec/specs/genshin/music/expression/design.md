@@ -29,10 +29,9 @@ The player plays each segment's notes through a gain of their own `packages/gens
 
 ## Open
 
-- [ ] **The game's orchestra swells or fades a section by about twenty decibels at once in every band across the first piece** — no source yet: no checked level measurement of the game's sections is recorded.
+The swell's level, the second fit's movement and the fit's place after the instruments are open in the [spec](spec.md).
+
 - [ ] **The transcription's velocities read each note's amplitude much alike from section to section** — no source yet: no velocity readout is on disk.
-- [ ] **A second expression run moves the gains little** — no source yet: no second run's output is recorded.
 - [ ] **The expression is the largest gain of any step on the score, with pitch agreement unchanged** — no source yet: the score snapshot holds only final scores, not each step's gain.
 - [ ] **Gains fitted to half the bands and scored on the others leave nearly the same distance** — no source yet: no half-band fit run is recorded.
 - [ ] **Each segment carries one gain a window over every voice, which swells and fades a section** — no source yet: a decoded reading of the game's expression curves for the gains, since `{data-root}/genshin-parity/extracted/music/` holds only its chroma and decoding bins.
-- [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: a reading of the game's sound levels in `{data-root}/genshin-parity/extracted/music/`, which has no file named for expression.
