@@ -46,12 +46,13 @@ const stepThreshold = (direction: -1 | 1) => {
   };
 };
 // The deployed team's members, each with the share of its Max HP it holds
-const getMembers = () =>
+const members = computed(() =>
   getDeployedCharacterIds(party).map((id) => ({
     healthShare: getPartyMember(party, id).healthShare,
     id,
     name: getName(id),
-  }));
+  })),
+);
 const heal = (characterId: number) => {
   power.value = healPartyMemberWithPower(party, characterId, getMaxHealth(characterId), regeneratePower());
 };
@@ -63,7 +64,7 @@ const heal = (characterId: number) => {
       :auto-recover-title="AUTO_RECOVER_TITLE"
       :close-label="gameText[GameTextKey.Back]"
       :is-auto-recover-on="autoRecover.isOn"
-      :members="getMembers()"
+      :members
       :pool-amount="regeneratePower().amount"
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
       :threshold-percent="autoRecover.thresholdPercent"

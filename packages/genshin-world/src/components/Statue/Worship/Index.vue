@@ -22,13 +22,14 @@ const { gameText, getItemName, levels, progress } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 
 // Each level with the Oculi it takes, the rewards it pays and its state, which a claim takes one level of at a time
-const getWorshipLevels = () =>
+const worshipLevels = computed(() =>
   levels.map((level) => ({
     level: level.level,
     oculusCount: level.items.reduce((count, { itemCount }) => count + itemCount, 0),
     rewards: level.rewards.map(({ itemCount, itemId }) => ({ count: itemCount, name: getItemName(itemId) })),
     state: getStatueLevelState(level.level, progress.level, progress.claimedLevel),
-  }));
+  })),
+);
 </script>
 
 <template>
@@ -37,7 +38,7 @@ const getWorshipLevels = () =>
       :blessing-title="gameText[GameTextKey.StatueBlessing]"
       :close-label="gameText[GameTextKey.Back]"
       :held-count="progress.heldCount"
-      :levels="getWorshipLevels()"
+      :levels="worshipLevels"
       :title="gameText[GameTextKey.StatueWorship]"
       @blessing="emit('blessing')"
       @claim="emit('claim')"
