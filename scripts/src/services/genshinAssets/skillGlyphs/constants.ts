@@ -1,11 +1,11 @@
 import type { GlyphTones } from "#src/models/genshinAssets/skillGlyphs/GlyphTones";
 
 import { WORLD_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
-import { SkillGlyphTones } from "genshin-world";
+import { GameDataset, SkillGlyphTones } from "genshin-world";
 import { join } from "node:path";
 
 // The folder of the committed loader map whose entries read each character's icons from the hosted index
-export const SKILL_GLYPHS_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIRECTORY, "skillGlyphs");
+export const SKILL_GLYPHS_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIRECTORY, GameDataset.SkillGlyphs);
 // The shares of white each button draws an icon's tones in, as the recordings read them: a skill's pale tone 0.38 and its
 // White 0.78, as Skyward Sonnet's in `hud-world-pickup` and Chonghua's Layered Frost's in `hud-world-keys` both read, and a
 // Charged burst's pale tone 0.54 and its white whole, as Cloud-Parting Star's in `hud-world-keys` reads. An icon of one

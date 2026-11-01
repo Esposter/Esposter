@@ -3,6 +3,7 @@ import type { SkillGlyphs } from "genshin-world";
 
 import { SkillGlyphTonesMap } from "#src/services/genshinAssets/skillGlyphs/constants";
 import { getSkillGlyphsLoaderMapSource } from "#src/services/genshinAssets/skillGlyphs/getSkillGlyphsLoaderMapSource";
+import { getTitles } from "#src/services/genshinAssets/skillGlyphs/getTitles";
 import { traceTalentIcon } from "#src/services/genshinAssets/skillGlyphs/traceTalentIcon";
 import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
 import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
@@ -13,11 +14,6 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { settleAll } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
-
-// The wiki files a talent's name with its colons dropped, or, for a few, made dashes
-const getTitles = (talentName: string) => [
-  ...new Set(["", "-"].map((colon) => `File:Talent ${talentName.replaceAll(":", colon)}.png`)),
-];
 
 // The talents traced at once: each trace holds a whole enlarged icon while it runs, so the pool bounds how many are held
 const TALENT_TRACE_CONCURRENCY = 4;

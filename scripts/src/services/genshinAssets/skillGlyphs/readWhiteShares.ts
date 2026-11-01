@@ -1,6 +1,7 @@
 import type { Sharp } from "sharp";
 
 import { DISC_SHADE_QUANTILE } from "#src/services/genshinAssets/skillGlyphs/constants";
+import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { getPercentile } from "#src/services/shared/getPercentile";
 
 const OPAQUE_ALPHA = 255;
@@ -10,7 +11,9 @@ const WHITE = 255;
 export const readWhiteShares = async (image: Sharp, size: number): Promise<Float32Array> => {
   const data = await image.raw().toBuffer();
   const getLuminance = (offset: number) =>
-    0.2126 * (data[offset] ?? 0) + 0.7152 * (data[offset + 1] ?? 0) + 0.0722 * (data[offset + 2] ?? 0);
+    LUMINANCE[0] * (data[offset] ?? 0) +
+    LUMINANCE[1] * (data[offset + 1] ?? 0) +
+    LUMINANCE[2] * (data[offset + 2] ?? 0);
   const shares = new Float32Array(size * size).fill(-1);
   for (let y = 0; y < size; y++) {
     const offsets = Array.from({ length: size }, (_value, x) => (y * size + x) * 4).filter(

@@ -6,11 +6,10 @@ import {
   TONE_MIN_GAP,
   WHITE_TONE_MIN_SHARE,
 } from "#src/services/genshinAssets/skillGlyphs/constants";
+import { getShare } from "#src/services/genshinAssets/skillGlyphs/getShare";
 import { getPercentile } from "#src/services/shared/getPercentile";
 import { takeOne } from "@esposter/shared";
 
-// A bin's share of white, at its middle
-const getShare = (bin: number) => (bin + 0.5) / TONE_BIN_COUNT;
 // Where an icon's mark is split from its disc and its tones from one another, as shares of white: halfway between the
 // Disc and its first tone, and, for an icon with a pale tone under its white, halfway between the two tones' peaks. Each
 // Peak is the fullest twentieth of its range in the histogram of the mark's shares
