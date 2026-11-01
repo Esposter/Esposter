@@ -23,9 +23,9 @@ flowchart TD
 
 ## Key files
 
-| File                                                                | Role                                                                                                                      |
-| :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/tighnariKit.ts` | `createTighnariKitBehaviour`, Constellations 1 and 4 and Ascension 4's DMG; the rest is his record's alone                |
+| File                                                                | Role                                                                                                       |
+| :------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/tighnariKit.ts` | `createTighnariKitBehaviour`, Constellations 1 and 4 and Ascension 4's DMG; the rest is his record's alone |
 
 ## Sources
 
