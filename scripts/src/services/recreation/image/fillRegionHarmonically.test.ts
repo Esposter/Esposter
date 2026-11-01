@@ -1,10 +1,10 @@
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
+import { CHANNELS } from "#src/services/recreation/image/constants";
 import { fillRegionHarmonically } from "#src/services/recreation/image/fillRegionHarmonically";
 import { describe, expect, test } from "vitest";
 
 describe(fillRegionHarmonically, () => {
-  const CHANNELS = 4;
   const OPAQUE = 255;
   const INTERFACE_COLOUR = [0, 0, 0, OPAQUE];
   const getGradientColour = (column: number, row: number) => [2 * column + 3, row + 40, 100 - column, OPAQUE];
