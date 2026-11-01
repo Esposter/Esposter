@@ -2,6 +2,7 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 
+import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 
 // Each reference's measure taken on its own witness page, closed once its measure settles, and the notes and readings of
@@ -21,5 +22,5 @@ export const measureEachReference = async (
       // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
       await withReferencePage(referenceId, component, (openedPage) => measureReference(referenceId, openedPage), width),
     );
-  return { notes: measures.flatMap(({ notes }) => notes), readings: measures.flatMap(({ readings }) => readings) };
+  return mergeParityPassMeasures(measures);
 };
