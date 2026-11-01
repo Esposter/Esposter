@@ -105,6 +105,8 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Open
 
+The open source for a talent's extra with no room in the bag is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **The Mystic Offering's gate at Adventure Rank 45** is the [Artifact Strongbox](../artifact-strongbox/design.md) open item too: the dump's open-state row 1600 (`{data-root}/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gates rank 45 but names no system, so the game's gate for this tab is unverified.
 - [ ] **The talent draws of 10%, 25%, 20%, 25% and 10%** — no source yet: the wiki's Crafting Talents category is not in `{data-root}/cache/genshin-wiki/`, and none of the rows with a 0.25 parameter in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json` names a crafting talent.
 - [ ] **A character's crafting talent gives a double, a refund or a regional extra** — no source yet: the wiki's Crafting Talents category is not in `{data-root}/cache/genshin-wiki/`.
@@ -113,4 +115,3 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - [ ] **Timaeus stands beside the bench** — no source yet: the wiki's Timaeus page, named in Sources, is not in `{data-root}/cache/genshin-wiki/`.
 - [ ] **The bench stands where its scene group record places it** — no source yet: the scene group record's Craft member is not compared with the published `craftingBenchPlaces/mondstadt`.
 - [ ] **Mondstadt's is the only bench the scene group records place, and Timaeus has no birth in the scene group record** — no source yet: the dump's scene group records, counted for every city's Craft member, and Timaeus's row in his scene group record.
-- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the game's overflow rule is not on disk; the repo's `packages/genshin-world/src/components/Crafting/Screen/Index.vue` keeps only the `.inventory` that `addInventoryItem` returns, which is the repo's rule and not evidence for the game's.

@@ -124,7 +124,7 @@ A character without a crafting talent SHALL craft only the recipe's own results.
 
 ### Requirement: Open recipes are listed under one tab per combine type
 
-Open recipes SHALL be listed under one tab per combine type, each named by the game's own text, in the game's order, with the first tab shown until one is picked. A conversion SHALL be listed under its own tab, apart from the craft tab of the same combine type.
+Open recipes SHALL be listed under one tab per combine type, each named by the game's own text, in the game's order, with the first tab shown until one is picked.
 
 #### Scenario: The bench opens on its first tab
 
@@ -219,16 +219,6 @@ Using the bench SHALL open the crafting screen with the party's crafter picked.
 - **WHEN** the player uses the bench from its prompt
 - **THEN** the crafting screen opens with the party's crafter picked
 
-### Requirement: Crafting spends its materials and mora
-
-Crafting a recipe at the bench SHALL spend the recipe's materials from the bag and its mora from the wallet.
-
-#### Scenario: A craft spends its materials and mora
-
-- **GIVEN** the bag holds the recipe's materials and the wallet holds its mora
-- **WHEN** the player crafts the recipe
-- **THEN** the bag loses the recipe's materials and the wallet loses its mora
-
 ### Requirement: Condensed Resin takes its resin from Original Resin
 
 Crafting Condensed Resin SHALL spend its resin from the Original Resin wallet.
@@ -292,5 +282,5 @@ A conversion SHALL be listed under a tab of its own, apart from the craft tab of
 ## Open
 
 - [ ] **The bench stands in Mondstadt's Market District** — no source yet: the scene group record that names the region is not in the dump backup; NPC 10256 is born in group 133004082 (`{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`) at (2267.3, 216.0, -889.3), which does not name it.
-- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the `addInventoryItem` call that drops it was not read.
+- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the game's overflow rule is not on disk. The repo's `packages/genshin-world/src/components/Crafting/Screen/Index.vue` keeps only the `.inventory` that `addInventoryItem` returns, which is the repo's rule and not evidence for the game's.
 - [ ] **A combine type eleven row disassembles a mechanical fish into drops** — no source yet: the dump's type 11 rows disassemble Maintenance Mek parts and a Secret Source Scout Sweeper, and name no mechanical fish.
