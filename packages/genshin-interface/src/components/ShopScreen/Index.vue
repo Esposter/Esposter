@@ -6,8 +6,10 @@ import type { ShopTabCell } from "#src/models/ShopTabCell";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import ShopScreenCloseButton from "#src/components/ShopScreen/CloseButton/Index.vue";
-import { useShopGoodPick } from "#src/composables/useShopGoodPick";
+import ShopScreenDetail from "#src/components/ShopScreen/Detail/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_WHITE } from "#src/services/constants";
+import { useShopGoodPick } from "#src/services/useShopGoodPick";
 
 interface Props {
   // The currencies the player holds, shown across the head, the top-up ones with a plus
@@ -34,7 +36,7 @@ const tabId = defineModel<number>("tabId", { default: 0 });
 const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, tabs, title } = defineProps<Props>();
 const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
 // The good the player picked, whose detail the screen shows over the goods grid, and the count it is bought for
-const { pickedCount, pickedGood, setCount } = useShopGoodPick({
+const { pickedCount, pickedGood } = useShopGoodPick({
   count,
   getCountMaximum: () => countMaximum,
   getGoods: () => goods,
@@ -91,41 +93,18 @@ const { pickedCount, pickedGood, setCount } = useShopGoodPick({
         </GameButton>
       </li>
     </ul>
-    <div v-if="pickedGood" class="detail" role="dialog" aria-modal="true" :aria-label="pickedGood.name">
-      <div class="detail-good">
-        <p class="detail-name">{{ pickedGood.name }}</p>
-        <p v-for="cost of pickedGood.costs" :key="cost.name" class="detail-price price-line">
-          <span class="price-icon" role="img" :aria-label="cost.name" />
-          {{ cost.count * pickedCount }}
-        </p>
-        <p v-if="pickedGood.limitLabel" class="detail-line">{{ pickedGood.limitLabel }}</p>
-        <p v-if="pickedGood.refreshLabel" class="detail-line">{{ pickedGood.refreshLabel }}</p>
-      </div>
-      <input
-        :aria-label="countLabel"
-        class="amount"
-        :max="countMaximum"
-        min="1"
-        type="range"
-        :value="pickedCount"
-        @input="(event) => setCount(event)"
-      />
-      <p class="amount-value">{{ pickedCount }}</p>
-      <GameButton class="cancel" :aria-label="closeLabel" :kind="GameButtonKind.Row" tip="" @click="goodId = 0">
-        <svg class="cross" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6 18 18M18 6 6 18" />
-        </svg>
-      </GameButton>
-      <GameButton
-        class="buy"
-        :disabled="countMaximum < 1"
-        :kind="GameButtonKind.Row"
-        tip=""
-        @click="pickedGood && countMaximum >= 1 && emit('buy', pickedGood, pickedCount)"
-      >
-        {{ buyLabel }}
-      </GameButton>
-    </div>
+    <ShopScreenDetail
+      v-if="pickedGood"
+      v-model:count="count"
+      :buy-label="buyLabel"
+      :close-label="closeLabel"
+      :count-label="countLabel"
+      :count-maximum="countMaximum"
+      :good="pickedGood"
+      :picked-count="pickedCount"
+      @buy="(good, buyCount) => emit('buy', good, buyCount)"
+      @close="goodId = 0"
+    />
   </div>
 </template>
 
@@ -228,7 +207,7 @@ const { pickedCount, pickedGood, setCount } = useShopGoodPick({
 }
 
 .good[aria-pressed="true"] {
-  outline: calc(var(--unit) * 2) solid #fdfdfd;
+  outline: calc(var(--unit) * 2) solid v-bind(GAME_WHITE);
 }
 
 .good-name {
@@ -264,104 +243,6 @@ const { pickedCount, pickedGood, setCount } = useShopGoodPick({
   background: #5b6882;
   font-size: calc(var(--unit) * 24);
 }
-
-.price-icon {
-  width: calc(var(--unit) * 18);
-  height: calc(var(--unit) * 18);
-  background: #7aa9e8;
-  transform: rotate(45deg);
-}
-
-.detail {
-  position: absolute;
-  top: calc(var(--unit) * 250);
-  left: calc(var(--unit) * 505);
-  width: calc(var(--unit) * 910);
-  height: calc(var(--unit) * 580);
-  background: #e8e1cd;
-  color: #2b2a26;
-}
-
-.detail-good {
-  position: absolute;
-  top: calc(var(--unit) * 95);
-  left: calc(var(--unit) * 65);
-  display: flex;
-  width: calc(var(--unit) * 780);
-  height: calc(var(--unit) * 170);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: calc(var(--unit) * 8);
-  background: #6f78ab;
-  color: #fff7ea;
-}
-
-.detail-good p {
-  margin: 0;
-}
-
-.detail-name {
-  font-size: calc(var(--unit) * 28);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 34);
-}
-
-.detail-price {
-  line-height: calc(var(--unit) * 28);
-}
-
-.detail-line {
-  font-size: calc(var(--unit) * 18);
-  line-height: calc(var(--unit) * 22);
-}
-
-.amount {
-  position: absolute;
-  top: calc(var(--unit) * 380);
-  left: calc(var(--unit) * 183);
-  width: calc(var(--unit) * 540);
-}
-
-.amount-value {
-  position: absolute;
-  top: calc(var(--unit) * 366);
-  left: calc(var(--unit) * 728);
-  margin: 0;
-  font-size: calc(var(--unit) * 26);
-  line-height: calc(var(--unit) * 30);
-}
-
-.cancel,
-.buy {
-  position: absolute;
-  top: calc(var(--unit) * 478);
-  height: calc(var(--unit) * 62);
-  padding: 0;
-  border: none;
-  border-radius: calc(var(--unit) * 4);
-  cursor: inherit;
-}
-
-.cancel {
-  left: calc(var(--unit) * 70);
-  width: calc(var(--unit) * 145);
-  background: #6f78ab;
-  color: #fff7ea;
-}
-
-.buy {
-  left: calc(var(--unit) * 630);
-  width: calc(var(--unit) * 210);
-  background: #3d4a68;
-  color: #fff7ea;
-  font-size: calc(var(--unit) * 24);
-}
-
-.buy:disabled {
-  opacity: 0.4;
-}
 </style>
 
-<style scoped src="../../styles/craftingShop.css"></style>
 <style scoped src="../../styles/shopScreen.css"></style>

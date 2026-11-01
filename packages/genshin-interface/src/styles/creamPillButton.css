@@ -2,20 +2,20 @@
    1 unit outside its edge and 2 within on a pointer's hover (only a pointer's, so a tap leaves none), and on focus or
    the forced hover, holding its size. Pressed, its cream gives way to the slate and gold light the pill takes at once.
    Provisional past the ring, as no recording shows these pills under the pointer */
+.cream-pill-button {
+  --cream-pill-button-lit-shadow:
+    0 0 0 calc(var(--unit) * 1) #fff, inset 0 0 0 calc(var(--unit) * 2) #fff,
+    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+}
+
 @media (hover: hover) {
   .cream-pill-button:enabled:hover {
-    box-shadow:
-      0 0 0 calc(var(--unit) * 1) #fff,
-      inset 0 0 0 calc(var(--unit) * 2) #fff,
-      0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+    box-shadow: var(--cream-pill-button-lit-shadow);
   }
 }
 
 .cream-pill-button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  box-shadow:
-    0 0 0 calc(var(--unit) * 1) #fff,
-    inset 0 0 0 calc(var(--unit) * 2) #fff,
-    0 0 calc(var(--unit) * 7) rgb(255 255 255 / 0.125);
+  box-shadow: var(--cream-pill-button-lit-shadow);
 }
 
 .cream-pill-button::before {

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { DialogueChoice } from "#src/models/DialogueChoice";
 
-import GameButton from "#src/components/GameButton/Index.vue";
-import { GameButtonKind } from "#src/models/GameButtonKind";
+import DialogueScreenChoices from "#src/components/DialogueScreen/Choices/Index.vue";
 import { GAME_DIALOGUE_GOLD, ROLE_FLOURISH_PATH } from "#src/services/constants";
-import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 
 interface Props {
   // The replies on offer, shown once the line is written out, none while the talk only goes on
@@ -57,26 +55,12 @@ const lineParts = computed(() => ({
         <span class="spoken">{{ line }}</span>
       </p>
     </div>
-    <ul v-if="choices.length > 0" class="choices">
-      <li
-        v-for="{ icon, id, text } of choices"
-        :key="id"
-        :data-interaction-state="id === selectedChoiceId ? 'Hover' : undefined"
-      >
-        <GameButton
-          class="choice"
-          :data-icon="icon"
-          :kind="GameButtonKind.Reply"
-          tip=""
-          @click.stop="emit('choose', id)"
-        >
-          <svg class="icon" aria-hidden="true" :viewBox="DialogueChoiceIconPathMap[icon].viewBox">
-            <path :d="DialogueChoiceIconPathMap[icon].d" fill="currentColor" fill-rule="evenodd" />
-          </svg>
-          {{ text }}
-        </GameButton>
-      </li>
-    </ul>
+    <DialogueScreenChoices
+      v-if="choices.length > 0"
+      :choices
+      :selected-choice-id="selectedChoiceId"
+      @choose="(id) => emit('choose', id)"
+    />
     <svg v-if="isWhole" class="advance" aria-hidden="true" viewBox="0 0 24 24">
       <path class="ring" d="M12 0L24 12L12 24L0 12ZM12 4L4 12L12 20L20 12Z" fill-rule="evenodd" />
       <path class="core" d="M12 8L16 12L12 16L8 12Z" />
@@ -209,45 +193,7 @@ const lineParts = computed(() => ({
 
 /* The whole line once, for a screen reader, which the written-out halves are hidden from */
 .spoken {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
   white-space: nowrap;
-}
-
-/* The replies' place is read off the English client's recording: the first pill's left edge at 1275 of 1920 and its top
-   at 698 of 1080, each pill 45 high and 15 apart */
-.choices {
-  position: absolute;
-  top: calc(var(--unit) * 698);
-  right: calc(var(--unit) * 273);
-  display: flex;
-  width: calc(var(--unit) * 372);
-  flex-direction: column;
-  gap: calc(var(--unit) * 15);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* The reply's look and its states are its GameButton kind's, so the screen places each and sets only its layout */
-.choice {
-  display: flex;
-  width: 100%;
-  min-height: calc(var(--unit) * 45);
-  align-items: center;
-  gap: calc(var(--unit) * 7.5);
-  padding: 0 calc(var(--unit) * 10.5);
-  text-align: start;
-}
-
-/* The mark's place, its traced glyph from the game's own file, drawn in the pill's colour */
-.icon {
-  width: calc(var(--unit) * 30);
-  height: calc(var(--unit) * 30);
-  flex: none;
 }
 
 /* The continue mark under the line's middle: a gold diamond ring with a brighter core, 24 units across, its centre at the
@@ -305,3 +251,5 @@ const lineParts = computed(() => ({
   stroke-width: 4.5;
 }
 </style>
+
+<style scoped src="../../styles/visuallyHidden.css"></style>

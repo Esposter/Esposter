@@ -11,14 +11,16 @@ import type { WishSet } from "#src/models/WishSet";
 
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
-import RarityStars from "#src/components/RarityStars/Index.vue";
 import ScreenTitle from "#src/components/ScreenTitle/Index.vue";
 import WishDetails from "#src/components/Wish/Details/Index.vue";
 import WishHistory from "#src/components/Wish/History/Index.vue";
 import WishPath from "#src/components/Wish/Path/Index.vue";
+import Card from "#src/components/Wish/Screen/Card/Index.vue";
+import Currencies from "#src/components/Wish/Screen/Currencies/Index.vue";
+import Results from "#src/components/Wish/Screen/Results/Index.vue";
+import Sets from "#src/components/Wish/Screen/Sets/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // The way back to the world in the reader's language
@@ -89,19 +91,14 @@ const {
   trialLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{ buy: []; close: []; dismiss: []; trial: []; wish: [count: number] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const isHistoryOpen = ref(false);
-const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeatured && rarity === 5));
 const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).join("");
 const bannerLabelText = computed(() => {
   const openBanner = banners.find(({ id }) => id === bannerId.value);
   return openBanner && getLabelText(openBanner.label);
 });
-const topUpCurrencies = computed(() => currencies.filter(({ isTopUp }) => isTopUp));
-const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTopUp));
 </script>
 
 <template>
@@ -126,37 +123,18 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
         />
       </li>
     </ul>
-    <ul class="currencies currencies-top">
-      <li v-for="{ id, name, quantity } of topUpCurrencies" :key="id" class="currency">
-        <span class="currency-icon" role="img" :aria-label="name" />
-        <span class="currency-count">{{ quantity }}</span>
-        <span class="top-up" aria-hidden="true">+</span>
-      </li>
-    </ul>
-    <ul class="currencies currencies-bottom">
-      <li v-for="{ id, name, quantity } of bottomCurrencies" :key="id" class="currency">
-        <span class="currency-icon" role="img" :aria-label="name" />
-        <span class="currency-count">{{ quantity }}</span>
-      </li>
-    </ul>
+    <Currencies :currencies />
     <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
-    <section v-if="bannerLabelText && fiveStarNotice" class="card">
-      <p class="tag">{{ bannerLabelText }}</p>
-      <p v-if="bannerCard" class="card-title">
-        <span v-for="({ color, text }, index) of bannerCard.title" :key="index" :style="{ color }">{{ text }}</span>
-      </p>
-      <span v-if="bannerCard" class="rule" aria-hidden="true" />
-      <p class="probability">{{ probabilityLabel }}</p>
-      <p v-if="bannerCard" class="rate-up"><span class="sparkle small" aria-hidden="true" />{{ bannerCard.rateUp }}</p>
-      <p class="notice">{{ fiveStarNotice }}</p>
-      <p v-if="timeRemainingText" class="time-label">{{ timeRemainingLabel }}</p>
-      <p v-if="timeRemainingText" class="time-duration">{{ timeRemainingText }}</p>
-      <div v-if="bannerCard && featuredCell" class="featured">
-        <p class="featured-name">{{ featuredCell.name }}</p>
-        <p class="featured-stars"><RarityStars color="" :rarity="featuredCell.rarity" /></p>
-        <p class="featured-title">{{ bannerCard.featuredTitle }}</p>
-      </div>
-    </section>
+    <Card
+      v-if="bannerLabelText && fiveStarNotice"
+      :banner-card="bannerCard"
+      :banner-label="bannerLabelText"
+      :five-star-notice="fiveStarNotice"
+      :pool
+      :probability-label="probabilityLabel"
+      :time-remaining-label="timeRemainingLabel"
+      :time-remaining-text="timeRemainingText"
+    />
     <div class="links">
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="">{{ shopLabel }}</GameButton>
       <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" tip="" @click="emit('trial')">{{
@@ -170,32 +148,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
       }}</GameButton>
     </div>
     <WishPath v-if="pathLabel" class="path" :path-label :fate-points />
-    <div v-if="bannerId" class="sets">
-      <GameButton
-        v-for="{ cost, count, isAffordable, label } of sets"
-        :key="count"
-        class="set"
-        :disabled="!isAffordable"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="emit('wish', count)"
-      >
-        <span class="set-label">{{ label }}</span>
-        <span class="cost">{{ cost }}</span>
-      </GameButton>
-      <GameButton
-        v-for="{ cost, isAffordable, label } of purchases"
-        :key="label"
-        class="set"
-        :disabled="!isAffordable"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="emit('buy')"
-      >
-        <span class="set-label">{{ label }}</span>
-        <span class="cost">{{ cost }}</span>
-      </GameButton>
-    </div>
+    <Sets v-if="bannerId" :purchases :sets @buy="emit('buy')" @wish="(count) => emit('wish', count)" />
     <WishDetails
       v-if="isDetailsOpen"
       :close-label="backLabel"
@@ -212,24 +165,11 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
       :title="historyLabel"
       @close="isHistoryOpen = false"
     />
-    <button v-if="results.length > 0" class="results" type="button" @click="emit('dismiss')">
-      <span class="result-list">
-        <span
-          v-for="({ isCapturingRadiance, name, rarity, stellaFortuna, wishReturn }, index) of results"
-          :key="index"
-          class="result"
-          :data-capturing-radiance="isCapturingRadiance"
-          :data-rarity="rarity"
-        >
-          <span class="result-name">{{ name }}</span>
-          <RarityStars color="" :rarity />
-          <span v-if="stellaFortuna" class="result-stella-fortuna">{{ stellaFortuna }}</span>
-          <span class="result-return">{{ wishReturn }}</span>
-        </span>
-      </span>
-    </button>
+    <Results v-if="results.length > 0" :results @dismiss="emit('dismiss')" />
   </div>
 </template>
+
+<style scoped src="../../../styles/sparkle.css"></style>
 
 <style scoped>
 .wish-screen {
@@ -244,9 +184,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
 }
 
 .banners,
-.currencies,
-.links,
-.result-list {
+.links {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -280,67 +218,9 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   background: #fffdea;
 }
 
-/* The top-up currency sits in a translucent pill with its own plus, the banner's Fates below at the foot, each a count beside
-   its icon. The icons are the game's own art, which cannot ship, so each is a placeholder of its size */
-.currencies {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  font-size: calc(var(--unit) * 28);
-  font-weight: 700;
-}
-
-.currencies-top {
-  top: calc(var(--unit) * 27);
-  left: calc(var(--unit) * 1487);
-}
-
-.currencies-bottom {
-  top: calc(var(--unit) * 958);
-  left: calc(var(--unit) * 68);
-  gap: calc(var(--unit) * 47);
-}
-
-.currency {
-  display: flex;
-  height: calc(var(--unit) * 36);
-  align-items: center;
-  gap: calc(var(--unit) * 15);
-}
-
-.currencies-top .currency {
-  padding: 0 calc(var(--unit) * 2) 0 calc(var(--unit) * 13);
-  border-radius: calc(var(--unit) * 18);
-  background: rgb(40 52 68 / 0.55);
-}
-
-.currency-icon {
-  width: calc(var(--unit) * 26);
-  height: calc(var(--unit) * 26);
-}
-
-.top-up {
-  display: flex;
-  width: calc(var(--unit) * 31);
-  height: calc(var(--unit) * 31);
-  margin-left: calc(var(--unit) * 14);
-  border-radius: 50%;
-  background: #fff;
-  color: #343744;
-  font-size: calc(var(--unit) * 26);
-  align-items: center;
-  justify-content: center;
-}
-
 .close {
   background: #f2f2f4;
   color: #343744;
-}
-
-/* The sparkle the game marks its Wish and its banner's rate-up with, a four-point star in its own colour */
-.sparkle {
-  position: absolute;
-  clip-path: var(--sparkle-clip-path);
 }
 
 .star {
@@ -349,163 +229,6 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   width: calc(var(--unit) * 49);
   height: calc(var(--unit) * 47);
   background: #e5ca95;
-}
-
-.sparkle.small {
-  top: calc(var(--unit) * 38);
-  left: calc(var(--unit) * 13);
-  width: calc(var(--unit) * 13);
-  height: calc(var(--unit) * 14);
-  background: #fff;
-}
-
-/* The faint dotted rule the game draws under the card's title */
-.rule {
-  position: absolute;
-  top: calc(var(--unit) * 413);
-  left: calc(var(--unit) * 380);
-  width: calc(var(--unit) * 440);
-  border-top: calc(var(--unit) * 2) dotted #d6dce4;
-}
-
-/* The card's art is the plate's and cannot ship, so the card is a measured panel of the reference's light field behind the
-   words its text column sits on, and its words are drawn over that, each at the game's place on the banner */
-.card {
-  position: absolute;
-  inset: 0;
-}
-
-.card::before,
-.card::after {
-  content: "";
-  position: absolute;
-  top: calc(var(--unit) * 215);
-  left: calc(var(--unit) * 322);
-  width: calc(var(--unit) * 508);
-  height: calc(var(--unit) * 672);
-  background: #fffdfd;
-}
-
-.card::after {
-  top: calc(var(--unit) * 453);
-  left: calc(var(--unit) * 338);
-  width: calc(var(--unit) * 6);
-  height: calc(var(--unit) * 292);
-  background: #524c50;
-}
-
-.tag {
-  position: absolute;
-  top: calc(var(--unit) * 213);
-  left: calc(var(--unit) * 316);
-  margin: 0;
-  padding: calc(var(--unit) * 2) calc(var(--unit) * 12);
-  border-radius: calc(var(--unit) * 18);
-  background: rgb(62 195 238);
-  font-size: calc(var(--unit) * 28);
-  letter-spacing: calc(var(--unit) * 0.4);
-  line-height: calc(var(--unit) * 33);
-}
-
-.card-title {
-  position: absolute;
-  top: calc(var(--unit) * 243);
-  left: calc(var(--unit) * 374);
-  width: calc(var(--unit) * 450);
-  margin: 0;
-  color: #3e3c3d;
-  font-size: calc(var(--unit) * 63);
-  letter-spacing: calc(var(--unit) * 4.5);
-  line-height: calc(var(--unit) * 74);
-}
-
-.probability {
-  position: absolute;
-  top: calc(var(--unit) * 451);
-  left: calc(var(--unit) * 377);
-  margin: 0;
-  color: #3e3c3d;
-  font-size: calc(var(--unit) * 36);
-  letter-spacing: calc(var(--unit) * 0.9);
-  line-height: calc(var(--unit) * 36);
-}
-
-.rate-up {
-  position: absolute;
-  top: calc(var(--unit) * 500);
-  left: calc(var(--unit) * 377);
-  width: calc(var(--unit) * 465);
-  box-sizing: border-box;
-  margin: 0;
-  padding: calc(var(--unit) * 3) calc(var(--unit) * 20) 0 calc(var(--unit) * 39);
-  background: rgb(62 195 238);
-  font-size: calc(var(--unit) * 28);
-  letter-spacing: calc(var(--unit) * 0.15);
-  line-height: calc(var(--unit) * 28.5);
-}
-
-.notice {
-  position: absolute;
-  top: calc(var(--unit) * 601);
-  left: calc(var(--unit) * 377);
-  width: calc(var(--unit) * 465);
-  margin: 0;
-  color: #3e3c3d;
-  font-size: calc(var(--unit) * 26);
-  letter-spacing: calc(var(--unit) * 1.6);
-  line-height: calc(var(--unit) * 28.8);
-}
-
-.time-label,
-.time-duration {
-  position: absolute;
-  left: calc(var(--unit) * 380);
-  margin: 0;
-  color: #3e3c3d;
-  font-size: calc(var(--unit) * 26);
-  line-height: calc(var(--unit) * 28);
-}
-
-.time-label {
-  top: calc(var(--unit) * 771);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1.45);
-}
-
-.time-duration {
-  top: calc(var(--unit) * 810);
-  letter-spacing: calc(var(--unit) * 0.8);
-}
-
-.featured {
-  position: absolute;
-  top: calc(var(--unit) * 672);
-  left: calc(var(--unit) * 1068);
-}
-
-.featured-name {
-  margin: calc(var(--unit) * 5) 0 0;
-  font-size: calc(var(--unit) * 56);
-  line-height: calc(var(--unit) * 56);
-  letter-spacing: calc(var(--unit) * 4);
-}
-
-.featured-stars {
-  margin: calc(var(--unit) * 7) 0 0;
-  font-size: calc(var(--unit) * 22);
-  line-height: calc(var(--unit) * 24);
-  letter-spacing: calc(var(--unit) * 4);
-}
-
-.featured-title {
-  width: calc(var(--unit) * 356);
-  box-sizing: border-box;
-  margin: calc(var(--unit) * 3) 0 0 calc(var(--unit) * -7);
-  padding: 0 calc(var(--unit) * 19);
-  background: rgb(20 30 50 / 0.7);
-  color: #dfc896;
-  font-size: calc(var(--unit) * 26);
-  line-height: calc(var(--unit) * 29);
 }
 
 .links {
@@ -529,114 +252,5 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
   position: absolute;
   top: calc(var(--unit) * 940);
   left: calc(var(--unit) * 68);
-}
-
-.sets {
-  position: absolute;
-  top: calc(var(--unit) * 975);
-  left: calc(var(--unit) * 1147);
-  display: flex;
-  gap: calc(var(--unit) * 33);
-}
-
-.sets .set {
-  display: flex;
-  width: calc(var(--unit) * 340);
-  height: calc(var(--unit) * 74);
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: calc(var(--unit) * 3) solid #f4f0cb;
-  border-radius: calc(var(--unit) * 36);
-  background: #fff;
-  color: #9d9a9a;
-  font-size: calc(var(--unit) * 22);
-}
-
-.set-label {
-  font-weight: 600;
-}
-
-.cost {
-  font-size: calc(var(--unit) * 24);
-  opacity: 0.85;
-}
-
-.results {
-  --state-duration: v-bind(restDuration);
-  position: absolute;
-  inset: 0;
-  display: grid;
-  border: none;
-  padding: 0;
-  background: rgb(255 255 255 / 0.92);
-  color: inherit;
-  cursor: inherit;
-  font: inherit;
-  place-items: center;
-}
-
-/* The overlay is one click that goes on, so hovering or focusing it lights its results together, and a press
-   dims them at once */
-.results:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
-}
-
-.results:is(:focus-visible, [data-interaction-state="Hover"] *) .result {
-  filter: brightness(1.1);
-}
-
-@media (hover: hover) {
-  .results:hover {
-    --state-duration: v-bind(hoverDuration);
-  }
-
-  .results:hover .result {
-    filter: brightness(1.1);
-  }
-}
-
-.results:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-}
-
-.results:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) .result {
-  filter: brightness(0.9);
-}
-
-.result-list {
-  display: flex;
-  gap: calc(var(--unit) * 12);
-}
-
-.result {
-  display: flex;
-  width: calc(var(--unit) * 120);
-  height: calc(var(--unit) * 420);
-  flex-direction: column;
-  justify-content: end;
-  border-radius: calc(var(--unit) * 8);
-  background: #5180b6;
-  color: #ece5d8;
-  font-size: calc(var(--unit) * 18);
-  text-align: center;
-  transition: filter var(--state-duration);
-}
-
-.result[data-rarity="4"] {
-  background: #8d6fb5;
-}
-
-.result[data-rarity="5"] {
-  background: #c18b4c;
-}
-
-.result-stella-fortuna {
-  font-size: calc(var(--unit) * 14);
-}
-
-.result-return {
-  padding-bottom: calc(var(--unit) * 8);
-  font-size: calc(var(--unit) * 14);
 }
 </style>

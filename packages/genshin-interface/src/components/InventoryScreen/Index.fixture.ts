@@ -4,6 +4,7 @@ import { ItemCategory } from "#src/models/ItemCategory";
 // The weapons' tab holding a sword and a bow, sorted by level from the highest, and the Materials tab's two stacks. The
 // Destroy mode's words are the game's, and its states are the variants
 export const props = {
+  amountLabel: "Amount to use",
   backLabel: "Back",
   cancelLabel: "Cancel",
   capacity: "Weapons 2/2000",

@@ -10,6 +10,10 @@ interface Props {
   // Each combat talent's level as the reader's language writes it, in the order the game lists them.
   // Those are the normal attack, the Elemental Skill and the Elemental Burst
   levelTexts: string[];
+  // Each combat talent's name in the reader's language, in the same order as the levels
+  names: string[];
+  // Each passive's name in the reader's language, in the order the character's kit lists them
+  passiveNames: string[];
   // Each talent's next level's phase, as its label, empty at its last level
   phases: string[];
   // Why each talent cannot rise now, as its label, empty when it can or is at its last level
@@ -18,18 +22,22 @@ interface Props {
   upgradeLabel: string;
 }
 
-const { costs, isUpgradeDisabled, levelTexts, phases, reasons, upgradeLabel } = defineProps<Props>();
+const { costs, isUpgradeDisabled, levelTexts, names, passiveNames, phases, reasons, upgradeLabel } =
+  defineProps<Props>();
 const emit = defineEmits<{ upgrade: [index: number] }>();
 </script>
 
 <template>
-  <!-- The Talents tab's panel: the three combat talents down its right, each with its level, the phase and cost of its next
-       level, why it cannot rise if it cannot, and its Upgrade while it is drawn. The talents' names and the passives under
-       them are not drawn yet, since the published kit carries no name id for either -->
+  <!-- The Talents tab's panel: the three combat talents down its right, each with its name and level, the phase and cost of
+       its next level, why it cannot rise if it cannot, and its Upgrade while it is drawn, then the passives under them, each
+       with its name -->
   <div class="talents">
     <ul class="talent-list">
       <li v-for="(levelText, index) in levelTexts" :key="index" class="talent">
-        <span class="level">{{ levelText }}</span>
+        <div class="title">
+          <span class="name">{{ names[index] }}</span>
+          <span class="level">{{ levelText }}</span>
+        </div>
         <div class="detail">
           <span class="phase">{{ phases[index] }}</span>
           <ul class="costs">
@@ -50,6 +58,14 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
         <span class="icon" />
       </li>
     </ul>
+    <ul class="passive-list">
+      <li v-for="(passiveName, index) in passiveNames" :key="index" class="passive">
+        <div class="title">
+          <span class="name">{{ passiveName }}</span>
+        </div>
+        <span class="icon" />
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -63,9 +79,9 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
   color: #fff;
 }
 
-.talent-list {
+.talent-list,
+.passive-list {
   position: absolute;
-  top: calc(var(--unit) * 29);
   right: 0;
   left: 0;
   margin: 0;
@@ -73,7 +89,18 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
   list-style: none;
 }
 
-.talent {
+.talent-list {
+  top: calc(var(--unit) * 29);
+}
+
+/* The passives sit under the three talents on the same 90-unit pitch, their first row placed off the frame's passive
+   names, the first near 305 units from the panel's top. Their place is provisional, not measured */
+.passive-list {
+  top: calc(var(--unit) * 305);
+}
+
+.talent,
+.passive {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -82,9 +109,20 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
   gap: calc(var(--unit) * 16);
 }
 
-/* The name above the level is not drawn yet, so the level sits beneath where that name's line would be, as the frame's does */
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.name {
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  text-align: right;
+  text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);
+}
+
 .level {
-  margin-top: calc(var(--unit) * 38);
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);

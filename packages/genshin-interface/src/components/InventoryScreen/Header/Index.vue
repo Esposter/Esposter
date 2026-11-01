@@ -48,17 +48,14 @@ const emit = defineEmits<{ close: [] }>();
 
 <style scoped>
 .tabs {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tabs {
   position: absolute;
   top: calc(var(--unit) * 22);
   left: calc(var(--unit) * 559);
   display: flex;
   gap: calc(var(--unit) * 56);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .tab {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_WHITE, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
 
 interface Props {
   // What the button does, for a screen reader, since it shows its content alone
@@ -36,7 +36,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: #fdfdfd;
+  background: v-bind(GAME_WHITE);
   box-shadow: 0 0 calc(var(--unit) * 3) calc(var(--unit) * 1) rgb(0 0 0 / 0.3);
   outline: calc(var(--unit) * 1) solid transparent;
   cursor: inherit;

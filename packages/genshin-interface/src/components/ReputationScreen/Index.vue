@@ -3,7 +3,7 @@ import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
 import ItemTile from "#src/components/ItemTile/Index.vue";
-import { CHECK_MARK_PATH, GAME_ROW_HOVER, GAME_ROW_PRESS } from "#src/services/constants";
+import { CHECK_MARK_PATH, GAME_CREAM, GAME_ROW_HOVER, GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
   // The achieved mark's words in the reader's language, read to assistive technology in place of the mark
@@ -136,7 +136,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   top: calc(var(--unit) * 165);
   left: calc(var(--unit) * 85);
   width: calc(var(--unit) * 520);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 .headline {
@@ -155,7 +155,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   top: calc(var(--unit) * 380);
   left: calc(var(--unit) * 85);
   width: calc(var(--unit) * 520);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 
 .offer-title {
@@ -167,7 +167,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   padding: calc(var(--unit) * 12) calc(var(--unit) * 32);
   border: none;
   border-radius: calc(var(--unit) * 8);
-  background: #ece5d8;
+  background: v-bind(GAME_CREAM);
   color: #3b4255;
   font: inherit;
   font-size: calc(var(--unit) * 26);
@@ -281,14 +281,6 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 41);
 }
 
-.hidden-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
 .items {
   position: absolute;
   top: calc(var(--unit) * 20);
@@ -360,3 +352,5 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 31);
 }
 </style>
+
+<style scoped src="../../styles/visuallyHidden.css"></style>

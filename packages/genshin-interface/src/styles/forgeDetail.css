@@ -1,0 +1,30 @@
+/* The detail pane's frame and the children it places: each direct child of the pane is absolute, pointer-events auto, with no
+   margin, so every pane that is a child of it pulls this sheet in to draw its own */
+.detail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.detail > * {
+  pointer-events: auto;
+  position: absolute;
+  margin: 0;
+}
+/* The game's label sits right of its icon, which is not drawn, so the padding pushes the label along by half of itself */
+.action {
+  box-sizing: border-box;
+  top: calc(var(--unit) * 963);
+  left: calc(var(--unit) * 1883);
+  width: calc(var(--unit) * 277);
+  height: calc(var(--unit) * 78);
+  padding-left: calc(var(--unit) * 39);
+  border: none;
+  border-radius: calc(var(--unit) * 39);
+  background: #ece5d8;
+  color: #3b3b3b;
+  font-size: calc(var(--unit) * 36);
+  letter-spacing: calc(var(--unit) * 2.9);
+}

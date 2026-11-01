@@ -2,8 +2,11 @@
 import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 import type { CharacterMenuTab } from "#src/models/CharacterMenuTab";
 
-import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import Band from "#src/components/CharacterMenu/Band/Index.vue";
+import Characters from "#src/components/CharacterMenu/Characters/Index.vue";
+import Keys from "#src/components/CharacterMenu/Keys/Index.vue";
+import Steps from "#src/components/CharacterMenu/Steps/Index.vue";
+import Tabs from "#src/components/CharacterMenu/Tabs/Index.vue";
 
 interface Props {
   // The player's characters, across the screen's top in the order given
@@ -22,18 +25,11 @@ defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
 const { characters, elementMarkPath, elementName, isTouch, tabLabels } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
-const characterName = computed(() => characters.find(({ id }) => id === characterId.value)?.name ?? "");
-// The characters either side of the chosen one, the list wrapping round at its ends, which the arrows at the frame's
-// Left and right edges step to
+// The characters either side of the chosen one, the list wrapping round at its ends
 const steps = computed(() => {
   const index = characters.findIndex(({ id }) => id === characterId.value);
   const getStep = (step: number) => characters[(index + step + characters.length) % characters.length];
-  return [
-    { character: getStep(-1), className: "previous" },
-    { character: getStep(1), className: "next" },
-  ];
+  return { next: getStep(1), previous: getStep(-1) };
 });
 </script>
 
@@ -42,68 +38,16 @@ const steps = computed(() => {
        down the left with the open one lit, and the open tab's panel down the right -->
   <div class="character-menu" :data-tab="tab">
     <div class="head" />
-    <ul class="characters">
-      <li v-for="{ id, name } of characters" :key="id">
-        <button
-          class="character ring-button"
-          :aria-pressed="id === characterId"
-          type="button"
-          @click="characterId = id"
-        >
-          {{ name }}
-        </button>
-      </li>
-    </ul>
-    <!-- The band's words: the element's name and the character's, split by the screen's own slash -->
-    <p class="breadcrumb">{{ elementName ? `${elementName} / ${characterName}` : characterName }}</p>
-    <svg v-if="elementMarkPath" class="element" viewBox="0 0 1600 1600" aria-hidden="true">
-      <path
-        class="frame"
-        d="M800 0 L1014 283 L1366 234 L1317 586 L1600 800 L1317 1014 L1366 1366 L1014 1317 L800 1600 L586 1317 L234 1366 L283 1014 L0 800 L283 586 L234 234 L586 283 Z"
-      />
-      <path :d="elementMarkPath" transform="translate(400 400) scale(0.5)" />
-    </svg>
+    <Characters v-model:character-id="characterId" :characters />
+    <Band :character-id="characterId" :characters :element-mark-path="elementMarkPath" :element-name="elementName" />
     <!-- The keys stepping through the tabs, W up and S down, beside the first; the keys stepping through the characters,
          Q and E, either side of the row; a finger has no keys to press -->
-    <div v-if="!isTouch" class="tab-keys" aria-hidden="true">
-      <kbd class="key">W</kbd>
-      <kbd class="key">S</kbd>
-    </div>
-    <div v-if="!isTouch" class="character-keys" aria-hidden="true">
-      <kbd class="key key-previous">Q</kbd>
-      <kbd class="key key-next">E</kbd>
-    </div>
-    <ul class="tabs">
-      <li v-for="menuTab of CharacterMenuTabs" :key="menuTab">
-        <button class="tab fill-tint" :aria-pressed="menuTab === tab" type="button" @click="tab = menuTab">
-          {{ tabLabels[menuTab] }}
-        </button>
-      </li>
-    </ul>
+    <Keys v-if="!isTouch" />
+    <Tabs v-model:tab="tab" :tab-labels="tabLabels" />
     <section class="panel" :aria-label="tabLabels[tab]"><slot /></section>
-    <template v-if="characters.length > 1">
-      <button
-        v-for="{ character, className } of steps"
-        :key="className"
-        :class="['step', className]"
-        :aria-label="character?.name"
-        type="button"
-        @click="characterId = character?.id ?? characterId"
-      >
-        <!-- The arrow's head and the diamond in its notch, in the reference's own pixels -->
-        <svg viewBox="0 0 43 55" aria-hidden="true">
-          <path class="arrow" d="M31 0 L0 27.5 L31 55 L31 42 L16 27.5 L31 13 Z" />
-          <path class="mark" d="M31 16.5 L42 27.5 L31 38.5 L20 27.5 Z M31 22 L25.5 27.5 L31 33 L36.5 27.5 Z" />
-          <path class="mark" d="M31 25.5 L33 27.5 L31 29.5 L29 27.5 Z" />
-        </svg>
-      </button>
-    </template>
+    <Steps v-if="characters.length > 1" :next="steps.next" :previous="steps.previous" @step="characterId = $event" />
   </div>
 </template>
-
-<style scoped src="../../styles/fillTint.css"></style>
-
-<style scoped src="../../styles/ringButton.css"></style>
 
 <style scoped>
 /* Measured off the English PC client's character screen at 21:9 (captures/session-2.mp4, a frame per tab from 155 to
@@ -126,313 +70,6 @@ const steps = computed(() => {
   left: 0;
   height: calc(var(--unit) * 96);
   background: linear-gradient(rgb(0 0 0 / 0.4), rgb(0 0 0 / 0.22));
-}
-
-.characters,
-.tabs {
-  position: absolute;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* The list's overflow clips at its padding edge, so the padding holds what the portraits draw outside their own 69 units:
-   the chosen one's underline below, and above and left of the first one the 1 unit ring a hover or focus lights. The
-   list stands that unit up and left, so the portraits stay where they were */
-.characters {
-  top: calc(var(--unit) * 11.5);
-  left: calc(var(--unit) * 607);
-  display: flex;
-  gap: calc(var(--unit) * 27);
-  padding: calc(var(--unit) * 1) 0 calc(var(--unit) * 14) calc(var(--unit) * 1);
-  overflow-x: auto;
-}
-
-/* The portraits are the game's own art, which the app does not carry, so each is a disc of the art's mean tone across the
-   roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 79 units below
-   the top of its portrait */
-.character {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
-  position: relative;
-  display: grid;
-  width: calc(var(--unit) * 69);
-  height: calc(var(--unit) * 69);
-  flex: none;
-  padding: 0;
-  border: calc(var(--unit) * 3) solid #9bbf4b;
-  outline: calc(var(--unit) * 1) solid transparent;
-  border-radius: 50%;
-  background: rgb(171 154 146);
-  color: inherit;
-  cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 11);
-  place-items: center;
-}
-
-/* A portrait lights a white ring when hovered or focused (`ringButton.css`), and a press dims it, its size held */
-.character:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  filter: brightness(0.9);
-}
-
-.character[aria-pressed="true"] {
-  border-color: #7fd6e0;
-}
-
-.character[aria-pressed="true"]::after {
-  position: absolute;
-  top: calc(var(--unit) * 79);
-  left: calc(var(--unit) * -13.5);
-  width: calc(var(--unit) * 96);
-  height: calc(var(--unit) * 4);
-  background: #78e2f0;
-  content: "";
-}
-
-.breadcrumb {
-  position: absolute;
-  top: calc(var(--unit) * 29);
-  left: calc(var(--unit) * 216);
-  margin: 0;
-  color: #e6d6a8;
-  font-size: calc(var(--unit) * 30);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 36);
-}
-
-/* The element's emblem at the band's left: a silver star 97.5 units across, its tips on the frame's top and bottom
-   edges, with the element's mark drawn at its centre */
-.element {
-  position: absolute;
-  top: 0;
-  left: calc(var(--unit) * 99.75);
-  width: calc(var(--unit) * 97.5);
-  height: calc(var(--unit) * 97.5);
-  fill: #e0a83c;
-}
-
-.element .frame {
-  fill: #d8d4cf;
-}
-
-/* The tabs down the left, measured off each tab's own frame of the recording (155 to 159 seconds): the rows on a
-   69.6-unit pitch, the first's words centred 155.8 units down. Each row spans the column from the frame's left, so its
-   word and its diamond are placed from the frame's own edge */
-.tabs {
-  top: calc(var(--unit) * 121);
-  left: 0;
-  width: calc(var(--unit) * 560);
-}
-
-.tabs li {
-  height: calc(var(--unit) * 69.6);
-}
-
-/* A closed tab's word starts 216 units in, its ascenders 25.5 units tall in a cream a little short of white, letter-spaced
-   out to the game's width, with a faint shadow round it */
-.tab {
-  --hover-duration: v-bind(hoverDuration);
-  --rest-duration: v-bind(restDuration);
-  --row-tint: v-bind(GAME_ROW_HOVER);
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 0 0 0 calc(var(--unit) * 216);
-  border: none;
-  background: transparent;
-  color: rgb(206 197 176);
-  cursor: inherit;
-  font: inherit;
-  font-size: calc(var(--unit) * 34.5);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1.95);
-  line-height: calc(var(--unit) * 69.6);
-  text-align: start;
-  text-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.2);
-}
-
-/* A press tints the row at once, over the tint `fillTint.css` draws behind its word and its diamond */
-.tab:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  background-color: v-bind(GAME_ROW_PRESS);
-}
-
-/* A closed tab's diamond, 15 units corner to corner and centred 196.9 units in, the word's cream at half strength */
-.tab::before {
-  position: absolute;
-  top: calc(50% - var(--unit) * 1.3);
-  left: calc(var(--unit) * 191.6);
-  width: calc(var(--unit) * 10.6);
-  height: calc(var(--unit) * 10.6);
-  background: rgb(236 229 216 / 0.5);
-  content: "";
-  transform: translateY(-50%) rotate(45deg);
-}
-
-/* The open tab's word is a fifth larger and near white, 9.75 units further in, blooming into the light behind it */
-.tab[aria-pressed="true"] {
-  z-index: 0;
-  padding-left: calc(var(--unit) * 225.75);
-  color: rgb(244 243 235);
-  font-size: calc(var(--unit) * 41.4);
-  letter-spacing: calc(var(--unit) * 2.34);
-  text-shadow:
-    0 0 calc(var(--unit) * 4) rgb(255 248 230 / 0.8),
-    0 0 calc(var(--unit) * 12) rgb(255 240 200 / 0.5);
-}
-
-/* Its diamond is a faint outline 28.5 units corner to corner on the same centre, the part of it right of a line 4.5 units
-   past its centre filled near white, a head pointing right, with a light rising towards it from the left corner */
-.tab[aria-pressed="true"]::before {
-  top: 50%;
-  left: calc(var(--unit) * 186.4);
-  box-sizing: border-box;
-  width: calc(var(--unit) * 20.2);
-  height: calc(var(--unit) * 20.2);
-  border: calc(var(--unit) * 1.6) solid rgb(236 229 216 / 0.45);
-  background: linear-gradient(45deg, transparent 30%, rgb(255 250 240 / 0.45) 68.75%, rgb(236 231 219) 68.75%)
-    padding-box;
-}
-
-/* Behind its word, a warm light from the word's start out to 517.5 units, a thin bright streak along the row's middle in
-   a fainter haze, as the frame less its clean plate measures it */
-.tab[aria-pressed="true"]::after {
-  position: absolute;
-  z-index: -1;
-  top: 50%;
-  left: calc(var(--unit) * 217.5);
-  width: calc(var(--unit) * 300);
-  height: calc(var(--unit) * 90);
-  background:
-    radial-gradient(
-        closest-side,
-        rgb(255 240 200 / 0.4),
-        rgb(255 240 200 / 0.3) 35%,
-        rgb(255 240 200 / 0.17) 55%,
-        rgb(255 240 200 / 0.09) 75%,
-        transparent 95%
-      )
-      center / 100% calc(var(--unit) * 18) no-repeat,
-    radial-gradient(closest-side, rgb(255 240 200 / 0.14), rgb(255 240 200 / 0.08) 50%, transparent);
-  content: "";
-  transform: translateY(-50%);
-}
-
-/* The keys stepping through the tabs: white caps 30.75 by 25 units with dark letters, an arrow over the W and under the
-   S, centred 148.9 units in from the frame's left */
-.tab-keys {
-  position: absolute;
-  top: calc(var(--unit) * 126.75);
-  left: calc(var(--unit) * 133.5);
-  display: flex;
-  width: calc(var(--unit) * 30.75);
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--unit) * 3.5);
-}
-
-.tab-keys .key {
-  width: 100%;
-  height: calc(var(--unit) * 25);
-}
-
-/* The character keys' caps 32.25 by 27 units, the Q's on the row's left and the E's over its right end */
-.character-keys .key {
-  position: absolute;
-  top: calc(var(--unit) * 34.5);
-  width: calc(var(--unit) * 32.25);
-  height: calc(var(--unit) * 27);
-}
-
-.key-previous {
-  left: calc(var(--unit) * 549);
-}
-
-.key-next {
-  left: calc(var(--unit) * 1999);
-}
-
-.tab-keys::before,
-.tab-keys::after {
-  width: calc(var(--unit) * 11.25);
-  height: calc(var(--unit) * 6);
-  background: #fdfdfd;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  content: "";
-}
-
-.tab-keys::after {
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-
-.key {
-  display: grid;
-  border-radius: calc(var(--unit) * 3);
-  background: #fdfdfd;
-  color: #2b2b2b;
-  font: inherit;
-  font-size: calc(var(--unit) * 20.5);
-  font-weight: 600;
-  line-height: 1;
-  place-items: center;
-}
-
-/* The arrows stepping to the characters either side, centred down the frame's left and right edges, their heads 129.75
-   units from the edge and their backs 153.75 */
-.step {
-  --state-duration: v-bind(restDuration);
-  position: absolute;
-  top: calc(50% - var(--unit) * 21);
-  width: calc(var(--unit) * 32.25);
-  height: calc(var(--unit) * 41.25);
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: inherit;
-  transition: filter var(--state-duration);
-}
-
-.step:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
-  filter: brightness(1.2);
-}
-
-@media (hover: hover) {
-  .step:hover {
-    --state-duration: v-bind(hoverDuration);
-    filter: brightness(1.2);
-  }
-}
-
-.step:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  --state-duration: 0s;
-  filter: brightness(0.9);
-}
-
-.step svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.previous {
-  left: calc(var(--unit) * 129.75);
-}
-
-.next {
-  right: calc(var(--unit) * 129.75);
-  transform: scaleX(-1);
-}
-
-.arrow {
-  fill: rgb(236 229 216);
-}
-
-.mark {
-  fill: rgb(236 229 216 / 0.5);
 }
 
 /* The panel's left edge sits at 2057 units of the 2580-unit frame and its right margin at 195 units */

@@ -3,7 +3,9 @@ import type { ArtifactSetBonusGroup } from "#src/models/ArtifactSetBonusGroup";
 import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
 import type { ArtifactStatLine } from "#src/models/ArtifactStatLine";
 
-import CharacterMenuButtons from "#src/components/CharacterMenu/Buttons/Index.vue";
+import CharacterMenuArtifactsDetails from "#src/components/CharacterMenu/Artifacts/Details/Index.vue";
+import CharacterMenuArtifactsFoot from "#src/components/CharacterMenu/Artifacts/Foot/Index.vue";
+import CharacterMenuArtifactsTotals from "#src/components/CharacterMenu/Artifacts/Totals/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
@@ -72,7 +74,6 @@ const emit = defineEmits<{
 const selectedIndex = ref(0);
 const isDetailsOpen = ref(false);
 const selectedStats = computed(() => slotStats[selectedIndex.value]);
-const isSelectedWorn = computed(() => selectedStats.value !== undefined);
 </script>
 
 <template>
@@ -90,97 +91,36 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
     >
       {{ artifactDetailsLabel }}
     </GameButton>
-    <template v-if="isDetailsOpen">
-      <p class="slot-name">{{ slotNames[selectedIndex] }}</p>
-      <ul v-if="selectedStats" class="stats">
-        <li class="stat">
-          <span>{{ selectedStats.mainStat.label }}</span>
-          <span>{{ selectedStats.mainStat.value }}</span>
-        </li>
-        <li v-for="({ label, value }, index) in selectedStats.subStats" :key="index" class="stat">
-          <span>{{ label }}</span>
-          <span>{{ value }}</span>
-        </li>
-      </ul>
-    </template>
-    <template v-else>
-      <ul class="totals">
-        <li v-for="{ label, value } in totals" :key="label" class="total">
-          <span>{{ label }}</span>
-          <span>{{ value }}</span>
-        </li>
-      </ul>
-      <div class="set-bonus">
-        <p class="set-bonus-heading">{{ setBonusHeading }}</p>
-        <template v-if="sets.length > 0">
-          <div v-for="({ lines, name }, index) in sets" :key="index">
-            <p v-if="name" class="set-name">{{ name }}</p>
-            <ul class="set-bonus-lines">
-              <li v-for="line in lines" :key="line">
-                <svg class="check" viewBox="0 0 20 20" aria-hidden="true">
-                  <circle cx="10" cy="10" r="10" />
-                  <path d="M5.5 10.5 L8.5 13.5 L14.5 7" />
-                </svg>
-                {{ line }}
-              </li>
-            </ul>
-          </div>
-        </template>
-        <p v-else class="set-bonus-lines">{{ noSetBonusLabel }}</p>
-      </div>
-    </template>
-    <CharacterMenuButtons>
-      <template v-if="isDetailsOpen">
-        <GameButton
-          class="button"
-          :disabled="!isSelectedWorn"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="emit('enhance', selectedIndex)"
-        >
-          {{ enhanceLabel }}
-        </GameButton>
-        <GameButton
-          class="button"
-          :disabled="!isSelectedWorn && equipDisabledSlots[selectedIndex]"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="isSelectedWorn ? emit('unequip', selectedIndex) : emit('equip', selectedIndex)"
-        >
-          {{ isSelectedWorn ? unequipLabel : equipLabel }}
-        </GameButton>
-        <GameButton
-          v-if="selectedStats"
-          class="button"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="emit('lock', selectedIndex)"
-        >
-          {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
-        </GameButton>
-      </template>
-      <template v-else>
-        <GameButton
-          class="button"
-          :disabled="equipDisabledSlots[selectedIndex]"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="emit('equip', selectedIndex)"
-        >
-          <span class="key" aria-hidden="true">R</span>
-          {{ fastEquipLabel }}
-        </GameButton>
-        <GameButton
-          class="button"
-          :kind="GameButtonKind.Pill"
-          tip=""
-          @click="selectedIndex = (selectedIndex + 1) % slotNames.length"
-        >
-          <span class="key" aria-hidden="true">F</span>
-          {{ switchLabel }}
-        </GameButton>
-      </template>
-    </CharacterMenuButtons>
+    <CharacterMenuArtifactsDetails
+      v-if="isDetailsOpen"
+      :selected-stats="selectedStats"
+      :slot-name="slotNames[selectedIndex]"
+    />
+    <CharacterMenuArtifactsTotals
+      v-else
+      :no-set-bonus-label="noSetBonusLabel"
+      :set-bonus-heading="setBonusHeading"
+      :sets="sets"
+      :totals="totals"
+    />
+    <CharacterMenuArtifactsFoot
+      v-model:selected-index="selectedIndex"
+      :enhance-label="enhanceLabel"
+      :equip-disabled-slots="equipDisabledSlots"
+      :equip-label="equipLabel"
+      :fast-equip-label="fastEquipLabel"
+      :is-details-open="isDetailsOpen"
+      :lock-label="lockLabel"
+      :selected-stats="selectedStats"
+      :slot-names="slotNames"
+      :switch-label="switchLabel"
+      :unequip-label="unequipLabel"
+      :unlock-label="unlockLabel"
+      @enhance="(index) => emit('enhance', index)"
+      @equip="(index) => emit('equip', index)"
+      @lock="(index) => emit('lock', index)"
+      @unequip="(index) => emit('unequip', index)"
+    />
   </div>
 </template>
 
@@ -219,136 +159,5 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
   font: inherit;
   font-size: calc(var(--unit) * 24);
   font-weight: 500;
-}
-
-.totals,
-.stats {
-  position: absolute;
-  top: calc(var(--unit) * 0.7);
-  right: 0;
-  left: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.stats {
-  top: calc(var(--unit) * 250);
-}
-
-.total,
-.stat {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: calc(var(--unit) * 35.6);
-  padding: 0 calc(var(--unit) * 2) 0 calc(var(--unit) * 28);
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-}
-
-.slot-name {
-  position: absolute;
-  top: calc(var(--unit) * 212);
-  right: 0;
-  left: 0;
-  margin: 0;
-  padding: 0 calc(var(--unit) * 28);
-  color: #fff;
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 30);
-}
-
-/* The block ends 88 units above the panel's foot, where the game's text is cut off under the pills */
-.set-bonus {
-  position: absolute;
-  top: calc(var(--unit) * 222.4);
-  right: calc(var(--unit) * 16);
-  bottom: calc(var(--unit) * 88);
-  left: 0;
-  overflow: hidden;
-  color: #a8ff8e;
-}
-
-.set-bonus-heading,
-.set-name,
-.set-bonus-lines {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* The face is Signika, narrower than the game's at the same cap height, so each line is spaced out to the game's width */
-.set-bonus-heading {
-  font-size: calc(var(--unit) * 26);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1.1);
-  line-height: calc(var(--unit) * 30);
-}
-
-.set-name {
-  margin-top: calc(var(--unit) * 14.1);
-  font-size: calc(var(--unit) * 27);
-  font-weight: 600;
-  letter-spacing: calc(var(--unit) * 1.3);
-  line-height: calc(var(--unit) * 28.9);
-}
-
-.set-bonus-lines {
-  margin-top: calc(var(--unit) * 1.9);
-  font-size: calc(var(--unit) * 23.5);
-  letter-spacing: calc(var(--unit) * 0.66);
-  line-height: calc(var(--unit) * 24.4);
-}
-
-.set-bonus-lines li {
-  position: relative;
-  padding-left: calc(var(--unit) * 21.4);
-}
-
-.check {
-  position: absolute;
-  top: calc(var(--unit) * 2.4);
-  left: 0;
-  width: calc(var(--unit) * 19.5);
-  height: calc(var(--unit) * 19.5);
-}
-
-.check circle {
-  fill: #61bf55;
-}
-
-.check path {
-  fill: none;
-  stroke: #fff;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2.2;
-}
-
-.button {
-  position: relative;
-  display: grid;
-  flex: 1;
-  height: calc(var(--unit) * 49);
-  place-items: center;
-  font-size: calc(var(--unit) * 27);
-  font-weight: 600;
-}
-
-.key {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: calc(var(--unit) * 19.9);
-  height: calc(var(--unit) * 18.75);
-  border-radius: calc(var(--unit) * 4);
-  background: #f2f0ec;
-  color: #373536;
-  font-size: calc(var(--unit) * 15);
-  font-weight: 600;
-  line-height: calc(var(--unit) * 18.75);
-  text-align: center;
 }
 </style>

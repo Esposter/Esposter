@@ -16,6 +16,13 @@
   stroke-width: 3;
 }
 
+.price-icon {
+  width: calc(var(--unit) * 18);
+  height: calc(var(--unit) * 18);
+  background: #7aa9e8;
+  transform: rotate(45deg);
+}
+
 .price-line {
   display: flex;
   align-items: center;

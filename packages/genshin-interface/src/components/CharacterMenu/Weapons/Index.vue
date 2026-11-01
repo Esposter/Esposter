@@ -17,6 +17,8 @@ interface Props {
   levelText: string;
   // The weapon's name in the reader's language
   name: string;
+  // The weapon's passive's name in the reader's language, which its column draws beneath the refinement rank
+  passiveName: string;
   // The weapon's rarity in stars
   rarity: number;
   // The weapon's refinement rank, from one to five
@@ -37,6 +39,7 @@ const {
   kind,
   levelText,
   name,
+  passiveName,
   rarity,
   refinement,
   subStatLabel,
@@ -47,9 +50,9 @@ const {
 
 <template>
   <!-- The Weapons tab's panel: the weapon's name and kind beside its lock, its base ATK and secondary attribute, its stars,
-       its level with the ascension phases reached, its refinement rank, the scrollbar of its passive's column, and the two
-       buttons beneath. The passive's text is not drawn: its glyphs are the game's typeface, and drawn in ours they score
-       worse than the frame's own text left bare -->
+       its level with the ascension phases reached, its refinement rank, its passive's name beneath that, the scrollbar of
+       its passive's column, and the two buttons beneath. The passive's text is not drawn yet: its rank's numbers are not
+       filled into it and its colour tags are not split, and the frame sets it in the game's typeface -->
   <div class="weapons">
     <p class="name">{{ name }}</p>
     <p class="kind">{{ kind }}</p>
@@ -72,6 +75,7 @@ const {
       <span v-for="phase in ASCENSION_PHASE_COUNT" :key="phase" class="spark" :class="{ lit: phase <= ascension }" />
     </p>
     <p class="refinement">{{ refinement }}</p>
+    <p class="passive-name">{{ passiveName }}</p>
     <span class="scrollbar"><span class="thumb" /></span>
     <CharacterMenuButtons>
       <span class="action cream-pill">{{ switchLabel }}</span>
@@ -205,6 +209,20 @@ const {
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
+}
+
+/* The passive's name beneath the refinement rank, at the column's left edge as the frame sets it. Its place is provisional,
+   the frame's own passive column not measured to the unit */
+.passive-name {
+  position: absolute;
+  top: calc(var(--unit) * 322);
+  right: 0;
+  left: 0;
+  margin: 0;
+  color: #f0d27a;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 28);
 }
 
 /* The scrollbar beside the passive's column, its thumb over the top of its track */

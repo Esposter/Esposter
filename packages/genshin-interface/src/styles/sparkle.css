@@ -1,0 +1,6 @@
+/* The sparkle the game marks its Wish and its banner's rate-up with, a four-point star in its own colour. Its size and colour
+   are each piece's own, so the base is all a sparkle shares */
+.sparkle {
+  position: absolute;
+  clip-path: var(--sparkle-clip-path);
+}

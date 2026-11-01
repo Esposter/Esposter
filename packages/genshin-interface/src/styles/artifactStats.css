@@ -1,0 +1,21 @@
+/* The attribute rows the panel's totals and a picked piece's stats draw alike. Each list sets its own top */
+.totals,
+.stats {
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.total,
+.stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--unit) * 35.6);
+  padding: 0 calc(var(--unit) * 2) 0 calc(var(--unit) * 28);
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+}

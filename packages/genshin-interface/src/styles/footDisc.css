@@ -1,0 +1,9 @@
+/* The round 50 unit buttons along a screen's foot, each placed and filled by its own rule */
+.foot-disc {
+  position: absolute;
+  width: calc(var(--unit) * 50);
+  height: calc(var(--unit) * 50);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+}

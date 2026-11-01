@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { CONSTELLATION_NODE_PLACES } from "#src/services/constants";
+import { CONSTELLATION_NODE_PLACES, GAME_CREAM } from "#src/services/constants";
 
 interface Props {
   // Each of the character's six constellations in the order it takes them, true where it is activated
@@ -91,7 +91,7 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   top: 50%;
   left: calc(var(--unit) * 88);
   width: calc(var(--unit) * 240);
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 30);
   text-align: left;

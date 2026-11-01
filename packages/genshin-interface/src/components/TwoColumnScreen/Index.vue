@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { VNode } from "vue";
 
+import { GAME_CREAM } from "#src/services/constants";
+
 defineSlots<{ default: () => VNode }>();
 </script>
 
@@ -20,6 +22,6 @@ defineSlots<{ default: () => VNode }>();
   height: 100%;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
-  color: #ece5d8;
+  color: v-bind(GAME_CREAM);
 }
 </style>

@@ -26,7 +26,7 @@ const { orderLabel, sortLabels } = defineProps<Props>();
     </select>
   </div>
   <GameButton
-    class="order"
+    class="order foot-disc"
     :aria-label="orderLabel"
     :data-descending="isDescending"
     :kind="GameButtonKind.Row"
@@ -39,14 +39,8 @@ const { orderLabel, sortLabels } = defineProps<Props>();
 /* The filter and the sort's dropdown on an equipment tab, measured off the bag's recording at 1080 high. The
    dropdown is the game's own pill, its list drawn by the browser until its open motion is measured */
 .order {
-  position: absolute;
   top: calc(var(--unit) * 992);
   left: calc(var(--unit) * 483);
-  width: calc(var(--unit) * 50);
-  height: calc(var(--unit) * 50);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
   background: #ece3d8;
 }
 
@@ -92,3 +86,4 @@ const { orderLabel, sortLabels } = defineProps<Props>();
 </style>
 
 <style scoped src="../../../styles/creamPillLit.css"></style>
+<style scoped src="../../../styles/footDisc.css"></style>

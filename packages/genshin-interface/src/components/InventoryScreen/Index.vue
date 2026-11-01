@@ -18,6 +18,8 @@ import Sort from "#src/components/InventoryScreen/Sort/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
+  // The slider's name for assistive tech, the game's "Amount to use" line in the reader's language
+  amountLabel: string;
   // The way back to the world in the reader's language
   backLabel: string;
   // The dialog's way out without destroying, in the reader's language
@@ -85,6 +87,7 @@ const isDescending = defineModel<boolean>("isDescending", { required: true });
 // The entry the detail panel shows, its id, and the first entry of the open tab while none is chosen
 const selectedId = defineModel<string>("selectedId", { required: true });
 const {
+  amountLabel,
   backLabel,
   cancelLabel,
   capacity,
@@ -129,7 +132,7 @@ const emit = defineEmits<{
   quickSelect: [rarity: number];
   quickUse: [id: string];
   toggleDestroy: [];
-  use: [id: string];
+  use: [id: string, amount: number];
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
 // The dialog takes the focus as it opens, the bag behind it inert until it closes, so nothing behind it changes what OK
@@ -183,16 +186,18 @@ watch(
         @lock="(id) => emit('lock', id)"
       />
       <Actions
+        :key="selectedCell?.id"
+        :amount-label="amountLabel"
         :details-label="detailsLabel"
         :is-destroying="isDestroying"
         :is-sortable="isSortable"
         :selected-cell="selectedCell"
         :use-label="useLabel"
-        @use="(id) => emit('use', id)"
+        @use="(id, amount) => emit('use', id, amount)"
       />
       <GameButton
         ref="trashButton"
-        class="trash"
+        class="trash foot-disc"
         :aria-label="destroyLabel"
         :aria-pressed="isDestroying"
         :kind="GameButtonKind.Disc"
@@ -296,16 +301,6 @@ watch(
 
 /* The foot bar's trash, measured off the bag's recording at 1080 high */
 .trash {
-  position: absolute;
-  width: calc(var(--unit) * 50);
-  height: calc(var(--unit) * 50);
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.14);
-}
-
-.trash {
   top: calc(var(--unit) * 992);
   left: calc(var(--unit) * 50);
   background: #ece3d8;
@@ -333,3 +328,4 @@ watch(
 </style>
 
 <style scoped src="../../styles/translucentButton.css"></style>
+<style scoped src="../../styles/footDisc.css"></style>

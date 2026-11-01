@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { InventoryCell } from "#src/models/InventoryCell";
 
+import Amount from "#src/components/InventoryScreen/Amount/Index.vue";
 import { GAME_ROW_PRESS } from "#src/services/constants";
 
 interface Props {
+  // The slider's name for assistive tech, the game's "Amount to use" line in the reader's language
+  amountLabel: string;
   // The equipment tab's pill that opens the entry's details, in the reader's language
   detailsLabel: string;
   // Whether the bag is in its destroy mode, where a tick chooses an entry for a destroy rather than showing it
@@ -16,16 +19,29 @@ interface Props {
   useLabel: string;
 }
 
-const emit = defineEmits<{ use: [id: string] }>();
-const { detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defineProps<Props>();
+const emit = defineEmits<{ use: [id: string, amount: number] }>();
+const { amountLabel, detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defineProps<Props>();
+// The amount the Use eats, one until the player picks one. The Index keys this component by the entry it shows, so each
+// Entry starts at one, and a Use sets it back to one, since the stack it came from may now hold less than was picked
+const amount = ref(1);
 </script>
 
 <template>
+  <Amount
+    v-if="selectedCell?.amountMaximum && !isDestroying"
+    v-model:amount="amount"
+    class="amount-picker"
+    :amount-label="amountLabel"
+    :amount-maximum="selectedCell.amountMaximum"
+  />
   <button
     v-if="selectedCell?.isUsable && !isDestroying"
     class="use cream-pill-lit"
     type="button"
-    @click="emit('use', selectedCell.id)"
+    @click="
+      emit('use', selectedCell.id, amount);
+      amount = 1;
+    "
   >
     {{ useLabel }}
   </button>
@@ -76,6 +92,16 @@ const { detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defin
 
 .use:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
   background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
+}
+
+/* The amount picker stands on the Use pill's row to its left, where the foot's Currencies stand at the screen's left
+   And nothing else does. Provisional: no recording shows the bag's amount, so its place is measured off the Use pill */
+.amount-picker {
+  position: absolute;
+  top: calc(var(--unit) * 987);
+  left: calc(var(--unit) * 1298);
+  width: calc(var(--unit) * 240);
+  height: calc(var(--unit) * 63);
 }
 </style>
 

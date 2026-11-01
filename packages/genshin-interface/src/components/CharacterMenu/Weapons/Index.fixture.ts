@@ -8,6 +8,7 @@ export const props = {
   kind: "Sword",
   levelText: "Lv. 90/90",
   name: "Peak Patrol Song",
+  passiveName: "Halcyon Years Unending",
   rarity: 5,
   refinement: 5,
   subStatLabel: "DEF",

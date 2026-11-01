@@ -1,0 +1,11 @@
+/* The words a screen reader reads and no eye sees: each keeps its place in the page at one pixel square and clipped to
+   nothing, under the class that carries it (a tab's name, a level's achieved word, a dialogue's whole line) */
+.tab-name,
+.hidden-label,
+.spoken {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
