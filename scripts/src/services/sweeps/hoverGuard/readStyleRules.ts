@@ -1,10 +1,11 @@
 import type { StyleRule } from "#src/models/sweeps/hoverGuard/StyleRule";
 
 const COMMENT_REGEX = /\/\*[\s\S]*?\*\//gu;
-const HOVER_MEDIA_REGEX = /@media[^{]*\(hover:\s*hover\)/u;
+// The hover query, unless the prelude negates it: `not (hover: hover)` is the touch-only case, which the guard must not claim
+const HOVER_MEDIA_REGEX = /@media(?![^{]*\bnot\b)[^{]*\(hover:\s*hover\)/u;
 
 // Each rule of a stylesheet, its selector read as the text before its `{`, with a stack of whether each open block is
-// the hover media query, so a rule anywhere inside one is guarded. At-rules are not rules and are left out. Comments
+// The hover media query, so a rule anywhere inside one is guarded. At-rules are not rules and are left out. Comments
 // Are blanked rather than dropped, so a line stays the line it was written on
 export const readStyleRules = (css: string, firstLine = 1): StyleRule[] => {
   const text = css.replaceAll(COMMENT_REGEX, (comment) => comment.replaceAll(/[^\n]/gu, " "));

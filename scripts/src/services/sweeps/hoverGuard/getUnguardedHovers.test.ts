@@ -25,6 +25,14 @@ describe(getUnguardedHovers, () => {
     expect(getUnguardedHovers("@media (hover: hover) {\n  .a:hover {\n    color: blue;\n  }\n}")).toStrictEqual([]);
   });
 
+  test("reports a hover rule inside a negated hover media query, which applies to touch-only screens", () => {
+    expect.hasAssertions();
+
+    expect(getUnguardedHovers("@media not (hover: hover) {\n  .a:hover {\n    color: blue;\n  }\n}")).toStrictEqual([
+      "2: .a:hover",
+    ]);
+  });
+
   test("reports a hover rule inside a media query that is not the hover one", () => {
     expect.hasAssertions();
 
