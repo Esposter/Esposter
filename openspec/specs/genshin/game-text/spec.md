@@ -200,7 +200,7 @@ The app's own interface SHALL stay in English, and only the game's own words SHA
 
 ### Requirement: Non-Latin game text draws in a system face
 
-Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it.
+Non-Latin game text SHALL be drawn in a system face.
 
 #### Scenario: Chinese text is drawn in a system face
 

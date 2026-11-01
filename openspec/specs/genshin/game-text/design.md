@@ -65,7 +65,7 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 - **Every word of the opening is the game's.** The text map carries what the opening shows before the client loads its data, the door's prompt worded per platform with the PC's form kept, and the account kit carries the welcome (`{data-root}/genshin-parity/text/Sdk/`); only the server's name stays as recorded, since the game takes it from the server list it is sent.
 - **A word per gender is filled once, for one twin.** Some languages spell the Traveler with a word per gender (`{M#…}` and `{F#…}`); `fillLinePlaceholders` (`packages/genshin-text/src/services/fillLinePlaceholders.ts`) keeps one twin's, which the persona fills from the twin it speaks as, and the login screen, the character menu and a talk's words from `LOGIN_TRAVELER_GENDER` (`packages/genshin-world/src/services/login/constants.ts`).
 - The health notice's wording is the dump's too.
-- **A non-Latin language falls back past the game's face.** HYWenHei and Signika are the faces the [interface library](../interface-library/design.md) sets text in (`packages/genshin-interface/src/services/constants.ts`, `GAME_FONT_FAMILY`), and neither covers Chinese, Japanese, Korean or Thai, which a browser then draws in a system face. The visual suites and parity scoring compare the English client only.
+- **A non-Latin language falls back past the game's face.** HYWenHei and Signika are the faces the [interface library](../interface-library/design.md) sets text in (`packages/genshin-interface/src/services/constants.ts`, `GAME_FONT_FAMILY`), and Signika covers no Chinese, Japanese, Korean or Thai (see Sources), so a browser draws those in a system face; HYWenHei's coverage is open (see Open). The visual suites and parity scoring compare the English client only.
 - **The app's own interface is not translated.** What is the app's rather than the game's stays English, as the [internationalization](../../../deferred/architecture/i18n/design.md) decision has it, and `apps/web/configuration/modules.ts` loads no i18n or locale module; this package translates only what the game itself says.
 - `scripts/src/services/genshinText/readSdkText.ts` calls `exportSdkText` when the kit's folder is missing (line 11), which runs `runAnimeStudio`; `scripts/src/services/recreation/animeStudio/runAnimeStudio.ts` (line 16) asserts readiness, and `GENSHIN_ANIMESTUDIO_OPTIONS` in `scripts/src/services/genshinAssets/shared/constants.ts` (line 75) names `checkIsGameRunning` as its block guard.
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json` key 3535917252, which `{data-root}/genshin-parity/text/ExcelBinOutput/EmbeddedTextMapConfigData.json` names "UI_LOGIN_TOUCH_TO_ENTER": "#{LAYOUT_MOBILE#TAP}{LAYOUT_PC#CLICK}{LAYOUT_PS#PRESS} TO BEGIN".
@@ -108,8 +108,9 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 
 ## Open
 
+The open check for HYWenHei's coverage is recorded with its requirement in [the spec](spec.md).
+
 - [ ] **The `ExcelBinOutput` tables and text maps match the install's revision** — no source yet: a file recording the dump's revision, which none holds.
 - [ ] **The server's name stays as recorded** — no source yet: no source checked here shows how the server list names it.
 - [ ] **The opening's English is the current build's, so the health notice reads its current wording** — no source yet: the dump's revision is unrecorded (see the first item), so its health notice was not compared with the current client's.
-- [ ] **HYWenHei does not cover Chinese, Japanese, Korean or Thai** — no source yet: no HYWenHei font file is on disk, so its coverage is unread.
 - [ ] **The mixer's core constants changed, so a known-plaintext solve against the current text does not hold** — no source yet: a known-plaintext solve of the current text's mixer constants, which no record keeps.
