@@ -1,6 +1,6 @@
-import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 
+import { describeCall } from "#src/services/genshinParity/shared/describeCall";
 import { describeCategories } from "#src/services/genshinParity/shared/describeCategories";
 import { describeGpuFrames } from "#src/services/genshinParity/shared/describeGpuFrames";
 import { roundMs } from "#src/services/genshinParity/shared/roundMs";
@@ -9,9 +9,6 @@ import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarize
 // A call under this many milliseconds is counted in its frame's total but not listed, and at most this many are listed
 const LISTED_CALL_MS = 0.5;
 const LISTED_CALLS_PER_FRAME = 12;
-
-const describeCall = (call: GpuCall): string =>
-  `  ${roundMs(call.duration)} ms ${call.name} | ${call.label} | ${call.detail}`;
 
 export const describeFrame = (
   time: number,
