@@ -21,10 +21,7 @@ flowchart TD
 
 ## Not built
 
-- **Her poise is not recorded.** The wiki's values are in the decision above, and the record takes none of them, so her strikes deal no poise until the record takes them.
 - **The Musou Isshin plunges are not built.** gcsim has three (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/plunge.go:151`, `:244`, `:293`), and the kit does not take them yet.
-- **Resolve's clearing on a drown or a jump has no source.** gcsim keeps the stacks when the stance ends on a swap (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/burst.go:106-118` clears only the stance), and the cache says nothing on how the game treats a drown or a jump.
-
 ## Key files
 
 | File                                                              | Role                                                                                                                                        |
