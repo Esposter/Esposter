@@ -31,6 +31,9 @@ const emit = defineEmits<{
   showDay: [];
 }>();
 const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
+// The events the cell draws, held as a computed so a drag over the cell, which re-renders it without moving its events,
+// Does not take the slice again
+const visibleEvents = computed(() => events.slice(0, CALENDAR_DAY_EVENT_LIMIT));
 const isDropTarget = ref(false);
 </script>
 
@@ -92,7 +95,7 @@ const isDropTarget = ref(false);
       <NuxtTime :datetime="day.toString()" date-style="full" time-zone="UTC" sr-only />
     </button>
     <UiEventCalendarEvent
-      v-for="event of events.slice(0, CALENDAR_DAY_EVENT_LIMIT)"
+      v-for="event of visibleEvents"
       :key="event.id"
       :event
       @drag-start="emit('dragStart', event.id)"
