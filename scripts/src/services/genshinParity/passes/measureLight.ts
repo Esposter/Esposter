@@ -6,6 +6,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { COLOUR_GATE, FRAME_GATE_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { measureGlow } from "#src/services/genshinParity/passes/measureGlow";
+import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
 import { readReferenceStoneSamples } from "#src/services/genshinParity/witness/readReferenceStoneSamples";
@@ -51,8 +52,5 @@ export const measureLight = async (component: DerivedAssetComponent): Promise<Pa
     });
   }
   const glow = await measureGlow(component);
-  return {
-    notes: [...measures.flatMap(({ notes }) => notes), ...glow.notes],
-    readings: [...measures.flatMap(({ readings }) => readings), ...glow.readings],
-  };
+  return mergeParityPassMeasures([...measures, glow]);
 };
