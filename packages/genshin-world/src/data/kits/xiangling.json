@@ -251,7 +251,7 @@
   "hits.implode.poiseDamage": { "cause": "Unsourced", "value": 8.8 },
   "parameters.pyronadoSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2339 } },
   "hits.slowbakePyronadoTicks.length": { "source": "Gcsim", "value": 12 },
-  "hits.slowbakePyronadoTicks.9.hitmarkFrames": { "cause": "Unclassified", "value": 713 },
-  "hits.slowbakePyronadoTicks.10.hitmarkFrames": { "cause": "Unclassified", "value": 786 },
-  "hits.slowbakePyronadoTicks.11.hitmarkFrames": { "cause": "Unclassified", "value": 859 }
+  "hits.slowbakePyronadoTicks.9.hitmarkFrames": { "source": "Gcsim", "value": 713 },
+  "hits.slowbakePyronadoTicks.10.hitmarkFrames": { "source": "Gcsim", "value": 786 },
+  "hits.slowbakePyronadoTicks.11.hitmarkFrames": { "source": "Gcsim", "value": 859 }
 }
