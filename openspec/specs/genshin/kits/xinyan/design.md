@@ -20,7 +20,8 @@ flowchart TD
 
 ## Provisional constants
 
-- **The charged attack's stand-in is open.** Its reach and hitmark frames are the fourth strike's (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/attack.go` lines 16, 19 and 21, hitmark 35, fan 270). The wiki's Dance on Fire page gives the charged attack's poise as 60 and 120 (`{data-root}/cache/genshin-wiki/Category_Xinyan_Talents.json`), where the record takes the fourth strike's, so its poise waits on the wiki's figures.- **The first shield's timing is open.** gcsim sets the level-1 shield 28 frames after the press (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/skill.go` lines 62 to 65), and this kit sets it at the press, which the Open entry records as contradicted by that source.
+- **The charged attack's stand-in is open.** Its reach and hitmark frames are the fourth strike's (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/attack.go` lines 16, 19 and 21, hitmark 35, fan 270). The wiki's Dance on Fire page gives the charged attack's poise as 60 and 120 (`{data-root}/cache/genshin-wiki/Category_Xinyan_Talents.json`), where the record takes the fourth strike's, so its poise waits on the wiki's figures.
+- **The first shield's timing is open.** gcsim sets the level-1 shield 28 frames after the press (`{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/skill.go` lines 62 to 65), and this kit sets it at the press, which the Open entry records as contradicted by that source.
 
 ## Key files
 
