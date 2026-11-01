@@ -1,4 +1,3 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
@@ -7,16 +6,11 @@ import {
   ELEMENTAL_NODE_MAX_GAUGE,
   ELEMENTAL_NODE_PULSE_GAUGE,
 } from "#src/services/elementalNode/constants";
+import { createTestEnemy, enemyTables } from "#src/services/elementalNode/createTestEnemy.test";
 import { pulseElementalNode } from "#src/services/elementalNode/pulseElementalNode";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
-import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
-import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
-
-const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createTestEnemy = () => createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 describe(pulseElementalNode, () => {
   test("an unbuffed enemy gains the node's full gauge, which does not decay", () => {

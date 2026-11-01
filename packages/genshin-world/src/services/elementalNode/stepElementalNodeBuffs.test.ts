@@ -1,18 +1,12 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
 import { checkIsElementalNodeBuffed } from "#src/services/elementalNode/checkIsElementalNodeBuffed";
 import { ELEMENTAL_NODE_COOLDOWN_PULSES, ELEMENTAL_NODE_PULSE_GAUGE } from "#src/services/elementalNode/constants";
+import { createTestEnemy } from "#src/services/elementalNode/createTestEnemy.test";
 import { pulseElementalNode } from "#src/services/elementalNode/pulseElementalNode";
 import { stepElementalNodeBuffs } from "#src/services/elementalNode/stepElementalNodeBuffs";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
-import { createEnemy } from "#src/services/enemy/createEnemy";
-import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
-
-const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createTestEnemy = () => createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 describe(stepElementalNodeBuffs, () => {
   test("a buff a reaction depletes is lifted at the next step, and its enemy waits two pulses to regain it", () => {
