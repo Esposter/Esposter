@@ -267,16 +267,6 @@ The dish and processing recipes SHALL be built from the game's own tables, and a
 - **WHEN** the processing record is built
 - **THEN** that processing is left out of the record
 
-### Requirement: City stoves cook on every use
-
-A city's stove SHALL open the cooking screen whenever a player uses it, whether or not any fire is lit.
-
-#### Scenario: A city stove cooks where a campfire would be out
-
-- **GIVEN** a campfire nearby is out
-- **WHEN** the player uses the city's stove
-- **THEN** the cooking screen opens
-
 ### Requirement: Cooking indicator zones follow each recipe
 
 The cooking screen SHALL lay out its indicator zones from the zone parameters of the recipe being cooked.
@@ -421,5 +411,5 @@ Auto Cook SHALL be offered on the cooking screen once a dish's proficiency is fu
 - [ ] **The game refuses Raiden Shogun as a cook** — no source yet: a dump table or cached wiki page naming the refusal; the cached Raiden Shogun talents page does not mention cooking, and the code's check asserts it.
 - [ ] **A cook's passive bonuses each matching dish** — no source yet: a game table naming each passive's food type, which no dump table holds; the cooking services apply no passive bonus, and the talent roll only adds a dish.
 - [ ] **A stove offers no prompt out of reach** — no source yet: a capture or game table of the stove's prompt range.
-- [ ] **A campfire is lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro** — no source yet: no campfire row in the game's exports and no cached Campfire wiki page is on disk.
+- [ ] **A campfire is lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro** — no source yet: no campfire row in the game's exports, no cached Campfire wiki page is on disk, and no recording of the campfire under each element was captured.
 - [ ] **Rain and thunderstorms put out a campfire in the open** — no source yet: no campfire row in the game's exports and the cached Weather wiki page is not on disk.
