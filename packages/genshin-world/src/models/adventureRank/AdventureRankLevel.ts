@@ -1,6 +1,6 @@
-import type { QuestRewardItem } from "#src/models/quest/Quest";
+import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 
-import { questRewardItemSchema } from "#src/models/quest/Quest";
+import { questRewardItemSchema } from "#src/models/quest/QuestRewardItem";
 import { z } from "zod";
 
 // One rank of the game's player level table: the Adventure EXP that takes the player from it to the next, and the items

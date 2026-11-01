@@ -2,7 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { QuestRewardItem } from "#src/models/quest/Quest";
+import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 

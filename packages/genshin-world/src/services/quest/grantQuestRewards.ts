@@ -1,7 +1,7 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { QuestRewardItem } from "#src/models/quest/Quest";
+import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { addRewardItem } from "#src/services/inventory/addRewardItem";

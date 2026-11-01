@@ -5,7 +5,7 @@ import type { HomeRealmToggleOptions } from "#src/models/home/HomeRealmToggleOpt
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
-import type { QuestRewardItem } from "#src/models/quest/Quest";
+import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";

@@ -1,23 +1,14 @@
 import type { Talk } from "#src/models/dialogue/Talk";
+import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
 import type { QuestStep } from "#src/models/quest/QuestStep";
 
 import { talkSchema } from "#src/models/dialogue/Talk";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { questRewardItemSchema } from "#src/models/quest/QuestRewardItem";
 import { questStepSchema } from "#src/models/quest/QuestStep";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-
-// One item a quest's finish pays: its id in the game's tables and how many of it
-export interface QuestRewardItem {
-  count: number;
-  itemId: number;
-}
-
-export const questRewardItemSchema = z.object({
-  count: z.int().positive(),
-  itemId: z.int().positive(),
-}) satisfies z.ZodType<QuestRewardItem>;
 
 // A quest by the game's own id: its kind, its title and description by text id, its steps in the order they are done,
 // The talks it runs, which a talk-to objective or its offer names, and the items its finish pays
