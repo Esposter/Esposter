@@ -15,7 +15,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
-  "hits.icicle.1.hitmarkFrames": { "cause": "Unclassified", "value": 93 },
+  "hits.icicle.1.hitmarkFrames": { "cause": "Unsourced", "value": 93 },
   "hits.icicle.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 1539 } },
   "hits.icicle.2.area": {
     "file": "burst.go",
@@ -23,7 +23,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
   },
-  "hits.icicle.2.hitmarkFrames": { "cause": "Unclassified", "value": 133 },
+  "hits.icicle.2.hitmarkFrames": { "cause": "Unsourced", "value": 133 },
   "hits.icicle.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 1539 } },
   "hits.icicle.3.area": {
     "file": "burst.go",
