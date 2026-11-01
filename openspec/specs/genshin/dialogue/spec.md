@@ -232,4 +232,4 @@ A standing talk that cannot run without its words SHALL be left out of the recor
 
 ## Open
 
-- [ ] **Lines are written out at the game's rate, one character every thirty milliseconds** — no source yet: the recording's character timing was not re-measured here (see the design page's Open list).
+- [ ] **Lines are written out at the game's rate, one character every thirty milliseconds** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here.

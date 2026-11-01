@@ -101,11 +101,11 @@ The five are judged over their clean plate, the reference frame with its scored 
 
 | Reference                  | Plate, softened shot | Bare render |
 | :------------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | 9.09%                | 9.64%       |
-| `dialogue-choices-replies` | 14.22%               | 17.80%      |
+| `dialogue-choices-line`    | 8.99%                | 9.64%       |
+| `dialogue-choices-replies` | 13.39%               | 17.80%      |
 | `dialogue-choices-speaker` | 6.37%                | 12.60%      |
-| `dialogue-line`            | 10.49%               | 11.65%      |
-| `dialogue-paimon-line`     | 9.75%                | 11.86%      |
+| `dialogue-line`            | 10.61%               | 11.65%      |
+| `dialogue-paimon-line`     | 9.67%                | 11.86%      |
 
 The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
@@ -160,7 +160,7 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 - **A standing talk is the talk table's alone.** The talk table names the characters each talk is begun on, so a resident's standing talk needs only their NPC id (`scripts/src/services/genshinText/mapNpcStandingTalkIds.ts`). The scene's groups decide only whether an NPC is placed at all, which [resident schedules](../resident-schedules/design.md) reads from their birth records, and no standing talk waits on one of their conditions.
 - **The offer's words and place have no source yet.** No published source shows the words of a reply that begins a quest's talk, or where it sits among a resident's own replies, and no roadmap item tracks either yet.
 - **Many residents hold no talk the world can begin.** The community dump has no words for many dialogs in any language, so a talk made only of those is left out of the record and its resident gets no prompt. Each run of `genshin:text standing-talks` reports how many it left out (`scripts/src/services/genshinText/buildStandingTalks.ts`), and the words come with the install's own text, as the [quests proposal](../../../changes/genshin-quests/design.md) decides.
-- **The plain reply's speech bubble keeps its three dots.**
+- **The plain reply's speech bubble is traced as its outer contour alone, so its body is solid and its three dots are holes** (`packages/genshin-interface/src/services/DialogueChoiceIconPathMap.ts`).
 
 ## Sources
 
@@ -179,12 +179,12 @@ The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9
 
 ## Open
 
-- [ ] **The reveal is 30 milliseconds a character, at the PlayStation client's rate** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here.
+The reveal's rate is open in [the spec](spec.md).
+
 - [ ] **The blurred-plate and bare-render columns of the Parity table** — no source yet: the parity snapshot holds only the softened column, and no run of the blurred or bare-render shots is committed.
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
 - [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — no source yet: `packages/genshin-interface/src/components/DialogueScreen/Index.vue` holds no 0.22 darkness, and the sweep is not committed.
-- [ ] **`DialogueScreen` is owed its draining sweep, which landed after its edit** — `packages/genshin-interface/src/components/DialogueScreen/Index.vue` was refactored in `3465de1a93` (the line split into characters once) with no sweep commit ahead of it, though its row in `.agents/ledgers/component-reference.md` is `—`. The sweep is owed in its own commit (`sweeps` skill, `references/draining.md`), and that sweep's by-eye check against the reference frames is a verdict for the owner or the main session.
 - [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json`: 1,773 talks across it and TalkExcelConfigData_1.json start outside their hundred.
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`: nine of the table's first 50,000 title hashes resolve in it.
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: 702 dialogs in `{data-root}/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json` hold a gadget or mate-avatar role, and the carried quests' talk ids are not matched to them in this pass.
