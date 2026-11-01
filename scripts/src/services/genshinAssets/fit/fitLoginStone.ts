@@ -2,6 +2,7 @@ import type { FittedStone } from "#src/models/genshinAssets/fit/FittedStone";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 import { computeMeanValue } from "#src/services/genshinAssets/fit/computeMeanValue";
 import { computeVectorMean } from "#src/services/genshinAssets/fit/computeVectorMean";
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
@@ -26,7 +27,10 @@ const RIM_STRENGTH_KEY = "_RGStrength";
 // The share of a family's rim glow the game's frame shows where its materials predict more, by family (the light pass,
 // `passes login --pass Light`): the frame holds about an eighth of the door's and the towers' glow, and the glow colour
 // Reads flat from none to an eighth, then climbs; a family not listed draws its materials' glow whole
-const GLOW_SCALES: Partial<Record<string, number>> = { door: 0.125, towers: 0.125 };
+const GLOW_SCALES: Partial<Record<string, number>> = {
+  [LoginStoneFamilyMaterialRegex.Door]: 0.125,
+  [LoginStoneFamilyMaterialRegex.Towers]: 0.125,
+};
 
 // The stone each family of the login's parts is carved from, as its materials hold it (Login/Scene/Index.reference.ts,
 // Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour
