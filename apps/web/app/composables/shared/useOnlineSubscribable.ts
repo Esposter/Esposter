@@ -24,14 +24,14 @@ export function useOnlineSubscribable(
 ) {
   const instance = context?.instance ?? getCurrentInstance();
   const scope = context?.scope ?? getCurrentScope();
-  // A subscription established after an await has no active scope of its own, so everything it creates, the online
-  // Listeners and the watch among it, is made inside the captured one and stopped with it
+  // One subscription is one target, so tearing the previous one down and establishing the next run as a single
+  // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
+  const { executeMutation } = useMutation();
+  // A subscription established after an await has no active scope of its own, so the online listeners and the watch
+  // It creates are made inside the captured one and stopped with it
   const setup = () => {
     const online = useOnline();
     const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
-    // One subscription is one target, so tearing the previous one down and establishing the next run as a single
-    // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
-    const { executeMutation } = useMutation();
     const key = "subscription";
 
     let currentCleanup: (() => Promisable<void>) | undefined;

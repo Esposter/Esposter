@@ -27,32 +27,32 @@ import {
 // The page's own region, which the shell sizes to the viewport past the dock
 const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clientHeight, width: clientWidth });
 
+const disposeFluidResources = async (resources: FluidResources) => {
+  const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
+    resources;
+  stopResize();
+  await renderer.setAnimationLoop(null);
+  renderPipeline.dispose();
+  water.geometry.dispose();
+  water.material.dispose();
+  water.waterNormals.dispose();
+  sky.geometry.dispose();
+  sky.material.dispose();
+  box.geometry.dispose();
+  box.material.dispose();
+  pmremGenerator.dispose();
+  disposeRenderTarget();
+  controls.dispose();
+  await renderer.dispose();
+  renderer.domElement.remove();
+};
+
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
   // Assigned only at the tail of onMounted, past every await, so an unmount that races setup finds it undefined
   let fluidResources: FluidResources | undefined;
   // Set by an unmount, which the tail of onMounted then answers by tearing down the resources it has just built
   let isUnmounted = false;
-  const disposeFluidResources = async (resources: FluidResources) => {
-    const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
-      resources;
-    stopResize();
-    await renderer.setAnimationLoop(null);
-    renderPipeline.dispose();
-    water.geometry.dispose();
-    water.material.dispose();
-    water.waterNormals.dispose();
-    sky.geometry.dispose();
-    sky.material.dispose();
-    box.geometry.dispose();
-    box.material.dispose();
-    pmremGenerator.dispose();
-    disposeRenderTarget();
-    controls.dispose();
-    await renderer.dispose();
-    renderer.domElement.remove();
-  };
-
   onMounted(async () => {
     const containerValue = toValue(container);
     if (!containerValue) return;
