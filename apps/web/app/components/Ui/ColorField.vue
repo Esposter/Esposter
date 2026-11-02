@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { readBrowserColor } from "@/services/shared/readBrowserColor";
+import { DEFAULT_PICKER_COLOR, HEX_COLOR_REGEX } from "@/services/ui/constants";
+import { getHexColor } from "@/services/ui/getHexColor";
+
 interface ColorSwatch {
   // The custom property's name without its dashes, which a picked swatch stores as a reference to it
   name: string;
@@ -14,10 +18,19 @@ interface Props {
 const modelValue = defineModel<string>({ required: true });
 const { label, swatches = [] } = defineProps<Props>();
 const id = useId();
+// Mounted on the client only: the browser reads a colour off the document, which a server render does not have
+const isMounted = useMounted();
 const getReference = (name: string) => `var(--${name})`;
 // The browser's picker holds a hex colour and no reference, so a held reference shows the colour of the swatch it names
+// Any other colour is read by the browser that draws it, and the picker shows the default where it cannot read it
 const pickerValue = computed({
-  get: () => swatches.find(({ name }) => getReference(name) === modelValue.value)?.value ?? modelValue.value,
+  get: () => {
+    const cssColor = swatches.find(({ name }) => getReference(name) === modelValue.value)?.value ?? modelValue.value;
+    if (HEX_COLOR_REGEX.test(cssColor)) return cssColor;
+
+    const srgbColor = isMounted.value ? readBrowserColor(cssColor) : undefined;
+    return srgbColor ? getHexColor(srgbColor) : DEFAULT_PICKER_COLOR;
+  },
   set: (value) => {
     modelValue.value = value;
   },

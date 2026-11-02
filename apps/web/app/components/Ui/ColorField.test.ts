@@ -2,12 +2,22 @@
 import UiColorField from "@/components/Ui/ColorField.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("uiColorField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    // happy-dom keeps a named colour as it was written, where a browser computes red in rgb, so the computed colour is
+    // Stubbed to the rgb a browser gives
+    const stubComputedRed = () => {
+      vi.spyOn(window, "getComputedStyle").mockReturnValue({ color: "rgb(255, 0, 0)" } as CSSStyleDeclaration);
+    };
 
     test("is a colour input named by its label, showing the value it holds", async () => {
       expect.hasAssertions();
@@ -48,6 +58,30 @@ describe("uiColorField", () => {
       await component.get('button[aria-label="color-brand"]').trigger("click");
 
       expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["var(--color-brand)"]]);
+    });
+
+    test("a colour that is not hex shows in the picker as the hex of the colour the browser reads it as", async () => {
+      expect.hasAssertions();
+
+      stubComputedRed();
+      const component = mount(UiColorField, { props: { label: "label", modelValue: "red" } });
+
+      await flushPromises();
+
+      expect(component.get<HTMLInputElement>('input[type="color"]').element.value).toBe("#ff0000");
+    });
+
+    test("a held reference to a swatch of a colour that is not hex shows that colour in the picker", async () => {
+      expect.hasAssertions();
+
+      stubComputedRed();
+      const component = mount(UiColorField, {
+        props: { label: "label", modelValue: "var(--color-brand)", swatches: [{ name: "color-brand", value: "red" }] },
+      });
+
+      await flushPromises();
+
+      expect(component.get<HTMLInputElement>('input[type="color"]').element.value).toBe("#ff0000");
     });
   });
 });

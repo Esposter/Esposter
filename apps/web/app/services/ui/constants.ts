@@ -105,3 +105,8 @@ export const MAX_SIDE_PANE_WIDTH = 480;
 export const CALENDAR_COMMAND_GROUP = "Calendar";
 // How often a calendar reads the clock, so today's ring and the current-time line move on without a reload
 export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+// The colour a colour field's picker shows for a colour the browser cannot read: the black a picker holds for a value
+// It refuses
+export const DEFAULT_PICKER_COLOR = "#000000";
+// A six-digit hex colour, the only form a colour picker holds
+export const HEX_COLOR_REGEX = /^#[\da-f]{6}$/iu;
