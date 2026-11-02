@@ -12,6 +12,7 @@ export const CreatableResourceTypes = [
   ResourceType.Note,
   ResourceType.Survey,
   ResourceType.Blueprint,
+  ResourceType.Whiteboard,
 ] as const;
 
 export type CreatableResourceType = (typeof CreatableResourceTypes)[number];

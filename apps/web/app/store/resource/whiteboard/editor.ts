@@ -1,0 +1,61 @@
+import type { CanvasRect } from "@/models/whiteboard/CanvasRect";
+import type { Viewport } from "@/models/whiteboard/Viewport";
+import type { WhiteboardGesture } from "@/models/whiteboard/WhiteboardGesture";
+import type { Bounds, Point, PositionedDocument } from "headless-block-editor";
+
+import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
+import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
+import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
+import { checkIsPointInBounds } from "headless-block-editor";
+
+// The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the viewport, and the gesture in
+// Progress with the document it would leave. None of it is saved
+export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
+  const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
+  const gesture = shallowRef<WhiteboardGesture>();
+  const isSnapEnabled = ref(true);
+  const preview = shallowRef<PositionedDocument>();
+  const selectedIds = ref<string[]>([]);
+  const tool = ref(GestureTool.Select);
+  const viewport = ref<Viewport>({ scale: 1, x: 0, y: 0 });
+  const getCentreScreen = (): Point => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
+  const checkIsInCanvas = (point: Point) => checkIsPointInBounds(canvasRect.value, point, 0);
+  // The document point at the middle of the canvas, where a click places an element
+  const getCentrePoint = () => getWorldPoint(getCentreScreen(), viewport.value);
+  // The document point under a point on the page
+  const getDocumentPoint = (point: Point) =>
+    getWorldPoint({ x: point.x - canvasRect.value.x, y: point.y - canvasRect.value.y }, viewport.value);
+  const setCanvasRect = (rect: CanvasRect) => {
+    canvasRect.value = rect;
+  };
+  const selectElement = (id: string) => {
+    selectedIds.value = [id];
+  };
+  const toggleSnap = () => {
+    isSnapEnabled.value = !isSnapEnabled.value;
+  };
+  const zoomBy = (factor: number) => {
+    viewport.value = getZoomedViewport(viewport.value, factor, getCentreScreen());
+  };
+  const fitTo = (bounds: Bounds) => {
+    viewport.value = getFitViewport(bounds, canvasRect.value);
+  };
+  return {
+    canvasRect,
+    checkIsInCanvas,
+    fitTo,
+    gesture,
+    getCentrePoint,
+    getDocumentPoint,
+    isSnapEnabled,
+    preview,
+    selectedIds,
+    selectElement,
+    setCanvasRect,
+    toggleSnap,
+    tool,
+    viewport,
+    zoomBy,
+  };
+});

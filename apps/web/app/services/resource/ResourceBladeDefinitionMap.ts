@@ -77,4 +77,5 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
       title: "Settings",
     },
   ],
+  [ResourceType.Whiteboard]: [],
 };

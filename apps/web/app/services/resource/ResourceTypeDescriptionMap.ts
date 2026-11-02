@@ -12,4 +12,5 @@ export const ResourceTypeDescriptionMap = {
   [ResourceType.Survey]: "Build a survey and collect responses.",
   [ResourceType.TodoList]: "Track tasks with a list and calendar.",
   [ResourceType.Webpage]: "Design and publish a web page.",
+  [ResourceType.Whiteboard]: "Sketch freeform ideas and connected diagrams on a canvas.",
 } as const satisfies Record<CreatableResourceType, string>;

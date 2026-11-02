@@ -5,6 +5,7 @@ import type { PortableResourceType } from "@/models/resource/PortableResourceTyp
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
+import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
@@ -14,6 +15,7 @@ import { createFlowchartPortableFormat } from "@/services/resource/createFlowcha
 import { createNoteMarkdownPortableFormat } from "@/services/resource/createNoteMarkdownPortableFormat";
 import { createSheetPortableFormat } from "@/services/resource/createSheetPortableFormat";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { exportWhiteboard } from "@/services/whiteboard/export/exportWhiteboard";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
@@ -172,5 +174,9 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       icon: "i-mdi:language-html5",
       label: "HTML",
     },
+  ],
+  [ResourceType.Whiteboard]: [
+    { export: () => exportWhiteboard(WhiteboardExportFormat.Png), icon: "i-mdi:image-outline", label: "PNG" },
+    { export: () => exportWhiteboard(WhiteboardExportFormat.Svg), icon: "i-mdi:vector-square", label: "SVG" },
   ],
 };

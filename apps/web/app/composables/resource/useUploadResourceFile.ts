@@ -15,11 +15,12 @@ import { getResultAsync } from "@esposter/shared";
 // Parameter type rather than a check that throws once the upload runs
 export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceRouter = useResourceRouter();
-  return async (file: File) => {
+  return async (file: File, hash?: string) => {
     const { generateUploadFileSasEntities } = getResourceRouter(type);
     const idValue = toValue(id);
-    const hash = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
-    const assetUrl = getResourceAssetUrl(getResourceFileBlobName(idValue, hash));
+    // A caller that has already hashed the bytes passes the hash, so they are read and hashed once
+    const fileHash = hash ?? (await getSha256Hex(new Uint8Array(await file.arrayBuffer())));
+    const assetUrl = getResourceAssetUrl(getResourceFileBlobName(idValue, fileHash));
     return getResultAsync(() =>
       uploadFileToSas<ResourceFileSasEntity>({
         checkIsUploadSkipped: ({ isHeld }) => isHeld,
@@ -27,7 +28,7 @@ export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRef
         // UploadFileToSas describes the batch by its name, type and size, so the hash is carried in alongside them
         generateUploadFileSasEntities: (files) =>
           generateUploadFileSasEntities.query({
-            files: files.map((fileEntity) => ({ ...fileEntity, hash })),
+            files: files.map((fileEntity) => ({ ...fileEntity, hash: fileHash })),
             id: idValue,
           }),
         isCreateOnly: true,

@@ -12,9 +12,17 @@ import { ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-const { uploadBlocksMock } = vi.hoisted(() => ({ uploadBlocksMock: vi.fn<typeof uploadBlocks>() }));
+const { getSha256HexMock, uploadBlocksMock } = vi.hoisted(() => ({
+  getSha256HexMock: vi.fn<typeof getSha256Hex>(),
+  uploadBlocksMock: vi.fn<typeof uploadBlocks>(),
+}));
 
 vi.mock(import("@/services/azure/container/uploadBlocks"), () => ({ uploadBlocks: uploadBlocksMock }));
+vi.mock(import("@/services/shared/getSha256Hex"), async (importOriginal) => {
+  const { getSha256Hex: hashBytes } = await importOriginal();
+  getSha256HexMock.mockImplementation(hashBytes);
+  return { getSha256Hex: getSha256HexMock };
+});
 
 const createFile = () => new File(["a"], "a", { type: MimeType.PlainText });
 
@@ -39,6 +47,18 @@ describe(useUploadResourceFile, () => {
     const hash = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
     const assetUrl = await useUploadResourceFile(ResourceType.Webpage, resourceId)(file);
 
+    expect(assetUrl).toBe(getResourceAssetUrl(getResourceFileBlobName(resourceId, hash)));
+  });
+
+  test("uploading bytes whose hash the caller passes does not hash them again", async () => {
+    expect.hasAssertions();
+
+    generateUploadFileSasEntities();
+    uploadBlocksMock.mockResolvedValue();
+    const hash = "a".repeat(64);
+    const assetUrl = await useUploadResourceFile(ResourceType.Webpage, resourceId)(createFile(), hash);
+
+    expect(getSha256HexMock).not.toHaveBeenCalled();
     expect(assetUrl).toBe(getResourceAssetUrl(getResourceFileBlobName(resourceId, hash)));
   });
 

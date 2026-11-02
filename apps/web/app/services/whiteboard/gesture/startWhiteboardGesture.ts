@@ -1,0 +1,98 @@
+import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
+import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
+import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
+
+import { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { MIDDLE_BUTTON, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
+import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
+import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
+import { getPressedSelection } from "@/services/whiteboard/gesture/getPressedSelection";
+import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
+import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
+import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
+import { applyPatches, exhaustiveGuard, takeOne } from "@esposter/shared";
+
+// An idle canvas takes a press. The middle button and the hand tool pan, the freehand tool starts a stroke, and the arrow tool starts an arrow
+// From the press. The select tool takes the press on a resize handle, an element or the canvas. Any other event changes nothing
+export const startWhiteboardGesture = (
+  state: WhiteboardGestureState,
+  event: GesturePointerEvent,
+): WhiteboardGestureResult => {
+  if (event.action !== GesturePointerAction.Down) return { operations: [], state };
+
+  if (event.button === MIDDLE_BUTTON || state.tool === GestureTool.Hand)
+    return {
+      operations: [],
+      state: {
+        ...state,
+        gesture: {
+          phase: GesturePhase.Panning,
+          pointerId: event.pointerId,
+          screen: event.screen,
+          viewportOrigin: { x: state.viewport.x, y: state.viewport.y },
+        },
+      },
+    };
+  if (event.button !== PRIMARY_BUTTON) return { operations: [], state };
+
+  const origin = getWorldPoint(event.screen, state.viewport);
+  switch (state.tool) {
+    case GestureTool.Freehand: {
+      const elementId = state.createId();
+      const points = [origin];
+      return {
+        operations: [],
+        state: {
+          ...state,
+          gesture: { elementId, phase: GesturePhase.Drawing, points, pointerId: event.pointerId },
+          preview: applyPatches(state.document, getStrokeOperations(state.document, elementId, points)).document,
+        },
+      };
+    }
+    case GestureTool.Arrow:
+      return {
+        operations: [],
+        state: {
+          ...state,
+          gesture: {
+            elementId: state.createId(),
+            phase: GesturePhase.Arrow,
+            pointerId: event.pointerId,
+            screen: event.screen,
+            start: getArrowEnd(state, origin, false),
+          },
+        },
+      };
+    case GestureTool.Select: {
+      const tolerance = getHitTolerance(state.viewport.scale);
+      const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);
+      const elementId =
+        handle === undefined ? (getHitElementId(state.document, origin, tolerance) ?? "") : takeOne(state.selectedIds);
+      const selectedIds =
+        !elementId || handle !== undefined
+          ? state.selectedIds
+          : getPressedSelection(state.selectedIds, elementId, event.isShiftKey);
+      return {
+        operations: [],
+        state: {
+          ...state,
+          gesture: {
+            elementId,
+            handle,
+            isAdditive: event.isShiftKey,
+            origin,
+            phase: GesturePhase.Pressed,
+            pointerId: event.pointerId,
+            screen: event.screen,
+          },
+          selectedIds,
+        },
+      };
+    }
+    default:
+      return exhaustiveGuard(state.tool);
+  }
+};
