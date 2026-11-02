@@ -88,6 +88,19 @@ describe("uiSlider", () => {
       expect(component.emitted<[number]>("end")).toStrictEqual([[0]]);
     });
 
+    test("settles a key's change after a press in the band around the track, which never becomes a drag", async () => {
+      expect.hasAssertions();
+
+      const component = mountSlider();
+      await component.get(".slider").trigger("pointerdown", { button: 0 });
+      document.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
+      await flushPromises();
+      await component.get('[role="slider"]').trigger("keydown", { key: "ArrowRight" });
+      await flushPromises();
+
+      expect(component.emitted<[number]>("end")).toStrictEqual([[1]]);
+    });
+
     test("hides its label but keeps it as its name", () => {
       expect.hasAssertions();
 

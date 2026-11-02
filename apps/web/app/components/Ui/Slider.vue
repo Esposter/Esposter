@@ -24,6 +24,10 @@ const emit = defineEmits<{ end: [value: number] }>();
 // Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
 // Settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
 const isPointerDown = ref(false);
+// Vuetify 0 never ends a press in the band around the track, since it never begins a drag, so its release clears the flag
+useEventListener(["pointerup", "pointercancel"], () => {
+  isPointerDown.value = false;
+});
 </script>
 
 <template>
