@@ -19,6 +19,11 @@ export const getDuplicateElement = (
         id,
         start: getDuplicateArrowEnd(element.start, originalIdCopyIdMap),
       };
+    case PositionedElementType.Image:
+    case PositionedElementType.Shape:
+    case PositionedElementType.StickyNote:
+    case PositionedElementType.Text:
+      return { ...element, id, x: element.x + WHITEBOARD_DUPLICATE_OFFSET, y: element.y + WHITEBOARD_DUPLICATE_OFFSET };
     case PositionedElementType.Stroke:
       return {
         ...element,
@@ -28,11 +33,6 @@ export const getDuplicateElement = (
           y: y + WHITEBOARD_DUPLICATE_OFFSET,
         })),
       };
-    case PositionedElementType.Image:
-    case PositionedElementType.Shape:
-    case PositionedElementType.StickyNote:
-    case PositionedElementType.Text:
-      return { ...element, id, x: element.x + WHITEBOARD_DUPLICATE_OFFSET, y: element.y + WHITEBOARD_DUPLICATE_OFFSET };
     default:
       return exhaustiveGuard(element);
   }

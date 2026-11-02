@@ -18,8 +18,8 @@ export const TEST_GREY_RGB_VALUE = "rgb(204, 204, 204)";
 export const TEST_GREY_COLOR: SrgbColor = [204 / 255, 204 / 255, 204 / 255];
 export const TEST_VALUE_COLOR_MAP = new Map<string, SrgbColor>([
   [TEST_DARK_VALUE, [17 / 255, 17 / 255, 17 / 255]],
-  [TEST_LIGHT_VALUE, [245 / 255, 245 / 255, 245 / 255]],
   [TEST_GREY_VALUE, TEST_GREY_COLOR],
+  [TEST_LIGHT_VALUE, [245 / 255, 245 / 255, 245 / 255]],
 ]);
 export const createTestTextNode = (id: string, style: NodeStyle): TextNode => ({
   props: { content: TEST_EDIT_CONTENT, id, style },

@@ -16,7 +16,7 @@ const selectCritiqueRow = (rowValue: string) => setSelectedNodeId(resourceId, ta
 </script>
 
 <template>
-  <UiList v-if="critiqueRows.length > 0" :items="critiqueRows" label="Findings" @select="selectCritiqueRow" />
+  <UiList v-if="critiqueRows.length > 0" :items="critiqueRows" label="Findings" @select="selectCritiqueRow($event)" />
 
   <UiEmptyState
     v-else

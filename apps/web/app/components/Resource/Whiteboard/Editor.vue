@@ -58,9 +58,9 @@ if (editState.value.document.elements.length > 0)
 </script>
 
 <template>
-  <div flex h-full gap-2>
+  <div flex gap-2 h-full>
     <ResourceWhiteboardEditorPalette shrink-0 />
-    <div relative h-full min-w-0 flex-1>
+    <div flex-1 h-full min-w-0 relative>
       <ResourceWhiteboardEditorCanvas
         @double-click="
           (screen) => {
@@ -86,8 +86,8 @@ if (editState.value.document.elements.length > 0)
           />
         </template>
       </ResourceWhiteboardEditorCanvas>
-      <ResourceWhiteboardEditorToolbar absolute left-2 top-2 />
-      <ResourceWhiteboardEditorControls absolute bottom-2 left-2 />
+      <ResourceWhiteboardEditorToolbar left-2 top-2 absolute />
+      <ResourceWhiteboardEditorControls bottom-2 left-2 absolute />
     </div>
     <ResourceWhiteboardEditorPropertiesPanel shrink-0 />
     <UiConfirmDialog

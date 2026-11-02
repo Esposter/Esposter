@@ -64,13 +64,13 @@ const onClick = () => {
       ui-button
       p-1
       :aria-label="item.title"
-      @pointerdown="onPointerDown"
-      @pointermove="onPointerMove"
-      @pointerup="onPointerUp"
-      @pointercancel="onPointerCancel"
-      @click="onClick"
+      @pointerdown="onPointerDown($event)"
+      @pointermove="onPointerMove($event)"
+      @pointerup="onPointerUp($event)"
+      @pointercancel="onPointerCancel()"
+      @click="onClick()"
     >
-      <svg block size-12 text-text :viewBox="previewViewBox">
+      <svg text-text size-12 block :viewBox="previewViewBox">
         <ResourceWhiteboardElement :element="previewElement" />
       </svg>
     </button>

@@ -11,8 +11,8 @@ import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { RouterLink } from "vue-router";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { RouterLink } from "vue-router";
 
 const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn<typeof navigateTo>() }));
 

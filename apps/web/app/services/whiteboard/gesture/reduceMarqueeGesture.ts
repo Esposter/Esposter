@@ -1,5 +1,5 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GestureMarquee } from "@/models/whiteboard/GestureMarquee";
+import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 
@@ -18,6 +18,8 @@ export const reduceMarqueeGesture = (
   switch (event.action) {
     case GesturePointerAction.Cancel:
       return { operations: [], state: { ...state, gesture: undefined, selectedIds: gesture.baseIds } };
+    case GesturePointerAction.Down:
+      return { operations: [], state };
     case GesturePointerAction.Move:
     case GesturePointerAction.Up: {
       const current = getWorldPoint(event.screen, state.viewport);
@@ -31,8 +33,6 @@ export const reduceMarqueeGesture = (
 
       return { operations: [], state: { ...state, gesture: { ...gesture, current }, selectedIds } };
     }
-    case GesturePointerAction.Down:
-      return { operations: [], state };
     default:
       return exhaustiveGuard(event.action);
   }

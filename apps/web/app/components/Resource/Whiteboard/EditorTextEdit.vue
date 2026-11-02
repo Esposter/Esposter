@@ -36,9 +36,10 @@ onMounted(() => {
   <textarea
     ref="textarea"
     v-model="draft"
-    absolute
+    aria-label="Element text"
     w-48
     resize-none
+    absolute
     ui-field
     :style
     @blur="emit('blur')"

@@ -1,8 +1,8 @@
 import {
+  createWhiteboardEditState,
   WHITEBOARD_ARROW,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-  createWhiteboardEditState,
 } from "@/services/whiteboard/constants.test";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";

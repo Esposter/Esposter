@@ -1,6 +1,6 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GestureMarquee } from "@/models/whiteboard/GestureMarquee";
 import type { GestureMoving } from "@/models/whiteboard/GestureMoving";
+import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GesturePressed } from "@/models/whiteboard/GesturePressed";
 import type { GestureResizing } from "@/models/whiteboard/GestureResizing";
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
@@ -26,6 +26,8 @@ export const reducePressedGesture = (
   switch (event.action) {
     case GesturePointerAction.Cancel:
       return { operations: [], state: { ...state, gesture: undefined } };
+    case GesturePointerAction.Down:
+      return { operations: [], state };
     case GesturePointerAction.Move: {
       if (getPointDistance(gesture.screen, event.screen) < DRAG_START_DISTANCE) return { operations: [], state };
 
@@ -57,8 +59,6 @@ export const reducePressedGesture = (
       };
       return reduceMovingGesture({ ...state, gesture: moving }, moving, event);
     }
-    case GesturePointerAction.Down:
-      return { operations: [], state };
     case GesturePointerAction.Up:
       return {
         operations: [],

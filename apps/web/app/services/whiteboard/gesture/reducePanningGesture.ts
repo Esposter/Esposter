@@ -1,5 +1,5 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GesturePanning } from "@/models/whiteboard/GesturePanning";
+import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 
@@ -17,6 +17,8 @@ export const reducePanningGesture = (
     case GesturePointerAction.Cancel:
     case GesturePointerAction.Up:
       return { operations: [], state: { ...state, gesture: undefined } };
+    case GesturePointerAction.Down:
+      return { operations: [], state };
     case GesturePointerAction.Move: {
       const { scale } = state.viewport;
       return {
@@ -31,8 +33,6 @@ export const reducePanningGesture = (
         },
       };
     }
-    case GesturePointerAction.Down:
-      return { operations: [], state };
     default:
       return exhaustiveGuard(event.action);
   }

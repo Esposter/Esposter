@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 export const getSelectedElement = (
   document: PositionedDocument,
   selectedIds: string[],
-): { element: PositionedElement; index: number } | undefined => {
+): undefined | { element: PositionedElement; index: number } => {
   const [selectedId] = selectedIds;
   if (selectedIds.length !== 1 || selectedId === undefined) return undefined;
   const index = getElementIndexById(document, selectedId);

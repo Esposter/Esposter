@@ -1,10 +1,10 @@
 import type { TextElement } from "headless-block-editor";
 
 import {
+  createWhiteboardEditState,
   WHITEBOARD_ARROW,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-  createWhiteboardEditState,
 } from "@/services/whiteboard/constants.test";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";

@@ -19,7 +19,7 @@ export const getWhiteboardImageUrls = async (
   const imageUrls = new Map<string, string>();
   const failedFileIds: string[] = [];
   await Promise.all(
-    [...fileIds].map((fileId) =>
+    Array.from(fileIds, (fileId) =>
       getResultAsync(async () => {
         const response = await fetch(getResourceAssetUrl(getResourceFileBlobName(resourceId, fileId)));
         if (!response.ok)

@@ -40,18 +40,6 @@ export const startWhiteboardGesture = (
 
   const origin = getWorldPoint(event.screen, state.viewport);
   switch (state.tool) {
-    case GestureTool.Freehand: {
-      const elementId = state.createId();
-      const points = [origin];
-      return {
-        operations: [],
-        state: {
-          ...state,
-          gesture: { elementId, phase: GesturePhase.Drawing, points, pointerId: event.pointerId },
-          preview: applyPatches(state.document, getStrokeOperations(state.document, elementId, points)).document,
-        },
-      };
-    }
     case GestureTool.Arrow:
       return {
         operations: [],
@@ -66,6 +54,18 @@ export const startWhiteboardGesture = (
           },
         },
       };
+    case GestureTool.Freehand: {
+      const elementId = state.createId();
+      const points = [origin];
+      return {
+        operations: [],
+        state: {
+          ...state,
+          gesture: { elementId, phase: GesturePhase.Drawing, pointerId: event.pointerId, points },
+          preview: applyPatches(state.document, getStrokeOperations(state.document, elementId, points)).document,
+        },
+      };
+    }
     case GestureTool.Select: {
       const tolerance = getHitTolerance(state.viewport.scale);
       const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);

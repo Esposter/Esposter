@@ -14,8 +14,9 @@ interface Props {
 const { arrow, index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations, updateElementProperty } = whiteboardStore;
+const { editState } = storeToRefs(whiteboardStore);
 const detachEnd = (arrowEndKey: ArrowEndKey) =>
-  commitOperations(unbindPositionedArrowEnd(whiteboardStore.editState.document, index, arrowEndKey));
+  commitOperations(unbindPositionedArrowEnd(editState.value.document, index, arrowEndKey));
 </script>
 
 <template>

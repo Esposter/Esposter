@@ -2,8 +2,8 @@
 import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { Point } from "headless-block-editor";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
+import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { GRID_SIZE } from "headless-block-editor";
@@ -43,9 +43,9 @@ const emitPointer = (action: GesturePointerAction, event: PointerEvent) => {
 <template>
   <div
     ref="canvas"
-    relative
     h-full
     w-full
+    relative
     of-hidden
     tabindex="0"
     role="application"
@@ -62,7 +62,7 @@ const emitPointer = (action: GesturePointerAction, event: PointerEvent) => {
     @dblclick="(event) => emit('doubleClick', getScreenPoint(event))"
     @paste="(event) => insertImages([...(event.clipboardData?.files ?? [])])"
   >
-    <svg block size-full text-text>
+    <svg text-text size-full block>
       <defs>
         <pattern
           id="whiteboard-grid"

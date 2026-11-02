@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
-import type { ArrowElement, Point, ShapeElement } from "headless-block-editor";
 import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
+import type { ArrowElement, Point, ShapeElement } from "headless-block-editor";
 import type { Except } from "type-fest";
 
 import { MimeType } from "#shared/models/file/MimeType";
@@ -9,7 +9,7 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import ResourceWhiteboardEditor from "@/components/Resource/Whiteboard/Editor.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS, pressKey } from "@/services/whiteboard/constants.test";
+import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { useResourceStore } from "@/store/resource";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";

@@ -6,10 +6,10 @@ import type { Point } from "headless-block-editor";
 export interface GesturePressed {
   // The element the press landed on, or "" for the canvas
   elementId: string;
-  // Whether shift was held, so the press adds to the selection rather than replacing it
-  isAdditive: boolean;
   // The handle of the one selected element the press landed on, or undefined when it landed on no handle
   handle?: ResizeHandle;
+  // Whether shift was held, so the press adds to the selection rather than replacing it
+  isAdditive: boolean;
   // The press's document point, which a move or a resize is measured from
   origin: Point;
   phase: GesturePhase.Pressed;

@@ -14,7 +14,7 @@ const { fitTo, zoomBy } = whiteboardEditorStore;
 </script>
 
 <template>
-  <div ui-lifted flex gap-1 p-1>
+  <div p-1 flex gap-1 ui-lifted>
     <UiIconButton
       label="Zoom out"
       :meaning="UiIconMeaning.ZoomOut"

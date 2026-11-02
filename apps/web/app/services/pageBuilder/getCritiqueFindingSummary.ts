@@ -18,10 +18,10 @@ export const getCritiqueFindingSummary = (
       };
     case CritiqueFindingKind.UncheckedContrast:
       return { description: "Contrast not checked: a colour here cannot be read", meaning: UiIconMeaning.Info };
-    case CritiqueFindingKind.UnpublishedSurvey:
-      return { description: "Invite to a survey with no published version", meaning: UiIconMeaning.Warning };
     case CritiqueFindingKind.UncheckedSurvey:
       return { description: "Survey not checked: its publish state could not be read", meaning: UiIconMeaning.Info };
+    case CritiqueFindingKind.UnpublishedSurvey:
+      return { description: "Invite to a survey with no published version", meaning: UiIconMeaning.Warning };
     case CritiqueFindingKind.WideFixedWidth:
       return {
         description: `Fixed width of ${finding.phoneWidthInPixels}px is wider than a phone`,

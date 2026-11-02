@@ -119,8 +119,8 @@ watch(
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" />
       <PageBuilderCanvas
         v-else
-        v-model:is-delete-open="isDeleteOpen"
         ref="canvas"
+        v-model:is-delete-open="isDeleteOpen"
         :announce
         :drop-target
         :kind

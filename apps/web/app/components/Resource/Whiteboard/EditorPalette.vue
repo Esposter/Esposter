@@ -22,7 +22,7 @@ const placeAt = (item: WhiteboardPaletteItem, point: Point) => {
 </script>
 
 <template>
-  <div flex flex-col gap-3 p-2 of-y-auto ui-lifted>
+  <div p-2 flex flex-col gap-3 of-y-auto ui-lifted>
     <section v-for="{ items, title } in WHITEBOARD_PALETTE_GROUPS" :key="title" flex flex-col gap-1>
       <h3 text-muted ui-title>{{ title }}</h3>
       <div flex flex-col gap-1>

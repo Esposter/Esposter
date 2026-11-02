@@ -17,8 +17,6 @@ describe(rasterizeSvg, () => {
 
   class ImageDouble {
     onload?: () => void;
-    #source = "";
-
     get src() {
       return this.#source;
     }
@@ -29,6 +27,8 @@ describe(rasterizeSvg, () => {
         this.onload?.();
       });
     }
+
+    #source = "";
   }
 
   let drawImage: Mock<(image: unknown, x: number, y: number, width: number, height: number) => void>;

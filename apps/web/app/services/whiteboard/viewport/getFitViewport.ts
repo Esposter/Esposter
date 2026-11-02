@@ -1,8 +1,8 @@
 import type { Viewport } from "@/models/whiteboard/Viewport";
 import type { Bounds, Size } from "headless-block-editor";
 
-import { getClampedScale } from "@/services/whiteboard/viewport/getClampedScale";
 import { WHITEBOARD_FIT_MAX_SCALE } from "@/services/whiteboard/viewport/constants";
+import { getClampedScale } from "@/services/whiteboard/viewport/getClampedScale";
 
 // The viewport that shows a box of the document entirely within a canvas of a size, centred on the box. A fit never enlarges the
 // Box past its own size, so a small document sits at full size rather than filling the canvas

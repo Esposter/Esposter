@@ -3,14 +3,14 @@ import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditStat
 
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
 import {
+  createWhiteboardEditState,
+  pressKey,
   WHITEBOARD_ARROW,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-  createWhiteboardEditState,
-  pressKey,
 } from "@/services/whiteboard/constants.test";
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
 import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
 import { takeOne } from "@esposter/shared";

@@ -13,7 +13,7 @@ const selected = computed(() => getSelectedElement(editState.value.document, sel
 </script>
 
 <template>
-  <div v-if="selected" ui-lifted flex flex-col gap-3 p-2>
+  <div v-if="selected" p-2 flex flex-col gap-3 ui-lifted>
     <ResourceWhiteboardEditorPropertiesFill
       v-if="
         selected.element.type === PositionedElementType.Shape ||

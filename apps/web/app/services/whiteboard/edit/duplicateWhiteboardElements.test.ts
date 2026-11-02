@@ -1,9 +1,9 @@
 import {
+  createWhiteboardEditState,
   WHITEBOARD_ARROW,
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
-  createWhiteboardEditState,
 } from "@/services/whiteboard/constants.test";
 import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";

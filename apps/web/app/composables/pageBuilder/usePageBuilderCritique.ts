@@ -22,13 +22,9 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
     const document = getDocument(toValue(resourceId));
     return document !== undefined && checkHasSurveyInvite(document);
   });
-  watch(
-    isSurveyInvited,
-    async (newIsSurveyInvited) => {
-      if (newIsSurveyInvited) await refreshPublishedSurveys();
-    },
-    { immediate: true },
-  );
+  watchImmediate(isSurveyInvited, async (newIsSurveyInvited) => {
+    if (newIsSurveyInvited) await refreshPublishedSurveys();
+  });
   const lookupSurveyPublishState = (surveyId: string) => {
     const surveys = publishedSurveys.value;
     if (!surveys) return SurveyPublishState.Unreadable;

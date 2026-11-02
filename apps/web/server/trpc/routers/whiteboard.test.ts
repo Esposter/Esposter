@@ -1,6 +1,6 @@
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { ArrowElement, ShapeElement } from "headless-block-editor";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { ArrowElement, ShapeElement } from "headless-block-editor";
 
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";

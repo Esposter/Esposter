@@ -1,5 +1,5 @@
-import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GestureMoving } from "@/models/whiteboard/GestureMoving";
+import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 

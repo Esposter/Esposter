@@ -5,7 +5,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
 import { checkHasSurveyInvite } from "#shared/services/pageBuilder/critique/checkHasSurveyInvite";
-import { ResourceType, resourcesInResource } from "@esposter/db-schema";
+import { resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // What the critique reads from the server, which has no browser to read a colour in, so every colour is unchecked. A survey

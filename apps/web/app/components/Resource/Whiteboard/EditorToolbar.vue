@@ -11,7 +11,7 @@ const { toggleSnap } = whiteboardEditorStore;
 </script>
 
 <template>
-  <div ui-lifted flex gap-1 p-1>
+  <div p-1 flex gap-1 ui-lifted>
     <UiToggleGroup v-model="tool" is-icon-only label="Tool" :items="WHITEBOARD_TOOL_ITEMS" />
     <UiIconButton
       label="Snap to grid"

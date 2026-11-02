@@ -1,4 +1,4 @@
-import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS, createWhiteboardEditState } from "@/services/whiteboard/constants.test";
+import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { updatePositionedElementText } from "headless-block-editor";
 import { describe, expect, test } from "vitest";

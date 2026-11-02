@@ -5,6 +5,6 @@ import type { Point } from "headless-block-editor";
 export interface GestureDrawing {
   elementId: string;
   phase: GesturePhase.Drawing;
-  points: Point[];
   pointerId: number;
+  points: Point[];
 }

@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 import { useWhiteboardTextEdit } from "@/composables/whiteboard/useWhiteboardTextEdit";
 import {
-  WHITEBOARD_PROCESS,
-  WHITEBOARD_PROCESS_ID,
   createWhiteboardEditState,
   pressKey,
+  WHITEBOARD_PROCESS,
+  WHITEBOARD_PROCESS_ID,
 } from "@/services/whiteboard/constants.test";
 import { describe, expect, test } from "vitest";
 
