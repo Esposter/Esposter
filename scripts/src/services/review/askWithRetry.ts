@@ -13,5 +13,7 @@ export const askWithRetry = async (ask: () => Promise<ReviewFinding[]>): Promise
   if ("findings" in first) return first.findings;
   if (first.error instanceof ReviewSessionLimitedError) throw first.error;
 
+  // Logged before the retry, so a retry that succeeds still leaves the failure it recovered from in the job's log
+  console.error(`a reviewer's first attempt failed, so it is asked again: ${first.error.message}`);
   return ask();
 };
