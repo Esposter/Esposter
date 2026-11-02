@@ -14,9 +14,12 @@ export const decodeCsv = (text: string): number[] => {
   let hasDigit = false;
   let isEnded = false;
   for (let index = 0; index <= text.length; index++) {
-    // Past the last character there is no code point, which closes the last cell as a separator would
-    const codePoint = text.codePointAt(index) ?? CSV_SEPARATOR_CODE_POINT;
-    if (codePoint === CSV_SEPARATOR_CODE_POINT) {
+    const codePoint = text.codePointAt(index);
+    // Past the last character the last cell closes as a separator would, but only when a cell was opened: text with no
+    // Digit and no separator holds no cell
+    if (codePoint === undefined) {
+      if (hasDigit || tiles.length > 0) tiles.push(tile);
+    } else if (codePoint === CSV_SEPARATOR_CODE_POINT) {
       tiles.push(tile);
       tile = 0;
       hasDigit = false;
