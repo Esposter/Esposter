@@ -193,7 +193,7 @@ Retiring a record SHALL remove its entry from the lock, and its stored objects S
 - **GIVEN** the remote repository cannot be fetched
 - **WHEN** a prune runs
 - **THEN** nothing is deleted
-- **AND** the skipped prune is noted
+- **AND** the skipped prune is noted and the command exits 1
 
 #### Scenario: A reverted lock commit still resolves
 

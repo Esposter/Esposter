@@ -169,7 +169,7 @@ A key is retired by deleting its line from the lock, and a dataset by removing i
 ```mermaid
 flowchart TD
   Retire["retire a key: delete its lock line — a dataset: remove its GameDataset member"] --> Unreached["no live lock names its objects"]
-  Fetch["git fetch origin"] -->|fails| Skipped["prune skipped, with a note"]
+  Fetch["git fetch origin"] -->|fails| Skipped["prune skipped, with a note and exit 1"]
   Fetch --> Locks["live locks: working tree, HEAD, each origin head, origin/main within 90 days"]
   Unreached --> Candidates
   Locks --> Candidates["listed, not live, older than 90 days"]

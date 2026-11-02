@@ -27,7 +27,11 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
         return false;
       },
     );
-    if (!isFetched) return;
+    // A skipped prune deleted nothing, so the exit code tells a chain that runs after it that the prune did not happen
+    if (!isFetched) {
+      process.exitCode = 1;
+      return;
+    }
     const locks = readLiveGameDataLocks(await readGameDataLock());
     for (const target of Object.values(GameDataTarget)) {
       const containerClient = createGameDataContainerClient(target);
