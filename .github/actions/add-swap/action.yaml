@@ -3,10 +3,8 @@ description: Give the runner a second swap file, so a check that peaks above its
 runs:
   using: composite
   steps:
-    # `ubuntu-latest` has 16 GB of memory and a small swap file of its own at `/swapfile`, and `nuxt typecheck` of the app
-    # alone grows to 14 GB of the memory, so a session that runs it beside its own tools used it all and the runner was
-    # shut down ("The runner has received a shutdown signal"). The root disk has about 79 GB free, which a second swap
-    # file spends, and `swapon --show` logs both
+    # The runner image already holds a swap file at `/swapfile`, so this one is a second file, and it spends the root
+    # disk's free space. `swapon --show` logs both
     - name: 💾 Add swap
       shell: bash
       run: |
