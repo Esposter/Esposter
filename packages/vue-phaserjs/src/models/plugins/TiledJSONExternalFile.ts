@@ -42,7 +42,9 @@ export class TiledJSONExternalFile extends MultiFile {
     if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
     // Every tileset is read here synchronously, so Phaser's lifecycle cannot run partway through: a call to
     // `pendingDestroy()` nulls tilemapFile.data, and loader cleanup nulls this.loader, and both are read before either.
-    const tilemapData = tilemapFile.data;
+    // A tilemap given as an object is the caller's own, which every game started on the page loads again, and the
+    // Loop below overwrites each tileset's `source`, so the cache takes a copy
+    const tilemapData = structuredClone(tilemapFile.data);
     const tilemapKey = tilemapFile.key;
     const loader = this.loader;
     const files = this.files;
