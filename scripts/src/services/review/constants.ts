@@ -55,6 +55,11 @@ export const REVIEW_COMMIT_INSTRUCTION =
 export const REVIEWER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 20 }).total("milliseconds");
 export const FIXER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 90 }).total("milliseconds");
 export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 }).total("milliseconds");
+// How often the fix and settle jobs log what their runner has left, and how many of the processes holding the most memory
+// That line names, each cut to a command's first characters
+export const REVIEW_HEARTBEAT_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
+export const REVIEW_HEARTBEAT_PROCESS_COUNT = 3;
+export const REVIEW_HEARTBEAT_COMMAND_CHARACTER_LIMIT = 100;
 // The wall clock of one run, from its start: once it has passed, no further batch starts, and the batches already started
 // Finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
 export const REVIEW_RUN_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 300 });

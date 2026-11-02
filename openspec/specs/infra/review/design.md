@@ -153,6 +153,8 @@ The excluded paths are the generated output, snapshots, the lockfile, migrations
 
 Every session goes through one function. It starts the Claude Code command line headless with the role's model and tool flags, sends the prompt on standard input, and kills the whole process tree at its wall clock. It removes every environment variable whose name looks like a credential, except the Claude token the session itself needs. Git and `gh` are authenticated in the parent only, through the credential helper, so a session can read the repository but cannot push or call the API on its own.
 
+A session's output comes back whole when it ends, so the job log holds nothing of a session that never ends cleanly, such as one on a runner GitHub shuts down mid-session. The fix and settle jobs therefore log which issue they are on, and once a minute what the runner has left: free memory, free disk and the three processes holding the most memory (`REVIEW_HEARTBEAT_INTERVAL_MS`). A job that dies with "The runner has received a shutdown signal" then shows in its last lines whether memory or disk ran out and what held it.
+
 When Claude Code reports the account's usage limit, the launcher throws a distinct error, which is what a window's or an issue's limited status catches. Any other failure is a plain error and counts as the batch's, the fixer's or the settler's failed attempt.
 
 ## The workflow
@@ -187,6 +189,7 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 | `scripts/src/services/review/runReviewSettle.ts`                  | the settle job's half: each open issue settled, its commits landed, and the issue closed                         |
 | `scripts/src/services/review/getDataBlock.ts`                     | the one fence each prompt puts the code under review, its findings and its issue body in, as data                |
 | `scripts/src/services/review/runSettler.ts`                       | the settler session and its answer, which must settle every finding                                              |
+| `scripts/src/services/review/startRunnerResourceHeartbeat.ts`     | the minute-by-minute log line of the runner's free memory and disk and its heaviest processes                    |
 | `scripts/src/services/review/checkIsHeldByLiveRun.ts`             | whether a fixer may still be on an issue: its run's review job or its own fix job has not completed              |
 | `scripts/src/services/review/checkIsBacklogOwed.ts`               | whether the run stopped for the deadline alone, and so dispatches the next run                                   |
 | `scripts/src/services/review/readReviewWindows.ts`                | plans every window owed, each with its base, end, commits and batches                                            |

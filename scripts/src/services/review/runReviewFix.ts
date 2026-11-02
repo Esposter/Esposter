@@ -12,6 +12,7 @@ import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewI
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
 import { resolveDispositions } from "#src/services/review/resolveDispositions";
 import { runFixer } from "#src/services/review/runFixer";
+import { startRunnerResourceHeartbeat } from "#src/services/review/startRunnerResourceHeartbeat";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { REMOTE_QUEUE_REF } from "#src/services/shared/constants";
 import { runGh } from "#src/services/shared/runGh";
@@ -23,6 +24,8 @@ import { getResultAsync, takeOne } from "@esposter/shared";
 // Commit did not land, leaves its findings on the issue, which the settle job takes.
 export const runReviewFix = async ({ base, end, findings, issue }: ReviewIssueFindings): Promise<void> => {
   const summary = [`## Fix issue #${issue}`, "", `${findings.length} finding(s) to fix.`];
+  console.info(`fixer on #${issue}: ${findings.length} finding(s)`);
+  startRunnerResourceHeartbeat();
   fetchRemote();
   assertCheckoutIsDisposable();
   const fixer = await getResultAsync(() => runFixer(base, end, findings)).match(

@@ -15,6 +15,7 @@ import { getReviewIssueRunId } from "#src/services/review/issues/getReviewIssueR
 import { runGhWithBody } from "#src/services/review/issues/runGhWithBody";
 import { listReviewIssues } from "#src/services/review/listReviewIssues";
 import { runSettler } from "#src/services/review/runSettler";
+import { startRunnerResourceHeartbeat } from "#src/services/review/startRunnerResourceHeartbeat";
 import { writeReviewSummary } from "#src/services/review/writeReviewSummary";
 import { getResult, getResultAsync } from "@esposter/shared";
 
@@ -28,6 +29,7 @@ export const runReviewSettle = async (): Promise<void> => {
   const rows = ["## Settle", "", "| Issue | Fixed | Recorded | Refuted | Result |", "| --- | --- | --- | --- | --- |"];
   let isLimited = false;
   let isPastDeadline = false;
+  startRunnerResourceHeartbeat();
   fetchRemote();
   assertCheckoutIsDisposable();
   for (const issue of listReviewIssues()) {
@@ -46,6 +48,7 @@ export const runReviewSettle = async (): Promise<void> => {
     fetchRemote();
     checkoutQueue();
 
+    console.info(`settler on #${issue.number}`);
     // oxlint-disable-next-line no-await-in-loop -- Settlers run one at a time, so each one lands before the next starts
     const outcome: SettleOutcome = await getResultAsync(() => runSettler(issue)).match(
       (dispositions): SettleOutcome => ({ dispositions }),
@@ -57,6 +60,7 @@ export const runReviewSettle = async (): Promise<void> => {
         rows.push(`| #${issue.number} | | | | limited, left open |`);
         continue;
       }
+      console.error(`settler on #${issue.number} failed: ${outcome.error.message}`);
       runGhWithBody(
         ["issue", "comment", String(issue.number)],
         `The settler failed, so this issue stays open for the next run.\n\n${outcome.error.message}`,
