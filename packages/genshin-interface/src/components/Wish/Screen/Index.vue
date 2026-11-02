@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { BannerKind } from "#src/models/BannerKind";
 import type { CurrencyCount } from "#src/models/CurrencyCount";
 import type { TextSegment } from "#src/models/TextSegment";
 import type { WishBannerCard } from "#src/models/WishBannerCard";
@@ -27,9 +26,9 @@ interface Props {
   backLabel: string;
   // The open event banner's card, "undefined" on a banner the game gives no card to here
   bannerCard?: WishBannerCard;
-  // The banners on offer, in the game's order, each with its id, its kind and its name in the runs of colour the game
+  // The banners on offer, in the game's order, each with its id and its name in the runs of colour the game
   // Words it in
-  banners: { id: string; kind: BannerKind; label: TextSegment[] }[];
+  banners: { id: string; label: TextSegment[] }[];
   // The counts the screen shows over its banner
   currencies: CurrencyCount[];
   // The Details button's words, which open the popup listing the open banner's pool
@@ -90,7 +89,7 @@ const {
   title,
   trialLabel,
 } = defineProps<Props>();
-const emit = defineEmits<{ buy: []; close: []; dismiss: []; trial: []; wish: [count: number] }>();
+const emit = defineEmits<{ buy: []; close: []; dismiss: []; startTrial: []; wish: [count: number] }>();
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);
 const isHistoryOpen = ref(false);
@@ -136,9 +135,14 @@ const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id ==
     />
     <div class="links">
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="">{{ shopLabel }}</GameButton>
-      <GameButton v-if="trialLabel" class="link trial" :kind="GameButtonKind.Reply" tip="" @click="emit('trial')">{{
-        trialLabel
-      }}</GameButton>
+      <GameButton
+        v-if="trialLabel"
+        class="link trial"
+        :kind="GameButtonKind.Reply"
+        tip=""
+        @click="emit('startTrial')"
+        >{{ trialLabel }}</GameButton
+      >
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="" @click="isDetailsOpen = true">{{
         detailsLabel
       }}</GameButton>

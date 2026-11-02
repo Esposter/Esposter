@@ -32,12 +32,12 @@ describe("wishScreen", () => {
 
     const character = featuredCharacterOf();
     const trial: Trial = { characterId: character.id, level: 85, trialId: 1022 };
-    const onTrial = vi.fn<(trial: Trial) => void>();
-    await render(WishScreen, { attrs: { onTrial }, props: { ...props, trials: [trial], wishHistory: [] } });
+    const onStartTrial = vi.fn<(trial: Trial) => void>();
+    await render(WishScreen, { attrs: { onStartTrial }, props: { ...props, trials: [trial], wishHistory: [] } });
 
     await page.getByRole("button", { exact: true, name: props.gameText[GameTextKey.WishGoToTrial] }).click();
 
-    expect(onTrial).toHaveBeenCalledExactlyOnceWith(trial);
+    expect(onStartTrial).toHaveBeenCalledExactlyOnceWith(trial);
   });
 
   test("a banner whose featured character has no trial offers no trial button", async () => {

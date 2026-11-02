@@ -52,7 +52,6 @@ export const useWishBanners = ({
         : banners.value.filter((banner) => banner.kind === kind),
     ).map((banner) => ({
       id: banner.id,
-      kind: banner.kind,
       label: [
         ...splitGameTextColors(getGameText()[BannerKindGameTextKeyMap[banner.kind]]),
         ...(banner.kindNumber > 1 ? [{ text: `-${banner.kindNumber}` }] : []),

@@ -1714,7 +1714,7 @@ useWorldSaveSync({
           :stella-fortuna-name-text-id-map
           :trials
           @close="closeScreen()"
-          @trial="(trial) => openTrial(trial)"
+          @start-trial="(trial) => openTrial(trial)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>

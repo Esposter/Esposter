@@ -14,9 +14,9 @@ export const props = {
   backLabel: "Back",
   bannerId: "weapon-event",
   banners: [
-    { id: "character-event", kind: BannerKind.CharacterEvent, label: BANNER_LABELS[BannerKind.CharacterEvent] },
-    { id: "weapon-event", kind: BannerKind.WeaponEvent, label: BANNER_LABELS[BannerKind.WeaponEvent] },
-    { id: "standard", kind: BannerKind.Standard, label: BANNER_LABELS[BannerKind.Standard] },
+    { id: "character-event", label: BANNER_LABELS[BannerKind.CharacterEvent] },
+    { id: "weapon-event", label: BANNER_LABELS[BannerKind.WeaponEvent] },
+    { id: "standard", label: BANNER_LABELS[BannerKind.Standard] },
   ],
   currencies: [
     { id: "Primogem", isTopUp: true, name: "Primogem", quantity: 539 },

@@ -56,7 +56,7 @@ const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true 
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const { gameText, getWorldNow, nameText, now, statTables, stellaFortunaNameTextIdMap, trials, wishSchedule } =
   defineProps<Props>();
-const emit = defineEmits<{ close: []; trial: [trial: Trial] }>();
+const emit = defineEmits<{ close: []; startTrial: [trial: Trial] }>();
 // An amount of a currency as the game's count text: its name and its count in the item-count format, in the reader's language
 const toCountText = (currency: Currency, quantity: number) =>
   fillGameTextValues(gameText[GameTextKey.ItemCount], gameText[CurrencyGameTextKeyMap[currency]], quantity);
@@ -144,7 +144,7 @@ const wish = useWishDraw({
       @buy="bannerKind && (wallet = buyWishFate(wallet, BannerKindFateMap[bannerKind]))"
       @close="emit('close')"
       @dismiss="results = []"
-      @trial="bannerTrial && emit('trial', bannerTrial)"
+      @start-trial="bannerTrial && emit('startTrial', bannerTrial)"
       @wish="wish"
     />
   </GameScreen>
