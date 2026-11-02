@@ -11,11 +11,16 @@ interface Props {
 
 const name = defineModel<string>({ required: true });
 const { isAutofocus, isLabelHidden } = defineProps<Props>();
+const field = useTemplateRef("field");
 // The colons are the shortcode's rather than the name's, so a pasted `:avocado:` keeps only what is between them
 const enteredName = computed({
   get: () => name.value,
   set: (newName) => {
-    name.value = newName.replaceAll(SuggestionTrigger.Emoji, "");
+    const strippedName = newName.replaceAll(SuggestionTrigger.Emoji, "");
+    name.value = strippedName;
+    // The field keeps what was typed until its model changes, and a colon typed into a name the model already holds
+    // Changes the model not at all, so nothing redraws the field: it is written back to the name the model holds
+    if (field.value?.element && field.value.element.value !== strippedName) field.value.element.value = strippedName;
   },
 });
 // The rule is the schema the server parses the name with, so the field and every save gate agree on what a name is, and
@@ -30,5 +35,5 @@ const nameRules = [
 </script>
 
 <template>
-  <UiTextField v-model="enteredName" :is-autofocus :is-label-hidden label="Emoji name" :rules="nameRules" />
+  <UiTextField ref="field" v-model="enteredName" :is-autofocus :is-label-hidden label="Emoji name" :rules="nameRules" />
 </template>
