@@ -14,12 +14,15 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
 
   useOnlineSubscribable(
     activeCallSessionId,
-    (callSessionId) => {
+    async (callSessionId) => {
       if (!callSessionId) return undefined;
 
+      // The join's snapshot predates this subscription, so the session is read again once it is open, which replays
+      // Whatever the connect delivered in between
+      const participantSubscription = await subscribeCallParticipants(callSessionId);
       // Only the doorkeeper is let into the knock stream, so nobody else opens one
       return getUnsubscribe(
-        subscribeCallParticipants(callSessionId),
+        participantSubscription,
         ...(isDoorkeeper.value
           ? [
               $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {

@@ -1,7 +1,7 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { CallParticipantTileProps } from "@/models/message/room/call/CallParticipantTileProps";
 
 import { authClient } from "@/services/auth/authClient";
+import { getCallParticipantMap } from "@/services/message/room/call/getCallParticipantMap";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -26,16 +26,12 @@ export const useCallParticipantTiles = () => {
   const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
   // A room call names each participant as the room knows them; a standalone call has no room, so the account's own
   // Name is the one there is
-  const callParticipantMap = computed(
-    () =>
-      new Map<string, CallParticipant>(
-        Array.from(callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? [], ([id, participant]) => [
-          id,
-          callRoomId.value
-            ? { ...participant, name: getRoomMemberName(callRoomId.value, participant.userId, participant.name) }
-            : participant,
-        ]),
-      ),
+  const callParticipantMap = computed(() =>
+    getCallParticipantMap(
+      callSessionParticipantsMap.value.get(activeCallSessionId.value),
+      callRoomId.value,
+      getRoomMemberName,
+    ),
   );
   const presenterName = computed(() => {
     const participant = activeScreenShareParticipantId.value

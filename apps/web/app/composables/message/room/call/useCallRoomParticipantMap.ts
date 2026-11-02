@@ -1,5 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import { getCallParticipantMap } from "@/services/message/room/call/getCallParticipantMap";
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -15,13 +14,11 @@ export const useCallRoomParticipantMap = () => {
   const { callSessionParticipantsMap } = storeToRefs(participantStore);
   const userStore = useUserStore();
   const { getRoomMemberName } = userStore;
-  return computed(
-    () =>
-      new Map<string, CallParticipant>(
-        Array.from(callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? [], ([id, participant]) => [
-          id,
-          { ...participant, name: getRoomMemberName(currentRoomId.value, participant.userId, participant.name) },
-        ]),
-      ),
+  return computed(() =>
+    getCallParticipantMap(
+      callSessionParticipantsMap.value.get(currentRoomCallSessionId.value),
+      currentRoomId.value,
+      getRoomMemberName,
+    ),
   );
 };

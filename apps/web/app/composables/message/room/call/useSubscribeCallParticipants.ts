@@ -5,7 +5,8 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 // The five participant events every view of a call session tracks, whether it is the viewed room's session
-// Or the one the user has joined — the two subscribables share this core so the session is read one way
+// Or the one the user has joined — the two subscribables share this core so the session is read one way. The session
+// Is subscribed before it is read, so the events that land while the read is in flight are replayed over its answer
 export const useSubscribeCallParticipants = () => {
   const { $trpc } = useNuxtApp();
   const mediaStore = useMediaStore();
@@ -15,13 +16,14 @@ export const useSubscribeCallParticipants = () => {
     createCallParticipant,
     deleteCallParticipant,
     deleteSpeaker,
+    readCallParticipants,
     setParticipantCameraEnabled,
     setParticipantHandRaised,
     setParticipantMuted,
   } = participantStore;
 
-  return (callSessionId: string): Unsubscribable => ({
-    unsubscribe: getUnsubscribe(
+  return async (callSessionId: string): Promise<Unsubscribable> => {
+    const unsubscribe = getUnsubscribe(
       $trpc.callSession.onJoinCall.subscribe(callSessionId, {
         onData: (participant) => {
           createCallParticipant(callSessionId, participant);
@@ -49,6 +51,8 @@ export const useSubscribeCallParticipants = () => {
           setParticipantCameraEnabled(callSessionId, participantId, isCameraEnabled);
         },
       }),
-    ),
-  });
+    );
+    await readCallParticipants(callSessionId, () => $trpc.callSession.readCallParticipantMap.query({ callSessionId }));
+    return { unsubscribe };
+  };
 };

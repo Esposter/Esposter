@@ -10,7 +10,7 @@ export const useCallSubscribables = () => {
   const callStore = useCallStore();
   const { setCurrentRoomCallSessionId } = callStore;
   const participantStore = useParticipantStore();
-  const { clearSpeakers, setParticipantMap } = participantStore;
+  const { clearSpeakers } = participantStore;
   const subscribeCallParticipants = useSubscribeCallParticipants();
 
   useOnlineSubscribable(
@@ -22,10 +22,7 @@ export const useCallSubscribables = () => {
       setCurrentRoomCallSessionId(callSessionId);
       if (!callSessionId) return undefined;
 
-      const participantMap = await $trpc.callSession.readCallParticipantMap.query({ callSessionId });
-      setParticipantMap(callSessionId, participantMap);
-
-      const { unsubscribe } = subscribeCallParticipants(callSessionId);
+      const { unsubscribe } = await subscribeCallParticipants(callSessionId);
       return () => {
         setCurrentRoomCallSessionId("");
         clearSpeakers();

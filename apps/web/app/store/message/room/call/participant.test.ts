@@ -2,7 +2,10 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { getMockSession } from "#server/trpc/context.test";
+import { createId } from "#shared/util/math/random/createId";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useParticipantStore } from "@/store/message/room/call/participant";
+import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 // The session user as a participant row — the shape every write here addresses
@@ -19,8 +22,19 @@ const createSessionParticipant = (): CallParticipant => {
   };
 };
 
+const createParticipant = (): CallParticipant => ({
+  id: crypto.randomUUID(),
+  image: "image",
+  isCameraEnabled: false,
+  isHandRaised: false,
+  isMuted: false,
+  name: "name",
+  userId: crypto.randomUUID(),
+});
+
 describe(useParticipantStore, () => {
-  const callSessionId = crypto.randomUUID();
+  const { trpcMsw } = setupMswTrpc();
+  const callSessionId = createId(CALL_ID_LENGTH);
 
   test("createSpeaker adds the id to speakingIds", () => {
     expect.hasAssertions();
@@ -116,5 +130,33 @@ describe(useParticipantStore, () => {
     setParticipantMuted(callSessionId, participant.id, true);
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isMuted).toBe(true);
+  });
+  // The session is subscribed while its participants are read, so a leave and a join that land in that window are not
+  // In the answer's favour: the answer may still list the leaver and not the joiner
+  test("replays a leave and a join that land during the read over its answer", async () => {
+    expect.hasAssertions();
+
+    const { $trpc } = useNuxtApp();
+    const participantStore = useParticipantStore();
+    const { callSessionParticipantsMap } = storeToRefs(participantStore);
+    const kept = createParticipant();
+    const left = createParticipant();
+    const joined = createParticipant();
+    trpcMsw.callSession.readCallParticipantMap.query(() => {
+      participantStore.deleteCallParticipant(callSessionId, left.id);
+      participantStore.createCallParticipant(callSessionId, joined);
+      return new Map([
+        [kept.id, kept],
+        [left.id, left],
+      ]);
+    });
+    await participantStore.readCallParticipants(callSessionId, () =>
+      $trpc.callSession.readCallParticipantMap.query({ callSessionId }),
+    );
+
+    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([
+      kept.id,
+      joined.id,
+    ]);
   });
 });
