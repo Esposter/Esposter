@@ -37,7 +37,6 @@ Geometry is computed in the core. Each shape's outline is drawn from its kind, t
 
 ## Not built
 
-- **Z-order and unbind have no caller in the app.** The commands exist and are tested in the core, but no control reorders elements, and no control detaches a bound arrow end. The [whiteboard](../../resource/whiteboard/design.md) states what the canvas does with each.
 - **A text's wrapped lines are an estimate.** The decision above names the cost: a line can draw wider or narrower than its box, and nothing measures the font to correct it.
 
 ## Failure and retry

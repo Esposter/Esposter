@@ -13,4 +13,4 @@ The design canvas draws most of an email's node types as a generic box labelled 
 
 ## Out of scope
 
-The preview's request size and the frame's console and scrolling problems are separate changes: [resource-email-preview-transport](../../resource-email-preview-transport/proposal.md) and [resource-email-canvas-frame](../../resource-email-canvas-frame/proposal.md).
+The preview's request size and the frame's console and scrolling problems are separate changes: [resource-email-preview-transport](../../archive/2026-11-02-resource-email-preview-transport/proposal.md) and [resource-email-canvas-frame](../../resource-email-canvas-frame/proposal.md).

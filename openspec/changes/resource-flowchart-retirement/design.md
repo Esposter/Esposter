@@ -17,24 +17,24 @@ A blob is deleted only inside the purge of its own resource, together with that 
 
 Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [gap analysis](../../specs/resource/whiteboard/design.md#gap-analysis), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
 
-| Flowchart feature                                 | Whiteboard row, in its gap analysis                              | Status                                         |
-| ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------- |
-| Labelled step nodes                               | Node label                                                       | Covered                                        |
-| Node colour                                       | Node colour                                                      | Covered                                        |
-| Node resize with a minimum size                   | Node resize                                                      | Covered                                        |
-| Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                        |
-| Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                    |
-| Connector labels, edited inline                   | Edge label                                                       | Covered                                        |
-| Curved, right-angled and straight paths           | Path kinds, and right-angled routing                             | Covered                                        |
-| Palette of node types, dropped on the canvas      | Palette, placed by drag or by click                              | Covered, changed: no native drag and drop      |
-| Minimap                                           | MiniMap                                                          | Dropped, by the owner's decision               |
-| Dot grid and snap to grid                         | Background grid and snap                                         | Covered                                        |
-| Pan, zoom and fit                                 | Pan and zoom, and zoom and fit controls                          | Covered                                        |
-| Delete by keyboard                                | Keyboard                                                         | Covered, extended                              |
-| Export to PNG and SVG, fonts and theme background | Export PNG and SVG, and export background and fonts              | Covered, changed: drawn from the model         |
-| Read-only published view                          | Read-only published view                                         | Deferred, by the owner's decision              |
-| Agent reads and patches of flowchart content      | Agent tools                                                      | Covered, extended with the typed move          |
-| Flowchart achievement                             | Earned achievement                                               | Removed with the type, by the owner's decision |
+| Flowchart feature                                 | Whiteboard row, in its gap analysis                              | Status                                          |
+| ------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------- |
+| Labelled step nodes                               | Node label                                                       | Covered                                         |
+| Node colour                                       | Node colour                                                      | Covered                                         |
+| Node resize with a minimum size                   | Node resize                                                      | Covered, changed: one minimum for every element |
+| Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                         |
+| Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                     |
+| Connector labels, edited inline                   | Edge label                                                       | Covered                                         |
+| Curved, right-angled and straight paths           | Path kinds, and right-angled routing                             | Covered                                         |
+| Palette of node types, dropped on the canvas      | Palette, placed by drag or by click                              | Covered, changed: no native drag and drop       |
+| Minimap                                           | MiniMap                                                          | Dropped, by the owner's decision                |
+| Dot grid and snap to grid                         | Background grid and snap                                         | Covered                                         |
+| Pan, zoom and fit                                 | Pan and zoom, and zoom and fit controls                          | Covered                                         |
+| Delete by keyboard                                | Keyboard                                                         | Covered, extended                               |
+| Export to PNG and SVG, fonts and theme background | Export PNG and SVG, and export background and fonts              | Covered, changed: drawn from the model          |
+| Read-only published view                          | Read-only published view                                         | Deferred, by the owner's decision               |
+| Agent reads and patches of flowchart content      | Agent tools                                                      | Covered, extended with the typed move           |
+| Flowchart achievement                             | Earned achievement                                               | Removed with the type, by the owner's decision  |
 
 ## Scope of the removal
 

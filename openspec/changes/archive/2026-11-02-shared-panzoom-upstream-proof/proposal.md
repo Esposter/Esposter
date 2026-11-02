@@ -6,7 +6,7 @@ The Upstream table in `openspec/specs/shared/panzoom/design.md` says each in-sco
 
 ## What changes
 
-- The owner picks how an absence is proven. Each option is written in the change's `tasks.md`.
+- The owner picks how an absence is proven. Each option is weighed under Decision below.
 - The chosen path is then built, and the #703 cell in the design table cites it.
 
 ## Decision
