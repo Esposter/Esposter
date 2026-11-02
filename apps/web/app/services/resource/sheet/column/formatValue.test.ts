@@ -49,6 +49,12 @@ describe(formatValue, () => {
     expect(formatValue(epochDate, DateFormat["YYYY-MM-DD"])).toBe(epochDate);
   });
 
+  test("reads a date in the column's own format, so a day-first date keeps its day and month", () => {
+    expect.hasAssertions();
+
+    expect(formatValue("02/01/1970", DateFormat["D/M/YYYY"])).toBe("2/1/1970");
+  });
+
   test("returns raw string for invalid date string", () => {
     expect.hasAssertions();
     expect(formatValue("a", DateFormat["YYYY-MM-DD"])).toBe("a");

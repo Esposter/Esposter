@@ -25,7 +25,7 @@ export const computeColumnStatisticsForColumn = (column: Column, values: ColumnV
     effectiveColumnType === ColumnType.String
       ? computeTopFrequencies(context.stringCountMap)
       : effectiveColumnType === ColumnType.Date
-        ? computeMonthFrequencies(context.nonNullStrings)
+        ? computeMonthFrequencies(context.nonNullStrings, "format" in column ? column.format : undefined)
         : undefined;
   // The effective type, because it is the type every statistic above was computed under — reporting the
   // Declared `Computed` instead leaves the chart map with no arm for a column whose numbers it can plot

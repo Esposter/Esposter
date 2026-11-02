@@ -21,8 +21,9 @@ export const formatValue = (value: ColumnValue, format: ColumnFormat) => {
   else if (checkIsBooleanFormat(format)) return formatBoolean(value, format);
   else if (checkIsNumberFormat(format)) return formatNumber(value, format);
   else if (typeof value === "string") {
-    // A malformed string in a date column falls back to the raw value instead of rendering "Invalid Date"
-    const date = parseLooseDate(value);
+    // The column's own format reads its cells, so a day-first value keeps its day. Text in another shape falls back
+    // To the loose reader, and a malformed string to the raw value instead of rendering "Invalid Date"
+    const date = parseLooseDate(value, format);
     return date ? formatDate(date, format) : value;
   } else return "";
 };

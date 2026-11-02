@@ -6,7 +6,7 @@ import { createColumn } from "#shared/models/resource/sheet/column/createColumn.
 import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
 import { createDateColumn } from "#shared/models/resource/sheet/column/createDateColumn.test";
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
-import { DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
+import { DateFormat, DateFormats } from "#shared/models/resource/sheet/column/DateFormat";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
@@ -161,6 +161,26 @@ describe(computeColumnStatisticsForColumn, () => {
         nullPercentage: 25,
         topFrequencies: [[epochDate.slice(0, 7), 3]],
         uniqueCount: 2,
+      }),
+    );
+  });
+
+  test("date column files a day-first value under the month its own format reads", () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource(
+      [createDateColumn("", DateFormat["D/M/YYYY"])],
+      [createRow({ "": "02/01/1970" })],
+    );
+    const column = takeOne(dataSource.columns);
+
+    expect(computeStatistics(dataSource, column)).toStrictEqual(
+      createColumnStatistics({
+        columnType: ColumnType.Date,
+        mostFrequentValue: "02/01/1970",
+        nullPercentage: 0,
+        topFrequencies: [["1970-01", 1]],
+        uniqueCount: 1,
       }),
     );
   });
