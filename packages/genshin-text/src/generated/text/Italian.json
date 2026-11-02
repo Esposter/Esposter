@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Limite di decorazioni raggiunto",
   "RetScoinNotEnough": "Mora insufficienti",
   "SHOP_CAN_BE_PURCHASED": "Limite d'acquisto: {0}",
+  "SHOP_HOLD_NUM": "In tuo possesso: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Emporio",
   "SHOP_TYPE_PAIMON": "Bazar di Paimon",

@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "調度品の配置上限を超えました",
   "RetScoinNotEnough": "モラ不足",
   "SHOP_CAN_BE_PURCHASED": "数量限定 {0}",
+  "SHOP_HOLD_NUM": "現在所持 {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0}×{1}",
   "SHOP_TYPE_GROCERY": "雑貨屋",
   "SHOP_TYPE_PAIMON": "スター交換",

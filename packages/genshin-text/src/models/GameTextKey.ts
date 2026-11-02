@@ -810,6 +810,8 @@ export enum GameTextKey {
   ShopLimitWeekly = "UI_MALL_LIMIT_BUY_INFO_WEEKLY",
   // The line a character a shop sells shows once the player holds it at its full constellations, in place of its limit
   ShopMaximumStellaFortuna = "UI_MALL_NOTAVAILABLE_AVARTARTALENTFULL",
+  // The line over a good's art that says how many of its item the player holds, the count filled in
+  ShopOwned = "SHOP_HOLD_NUM",
   // The shop's Buy button, which purchases the picked good
   ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
   // The line over a good's limit that says how many of it the player can still buy, the count filled in

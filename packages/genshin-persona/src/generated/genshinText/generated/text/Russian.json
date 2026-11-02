@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Достигнут лимит расставленной мебели",
   "RetScoinNotEnough": "Недостаточно моры",
   "SHOP_CAN_BE_PURCHASED": "Доступно: {0}",
+  "SHOP_HOLD_NUM": "В наличии: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Купец",
   "SHOP_TYPE_PAIMON": "Магазин",

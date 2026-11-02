@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Limit für Dekorationseinrichtung überschritten",
   "RetScoinNotEnough": "Mora unzureichend",
   "SHOP_CAN_BE_PURCHASED": "Kauflimit: {0}",
+  "SHOP_HOLD_NUM": "Aktuell {0} vorhanden",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Gemischtwarenladen",
   "SHOP_TYPE_PAIMON": "Rares für Staub und Glanz",

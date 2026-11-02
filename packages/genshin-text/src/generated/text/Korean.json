@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "장식 배치 한도 초과",
   "RetScoinNotEnough": "모라가 부족합니다",
   "SHOP_CAN_BE_PURCHASED": "한정 구매 {0}",
+  "SHOP_HOLD_NUM": "현재 보유 {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0}x{1}",
   "SHOP_TYPE_GROCERY": "잡화점",
   "SHOP_TYPE_PAIMON": "더스트 라이트 교환",

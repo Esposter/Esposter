@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "摆设超过放置上限",
   "RetScoinNotEnough": "摩拉不足",
   "SHOP_CAN_BE_PURCHASED": "限购 {0}",
+  "SHOP_HOLD_NUM": "当前持有 {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0}x{1}",
   "SHOP_TYPE_GROCERY": "杂货店",
   "SHOP_TYPE_PAIMON": "尘辉兑换",

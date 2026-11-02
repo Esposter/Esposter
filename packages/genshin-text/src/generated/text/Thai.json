@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "การวางเฟอร์นิเจอร์เกินขีดจำกัด",
   "RetScoinNotEnough": "Mora ไม่พอ",
   "SHOP_CAN_BE_PURCHASED": "จำกัดการซื้อ {0}",
+  "SHOP_HOLD_NUM": "ขณะนี้มีอยู่ {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0}x{1}",
   "SHOP_TYPE_GROCERY": "ร้านขายของชำ",
   "SHOP_TYPE_PAIMON": "ร้านค้า Paimon",

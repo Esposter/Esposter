@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Límite de decoraciones alcanzado",
   "RetScoinNotEnough": "Mora insuficiente",
   "SHOP_CAN_BE_PURCHASED": "Límite de compra: {0}",
+  "SHOP_HOLD_NUM": "Tienes {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Comestibles",
   "SHOP_TYPE_PAIMON": "Gangas de Paimon",

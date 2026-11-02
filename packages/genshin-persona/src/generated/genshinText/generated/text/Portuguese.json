@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Limite máximo de Decoração atingido",
   "RetScoinNotEnough": "Mora insuficiente",
   "SHOP_CAN_BE_PURCHASED": "Limite de compras: {0}",
+  "SHOP_HOLD_NUM": "Possui: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} x{1}",
   "SHOP_TYPE_GROCERY": "Bazar de Natlan",
   "SHOP_TYPE_PAIMON": "Barganhas da Paimon",

@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Furnishings exceed placement limit",
   "RetScoinNotEnough": "Insufficient Mora",
   "SHOP_CAN_BE_PURCHASED": "Purchase up to {0}",
+  "SHOP_HOLD_NUM": "Owned: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "General Goods",
   "SHOP_TYPE_PAIMON": "Paimon's Bargains",

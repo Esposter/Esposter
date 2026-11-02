@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Limite de décorations atteinte",
   "RetScoinNotEnough": "Moras insuffisants",
   "SHOP_CAN_BE_PURCHASED": "{0} disponible(s)",
+  "SHOP_HOLD_NUM": "Possédé : {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Épicerie",
   "SHOP_TYPE_PAIMON": "Boutique",

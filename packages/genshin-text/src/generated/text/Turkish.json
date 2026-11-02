@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Dekorasyon yerleştirme sınırını aşıyor",
   "RetScoinNotEnough": "Yetersiz Mora",
   "SHOP_CAN_BE_PURCHASED": "{0} adet satın alınabilir",
+  "SHOP_HOLD_NUM": "Sahip Olunan: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} x{1}",
   "SHOP_TYPE_GROCERY": "Gıda Pazarı",
   "SHOP_TYPE_PAIMON": "Paimon'un Dükkanı",

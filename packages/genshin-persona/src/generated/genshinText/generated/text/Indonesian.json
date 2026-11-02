@@ -324,6 +324,7 @@
   "RetHomeFurnitureExceedLimit": "Jumlah perabot mencapai batas",
   "RetScoinNotEnough": "Mora tidak memadai",
   "SHOP_CAN_BE_PURCHASED": "Batas Pembelian {0}",
+  "SHOP_HOLD_NUM": "Memiliki: {0}",
   "SHOP_ITEM_NAME_AND_COUNT": "{0} ×{1}",
   "SHOP_TYPE_GROCERY": "Toko Barang Kebutuhan",
   "SHOP_TYPE_PAIMON": "Penukaran Paimon",
