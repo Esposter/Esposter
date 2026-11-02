@@ -20,6 +20,11 @@ import {
 import { Mesh } from "three";
 import { toValue, watch } from "vue";
 
+const disposeTileMesh = (mesh: Mesh) => {
+  mesh.geometry.dispose();
+  for (const child of mesh.children) if (child instanceof Mesh) child.geometry.dispose();
+};
+
 // The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The streamer asks
 // The pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
@@ -55,10 +60,6 @@ export const useTerrainResidency = ({
     ringDrawnKeysMap.set(level, []);
     tileGroup.add(ring.mesh);
     return ring;
-  };
-  const disposeTileMesh = (mesh: Mesh) => {
-    mesh.geometry.dispose();
-    for (const child of mesh.children) if (child instanceof Mesh) child.geometry.dispose();
   };
   // The tiles asked for again while the streamer still held them, each built over a ground that arrived under it since,
   // Counted from the start of the latest refresh

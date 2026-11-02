@@ -3,11 +3,16 @@ import type { Camera, Mesh } from "three";
 import type { MaybeRefOrGetter } from "vue";
 
 import { FINEST_TILE_LEVEL, TILE_SELECTION_CAPACITY } from "#src/services/constants";
-import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { createFrustumSetter } from "#src/services/world/createFrustumSetter";
 import { createTerrainSelection, getTerrainTileLevel, resolveTerrainDraws, selectTerrainTiles } from "genshin-engine";
 import { Frustum, Vector3 } from "three";
 import { toValue } from "vue";
+
+const checkIsSelectionSettled = (
+  { count, keys }: TerrainSelection,
+  checkIsSettled: (key: number) => boolean,
+): boolean => keys.subarray(0, count).every((key) => checkIsSettled(key));
 
 // Each frame the quadtree is walked from the eye's world position, what is missing is asked for, and the tiles to
 // Draw are shown in place of last frame's. It is walked twice: in the view, for what is asked for first and what makes
@@ -43,14 +48,9 @@ export const useTerrainSelection = ({
   const setFrustum = createFrustumSetter();
   let isReady = false;
   // The terrain's first settled tiles, measured from its mount to the frame it is ready
-  const { promise: isTerrainReady, resolve: resolveTerrainReady } = Promise.withResolvers<void>();
-  measureLoadStep("terrain", isTerrainReady);
+  const terrainStart = performance.now();
   const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
   const checkIsTileSettled = (key: number): boolean => tileStreamer.checkIsSettled(key);
-  const checkIsSelectionSettled = (
-    { count, keys }: TerrainSelection,
-    checkIsSettled: (key: number) => boolean,
-  ): boolean => keys.subarray(0, count).every((key) => checkIsSettled(key));
   // The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
   const checkIsFirstFrameSettled = (key: number): boolean =>
     getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || checkIsTileSettled(key);
@@ -71,7 +71,7 @@ export const useTerrainSelection = ({
       endRefresh(checkIsRefreshSettled);
       if (isReady || !toValue(isGroundSettled) || !checkIsSelectionSettled(wanted, checkIsFirstFrameSettled)) return;
       isReady = true;
-      resolveTerrainReady();
+      performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain`, { start: terrainStart });
       onReady();
     },
     shown,

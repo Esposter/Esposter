@@ -28,6 +28,9 @@ interface WishBannersSource {
   pityMap: Ref<Readonly<Record<BannerKind, WishPity>>>;
 }
 
+const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
+  items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
+
 // The banner the screen is on, the banners on offer and the open banner's pool: the banners the world offers now, their
 // Pools read from the stat tables and named in the reader's language, the Permanent ones and each event banner the schedule
 // Has open at the game's time
@@ -61,8 +64,6 @@ export const useWishBanners = ({
   const bannerId = ref(bannerOffers.value[0]?.id);
   const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
   const bannerKind = computed(() => banner.value?.kind);
-  const toPoolCells = (items: WishItem[], isFeatured: boolean) =>
-    items.map(({ id, name, rarity }) => ({ id, isFeatured, name, rarity }));
   // What the open banner can draw, the highest rarity first and its featured items first of each rarity
   const pool = computed(() => {
     if (!banner.value) return [];

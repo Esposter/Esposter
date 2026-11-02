@@ -17,13 +17,13 @@ export const useSettingsGameText = (
   const chosenGameText = shallowRef<GameText>();
   watchImmediate(
     () => settings.value.language,
-    (newLanguage) => {
+    async (newLanguage) => {
       if (newLanguage === language()) {
         chosenGameText.value = undefined;
         return;
       }
 
-      getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
+      await getResultAsync(() => GameTextLoaderMap[newLanguage]()).match(
         (loadedGameText) => {
           if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;
         },
