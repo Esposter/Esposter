@@ -1,4 +1,4 @@
-import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
+import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
 
 // A palindrome needs a letter or digit to mirror against another, so a message of fewer has none
 const MIN_PALINDROME_GRAPHEMES = 2;
@@ -10,7 +10,7 @@ export const checkIsPalindrome = (value: string | undefined): boolean => {
   if (value === undefined) return false;
 
   const graphemes = Array.from(
-    EN_US_SEGMENTER.segment(value.toLowerCase().replaceAll(NON_TEXT_REGEX, "")),
+    EN_US_GRAPHEME_SEGMENTER.segment(value.toLowerCase().replaceAll(NON_TEXT_REGEX, "")),
     ({ segment }) => segment,
   );
   return graphemes.length >= MIN_PALINDROME_GRAPHEMES && graphemes.join("") === graphemes.toReversed().join("");

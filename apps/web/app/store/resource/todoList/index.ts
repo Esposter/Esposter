@@ -112,9 +112,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     if (!item || !checkRollsOnTick(item))
       return setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
 
-    const { dueAt, recurrence, steps } = item;
+    const { dueAt, steps } = item;
     const writtenTodoList = todoList.value;
-    rollRecurringItem(item, dueAt, recurrence, Intl.DateTimeFormat().resolvedOptions().timeZone);
+    rollRecurringItem(item, Intl.DateTimeFormat().resolvedOptions().timeZone);
     const isSuccessful = await saveTodoList();
     if (!isSuccessful && todoList.value === writtenTodoList) {
       item.dueAt = dueAt;

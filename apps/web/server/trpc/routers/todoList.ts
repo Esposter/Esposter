@@ -61,8 +61,7 @@ export const todoListRouter = router({
         const followUp = requireOpenFollowUp(todoList, itemId);
         appendNotesParagraph(followUp, summary);
         // As the checkbox ticks it
-        if (followUp.recurrence && followUp.dueAt)
-          rollRecurringItem(followUp, followUp.dueAt, followUp.recurrence, timeZone);
+        if (checkRollsOnTick(followUp)) rollRecurringItem(followUp, timeZone);
         else followUp.completedAt = new Date();
       });
     }),
@@ -117,7 +116,7 @@ export const todoListRouter = router({
       await updateTodoListContent(ctx, ctx.resource, (todoList) => {
         const item = todoList.items.find(({ id }) => id === itemId);
         if (!item) throw getNotFoundError("Todo", itemId);
-        if (checkRollsOnTick(item)) rollRecurringItem(item, item.dueAt, item.recurrence, timeZone);
+        if (checkRollsOnTick(item)) rollRecurringItem(item, timeZone);
         else item.completedAt = item.completedAt ? undefined : new Date();
       });
     }),

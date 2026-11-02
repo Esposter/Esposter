@@ -1,4 +1,4 @@
-import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
+import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
 import { ID_CHARACTERS } from "#shared/util/math/random/constants";
 import { createId } from "#shared/util/math/random/createId";
 import { describe, expect, test } from "vitest";
@@ -15,6 +15,8 @@ describe(createId, () => {
 
     const id = createId(100);
 
-    expect([...EN_US_SEGMENTER.segment(id)].every(({ segment }) => ID_CHARACTERS.includes(segment))).toBe(true);
+    expect([...EN_US_GRAPHEME_SEGMENTER.segment(id)].every(({ segment }) => ID_CHARACTERS.includes(segment))).toBe(
+      true,
+    );
   });
 });

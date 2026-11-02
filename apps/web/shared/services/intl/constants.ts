@@ -8,7 +8,6 @@ export const EN_US_LONG_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { mon
 export const EN_US_LONG_WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", { weekday: "long" });
 export const EN_US_ORDINAL_PLURAL_RULES = new Intl.PluralRules("en-US", { type: "ordinal" });
 export const EN_US_PLURAL_RULES = new Intl.PluralRules("en-US");
-export const EN_US_SEGMENTER = new Intl.Segmenter("en-US");
 export const EN_US_SHORT_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
 export const EN_US_SHORT_WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", { weekday: "short" });
 // A figure to at most two decimals, an average or a quantile alike
