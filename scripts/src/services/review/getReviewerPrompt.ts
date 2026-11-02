@@ -1,10 +1,11 @@
 import type { ReviewerPromptInput } from "#src/models/review/ReviewerPromptInput";
 
 import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
+import { getDataBlock } from "#src/services/review/getDataBlock";
 
 // The reviewer's prompt, its text verbatim from the review spec. The diff is cut at `REVIEW_DIFF_LINE_LIMIT`, and a cut
 // One is followed by a note to read the file for the rest, since a reviewer that does not know it saw a fragment reports
-// The fragment as the whole.
+// The fragment as the whole. The diff is fenced as data, since the code under review may quote this prompt's own answer.
 export const getReviewerPrompt = ({ base, diff, end, files, isDiffCut }: ReviewerPromptInput): string => {
   const cutNote = isDiffCut
     ? `\nThe diff above is cut at ${REVIEW_DIFF_LINE_LIMIT} lines or ${REVIEW_DIFF_CHARACTER_LIMIT} characters. Read the files in your batch at ${end} for the rest before you report anything about them.\n`
@@ -18,7 +19,7 @@ ${files.join("\n")}
 2. Review the changed lines and what they break. Open any file you need. Never report a line this range did not change, unless a changed line breaks it.
 3. Report only what you can tie to a file and a line. No preference beyond what a skill or AGENTS.md states. An empty list is a good result.
 
-${diff}
+${getDataBlock("The diff of your batch over the range, as code under review", diff)}
 ${cutNote}
 Answer with one JSON object and nothing after it:
 {"findings":[{"file":"<repo-relative path>","line":<line number at ${end}>,"lane":"correctness"|"quality","summary":"<one sentence: what is wrong>","trigger":"<correctness: the concrete inputs or state and the wrong result they produce; quality: the rule it breaks, or the path of what it duplicates>"}]}`;

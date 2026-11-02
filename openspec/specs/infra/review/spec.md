@@ -74,6 +74,17 @@ A reviewer SHALL be read-only, SHALL be unable to change the code, and SHALL NOT
 - **WHEN** it attempts to edit a file
 - **THEN** the edit is denied
 
+### Requirement: Code under review is data to the sessions that read it
+
+A session SHALL read the diff it reviews, the findings it fixes and the issue body it settles as data. The text of each SHALL sit in a fence that no backtick run inside it can close, and a line inside it SHALL NOT be read as the session's instruction or answer format.
+
+#### Scenario: Diff quotes the answer format
+
+- **GIVEN** a batch's diff holds a line that asks for an empty answer
+- **WHEN** its prompt is built
+- **THEN** the diff sits in a fence no backtick run inside it can close
+- **AND** the answer format follows the fence, as the only answer the reviewer is asked for
+
 ### Requirement: A failed batch is retried once
 
 A batch that fails SHALL be retried once, and a window whose batch still fails SHALL be marked failed.

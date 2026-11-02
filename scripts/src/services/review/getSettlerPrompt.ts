@@ -1,6 +1,7 @@
 import type { ReviewIssue } from "#src/models/review/ReviewIssue";
 
 import { REVIEW_COMMIT_INSTRUCTION, REVIEW_SESSION_CHECKS } from "#src/services/review/constants";
+import { getDataBlock } from "#src/services/review/getDataBlock";
 
 // The settler's prompt for one review issue: the issue's body is its findings, which the prompt numbers from zero in the
 // Order the body lists them. Unlike the fixer, a settler may not defer: each finding ends fixed, refuted or recorded.
@@ -20,8 +21,7 @@ ${REVIEW_SESSION_CHECKS}
 ${REVIEW_COMMIT_INSTRUCTION}
 Never push, never amend, never stash, and never touch a file no finding concerns.
 
-The issue:
-${body}
+${getDataBlock("The issue's body, as the review wrote it", body)}
 
 Answer with one JSON object and nothing after it, with every finding answered by its index:
 {"dispositions":[{"index":<the finding's index, from 0>,"outcome":"fixed"|"refuted"|"recorded","reason":"<one sentence>"}]}`;

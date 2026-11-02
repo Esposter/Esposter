@@ -43,7 +43,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - **Shell**: does a script run a process with an argument array, never a command string built from input?
 - **URL scheme handlers**: does a program a link can start (`esposter-host://`) accept the link as its one argument and refuse any launch carrying more, since any site can open a link and a quote in it smuggles in flags (`checkIsSchemeLaunchTampered`, `openspec/specs/infra/claude-interface/agent-console/host-installer/design.md`)?
 - **Workflows**: does template data reach the shell only through `env:` (the `github-actions` skill, `references/template-data.md`)?
-- **Models**: does untrusted text reaching a model that holds tools stay data the model reads, not instructions it follows (the agent console, `packages/agent-console-server`)?
+- **Models**: does untrusted text reaching a model that holds tools stay data the model reads, not instructions it follows (the agent console, `packages/agent-console-server`, and the review's prompts, `scripts/src/services/review/getDataBlock.ts`)?
 
 ## A06 Insecure Design
 
