@@ -4,6 +4,7 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { mergeWordFilterFormData } from "@/services/message/moderation/mergeWordFilterFormData";
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
 import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
@@ -43,18 +44,31 @@ const isDirty = computed(
 );
 const { executeMutation } = useMutation();
 const saveFilter = async () => {
+  // The edit as it stood when the save was issued, and the filter it was made against: both are taken before the
+  // Optimistic apply moves the form's own baseline to the edit
+  const issuedFormData = structuredClone(toRawDeep(editedFormData.value));
+  const baseFormData = initialFormData.value;
   await executeMutation(
-    () =>
-      $trpc.room.filter.upsertRoomFilter.mutate({
-        action: editedFormData.value.action,
+    async () => {
+      // Read when the write is sent, since another moderator may have changed the words since this form read them.
+      // The write keeps those changes and applies only the words and fields the reader changed
+      const currentFilter = await $trpc.room.filter.readRoomFilter.query({ roomId });
+      const { action, timeoutDurationMs, words } = mergeWordFilterFormData(
+        baseFormData,
+        issuedFormData,
+        getWordFilterFormData(currentFilter),
+      );
+      return $trpc.room.filter.upsertRoomFilter.mutate({
+        action,
         roomId,
-        ...(isTimeout.value && { timeoutDurationMs: editedFormData.value.timeoutDurationMs }),
-        words: editedFormData.value.words,
-      }),
+        ...(action === WordFilterAction.Timeout && { timeoutDurationMs }),
+        words,
+      });
+    },
     {
       applyOptimistic: () => {
         const previousInitialFormData = initialFormData.value;
-        initialFormData.value = structuredClone(toRawDeep(editedFormData.value));
+        initialFormData.value = issuedFormData;
         return () => {
           initialFormData.value = previousInitialFormData;
         };
