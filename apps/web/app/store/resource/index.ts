@@ -114,7 +114,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Whether the loaded resource is the one an edit is held for. The empty sentinel is no edit, and it is also what
   // The current resource id reads when none is loaded, so it is excluded rather than matched
   const hasUnwrittenContent = computed(
-    () => unwrittenContentResourceId.value !== "" && unwrittenContentResourceId.value === currentResourceId.value,
+    () => Boolean(unwrittenContentResourceId.value) && unwrittenContentResourceId.value === currentResourceId.value,
   );
   // Every type's edits land through saveContent, so the state every type shows is derived here rather than
   // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
