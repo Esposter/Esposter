@@ -1,0 +1,46 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "40a97145-c172-4f47-86eb-2e2d899cd231",
+  "prevIds": [
+    "aa073c57-68fb-4864-bab0-238bb7f74d69"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_enum",
+      "statementTarget": [
+        "enum",
+        "resource",
+        "resourceType"
+      ],
+      "writes": [
+        "s|enum|resource.resourceType"
+      ],
+      "reads": [
+        "n|sch|resource"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"resource\",\"resourceType\"]",
+      "set": {
+        "values": [
+          "Blueprint",
+          "Dashboard",
+          "Email",
+          "Flowchart",
+          "Note",
+          "Program",
+          "Sheet",
+          "Survey",
+          "TodoList",
+          "Webpage",
+          "Whiteboard"
+        ]
+      }
+    }
+  ]
+}
