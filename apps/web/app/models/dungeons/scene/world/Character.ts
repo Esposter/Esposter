@@ -1,6 +1,7 @@
 import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import type { Asset } from "#shared/models/dungeons/Asset";
 import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
+import type { ID_SEPARATOR } from "@esposter/shared";
 import type { Direction, WalkingAnimationMapping } from "grid-engine";
 
 import { ItemMetadata } from "@esposter/shared";
@@ -8,7 +9,7 @@ import { ItemMetadata } from "@esposter/shared";
 export class Character<TName extends string = string> extends ItemMetadata {
   declare asset: Asset;
   direction?: Direction;
-  declare id: `${CharacterId.Npc}${NpcId}` | CharacterId.Player;
+  declare id: `${CharacterId.Npc}${typeof ID_SEPARATOR}${NpcId}` | CharacterId.Player;
   declare name: TName;
   // Some spritesheets may only animate one side and rely on us to flipX
   singleSidedSpritesheetDirection?: Direction.LEFT | Direction.RIGHT;

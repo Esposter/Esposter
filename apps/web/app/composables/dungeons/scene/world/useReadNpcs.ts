@@ -12,7 +12,7 @@ import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
-import { NotFoundError } from "@esposter/shared";
+import { ID_SEPARATOR, NotFoundError } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export const useReadNpcs = () => {
@@ -43,7 +43,7 @@ export const useReadNpcs = () => {
     npcs.push(
       new Npc({
         asset: { frame, key: AssetKey.Npc },
-        id: `${CharacterId.Npc}${id}`,
+        id: `${CharacterId.Npc}${ID_SEPARATOR}${id}`,
         name: id,
         path: npcPath,
         singleSidedSpritesheetDirection: Direction.RIGHT,
