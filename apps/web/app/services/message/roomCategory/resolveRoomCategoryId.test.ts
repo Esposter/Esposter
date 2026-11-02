@@ -20,6 +20,6 @@ describe(resolveRoomCategoryId, () => {
   ])("returns null for %s", (_description, categoryId) => {
     expect.hasAssertions();
 
-    expect(resolveRoomCategoryId([roomCategory], categoryId)).toStrictEqual(null);
+    expect(resolveRoomCategoryId([roomCategory], categoryId)).toBeNull();
   });
 });

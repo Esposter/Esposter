@@ -9,7 +9,7 @@ export const usePostCountStore = defineStore("post/count", () => {
   const { $trpc } = useNuxtApp();
   const refreshPostCounts = createBatchedRefresh(async (postIds: string[]) => {
     // The read caps its list, so a larger set is read a chunk at a time: one at a time, since chunks issued together
-    // would join one batch and one request again
+    // Would join one batch and one request again
     const postCounts = await settleAll(
       chunk(postIds, MAX_POST_COUNTS_PER_READ).map(
         (postIdsChunk) => () => $trpc.post.readPostCounts.query(postIdsChunk),

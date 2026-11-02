@@ -12,7 +12,7 @@ import { and, inArray, ne } from "drizzle-orm";
 // `excludedSessionId` is the session that caused the notification. A subscription is per-session, so excluding it
 // Is what lets the acting tab keep its own synchronous toast while every other device of the same user is pushed.
 // A room too large for one statement is read in waves of MAX_USER_IDS_PER_STATEMENT users, one wave after another, so
-// a large room holds one connection rather than one per wave: each statement binds a parameter per user
+// A large room holds one connection rather than one per wave: each statement binds a parameter per user
 export const getPushSubscriptionsForUsers = async (db: Database, userIds: string[], excludedSessionId?: string) =>
   (
     await settleAll(

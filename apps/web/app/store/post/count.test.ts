@@ -10,7 +10,7 @@ describe(usePostCountStore, () => {
   const { trpcMsw } = setupMswTrpc();
 
   // A read takes at most MAX_POST_COUNTS_PER_READ ids, so a set larger than that is read chunk by chunk rather than
-  // refused whole, and the server never sees a list it would reject
+  // Refused whole, and the server never sees a list it would reject
   test("reads a set larger than one read takes in chunks", async () => {
     expect.hasAssertions();
 

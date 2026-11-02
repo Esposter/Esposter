@@ -37,7 +37,11 @@ describe("columnTransformationFormSchema", () => {
   });
 
   test.each([
-    ["a backreference", "(a)\\1", "RE2 cannot run this pattern: error parsing regexp: invalid escape sequence: `\\1`"],
+    [
+      "a backreference",
+      String.raw`(a)\1`,
+      "RE2 cannot run this pattern: error parsing regexp: invalid escape sequence: `\\1`",
+    ],
     [
       "a lookahead",
       "a(?=b)",
@@ -59,7 +63,12 @@ describe("columnTransformationFormSchema", () => {
   test("keeps a stored pattern RE2 cannot run loadable, the column reads empty", () => {
     expect.hasAssertions();
 
-    const stored = { groupIndex: 1, pattern: "(a)\\1", sourceColumnId: "", type: ColumnTransformationType.RegexMatch };
+    const stored = {
+      groupIndex: 1,
+      pattern: String.raw`(a)\1`,
+      sourceColumnId: "",
+      type: ColumnTransformationType.RegexMatch,
+    };
 
     expect(columnTransformationSchema.safeParse(stored).success).toBe(true);
   });

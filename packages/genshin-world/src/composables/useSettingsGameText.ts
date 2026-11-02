@@ -27,7 +27,9 @@ export const useSettingsGameText = (
         (loadedGameText) => {
           if (settings.value.language === newLanguage) chosenGameText.value = loadedGameText;
         },
-        (error) => console.error(error),
+        (error) => {
+          console.error(error);
+        },
       );
     },
   );

@@ -12,7 +12,7 @@ import { describe, expect, test, vi } from "vitest";
 describe(AgentConsolePanelComposer, () => {
   const name = "name";
 
-  test("Enter that confirms an IME candidate leaves the composed text in the composer, unsent", async () => {
+  test("enter that confirms an IME candidate leaves the composed text in the composer, unsent", async () => {
     expect.hasAssertions();
 
     const agentConsoleSessionStore = useAgentConsoleSessionStore();

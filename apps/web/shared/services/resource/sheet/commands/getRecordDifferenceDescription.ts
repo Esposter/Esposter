@@ -4,7 +4,10 @@ const LINE_BREAK_REGEX = /[\r\n]+/gu;
 
 // A cell's text is a key or a value a user typed, so a pipe would open another cell of the row and a line break would
 // End it, and both are written so the cell holds them
-const toTableCell = (value: unknown) => String(value).replaceAll("|", "\\|").replaceAll(LINE_BREAK_REGEX, " ");
+const toTableCell = (value: unknown) =>
+  String(value)
+    .replaceAll("|", String.raw`\|`)
+    .replaceAll(LINE_BREAK_REGEX, " ");
 
 export const getRecordDifferenceDescription = (original: object, next: object) => {
   const keys = new Set([...Object.keys(original), ...Object.keys(next)]);

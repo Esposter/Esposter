@@ -220,7 +220,7 @@ describe("userToRoomRouter", () => {
     );
 
     expect(updatedUserToRoom.categoryId).toStrictEqual(memberCategory.id);
-    expect(await readMemberCategoryId(member, newRoom.id)).toStrictEqual(memberCategory.id);
+    await expect(readMemberCategoryId(member, newRoom.id)).resolves.toStrictEqual(memberCategory.id);
   });
 
   // Each member files the room under a category of their own, so one member's assignment never moves another's
@@ -239,7 +239,7 @@ describe("userToRoomRouter", () => {
     await mockSessionOnce(mockContext.db, secondMember);
     await userToRoomCaller.updateUserToRoom({ categoryId: secondCategory.id, roomId: newRoom.id });
 
-    expect(await readMemberCategoryId(firstMember, newRoom.id)).toStrictEqual(firstCategory.id);
-    expect(await readMemberCategoryId(secondMember, newRoom.id)).toStrictEqual(secondCategory.id);
+    await expect(readMemberCategoryId(firstMember, newRoom.id)).resolves.toStrictEqual(firstCategory.id);
+    await expect(readMemberCategoryId(secondMember, newRoom.id)).resolves.toStrictEqual(secondCategory.id);
   });
 });

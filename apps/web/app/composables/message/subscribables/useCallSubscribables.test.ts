@@ -20,7 +20,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 const { subscribeCallParticipants } = vi.hoisted(() => ({
   subscribeCallParticipants: vi.fn<(callSessionId: string) => Promise<Unsubscribable>>(),
 }));
-vi.mock("@/composables/message/room/call/useSubscribeCallParticipants", () => ({
+vi.mock(import("@/composables/message/room/call/useSubscribeCallParticipants"), () => ({
   useSubscribeCallParticipants: () => subscribeCallParticipants,
 }));
 

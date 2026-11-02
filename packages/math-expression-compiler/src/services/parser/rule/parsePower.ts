@@ -10,7 +10,7 @@ import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOp
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 
 // A power is right associative, and its exponent is a unary operand, so `2^-3^2` is `2^(-(3^2))`. Each power nests its
-// exponent one level, so a long chain is refused at the depth limit rather than exhausting the stack
+// Exponent one level, so a long chain is refused at the depth limit rather than exhausting the stack
 export const parsePower: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
   const base = parse(state, MathExpressionGrammarRule.Nullish);
   const name = getOwnValue(MathExpressionOperatorMap[MathExpressionGrammarRule.Power], state.token);

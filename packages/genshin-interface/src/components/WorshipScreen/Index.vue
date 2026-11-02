@@ -15,7 +15,7 @@ interface Props {
   // The Oculi the region holds toward its next level, which an offer reaches the levels they complete with
   heldCount: number;
   // The level the screen shows, the lowest one whose rewards are not yet claimed: its number, the Oculus it takes (none
-  // for a level that takes none), the rewards it pays and the state they are in on the Worship Statue
+  // For a level that takes none), the rewards it pays and the state they are in on the Worship Statue
   level: {
     level: number;
     oculus?: { count: number; name: string };

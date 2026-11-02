@@ -47,7 +47,7 @@ export const useMenuNavigation = ({
   // A control inside an inert part of the page cannot take the focus, so it is left out
   const getFocusables = (): HTMLElement[] => {
     if (!root.value) return [];
-    return Array.from(root.value.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)).filter(
+    return [...root.value.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR)].filter(
       (element) => element.getClientRects().length > 0 && element.closest("[inert]") === null,
     );
   };
@@ -115,17 +115,17 @@ export const useMenuNavigation = ({
     if (inputState.pressedActions.has(InputAction.Confirm)) pressFocused();
     const direction = getMenuDirection(inputState);
     if (direction === undefined) heldDirection = undefined;
-    else if (direction !== heldDirection) {
-      heldDirection = direction;
-      heldSeconds = 0;
-      nextRepeatSeconds = MENU_REPEAT_DELAY_SECONDS;
-      moveFocus(direction);
-    } else {
+    else if (direction === heldDirection) {
       heldSeconds += deltaSeconds;
       if (heldSeconds >= nextRepeatSeconds) {
         nextRepeatSeconds += MENU_REPEAT_INTERVAL_SECONDS;
         moveFocus(direction);
       }
+    } else {
+      heldDirection = direction;
+      heldSeconds = 0;
+      nextRepeatSeconds = MENU_REPEAT_DELAY_SECONDS;
+      moveFocus(direction);
     }
   };
   return { stepMenuNavigation };

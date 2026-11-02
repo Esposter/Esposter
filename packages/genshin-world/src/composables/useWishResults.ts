@@ -18,7 +18,7 @@ interface WishResultsSource {
 }
 
 // The cards the screen shows, which a set's draws replace, and the card each drawn result shows: its name, rarity and
-// capturing radiance, and the Stella Fortuna and the return it brought as their count texts
+// Capturing radiance, and the Stella Fortuna and the return it brought as their count texts
 export const useWishResults = ({
   getGameText,
   getNameText,

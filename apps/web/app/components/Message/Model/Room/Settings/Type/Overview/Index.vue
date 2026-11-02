@@ -26,7 +26,7 @@ const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();
 // The category is the reader's own, so the field holds the reader's row for this room, resolved against the categories
-// the reader still has
+// The reader still has
 const myCategoryId = computed(() => resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId));
 const {
   draft: editedCategoryId,

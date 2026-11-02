@@ -37,7 +37,7 @@ const listElement = useTemplateRef("listElement");
 const questGroups = computed(() => getQuestGroups(quests, questChapters, category));
 // The list is a list screen's column, LIST_SCREEN_WIDTH units wide, so its pixel width over that is a unit in pixels.
 // The screen's root calls this once it has mounted, since the unit its width is in is set by the screen's own mount,
-// which runs after the list's
+// Which runs after the list's
 const scrollToListScroll = () => {
   if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / LIST_SCREEN_WIDTH);
 };

@@ -51,7 +51,7 @@ describe(useDocumentPictureInPicture, () => {
     scope.stop();
     await opening;
 
-    expect(target.close).toHaveBeenCalledOnce();
+    expect(target.close).toHaveBeenCalledTimes(1);
     expect(documentPictureInPicture.pictureInPictureWindow.value).toBeUndefined();
   });
 });

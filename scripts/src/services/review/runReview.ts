@@ -31,7 +31,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop, takeOne } from "@esposter/shared";
 
 // Plans every window owed, reviews all of their batches in one pool, and acts on each window as it joins the passed prefix:
-// its findings open their issues, and in steady mode `main` advances to the prefix's end once that end holds `main`. A
+// Its findings open their issues, and in steady mode `main` advances to the prefix's end once that end holds `main`. A
 // Window that did not pass stops the prefix, so `main` never moves past a window no review read in full. A deadline leaves
 // The windows past it for the next run, which the run dispatches once when nothing else stopped it.
 export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {

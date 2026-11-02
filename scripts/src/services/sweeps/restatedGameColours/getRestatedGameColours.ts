@@ -10,7 +10,7 @@ const toColourRegex = (colour: string): RegExp => {
   const channels = Array.from({ length: CHANNEL_COUNT }, (_value, index) =>
     Number.parseInt(colour.slice(1 + index * HEX_DIGITS_PER_CHANNEL, 1 + (index + 1) * HEX_DIGITS_PER_CHANNEL), 16),
   );
-  return new RegExp(`${colour}(?![\\da-f])|rgb\\(\\s*${channels.join("[\\s,]+")}\\s*\\)`, "iu");
+  return new RegExp(`${colour}(?![\\da-f])|rgb\\(\\s*${channels.join(String.raw`[\s,]+`)}\\s*\\)`, "iu");
 };
 
 // A colour the interface library already publishes as a constant, written again as its literal in a stylesheet, is a

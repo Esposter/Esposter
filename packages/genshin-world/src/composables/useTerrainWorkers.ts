@@ -43,8 +43,12 @@ export const useTerrainWorkers = ({
       if ("kind" in data) onTileFailed(data.key);
       else onTerrainTile(data);
     });
-    worker.addEventListener("error", (event) => failHeldTiles(workerIndex, event));
-    worker.addEventListener("messageerror", (event) => failHeldTiles(workerIndex, event));
+    worker.addEventListener("error", (event) => {
+      failHeldTiles(workerIndex, event);
+    });
+    worker.addEventListener("messageerror", (event) => {
+      failHeldTiles(workerIndex, event);
+    });
   }
   return {
     postTile: (key: number, message: TerrainWorkerMessage) => {

@@ -7,7 +7,7 @@ import { computeNextDailyReset } from "#src/services/time/computeNextDailyReset"
 
 // When a camp member defeated at a time comes back, by the hardest kind in its camp. A boss is back five seconds after its
 // Blossom is claimed, and has no time while unclaimed, since `checkIsBossHeld` holds it until a teleport out of its area;
-// a camp with an elite comes back whole at the next daily reset on the server's clock; and a common enemy twelve hours on
+// A camp with an elite comes back whole at the next daily reset on the server's clock; and a common enemy twelve hours on
 export const computeEnemyRespawnTime = (
   campEnemyTypes: EnemyType[],
   defeatedAt: Temporal.Instant,

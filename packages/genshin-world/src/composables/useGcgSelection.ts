@@ -28,7 +28,7 @@ interface GcgSelectionEmit {
 }
 
 // The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers are
-// read where each choice is made, so they are passed as getters that follow the board's props
+// Read where each choice is made, so they are passed as getters that follow the board's props
 export const useGcgSelection = (
   duel: MaybeRefOrGetter<GcgDuel>,
   playerSideIndex: MaybeRefOrGetter<number>,
@@ -140,7 +140,9 @@ export const useGcgSelection = (
     clearSelection();
   };
 
-  const confirmPreparation = () => emit("prepare", switchedHandIndices.value, preparedActiveIndex.value);
+  const confirmPreparation = () => {
+    emit("prepare", switchedHandIndices.value, preparedActiveIndex.value);
+  };
   const confirmReroll = () => {
     emit("reroll", selectedDieIndices.value);
     clearSelection();

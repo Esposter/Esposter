@@ -29,8 +29,8 @@ interface WishBannersSource {
 }
 
 // The banner the screen is on, the banners on offer and the open banner's pool: the banners the world offers now, their
-// pools read from the stat tables and named in the reader's language, the Permanent ones and each event banner the schedule
-// has open at the game's time
+// Pools read from the stat tables and named in the reader's language, the Permanent ones and each event banner the schedule
+// Has open at the game's time
 export const useWishBanners = ({
   getGameText,
   getNameText,

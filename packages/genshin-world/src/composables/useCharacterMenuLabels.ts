@@ -15,7 +15,7 @@ import { fillLinePlaceholders, GameTextKey } from "genshin-text";
 import { computed, toValue } from "vue";
 
 // The labels the character menu and its panels are drawn with: each character's name, the chosen character's name,
-// its element mark and element name, and the tabs' labels, all read from the characters and the game's text given
+// Its element mark and element name, and the tabs' labels, all read from the characters and the game's text given
 export const useCharacterMenuLabels = ({
   characterId,
   characters,

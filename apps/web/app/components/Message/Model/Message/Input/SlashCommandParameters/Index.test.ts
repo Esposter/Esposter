@@ -25,7 +25,7 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     return component;
   };
 
-  test("Backspace in a command name that still has text deletes a character and keeps the command", async () => {
+  test("backspace in a command name that still has text deletes a character and keeps the command", async () => {
     expect.hasAssertions();
 
     const component = await mountWithPendingCommand();
@@ -37,7 +37,7 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     expect(pendingSlashCommand.value?.type).toBe(SlashCommandType.Me);
   });
 
-  test("Escape pressed outside the row leaves the pending command where it is", async () => {
+  test("escape pressed outside the row leaves the pending command where it is", async () => {
     expect.hasAssertions();
 
     await mountWithPendingCommand();
@@ -47,7 +47,7 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     expect(pendingSlashCommand.value?.type).toBe(SlashCommandType.Me);
   });
 
-  test("Escape pressed inside the row collapses the command to text", async () => {
+  test("escape pressed inside the row collapses the command to text", async () => {
     expect.hasAssertions();
 
     const component = await mountWithPendingCommand();

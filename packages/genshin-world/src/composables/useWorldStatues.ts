@@ -91,9 +91,9 @@ export const useWorldStatues = ({
   );
   // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start, not
   // From the region's next read
-  for (const [regionId, { level }] of regionStatueProgressMap.value) {
+  for (const [regionId, { level }] of regionStatueProgressMap.value)
     if (level > 0) readRegionLevels(regionId, () => undefined);
-  }
+
   // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();

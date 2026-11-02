@@ -28,7 +28,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   // Of two overlapping searches to finish clears the flag for both
   const { data: isSearching, getBoundData: getBoundIsSearching } = useDataMap(() => roomStore.currentRoomId, false);
   // A room's newest search cancels the one still in flight for it, from whichever surface issued it, so the response
-  // to an earlier search never lands over the results of the search that replaced it
+  // To an earlier search never lands over the results of the search that replaced it
   const searchAbortControllerMap = new Map<string, AbortController>();
   const beginSearch = (roomId: string) => {
     searchAbortControllerMap.get(roomId)?.abort();

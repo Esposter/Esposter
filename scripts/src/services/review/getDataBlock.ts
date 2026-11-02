@@ -1,6 +1,6 @@
 // A block of text the sessions read but did not write, the code under review or the findings or issue body about it, fenced
-// in a backtick run one longer than the longest run inside it, so no line of the text can close the block. The sentence
-// before the block says it is data, since a model reads a prompt's text as instructions unless the prompt says otherwise.
+// In a backtick run one longer than the longest run inside it, so no line of the text can close the block. The sentence
+// Before the block says it is data, since a model reads a prompt's text as instructions unless the prompt says otherwise.
 export const getDataBlock = (label: string, text: string): string => {
   const longestRun = [...text.matchAll(/`+/gu)].reduce((longest, [run]) => Math.max(longest, run.length), 0);
   // Three backticks is the shortest fence Markdown reads

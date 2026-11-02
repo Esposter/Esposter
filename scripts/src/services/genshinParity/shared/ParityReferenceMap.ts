@@ -27,7 +27,7 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
   { height: 200, width: 280, x: 1640, y: 880 },
 ];
 // The list's own pieces on the still: its three commission rows, the World Quests heading, the Hesperides series row
-// with its quests' panel, the In the Dwelling of Life series row and the first quest under it, each filled from the
+// With its quests' panel, the In the Dwelling of Life series row and the first quest under it, each filled from the
 // World round it. The bright gaps between the rows stay the still's own pixels
 const QUEST_SCREEN_LIST_PLATE = [
   { height: 80, width: 666, x: 150, y: 106 },
@@ -52,7 +52,7 @@ const QUEST_SCREEN_DETAILS_PLATE = [
   { height: 64, width: 904, x: 874, y: 312 },
 ];
 // The still's own interface that the whole quest screen is scored over: the list and the details column, the band across
-// the top, the rewards row with its caption, the rules, both buttons, the list's scroll bar and the recording's UID, each
+// The top, the rewards row with its caption, the rules, both buttons, the list's scroll bar and the recording's UID, each
 // Filled from the world round it, so the still's world is what the screen sits on
 const QUEST_SCREEN_CHROME_PLATE = [
   { height: 96, width: 1920, x: 0, y: 0 },
@@ -1138,7 +1138,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "publisher-splash": { screen: "SplashPublisher", source: "session-2.mp4 at 1s" },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
   // World behind it is the still's own pixels, its interface filled from the world round it (QUEST_SCREEN_PLATE), so
-  // the world is the one the reference shows rather than the overview clip's sharper, darker frame
+  // The world is the one the reference shows rather than the overview clip's sharper, darker frame
   "quest-screen": {
     isBackdrop: true,
     plate: QUEST_SCREEN_PLATE,

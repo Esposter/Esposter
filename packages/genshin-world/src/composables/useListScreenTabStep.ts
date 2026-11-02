@@ -15,7 +15,9 @@ export const useListScreenTabStep = (
   selectTab: (tabIndex: number) => void,
 ) => {
   const getSteppedTabIndex = (step: number): number => Math.min(Math.max(getTabIndex() + step, 0), getTabCount() - 1);
-  const stepTab = (step: number) => selectTab(getSteppedTabIndex(step));
+  const stepTab = (step: number) => {
+    selectTab(getSteppedTabIndex(step));
+  };
   useEventListener("keydown", (event) => {
     if (event.code === LIST_SCREEN_TAB_NEXT_CODE) stepTab(1);
     else if (event.code === LIST_SCREEN_TAB_PREVIOUS_CODE) stepTab(-1);

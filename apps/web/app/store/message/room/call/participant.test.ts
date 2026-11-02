@@ -131,6 +131,7 @@ describe(useParticipantStore, () => {
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isMuted).toBe(true);
   });
+
   // The session is subscribed while its participants are read, so a leave and a join that land in that window are not
   // In the answer's favour: the answer may still list the leaver and not the joiner
   test("replays a leave and a join that land during the read over its answer", async () => {

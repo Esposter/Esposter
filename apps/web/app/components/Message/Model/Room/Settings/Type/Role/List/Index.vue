@@ -17,7 +17,7 @@ const { memberPermissionOverrideMap, selectedMemberId, selectedRoleId } = storeT
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
-// deleteRole refuses a role at or above the reader's top role, so a row offers Delete only for one they outrank
+// DeleteRole refuses a role at or above the reader's top role, so a row offers Delete only for one they outrank
 const isDeletable = (roleId: string) => {
   const role = roleMap.value.get(roleId);
   return Boolean(role && !role.isEveryone && checkIsRoleManageable(roomId, role.position));

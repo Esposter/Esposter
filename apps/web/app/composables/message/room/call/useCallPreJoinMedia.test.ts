@@ -79,6 +79,6 @@ describe(useCallPreJoinMedia, () => {
     grantRequests("video", { getTracks: () => [{ stop: stopTrack }] } as unknown as MediaStream);
     await flushPromises();
 
-    expect(stopTrack).toHaveBeenCalledOnce();
+    expect(stopTrack).toHaveBeenCalledTimes(1);
   });
 });

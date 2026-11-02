@@ -27,7 +27,7 @@ interface WishOffersSource {
 }
 
 // The open banner's offers and the wallet they are paid from: its ×1 and ×10 sets, the Fate bought with Primogems once the
-// wallet holds too few Fates for its ×1, and the currencies the screen shows beside them
+// Wallet holds too few Fates for its ×1, and the currencies the screen shows beside them
 export const useWishOffers = ({ bannerKind, getGameText, pityMap, toCountText, wallet }: WishOffersSource) => {
   // The open banner's ×1 and ×10, each offered while the wallet holds its Fates and the beginners' wish has room for it
   const sets = computed(() => {

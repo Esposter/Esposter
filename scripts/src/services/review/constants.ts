@@ -7,7 +7,7 @@ export const REVIEW_ISSUE_LABEL = "review";
 // Is split over several issues, each its own part.
 export const REVIEW_ISSUE_FINDING_CAP = 25;
 // The bullet a finding's line opens with in an issue body. The settle job reads a bullet over a code span back as a finding,
-// so the body's writer and that reader both take the bullet from here.
+// So the body's writer and that reader both take the bullet from here.
 export const REVIEW_FINDING_BULLET = "- ";
 // GitHub's limit on the jobs one matrix runs. The issues past it are not lost: they stay open, and the settle job takes them.
 export const REVIEW_FIX_MATRIX_CAP = 256;

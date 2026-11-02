@@ -194,12 +194,12 @@ describe(createInput, () => {
   test("reads the directional pad as a menu's direction, and a bumper's press as one tab step", () => {
     expect.hasAssertions();
 
-    const pressedButtons = [GamepadButton.DirectionalPadRight, GamepadButton.RightBumper];
+    const pressedButtons = new Set([GamepadButton.DirectionalPadRight, GamepadButton.RightBumper]);
     const target = createTarget([
       {
         axes: [],
         get buttons() {
-          return GAMEPAD_BUTTONS.map((button) => ({ pressed: pressedButtons.includes(button) }));
+          return GAMEPAD_BUTTONS.map((button) => ({ pressed: pressedButtons.has(button) }));
         },
       },
     ]);

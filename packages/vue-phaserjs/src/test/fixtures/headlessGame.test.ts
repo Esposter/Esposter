@@ -55,7 +55,7 @@ beforeAll(async () => {
   testGame = new Game({ audio: { noAudio: true }, scene: [], type: HEADLESS });
   if (!testGame.isBooted) throw new NotInitializedError(Game.name);
   // Boot is synchronous, but the base textures load after the constructor, as in a browser, so the scene manager's
-  // first boot and the loop's start follow READY: wait for it before the loop is stopped below
+  // First boot and the loop's start follow READY: wait for it before the loop is stopped below
   await new Promise((resolve) => {
     testGame.events.once(Core.Events.READY, resolve);
   });

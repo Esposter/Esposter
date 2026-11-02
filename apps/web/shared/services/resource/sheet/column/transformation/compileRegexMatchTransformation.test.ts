@@ -50,10 +50,10 @@ describe(compileRegexMatchTransformation, () => {
 
   test.each([
     ["a pattern that does not compile", "(", "a"],
-    ["a backreference", "(a)\\1", "aa"],
+    ["a backreference", String.raw`(a)\1`, "aa"],
     ["a lookahead", "a(?=b)", "ab"],
     ["a lookbehind holding a capture", "(?<=(a))b", "ab"],
-    ["a JavaScript \\u escape", "\\u0041", "A"],
+    [String.raw`a JavaScript \u escape`, String.raw`\u0041`, "A"],
   ])("reads null for %s, which the engine refuses", (_title, pattern, value) => {
     expect.hasAssertions();
     expect(readRegexMatch({ ...baseTransformation, groupIndex: 0, pattern }, value)).toBeNull();

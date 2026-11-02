@@ -13,8 +13,12 @@ export const subscribeStarted = async <TSubscription extends Unsubscribable>(
     onConnectionStateChange: ({ error }) => {
       if (error) resolve();
     },
-    onError: () => resolve(),
-    onStarted: () => resolve(),
+    onError: () => {
+      resolve();
+    },
+    onStarted: () => {
+      resolve();
+    },
   });
   await promise;
   return subscription;

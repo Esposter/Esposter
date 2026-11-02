@@ -22,12 +22,12 @@ export const SHELL_OUTPUT_LENGTH = 100_000;
 // How long a code the page opened the host with pairs it: the reader has that long to allow the browser's prompt
 export const SCHEME_PAIRING_CODE_DURATION_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // The most the attachments of one prompt may weigh on the wire, counted as the page sends them: each file's JSON, with
-// its base64 and any escapes in it. Sixteen mebibytes is inside Bedrock's 20 MB request limit, the smallest documented
-// for the Messages API, so a prompt that attaches this much still has room for its text on every platform
+// Its base64 and any escapes in it. Sixteen mebibytes is inside Bedrock's 20 MB request limit, the smallest documented
+// For the Messages API, so a prompt that attaches this much still has room for its text on every platform
 export const ATTACHMENTS_MAX_BYTE_LENGTH: number = 16 * 1024 * 1024;
 // The room a message holds beside its attachments for its text and its envelope. The text has no ceiling of its own,
-// so a message past this is refused whole, which no typed prompt comes near
+// So a message past this is refused whole, which no typed prompt comes near
 export const PROMPT_ENVELOPE_MAX_BYTE_LENGTH: number = 8 * 1024 * 1024;
 // The largest message any socket may send the host, admitted or not, so a message over it ends its socket before the
-// host holds it
+// Host holds it
 export const MESSAGE_MAX_BYTE_LENGTH: number = ATTACHMENTS_MAX_BYTE_LENGTH + PROMPT_ENVELOPE_MAX_BYTE_LENGTH;

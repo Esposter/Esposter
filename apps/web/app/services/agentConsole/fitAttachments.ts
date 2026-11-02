@@ -4,7 +4,7 @@ import { getAttachmentByteLength } from "@/services/agentConsole/getAttachmentBy
 import { ATTACHMENTS_MAX_BYTE_LENGTH } from "agent-console-server/contracts";
 
 // The new attachments a prompt can take beside the ones it holds, in the order they were picked, and the ones that would
-// take it over the ceiling its attachments share
+// Take it over the ceiling its attachments share
 export const fitAttachments = (attachments: Attachment[], newAttachments: Attachment[]) => {
   let byteLength = attachments.reduce((total, attachment) => total + getAttachmentByteLength(attachment), 0);
   const fitted: Attachment[] = [];

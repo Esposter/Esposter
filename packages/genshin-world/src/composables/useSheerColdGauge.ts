@@ -43,5 +43,7 @@ export const useSheerColdGauge = ({
     getWeather,
     onColdDamage,
   );
-  watch(sheerCold, (value) => onSheerCold(value));
+  watch(sheerCold, (value) => {
+    onSheerCold(value);
+  });
 };

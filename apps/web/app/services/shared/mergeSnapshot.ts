@@ -2,7 +2,7 @@ import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 
 // The answer to a read with the pushes that landed while it was in flight replayed over it, in the order they landed.
 // The answer can predate a push in either direction, a create it lacks or a removal it still lists, so the last push
-// for an item decides that item, and a push the answer already reflects replays to the same state
+// For an item decides that item, and a push the answer already reflects replays to the same state
 export const mergeSnapshot = <TItem extends { id: string }>(
   snapshot: TItem[],
   pushes: SnapshotPush<TItem>[],

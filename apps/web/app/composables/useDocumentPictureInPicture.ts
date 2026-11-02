@@ -107,7 +107,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
       );
       await bridgeStyles(target);
       // The owner may have been disposed while the stylesheets loaded, and the window may have been closed meanwhile;
-      // neither case surfaces a dead window
+      // Neither case surfaces a dead window
       if (isDisposed) target.close();
       else if (!target.closed) pictureInPictureWindow.value = target;
     }, noop);

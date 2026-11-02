@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 describe("saveStagedResourceContentInputSchema", () => {
   // The server compares the staged bytes against lowercase hex, so an uppercase digest of the same bytes is refused at
-  // the boundary rather than after the upload has been staged
+  // The boundary rather than after the upload has been staged
   test("refuses an uppercase hash", () => {
     expect.hasAssertions();
 

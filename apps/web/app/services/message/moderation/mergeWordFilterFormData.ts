@@ -9,13 +9,13 @@ export const mergeWordFilterFormData = (
   current: WordFilterFormData,
 ): WordFilterFormData => {
   const addedWords = issued.words.filter((word) => !base.words.includes(word));
-  const removedWords = base.words.filter((word) => !issued.words.includes(word));
+  const removedWords = new Set(base.words.filter((word) => !issued.words.includes(word)));
   return {
     action: issued.action === base.action ? current.action : issued.action,
     timeoutDurationMs:
       issued.timeoutDurationMs === base.timeoutDurationMs ? current.timeoutDurationMs : issued.timeoutDurationMs,
     words: [
-      ...current.words.filter((word) => !removedWords.includes(word)),
+      ...current.words.filter((word) => !removedWords.has(word)),
       ...addedWords.filter((word) => !current.words.includes(word)),
     ],
   };

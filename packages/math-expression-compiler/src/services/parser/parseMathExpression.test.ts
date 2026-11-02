@@ -44,7 +44,7 @@ describe(parseMathExpression, () => {
   });
 
   // A right-associative chain nests one level per operator, so a long one is refused where the parentheses are. A
-  // conditional's refusal lands on its true branch, where the depth limit is checked
+  // Conditional's refusal lands on its true branch, where the depth limit is checked
   test.each([
     ["a chain of powers", `${"2^".repeat(5000)}2`, 2 * MAX_MATH_EXPRESSION_DEPTH],
     ["a chain of conditionals", `${"1?2:".repeat(5000)}3`, 4 * MAX_MATH_EXPRESSION_DEPTH - 1],

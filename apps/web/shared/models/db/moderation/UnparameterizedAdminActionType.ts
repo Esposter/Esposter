@@ -1,7 +1,7 @@
 import { AdminActionType } from "@esposter/db-schema";
 
 // The actions that take nothing past their target. The input's type and its schema both read this one list, so a
-// member cannot sit in one of them and be missing from the other
+// Member cannot sit in one of them and be missing from the other
 export const UnparameterizedAdminActionTypes = [
   AdminActionType.CreateBan,
   AdminActionType.ForceMute,

@@ -95,7 +95,9 @@ export const useWeaponActions = ({
     clearPicks();
   };
   // A refusal is the rule's answer and changes nothing, so it is logged and the weapon and the bag stay as they were
-  const reportRefusal = (error: Error) => console.error(error);
+  const reportRefusal = (error: Error) => {
+    console.error(error);
+  };
   // Levels the weapon with the picked ores and fodder weapons, which leave the bag, and returns the EXP past the cap as the
   // Ores it fills
   const enhanceAction = () =>

@@ -46,7 +46,7 @@ describe(removeWorktree, () => {
   });
 
   // The main checkout is not a linked worktree, and its installs are the ones every other checkout's point into. The refusal
-  // comes before any install is touched, on every platform, so the installs are still there after it
+  // Comes before any install is touched, on every platform, so the installs are still there after it
   test("refuses the main checkout before any install is removed", () => {
     expect.hasAssertions();
 
@@ -65,7 +65,7 @@ describe(removeWorktree, () => {
   });
 
   // Git refuses a linked worktree with uncommitted changes only after its installs are gone on Windows, so the refusal is made
-  // first, and the installs of the worktree are still there after it
+  // First, and the installs of the worktree are still there after it
   test("refuses a linked worktree with uncommitted changes before any install is removed", () => {
     expect.hasAssertions();
 

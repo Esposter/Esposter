@@ -20,7 +20,7 @@ describe(downloadObjectTo, () => {
   });
 
   // A body that fails after its first chunk has already opened the file the copy writes, so only a cleanup of that file
-  // leaves the folder as it was
+  // Leaves the folder as it was
   test("a download cut short leaves no part file", async () => {
     expect.hasAssertions();
 

@@ -59,7 +59,7 @@ describe(getPushSubscriptionsForUsers, () => {
   });
 
   // One user past Postgres's cap of 65,535 bind parameters, so a single statement for this room is refused. The owner
-  // is the last user, so the read only finds its subscriptions if it reaches the final wave
+  // Is the last user, so the read only finds its subscriptions if it reaches the final wave
   test("reads the subscriptions of a room too large for one statement", async () => {
     expect.hasAssertions();
 

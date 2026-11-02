@@ -13,7 +13,7 @@ describe("uiColorField", () => {
       vi.restoreAllMocks();
     });
 
-    // happy-dom keeps a named colour as it was written, where a browser computes red in rgb, so the computed colour is
+    // Happy-dom keeps a named colour as it was written, where a browser computes red in rgb, so the computed colour is
     // Stubbed to the rgb a browser gives
     const stubComputedRed = () => {
       vi.spyOn(window, "getComputedStyle").mockReturnValue({ color: "rgb(255, 0, 0)" } as CSSStyleDeclaration);

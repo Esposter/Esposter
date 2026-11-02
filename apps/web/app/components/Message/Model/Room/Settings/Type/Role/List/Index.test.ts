@@ -25,7 +25,7 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
     updatedAt: new Date(0),
   });
 
-  // deleteRole refuses a role at or above the reader's top role, so a row above it is listed without its Delete
+  // DeleteRole refuses a role at or above the reader's top role, so a row above it is listed without its Delete
   test("offers Delete only for a role the reader's top role outranks", async () => {
     expect.hasAssertions();
 

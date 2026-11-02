@@ -37,7 +37,9 @@ export const useInitializeGameObjectSetters = <
       // We should emit the intrinsic gameObject value so vue can grab it
       else if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
     };
-    setters.push((targetGameObject) => applyValue(targetGameObject, value));
+    setters.push((targetGameObject) => {
+      applyValue(targetGameObject, value);
+    });
 
     setterWatchHandles.push(
       watch(

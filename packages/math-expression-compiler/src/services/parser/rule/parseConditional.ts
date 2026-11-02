@@ -9,8 +9,8 @@ import { failMathExpression } from "#src/services/parser/failMathExpression";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 
 // The true branch is an assignment, so a conditional may nest inside it; the false branch is right associative, and
-// nests one level per conditional. The true branch's assignment checks the depth limit at that same level, so a long
-// chain is refused there rather than exhausting the stack
+// Nests one level per conditional. The true branch's assignment checks the depth limit at that same level, so a long
+// Chain is refused there rather than exhausting the stack
 export const parseConditional: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
   const condition = parse(state, MathExpressionGrammarRule.Binary);
   if (state.error !== null || !checkIsToken(state, "?")) return condition;

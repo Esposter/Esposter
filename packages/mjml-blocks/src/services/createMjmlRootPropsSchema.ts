@@ -26,7 +26,7 @@ export const createMjmlRootPropsSchema = (
       const segments = ["attributes", type];
       if (type === ALL_ATTRIBUTES_KEY) {
         // MJML writes a default for all components into every type that takes its name, and no type checks it there,
-        // so a value is kept only when each of those types accepts it
+        // So a value is kept only when each of those types accepts it
         for (const [name, value] of Object.entries(values)) {
           const schemas = definitions
             .map((definition) => getMjmlAttributeSchema(definition.allowedAttributes, name))
