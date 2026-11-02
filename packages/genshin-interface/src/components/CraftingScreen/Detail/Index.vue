@@ -174,13 +174,10 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
   left: calc(var(--unit) * 1636);
   width: calc(var(--unit) * 224);
   height: calc(var(--unit) * 50);
-  padding: 0;
-  border: none;
   border-radius: calc(var(--unit) * 4);
   background: #fff7ea;
   color: #212121;
   font-size: calc(var(--unit) * 22);
-  cursor: inherit;
 }
 
 .crafters {
@@ -194,14 +191,9 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
 }
 
 .crafter {
-  position: relative;
   width: 100%;
   height: calc(var(--unit) * 134);
-  padding: 0;
-  border: none;
   background: #3b4558;
-  color: inherit;
-  cursor: inherit;
 }
 
 .crafter[aria-pressed="true"] {

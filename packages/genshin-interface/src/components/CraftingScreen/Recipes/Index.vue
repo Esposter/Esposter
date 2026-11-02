@@ -51,15 +51,10 @@ const { recipes } = defineProps<Props>();
 }
 
 .recipe {
-  position: relative;
   width: 100%;
   height: calc(var(--unit) * 152);
-  padding: 0;
-  border: none;
   border-radius: calc(var(--unit) * 3);
   background: #54658c;
-  color: inherit;
-  cursor: inherit;
 }
 
 .recipe[aria-pressed="true"] {

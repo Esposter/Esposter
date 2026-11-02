@@ -43,11 +43,6 @@ const { tabs } = defineProps<Props>();
 .tab {
   width: calc(var(--unit) * 96);
   height: calc(var(--unit) * 68);
-  padding: 0;
-  border: none;
-  background: none;
-  color: inherit;
-  cursor: inherit;
 }
 
 .tab[aria-pressed="true"] {

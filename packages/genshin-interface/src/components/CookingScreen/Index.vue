@@ -116,7 +116,6 @@ const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: 
 .dishes button {
   width: calc(var(--unit) * 260);
   padding: calc(var(--unit) * 10);
-  border: 0;
   background: rgb(255 255 255 / 12%);
   color: #ece3d8;
   font-size: calc(var(--unit) * 20);
@@ -134,7 +133,6 @@ const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: 
   width: calc(var(--unit) * 180);
   height: calc(var(--unit) * 52);
   transform: translateX(-50%);
-  border: 0;
   background: #3a3a44;
   color: #ece3d8;
   font-size: calc(var(--unit) * 22);
@@ -150,10 +148,7 @@ const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: 
   align-items: center;
   gap: calc(var(--unit) * 26);
   width: calc(var(--unit) * 160);
-  padding: 0;
   transform: translateX(-50%);
-  border: 0;
-  background: none;
   color: rgb(44 40 36);
   font-size: calc(var(--unit) * 24);
   font-weight: 700;
