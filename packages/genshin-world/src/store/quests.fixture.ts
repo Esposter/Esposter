@@ -5,7 +5,7 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { useWorldQuestsStore } from "#src/store/quests";
 
 // A main quest of one step, which its progress finishes by standing past that step
-const createMainQuest = (id: number): Quest => ({
+export const createMainQuest = (id: number): Quest => ({
   descriptionTextId: "1",
   id: String(id),
   kind: QuestKind.World,

@@ -1,25 +1,12 @@
-import type { Quest } from "#src/models/quest/Quest";
-
-import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { useWorldQuestsStore } from "#src/store/quests";
+import { createMainQuest } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useWorldQuestsStore, () => {
   // A main quest of one step that asks for a place to be reached
-  const QUEST: Quest = {
-    descriptionTextId: "1",
-    id: "7",
-    kind: QuestKind.World,
-    mainId: "7",
-    offerTalkIds: [],
-    parentQuestIds: [],
-    rewards: [],
-    steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }], textId: "1" }],
-    talks: [],
-    titleTextId: "1",
-  };
+  const QUEST = createMainQuest(7);
 
   const setUpQuests = () => {
     const worldSessionStore = startTestWorldSession();
