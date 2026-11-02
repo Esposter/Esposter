@@ -14,8 +14,8 @@ const { drafts } = storeToRefs(inputStore);
 // The count is the store's, so a job scheduled or cancelled moves this badge as it moves the Scheduled tab
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
-await readScheduledMessageJobs();
+const { readScheduledMessageJobCount } = useReadScheduledMessageJobs();
+await readScheduledMessageJobCount();
 const items = computed<UiListItem<string>[]>(() => [
   {
     isCurrent: currentRoute.value.path === RoutePath.MessagesFriends,
