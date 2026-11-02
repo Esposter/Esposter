@@ -144,6 +144,7 @@
     "pinia": "catalog:",
     "postgres": "catalog:",
     "rate-limiter-flexible": "catalog:",
+    "re2js": "catalog:",
     "read-excel-file": "catalog:",
     "rxjs": "catalog:",
     "superjson": "catalog:",

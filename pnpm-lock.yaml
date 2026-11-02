@@ -654,6 +654,9 @@ catalogs:
     rate-limiter-flexible:
       specifier: ^11.2.3
       version: 11.2.3
+    re2js:
+      specifier: ^2.9.1
+      version: 2.9.1
     read-excel-file:
       specifier: ^9.3.14
       version: 9.3.14
@@ -1205,6 +1208,9 @@ importers:
       rate-limiter-flexible:
         specifier: 'catalog:'
         version: 11.2.3
+      re2js:
+        specifier: 'catalog:'
+        version: 2.9.1
       read-excel-file:
         specifier: 'catalog:'
         version: 9.3.14
@@ -12134,6 +12140,10 @@ packages:
 
   rc9@3.1.0:
     resolution: {integrity: sha512-ufjkNVzbRHKcCOmTahZkmVsyc3W+MSk3jY03m+a7tGHkIsdVMG9l10/3HvFbWkkKzY5VFp3pkRsIo/UYgmFL7Q==}
+
+  re2js@2.9.1:
+    resolution: {integrity: sha512-JIT3bEEUZTOR2YS1walNEIfH4cF/cQeZcBUFq7ldqO6lR6g0X5CBq/S8rsa9omzZcsNf8qc36jCkWpKKtncrZg==}
+    engines: {node: '>=20.0.0'}
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -25337,6 +25347,8 @@ snapshots:
     dependencies:
       defu: 6.1.7
       destr: 2.0.5
+
+  re2js@2.9.1: {}
 
   react-is@17.0.2: {}
 

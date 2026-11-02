@@ -212,6 +212,7 @@ catalog:
   publint: ^0.3.25
   rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.3
+  re2js: ^2.9.1
   read-excel-file: ^9.3.14
   rolldown: ^1.2.16
   rollup-plugin-visualizer: ^7.1.1
