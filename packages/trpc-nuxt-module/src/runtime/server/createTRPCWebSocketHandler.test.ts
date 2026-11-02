@@ -3,11 +3,11 @@ import type { AddressInfo } from "node:net";
 
 import { createTRPCWebSocketHandler } from "#src/runtime/server/createTRPCWebSocketHandler";
 import { createTRPCClient, createWSClient, wsLink } from "@trpc/client";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import crossws from "crossws/adapters/node";
 import { once } from "node:events";
 import { createServer } from "node:http";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(createTRPCWebSocketHandler, () => {
   const t = initTRPC.context<{ url?: string }>().create();
@@ -70,5 +70,35 @@ describe(createTRPCWebSocketHandler, () => {
     await webSocketClient.close();
 
     expect((await closedConnection.promise).context).toStrictEqual({ url: "/" });
+  });
+
+  // A context that fails is answered and closed as tRPC does it, and its onOpen never runs. The rejection must not
+  // Escape the open hook, which crossws never awaits
+  test.each([
+    ["rejects", () => Promise.reject(new TRPCError({ code: "UNAUTHORIZED", message: "The session is unreadable" }))],
+    [
+      "throws",
+      () => {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "The session is unreadable" });
+      },
+    ],
+  ])("a context that %s closes its peer and opens no connection", async (_label, createContext) => {
+    expect.hasAssertions();
+
+    const onOpen = vi.fn<(connection: TRPCWebSocketConnection<{ url?: string }>) => void>();
+    const { hooks } = createTRPCWebSocketHandler({ createContext, onOpen, router });
+    const webSocketAdapter = crossws({ hooks });
+    const closed = Promise.withResolvers<void>();
+    const socket = new WebSocket(url);
+    socket.addEventListener("close", () => {
+      closed.resolve();
+    });
+    const upgrade = once(server, "upgrade");
+    const [request, upgradeSocket, head] = await upgrade;
+
+    await webSocketAdapter.handleUpgrade(request, upgradeSocket, head);
+    await closed.promise;
+
+    expect(onOpen).not.toHaveBeenCalled();
   });
 });
