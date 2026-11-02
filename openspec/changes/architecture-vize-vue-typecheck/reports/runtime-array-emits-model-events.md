@@ -155,6 +155,6 @@ The fix is tested by changing the generated lines in a copy of the native module
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests in `ubugeeei-prod/vize` for `runtime array defineEmits defineModel StaticEventMap update`, with no result. The nearest is #9429 (closed): `defineEmits(['click'])` alone gave `TS2339` on `click`, which is fixed, and the same array without a model is clean on 0.644.0. This case needs a model. The event-map overload cap, in `event-map-overload-cap.md`, is a separate defect in the same map: it needs more than 16 events and loses the earliest, and this one fails at 4 events and loses the model's event.
+Searched open and closed issues and pull requests in `ubugeeei-prod/vize` for `runtime array defineEmits defineModel StaticEventMap update`, with no result. The nearest is #9429 (closed): `defineEmits(['click'])` alone gave `TS2339` on `click`, which is fixed, and the same array without a model is clean on 0.644.0. This case needs a model. The event-map overload cap, in `event-map-overload-cap.md`, is a separate defect in the same map: it needs more than 16 events and loses the earliest, and this one fails with one error for each model, from a single model with three events, and loses the model's event.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
