@@ -5,9 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Genshin Impact's own text in its fifteen languages. It is an unofficial, non-commercial fan work. It is not affiliated with HoYoverse.
-
-No string is translated by hand. Each string is the game's own, in the game's own translation.
+Genshin Impact's own text in its fifteen languages, none translated by hand. It is an unofficial, non-commercial fan work, not affiliated with HoYoverse.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin/game-text).
 

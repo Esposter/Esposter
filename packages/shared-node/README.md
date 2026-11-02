@@ -27,6 +27,8 @@ Import this package only in a server or build environment, never in browser code
 pnpm i @esposter/shared-node
 ```
 
+Check: `package.json` lists `@esposter/shared-node` in its dependencies.
+
 2. Run this code.
 
 ```ts

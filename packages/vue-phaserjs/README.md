@@ -25,6 +25,8 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pinia
 ```
 
+Check: the install ends with no peer or version conflict, and `package.json` lists `vue-phaserjs`.
+
 2. Add these type declaration files. The editor shows intellisense for scene keys and custom plugins.
    - [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/types/phaser.d.ts) narrows the scene key types.
    - [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/types/vue-phaserjs.d.ts) provides the custom plugin types.

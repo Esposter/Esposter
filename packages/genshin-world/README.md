@@ -5,9 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Genshin Impact's world, rebuilt as an unofficial, non-commercial fan work on [`genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine). It is not affiliated with HoYoverse.
-
-It ships no image, model or sound from the game. Code generates every mesh, texture and shader. Each mark on a screen is a vector path. The path is traced from the game's own, or taken from a published vector of it.
+Genshin Impact's world, rebuilt as an unofficial, non-commercial fan work on [`genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine), with no image, model or sound from the game. It is not affiliated with HoYoverse.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/genshin).
 

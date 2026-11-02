@@ -25,6 +25,8 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 pnpm i tresjs-nuxt
 ```
 
+Check: `package.json` lists `tresjs-nuxt` in its dependencies.
+
 2. Add this to `nuxt.config.ts`.
 
 ```ts
@@ -35,6 +37,8 @@ export default defineNuxtConfig({
   tres: { glsl: true },
 });
 ```
+
+Check: `pnpm dev` starts with no module error.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
