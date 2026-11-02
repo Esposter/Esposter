@@ -4,6 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useRenameResource } from "@/composables/resource/list/useRenameResource";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useFavoriteStore } from "@/store/resource/favorite";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 
@@ -41,5 +42,29 @@ describe(useRenameResource, () => {
     await useRenameResource(resource, refresh)(newName);
 
     expect(refresh).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  // The favorites rows carry the name, and only the list's own refresh re-reads the list it renders, so a rename has
+  // To invalidate the resources tag or the star set keeps the old name for the rest of the session
+  test("re-reads the cached favorites so they carry the new name", async () => {
+    expect.hasAssertions();
+
+    const resource = createResource();
+    let serverName = name;
+    trpcMsw.resource.readFavorites.query(() => [createResourceListItem({ id: resource.value.id, name: serverName })]);
+    trpcMsw.sheet.updateResource.mutation(() => {
+      serverName = newName;
+      return { ...resource.value, name: newName };
+    });
+    const favoriteStore = useFavoriteStore();
+    const { favorites } = storeToRefs(favoriteStore);
+    const { readFavorites } = favoriteStore;
+    await readFavorites();
+    await useRenameResource(
+      resource,
+      vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    )(newName);
+
+    expect(favorites.value.map((favorite) => favorite.name)).toStrictEqual([newName]);
   });
 });

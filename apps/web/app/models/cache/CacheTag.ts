@@ -4,6 +4,7 @@
 export enum CacheTag {
   // A recorded visit — it reorders Recent without changing which resources exist
   Recents = "Recents",
-  // Which resources exist and are live — a create, delete, restore or purge
+  // Which resources exist, are live, and what their cached rows say of them — a create, delete, restore, purge,
+  // Rename or tag edit
   Resources = "Resources",
 }

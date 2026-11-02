@@ -1,5 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { CacheTag } from "@/models/cache/CacheTag";
 import { useNotificationStore } from "@/store/notification";
 import { noop } from "@esposter/shared";
 
@@ -25,6 +26,8 @@ export const useRenameResource = (resource: Ref<ResourceInResource | undefined>,
           resourceValue.name = name;
           return noop;
         },
+        // The favorites and Recent rows carry the name, and nothing else re-reads them once they have loaded
+        invalidates: [CacheTag.Resources],
         key: resourceValue.id,
         onError: async (error) => {
           createErrorNotification(error);

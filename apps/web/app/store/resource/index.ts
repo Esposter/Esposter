@@ -15,6 +15,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { CacheTag } from "@/models/cache/CacheTag";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getFileSize } from "@/services/file/getFileSize";
@@ -408,6 +409,8 @@ export const useResourceStore = defineStore("resource", () => {
             mergeResource(resourceValue.id, { name: previousResource.name });
           };
         },
+        // The favorites and Recent rows carry the name, which nothing else re-reads once they have loaded
+        invalidates: [CacheTag.Resources],
         key: resourceValue.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
@@ -437,6 +440,8 @@ export const useResourceStore = defineStore("resource", () => {
             mergeResource(resourceValue.id, { tags: previousResource.tags });
           };
         },
+        // The favorites and Recent rows carry the tags, which nothing else re-reads once they have loaded
+        invalidates: [CacheTag.Resources],
         key: resourceValue.id,
         onError: createErrorNotification,
         onSuccess: (newResource) => {
