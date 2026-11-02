@@ -10,6 +10,7 @@ import { setCallParticipant } from "#server/trpc/routers/call/setCallParticipant
 import { setupCallSuite } from "#server/trpc/routers/call/setupCallSuite.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { roomRouter } from "#server/trpc/routers/room";
+import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { ForbiddenError } from "@esposter/shared";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -79,6 +80,36 @@ describe("callRouter", () => {
       id: getSessionPayload.session.id,
       isHandRaised: true,
     });
+  });
+
+  // A room's call takes its events from the room, so a member who leaves the room has them end as the room's own
+  // Streams do, rather than going on to receive a call they are no longer a member of
+  test("ends a room call's events when the subscriber leaves the room", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, room.id);
+    const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
+    const memberPayload = await mockSessionOnce(mockContext.db, member);
+    setCallParticipant(callSessionId, memberPayload);
+    const subscription = await callCaller.onSetMuted(callSessionId);
+    const result = await withAsyncIterator(
+      () => subscription,
+      async (iterator) => {
+        const [next] = await Promise.all([
+          iterator.next(),
+          (async () => {
+            await mockSessionOnce(mockContext.db, member);
+            await roomCaller.leaveRoom(room.id);
+            // The call still raises an event after the departure, which an open stream would yield
+            callEventEmitter.emit("muteChanged", { callSessionId, id: memberPayload.session.id, isMuted: true });
+          })(),
+        ]);
+        return next;
+      },
+    );
+
+    expect(result.done).toBe(true);
   });
 
   test("fails join for non-member", async () => {

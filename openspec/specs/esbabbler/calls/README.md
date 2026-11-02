@@ -118,6 +118,8 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | `onJoinCall` / `onLeaveCall` / `onSetMuted` / `onSetCameraEnabled` / `onSetHandRaised` | authed             | subscriptions keyed by `callSessionId`                                                |
 | `knocker.onKnockCall` / `knocker.onKnockerAdmitted` / `knocker.onKnockerDismissed`     | creator / authed   | waiting-room subscriptions keyed by `callSessionId` — the knock feed is the creator's |
 
+The subscriptions above are gated when they open, and a call in a room also ends them when the subscriber leaves that room, by a leave, a kick or a ban, as the room's own streams end (`onWhileCallRoomMember`). A standalone call has no room to leave, so its subscriptions are gated at open alone, and a participant who leaves the call keeps them until the socket closes.
+
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
 ## Client stores
@@ -142,6 +144,7 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)        |
 | `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)         |
 | `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                 |
+| `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership    |
 | `apps/web/server/api/webhooks/livekit.post.ts`                   | webhook backup for join/leave                            |
 | `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores              |
 | `apps/web/app/store/message/room/liveKit.ts`                     | LiveKit `Room` bridge                                    |

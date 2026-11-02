@@ -2,7 +2,6 @@ import type { JoinCallResult } from "#server/models/room/call/JoinCallResult";
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
-import { on } from "#server/services/events/on";
 import { callAdmittedParticipantMap } from "#server/services/message/call/callAdmittedParticipantMap";
 import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
@@ -11,6 +10,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { createStandaloneCallSessionId } from "#server/services/message/call/createStandaloneCallSessionId";
 import { joinLiveKitCall } from "#server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
+import { onWhileCallRoomMember } from "#server/services/message/call/onWhileCallRoomMember";
 import { readCallSessionId } from "#server/services/message/call/readCallSessionId";
 import { requireCallParticipant } from "#server/services/message/call/requireCallParticipant";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
@@ -87,8 +87,12 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = on(callEventEmitter, "joinCall", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+    const events = await onWhileCallRoomMember(ctx.db, "joinCall", {
+      callSessionId: input,
+      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
 
     for await (const [{ callSessionId, participant, sessionId }] of events) {
       if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
@@ -100,8 +104,12 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = on(callEventEmitter, "leaveCall", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+    const events = await onWhileCallRoomMember(ctx.db, "leaveCall", {
+      callSessionId: input,
+      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
 
     for await (const [{ callSessionId, id }] of events) {
       if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
@@ -113,8 +121,12 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = on(callEventEmitter, "videoChanged", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+    const events = await onWhileCallRoomMember(ctx.db, "videoChanged", {
+      callSessionId: input,
+      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
 
     for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
       if (callSessionId !== input) continue;
@@ -126,8 +138,12 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = on(callEventEmitter, "handRaisedChanged", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+    const events = await onWhileCallRoomMember(ctx.db, "handRaisedChanged", {
+      callSessionId: input,
+      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
 
     for await (const [{ callSessionId, id, isHandRaised }] of events) {
       if (callSessionId !== input) continue;
@@ -139,8 +155,12 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = on(callEventEmitter, "muteChanged", { signal });
-    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+    const events = await onWhileCallRoomMember(ctx.db, "muteChanged", {
+      callSessionId: input,
+      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
 
     for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
