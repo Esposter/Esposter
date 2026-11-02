@@ -28,7 +28,7 @@ import { getRequestBodyByteLength } from "@/services/trpc/getRequestBodyByteLeng
 import { useNotificationStore } from "@/store/notification";
 import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
+import { noop, RoutePath, toRawDeep, withFinalizerAsync } from "@esposter/shared";
 
 // The resource the blade has open — its row, its publication and the bookkeeping its content saves need.
 // One resource is open at a time, so the page shell, the toolbar and whichever content store the type's editor
@@ -300,7 +300,9 @@ export const useResourceStore = defineStore("resource", () => {
     // Wrote nothing because there was nothing left to write
     if (unwrittenContentResourceId.value === resourceValue.id) unwrittenContentResourceId.value = "";
     const contentJson = JSON.stringify(content);
-    if (contentJson === persistedContentJson) return true;
+    // The baseline is the last content the server confirmed, so while a write of this resource is still in flight it
+    // Can be about to replace that content — a revert to the baseline has to be written behind it, not skipped
+    if (contentJson === persistedContentJson && !checkIsSaveContentPending(resourceValue.id)) return true;
     // The serialization already made for the dirty check is what sizes the document, so a document no resource
     // May hold is refused here rather than sent — the server would refuse it after the whole upload
     const contentBytes = new TextEncoder().encode(contentJson);
@@ -312,6 +314,10 @@ export const useResourceStore = defineStore("resource", () => {
       });
       return false;
     }
+    // A body under the request limit sends the content object, so it sends the content this save was issued with
+    // Rather than the object as it stands when a save queued behind another comes up. Otherwise the server would
+    // Hold an edit the persisted baseline does not name, and a revert to the issued content would be skipped
+    const issuedContent = contentBytes.byteLength < MAX_REQUEST_SIZE ? structuredClone(toRawDeep(content)) : undefined;
     // Saves of different resources are different single-flight keys, so this one can settle after the blade has
     // Moved on, and everything it carries back — a stale latch, a failure, a contentVersion, the persisted-content
     // Baseline — is its own resource's. Applied to whichever resource is loaded now, it strands that one behind a
@@ -324,7 +330,7 @@ export const useResourceStore = defineStore("resource", () => {
         // Cross-session edit. A load that swapped the resource in between leaves the issue-time row in place
         const target = getActiveResource(resourceValue.id) ?? resourceValue;
         const resourceRouter = getResourceRouter(target.type);
-        const input = { content, contentVersion: target.contentVersion, id: target.id };
+        const input = { content: issuedContent, contentVersion: target.contentVersion, id: target.id };
         const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
         // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
         // Client holds them, and staged through Blob Storage otherwise. The body is measured as the transformer

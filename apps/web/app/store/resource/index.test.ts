@@ -494,6 +494,66 @@ describe(useResourceStore, () => {
     expect(contentVersions).toStrictEqual([0, 1]);
   });
 
+  // Records the name of each content the server receives, and holds the first save until the test releases it, so a
+  // Save issued meanwhile queues behind it
+  const holdFirstSave = () => {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    const savedNames: string[] = [];
+    trpcMsw.sheet.saveResourceContent.mutation(async ({ input }) => {
+      savedNames.push(input.content.data.metadata.name);
+      if (savedNames.length === 1) await promise;
+
+      return { ...createResource(input.id), contentVersion: input.contentVersion + 1 };
+    });
+    return { releaseFirstSave: resolve, savedNames };
+  };
+
+  // A queued save is sent with the content it was issued with. Sent with the object as it stands when its turn
+  // Comes, it carries an edit made while it waited, while the persisted baseline records the issued content — so the
+  // Server ends on a document the blade no longer shows, and reverting to the issued content is skipped as saved
+  test("sends a queued save the content it was issued with", async () => {
+    expect.hasAssertions();
+
+    const { releaseFirstSave, savedNames } = holdFirstSave();
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    const firstSave = saveContent(createDefaultSheetResource());
+    const content = createDefaultSheetResource();
+    content.data.metadata.name = " ";
+    const queuedSave = saveContent(content);
+    content.data.metadata.name = "";
+    releaseFirstSave();
+
+    await Promise.all([firstSave, queuedSave]);
+
+    expect(savedNames).toStrictEqual(["", " "]);
+  });
+
+  // The baseline a save is skipped against is the last content the server confirmed. While another write of the
+  // Resource is in flight, that confirmed content is not what the server holds yet, so a save of it still has to be
+  // Written — skipping it leaves the in-flight write to land as the last word
+  test("does not skip a save of the confirmed content while another write is in flight", async () => {
+    expect.hasAssertions();
+
+    const { releaseFirstSave, savedNames } = holdFirstSave();
+    const resourceStore = useResourceStore();
+    const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    setPersistedContent(createDefaultSheetResource());
+    const content = createDefaultSheetResource();
+    content.data.metadata.name = " ";
+    const firstSave = saveContent(content);
+    const revertedSave = saveContent(createDefaultSheetResource());
+    releaseFirstSave();
+
+    await Promise.all([firstSave, revertedSave]);
+
+    expect(savedNames).toStrictEqual([" ", ""]);
+  });
+
   // The notification that reports a failed save is a one-shot the owner dismisses, so the state is what keeps
   // Saying their work is only in the tab
   test("reports a rejected save as not saved until one lands", async () => {

@@ -53,7 +53,7 @@ The autosaving editors are the Dashboard, Note, Program, Sheet settings, Email a
 
 **It is a flag, not a count of armed debounces.** A save writes the whole content blob, so one write cleans every edit waiting on the resource however many watchers observed them — a count would claim two pending saves where there is one, and would need a per-instance guard and a disposal hook to stay honest about a number nothing reads. A pair of counters beside a ref in a store is the shape the [async sequencing rule](../../architecture/async-operations/design.md) names as the tell for ordering done by hand.
 
-It is also never derived by comparing the content against what was persisted, though the store holds exactly that snapshot: deriving it reactively means serializing the whole blob on every keystroke, which is the cost the debounce exists to avoid. The flag is the cheap early signal, and `persistedContentJson` is the exact one the write itself consults.
+It is also never derived by comparing the content against what was persisted, though the store holds exactly that snapshot: deriving it reactively means serializing the whole blob on every keystroke, which is the cost the debounce exists to avoid. The flag is the cheap early signal, and `persistedContentJson` is the exact one the write itself consults — skipping a write only when nothing of the resource is in flight, since an in-flight write can still replace the content the baseline names.
 
 **`Saved` carries the time.** The word on its own is a claim the owner has to take on trust, which is exactly the trust they did not have when they went looking for a Save button. `updatedAt` is what the row already tracks, so the resting state is `Saved` plus a relative time, with the absolute one on hover.
 
