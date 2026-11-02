@@ -52,7 +52,7 @@ flowchart TD
 | `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                                                                                        |
 | `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer                                                                     |
 | `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                                                                                  |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free (lines 15 to 23, of which line 16 and lines 18 to 23 give none when no place is left) |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free (lines 15 to 23: line 16 for an unfitted claim, lines 18 to 23 when no place is left) |
 
 ## Sources
 
