@@ -40,7 +40,8 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const setParticipantMap = (callSessionId: string, participants: Map<string, CallParticipant>) => {
     callSessionParticipantsMap.value.set(callSessionId, participants);
   };
-  // The read is handed in, as a thread's is. Its answer is merged with the participant writes that landed while it was in flight.
+  // The read is handed in, as a thread's is.
+  // Its answer is merged with the participant writes that landed while it was in flight.
   // A session whose participants a subscription is following is never written back without them.
   const readCallParticipants = (callSessionId: string, read: () => Promise<Map<string, CallParticipant>>) =>
     readWithReplayedPushes(
