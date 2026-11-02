@@ -7,7 +7,7 @@ import { handleCors } from "nitro/h3";
 // CORS headers for the request's origin, and a preflight answered without reaching a handler
 const corsHandler: Middleware = defineMiddleware((event) => {
   const rules = getSecurityRules(event);
-  if (!rules?.enabled || !rules.corsHandler) return;
+  if (!rules?.enabled || !rules.corsHandler) return undefined;
 
   const { allowHeaders, credentials, exposeHeaders, maxAge, methods, origin, preflight } = rules.corsHandler;
   const response = handleCors(event, {
@@ -20,7 +20,7 @@ const corsHandler: Middleware = defineMiddleware((event) => {
     preflight,
   });
   // A preflight is answered here, so its response is returned for h3 to send. Any other request falls through to its handler
-  if (response !== false) return response;
+  return response === false ? undefined : response;
 });
 
 export default corsHandler;

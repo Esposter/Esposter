@@ -49,7 +49,7 @@ describe(createRouteRulesPlugin, () => {
     await app.nitroApp.hooks.callHook("request", event);
 
     expect(() => getSecurityRules(event)).toThrowErrorMatchingInlineSnapshot(
-      `[Error: The security route rules did not resolve]`,
+      `[TypeError: nuxt-security-module: the security route rules did not resolve]`,
     );
   });
 });

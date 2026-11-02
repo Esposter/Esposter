@@ -16,7 +16,7 @@ export const setSecurityRouteMatcher = (routes: Record<string, SecurityRules>): 
 };
 
 export const setSecurityRouteMatcherFailure = (cause: unknown): void => {
-  securityRouteFailure = new Error("The security route rules did not resolve", { cause });
+  securityRouteFailure = new TypeError("nuxt-security-module: the security route rules did not resolve", { cause });
 };
 
 // The rules of every pattern that matches the path, the least specific first, `undefined` before startup has run

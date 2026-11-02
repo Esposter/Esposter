@@ -27,7 +27,7 @@ describe(corsHandler, () => {
 
     const response = corsHandler(createEvent("OPTIONS"), () => undefined);
 
-    expect(response).toMatchObject({ status: 204 });
+    expect((response as Response).status).toBe(204);
   });
 
   test("a request that is not a preflight passes on to its handler", () => {
