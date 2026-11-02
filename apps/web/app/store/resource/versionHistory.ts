@@ -17,7 +17,7 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   const resourceStore = useResourceStore();
   const { reloadResourceContent } = resourceStore;
   const { checkIsPending, executeQuery } = useMutation();
-  const { executeMutation: executeRestoreMutation, isPending: isRestorePending } = useMutation();
+  const { executeMutation: executeRestoreMutation } = useMutation();
   const { executeMutation: executeSaveRevisionMutation } = useMutation();
   // Keyed by the resource the history was read for. Reads of two resources are two keys and do not supersede
   // Each other, so one issued before a switch can land after it — and held once for the store, that resource's
@@ -108,7 +108,6 @@ export const useVersionHistoryStore = defineStore("resource/versionHistory", () 
   return {
     clearVersionHistory,
     isPending,
-    isRestorePending,
     readSnapshotHistory,
     restoreSnapshot,
     restoringSnapshotVersionId,

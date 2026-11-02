@@ -30,7 +30,6 @@ export const usePageBuilderCanvasStore = defineStore("pageBuilder/canvas", () =>
     getEditingNodeId,
     getSelectedNodeId,
     getStyleState,
-    selectedNodeIdMap,
     setDevice,
     setEditingNodeId,
     setSelectedNodeId,

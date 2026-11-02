@@ -68,7 +68,6 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     mergeFieldColumnsMap.value.set(resourceId, columnNames);
   };
   return {
-    documentMap,
     getDocument,
     getEmailDocument,
     getHeldDocument,
