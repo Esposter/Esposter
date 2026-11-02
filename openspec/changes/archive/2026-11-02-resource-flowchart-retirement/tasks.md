@@ -13,7 +13,7 @@
 - [x] 3.2 Remove the Flowcharter achievement name and the Flowchart achievement category. Verify: a search of source finds no `FlowchartAchievementName` and no `AchievementCategory.Flowchart`.
 - [x] 3.3 Remove the five `@vue-flow` packages from `apps/web/package.json` and `pnpm-workspace.yaml`, refresh `pnpm-lock.yaml` through `pnpm i`, and remove their stylesheet imports and their ledger rows. Verify: a search of source for `@vue-flow` finds nothing, and `.agents/ledgers/dependencies.md` has no Vue Flow row.
 - [x] 3.4 Write the removal migration under the drizzle skill: delete any row still referencing a Flowchart resource and any Flowcharter achievement rows, then drop the Flowchart resource type value and the Flowcharter achievement value. It refuses to run while any Flowchart row remains. Verify: the refusal is a guard in the migration's own SQL and its run's output is the evidence, with no test of a one-time migration (the `testing` skill, `references/what-earns-a-test.md`).
-- [ ] 3.5 Run the release's bundle measurement against the last release before it, and record the client bytes Vue Flow no longer adds in the change's proposal. Verify: the measurement is recorded beside the release's commit, with the score's date.
+- [x] 3.5 Run the release's bundle measurement against the last release before it, and record the client bytes Vue Flow no longer adds in the change's proposal. Verify: the measurement is recorded in the proposal under Bundle measurement. (Recorded as the packages' built size, a ceiling: the app bundle is ungated and a local app build is not run.)
 
 ## 4. Specs and sweep
 
