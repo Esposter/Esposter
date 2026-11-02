@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, and navigation, with no framework or DOM.
+This package edits a typed node tree over a registry, with commands that edit it as JSON Patch operations, and it provides navigation. It uses no framework or DOM.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/headless-block-editor).
 

@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-A Claude Code plugin that writes the follow-ups a session leaves unfinished into an Esposter TodoList, tagged with the repository and session that found them, and drains a repository's follow-ups again one change at a time until none is left.
+A Claude Code plugin that writes a session's unfinished follow-ups into an Esposter TodoList, tagged with the repository and session that found them. It drains a repository's follow-ups one change at a time until none is left.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/todolist-agent-follow-ups).
 
@@ -15,12 +15,16 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
-Open a TodoList, press **Connect an agent** and follow its steps: create an API key with the Follow-ups scope under API keys in your settings, then install the plugin and give it the site, the list's id and the key.
+1. Open a TodoList and press **Connect an agent**. Follow its steps.
+2. Create an API key with the Follow-ups scope under API keys in your settings.
+3. Install the plugin:
 
 ```bash
 claude plugin marketplace add Esposter/Esposter
 claude plugin install follow-ups@esposter
 ```
+
+4. Give the plugin the site, the list's id and the key.
 
 ## <a name="license">⚖️ License</a>
 

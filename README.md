@@ -7,7 +7,7 @@
 [![skills.sh installs][badge-skills]][url-skills]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-> **Experimental.** Every published package in this repository is experimental: its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+> **Experimental.** Every published package in this repository is experimental. Its exports, build entries and files may change or be removed in any release, including a minor release. See [Stability](openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
 
 ## Table of Contents
 
@@ -244,102 +244,82 @@
 
 ## <a name="local-development">🏠 Local Development</a>
 
-### Git configuration to enable symlinks
+Run these in order from the repository root. Each step that can fail ends in a check; do not continue past a failed one. An agent reads `AGENTS.md` next and starts every session with `pnpm ai:resume`.
 
-The projects make use of symlinks in the git project. On Windows, this may not work as expected without extra configuration. To configure git to create symlinks on windows, you need to enable the Windows "Developer Mode" setting, and also set the `core.symlinks` git feature using either of the following commands:
+1. **Symlinks.** The repository tracks symlinks. On Windows, turn on Developer Mode first. Then run one of these commands:
 
 ```bash
-# Global setting
+# Global setting, for all repositories
 git config --global core.symlinks true
 
-# Local setting
+# Local setting, for this repository only
 git config core.symlinks true
 ```
 
-After applying this setting, you may need to reset your local branch to ensure the files get rewritten as symlinks. Note that this step is destructive and you will want to push any changes you have made prior to resetting your branch.
+Check: the tracked symlinks open as links and not as text files. If they open as text, `git reset --hard` rewrites them. It discards uncommitted work, so push or commit first.
 
-```bash
-git reset --hard
-```
-
-### Installing Dependencies
-
-1. Install the global [Vite+](https://viteplus.dev/guide/) CLI, then the node and pnpm versions the repository pins:
+2. **Toolchain.** Install the global [Vite+](https://viteplus.dev/guide/) CLI, then the node and pnpm versions the repository pins:
 
 ```bash
 vp env install
 ```
 
-2. Install Node Modules:
+Check: `node -v` equals `.node-version`, and `pnpm -v` equals `packageManager` in `package.json`.
+
+3. **Dependencies.**
 
 ```bash
 pnpm i
 ```
 
-3. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, `brew install postgresql@18` installs the server and `brew services start postgresql@18` keeps it running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`, which is not on `PATH` until added. The server listens on `localhost:5432`. The `esposter` database holds no data worth keeping: `pnpm dev` runs the migrations on it.
+Check: `pnpm i` exits with code 0.
 
-4. Add `.env` file according to `.env.example` in `apps/web` directory.
+4. **PostgreSQL.** Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, run `brew install postgresql@18`. Then run `brew services start postgresql@18`. It keeps the server running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`. That folder is not on `PATH` until you add it. Check: the server answers on `localhost:5432`. The `esposter` database holds no data worth keeping, and `pnpm dev` runs its migrations.
 
-5. Check what this machine still needs, the tools and logins with the command that installs or logs in to each:
+5. **Environment.** Create `apps/web/.env` from `apps/web/.env.example`.
+
+Check: the file `apps/web/.env` exists.
+
+6. **Machine check.** The command prints a table of the tools and logins that this machine still lacks. Each row gives its install or login command. It prints the full table on every run. Run what the table lists, and rerun until the command exits with code 0:
 
 ```bash
 pnpm ai:setup
 ```
 
-Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Check: `pnpm ai:setup` exits with code 0.
 
-### Spotlight on macOS
-
-The parity data lives in `{data-root}/genshin-parity` unless `GENSHIN_PARITY_DIRECTORY` names another folder. Create `{data-root}.noindex` as the data folder and make `{data-root}` a symlink to it: macOS never indexes a `*.noindex` folder and Spotlight follows no symlink, so every `{data-root}/...` path still resolves, and a real `{data-root}` folder must not be created beside the link. Then add `node_modules` and the pnpm store (`{home}/Library/pnpm/store`) under System Settings → Spotlight → Search Privacy, which can only be done by hand. The reason is in the [machine efficiency](openspec/specs/architecture/machine-efficiency/design.md) design.
-
-### Development Server
-
-1. Build the packages to be used by the application:
+7. **Run the app.** Build the workspace packages, then start the dev server on <http://localhost:3000>:
 
 ```bash
 vp run build:packages
-```
-
-2. Change to the app directory:
-
-```bash
 cd apps/web
-```
-
-3. Start the development server on <http://localhost:3000>
-
-```bash
 pnpm dev
 ```
 
-### Production
+Check: <http://localhost:3000> answers.
 
-Build the application for production:
+### Production
 
 ```bash
 pnpm build
-```
-
-Locally preview production build:
-
-```bash
 pnpm -C apps/web preview
 ```
+
+Deployment targets are in the [Nuxt deployment documentation](https://nuxt.com/docs/getting-started/deployment).
 
 ## <a name="architecture">🧭 Architecture</a>
 
 Esposter is a pnpm workspaces monorepo. See [monorepo tooling](https://github.com/Esposter/Esposter/blob/main/openspec/specs/architecture/monorepo-tooling/design.md) for workspace script orchestration and publishing boundaries.
-Packages are used directly by the nuxt application via `workspace:*`.
+The Nuxt application uses the packages directly, through `workspace:*`.
 
-How AI sessions land their commits, and how those commits are reviewed on the way to `main`, is in [the review docs](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/review/design.md).
+For how AI sessions land their commits, and how those commits are reviewed before they reach `main`, see [the review docs](https://github.com/Esposter/Esposter/blob/main/openspec/specs/infra/review/design.md).
 
 ### Workspace Graph
 
 [![Workspace dependency graph](./dependency-graph.svg)](https://github.com/Esposter/Esposter/blob/main/dependency-graph.svg)
 
-Each node's hue and tint are the role its edges give it, darkest at what the repo ships and lightest at what
-the rest of it stands on; the key is drawn into the image.
-Regenerate it from the repo root with:
+The hue and tint of each node show the role its edges give it. The darkest nodes are what the repository ships. The lightest nodes are what the rest of the repository stands on. The key is drawn into the image.
+To regenerate the graph, run this command from the repository root:
 
 ```bash
 pnpm graph:gen
@@ -389,7 +369,7 @@ pnpm graph:gen
 
 ## <a name="claude-code-plugins">🔌 Claude Code Plugins</a>
 
-This repository is also a Claude Code plugin marketplace named `esposter`, declared in [`.claude-plugin/marketplace.json`](https://github.com/Esposter/Esposter/blob/main/.claude-plugin/marketplace.json). Anyone adds it by the repository's GitHub name and installs a plugin by its marketplace name:
+This repository is also a Claude Code plugin marketplace named `esposter`. It is declared in [`.claude-plugin/marketplace.json`](https://github.com/Esposter/Esposter/blob/main/.claude-plugin/marketplace.json). To add the marketplace, use the repository's GitHub name. To install a plugin, use its name and the marketplace name:
 
 ```bash
 claude plugin marketplace add Esposter/Esposter
@@ -397,12 +377,12 @@ claude plugin install genshin-persona@esposter
 claude plugin install genshin-mods@esposter
 ```
 
-| Plugin                                                                                       | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)       | Eight mods: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and three guards: a delegation guard that nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout. |
-| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, with each answer opening on a spoken line and the rest in plain prose, and reads each reply aloud in the character's own cloned voice.                                                                                                                                                                                                                                                                                                                                                                                               |
+| Plugin                                                                                       | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)       | Eight mods. Five sit under one band above the prompt. Waypoints gives the next steps, one press each. Resin gives cache, context, limits and cost, with warm, compact and a one-click handoff. Veil is the recording mode. Commission gives a goal's task list and clock. Ward asks a question before editing a file another session just changed. The other three are guards. A delegation guard nudges a run of lookups toward a haiku agent. A disk-scan guard refuses a Bash scan from a root or home folder. A whole-index guard refuses a git command over the whole index while another session shares the checkout. |
+| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | The plugin speaks as the Genshin Impact character whose birthday is nearest to today. Each answer opens with a spoken line. The rest of each answer is plain prose. The plugin reads each reply aloud in the character's own cloned voice.                                                                                                                                                                                                                                                                                                                                                                                  |
 
-A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface) page.
+A plugin here is an ordinary workspace package. It is formatted, linted, tested and dependency-bumped with every other package. A merge to `main` releases it. An installed copy follows the marketplace on the next plugin update. For how plugins are built, and what they deliberately do not do, see the [Claude interface](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface) page.
 
 ## <a name="community">🤝 Community</a>
 

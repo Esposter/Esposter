@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-MJML's components as block types on the headless block editor, with a render to MJML's JSON form and source and a read back from MJML that refuses what the package does not take.
+This package provides MJML's components as block types for the headless block editor. It renders to MJML's JSON form and MJML source, and it reads MJML source back, refusing any tag, attribute or value it does not take.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/mjml-blocks).
 
@@ -23,7 +23,12 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 pnpm i mjml-blocks mjml zod
 ```
 
-The compile is the consumer's, so `mjml` is installed beside the package, and so is `zod`, the peer the schemas are written in. This example declares one leaf type, which a node schema needs, registers MJML's components beside it, renders a one-section email to MJML's JSON form and compiles it under strict validation:
+The consumer runs the compile. Install `mjml` and `zod` beside the package. `zod` is the peer that the schemas are written in. The example below does the following:
+
+1. Declares one leaf type, which a node schema needs.
+2. Registers MJML's components beside that leaf type.
+3. Renders a one-section email to MJML's JSON form.
+4. Compiles the JSON under strict validation.
 
 ```ts
 import mjml2html from "mjml";
@@ -37,8 +42,9 @@ import {
 import type { MjmlRichTextDefinition } from "mjml-blocks";
 import { z } from "zod";
 
-// A leaf the document holds beside MJML's own nodes, declared by merging its type tag into MjmlLeafNodes. A column or a hero names a leaf only
-// when the registry is given its full definition as leafTypes, which this example leaves empty, so here they hold MJML's own nodes alone
+// The document holds this leaf beside MJML's own nodes. Declare it by merging its type tag into MjmlLeafNodes.
+// A column or a hero names a leaf only when the registry is given its full definition as leafTypes.
+// This example leaves leafTypes empty, so its columns and heroes hold MJML's own nodes alone
 interface LinkNode {
   props: { href: string; id: string };
   type: "link";

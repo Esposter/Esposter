@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Mock Azure service classes for local development and testing, providing in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
+It provides mock Azure service classes for local development and testing. They are in-memory implementations of the Azure Table Storage, Blob Storage, Service Bus and EventGrid clients, and they mirror the real Azure SDK interfaces.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -18,6 +18,8 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ---
 
 ## <a name="getting-started">🚀 Getting Started</a>
+
+Install the package and its Azure peer packages as dev dependencies:
 
 ```bash
 pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/search-documents @azure/service-bus @azure/storage-blob @azure/storage-queue
@@ -34,7 +36,7 @@ await mockTableClient.upsertEntity({ partitionKey: "pk", rowKey: "rk", value: 42
 const entity = await mockTableClient.getEntity("pk", "rk");
 ```
 
-Replace real Azure clients with their mock equivalents by swapping them in your test setup or local `.env` configuration.
+Replace each real Azure client with its mock equivalent. Make the replacement in your test setup or in your local `.env` configuration.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
@@ -51,7 +53,7 @@ Replace real Azure clients with their mock equivalents by swapping them in your 
 | `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
 | `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | Stub: `group().sendToAll` and nothing else   |
 
-Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase`, `MockContainerDatabase`, …), so a test resets by clearing the one it seeded.
+Each client stores its state in an exported `Mock*Database` map, such as `MockTableDatabase` or `MockContainerDatabase`. To reset a test, clear the map that the test seeded.
 
 ## <a name="license">⚖️ License</a>
 

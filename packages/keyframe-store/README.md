@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Content-addressed version storage for documents handed over whole, where every version is a zstd **keyframe**, compressed on its own, or a **delta** against a keyframe.
+This package stores content-addressed versions of whole documents. Each version is either a zstd **keyframe**, compressed on its own, or a **delta** against a keyframe.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
 

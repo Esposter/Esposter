@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Headless Vue composables over pdfjs-dist that load a document, draw its pages and track the viewer's state, with no styling and no renderer of its own.
+This package provides headless Vue composables over pdfjs-dist. The composables load a document, draw its pages and track the viewer's state, with no styling and no renderer of their own.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-pdfjs-headless).
 
@@ -19,9 +19,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+1. Install the package.
+
 ```bash
 pnpm i vue-pdfjs-headless
 ```
+
+2. Add this code to the `<script setup>` of a component.
 
 ```ts
 import * as pdfjs from "pdfjs-dist";
@@ -42,23 +46,23 @@ const { pdfDocument } = usePdfDocument({
 usePdfPage({ canvas, pageNumber: 1, pdfDocument });
 ```
 
-Bind `canvas` to a `<canvas ref="canvas" />` in the component's template, and the page is drawn into it.
+3. Bind `canvas` to a `<canvas ref="canvas" />` in the template. The first page appears in the canvas.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Kind       | Purpose                                                                                                       |
-| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------- |
-| `PdfRenderer`       | interface  | The renderer's API module, its data folder URLs and its worker, which the consumer supplies                   |
-| `PdfSource`         | type       | A document by its URL, its bytes, or a file the reader picked                                                 |
-| `PdfViewerState`    | interface  | The viewer's pages, zoom, rotation, search, download and print, as state and actions                          |
-| `readXfdf`          | function   | Reads the free-text annotations of an XFDF file, or an error naming what is wrong with it                     |
-| `usePdfAnnotations` | composable | The reader's comments and free-text annotations, exported to and imported from XFDF                           |
-| `usePdfDocument`    | composable | Loads a document from a source through the consumer's renderer, with its password prompt and failure as state |
-| `usePdfPage`        | composable | Draws one page of a loaded document into a canvas, at the canvas's width and the device's pixel ratio         |
-| `usePdfThumbnails`  | composable | One thumbnail per page, drawn only while its row is in view of the sidebar                                    |
-| `usePdfViewer`      | composable | Builds the renderer's viewer for a loaded document, with its pages, zoom and search as state                  |
-| `usePdfZoomGesture` | composable | Pinch and Ctrl-wheel zoom the viewer about the pointer, keeping the content under it in place                 |
-| `writeXfdf`         | function   | Writes free-text annotations as XFDF                                                                          |
+| Export              | Kind       | Purpose                                                                                                        |
+| ------------------- | ---------- | -------------------------------------------------------------------------------------------------------------- |
+| `PdfRenderer`       | interface  | The renderer: its API module, its data folder URLs and its worker. The consumer supplies it.                   |
+| `PdfSource`         | type       | A document, given by its URL, its bytes or a file that the reader picked                                       |
+| `PdfViewerState`    | interface  | The viewer's pages, zoom, rotation, search, download and print, as state and actions                           |
+| `readXfdf`          | function   | Reads the free-text annotations of an XFDF file, or returns an error that names what is wrong with it          |
+| `usePdfAnnotations` | composable | Exports the reader's comments and free-text annotations to XFDF, and imports them from XFDF                    |
+| `usePdfDocument`    | composable | Loads a document from a source through the consumer's renderer. Its password prompt and its failure are state. |
+| `usePdfPage`        | composable | Draws one page of a loaded document into a canvas, at the canvas's width and the device's pixel ratio          |
+| `usePdfThumbnails`  | composable | One thumbnail per page. A thumbnail is drawn only while its row is in view of the sidebar.                     |
+| `usePdfViewer`      | composable | Builds the renderer's viewer for a loaded document. Its pages, zoom and search are state.                      |
+| `usePdfZoomGesture` | composable | Zooms the viewer about the pointer on a pinch or a Ctrl-wheel. The content under the pointer stays in place.   |
+| `writeXfdf`         | function   | Writes free-text annotations as XFDF                                                                           |
 
 ## <a name="license">⚖️ License</a>
 

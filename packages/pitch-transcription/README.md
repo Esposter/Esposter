@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-The notes played in a recording: each note's pitch, start, length, loudness and pitch bend, heard by Spotify's Basic Pitch model on ONNX Runtime and written as MIDI if you want a file.
+This package finds the notes played in a recording, with each note's pitch, start, length, loudness and pitch bend. It uses Spotify's Basic Pitch model on ONNX Runtime, and it can write them as a MIDI file.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/pitch-transcription).
 
@@ -47,9 +47,9 @@ const midiBytes = writeMidi(timedNotes);
 await session.release();
 ```
 
-A worker or a server that already holds the readings imports note creation from `pitch-transcription/notes`, which never loads ONNX Runtime.
+If a worker or a server already holds the readings, import note creation from `pitch-transcription/notes`. That subpath never loads ONNX Runtime.
 
-`pitch-transcription` takes `onnxruntime-common` as a peer; the runtime the session runs on is yours to choose, `onnxruntime-node` under Node or `onnxruntime-web` in a browser.
+`pitch-transcription` takes `onnxruntime-common` as a peer. Choose the runtime that the session runs on: `onnxruntime-node` under Node, or `onnxruntime-web` in a browser.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
@@ -64,7 +64,7 @@ A worker or a server that already holds the readings imports note creation from 
 
 ## <a name="license">⚖️ License</a>
 
-This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE). It is derived from [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), Copyright 2022 Spotify AB, and ships its trained model unmodified, both under the Apache-2.0 license; see `NOTICE`.
+This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE). It is derived from [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts), Copyright 2022 Spotify AB. It ships the Basic Pitch model unmodified. basic-pitch-ts and the model are both licensed under the Apache-2.0 license. See `NOTICE`.
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

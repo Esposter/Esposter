@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL database, the source of truth for all relational data and usable in both browser and server environments.
+It provides Drizzle ORM schemas, relations and migrations for Esposter's PostgreSQL database. It is the source of truth for all relational data, and it works in browser and server environments.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -41,7 +41,12 @@ export const countUsers = (db: Database) => db.$count(usersInAuth);
 
 ## <a name="migrations">🗃️ Migrations</a>
 
-After editing a schema file, generate the migration with `pnpm db:gen`. Migrations are output to `apps/web/server/db/migrations/` and applied by `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` runs first and the deploy's pre-deploy step runs too.
+After you edit a schema file, generate the migration:
+
+1. Run `pnpm db:gen` in `packages/db-schema/`.
+2. Check the result: the new migration folder appears in `apps/web/server/db/migrations/`.
+
+Migrations are applied by `pnpm --filter @esposter/db-schema db:migrate`. `pnpm dev` runs this command first. The deploy's pre-deploy step runs it too.
 
 ## <a name="license">⚖️ License</a>
 

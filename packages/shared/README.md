@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Shared TypeScript utilities, types, and error classes for the Esposter platform.
+Provides shared TypeScript utilities, types and error classes for the Esposter platform.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/shared).
 
@@ -19,11 +19,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+Install the package and zod.
+
 ```bash
 pnpm i @esposter/shared zod
 ```
 
-Works in both browser and server environments.
+The package works in browser and server environments.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 

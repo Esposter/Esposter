@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Serverless Azure Functions backend for Esposter, handling asynchronous workloads triggered by Azure EventGrid events, Service Bus queues, and timers — notification delivery, webhook delivery, scheduled message jobs, and resource purging.
+Runs Esposter's asynchronous work as serverless Azure Functions. The triggers are Azure EventGrid events, Service Bus queues and timers. The work is notification delivery, webhook delivery, scheduled message jobs and resource purging.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -15,7 +15,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run from `apps/functions/`:
+Run this command from `apps/functions/`:
 
 ```bash
 pnpm build        # compile to dist/

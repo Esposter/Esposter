@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A Nuxt module for TresJS that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.
+A Nuxt module for TresJS that auto-imports the TresJS core API and registers TresCanvas for client and server. It registers the components and composables of every installed @tresjs package, and has no devtools UI of its own.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/tresjs-nuxt).
 
@@ -19,9 +19,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+1. Install the package.
+
 ```bash
 pnpm i tresjs-nuxt
 ```
+
+2. Add this to `nuxt.config.ts`.
 
 ```ts
 // nuxt.config.ts
@@ -34,10 +38,10 @@ export default defineNuxtConfig({
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export          | Kind      | Purpose                                                                                                                    |
-| :-------------- | :-------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `default`       | const     | The Nuxt module: auto-imports the TresJS core API, registers `TresCanvas` and each installed `@tresjs/*` package's exports |
-| `ModuleOptions` | interface | The `tres` config key: `glsl` loads the `vite-plugin-glsl` peer, and `modules` names extra packages whose exports register |
+| Export          | Kind      | Purpose                                                                                                                                 |
+| :-------------- | :-------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `default`       | const     | The Nuxt module. It auto-imports the TresJS core API, and registers `TresCanvas` and the exports of each installed `@tresjs/*` package. |
+| `ModuleOptions` | interface | The `tres` config key. `glsl` loads the `vite-plugin-glsl` peer. `modules` names extra packages whose exports register.                 |
 
 ## <a name="license">⚖️ License</a>
 

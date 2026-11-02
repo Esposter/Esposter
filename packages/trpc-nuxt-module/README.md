@@ -5,7 +5,11 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-tRPC for [Nuxt](https://nuxt.com): a Nuxt module that registers your router's HTTP handler — and, when you ask for it, a WebSocket handler over Nitro's own WebSockets — fetches through the request event during server rendering so a call never leaves the process, and decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`, each a composable over Nuxt's own `useAsyncData`.
+tRPC for [Nuxt](https://nuxt.com). This module does the following:
+
+- It registers the router's HTTP handler, and a WebSocket handler over Nitro's own WebSockets when you enable it.
+- During server rendering, it fetches through the request event, so a call never leaves the process.
+- It decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`. Each is a composable over Nuxt's own `useAsyncData`.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/trpc-nuxt-module).
 
@@ -19,11 +23,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+1. Install the packages.
+
 ```bash
 pnpm i trpc-nuxt-module @trpc/server @trpc/client
 ```
 
-Register the module with the file and export name of your router and your context factory:
+2. Register the module in `nuxt.config.ts`. Give the file and the export name of your router and of your context factory.
 
 ```ts
 // nuxt.config.ts
@@ -39,6 +45,8 @@ export default defineNuxtConfig({
 });
 ```
 
+3. Define the router in the file that the `router` option names.
+
 ```ts
 // server/trpc/router.ts
 import { initTRPC } from "@trpc/server";
@@ -51,7 +59,7 @@ export const appRouter = t.router({ greeting: t.procedure.input(z.string()).quer
 export type AppRouter = typeof appRouter;
 ```
 
-Provide a client from a plugin — `createTRPCNuxtClient` and the links are auto-imported:
+4. Create a plugin from this code. `createTRPCNuxtClient` and the links are auto-imported. `useNuxtApp()` returns `$trpc`.
 
 ```ts
 // app/plugins/trpc.ts
@@ -63,7 +71,7 @@ export default defineNuxtPlugin(() => {
 });
 ```
 
-And call a procedure from a page:
+5. Create a page from this code. The page shows `Hello world`.
 
 ```vue
 <script setup lang="ts">
@@ -79,16 +87,16 @@ const { data } = await $trpc.greeting.useQuery(name);
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                                                       | Description                                                                                                     |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `createTRPCNuxtClient`                                       | The typed client, every procedure decorated with `useQuery`, `useLazyQuery`, `useMutation` or `useSubscription` |
-| `getMutationKey`, `getQueryKey`                              | The `useAsyncData` keys a procedure's data is cached under, for `useNuxtData` and `refreshNuxtData`             |
-| `httpBatchLink`, `httpLink`                                  | tRPC's links, sending through the request event during server rendering                                         |
-| `trpc-nuxt-module`                                           | The module — `router`, `createContext`, `endpoint` and `webSocket` options                                      |
-| `trpc-nuxt-module/runtime/server/createTRPCEventHandler`     | The HTTP handler over tRPC's fetch adapter, for a Nitro app without Nuxt                                        |
-| `trpc-nuxt-module/runtime/server/createTRPCWebSocketHandler` | The WebSocket handler over tRPC's `applyWSSHandler` and crossws, for a Nitro app without Nuxt                   |
+| Export                                                       | Description                                                                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `createTRPCNuxtClient`                                       | The typed client. Every procedure is decorated with `useQuery`, `useLazyQuery`, `useMutation` or `useSubscription`. |
+| `getMutationKey`, `getQueryKey`                              | The `useAsyncData` keys that cache a procedure's data. Used by `useNuxtData` and `refreshNuxtData`.                 |
+| `httpBatchLink`, `httpLink`                                  | tRPC's links. They send through the request event during server rendering.                                          |
+| `trpc-nuxt-module`                                           | The module. Its options are `router`, `createContext`, `endpoint` and `webSocket`.                                  |
+| `trpc-nuxt-module/runtime/server/createTRPCEventHandler`     | The HTTP handler over tRPC's fetch adapter. For a Nitro app without Nuxt.                                           |
+| `trpc-nuxt-module/runtime/server/createTRPCWebSocketHandler` | The WebSocket handler over tRPC's `applyWSSHandler` and crossws. For a Nitro app without Nuxt.                      |
 
-A WebSocket connection's open and close call the `trpc-nuxt-module:webSocket:open` and `trpc-nuxt-module:webSocket:close` Nitro runtime hooks with its context, typed off your router.
+A WebSocket connection calls the `trpc-nuxt-module:webSocket:open` Nitro runtime hook when it opens. It calls the `trpc-nuxt-module:webSocket:close` hook when it closes. Both hooks receive the connection's context, typed from your router.
 
 ## <a name="license">⚖️ License</a>
 

@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-The main Esposter web application — a Nuxt full-stack app serving the frontend, tRPC API, and server routes.
+Serves the Esposter frontend, tRPC API and server routes. It is the main web application, built as a Nuxt full-stack app.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -16,32 +16,43 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
-From the **repo root**, install dependencies and build workspace packages first:
+1. From the **repo root**, install the dependencies and build the workspace packages:
 
-```bash
-pnpm i
-vp run build:packages
-```
+   ```bash
+   pnpm i
+   vp run build:packages
+   ```
 
-Then from `apps/web/`:
+   Check: both commands end without an error.
 
-```bash
-# Copy and fill in environment variables
-cp .env.example .env
+2. From `apps/web/`, copy the example environment file and fill in its variables:
 
-# Start the development server on http://localhost:3000
-pnpm dev
-```
+   ```bash
+   # Copy and fill in environment variables
+   cp .env.example .env
+   ```
+
+   Check: `.env` exists in `apps/web/`.
+
+3. Start the development server:
+
+   ```bash
+   # Start the development server on http://localhost:3000
+   pnpm dev
+   ```
+
+   Check: the development server serves `http://localhost:3000`.
 
 ### Prerequisites
 
-- Node.js at the root `.node-version`, and pnpm at the root `package.json`'s `packageManager` version
-- [PostgreSQL](https://www.postgresql.org/download) + PgAdmin (local DB)
-- Azure credentials in `.env` for Table Storage, Blob, WebPubSub, and EventGrid (mocked locally via `azure-mock`)
+- Node.js: the version in the root `.node-version` file.
+- pnpm: the version in the `packageManager` field of the root `package.json`.
+- [PostgreSQL](https://www.postgresql.org/download) and PgAdmin, for the local database.
+- Azure credentials in `.env` for Table Storage, Blob, WebPubSub and EventGrid. Locally, `azure-mock` mocks these services.
 
 ### Database
 
-Migrations live in `server/db/migrations/` and are generated from `packages/db-schema`:
+Migrations are in `server/db/migrations/`. They are generated from `packages/db-schema`. Run these commands from `packages/db-schema/`:
 
 ```bash
 # From packages/db-schema/
@@ -50,11 +61,11 @@ pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI
 ```
 
-Pending migrations are applied by `pnpm --filter @esposter/db-schema db:migrate`: `pnpm dev` runs it first, and it is the deploy's pre-deploy step.
+Pending migrations are applied by `pnpm --filter @esposter/db-schema db:migrate`. `pnpm dev` runs this command first. It is also the deploy's pre-deploy step.
 
 ## <a name="commands">⌨️ Commands</a>
 
-All commands run from `apps/web/`:
+Run these commands from `apps/web/`:
 
 ```bash
 pnpm build            # production build

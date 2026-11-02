@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A Nuxt security module for [Nitro 3](https://nitro.build) and h3 2 that sets security headers on rendered pages, a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.
+This package is a Nuxt security module for [Nitro 3](https://nitro.build) and h3 2 that sets security headers on rendered pages. It also provides a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/nuxt-security-module).
 

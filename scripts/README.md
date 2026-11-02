@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-The repository's own tooling — the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher.
+Provides the repository's own tooling: the workspace dependency graph, the outdated-dependency report, the custom oxlint plugins, the sweep scans and the cross-platform launcher.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -15,7 +15,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run from `scripts/`:
+Run these commands from `scripts/`:
 
 ```bash
 pnpm ai:ci:watch

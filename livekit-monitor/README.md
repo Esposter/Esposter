@@ -1,17 +1,19 @@
 # livekit-monitor Railway service
 
-This folder lets Railway deploy `livekit-monitor` as a separate service from this repository. It wraps the upstream public `jossephus/livekit-monitor` image with a tiny entrypoint that requires all deployment variables to be present at startup.
+Use this folder to deploy `livekit-monitor` to Railway as a separate service from this repository. It wraps the public upstream image `jossephus/livekit-monitor` with an entrypoint that requires every deployment variable at startup.
 
 ## Railway settings
 
-Create a Railway service from this repo with:
+Warning: the monitor stores session history in SQLite under `/data`. Keep `/data` on a Railway volume, so the history persists.
+
+Create a Railway service from this repository with these settings:
 
 - Root Directory: `livekit-monitor`
 - Dockerfile Path: `Dockerfile`
 - Public domain: enabled
 - Volume mount: `/data`
 
-Variables:
+Set these variables:
 
 ```text
 LIVEKIT_URL=http://${{livekit-server.RAILWAY_PRIVATE_DOMAIN}}:${{livekit-server.PORT}}
@@ -21,4 +23,4 @@ PORT=3001
 SQLITE_PATH=/data/monitor.db
 ```
 
-The monitor stores session history in SQLite, so keep `/data` on a Railway volume.
+Check: the deploy logs have no line that starts with `ERROR:`.

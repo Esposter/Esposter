@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-The Azure wire conventions that a real client and a fake one both have to speak: the OData filter clause vocabulary shared by Table Storage and Search, the entity key casing convention, and the service limits.
+It holds the Azure wire conventions that a real client and a fake client must both follow. They are the OData filter clause vocabulary shared by Table Storage and Search, the entity key casing convention and the service limits.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -18,6 +18,8 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ---
 
 ## <a name="getting-started">🚀 Getting Started</a>
+
+Install the package:
 
 ```bash
 pnpm add @esposter/azure
@@ -42,10 +44,11 @@ pnpm add @esposter/azure
 
 ### Clauses
 
-A `Clause<T>` is a filter condition expressed against a property of `T`, and it is what the OData string is
-built from rather than the string being assembled by hand. `BinaryOperator` covers the comparisons Table
-Storage understands; `SearchOperator` covers the collection predicates only Azure Search does; `UnaryOperator`
-is how clauses are combined.
+A `Clause<T>` is a filter condition on a property of `T`. The OData string is built from clauses. Do not assemble the string by hand.
+
+- `BinaryOperator` holds the comparisons that Table Storage understands.
+- `SearchOperator` holds the collection predicates that only Azure Search supports.
+- `UnaryOperator` combines clauses.
 
 ```ts
 import type { Clause } from "@esposter/azure";
@@ -57,10 +60,12 @@ const clause: Clause<{ createdAt: Date }> = { key: "createdAt", operator: Binary
 
 ### Values
 
-`serializeValue` renders a `SerializableValue` the way the target service expects — Table Storage wants a
-`datetime'<iso>'` literal for a `Date`, Search wants the bare ISO string, and `isTableFilter` selects between
-them. Strings go through `escapeValue`, which doubles embedded single quotes so a value can never close its own
-literal and append filter syntax of its own.
+`serializeValue` renders a `SerializableValue` in the format that the target service expects. `isTableFilter` selects the format.
+
+- Table Storage: a `Date` renders as a `datetime'<iso>'` literal.
+- Search: a `Date` renders as the bare ISO string.
+
+Strings go through `escapeValue`. It doubles each embedded single quote, so a value cannot close its own literal or add filter syntax of its own.
 
 ```ts
 import { escapeValue, serializeValue } from "@esposter/azure";
@@ -68,10 +73,14 @@ import { escapeValue, serializeValue } from "@esposter/azure";
 
 ### Filters
 
-`serializeClauses` turns a clause array into a Table Storage filter string and `serializeSearchClauses` into a
-Search one; the two differ only in how a `Date` renders. Clauses on the same key are grouped — a range pair is
-joined with `and`, anything else with `or` — so a caller never assembles the boolean structure by hand.
-`deserializeClause` is the inverse.
+`serializeClauses` turns a clause array into a Table Storage filter string. `serializeSearchClauses` turns a clause array into a Search filter string. The two differ only in how a `Date` renders.
+
+Clauses on the same key are grouped:
+
+- A range pair is joined with `and`.
+- Any other group is joined with `or`.
+
+Do not assemble the boolean structure by hand. `deserializeClause` is the inverse.
 
 ```ts
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
@@ -83,13 +92,16 @@ const filter = serializeClauses([
 ]);
 ```
 
-Null is where the two services diverge and the helpers carry the difference: `getTableNullClause` expresses "is null" for Table Storage, while Search supports it directly through `getSearchNullClause` / `getSearchNonNullClause`. `getPartitionKeyFilter` is the one-clause case worth naming, since a read, a count and a purge of the same entity must all start from it.
+The two services handle null differently. The helpers handle the difference.
+
+- `getTableNullClause` expresses "is null" for Table Storage.
+- Search supports null directly, through `getSearchNullClause` / `getSearchNonNullClause`.
+
+`getPartitionKeyFilter` builds the one-clause filter that selects everything under one partition key. A read, a count and a purge of the same entity must all start from this filter.
 
 ### Keys
 
-`CompositeKey` is the `partitionKey`/`rowKey` pair every Table entity carries, and `CompositeKeyPropertyNames`
-is how those names are referred to without restating the strings. `serializeKey` and `deserializeKey` convert
-at the boundary.
+`CompositeKey` is the `partitionKey`/`rowKey` pair that every Table entity carries. Refer to these names through `CompositeKeyPropertyNames`. Do not restate the strings. `serializeKey` and `deserializeKey` convert keys at the boundary.
 
 ```ts
 import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
@@ -97,8 +109,7 @@ import { CompositeKey, CompositeKeyPropertyNames, serializeKey } from "@esposter
 
 ### Limits
 
-`AZURE_MAX_BATCH_SIZE`, `AZURE_MAX_PAGE_SIZE` and `AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS` are the service's own
-ceilings, named so a caller paginating, batching or enqueueing does not hard-code them.
+These constants hold the maximum values that the service allows: `AZURE_MAX_BATCH_SIZE`, `AZURE_MAX_PAGE_SIZE` and `AZURE_MAX_QUEUE_VISIBILITY_TIMEOUT_MS`. Use them when you paginate, batch or enqueue. Do not hard-code these values.
 
 ## <a name="license">⚖️ License</a>
 

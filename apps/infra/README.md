@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-[Pulumi](https://github.com/pulumi/pulumi) infrastructure-as-code for Esposter's Azure and GitHub resources — every cloud resource declared from TypeScript, through the Azure Native and GitHub providers.
+[Pulumi](https://github.com/pulumi/pulumi) infrastructure-as-code for Esposter's Azure and GitHub resources. Every cloud resource is declared in TypeScript, through the Azure Native and GitHub providers.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra).
 
@@ -18,40 +18,46 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ### Tooling
 
-Install the Pulumi CLI before running stack commands. The `@pulumi/pulumi` dependency is the Node.js SDK used by the Pulumi program; it does not install the `pulumi` command.
+Install the Pulumi CLI before you run a stack command. The `@pulumi/pulumi` dependency is the Node.js SDK for the Pulumi program. It does not install the `pulumi` command.
 
-```bash
-winget install Pulumi.Pulumi
-# Or, if you use Chocolatey:
-choco install pulumi
-pulumi version
-```
+1. Install the Pulumi CLI with one of these commands:
 
-Install workspace dependencies from the repository root:
+   ```bash
+   winget install Pulumi.Pulumi
+   # Or, if you use Chocolatey:
+   choco install pulumi
+   pulumi version
+   ```
 
-```bash
-pnpm i
-```
+2. Install the workspace dependencies. Run this command from the repository root:
+
+   ```bash
+   pnpm i
+   ```
+
+   Check: the command ends without an error.
 
 ### Stack Setup
 
-Authenticate Azure locally:
+1. Authenticate to Azure on the local machine:
 
-```bash
-az login
-az account set --subscription "<subscription-id>"
-```
+   ```bash
+   az login
+   az account set --subscription "<subscription-id>"
+   ```
 
-Select the stack:
+   Replace `<subscription-id>` with your subscription ID.
 
-```bash
-cd apps/infra
-pulumi stack select prod
-```
+2. Select the stack:
+
+   ```bash
+   cd apps/infra
+   pulumi stack select prod
+   ```
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run from `apps/infra/`:
+Run these commands from `apps/infra/`:
 
 ```bash
 pnpm build             # regenerate the barrel and compile the Pulumi program to dist/

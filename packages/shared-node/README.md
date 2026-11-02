@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Node-only shared tooling for Esposter — the machine-wide download cache, hidden-window child processes and benchmark reporting reused across packages.
+Provides the Node-only tools that Esposter packages share: a machine-wide download cache, hidden-window child processes and benchmark reporting.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -19,9 +19,15 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+Import this package only in a server or build environment, never in browser code.
+
+1. Install the package.
+
 ```bash
 pnpm i @esposter/shared-node
 ```
+
+2. Run this code.
 
 ```ts
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -29,17 +35,15 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 spawnSync("pnpm", ["install"], { stdio: "inherit" });
 ```
 
-- Server/build environment only; never import in browser code.
-
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                                                                          | Description                                                                                                                   |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `BENCHMARK_RUN_OPTIONS` (`/bench`)                                              | Run options every `bench.compare` passes, fixing the iteration count                                                          |
-| `BenchmarkMarkdownReporter` (default export, `/reporter`)                       | Vitest reporter — writes `Foo.bench.md` + `Foo.bench.json` beside `Foo.bench.ts`                                              |
-| `spawn`, `spawnSync`, `execFile`, `execFileSync`, `execSync` (`/child-process`) | Node's own child-process functions, each forcing `windowsHide: true` so a console child never opens a window of its own       |
-| `execFileAsync` (`/child-process`)                                              | The promisified `execFile`, with the same window flag, resolving `{ stdout, stderr }`                                         |
-| `CACHE_ROOT`, `readContentAddressedObject` (`/cache`)                           | The download cache folder every checkout shares, and a read-through cache for objects named by the hex SHA-256 of their bytes |
+| Export                                                                          | Description                                                                                                                     |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `BENCHMARK_RUN_OPTIONS` (`/bench`)                                              | Run options that every `bench.compare` call passes. They fix the iteration count.                                               |
+| `BenchmarkMarkdownReporter` (default export, `/reporter`)                       | Vitest reporter. Writes `Foo.bench.md` and `Foo.bench.json` beside `Foo.bench.ts`.                                              |
+| `spawn`, `spawnSync`, `execFile`, `execFileSync`, `execSync` (`/child-process`) | Node's own child-process functions. Each forces `windowsHide: true`, so a console child never opens a window of its own.        |
+| `execFileAsync` (`/child-process`)                                              | The promisified `execFile`, with the same window flag. Resolves `{ stdout, stderr }`.                                           |
+| `CACHE_ROOT`, `readContentAddressedObject` (`/cache`)                           | The download cache folder that every checkout shares. A read-through cache for objects named by the hex SHA-256 of their bytes. |
 
 ## <a name="license">⚖️ License</a>
 

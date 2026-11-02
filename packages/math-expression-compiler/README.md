@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Math expressions compiled once into a function of plain numbers, in mathjs's numeric language and held to mathjs's recorded answers.
+This package compiles math expressions once, each into a function of plain numbers. They use mathjs's numeric language and match mathjs's recorded answers.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/math-expression-compiler).
 

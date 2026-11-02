@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files, inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
+This package parses \*.tmx files written by [Tiled Map Editor](http://www.mapeditor.org/). It is inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/parse-tmx).
 

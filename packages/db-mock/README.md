@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-In-memory PostgreSQL database factory for testing, server environment only: it uses [PGlite](https://github.com/electric-sql/pglite) to spin up a real Drizzle ORM database with the full Esposter schema applied, without needing a running Postgres instance.
+It provides an in-memory PostgreSQL database factory for tests, for the server environment only. It uses [PGlite](https://github.com/electric-sql/pglite) to start a real Drizzle ORM database with the full Esposter schema applied, so no running Postgres instance is needed.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -23,7 +23,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="usage">📝 Usage</a>
 
-`@esposter/db-mock` is a `devDependency` — import it only in test files:
+`@esposter/db-mock` is a `devDependency`. Import it only in test files:
 
 ```ts
 import { createMockDb } from "@esposter/db-mock";
@@ -32,8 +32,12 @@ const db = await createMockDb();
 // db is a fully-typed `Database` (the driver-agnostic drizzle handle) with all Esposter relations applied
 ```
 
-- A schema change needs the snapshot regenerated: build `@esposter/db-schema`, then run `pnpm snapshot:gen` here.
-- Its peers install with `pnpm i -D @electric-sql/pglite @esposter/db-schema drizzle-orm`.
+After a schema change, regenerate the snapshot:
+
+1. Run `pnpm build` in `packages/db-schema/`. The build exits without errors.
+2. Run `pnpm snapshot:gen` in `packages/db-mock/`. The output contains `Wrote`.
+
+Install the peer dependencies: `pnpm i -D @electric-sql/pglite @esposter/db-schema drizzle-orm`.
 
 ## <a name="license">⚖️ License</a>
 

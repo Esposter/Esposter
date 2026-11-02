@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless canvas frame: `useCanvasFrame` draws its content in an isolated document at a width, scales it down to fit a narrower pane, and adopts a stylesheet into that document, with no styling of its own.
+This package is a headless canvas frame with no styling of its own. `useCanvasFrame` draws content in an isolated document at a width, scales it down to fit a narrower pane, and adopts a stylesheet into that document.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -19,9 +19,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
+1. Install the package.
+
 ```bash
 pnpm i vue-canvas-frame-headless
 ```
+
+2. Create a component from this code. The slot content appears inside the frame.
 
 ```vue
 <script setup lang="ts">
@@ -51,14 +55,14 @@ const { frameBody, frameStyle } = useCanvasFrame({
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                | Kind       | Purpose                                                                                  |
-| --------------------- | ---------- | ---------------------------------------------------------------------------------------- |
-| `CANVAS_FRAME_SRCDOC` | const      | The document every frame starts from, before its page's markup is teleported into it     |
-| `getFrameScale`       | function   | The scale that fits a frame to a pane, never above 1, and 1 while the pane is unmeasured |
-| `getFrameWidth`       | function   | The frame's width: its least width, or the pane's width when it fills a wider pane       |
-| `useCanvasFrame`      | composable | Draws content in an isolated document at a width, scaled down to fit a narrower pane     |
+| Export                | Kind       | Purpose                                                                                               |
+| --------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| `CANVAS_FRAME_SRCDOC` | const      | The document that every frame starts from, before the page markup is teleported into it               |
+| `getFrameScale`       | function   | The scale that fits a frame to a pane. It is never above 1, and it is 1 while the pane is unmeasured. |
+| `getFrameWidth`       | function   | The frame's width: its least width, or the pane's width when it fills a wider pane                    |
+| `useCanvasFrame`      | composable | Draws content in an isolated document at a width, scaled down to fit a narrower pane                  |
 
-`getFrameWidth` and `getFrameScale` are the pure geometry the composable uses, exported on their own.
+`getFrameWidth` and `getFrameScale` are the pure geometry that `useCanvasFrame` uses. They are exported on their own.
 
 ## <a name="license">⚖️ License</a>
 

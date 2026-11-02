@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Azure client factories and the server-side domain services built on them, server environment only, covering Azure Table Storage, Blob Storage, Service Bus and AI Search, plus the message, moderation, resource and RBAC services shared by the app and the Azure Functions.
+It provides Azure client factories for Table Storage, Blob Storage, Service Bus and AI Search, for the server environment only. The server-side domain services built on them include the message, moderation, resource and RBAC services, which the app and the Azure Functions share.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -22,7 +22,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 | `getServiceBusSender` | A cached `ServiceBusSender` for an `AzureQueue`                   |
 | `getTableClient`      | A `TableClient` typed by `AzureTableEntityMap`, table provisioned |
 
-- **Server-only**: this package must not be imported in browser code.
+- **Server-only**: Do not import this package in browser code.
 - Every factory takes a **connection string**.
 
 ## <a name="usage">📝 Usage</a>
@@ -30,7 +30,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ```ts
 import { getFilesBlobNames } from "@esposter/db";
 
-// Every blob each file owns, flattened into the one list a delete publishes
+// One flat list of every blob that each file owns. A delete publishes this list.
 const blobNames = getFilesBlobNames("prefix", [{ filename: "photo.png", id: "file-id" }]);
 ```
 
