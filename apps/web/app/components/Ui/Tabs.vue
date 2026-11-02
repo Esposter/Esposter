@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 
-import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 import { Tabs } from "@vuetify/v0";
 
 interface Props {

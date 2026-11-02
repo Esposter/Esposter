@@ -1,8 +1,8 @@
-import { getResourceFileBlobName } from "@esposter/db-schema";
 import type { JSONContent } from "@tiptap/core";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
+import { getResourceFileBlobName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(renderNoteHtml, () => {

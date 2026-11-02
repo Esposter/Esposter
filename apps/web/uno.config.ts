@@ -266,6 +266,9 @@ export default defineConfig({
       "p-3 text-left cursor-pointer ui-frame hover:[filter:var(--ui-hover-filter)] hover:[background-image:var(--ui-hover-overlay)]",
     // A guide line down the start edge of what it holds — a navigation's nested list, a thread — as a divider
     "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
+    // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour under a heavier indicator
+    "ui-header-trigger":
+      "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
     // Current or focused one. The tint marks a focused row, so it draws no ring as well. Under a finger it is eleven
     // Steps tall at the least, as a button is
@@ -279,9 +282,6 @@ export default defineConfig({
     "ui-tab":
       "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[variant=Header]:data-[selected]:text-text data-[variant=Header]:data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
-    // The open trigger of a collapsible that heads a sector, drawn as a selected header tab is: in the full text colour under a heavier indicator
-    "ui-header-trigger":
-      "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
   },
   theme: {
     breakpoint: UNOCSS_BREAKPOINTS,

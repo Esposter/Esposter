@@ -31,7 +31,7 @@ describe(checkTextContrast, () => {
   test.each([
     ["text colour", { background: PAGE_BACKGROUND_COLOR }],
     ["background", { textColor: PAGE_TEXT_COLOR }],
-  ])("an unreadable %s is reported unchecked", (_, colors) => {
+  ])("an unreadable %s is reported unchecked", (_description, colors) => {
     expect.hasAssertions();
 
     const text = createTestTextNode(TEST_ID, {});

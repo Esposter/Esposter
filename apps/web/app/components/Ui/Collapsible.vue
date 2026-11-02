@@ -18,7 +18,7 @@ const { headerAttrs, variant } = defineProps<Props>();
   <Collapsible.Root v-model="isOpen" renderless>
     <div :="headerAttrs" flex gap-2 items-center>
       <Collapsible.Activator #default="{ attrs }" renderless>
-        <button :="attrs" ui-item ui-header-trigger flex-1 :data-variant="variant">
+        <button :="attrs" ui-header-trigger ui-item flex-1 :data-variant="variant">
           <Collapsible.Cue #default="{ attrs: cueAttrs }" renderless>
             <UiDisclosureIcon :="cueAttrs" />
           </Collapsible.Cue>
