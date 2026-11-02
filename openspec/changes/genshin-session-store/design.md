@@ -6,12 +6,12 @@
 
 ## Why not the alternatives
 
-| Alternative                              | Why it lost                                                                                                                                                                                                                                          |
-| :--------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provide` / `inject`                     | The repo forbids it by lint (`vue` skill): an injected input is missing from the component's signature, a forgotten provider silently takes the default, and a test must mount the provider. The one `inject` that remains is the scene witness key. |
-| One options object for the shared values | Measured already: the bag bundle (`WorldBagDependencies`) took 47 lines out of the root and added none, and it is the most that bundling does. The other shared values were bundled where their types allowed.                                       |
-| Module-level refs in a composable file   | State outside any component instance is shared by every mount, so two sessions in one page (a visual suite, a parity page) corrupt each other, and nothing resets it between tests.                                                                  |
-| Cutting the root into group composables  | Measured: five cuts by feature took 9 to 35 lines out of the root and put 117 to 222 net lines into the package, because each group restated the shared list as its options.                                                                         |
+| Alternative                              | Why it lost                                                                                                                                                                                                    |
+| :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provide` / `inject`                     | The repo forbids it by lint (the `vue` skill gives the reasons). The one `inject` that remains is the scene witness key.                                                                                       |
+| One options object for the shared values | Measured already: the bag bundle (`WorldBagDependencies`) took 47 lines out of the root and added none, and it is the most that bundling does. The other shared values were bundled where their types allowed. |
+| Module-level refs in a composable file   | State outside any component instance is shared by every mount, so two sessions in one page (a visual suite, a parity page) corrupt each other, and nothing resets it between tests.                            |
+| Cutting the root into group composables  | Measured: five cuts by feature took 9 to 35 lines out of the root and put 117 to 222 net lines into the package, because each group restated the shared list as its options.                                   |
 
 ## What the store holds, and what it does not
 
