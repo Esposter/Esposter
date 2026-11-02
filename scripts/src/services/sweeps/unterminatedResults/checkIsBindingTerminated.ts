@@ -14,5 +14,9 @@ export const checkIsBindingTerminated = (call: SyntaxNode, bindingName: string, 
     if (node.object.type !== "Identifier" || node.object.name !== bindingName) return false;
     const { isTerminated, top } = getValueChain(node.object);
     const parent = parents.get(top);
-    return isTerminated || (parent?.type !== "ExpressionStatement" && parent?.type !== "VariableDeclarator");
+    const isHandedOff =
+      parent?.type === "ReturnStatement" ||
+      (parent?.type === "ArrowFunctionExpression" && parent.body === top) ||
+      (parent?.type === "CallExpression" && parent.arguments.some((argument) => argument === top));
+    return isTerminated || isHandedOff;
   });

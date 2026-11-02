@@ -143,6 +143,15 @@ describe(getUnterminatedResults, () => {
     ]);
   });
 
+  // Inspecting the binding keeps its value in this statement, so no later line answers for it and it is reported
+  test("reports a binding only inspected in an if test", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nif (result.isErr()) read();`)).toStrictEqual([
+      { after: "; if (result.isErr()) read();", line: 1 },
+    ]);
+  });
+
   // The value leaves the statement, so the terminator is the caller's — every shape of that
   test("reports nothing for a chain its own function returns", () => {
     expect.hasAssertions();
