@@ -78,6 +78,11 @@ The agent endpoint SHALL serve only requests carrying a valid, unexpired API key
 - **WHEN** a key has used up its request budget for its window
 - **THEN** the endpoint answers 429
 
+#### Scenario: An address over its budget is refused before its key is checked
+
+- **WHEN** an address has used up its request budget for its window, and a request from it carries a key that matches no key
+- **THEN** the endpoint answers 429 without checking the key
+
 ### Requirement: A key reaches only the tools of its scopes
 
 An API key SHALL reach only the tools of the scopes it was created with, and a tool outside those scopes SHALL look to the caller the same as a name that was never a tool.

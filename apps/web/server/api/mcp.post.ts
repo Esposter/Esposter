@@ -1,12 +1,15 @@
 import { auth } from "#server/auth";
 import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPayload";
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
+import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
+import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
+import { getIpAddress } from "#server/services/request/getIpAddress";
 import { createContext } from "#server/trpc/context";
 import { trpcRouter } from "#server/trpc/routers";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
-import { withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { defineEventHandler } from "nuxt/server";
+import { defineEventHandler, getRequestIP } from "nuxt/server";
 
 // The Model Context Protocol over its Streamable HTTP transport, stateless: each POST builds a server, answers one
 // Message and returns. This server never pushes unprompted, so the router's 405 to any other method is the answer the
@@ -23,6 +26,21 @@ export default defineEventHandler(async (event) => {
   if (!key) {
     event.res.status = 401;
     return { message: "An API key is required as a bearer token." };
+  }
+
+  // A key matching no row has no budget of its own, and checking one costs a lookup, so every request spends its address
+  // First: the address is the one key a caller cannot choose
+  const address = getIpAddress(event.req.headers, getRequestIP(event) ?? "");
+  const isAddressRateLimited = await getResultAsync(() => consumeAddressRateLimit(address)).match(
+    () => false,
+    (rateLimitError) => {
+      if (checkIsRateLimitExceeded(rateLimitError)) return true;
+      throw rateLimitError;
+    },
+  );
+  if (isAddressRateLimited) {
+    event.res.status = 429;
+    return { message: "Rate limit exceeded." };
   }
 
   const { error, key: apiKey } = await auth.api.verifyApiKey({ body: { key } });

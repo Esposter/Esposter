@@ -32,6 +32,10 @@ sequenceDiagram
 
   S->>R: POST, Authorization: Bearer key
   R->>R: any Origin header → 403
+  R->>R: addressRateLimiter.consume on the address — before any key is looked up
+  alt over the address budget
+    R-->>S: 429
+  end
   R->>K: verifyApiKey
   alt invalid or expired
     R-->>S: 401
@@ -74,7 +78,7 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 - **Stored hashed**, shown once when it is created, and listed afterwards by its name and first characters.
 - **Created, listed and deleted under API keys in the user settings.** Creating goes through `user.createApiKey`, which asks which scopes the key holds; listing, with each key's scopes, and deleting go through the plugin's client. Deleting one is how a leaked key is revoked; the agent using it is refused from its next call.
 - **Named**, since a key is told apart from the owner's others only by its name in that list.
-- **Rate-limited per key** by the plugin, with the standard limiter's budget and window rather than the plugin's default of ten a day, since a drain calls a tool per step. Its calls also spend from the owner's own standard budget in the procedure's middleware, as any signed-in call does.
+- **Rate-limited per key** by the plugin, with the standard limiter's budget and window rather than the plugin's default of ten a day, since a drain calls a tool per step. Its calls also spend from the owner's own standard budget in the procedure's middleware, as any signed-in call does. The plugin's budget exists only for a key that matches a row, so the route spends the address budget (`addressRateLimiter`) before it looks a key up: a request carrying a key that matches none would otherwise cost a lookup with no budget at all.
 - **Never a session.** `enableSessionForAPIKeys` stays off, so a key opens nothing in the app's ordinary tRPC route. It is verified only by the MCP endpoint and reaches only the procedures that opt in there under its scopes, so no key can create or delete another.
 - **Its table is ours.** The plugin's model is `auth.apiKeys` in `@esposter/db-schema`, pointed at its export as every core auth model is, and the adapter's schema check suite runs with the plugin, so a field the plugin adds fails a test rather than a sign-in.
 
@@ -85,26 +89,26 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 
 ## Key files
 
-| File                                                                | Role                                                                     |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `apps/web/server/api/mcp.post.ts`                                   | the endpoint: `Origin`, the key and its scopes, the owner's context      |
-| `apps/web/server/services/mcp/createMcpServer.ts`                   | the bridge: the tools of the key's scopes, each called through tRPC      |
-| `apps/web/server/services/mcp/createMcpServer.test.ts`              | each scope's tools listed and called, and refused to every other scope   |
-| `apps/web/server/services/mcp/getMcpTools.ts`                       | walks the router for the procedures whose meta opts in, reads marked     |
-| `apps/web/server/services/mcp/getMcpTools.test.ts`                  | one object input per tool, no two tools one name, each scope's tools     |
-| `apps/web/server/models/trpc/Meta.ts`                               | the meta type every procedure may opt into MCP with, under a scope       |
-| `apps/web/shared/models/auth/McpScope.ts`                           | the scopes a key may hold                                                |
-| `apps/web/shared/services/auth/getApiKeyScopes.ts`                  | a verified key's scopes, none unless its permissions parse               |
-| `apps/web/server/trpc/routers/user.ts`                              | `createApiKey`, the one place a key's scopes are set                     |
-| `apps/web/server/trpc/context.ts`                                   | carries a session the route already authenticated, and the agent's key   |
-| `apps/web/server/services/resource/writeResourceActivity.ts`        | names the key on every activity entry an agent's write leaves            |
-| `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes that session before reading one from the cookie                    |
-| `apps/web/server/services/auth/getAgentSessionPayload.ts`           | the key owner's session payload, on the key's own device                 |
-| `apps/web/server/services/auth/apiKeyPlugin.ts`                     | the API key plugin's options, shared with the adapter's test             |
-| `apps/web/server/services/auth/drizzleAdapterConfiguration.test.ts` | runs better-auth's schema check with the plugin, covering `auth.apiKeys` |
-| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts`               | the plugin's table                                                       |
-| `apps/web/app/components/User/ApiKeysCard/Index.vue`                | the API keys section of the user settings                                |
-| `apps/web/app/components/User/ApiKeysCard/CreateButton.vue`         | names a new key and ticks the scopes it holds                            |
+| File                                                                | Role                                                                                    |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `apps/web/server/api/mcp.post.ts`                                   | the endpoint: `Origin`, the address budget, the key and its scopes, the owner's context |
+| `apps/web/server/services/mcp/createMcpServer.ts`                   | the bridge: the tools of the key's scopes, each called through tRPC                     |
+| `apps/web/server/services/mcp/createMcpServer.test.ts`              | each scope's tools listed and called, and refused to every other scope                  |
+| `apps/web/server/services/mcp/getMcpTools.ts`                       | walks the router for the procedures whose meta opts in, reads marked                    |
+| `apps/web/server/services/mcp/getMcpTools.test.ts`                  | one object input per tool, no two tools one name, each scope's tools                    |
+| `apps/web/server/models/trpc/Meta.ts`                               | the meta type every procedure may opt into MCP with, under a scope                      |
+| `apps/web/shared/models/auth/McpScope.ts`                           | the scopes a key may hold                                                               |
+| `apps/web/shared/services/auth/getApiKeyScopes.ts`                  | a verified key's scopes, none unless its permissions parse                              |
+| `apps/web/server/trpc/routers/user.ts`                              | `createApiKey`, the one place a key's scopes are set                                    |
+| `apps/web/server/trpc/context.ts`                                   | carries a session the route already authenticated, and the agent's key                  |
+| `apps/web/server/services/resource/writeResourceActivity.ts`        | names the key on every activity entry an agent's write leaves                           |
+| `apps/web/server/trpc/middleware/getRateLimitedMiddleware.ts`       | takes that session before reading one from the cookie                                   |
+| `apps/web/server/services/auth/getAgentSessionPayload.ts`           | the key owner's session payload, on the key's own device                                |
+| `apps/web/server/services/auth/apiKeyPlugin.ts`                     | the API key plugin's options, shared with the adapter's test                            |
+| `apps/web/server/services/auth/drizzleAdapterConfiguration.test.ts` | runs better-auth's schema check with the plugin, covering `auth.apiKeys`                |
+| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts`               | the plugin's table                                                                      |
+| `apps/web/app/components/User/ApiKeysCard/Index.vue`                | the API keys section of the user settings                                               |
+| `apps/web/app/components/User/ApiKeysCard/CreateButton.vue`         | names a new key and ticks the scopes it holds                                           |
 
 ## Sources
 

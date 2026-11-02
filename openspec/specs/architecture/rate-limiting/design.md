@@ -6,13 +6,13 @@ A limiter is defined by two configured numbers — how many points a key may spe
 
 ## The limiters
 
-| Limiter               | Budget (points, in its file)         | Key prefix        | Keyed on                        | Guards                                   |
-| --------------------- | ------------------------------------ | ----------------- | ------------------------------- | ---------------------------------------- |
-| `standardRateLimiter` | `points` in `standardRateLimiter.ts` | `Standard`        | user id, else path + IP address | ordinary tRPC procedures                 |
-| `slowRateLimiter`     | `points` in `slowRateLimiter.ts`     | `Slow`            | user id, else path + IP address | expensive or abuse-prone tRPC procedures |
-| `webhookRateLimiter`  | `points` in `webhookRateLimiter.ts`  | `Webhook`         | the webhook's id                | the inbound webhook push route           |
-| `assetRateLimiter`    | `points` in `assetRateLimiter.ts`    | `resource-assets` | user id, else IP address        | the resource-asset redirect route        |
-| `addressRateLimiter`  | `points` in `addressRateLimiter.ts`  | `Address`         | IP address                      | the inbound webhook push route, first    |
+| Limiter               | Budget (points, in its file)         | Key prefix        | Keyed on                        | Guards                                             |
+| --------------------- | ------------------------------------ | ----------------- | ------------------------------- | -------------------------------------------------- |
+| `standardRateLimiter` | `points` in `standardRateLimiter.ts` | `Standard`        | user id, else path + IP address | ordinary tRPC procedures                           |
+| `slowRateLimiter`     | `points` in `slowRateLimiter.ts`     | `Slow`            | user id, else path + IP address | expensive or abuse-prone tRPC procedures           |
+| `webhookRateLimiter`  | `points` in `webhookRateLimiter.ts`  | `Webhook`         | the webhook's id                | the inbound webhook push route                     |
+| `assetRateLimiter`    | `points` in `assetRateLimiter.ts`    | `resource-assets` | user id, else IP address        | the resource-asset redirect route                  |
+| `addressRateLimiter`  | `points` in `addressRateLimiter.ts`  | `Address`         | IP address                      | the webhook push route and the MCP endpoint, first |
 
 Every limiter shares one window, `RATE_LIMITER_DURATION_SECONDS` in `constants.ts`, so a budget is always read as points per that window.
 
@@ -29,6 +29,7 @@ flowchart TD
   middleware -->|"RateLimiterMap[type].consume(key)"| procedureLimiter["standardRateLimiter or slowRateLimiter"]
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consume(address), first"| addressLimiter["addressRateLimiter"]
   webhookRoute -->|"then consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
+  mcpRoute["POST /api/mcp"] -->|"consume(address), first"| addressLimiter
   assetRoute["GET /api/resource-assets/{path}"] -->|"consume(user id or IP)"| assetLimiter["assetRateLimiter"]
   procedureLimiter --> table[("rateLimiterFlexible table — Postgres")]
   webhookLimiter --> table
@@ -77,5 +78,6 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `server/trpc/middleware/getAuthedMiddleware.ts`                 | pipes the rate limiter, then requires a session           |
 | `server/trpc/procedure/room/AuthedProcedureMap.ts`              | enum → authed procedure builder                           |
 | `server/api/webhooks/[id]/[token].post.ts`                      | inbound webhook route, 429 on overspend                   |
+| `server/api/mcp.post.ts`                                        | MCP endpoint, 429 on overspend of the address budget      |
 | `server/api/resource-assets/[...path].get.ts`                   | asset redirect route, 429 on overspend                    |
 | `server/auth.ts`                                                | better-auth budget derived from the standard limiter      |
