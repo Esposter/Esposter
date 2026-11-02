@@ -1,6 +1,6 @@
 import { readAttachment } from "@/services/agentConsole/readAttachment";
-import { AttachmentMediaType } from "agent-console-server/contracts";
-import { describe, expect, test } from "vitest";
+import { AttachmentMediaType, ATTACHMENTS_MAX_BYTE_LENGTH } from "agent-console-server/contracts";
+import { describe, expect, test, vi } from "vitest";
 
 describe(readAttachment, () => {
   const name = "name";
@@ -39,5 +39,17 @@ describe(readAttachment, () => {
     expect.hasAssertions();
 
     await expect(readAttachment(new File([new Uint8Array([255])], name))).resolves.toBeUndefined();
+  });
+
+  test("leaves out a file its size alone takes over the ceiling, without reading it", async () => {
+    expect.hasAssertions();
+
+    // A file that large, with its bytes left out, as its size reports it
+    const file = new File(["a"], name);
+    Object.defineProperty(file, "size", { value: ATTACHMENTS_MAX_BYTE_LENGTH * 2 + 1 });
+    const arrayBuffer = vi.spyOn(file, "arrayBuffer");
+
+    await expect(readAttachment(file)).resolves.toBeUndefined();
+    expect(arrayBuffer).not.toHaveBeenCalled();
   });
 });

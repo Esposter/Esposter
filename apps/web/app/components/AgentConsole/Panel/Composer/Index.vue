@@ -3,6 +3,7 @@ import type { Attachment } from "agent-console-server/contracts";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { checkIsFileTooLarge } from "@/services/agentConsole/checkIsFileTooLarge";
 import { fitAttachments } from "@/services/agentConsole/fitAttachments";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeMenuItems";
 import { readAttachment } from "@/services/agentConsole/readAttachment";
@@ -79,15 +80,17 @@ const permissionMode = computed({
 });
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-// The attachments of one prompt share one ceiling, so a file that would take the prompt past it is left out and named
+// The attachments of one prompt share one ceiling, so a file that would take the prompt past it is left out and named.
+// A file too large by its size alone is named the same way, and is refused before it is read
 const attach = async (fileList: FileList | undefined) => {
-  const newAttachments = await Promise.all(Array.from(fileList ?? [], (file) => readAttachment(file)));
+  const files = Array.from(fileList ?? []);
+  const newAttachments = await Promise.all(files.map((file) => readAttachment(file)));
   const { fitted, refused } = fitAttachments(
     attachments.value,
     newAttachments.filter((attachment) => attachment !== undefined),
   );
   attachments.value = [...attachments.value, ...fitted];
-  for (const { name } of refused)
+  for (const { name } of [...files.filter((file) => checkIsFileTooLarge(file)), ...refused])
     createAlert(
       `"${name}" would take the prompt's attachments over ${getFileSize(ATTACHMENTS_MAX_BYTE_LENGTH)} — it was not attached`,
       "error",
