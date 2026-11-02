@@ -15,7 +15,7 @@ A report is a small, checked experiment that someone else can run in a minute. I
 ## Section order
 
 1. **Summary.** One or two sentences: what fails, and which tool accepts the same input.
-2. **Context.** The opening sentence, and for a set the Related line ("A set found in one pass"). Nothing about this repository except the link in "Real occurrence".
+2. **Context.** The opening sentence, and for a set the batch list ("A set found in one pass"). Nothing about this repository except the link in "Real occurrence".
 3. **Environment.** Exact versions, the operating system, and the oracle (the tool that accepts the input today).
 4. **Reproduction.** The manifest, the configuration and each file in full, then the command.
 5. **Actual.** The error lines, verbatim. A position in generated code is said to be in generated code.
@@ -48,7 +48,7 @@ Several gaps found by one migration are filed as one issue per bug, in one sitti
 
 - **Each issue is complete alone**: the reproduction, the output, the cause and the nearest issues are in the issue itself.
 - **The Context opens with one shared sentence**: what is being adopted and for what, and that this issue is one of a batch found doing so, in the first person singular ("I was trying to adopt `<tool>` for `<framework>` type checking and ran into this, among a few others."). The versions and the oracle's result stay in Environment, and the rest of the Context is only what is specific to this bug. The sentence is the same in each issue and carries no number from this repository.
-- **A "Related" line closes the Context** and names the earlier issues of the set by number, one clause each. File in this order, so each issue links the ones before it and GitHub back-links the earlier ones with no edit.
+- **The Context lists the whole batch** and says it is one batch, so the set is tracked from any one issue: a line after the shared sentence ("This is one of a batch of N issues filed together, all from that attempt, so they can be tracked as one set:") and a bullet list of every issue by number, with `<-- you are here` after the issue's own entry. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
 - **Every issue is actionable**: it has a reproduction that fails, an oracle that passes, a cause or the statement that it is not known, and a nearest-issues check. An issue missing any of these is not filed until it has them, or is not filed.
 - **Order by value to the maintainer**: a bug that hides other diagnostics, then one that reports false errors, then one that misses real errors, then the rest.
 
