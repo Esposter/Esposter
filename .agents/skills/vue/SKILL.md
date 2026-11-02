@@ -17,7 +17,7 @@ description: Apply when writing or reviewing .vue files, or rendering a date or 
 
 ## Ordering — `references/ordering.md`
 
-Macros `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then every `const`, `defineExpose` last; declarations run page metadata → macros → framework value composables → Pinia stores → everything else; attributes run `v-model`/`v-for` → `class` → attributify → valued props (alphabetical) → bare booleans → `@event`. The exceptions to each, and the typing `defineModel` and `defineSlots` take, are that page.
+Macros `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (a `defineOptions` before them; `vue/define-macros-order` enforces it), then every `const`, `defineExpose` last; declarations run macros → page metadata → framework value composables → Pinia stores → everything else; attributes run `v-model`/`v-for` → `class` → attributify → valued props (alphabetical) → bare booleans → `@event`. The exceptions to each, and the typing `defineModel` and `defineSlots` take, are that page.
 
 ## Single-use functions must be inlined — `references/inline-handlers.md`
 

@@ -4,9 +4,9 @@ interface Props {
   title: string;
 }
 
+defineSlots<{ default: (props: { descriptionId: string }) => VNode }>();
 const { description, title } = defineProps<Props>();
 const descriptionId = useId();
-defineSlots<{ default: (props: { descriptionId: string }) => VNode }>();
 </script>
 
 <!-- One permission on a row: its name, the sentence saying what it allows in full, and the control at the end. The

@@ -6,8 +6,8 @@ import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/Dr
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 
-const tab = defineModel<DraftsAndSentTab>({ required: true });
 defineSlots<{ default: (props: { value: DraftsAndSentTab }) => VNode }>();
+const tab = defineModel<DraftsAndSentTab>({ required: true });
 const draftItems = useDraftItems();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);

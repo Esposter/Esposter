@@ -12,9 +12,9 @@ import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplic
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne } from "@esposter/shared";
 
+const isOpen = defineModel<boolean>({ default: false });
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
-const isOpen = defineModel<boolean>({ default: false });
 const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
 const duplicateRows = computed(() => findDuplicateRows(dataSource.value, keepMode.value));

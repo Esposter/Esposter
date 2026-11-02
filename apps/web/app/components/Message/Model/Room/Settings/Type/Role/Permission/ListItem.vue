@@ -5,8 +5,8 @@ interface Props {
   title: string;
 }
 
-const { description, permission, title } = defineProps<Props>();
 const modelValue = defineModel<bigint>({ required: true });
+const { description, permission, title } = defineProps<Props>();
 </script>
 
 <!-- A setting rather than a row of a list: the switch at the end is the only control on the row -->

@@ -6,11 +6,11 @@ interface Props {
   confirm: () => Promisable<unknown>;
   title: string;
 }
+defineSlots<{ default: () => VNode }>();
 // The question before a draft or a scheduled message is deleted, which shows at once, so the caller mounts it only
 // While it is open
 const isOpen = defineModel<boolean>({ default: false });
 defineProps<Props>();
-defineSlots<{ default: () => VNode }>();
 </script>
 
 <template>

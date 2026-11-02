@@ -11,8 +11,8 @@ interface Props {
   column: Column;
 }
 
-const { column } = defineProps<Props>();
 const modelValue = defineModel<ColumnFilter | undefined>({ required: true });
+const { column } = defineProps<Props>();
 const booleanValue = computed<BooleanFilterValue>({
   get: () => (modelValue.value?.type === ColumnType.Boolean ? modelValue.value.value : ""),
   set: (value) => {

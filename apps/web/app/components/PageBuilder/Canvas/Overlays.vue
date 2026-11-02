@@ -21,10 +21,10 @@ interface Props {
   selectedNodeId: string;
 }
 
-const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
-  defineProps<Props>();
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox>("selectionBox");
+const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
+  defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 const pageOpen = computed(() => getHeldDocument(resourceId));

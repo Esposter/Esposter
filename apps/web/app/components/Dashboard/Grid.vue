@@ -6,8 +6,6 @@ import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { CollisionMode, CompactType, ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
 
-defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
-
 interface Props {
   columnNumber: number;
   isEditable?: true;
@@ -15,6 +13,7 @@ interface Props {
   visuals: Visual[];
 }
 
+defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 const { columnNumber, isEditable, rowHeight, visuals } = defineProps<Props>();
 const emit = defineEmits<{ commit: [changes: GridItem[]] }>();
 const grid = useTemplateRef("grid");

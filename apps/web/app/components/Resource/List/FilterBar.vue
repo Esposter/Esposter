@@ -12,7 +12,6 @@ interface Props {
   hasActiveFilters: boolean;
 }
 
-const { hasActiveFilters } = defineProps<Props>();
 const types = defineModel<ResourceType[]>("types", { required: true });
 const status = defineModel<"" | ResourceStatusFilter>("status", { required: true });
 const updatedFilter = defineModel<"" | ResourceUpdatedFilter>("updatedFilter", { required: true });
@@ -20,6 +19,7 @@ const tagName = defineModel<string>("tagName", { required: true });
 const tagValue = defineModel<string>("tagValue", { required: true });
 const updatedAfter = defineModel<Date | undefined>("updatedAfter", { required: true });
 const updatedBefore = defineModel<Date | undefined>("updatedBefore", { required: true });
+const { hasActiveFilters } = defineProps<Props>();
 const emit = defineEmits<{ clear: [] }>();
 // A pill stays visible while empty ("all") after being added, until its ✕ removes it —
 // A deep-linked filter value also surfaces its pill without an explicit add

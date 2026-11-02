@@ -4,29 +4,29 @@ Read when laying out a `<script setup>` block — the macros, then the declarati
 
 ## Macros
 
-`defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
+`defineOptions` (only where a component needs one) → `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, at the top of the script after the imports and the types they read, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks). `vue/define-macros-order` enforces the first part and fixes it (`packages/configuration/eslint/overrides/vueRules.js`); `defineExpose` is not in it, since the rule's own option would put it after the watches and hooks.
 
 - **`defineModel`**: always type explicitly, and for booleans pass `{ default: false }` so the type excludes `undefined`. Never declare one unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. An **unnamed** model's variable is `modelValue`, never `model` or another alias; a **named** model's variable matches the name (`const title = defineModel<string>("title")`).
 - **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
 
 ## Script setup declarations
 
-0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` near the **top**, above the macros when they depend on no local state; one reading reactive state sits just after that state, still above unrelated logic.
 1. **Macros** — in the order "Macros" on this page gives. No blank line between the macros and the declarations that follow.
-2. **Framework / third-party value composables** — `useNuxtApp`, `useRouter`, `useRuntimeConfig`, value composables (`useUiDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
-3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's (`references/consuming-a-store.md`).
-4. **Custom composables, refs, computeds, watches, functions** — everything else.
+2. **Page-metadata side-effects** — `useHead`, `useSeoMeta` right after the macros when they depend on no local state; one reading reactive state sits just after that state, still above unrelated logic.
+3. **Framework / third-party value composables** — `useNuxtApp`, `useRouter`, `useRuntimeConfig`, value composables (`useUiDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Grouped immediately after the macros.
+4. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods; the per-store grouping order is the `pinia` skill's (`references/consuming-a-store.md`).
+5. **Custom composables, refs, computeds, watches, functions** — everything else.
 
 ```ts
-useHead({ titleTemplate: ... });       // 0. static page metadata — top, may precede macros
-defineSlots<{ default: () => VNode }>();
-const { $trpc } = useNuxtApp();        // 2. third-party
-const fooStore = useFooStore();        // 3. custom store
+defineSlots<{ default: () => VNode }>(); // 1. macros
+useHead({ titleTemplate: ... });       // 2. static page metadata
+const { $trpc } = useNuxtApp();        // 3. third-party
+const fooStore = useFooStore();        // 4. custom store
 const { currentFoo } = storeToRefs(fooStore);
-const fooName = useFooName(...);       // 4. custom composable / state
+const fooName = useFooName(...);       // 5. custom composable / state
 ```
 
-Never leave a framework value composable stranded at the bottom below custom stores and refs. **Exceptions that stay in category 4:** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, a `useSeoMeta` reading store refs) which must stay after the state they depend on.
+Never leave a framework value composable stranded at the bottom below custom stores and refs. **Exceptions that stay in category 5:** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, a `useSeoMeta` reading store refs) which must stay after the state they depend on.
 
 ## Template attributes
 

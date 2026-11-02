@@ -17,10 +17,10 @@ interface Props {
   resource: ResourceInResource;
 }
 
-const { resource } = defineProps<Props>();
 // Essentials takes extra rows from the type (the grid owns the two columns, so a slot renders
 // A label/value pair); summary takes whole cards below the card
 defineSlots<{ essentials?: () => VNode; summary?: () => VNode }>();
+const { resource } = defineProps<Props>();
 const getResourceRouter = useResourceRouter();
 const resourceStore = useResourceStore();
 const { isPending, publication } = storeToRefs(resourceStore);

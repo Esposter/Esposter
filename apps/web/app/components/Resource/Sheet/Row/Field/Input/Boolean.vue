@@ -6,8 +6,8 @@ interface Props {
   isInline?: true;
 }
 
-const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<boolean | null>({ required: true });
+const { column, isInline } = defineProps<Props>();
 const container = useTemplateRef("container");
 
 // A cell opens its editor in place of its text, so the box takes focus at once; leaving it is what saves the edit

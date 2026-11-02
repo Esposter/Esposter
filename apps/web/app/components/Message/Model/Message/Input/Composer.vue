@@ -9,13 +9,13 @@ interface Props {
   target: ComposerTarget;
 }
 
-const input = defineModel<string>({ required: true });
-const { extraExtensions = [], target } = defineProps<Props>();
-const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
 const slots = defineSlots<{
   "prepend-footer"?: (props: { uploadFiles: Awaited<ReturnType<typeof useComposer>>["uploadFiles"] }) => VNode;
   "prepend-outer-footer"?: () => VNode;
 }>();
+const input = defineModel<string>({ required: true });
+const { extraExtensions = [], target } = defineProps<Props>();
+const { checkIsInputValid, extensions, sendComposerMessage, uploadFiles } = await useComposer(() => target);
 </script>
 
 <template>

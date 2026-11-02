@@ -6,8 +6,8 @@ interface Props {
   label: string;
 }
 
-const { label } = defineProps<Props>();
 const selectedIds = defineModel<string[]>({ required: true });
+const { label } = defineProps<Props>();
 const emit = defineEmits<{ delete: [ids: string[]] }>();
 </script>
 

@@ -16,8 +16,8 @@ interface Props {
   error: string;
 }
 
-const { error } = defineProps<Props>();
 const modelValue = defineModel<DatasetReference | undefined>({ required: true });
+const { error } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);

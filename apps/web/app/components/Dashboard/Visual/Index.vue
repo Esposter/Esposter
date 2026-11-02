@@ -17,9 +17,9 @@ interface Props {
   visual: Visual;
 }
 
-const { visual } = defineProps<Props>();
 // The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh
 defineSlots<{ actions?: (props: { dataset?: Dataset }) => VNode }>();
+const { visual } = defineProps<Props>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");
 const height = ref<number>();

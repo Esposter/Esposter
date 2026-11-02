@@ -15,9 +15,9 @@ interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<Props>();
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
 const isDrawerOpen = defineModel<boolean>("open", { default: false });
+const { room } = defineProps<Props>();
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { checkHasMyPermission, getMyPermissions } = roleStore;

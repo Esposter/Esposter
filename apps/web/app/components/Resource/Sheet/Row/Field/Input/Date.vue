@@ -9,8 +9,8 @@ interface Props {
   isInline?: true;
 }
 
-const { column, isInline } = defineProps<Props>();
 const modelValue = defineModel<null | string>({ required: true });
+const { column, isInline } = defineProps<Props>();
 // The cell stores its day as text in the column's own format, which the field reads and writes as the instant it names
 const date = computed({
   get: () => (modelValue.value ? parseDate(modelValue.value, column.format) : undefined),

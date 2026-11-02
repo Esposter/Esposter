@@ -11,6 +11,8 @@ import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { computeLoadingProgress, GameOpening } from "genshin-world";
 
+// The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
+const emit = defineEmits<{ load: []; ready: [] }>();
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
 // Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door and once
 // The character packs are held, and draws no frames while the opening covers it, though its first view's ground still
@@ -70,8 +72,6 @@ const progress = computed(() =>
     opening.value?.pendingBytes ?? 0,
   ),
 );
-// The world's loading is reported up, so a page that mounts the game, the agent console, can show its steps
-const emit = defineEmits<{ load: []; ready: [] }>();
 </script>
 
 <template>

@@ -5,9 +5,9 @@ interface Props {
   isFocused?: boolean;
 }
 
+const modelValue = defineModel<string>({ required: true });
 const { isFocused } = defineProps<Props>();
 const emit = defineEmits<{ blur: []; delete: []; focus: []; "navigate:next": [] }>();
-const modelValue = defineModel<string>({ required: true });
 const input = useTemplateRef("input");
 
 useFocusWhenActive(input, () => isFocused);

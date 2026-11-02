@@ -31,6 +31,14 @@ export default {
       registeredComponentsOnly: false,
     },
   ],
+  // A component's macros stand at the top of its script, after the imports and the types they read, in the order
+  // `defineOptions` → `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, with every declaration below them
+  // (`useHead` and the other page metadata included). `defineExpose` stays out of the order, since the `vue` skill puts
+  // It before the watches and lifecycle hooks and the rule's `defineExposeLast` would put it after them.
+  "vue/define-macros-order": [
+    "error",
+    { order: ["defineOptions", "defineSlots", "defineModel", "defineProps", "defineEmits"] },
+  ],
   // Styles are scoped by default; the rare global block (e.g. transition classes for slotted content,
   // Third-party DOM appended to document.body) carries an eslint-disable with its reason. Library CSS
   // Belongs in a script-setup `import "lib.css"` (code-split with the component), not a global style block.

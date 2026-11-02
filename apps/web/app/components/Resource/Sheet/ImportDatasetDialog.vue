@@ -14,6 +14,7 @@ import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 
+const isOpen = defineModel<boolean>({ default: false });
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const resourceStore = useResourceStore();
@@ -24,7 +25,6 @@ const { $trpc } = useNuxtApp();
 const { readSurveyResources } = useReadSurveys();
 const getDataSourceSetter = useSetDataSource();
 const { checkIsPending, executeMutation, executeQuery } = useMutation();
-const isOpen = defineModel<boolean>({ default: false });
 const importingResourceId = ref("");
 // The import an answer closes is the one on the sheet it started on, which the reader may have left by the time the
 // Dataset lands
