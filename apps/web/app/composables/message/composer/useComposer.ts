@@ -7,13 +7,17 @@ import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 
 // Everything a composer needs that does not depend on which composer it is — the room's and the thread pane's
 // Differ only in their target, the room's extra slash-command extension, and the header above the editor
 export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   const dataStore = useDataStore();
+  const { items } = storeToRefs(dataStore);
   const { sendMessage } = dataStore;
+  const threadStore = useThreadStore();
+  const { threadMessages } = storeToRefs(threadStore);
   const inputStore = useInputStore();
   const { checkIsInputValid, getComposerInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
@@ -36,8 +40,10 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     };
     await sendMessage(input, editor, composerTarget);
   };
-  const keyboardExtension = await useKeyboardShortcutsExtension((editor) =>
-    sendComposerMessage(editor, toValue(target)),
+  // A thread pane's composer edits its thread's replies, and the room's composer the room's messages
+  const keyboardExtension = await useKeyboardShortcutsExtension(
+    (editor) => sendComposerMessage(editor, toValue(target)),
+    () => (toValue(target).threadRootRowKey ? threadMessages.value : items.value),
   );
   const codeBlockExtension = useCodeBlockExtension();
   const emojiExtension = useEmojiExtension();
