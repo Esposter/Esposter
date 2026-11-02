@@ -27,18 +27,21 @@ export const getResizeOperations = (
   if (index === undefined) return [];
 
   const { height, width, x, y } = getElementBounds(takeOne(document.elements, index));
-  // The travel an edge makes from its position, which with snap on is the travel that lands the edge on the grid
-  const getEdgeTravel = (edge: number, travel: number) =>
-    isSnapEnabled ? snapToGrid(edge + travel, GRID_SIZE) - edge : travel;
+  // The position an edge moves to, which with snap on is the grid line it snaps to
+  const getTargetEdge = (edge: number, travel: number) =>
+    isSnapEnabled ? snapToGrid(edge + travel, GRID_SIZE) : edge + travel;
+  // The edge a minimum size allows, moved to the grid line that keeps the size at least the minimum with snap on
+  const getLeastEdge = (edge: number) => (isSnapEnabled ? Math.ceil(edge / GRID_SIZE) * GRID_SIZE : edge);
+  const getGreatestEdge = (edge: number) => (isSnapEnabled ? Math.floor(edge / GRID_SIZE) * GRID_SIZE : edge);
   switch (handle) {
-    case ResizeHandle.BottomRight:
-      return resizePositionedElement(document, index, {
-        height: Math.max(MINIMUM_ELEMENT_SIZE, height + getEdgeTravel(y + height, delta.y)),
-        width: Math.max(MINIMUM_ELEMENT_SIZE, width + getEdgeTravel(x + width, delta.x)),
-      });
+    case ResizeHandle.BottomRight: {
+      const bottom = Math.max(getTargetEdge(y + height, delta.y), getLeastEdge(y + MINIMUM_ELEMENT_SIZE));
+      const right = Math.max(getTargetEdge(x + width, delta.x), getLeastEdge(x + MINIMUM_ELEMENT_SIZE));
+      return resizePositionedElement(document, index, { height: bottom - y, width: right - x });
+    }
     case ResizeHandle.TopLeft: {
-      const left = Math.min(x + getEdgeTravel(x, delta.x), x + width - MINIMUM_ELEMENT_SIZE);
-      const top = Math.min(y + getEdgeTravel(y, delta.y), y + height - MINIMUM_ELEMENT_SIZE);
+      const left = Math.min(getTargetEdge(x, delta.x), getGreatestEdge(x + width - MINIMUM_ELEMENT_SIZE));
+      const top = Math.min(getTargetEdge(y, delta.y), getGreatestEdge(y + height - MINIMUM_ELEMENT_SIZE));
       return resizePositionedElementBounds(document, index, {
         height: y + height - top,
         width: x + width - left,

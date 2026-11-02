@@ -155,6 +155,24 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
+  test("a resize held at the minimum size keeps its edges on the grid", () => {
+    expect.hasAssertions();
+
+    const state = createState(
+      { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
+      { isSnapEnabled: true, selectedIds: [PROCESS_ID] },
+    );
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 105, y: 101 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 105, y: 101 }));
+
+    expect(up.operations).toStrictEqual([
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 20 },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 20 },
+    ]);
+  });
+
   test("a marquee selects every shape it covers", () => {
     expect.hasAssertions();
 
