@@ -1,6 +1,6 @@
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
-import { REMOVE_WORKTREE_SCRIPT } from "#src/services/resume/constants";
+import { WORKTREE_REMOVE_COMMAND } from "#src/services/worktree/remove/constants";
 import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 
 const WORKTREE_PREFIX = "worktree ";
@@ -32,11 +32,11 @@ export const getWorktreeItems = (porcelain: string, readFolderNames: (directory:
     .filter((path) => !linkedPaths.has(path));
   return [
     ...linkedWorktrees.map(({ head, path }) => ({
-      action: `${REMOVE_WORKTREE_SCRIPT} ${path} once nothing uses it`,
+      action: `${WORKTREE_REMOVE_COMMAND} ${path} once nothing uses it`,
       text: `${path} ${head}`,
     })),
     ...orphanPaths.map((path) => ({
-      action: `${REMOVE_WORKTREE_SCRIPT} ${path} once nothing in it is wanted`,
+      action: `${WORKTREE_REMOVE_COMMAND} ${path} once nothing in it is wanted`,
       text: `${path} no worktree registers it`,
     })),
   ];

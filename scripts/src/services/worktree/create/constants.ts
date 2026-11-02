@@ -12,5 +12,3 @@ export const WORKTREE_NAME_REGEX: RegExp = /^[\da-z][\da-z-]*$/u;
 // The memory gate is waited on for this long, sampled every poll, before the command gives up and creates nothing
 export const MEMORY_GATE_WAIT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 2 }).total("milliseconds");
 export const MEMORY_GATE_POLL_MILLISECONDS: number = Temporal.Duration.from({ seconds: 10 }).total("milliseconds");
-// A worktree a failed create leaves behind is cleared by this command, which the message of the failure names
-export const WORKTREE_REMOVE_COMMAND = "pnpm ai:worktree:remove";

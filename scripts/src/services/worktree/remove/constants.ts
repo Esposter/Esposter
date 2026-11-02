@@ -1,3 +1,5 @@
+// The command a failed create or a landing that could not remove its worktree names to clear it from outside
+export const WORKTREE_REMOVE_COMMAND = "pnpm ai:worktree:remove";
 export const GIT_FOLDER = ".git";
 export const NODE_MODULES_FOLDER = "node_modules";
 // The folder under the git common directory a loaded binary is moved into, so a later removal can delete it once nothing has it loaded

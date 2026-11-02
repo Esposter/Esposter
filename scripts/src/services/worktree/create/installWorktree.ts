@@ -5,8 +5,8 @@ import {
   INSTALL_FROZEN_ARGUMENTS,
   INSTALL_OFFLINE_ARGUMENTS,
   SCRIPTS_PACKAGE_NAME,
-  WORKTREE_REMOVE_COMMAND,
 } from "#src/services/worktree/create/constants";
+import { WORKTREE_REMOVE_COMMAND } from "#src/services/worktree/remove/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Installs only the closure of the scripts package and the packages named, never the app or the rest of the workspace.
