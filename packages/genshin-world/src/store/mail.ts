@@ -32,18 +32,25 @@ export const useWorldMailStore = defineStore("world/mail", () => {
     textMap: TextChunk;
   }>();
   const isBagFull = ref(false);
+  // The load in flight, which a stop retires, so a load the session outlived returns without reading the session it stopped
+  let loading: symbol | undefined;
 
   const start = (savedMails: MailSave[], savedTravelerBirthday?: TravelerBirthdaySave) => {
     mails.value = savedMails;
+    // The session's game data and language are taken before the first await, while the session is still there to read
+    const { gameDataBaseUrl, language } = worldSessionStore;
+    const load = Symbol("mail load");
+    loading = load;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(async () => {
-      const birthdayMailRows = await readBirthdayMailRows(worldSessionStore.gameDataBaseUrl);
+      const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);
       const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
       const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
       const [mailRows, textMap] = await Promise.all([
-        readMailRows(worldSessionStore.gameDataBaseUrl, [...mailIds]),
-        readMailText(worldSessionStore.gameDataBaseUrl, worldSessionStore.language),
+        readMailRows(gameDataBaseUrl, [...mailIds]),
+        readMailText(gameDataBaseUrl, language),
       ]);
+      if (loading !== load) return;
       const now = getWorldNow();
       const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
       mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
@@ -53,6 +60,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
     });
   };
   const stop = () => {
+    loading = undefined;
     mails.value = [];
     mailData.value = undefined;
     isBagFull.value = false;
