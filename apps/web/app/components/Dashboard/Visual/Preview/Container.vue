@@ -14,7 +14,6 @@ interface Props {
 const { visual } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { duplicateVisual, editItem } = visualStore;
-const { editedItem } = storeToRefs(visualStore);
 const container = useTemplateRef("container");
 
 onClickExceptDrag(
@@ -58,6 +57,5 @@ onClickExceptDrag(
         </template>
       </DashboardVisual>
     </div>
-    <DashboardVisualPreviewEditFormDialog v-if="editedItem?.id === visual.id" v-model="editedItem" />
   </div>
 </template>

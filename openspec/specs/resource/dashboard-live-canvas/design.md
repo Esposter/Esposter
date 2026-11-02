@@ -13,7 +13,9 @@ flowchart LR
   CONTAINER --> VIS["DashboardVisual — live read, inert body"]
   CONTAINER -->|corner actions via slot| CORNER["Edit · Duplicate · Delete"]
   VIS --> CORNER2["Copy link · Refresh"]
-  TILE -->|click, not drag| EDIT["edit form dialog"]
+  CONTAINER -->|"click, not drag, or Edit"| EDIT["Content.vue: the one edit form dialog"]
+  CORNER -->|"Delete names its visual"| TARGET["dashboard dialog store"]
+  TARGET --> CONFIRM["Content.vue: the one delete confirm"]
   PUB["/view/Dashboard/[id]"] --> VIS2["DashboardVisual — snapshot, interactive"]
 ```
 
@@ -29,15 +31,18 @@ flowchart LR
 - **No stock icons.** The visual-type select's entries come from `VisualTypeItemCategoryDefinitions`, each with the chart icon meaning rather than a stock image.
 - **The corner actions are a slot, not a second corner.** Two absolutely positioned rows at the same corner would overlap, so the tile passes its actions into the visual's own row.
 - **Nothing is persisted differently.** The editor saves the dashboard content; only what a tile draws changes.
-- **No new test.** It is template wiring over components whose behaviour the existing suites cover; a chart-mounting test would only pin the markup.
+- **One edit form and one delete confirm, for the whole editor.** A tile mounts no dialog of its own. Its Delete names its visual in the dashboard dialog store, and the editor's one confirm resolves it, as the [singleton dialogs](../../architecture/singleton-dialogs/design.md) pattern has a list's item do. The edit form is the editor's too, mounted on the edited draft and keyed by its visual. A grid of N tiles mounts nothing until one opens, and then one dialog.
+- **The dialogs are tested, the chart's markup is not.** A chart-mounting test would only pin the markup. `Editor/Content.test.ts` covers what a tile can break: one confirm for every tile, and Delete and Edit acting on the visual whose tile was pressed.
 
 ## Key files
 
-| File                                                             | Role                                                                               |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `apps/web/app/components/Dashboard/Visual/Index.vue`             | the one renderer for the editor and the published page; exposes the `actions` slot |
-| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue` | the editor tile: inert visual, corner actions, edit form                           |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`           | passes each tile its visual rather than only its id and type                       |
+| File                                                                | Role                                                                                  |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Dashboard/Visual/Index.vue`                | the one renderer for the editor and the published page; exposes the `actions` slot    |
+| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`    | the editor tile: inert visual and corner actions                                      |
+| `apps/web/app/components/Dashboard/Visual/Preview/DeleteButton.vue` | the corner's Delete: names its visual in the dialog store                             |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`              | passes each tile its visual; mounts the editor's one delete confirm and one edit form |
+| `apps/web/app/store/dashboard/dialog.ts`                            | the delete target, `deletingVisualId`                                                 |
 
 ## Sources
 

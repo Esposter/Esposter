@@ -3,7 +3,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useVisualStore } from "@/store/dashboard/visual";
+import { useDashboardDialogStore } from "@/store/dashboard/dialog";
 import { prettify } from "@/util/text/prettify";
 
 interface Props {
@@ -12,10 +12,9 @@ interface Props {
 }
 
 const { id, type } = defineProps<Props>();
-const visualStore = useVisualStore();
-const { deleteVisual } = visualStore;
+const dashboardDialogStore = useDashboardDialogStore();
+const { deletingVisualId } = storeToRefs(dashboardDialogStore);
 const title = computed(() => `Delete ${prettify(type)} visual`);
-const isOpen = ref(false);
 </script>
 
 <template>
@@ -23,9 +22,6 @@ const isOpen = ref(false);
     :label="title"
     :meaning="UiIconMeaning.Delete"
     :variant="UiButtonVariant.Quiet"
-    @click="isOpen = true"
+    @click="deletingVisualId = id"
   />
-  <UiConfirmDialog v-model="isOpen" confirm-label="Delete" :title :confirm="() => deleteVisual({ id })" is-optimistic>
-    <p>Delete this visual from the dashboard?</p>
-  </UiConfirmDialog>
 </template>
