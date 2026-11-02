@@ -14,7 +14,7 @@ import { SessionState } from "#src/models/session/SessionState";
 import { childMessageSchema } from "#src/models/window/ChildMessage";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { SessionWindowCloseCode } from "#src/models/window/SessionWindowCloseCode";
-import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { DEFAULT_HOSTNAME, MESSAGE_MAX_BYTE_LENGTH } from "#src/services/constants";
 import { SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { hashCredential } from "#src/services/device/hashCredential";
 import { writeStateFile } from "#src/services/device/writeStateFile";
@@ -56,7 +56,8 @@ export const createWindowDriver = (
   const childSet = new Set<SessionChild>();
   const pendingLaunchMap = new Map<string, { connection: PromiseWithResolvers<WebSocket>; timeout: NodeJS.Timeout }>();
   const taskRegistry = createTaskRegistry();
-  const webSocketServer = new WebSocketServer({ noServer: true });
+  // A window's socket takes what a page's may, so a window's message over the host's limit ends that window alone
+  const webSocketServer = new WebSocketServer({ maxPayload: MESSAGE_MAX_BYTE_LENGTH, noServer: true });
   const httpServer = createServer((_request, response) => {
     response.writeHead(405).end();
   });

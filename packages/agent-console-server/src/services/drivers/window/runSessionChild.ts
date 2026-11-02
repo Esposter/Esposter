@@ -1,4 +1,4 @@
-import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { DEFAULT_HOSTNAME, MESSAGE_MAX_BYTE_LENGTH } from "#src/services/constants";
 import { getStateDirectory } from "#src/services/device/getStateDirectory";
 import { createClaudeAgentSdkDriver } from "#src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver";
 import { SESSION_SECRET_ENVIRONMENT_VARIABLE } from "#src/services/drivers/window/constants";
@@ -21,7 +21,10 @@ export const runSessionChild = async (port: number, writeLine: (line: string) =>
   const connect = () => {
     const hostPort = isFirstConnection ? port : readSessionWindows(stateDirectory).port;
     isFirstConnection = false;
-    return new WebSocket(`ws://${DEFAULT_HOSTNAME}:${hostPort}`, { headers: { authorization: `Bearer ${secret}` } });
+    return new WebSocket(`ws://${DEFAULT_HOSTNAME}:${hostPort}`, {
+      headers: { authorization: `Bearer ${secret}` },
+      maxPayload: MESSAGE_MAX_BYTE_LENGTH,
+    });
   };
   // Ctrl+C, or closing the window, which Windows reports as SIGHUP, ends the session: the host sees the socket go and
   // Shows the session closed in every page

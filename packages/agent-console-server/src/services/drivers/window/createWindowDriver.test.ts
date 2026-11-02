@@ -5,7 +5,7 @@ import type { SessionWindowLaunch } from "#src/models/window/SessionWindowLaunch
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
-import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { DEFAULT_HOSTNAME, MESSAGE_MAX_BYTE_LENGTH } from "#src/services/constants";
 import { hashCredential } from "#src/services/device/hashCredential";
 import { writeStateFile } from "#src/services/device/writeStateFile";
 import {
@@ -171,6 +171,34 @@ describe(createWindowDriver, () => {
     expect(
       closedEvents?.map((event) => (event.type === AgentEventType.SessionState ? event.state : event.type)),
     ).toStrictEqual([SessionState.Closed]);
+  });
+
+  test("ends the window that sends a message over the host's limit, and does not rejoin in a loop", async () => {
+    expect.hasAssertions();
+
+    await driver.createSession(" ");
+    // A message the host closes the window's socket for before it reads it
+    childCallbacks.onEvents(sessionId, [
+      {
+        blockId: " ",
+        createdAt: new Date(0),
+        id: " ",
+        isThinking: false,
+        text: " ".repeat(MESSAGE_MAX_BYTE_LENGTH),
+        type: AgentEventType.StreamDelta,
+      },
+    ]);
+    // The window's one try at the host is refused, since a window's secret is admitted once, so its serving ends. A
+    // Window that looped would never resolve here
+    await serving;
+
+    const [closedSessionId, closedEvents] = onEvents.mock.lastCall ?? [];
+
+    expect(closedSessionId).toBe(sessionId);
+    expect(
+      closedEvents?.map((event) => (event.type === AgentEventType.SessionState ? event.state : event.type)),
+    ).toStrictEqual([SessionState.Closed]);
+    expect(childClose).toHaveBeenCalledTimes(1);
   });
 
   test("ends the window when its session is closed", async () => {
