@@ -34,10 +34,6 @@ const dragSetting = (event: PointerEvent): void => {
   const { left, width } = event.currentTarget.getBoundingClientRect();
   setBackedValue(row.range.min + ((event.clientX - left) / width) * (row.range.max - row.range.min));
 };
-const startSettingDrag = (event: PointerEvent): void => {
-  if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
-  dragSetting(event);
-};
 </script>
 
 <template>
@@ -59,7 +55,12 @@ const startSettingDrag = (event: PointerEvent): void => {
         event.preventDefault();
       }
     "
-    @pointerdown="startSettingDrag($event)"
+    @pointerdown="
+      (event) => {
+        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+        dragSetting(event);
+      }
+    "
     @pointermove="dragSetting($event)"
   >
     <span class="knob" :style="{ left: `${getTrackShare(trackValue, row.range) * 100}%` }" />
