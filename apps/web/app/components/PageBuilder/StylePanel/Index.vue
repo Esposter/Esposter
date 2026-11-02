@@ -2,6 +2,7 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
+import { UiCollapsibleVariant } from "@/models/ui/UiCollapsibleVariant";
 import {
   DEFAULT_THEME_COLOR,
   STYLE_CHOICES,
@@ -67,6 +68,7 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
       v-for="sector in STYLE_SECTORS"
       :key="sector.title"
       :model-value="!closedSectors.has(sector.title)"
+      :variant="UiCollapsibleVariant.Header"
       @update:model-value="(isOpen) => setSectorOpen(sector.title, isOpen)"
     >
       <template #title>{{ sector.title }}</template>
