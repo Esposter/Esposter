@@ -5,7 +5,7 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
-import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS } from "@esposter/db-schema";
+import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, usersInAuth } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
@@ -20,23 +20,28 @@ export const bookmarkRouter = router({
       resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
     );
   }),
-  toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(async ({ ctx, input }) => {
+  toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(({ ctx, input }) => {
     const userId = ctx.getSessionPayload.user.id;
-    // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
-    // Was bookmarked, so the toggle can never race with itself
-    const deletedBookmarks = await ctx.db
-      .delete(bookmarksInApp)
-      .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
-      .returning();
-    if (deletedBookmarks.length > 0) return false;
+    return ctx.db.transaction(async (tx) => {
+      // The user's row is locked first, because the cap is a count and a count has no constraint behind it: two
+      // Toggles of different pages both reading one below the cap would both insert
+      await tx.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId)).for("update");
+      // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
+      // Was bookmarked, so the toggle can never race with itself
+      const deletedBookmarks = await tx
+        .delete(bookmarksInApp)
+        .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
+        .returning();
+      if (deletedBookmarks.length > 0) return false;
 
-    if ((await ctx.db.$count(bookmarksInApp, eq(bookmarksInApp.userId, userId))) >= MAX_BOOKMARKS)
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
+      if ((await tx.$count(bookmarksInApp, eq(bookmarksInApp.userId, userId))) >= MAX_BOOKMARKS)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
 
-    await ctx.db
-      .insert(bookmarksInApp)
-      .values({ path: input.path, resourceType: input.mark?.resourceType, title: input.title, userId })
-      .onConflictDoNothing();
-    return true;
+      await tx
+        .insert(bookmarksInApp)
+        .values({ path: input.path, resourceType: input.mark?.resourceType, title: input.title, userId })
+        .onConflictDoNothing();
+      return true;
+    });
   }),
 });
