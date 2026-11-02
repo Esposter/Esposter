@@ -74,4 +74,26 @@ describe(useBlockStore, () => {
 
     expect(blockedUsers.value).toStrictEqual([first]);
   });
+
+  // A block and an unblock made while the blocked list is read are not in the answer's favour: the answer may predate
+  // Them, so each is replayed over it rather than the answer overwriting the list without them
+  test("replays a block and an unblock that land during the read over its answer", async () => {
+    expect.hasAssertions();
+
+    const { $trpc } = useNuxtApp();
+    const blockStore = useBlockStore();
+    const { blockedUsers } = storeToRefs(blockStore);
+    const added = createUser();
+    const removed = createUser();
+    trpcMsw.block.createBlock.mutation(() => added);
+    trpcMsw.block.deleteBlock.mutation(({ input: blockedUserId }) => blockedUserId);
+    trpcMsw.block.readBlockedUsers.query(async () => {
+      await blockStore.createBlock(added.id);
+      await blockStore.deleteBlock(removed.id);
+      return [first, removed];
+    });
+    await blockStore.readBlockedUsers(() => $trpc.block.readBlockedUsers.query());
+
+    expect(blockedUsers.value).toStrictEqual([first, added]);
+  });
 });
