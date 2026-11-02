@@ -78,7 +78,7 @@ Both are keyed by **id**, which is the one deliberate divergence from Discord's 
 
 ## Resolution, and what a deleted emoji does
 
-A room's set is read when the room is entered and kept current by its subscription, so every surface resolves an id through one store map. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
+A room's set is read when the room is entered and kept current by its subscription, so every surface resolves an id through one store map. The subscription opens before that read, and every write that lands while the read is in flight is replayed over its answer by `apps/web/app/services/shared/mergeSnapshot.ts` rather than overwritten by it, so an emoji removed or added in the gap between the two is neither lost nor written back. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
 
 An id that resolves to nothing is **data, not an error**. A reaction to a deleted emoji still counts and renders a placeholder rather than disappearing; a content node keeps the shortcode it was authored with; and one unresolvable emoji never fails the render of the message around it.
 

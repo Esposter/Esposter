@@ -1,7 +1,9 @@
+import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
 import { useFriendStore } from "@/store/message/user/friend";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -12,6 +14,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     useMutation();
   const { executeMutation: executeAcceptFriendRequestMutation } = useMutation();
   const { executeMutation: executeDeclineFriendRequestMutation } = useMutation();
+  const { executeQuery: executeReadFriendRequestsQuery } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestInSocialWithRelations[]>([]);
@@ -22,11 +25,20 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const sentFriendRequests = computed(() =>
     friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
-  const { createFriendRequest: storeCreateFriendRequest } = createOperationData(
+  // The writes that land while the friend requests read is in flight, kept until its answer is merged with them
+  let readingPushes: SnapshotPush<FriendRequestInSocialWithRelations>[] | undefined;
+  const recordReadingPush = (push: SnapshotPush<FriendRequestInSocialWithRelations>) => {
+    readingPushes?.push(push);
+  };
+  const { createFriendRequest: baseStoreCreateFriendRequest } = createOperationData(
     friendRequests,
     ["id"],
     DatabaseEntityType.FriendRequest,
   );
+  const storeCreateFriendRequest = (friendRequest: FriendRequestInSocialWithRelations) => {
+    recordReadingPush({ item: friendRequest, type: "set" });
+    baseStoreCreateFriendRequest(friendRequest);
+  };
   // Single source of truth for "has the app user already asked this user" — the counterpart to the friend
   // Store's checkIsFriend, and asked by the same surfaces
   const checkHasSentFriendRequest = (targetUserId: PublicUser["id"]) =>
@@ -38,6 +50,10 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const getFriendRequestsByUser = (targetUserId: PublicUser["id"]) =>
     friendRequests.value.filter(({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId));
   const storeDeleteFriendRequestsByUser = (targetUserId: PublicUser["id"]) => {
+    recordReadingPush({
+      checkIsRemoved: ({ receiverId, senderId }) => [receiverId, senderId].includes(targetUserId),
+      type: "remove",
+    });
     friendRequests.value = friendRequests.value.filter(
       ({ receiverId, senderId }) => ![receiverId, senderId].includes(targetUserId),
     );
@@ -45,6 +61,19 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const storeAcceptFriendRequest = (friendUser: PublicUser) => {
     storeDeleteFriendRequestsByUser(friendUser.id);
     storeCreateFriend(friendUser);
+  };
+  // The read's answer is merged with the requests a push added or removed while it was in flight, so a response taken
+  // Before the push does not put back a request the push already resolved
+  const readFriendRequests = async (read: () => Promise<FriendRequestInSocialWithRelations[]>) => {
+    const pushes: SnapshotPush<FriendRequestInSocialWithRelations>[] = [];
+    readingPushes = pushes;
+    await executeReadFriendRequestsQuery(read, {
+      key: "friendRequests",
+      onSuccess: (newFriendRequests) => {
+        friendRequests.value = mergeSnapshot(newFriendRequests, pushes);
+      },
+    });
+    if (readingPushes === pushes) readingPushes = undefined;
   };
   // Non-optimistic: the row carries the sender's user the client can't faithfully fabricate, and a
   // Temp-id placeholder would race the echo's server-id row into a transient duplicate.
@@ -91,6 +120,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     declineFriendRequest,
     friendRequests,
     getFriendRequestsByUser,
+    readFriendRequests,
     receivedFriendRequests,
     sendFriendRequest,
     sentFriendRequests,

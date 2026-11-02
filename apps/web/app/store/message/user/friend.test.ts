@@ -58,4 +58,24 @@ describe(useFriendStore, () => {
 
     expect(friends.value).toStrictEqual([first]);
   });
+
+  // A friend added or removed while the list is being read is not in the answer's favour: the answer may predate the
+  // Push, so the push is replayed over it rather than the answer overwriting the list without it
+  test("replays a removal and an addition that land during the read over its answer", async () => {
+    expect.hasAssertions();
+
+    const { $trpc } = useNuxtApp();
+    const friendStore = useFriendStore();
+    const { friends } = storeToRefs(friendStore);
+    const added = createUser();
+    const removed = createUser();
+    trpcMsw.friend.readFriends.query(() => {
+      friendStore.storeDeleteFriend(removed.id);
+      friendStore.storeCreateFriend(added);
+      return [first, removed];
+    });
+    await friendStore.readFriends(() => $trpc.friend.readFriends.query());
+
+    expect(friends.value).toStrictEqual([first, added]);
+  });
 });

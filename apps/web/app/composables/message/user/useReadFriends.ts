@@ -7,18 +7,16 @@ export const useReadFriends = () => {
   const blockStore = useBlockStore();
   const { blockedUsers } = storeToRefs(blockStore);
   const friendRequestStore = useFriendRequestStore();
-  const { friendRequests } = storeToRefs(friendRequestStore);
+  const { readFriendRequests } = friendRequestStore;
   const friendStore = useFriendStore();
-  const { friends } = storeToRefs(friendStore);
+  const { readFriends } = friendStore;
 
   return async () => {
-    const [newBlockedUsers, newFriends, newFriendRequests] = await Promise.all([
+    const [newBlockedUsers] = await Promise.all([
       $trpc.block.readBlockedUsers.query(),
-      $trpc.friend.readFriends.query(),
-      $trpc.friendRequest.readFriendRequests.query(),
+      readFriends(() => $trpc.friend.readFriends.query()),
+      readFriendRequests(() => $trpc.friendRequest.readFriendRequests.query()),
     ]);
     blockedUsers.value = newBlockedUsers;
-    friends.value = newFriends;
-    friendRequests.value = newFriendRequests;
   };
 };
