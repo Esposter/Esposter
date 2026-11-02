@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { VNode } from "vue";
+
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import {
   GAME_CREAM,
@@ -26,6 +28,7 @@ interface Props {
 }
 
 const { kind, tip } = defineProps<Props>();
+defineSlots<{ default?: () => VNode }>();
 const button = useTemplateRef("button");
 const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
 const restDuration = `${INTERACTION_REST_MS}ms`;
