@@ -15,7 +15,21 @@ import ArchiveScreen from "#src/components/Archive/Screen/Index.vue";
 import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import CharacterTerms from "#src/components/Character/Terms/Index.vue";
+import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
+import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
+import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
+import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import DomainScreen from "#src/components/Domain/Screen/Index.vue";
+import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
+import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
+import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
+import GameOverScreen from "#src/components/GameOver/Index.vue";
+import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
+import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
+import HudScreen from "#src/components/Hud/Screen/Index.vue";
+import HudShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
+import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
@@ -25,16 +39,18 @@ import MenuTime from "#src/components/Menu/Time/Index.vue";
 import PaimonsBargainsScreen from "#src/components/PaimonsBargains/Screen/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
+import ShopScreen from "#src/components/Shop/Screen/Index.vue";
+import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Index.vue";
+import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
+import StatueScreen from "#src/components/Statue/Screen/Index.vue";
+import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
-import WorldSessionChallenge from "#src/components/World/Session/Challenge/Index.vue";
-import WorldSessionHud from "#src/components/World/Session/Hud/Index.vue";
-import WorldSessionScreens from "#src/components/World/Session/Screens/Index.vue";
-import WorldSessionStatue from "#src/components/World/Session/Statue/Index.vue";
-import WorldSessionWorkshop from "#src/components/World/Session/Workshop/Index.vue";
+import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useMenuNavigation } from "#src/composables/useMenuNavigation";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
@@ -124,6 +140,7 @@ import {
   QualityTierSettingsMap,
 } from "genshin-engine";
 import { CharacterMenuTab, GAME_CREAM, InventorySort, ItemCategory } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 
 interface Props extends WorldScreenProps, WorldTables {}
@@ -1410,57 +1427,84 @@ useWorldSaveSync({
       :name-text
       :origin
     />
-    <WorldSessionHud
-      :bag-full-hint
+    <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
+      <HudShortcutWheel
+        :direction-count="shortcutWheelDirectionCount"
+        :game-text
+        :picked-index="shortcutWheelPickedIndex"
+      />
+    </div>
+    <HudNavigation
+      v-if="isHudShown && pointedLandmark"
+      :get-camera
+      :get-ground-height
+      :landmark="pointedLandmark"
+      :origin
+    />
+    <HudScreen
+      v-if="isHudShown"
       :camera="mapCamera"
       :catalogue
       :character-data-map="statTables.characterDataMap"
       :character-id-skill-glyphs-map
-      :claim-prompt
-      :domain-claim-offers
       :frame="hudFrame"
-      :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
       :game-text
-      :get-camera
-      :get-ground-height
+      :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
       :input
       :interaction-prompts
       :interface-rects="hudInterfaceRects"
-      :is-hud-shown
-      :is-shortcut-wheel-open
+      :is-quick-swap-open
       :is-touch
       :landmarks="unlockedLandmarks"
       :max-stamina="staminaMaximum"
       :member="hudMember"
       :name-text-map="nameText"
       :near-oculus-places
-      :origin
       :party
-      :pointed-landmark
       :quest-mark
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
       :quest-text-map
-      :is-quick-swap-open
-      :shortcut-wheel-direction-count
-      :shortcut-wheel-picked-index
-      :showing-tip
-      :tip-text
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
       :trial-seconds-remaining
-      :trounce-claim-prompt
-      @choose-domain="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
-      @choose-outcrop="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
-      @choose-trounce="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
-      @close-domain="closeDomainTreeClaim()"
-      @close-outcrop="closeOutcropClaim()"
-      @close-tip="closeTip()"
-      @close-trounce="closeTrounceBlossomClaim()"
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
       @press="(id) => pressInteractable(id)"
-      @restore-outcrop="restoreOutcropClaim(getWorldNow())"
-    />
+    >
+      <template #prompts>
+        <TipPopup
+          v-if="showingTip"
+          :game-text
+          :subtitle="tipText[showingTip.subtitleTextId] || ''"
+          :title="tipText[showingTip.titleTextId] || ''"
+          @close="closeTip()"
+        />
+        <OfferChoice
+          v-if="claimPrompt"
+          :can-restore="claimPrompt.canRestore"
+          :game-text
+          :offers="claimPrompt.offers"
+          @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
+          @close="closeOutcropClaim()"
+          @restore="restoreOutcropClaim(getWorldNow())"
+        />
+        <OfferChoice
+          v-if="trounceClaimPrompt"
+          :game-text
+          :offers="trounceClaimPrompt.offers"
+          @choose="chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
+          @close="closeTrounceBlossomClaim()"
+        />
+        <OfferChoice
+          v-if="domainClaimOffers"
+          :game-text
+          :offers="domainClaimOffers"
+          @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
+          @close="closeDomainTreeClaim()"
+        />
+        <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
+      </template>
+    </HudScreen>
     <MenuScreen
       v-model:screen-kind="screenKind"
       :account-avatar-url
@@ -1727,145 +1771,228 @@ useWorldSaveSync({
         />
       </template>
     </MenuScreen>
-    <WorldSessionScreens
-      v-model:expeditions="expeditions"
-      v-model:reputation-level="reputationLevel"
-      v-model:shop-purchases="shopPurchases"
-      :adventure-rank="rank"
-      :cast-view
-      :character-passive-group-id-map
-      :completed-main-quest-ids
-      :down-character-ids
-      :expedition-characters
-      :game-data-base-url
+    <GameOverScreen
+      v-if="screenKind === ScreenKind.GameOver"
+      :revive-label="gameText[GameTextKey.Revive]"
+      :title="gameText[GameTextKey.PlayerDieNone]"
+      @revive="
+        reviveFallenParty();
+        closeScreen();
+      "
+    />
+    <DialogueTalk
+      v-if="screenKind === ScreenKind.Dialogue && talk"
+      :key="talk.id"
       :game-text
-      :gcg-game-id
-      :get-world-now
-      :goods="shopIdShopGoodMap.get(shopId) ?? []"
-      :inventory
-      :language
-      :material-data-map
-      :name-text
-      :random="kitContext.random"
-      :region-statue-progress-map
-      :reputation
-      :reputation-bounty-offer
-      :reputation-city
-      :reputation-offer-title
-      :screen-kind
-      :shop-id
+      :is-duel-offered="talkDuelGameId !== undefined"
+      :offers="talkOffers"
       :talk
-      :talk-duel-game-id
-      :talk-offers
-      :talk-text-map
-      :wallet
-      :world-now
-      @accept="acceptReputationOffer()"
+      :text-map="talkTextMap"
       @begin="(talkId) => beginTalk(talkId)"
-      @close="closeScreen()"
       @duel="
         gcgGameId = talkDuelGameId;
         screenKind = ScreenKind.GcgDuel;
       "
       @end="endTalk()"
-      @leave-duel="
+    />
+    <ReputationScreen
+      v-if="screenKind === ScreenKind.Reputation && reputationCity"
+      v-model:level="reputationLevel"
+      :game-text
+      :material-data-map
+      :name-text
+      :bounty-offer="reputationBountyOffer"
+      :offer-title="reputationOfferTitle"
+      :progress="reputation"
+      :reputation="reputationCity"
+      @accept="acceptReputationOffer()"
+      @close="closeScreen()"
+    />
+    <GcgSession
+      v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
+      :game-data-base-url
+      :game-id="gcgGameId"
+      :game-text
+      :language
+      @leave="
         (won) => {
           payCardGameReward(gcgGameId, won);
           gcgGameId = undefined;
           closeScreen();
         }
       "
-      @revive="
-        reviveFallenParty();
-        closeScreen();
-      "
+    />
+    <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
+    <ShopScreen
+      v-if="screenKind === ScreenKind.Shop"
+      v-model:purchases="shopPurchases"
+      :adventure-rank="rank"
+      :game-text
+      :get-world-now
+      :goods="shopIdShopGoodMap.get(shopId) ?? []"
+      :inventory
+      :material-data-map
+      :name-text
+      :now="worldNow"
+      :reputation-level="reputation.level"
+      :shop-id
+      :wallet
+      @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
       @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
-    <WorldSessionStatue
+    <ExpeditionLoader
+      v-if="screenKind === ScreenKind.Expedition"
+      v-model:expeditions="expeditions"
+      :adventure-rank="rank"
+      :characters="expeditionCharacters"
+      :character-passive-group-id-map
+      :completed-quest-ids="completedMainQuestIds"
+      :down-character-ids
+      :game-data-base-url
+      :game-text
+      :inventory
+      :material-data-map
+      :name-text
+      :now="worldNow"
+      :random="kitContext.random"
+      :region-statue-progress-map
+      :wallet
+      @close="closeScreen()"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
+    />
+    <StatueScreen
+      v-if="screenKind === ScreenKind.Blessing"
       v-model:auto-recover="autoRecoverSetting"
       v-model:power="restorativePower"
       :game-text
-      :get-character-name
       :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
-      :get-region-progress
-      :get-world-now
-      :get-worship-item-name
+      :get-name="getCharacterName"
+      :get-now="getWorldNow"
       :party
-      :screen-kind
       :statue-count="resonatedRegionIds.length"
-      :worship-levels
-      :worship-region-id
+      @close="closeScreen()"
+      @worship="screenKind = ScreenKind.Worship"
+    />
+    <StatueWorshipScreen
+      v-if="screenKind === ScreenKind.Worship && worshipRegionId"
+      :game-text
+      :get-item-name="getWorshipItemName"
+      :levels="worshipLevels"
+      :progress="getRegionProgress(worshipRegionId)"
       @blessing="screenKind = ScreenKind.Blessing"
       @claim="claimWorship()"
       @close="closeScreen()"
       @offer="offerWorship()"
-      @worship="screenKind = ScreenKind.Worship"
     />
-    <WorldSessionChallenge
-      :abyss-blessing
-      :abyss-choice-chamber-index
-      :abyss-choice-floor-index
-      :abyss-choices
-      :abyss-floors-offered
-      :domain-levels="domainLevelRows"
+    <DomainScreen
+      v-if="screenKind === ScreenKind.Domain"
       :game-text
       :is-in-domain="domainArena !== undefined"
+      :levels="domainLevelRows"
+      @close="closeScreen()"
+      @enter="(dungeonId) => enterDomainLevel(dungeonId)"
+      @leave="
+        leaveDomain();
+        closeScreen();
+      "
+    />
+    <SpiralAbyssEntryScreen
+      v-if="screenKind === ScreenKind.SpiralAbyss"
+      :blessing="abyssBlessing"
+      :floors="abyssFloorsOffered"
+      :game-text
       :name-text
-      :screen-kind
-      @choose-abyss-chamber="
+      @choose="
         (floorId, chamberId) => {
           enterAbyssChamber(floorId, chamberId);
           closeScreen();
         }
       "
-      @choose-benediction="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
       @close="closeScreen()"
-      @enter="(dungeonId) => enterDomainLevel(dungeonId)"
-      @leave-domain="
-        leaveDomain();
-        closeScreen();
-      "
     />
-    <WorldSessionWorkshop
-      v-model:adventure-exp="adventureExp"
-      v-model:cooking-progress="cookingProgress"
-      v-model:cooking-recipe="cookingRecipe"
-      v-model:crafted-count-map="craftedCountMap"
-      v-model:forge-amount="forgeAmount"
-      v-model:forge-progress="forgeProgress"
-      v-model:forge-recipe-id="forgeRecipeId"
-      v-model:forge-tab="forgeTab"
-      v-model:processing-jobs="processingJobs"
-      :adventure-rank="rank"
-      :adventure-rank-tables
-      :artifact-drop-tables="craftingArtifactDropTables"
+    <SpiralAbyssBenediction
+      v-if="abyssChoices"
+      :chamber="abyssChoiceChamberIndex"
+      :choices="abyssChoices"
+      :floor="abyssChoiceFloorIndex"
+      :game-text
+      :name-text
+      @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
+    />
+    <CookingScreen
+      v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
+      v-model:progress="cookingProgress"
+      v-model:recipe="cookingRecipe"
       :avatar-id="activeCharacterId"
-      :completed-main-quest-ids
-      :cooking-recipes="openCookingRecipes"
-      :crafting-progress
-      :crafting-recipes
+      :game-text
+      :inventory
+      :material-data-map
+      :name-text
+      :random="kitContext.random"
+      :recipes="openCookingRecipes"
+      :talent="cookingTalents[activeCharacterId]"
+      @close="closeScreen()"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+    />
+    <ProcessingScreen
+      v-if="screenKind === ScreenKind.Processing"
+      v-model:jobs="processingJobs"
+      :game-text
+      :inventory
+      :material-data-map
+      :name-text
+      :now="getWorldNow"
+      :recipes="processingRecipes"
+      @close="closeScreen()"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+    />
+    <CraftingScreen
+      v-if="screenKind === ScreenKind.Crafting"
+      v-model:crafted-count-map="craftedCountMap"
+      :adventure-rank="rank"
+      :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
-      :forge-definitions
-      :forge-now
-      :forge-recipes
-      :forge-weapons
       :game-text
       :get-world-now
       :initial-crafter-id="crafting.crafterId"
       :inventory
       :material-data-map
       :name-text
-      :party-character-ids="getDeployedCharacterIds(party)"
-      :processing-recipes
+      :now="worldNow"
+      :progress="craftingProgress"
       :random="kitContext.random"
+      :recipes="craftingRecipes"
       :reliquary-piece-entry-map
-      :screen-kind
       :strongboxes="craftingStrongboxes"
-      :talent="cookingTalents[activeCharacterId]"
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
-      :world-now
+      @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
+      @close="closeScreen()"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
+    />
+    <ForgeScreen
+      v-if="screenKind === ScreenKind.Forge"
+      v-model:adventure-exp="adventureExp"
+      v-model:amount="forgeAmount"
+      v-model:progress="forgeProgress"
+      v-model:recipe-id="forgeRecipeId"
+      v-model:tab="forgeTab"
+      :adventure-rank="rank"
+      :adventure-rank-tables
+      :completed-main-quest-ids
+      :definitions="forgeDefinitions"
+      :game-text
+      :inventory
+      :is-in-realm="false"
+      :now="forgeNow"
+      :party-character-ids="getDeployedCharacterIds(party)"
+      :random="kitContext.random"
+      :recipes="forgeRecipes"
+      :wallet
+      :weapons="forgeWeapons"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
@@ -1886,6 +2013,28 @@ useWorldSaveSync({
 </template>
 
 <style scoped>
+/* Provisional: where the game's hint sits and how long it stays wait on a recording of the English client at 1080 high */
+.bag-full-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: v-bind(GAME_CREAM);
+  text-shadow: 0 0 4px rgb(0 0 0 / 0.8);
+}
+
+/* The shortcut wheel centred over the world, its size the shorter side of the view so it fits any window */
+.shortcut-wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(60dvh, 60vw);
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
 /* The package carries no utility classes, so the screen fills its host with a style of its own */
 .world-screen {
   position: relative;

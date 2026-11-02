@@ -1,6 +1,6 @@
 # Session menu layer: design
 
-Why the menu layer stays in the session root, and what the recorded build of it was. The exact code of that build is in [the recorded build](./recorded-build.md), and what it was is in [the proposal](./proposal.md).
+Why the menu layer stays in the session root, and what the recorded build of it was. The HUD, workshop, screens, statue and challenge layers it was recorded beside were forwarding children of the same kind, and have since been inlined into the root on the same measure. The exact code of that build is in [the recorded build](./recorded-build.md), and what it was is in [the proposal](./proposal.md).
 
 ## The recorded build
 
