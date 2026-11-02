@@ -7,6 +7,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { getElementBounds } from "#src/services/getElementBounds";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
+import { getPositionOperations } from "#src/services/getPositionOperations";
 import { getRerouteOperations } from "#src/services/getRerouteOperations";
 import { exhaustiveGuard, JsonPatchOperationType } from "@esposter/shared";
 
@@ -42,10 +43,7 @@ export const movePositionedElement = (
     case PositionedElementType.Shape:
     case PositionedElementType.StickyNote:
     case PositionedElementType.Text: {
-      const operations: JsonPatchOperation[] = [
-        { op: JsonPatchOperationType.Replace, path: `${pointer}/x`, value: point.x },
-        { op: JsonPatchOperationType.Replace, path: `${pointer}/y`, value: point.y },
-      ];
+      const operations = getPositionOperations(pointer, point);
       return element.type === PositionedElementType.Shape
         ? [...operations, ...getRerouteOperations(document.elements, { ...element, x: point.x, y: point.y })]
         : operations;

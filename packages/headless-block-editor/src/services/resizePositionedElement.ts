@@ -7,6 +7,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { checkIsResizablePositionedElement } from "#src/services/checkIsResizablePositionedElement";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
+import { getPositionOperations } from "#src/services/getPositionOperations";
 import { getRerouteOperations } from "#src/services/getRerouteOperations";
 import { JsonPatchOperationType } from "@esposter/shared";
 
@@ -22,12 +23,7 @@ export const resizePositionedElement = (
   if (!element || !checkIsResizablePositionedElement(element)) return [];
 
   const pointer = getElementPointer(index);
-  const positionOperations: JsonPatchOperation[] = position
-    ? [
-        { op: JsonPatchOperationType.Replace, path: `${pointer}/x`, value: position.x },
-        { op: JsonPatchOperationType.Replace, path: `${pointer}/y`, value: position.y },
-      ]
-    : [];
+  const positionOperations = position ? getPositionOperations(pointer, position) : [];
   const widthOperation: JsonPatchOperation = {
     op: JsonPatchOperationType.Replace,
     path: `${pointer}/width`,
