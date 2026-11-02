@@ -10,11 +10,15 @@ const knipConfiguration: KnipConfig = {
     ".": {
       // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
       // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
+      // `tsrs` loads `vize` by name from each package's `contentMappers`, and the mapper needs the `vue` the packages resolve
+      // to resolve from where `vize` is installed too, or it falls back to helpers that lack what a library component needs
       ignoreDependencies: [
         "@esposter/shared-node",
         "@fission-ai/openspec",
         "@kjanat/actionlint",
         "@lerna-lite/publish",
+        "vize",
+        "vue",
       ],
     },
     "apps/functions": { entry: ["src/**/*.ts"] },
