@@ -26,6 +26,47 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
   { height: 45, width: 400, x: 730, y: 990 },
   { height: 200, width: 280, x: 1640, y: 880 },
 ];
+// The details column's own pieces on the still, the title, its place and journal with the emblem, the divider, the
+// Objective's rule and the description, each filled from the world round it, so the still's world between them is
+// The overview frame's and the rows and gaps between the pieces are scored over it as drawn
+const QUEST_SCREEN_DETAILS_PLATE = [
+  { height: 46, width: 512, x: 877, y: 118 },
+  { height: 26, width: 26, x: 874, y: 170 },
+  { height: 38, width: 372, x: 1348, y: 166 },
+  { height: 46, width: 48, x: 1724, y: 163 },
+  { height: 12, width: 966, x: 843, y: 212 },
+  { height: 60, width: 899, x: 877, y: 238 },
+  { height: 64, width: 904, x: 874, y: 312 },
+];
+// The bag's own pieces at the weapons tab: the header band across the top, the four visible columns of its grid's
+// Cards, the detail panel, its Details pill and the arrow past the panel, each filled from the recording's world round
+// It. The world between them, the gaps between cards and the margin, stays the recording's own pixels
+const INVENTORY_WEAPONS_PLATE = [
+  { height: 96, width: 1270, x: 650, y: 0 },
+  { height: 152, width: 122, x: 650, y: 114 },
+  { height: 152, width: 124, x: 795, y: 114 },
+  { height: 152, width: 124, x: 942, y: 114 },
+  { height: 152, width: 124, x: 1089, y: 114 },
+  { height: 152, width: 122, x: 650, y: 290 },
+  { height: 152, width: 124, x: 795, y: 290 },
+  { height: 152, width: 124, x: 942, y: 290 },
+  { height: 152, width: 124, x: 1089, y: 290 },
+  { height: 152, width: 122, x: 650, y: 466 },
+  { height: 152, width: 124, x: 795, y: 466 },
+  { height: 152, width: 124, x: 942, y: 466 },
+  { height: 152, width: 124, x: 1089, y: 466 },
+  { height: 152, width: 122, x: 650, y: 642 },
+  { height: 152, width: 124, x: 795, y: 642 },
+  { height: 152, width: 124, x: 942, y: 642 },
+  { height: 152, width: 124, x: 1089, y: 642 },
+  { height: 142, width: 122, x: 650, y: 818 },
+  { height: 142, width: 124, x: 795, y: 818 },
+  { height: 142, width: 124, x: 942, y: 818 },
+  { height: 142, width: 124, x: 1089, y: 818 },
+  { height: 844, width: 493, x: 1298, y: 114 },
+  { height: 63, width: 226, x: 1562, y: 987 },
+  { height: 50, width: 40, x: 1836, y: 512 },
+];
 
 // A character screen's tab column, its words and diamonds clear of the scene's light, scored by the five tab entries
 const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
@@ -657,9 +698,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   // The weapons' tab of the bag at 1080 high, from a public account tour's recording of the English PC client, its frame
   // At 30 seconds into the clip, drawn behind the bag so only the bag can differ. The streamer's camera at the top left
-  // And the recording's UID at the bottom right sit outside the region
+  // And the recording's UID at the bottom right sit outside the region. Its plate is the bag's own pieces, so the world
+  // Between them is the recording's own pixels rather than a fill of the region's border
   "inventory-weapons": {
     isBackdrop: true,
+    plate: INVENTORY_WEAPONS_PLATE,
     region: { height: 1048, width: 1270, x: 650, y: 0 },
     screen: "InventoryScreen",
     source: "yt-_agTJviXj7s-bag.mp4 at 30s",
@@ -1049,7 +1092,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same still's details column on the right, the title, journal, objective and description, clear of the rewards
   "quest-screen-details": {
     isBackdrop: true,
-    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
+    plate: QUEST_SCREEN_DETAILS_PLATE,
     region: { height: 680, width: 899, x: 877, y: 100 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",

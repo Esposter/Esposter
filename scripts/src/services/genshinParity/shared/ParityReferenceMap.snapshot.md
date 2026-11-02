@@ -52,7 +52,7 @@ committed.
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
 | `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
-| `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.78% | 0.759 |  5.67% | 0.3633 |
+| `inventory-weapons`                    | `InventoryScreen`           |                                                                          5.48% | 0.813 |  2.25% | 0.2414 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
 | `loading-startup-failed`               | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
@@ -92,7 +92,7 @@ committed.
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.30% | 0.222 | 17.64% | 0.7110 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
 | `quest-screen`                         | `QuestScreen`               |                                                                          9.54% | 0.844 |  7.82% | 0.3506 |
-| `quest-screen-details`                 | `QuestScreen`               |                                                                         13.80% | 0.946 | 12.85% | 0.4340 |
+| `quest-screen-details`                 | `QuestScreen`               |                                                                          6.50% | 0.971 |  5.33% | 0.2775 |
 | `quest-screen-header`                  | `QuestScreen`               |                                                                          3.37% | 0.999 |  2.70% | 0.1857 |
 | `quest-screen-list`                    | `QuestScreen`               |                                                                          6.18% | 0.892 |  4.70% | 0.2657 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
