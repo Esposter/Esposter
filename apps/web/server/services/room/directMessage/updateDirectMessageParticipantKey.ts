@@ -10,9 +10,10 @@ export const updateDirectMessageParticipantKey = (
   db: Context["db"] | Transaction,
   roomId: RoomInMessage["id"],
   userIds: string[],
+  ownerId?: RoomInMessage["userId"],
 ) =>
   db
     .update(roomsInMessage)
-    .set({ participantKey: getDirectMessageParticipantKey(userIds) })
+    .set({ participantKey: getDirectMessageParticipantKey(userIds), userId: ownerId })
     .where(eq(roomsInMessage.id, roomId))
     .returning();

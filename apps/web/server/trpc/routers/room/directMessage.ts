@@ -182,10 +182,15 @@ export const directMessageRouter = router({
       // The owner leaving hands the group to the next participant, since the owner's permissions are checked without
       // Looking for a membership and a departed owner would otherwise keep every gate on a conversation they are not in
       const [nextOwnerId] = remainingParticipantIds;
-      if (room?.userId === userId && nextOwnerId)
-        await tx.update(roomsInMessage).set({ userId: nextOwnerId }).where(eq(roomsInMessage.id, roomId));
       const updatedRoomRow = requireMutation(
-        (await updateDirectMessageParticipantKey(tx, roomId, remainingParticipantIds))[0],
+        (
+          await updateDirectMessageParticipantKey(
+            tx,
+            roomId,
+            remainingParticipantIds,
+            room?.userId === userId ? nextOwnerId : undefined,
+          )
+        )[0],
         Operation.Update,
         DerivedDatabaseEntityType.DirectMessage,
         roomId,
