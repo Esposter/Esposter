@@ -1,6 +1,6 @@
 import { checkIsRebaseInProgress } from "#src/services/land/checkIsRebaseInProgress";
 import { LANDING_EXIT_STATUS, MAX_LANDING_ATTEMPTS } from "#src/services/land/constants";
-import { readRebaseConflicts } from "#src/services/land/readRebaseConflicts";
+import { readRebaseStopLines } from "#src/services/land/readRebaseStopLines";
 import { readRemovalLine } from "#src/services/land/readRemovalLine";
 import { verifyLanded } from "#src/services/land/verifyLanded";
 import { waitBeforeRetry } from "#src/services/land/waitBeforeRetry";
@@ -37,7 +37,7 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
   for (let attempt = 1; landedCount === undefined; attempt += 1) {
     const pull = spawnGit(["pull", "--rebase", REMOTE_NAME, QUEUE_BRANCH]);
     if (pull.status !== 0 && checkIsRebaseInProgress()) {
-      for (const path of readRebaseConflicts()) console.info(`conflict ${path}`);
+      for (const line of readRebaseStopLines()) console.info(line);
       return LANDING_EXIT_STATUS.conflicted;
     }
     if (pull.status !== 0) {
