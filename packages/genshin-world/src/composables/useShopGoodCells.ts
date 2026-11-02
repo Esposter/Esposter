@@ -1,3 +1,5 @@
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ShopGoodCell } from "genshin-interface";
@@ -6,6 +8,7 @@ import type { ComputedRef, Ref } from "vue";
 
 import { computeNextShopRefreshTime } from "#src/services/shop/computeNextShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
+import { countShopCost } from "#src/services/shop/countShopCost";
 import { formatShopRefreshCountdown } from "#src/services/shop/formatShopRefreshCountdown";
 import { ShopRefreshLimitGameTextKeyMap } from "#src/services/shop/ShopRefreshLimitGameTextKeyMap";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -17,17 +20,19 @@ import { computed } from "vue";
 export const useShopGoodCells = ({
   getCostName,
   getGameText,
-  getHeldCount,
   getNow,
   goods,
+  inventory,
   purchases,
+  wallet,
 }: {
   getCostName: (itemId: number) => string;
   getGameText: () => GameText;
-  getHeldCount: (itemId: number) => number;
   getNow: () => Temporal.Instant;
   goods: ComputedRef<{ good: Pick<ShopGood, "buyLimit" | "costs" | "goodsId" | "itemId" | "refresh">; name: string }[]>;
+  inventory: Readonly<Ref<Inventory>>;
   purchases: Readonly<Ref<ShopPurchase[]>>;
+  wallet: Readonly<Ref<Wallet>>;
 }) =>
   computed<ShopGoodCell[]>(() => {
     const gameText = getGameText();
@@ -41,7 +46,10 @@ export const useShopGoodCells = ({
         id: good.goodsId,
         limitLabel: left === undefined || limitKey === undefined ? "" : fillGameTextValues(gameText[limitKey], left),
         name,
-        ownedLabel: fillGameTextValues(gameText[GameTextKey.ShopOwned], getHeldCount(good.itemId)),
+        ownedLabel: fillGameTextValues(
+          gameText[GameTextKey.ShopOwned],
+          countShopCost(inventory.value, wallet.value, good.itemId),
+        ),
         purchaseLabel:
           left === undefined
             ? ""

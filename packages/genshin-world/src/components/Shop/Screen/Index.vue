@@ -18,8 +18,8 @@ import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
 import { computeShopTabs } from "#src/services/shop/computeShopTabs";
 import { countShopCost } from "#src/services/shop/countShopCost";
 import { discountShopGood } from "#src/services/shop/discountShopGood";
-import { ShopTitleGameTextKeyMap } from "#src/services/shop/ShopTitleGameTextKeyMap";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
+import { ShopTitleGameTextKeyMap } from "#src/services/shop/ShopTitleGameTextKeyMap";
 import { takeOne } from "@esposter/shared";
 import { GameScreen, ShopScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -86,13 +86,15 @@ const balances = computed<CurrencyCount[]>(() =>
 const goodCells = useShopGoodCells({
   getCostName,
   getGameText: () => gameText,
-  getHeldCount: (itemId) => countShopCost(inventory.value, wallet.value, itemId),
   getNow: () => now,
   goods: computed(() =>
     offeredGoods.value.map((good) => ({ good, name: getItemDefinition(good.itemId, nameText, materialDataMap).name })),
   ),
+  inventory,
   purchases,
+  wallet,
 });
+const title = computed(() => gameText[ShopTitleGameTextKeyMap.get(shopId) ?? GameTextKey.Shop]);
 // The most the picked good can be bought for: its limit left and every cost the player holds counted, the dearest cost
 // Limiting it. A cost of nothing is bought one at a time
 const countMaximum = computed(() => {
@@ -144,7 +146,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-maximum
       :goods="goodCells"
       :source-label="gameText[GameTextKey.ShopSource]"
-      :title="gameText[ShopTitleGameTextKeyMap.get(shopId) ?? GameTextKey.Shop]"
+      :title
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
     />
@@ -160,7 +162,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-maximum
       :goods="goodCells"
       :tabs
-      :title="gameText[ShopTitleGameTextKeyMap.get(shopId) ?? GameTextKey.Shop]"
+      :title
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
     />
