@@ -1,11 +1,8 @@
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { GcgLevels } from "#src/models/gcg/GcgLevels";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
-import type { ComputedRef, Ref } from "vue";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { getTalkOffers } from "#src/services/dialogue/getTalkOffers";
@@ -17,9 +14,11 @@ import { listGcgOpenGameIds } from "#src/services/gcg/listGcgOpenGameIds";
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, the quests not
@@ -33,10 +32,6 @@ export const useWorldTalks = ({
   getGroundHeight,
   getResidents,
   getResidentSpot,
-  questProgressMap,
-  questsInProgress,
-  questsOffered,
-  questTextMap,
 }: {
   closeScreen: () => void;
   // The Adventure Rank the player stands at, which opens the card game's duels from its rank
@@ -49,11 +44,9 @@ export const useWorldTalks = ({
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   // The world's names by text id, which name a resident's row
-  questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
-  questsInProgress: ComputedRef<Quest[]>;
-  questsOffered: ComputedRef<Quest[]>;
-  questTextMap: Ref<Readonly<Record<string, string>>>;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questProgressMap, questsInProgress, questsOffered, questTextMap } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   const talk = shallowRef<Talk>();

@@ -6,9 +6,6 @@ import type { FishingPool } from "#src/models/fishing/FishingPool";
 import type { FishProficient } from "#src/models/fishing/FishProficient";
 import type { FishReward } from "#src/models/fishing/FishReward";
 import type { FishRod } from "#src/models/fishing/FishRod";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
-import type { Ref } from "vue";
 
 import { FishingPhase } from "#src/models/fishing/FishingPhase";
 import { addFishingCatch } from "#src/services/fishing/addFishingCatch";
@@ -32,6 +29,7 @@ import { startFishingCast } from "#src/services/fishing/startFishingCast";
 import { stepFishingCast } from "#src/services/fishing/stepFishingCast";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { computeGameHour } from "#src/services/time/computeGameHour";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -42,17 +40,15 @@ import { computed, shallowRef } from "vue";
 // Fish. The game's tables are read once as the world starts
 export const useWorldFishing = ({
   getRegionIds,
-  questProgressMap,
-  quests,
   random,
   savedFishingCatchAts,
 }: {
   getRegionIds: () => string[];
-  questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
-  quests: Ref<Quest[]>;
   random: () => number;
   savedFishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questProgressMap, quests } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory, worldNow } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory } = worldSessionStore;

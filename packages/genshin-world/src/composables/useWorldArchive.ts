@@ -6,7 +6,7 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
-import type { ComputedRef, Ref, ShallowRef } from "vue";
+import type { Ref, ShallowRef } from "vue";
 
 import { bookBodySchema } from "#src/models/archive/ArchiveBook";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
@@ -29,6 +29,7 @@ import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readSceneGroups } from "#src/services/sceneGroup/readSceneGroups";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -40,7 +41,6 @@ export const useWorldArchive = ({
   archiveKillsMap,
   archiveProgressMap,
   enemyKindMap,
-  finishedMainQuestIds,
   reliquaryPieceEntryMap,
   reliquarySets,
   screenKind,
@@ -48,11 +48,12 @@ export const useWorldArchive = ({
   archiveKillsMap: ShallowRef<ArchiveKills>;
   archiveProgressMap: ShallowRef<ArchiveProgress>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
-  finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
   screenKind: Ref<ScreenKind>;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { finishedMainQuestIds } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory } = storeToRefs(worldSessionStore);
   const { events } = worldSessionStore;

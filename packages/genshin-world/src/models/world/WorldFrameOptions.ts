@@ -5,8 +5,6 @@ import type { InteractionPrompts } from "#src/models/interaction/InteractionProm
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Party } from "#src/models/party/Party";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
@@ -39,8 +37,6 @@ export interface WorldFrameOptions {
   kitContext: KitContext;
   party: Party;
   placeUsedGadget: (usedGadget: GadgetRow | undefined, feet: { x: number; z: number }) => void;
-  questProgressMap: Readonly<Ref<ReadonlyMap<string, QuestProgress>>>;
-  questsInProgress: Readonly<Ref<Quest[]>>;
   readInteraction: (inputState: InputState, frameSeconds: number) => Interactable | undefined;
   refreshMiningOutcrops: (now: Temporal.Instant, random: () => number) => void;
   screenKind: Ref<ScreenKind>;
@@ -65,7 +61,5 @@ export interface WorldFrameOptions {
   stepTrial: (step: WorldChallengeStep) => undefined | WorldJumpPose;
   stepWorldPuzzles: (deltaSeconds: number, position: GroundPoint) => void;
   touchOutcropsNear: (x: number, z: number, random: () => number) => void;
-  trackedQuestId: Ref<string>;
-  trackerQuest: Readonly<Ref<Quest | undefined>>;
   unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
 }

@@ -7,9 +7,10 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
+import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
-import { computed, nextTick, shallowRef } from "vue";
+import { nextTick } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
@@ -25,10 +26,9 @@ describe(useWorldAdventureRank, () => {
       { getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0) },
       { inventory: { ...EMPTY_INVENTORY }, wallet: savedState.wallet },
     );
-    const questIds = shallowRef(finishedMainQuestIds);
+    finishTestMainQuests(...finishedMainQuestIds);
     const adventureRank = useWorldAdventureRank({
       adventureRankTables,
-      finishedMainQuestIds: computed(() => questIds.value),
       savedAdventureExp,
       savedAdventureRankRewardsClaimed: [],
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
@@ -36,7 +36,7 @@ describe(useWorldAdventureRank, () => {
     return {
       adventureRank,
       setFinishedMainQuestIds: (nextFinishedMainQuestIds: ReadonlySet<number>) => {
-        questIds.value = nextFinishedMainQuestIds;
+        finishTestMainQuests(...nextFinishedMainQuestIds);
       },
       worldSessionStore,
     };

@@ -11,9 +11,11 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
+import { storeToRefs } from "pinia";
 
 // The world's frame, run before each draw: the input is read, the screen it moves to is chosen, and each feature that
 // Moves on its own steps by the time that passed, in the order they depend on one another. The world's own steps run
@@ -41,8 +43,6 @@ export const useWorldFrame = ({
   kitContext,
   party,
   placeUsedGadget,
-  questProgressMap,
-  questsInProgress,
   readInteraction,
   refreshMiningOutcrops,
   screenKind,
@@ -57,10 +57,10 @@ export const useWorldFrame = ({
   stepTrial,
   stepWorldPuzzles,
   touchOutcropsNear,
-  trackedQuestId,
-  trackerQuest,
   unlockedLandmarkIds,
 }: WorldFrameOptions) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questProgressMap, questsInProgress, trackedQuestId, trackerQuest } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // Whether the world is in play: not paused and on the world's own screen, which a step changes as the frame goes on

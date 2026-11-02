@@ -2,7 +2,6 @@ import type { Party } from "#src/models/party/Party";
 import type { AutoRecoverDwell } from "#src/models/statue/AutoRecoverDwell";
 import type { AutoRecoverSetting } from "#src/models/statue/AutoRecoverSetting";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
-import type { ComputedRef } from "vue";
 
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { advanceAutoRecoverDwell } from "#src/services/statue/advanceAutoRecoverDwell";
@@ -16,16 +15,14 @@ import {
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
-export const useWorldRestorativePower = ({
-  finishedMainQuestIds,
-  unlockedLandmarkIds,
-}: {
-  finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  unlockedLandmarkIds: ReadonlySet<string>;
-}) => {
+export const useWorldRestorativePower = ({ unlockedLandmarkIds }: { unlockedLandmarkIds: ReadonlySet<string> }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { finishedMainQuestIds } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // The regions whose statues the Traveler resonated with, which give its element and, once Welkin Moon's Homecoming is

@@ -1,6 +1,4 @@
 import type { MapCamera } from "#src/models/map/MapCamera";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 import type { Ref } from "vue";
@@ -10,9 +8,6 @@ import type { Ref } from "vue";
 export interface WorldQuestTargetsOptions {
   getGroundHeight: (x: number, z: number) => number;
   mapCamera: Readonly<Ref<MapCamera>>;
-  questProgressMap: Readonly<Ref<ReadonlyMap<string, QuestProgress>>>;
-  questsInProgress: Readonly<Ref<Quest[]>>;
-  questTargetId: Readonly<Ref<string | undefined>>;
   windrise: Readonly<
     Ref<
       | null

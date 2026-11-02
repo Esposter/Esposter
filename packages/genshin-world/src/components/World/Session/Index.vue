@@ -91,7 +91,6 @@ import { useWorldPointedLandmark } from "#src/composables/useWorldPointedLandmar
 import { useWorldProfileNamecards } from "#src/composables/useWorldProfileNamecards";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
-import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldQuestTargets } from "#src/composables/useWorldQuestTargets";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldReputationRequest } from "#src/composables/useWorldReputationRequest";
@@ -128,6 +127,7 @@ import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { useWorldMailStore } from "#src/store/mail";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
@@ -276,21 +276,21 @@ const { closeTip, showingTip } = useWorldTips({ queuedTipIds, shownTipIds, tips 
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
+const worldQuestsStore = useWorldQuestsStore();
 const {
-  acceptQuest,
   finishedMainQuestIds,
   questChapters,
   questProgressMap,
-  quests,
   questsInProgress,
-  questsOffered,
-  questStepTargets,
   questTargetId,
   questTargetIds,
   questTextMap,
   trackedQuestId,
   trackerQuest,
-} = useWorldQuests({ savedQuestProgressMap: savedState.quests });
+} = storeToRefs(worldQuestsStore);
+const { start: startQuests, stop: stopQuests } = worldQuestsStore;
+startQuests(savedState.quests);
+onUnmounted(stopQuests);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const {
   castView,
@@ -303,8 +303,6 @@ const {
   stepFishing,
 } = useWorldFishing({
   getRegionIds: () => [...(windrise.value?.regionDataMap.keys() ?? [])],
-  questProgressMap,
-  quests,
   random: () => kitContext.random(),
   savedFishingCatchAts: savedState.fishingCatchAts,
 });
@@ -323,7 +321,6 @@ const {
   worldLevelAdjustment,
 } = useWorldAdventureRank({
   adventureRankTables,
-  finishedMainQuestIds,
   savedAdventureExp: savedState.adventureExp,
   savedAdventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
@@ -341,8 +338,6 @@ const {
   wholeEncounterPoints,
   wholeLongTermEncounterPoints,
 } = useWorldCommissions({
-  finishedMainQuestIds,
-  questTargetIds,
   rank,
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
@@ -353,7 +348,6 @@ const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap
   archiveKillsMap,
   archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
-  finishedMainQuestIds,
   reliquaryPieceEntryMap,
   reliquarySets,
   screenKind,
@@ -486,7 +480,7 @@ const {
   stepAutoRecover,
   travelerBonusLines,
   travelerElement,
-} = useWorldRestorativePower({ finishedMainQuestIds, unlockedLandmarkIds: savedState.unlockedLandmarkIds });
+} = useWorldRestorativePower({ unlockedLandmarkIds: savedState.unlockedLandmarkIds });
 // The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 // The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the wish read
@@ -658,10 +652,6 @@ const {
   getGroundHeight,
   getResidents,
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
-  questProgressMap,
-  questsInProgress,
-  questsOffered,
-  questTextMap,
 });
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
@@ -725,7 +715,6 @@ const {
   completedMainQuestIds,
   gainWorldAdventureExp,
   placedDoings,
-  questStepTargets,
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
@@ -748,12 +737,8 @@ const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty,
     worldLevel,
   });
 const { acceptReputationOffer, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
-  acceptQuest,
   bountyHunt,
   claimBounty,
-  questProgressMap,
-  quests,
-  questTextMap,
   reputation,
   reputationBountyOffer,
   reputationCity,
@@ -1040,8 +1025,6 @@ const { stepFrame } = useWorldFrame({
   kitContext,
   party,
   placeUsedGadget,
-  questProgressMap,
-  questsInProgress,
   readInteraction,
   refreshMiningOutcrops,
   screenKind,
@@ -1056,8 +1039,6 @@ const { stepFrame } = useWorldFrame({
   stepTrial,
   stepWorldPuzzles,
   touchOutcropsNear,
-  trackedQuestId,
-  trackerQuest,
   unlockedLandmarkIds,
 });
 // The locked jump landmark the HUD points to
@@ -1071,14 +1052,7 @@ const getCharacter = () => {
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
 // Where the quests' targets stand from the character, which the quest screen and the tracker read
-const { questDistanceMap, questMark } = useWorldQuestTargets({
-  getGroundHeight,
-  mapCamera,
-  questProgressMap,
-  questsInProgress,
-  questTargetId,
-  windrise,
-});
+const { questDistanceMap, questMark } = useWorldQuestTargets({ getGroundHeight, mapCamera, windrise });
 defineExpose({ jumpTo, readCameraPosition });
 // The Companionship EXP, the day's commissions, the statues, the solved puzzles, the realm's placements and the
 // Traveler's name no source changes yet, so they are carried as they were saved

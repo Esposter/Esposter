@@ -1,8 +1,6 @@
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { GcgPlayerLevel } from "#src/models/gcg/GcgPlayerLevel";
-import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Resident } from "#src/models/world/Resident";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -19,7 +17,6 @@ import { jsonDateParse } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
-import { computed, shallowRef } from "vue";
 
 vi.mock(import("#src/services/gcg/readGcgLevels"));
 vi.mock(import("#src/services/resident/readStandingTalks"));
@@ -45,10 +42,6 @@ const useMondstadtTalks = async (adventureRank: number) => {
     getGroundHeight: () => 0,
     getResidents: () => residents,
     getResidentSpot: () => undefined,
-    questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-    questsInProgress: computed<Quest[]>(() => []),
-    questsOffered: computed<Quest[]>(() => []),
-    questTextMap: shallowRef<Record<string, string>>({}),
   });
   await flushReads();
   return talks;
@@ -91,10 +84,6 @@ describe(useWorldTalks, () => {
       getGroundHeight: () => 0,
       getResidents: () => [RESIDENT],
       getResidentSpot: () => undefined,
-      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-      questsInProgress: computed<Quest[]>(() => []),
-      questsOffered: computed<Quest[]>(() => []),
-      questTextMap: shallowRef<Record<string, string>>({}),
     });
   };
 

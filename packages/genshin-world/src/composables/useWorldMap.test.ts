@@ -27,6 +27,8 @@ import { readMondstadtReputation } from "#src/services/reputation/readMondstadtR
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { readRegionData } from "#src/services/world/readRegionData";
+import { useWorldQuestsStore } from "#src/store/quests";
+import { createInteractQuest } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
@@ -198,7 +200,6 @@ describe(useWorldMap, () => {
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
   const createWorldMap = (
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
-    questStepTargets = shallowRef({ named: new Set<string>(), reached: new Set<string>() }),
     savedRequestClaimedAts: readonly Temporal.Instant[] = [],
   ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
@@ -221,7 +222,6 @@ describe(useWorldMap, () => {
         completedMainQuestIds: shallowRef(new Set<string>()),
         gainWorldAdventureExp,
         placedDoings,
-        questStepTargets,
         recordedDoingIds,
         regionDataBaseUrl: "region-data",
         reputation,
@@ -277,7 +277,6 @@ describe(useWorldMap, () => {
     expect.hasAssertions();
 
     const { events, reputation, wallet } = createWorldMap(
-      undefined,
       undefined,
       Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => epoch),
     );
@@ -480,13 +479,14 @@ describe(useWorldMap, () => {
 
     // The unlock table lists the waypoint's point and a quest step names it, so the waypoint is hidden until that step is reached
     vi.mocked(readOpenWorldTransPointUnlocks).mockResolvedValue([{ pointId: TRANS_POINT_ID, sceneId: 3 }]);
-    const questStepTargets = shallowRef({ named: new Set([String(TRANS_POINT_ID)]), reached: new Set<string>() });
-    const { lockedJumpLandmarks } = createWorldMap(new Set(), questStepTargets);
+    const { lockedJumpLandmarks } = createWorldMap(new Set());
+    const worldQuestsStore = useWorldQuestsStore();
+    worldQuestsStore.quests = [createInteractQuest(TRANS_POINT_ID)];
     await waitForReads();
 
     expect(lockedJumpLandmarks.value.map(({ id }) => id)).not.toContain(waypoint.id);
 
-    questStepTargets.value = { named: new Set([String(TRANS_POINT_ID)]), reached: new Set([String(TRANS_POINT_ID)]) };
+    worldQuestsStore.questProgressMap = new Map([[String(TRANS_POINT_ID), { objectiveCounts: [], stepIndex: 0 }]]);
 
     expect(lockedJumpLandmarks.value.map(({ id }) => id)).toContain(waypoint.id);
   });

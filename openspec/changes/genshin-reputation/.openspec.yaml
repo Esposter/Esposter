@@ -23,7 +23,7 @@ x-touches:
     "packages/genshin-world/src/models/reputation/**",
     "packages/genshin-world/src/services/reputation/**",
     "packages/genshin-world/src/components/World/Session/Index.vue",
-    "packages/genshin-world/src/composables/useWorldQuests.ts",
+    "packages/genshin-world/src/store/quests.ts",
     "packages/genshin-world/src/composables/useWorldMap.test.ts",
     "packages/genshin-world/src/models/quest/**",
     "packages/genshin-world/src/services/quest/QuestLoaderMap.ts",

@@ -4,22 +4,23 @@ import type { ReputationRequestOptions } from "#src/models/reputation/Reputation
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 export const useWorldReputationRequest = ({
-  acceptQuest,
   bountyHunt,
   claimBounty,
-  questProgressMap,
-  quests,
-  questTextMap,
   reputation,
   reputationBountyOffer,
   reputationCity,
   requestClaimedAts,
   takeBounty,
 }: ReputationRequestOptions) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questProgressMap, quests, questTextMap } = storeToRefs(worldQuestsStore);
+  const { acceptQuest } = worldQuestsStore;
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not

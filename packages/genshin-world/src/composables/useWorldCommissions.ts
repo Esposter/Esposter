@@ -23,6 +23,7 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
 import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -32,20 +33,18 @@ import { computed, shallowRef } from "vue";
 // Them once the save is loaded when it was dealt before the latest daily reset. A quest in progress that finishes finishes
 // Its quest task, and a load that fails is logged and left with no day dealt, so no commission is offered rather than a wrong one
 export const useWorldCommissions = ({
-  finishedMainQuestIds,
-  questTargetIds,
   rank,
   savedCommissionDay,
   savedEncounterPoints,
   savedLongTermEncounterPoints,
 }: {
-  finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  questTargetIds: ComputedRef<string[]>;
   rank: ComputedRef<number>;
   savedCommissionDay: CommissionDay;
   savedEncounterPoints: EncounterPoints;
   savedLongTermEncounterPoints: LongTermEncounterPoints;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { finishedMainQuestIds, questTargetIds } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { worldNow } = storeToRefs(worldSessionStore);
   const { events, getWorldNow } = worldSessionStore;

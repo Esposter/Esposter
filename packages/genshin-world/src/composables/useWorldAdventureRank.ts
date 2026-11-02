@@ -1,6 +1,5 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
-import type { ComputedRef } from "vue";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { claimRankRewards } from "#src/services/adventureRank/claimRankRewards";
@@ -10,6 +9,7 @@ import { computeWorldLevel } from "#src/services/adventureRank/computeWorldLevel
 import { WORLD_LEVEL_LOWERING_MINIMUM } from "#src/services/adventureRank/constants";
 import { gainAdventureExp } from "#src/services/adventureRank/gainAdventureExp";
 import { toggleWorldLevelLowering } from "#src/services/adventureRank/toggleWorldLevelLowering";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef, watch } from "vue";
@@ -19,17 +19,17 @@ import { computed, shallowRef, watch } from "vue";
 // Step the player has lowered it by
 export const useWorldAdventureRank = ({
   adventureRankTables,
-  finishedMainQuestIds,
   savedAdventureExp,
   savedAdventureRankRewardsClaimed,
   savedWorldLevelAdjustment,
 }: {
   adventureRankTables: AdventureRankTables;
-  finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   savedAdventureExp: number;
   savedAdventureRankRewardsClaimed: number[];
   savedWorldLevelAdjustment: WorldLevelAdjustment;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { finishedMainQuestIds } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setWallet } = worldSessionStore;

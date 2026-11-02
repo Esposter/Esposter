@@ -77,7 +77,7 @@ The world screen loads the names and the game's tables the save is read by and t
 
 ```mermaid
 flowchart LR
-  Pick[useWorldPickups] -->|questEvent| Quests[useWorldQuests]
+  Pick[useWorldPickups] -->|questEvent| Quests[useWorldQuestsStore]
   Pick -->|pickUpMora| Combat[useWorldCombat]
   Combat -->|defeatEnemy| Archive[useWorldArchive]
   Combat -->|questEvent| Quests
@@ -87,7 +87,7 @@ flowchart LR
   Map[useWorldMap] -->|questEvent| Quests
 ```
 
-The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
+The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts` and `useWorldMap.ts`, `packages/genshin-world/src/store/quests.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
 
 ## Key files
 

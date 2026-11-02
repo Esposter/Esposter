@@ -4,19 +4,16 @@ import type { WorldQuestTargetsOptions } from "#src/models/quest/WorldQuestTarge
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed, watch } from "vue";
 
 // Where the quests' targets stand from the character: each go-to place the character steps into is a go-to event, and
 // The quests' distances and the navigated objective's mark are read off the regions in reach
-export const useWorldQuestTargets = ({
-  getGroundHeight,
-  mapCamera,
-  questProgressMap,
-  questsInProgress,
-  questTargetId,
-  windrise,
-}: WorldQuestTargetsOptions) => {
+export const useWorldQuestTargets = ({ getGroundHeight, mapCamera, windrise }: WorldQuestTargetsOptions) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questProgressMap, questsInProgress, questTargetId } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   // A quest's go-to step is reached once the character steps into its place's radius, so each place it steps into is a go-to

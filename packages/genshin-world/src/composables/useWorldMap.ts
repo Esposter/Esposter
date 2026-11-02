@@ -31,6 +31,7 @@ import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHidd
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
+import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -44,7 +45,6 @@ export const useWorldMap = ({
   completedMainQuestIds,
   gainWorldAdventureExp,
   placedDoings,
-  questStepTargets,
   recordedDoingIds,
   regionDataBaseUrl,
   reputation,
@@ -58,7 +58,6 @@ export const useWorldMap = ({
   gainWorldAdventureExp: (amount: number) => void;
   // The placed doings the world holds, each a chest, an Oculus, a puzzle or a camp, by the point it stands at
   placedDoings: Readonly<Ref<PlacedDoing[]>>;
-  questStepTargets: Readonly<Ref<{ named: ReadonlySet<string>; reached: ReadonlySet<string> }>>;
   // The doings the save records as done, by id, which count toward their areas whatever the statues have unlocked
   recordedDoingIds: Readonly<Ref<ReadonlySet<string>>>;
   regionDataBaseUrl: string;
@@ -69,6 +68,8 @@ export const useWorldMap = ({
   setReputation: (nextReputation: ReputationProgress) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
 }) => {
+  const worldQuestsStore = useWorldQuestsStore();
+  const { questStepTargets } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
   const { wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setWallet } = worldSessionStore;

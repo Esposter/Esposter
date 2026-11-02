@@ -40,12 +40,13 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { readCatalogue } from "#src/services/world/readCatalogue";
+import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { computed, ref, shallowRef } from "vue";
+import { ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -207,9 +208,9 @@ describe(useWorldTrounceBlossoms, () => {
       { ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] },
     );
     const { wallet } = storeToRefs(worldSessionStore);
+    finishTestMainQuests(...ascensionQuestIds);
     const adventureRank = useWorldAdventureRank({
       adventureRankTables,
-      finishedMainQuestIds: computed(() => ascensionQuestIds),
       savedAdventureExp: maxAdventureExp,
       savedAdventureRankRewardsClaimed: [],
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,

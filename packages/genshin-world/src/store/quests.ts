@@ -16,21 +16,29 @@ import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
+import { defineStore } from "pinia";
+import { computed, ref, shallowRef } from "vue";
+
+// A chapter read that fails is logged and leaves the series unlisted, so the quests still load without them
+const readQuestChaptersOrEmpty = (gameDataBaseUrl: string) =>
+  getResultAsync(() => readQuestChapters(gameDataBaseUrl)).match(
+    (newQuestChapters) => newQuestChapters,
+    (error) => {
+      console.error(error);
+      return [];
+    },
+  );
 
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
 // One stays in the progress map at its last step, so the quests in progress are those started and not yet finished. Each
 // Quest event the world records is handed to every quest in progress, the steps and quests it finishes reach the
 // Achievements and the Travel Log, and a talk that ends starts each quest it offers
-export const useWorldQuests = ({
-  savedQuestProgressMap,
-}: {
-  savedQuestProgressMap: ReadonlyMap<string, QuestProgress>;
-}) => {
+export const useWorldQuestsStore = defineStore("world/quests", () => {
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   const quests = shallowRef<Quest[]>([]);
   const questChapters = shallowRef<QuestChapter[]>([]);
-  const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(savedQuestProgressMap);
+  const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(new Map());
   const questsInProgress = computed(() =>
     quests.value.filter((quest) => {
       const progress = questProgressMap.value.get(quest.id);
@@ -69,35 +77,6 @@ export const useWorldQuests = ({
       ? getQuestTargetId(trackerQuest.value, questProgressMap.value.get(trackerQuest.value.id))
       : "",
   );
-  // A chapter read that fails is logged and leaves the series unlisted, so the quests still load without them
-  const readQuestChaptersOrEmpty = () =>
-    getResultAsync(() => readQuestChapters(worldSessionStore.gameDataBaseUrl)).match(
-      (newQuestChapters) => newQuestChapters,
-      (error) => {
-        console.error(error);
-        return [];
-      },
-    );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => Promise.all([readQuests(worldSessionStore.gameDataBaseUrl), readQuestChaptersOrEmpty()])).match(
-    ([newQuests, newQuestChapters]) => {
-      quests.value = newQuests;
-      questChapters.value = newQuestChapters;
-      questProgressMap.value = startQuests(newQuests, questProgressMap.value, undefined, newQuestChapters);
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => QuestTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
-    (newQuestTextMap) => {
-      questTextMap.value = newQuestTextMap;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
   // A quest the player accepts from a Reputation request's offer starts at its first step, once, as the carried quests do
   const acceptQuest = (questId: string) => {
     questProgressMap.value = startQuests(quests.value, questProgressMap.value, undefined, questChapters.value, questId);
@@ -121,9 +100,45 @@ export const useWorldQuests = ({
     ))
       events.emit("parentQuestFinish", targetId);
   };
-  events.on("questEvent", doQuestEvent);
+  const start = (savedQuestProgressMap: ReadonlyMap<string, QuestProgress>) => {
+    questProgressMap.value = savedQuestProgressMap;
+    events.on("questEvent", doQuestEvent);
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    getResultAsync(() =>
+      Promise.all([
+        readQuests(worldSessionStore.gameDataBaseUrl),
+        readQuestChaptersOrEmpty(worldSessionStore.gameDataBaseUrl),
+      ]),
+    ).match(
+      ([newQuests, newQuestChapters]) => {
+        quests.value = newQuests;
+        questChapters.value = newQuestChapters;
+        questProgressMap.value = startQuests(newQuests, questProgressMap.value, undefined, newQuestChapters);
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    getResultAsync(() => QuestTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
+      (newQuestTextMap) => {
+        questTextMap.value = newQuestTextMap;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  };
+  const stop = () => {
+    quests.value = [];
+    questChapters.value = [];
+    questProgressMap.value = new Map();
+    questTextMap.value = {};
+    trackedQuestId.value = "";
+  };
   return {
     acceptQuest,
+    doQuestEvent,
     finishedMainQuestIds,
     questChapters,
     questProgressMap,
@@ -134,7 +149,9 @@ export const useWorldQuests = ({
     questTargetId,
     questTargetIds,
     questTextMap,
+    start,
+    stop,
     trackedQuestId,
     trackerQuest,
   };
-};
+});
