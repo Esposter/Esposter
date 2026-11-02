@@ -2,20 +2,17 @@ import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
 import { parents } from "#src/services/shared/parents";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
-import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
+import { getValueChain } from "#src/services/sweeps/unterminatedResults/getValueChain";
 
-// Whether a `binding.match(…)`-style terminator is called on the binding after the call. A longer property name, or
-// Another object's field spelled the same, is not the binding, so only the identifier itself is read
+// Whether a later read of the binding answers for its value: a chain begun on it that a terminator ends, or one whose
+// Value leaves the statement for its caller to end, through a `return`, a callback's body or an argument. A value bound
+// To a new name is not followed, so it does not count. A longer property name, or another object's field spelled the
+// Same, is not the binding, so only the identifier itself is read
 export const checkIsBindingTerminated = (call: SyntaxNode, bindingName: string, scope: SyntaxNode): boolean =>
   getDescendants(scope).some((node) => {
     if (node.type !== "MemberExpression" || node.computed || node.start < call.end) return false;
-    const parent = parents.get(node);
-    return (
-      node.object.type === "Identifier" &&
-      node.object.name === bindingName &&
-      node.property.type === "Identifier" &&
-      TERMINATOR_NAMES.has(node.property.name) &&
-      parent?.type === "CallExpression" &&
-      parent.callee === node
-    );
+    if (node.object.type !== "Identifier" || node.object.name !== bindingName) return false;
+    const { isTerminated, top } = getValueChain(node.object);
+    const parent = parents.get(top);
+    return isTerminated || (parent?.type !== "ExpressionStatement" && parent?.type !== "VariableDeclarator");
   });

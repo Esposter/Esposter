@@ -22,6 +22,18 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults("getResultAsync(async () => read()).match(noop, console.error);")).toStrictEqual([]);
   });
 
+  // A combinator hands back the chain still a Result, so one of them alone leaves the chain standing unterminated
+  test.each(["andTee", "andThen", "map", "mapErr", "orElse", "orTee"])(
+    "reports a call only a %s combinator is chained onto",
+    (combinator) => {
+      expect.hasAssertions();
+
+      expect(getUnterminatedResults(`getResult(() => read()).${combinator}(console.error);`)).toStrictEqual([
+        { after: `.${combinator}(console.error);`, line: 1 },
+      ]);
+    },
+  );
+
   // A fixed window around the call is what this replaces: the terminator sits wherever the callback ends
   test("finds a terminator many lines below the call", () => {
     expect.hasAssertions();
@@ -208,6 +220,32 @@ describe(getUnterminatedResults, () => {
     expect(getUnterminatedResults(`const result = getResult(fn);\néresult.match(noop, log);`)).toStrictEqual([
       { after: "; éresult.match(noop, log);", line: 1 },
     ]);
+  });
+
+  test("reports a binding only a combinator is called on", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\nresult.orTee(console.error);`)).toStrictEqual([
+      { after: "; result.orTee(console.error);", line: 1 },
+    ]);
+  });
+
+  // A chain on the binding is read to its end, so a terminator at the end of a combinator chain counts
+  test("reports nothing for a binding whose combinator chain a terminator ends", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const result = getResult(fn);\nresult.andThen(read).match(noop, console.error);`),
+    ).toStrictEqual([]);
+  });
+
+  // A combinator's Result that a `return` takes leaves the function, and its caller owns the terminator
+  test("reports nothing for a binding read through a combinator its function returns", () => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const read = () => {\n  const result = getResult(fn);\n  return result.map(parse);\n};`),
+    ).toStrictEqual([]);
   });
 
   // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
