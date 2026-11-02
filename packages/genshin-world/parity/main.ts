@@ -46,7 +46,8 @@ import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
 // Those finish, then applies the fixture's motion props and holds the transitions they start. `data-parity-ready` marks
 // The page drawn, holding the screen's name, or nothing for the list, so a name with no fixture is told apart, and
 // `data-parity-error` a failure nothing caught, so a tool waiting on a screen that will never be ready fails with it.
-// `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against, and
+// `&backdrop=<file>` draws that image under the screen, for an overlay shot over the frame it is judged against,
+// `&backdropBlurred` says it is that frame itself, whose world the game has blurred already, so the screen blurs none,
 // `&variant=<name>` renders the fixture's variant of that name, and `&witness=<layout>` draws a scene's exports in
 // Place of its own parts, from the layout the shooting browser serves there, claimed by the fixture's
 // `witnessComponents` entry `&witnessComponent=<name>` names, failing on a name it lacks. A tool sets the screen's props
@@ -93,11 +94,18 @@ if (screen && root) {
   const windowLeft = searchParameters.get("windowLeft");
   const backdrop = searchParameters.get("backdrop");
   // Drawn pixel for pixel, since it is scaled by the page's device ratio alone, so it matches its reference exactly
-  if (backdrop)
+  if (backdrop) {
     Object.assign(window.document.body.style, {
       background: `url("${backdrop}") center / 100% 100% no-repeat`,
       imageRendering: "pixelated",
     });
+    // A backdrop that is the reference's own frame is the world as the game shows it behind the screen, its blur and wash
+    // Already in it, so a screen's own world blur and wash are not drawn over it a second time
+    if (searchParameters.has("backdropBlurred"))
+      document.head.append(
+        Object.assign(document.createElement("style"), { textContent: ".world-backdrop { display: none; }" }),
+      );
+  }
   const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
   const readyProps = screen.readyEvent ? { [`on${capitalize(screen.readyEvent)}`]: resolveReady } : {};
   if (!screen.readyEvent) resolveReady();

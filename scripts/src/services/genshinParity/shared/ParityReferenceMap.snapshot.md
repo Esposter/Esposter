@@ -91,10 +91,10 @@ committed.
 | `party-screen`                         | `PartyScreen`               |                                                                          4.26% | 0.366 |  2.51% | 0.1582 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.30% | 0.222 | 17.64% | 0.7110 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
-| `quest-screen`                         | `QuestScreen`               |                                                                          8.31% | 0.891 |  6.64% | 0.2996 |
-| `quest-screen-details`                 | `QuestScreen`               |                                                                          6.50% | 0.971 |  5.33% | 0.2775 |
+| `quest-screen`                         | `QuestScreen`               |                                                                          2.11% | 0.941 |  1.02% | 0.1004 |
+| `quest-screen-details`                 | `QuestScreen`               |                                                                          1.34% | 0.963 |  0.70% | 0.0644 |
 | `quest-screen-header`                  | `QuestScreen`               |                                                                          3.37% | 0.999 |  2.70% | 0.1857 |
-| `quest-screen-list`                    | `QuestScreen`               |                                                                          5.12% | 0.910 |  3.52% | 0.2270 |
+| `quest-screen-list`                    | `QuestScreen`               |                                                                          3.16% | 0.941 |  1.59% | 0.1543 |
 | `reputation-screen`                    | `ReputationScreen`          |                                                                          1.99% | 0.875 |  1.39% | 0.1429 |
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |
 | `settings-graphics`                    | `MenuSettings`              |                                                                          1.56% | 0.996 |  1.26% | 0.1010 |

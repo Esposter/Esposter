@@ -81,6 +81,8 @@ export const compareScreen = async (
   const [shotPath = ""] = await shootScreen({
     backdropPath,
     height,
+    // A plate cut from a frame beside the reference is a world the game has not blurred, which the screen blurs itself
+    isBackdropBlurred: reference.plateSource === undefined,
     pageRoot,
     pointer: reference.pointer,
     props: reference.props,

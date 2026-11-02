@@ -32,6 +32,7 @@ import sharp from "sharp";
 export const openParityPage = async ({
   backdropPath,
   height,
+  isBackdropBlurred,
   isClockFaked,
   isFrameRateUnlimited,
   motion,
@@ -89,7 +90,9 @@ export const openParityPage = async ({
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
     const variantQuery = variant ? `&variant=${encodeURIComponent(variant)}` : "";
-    const backdropQuery = backdropPath ? `&backdrop=${PARITY_BACKDROP_FILE}` : "";
+    const backdropQuery = backdropPath
+      ? `&backdrop=${PARITY_BACKDROP_FILE}${isBackdropBlurred ? "&backdropBlurred" : ""}`
+      : "";
     const windowLeftQuery = windowLeft === undefined ? "" : `&windowLeft=${windowLeft}`;
     // A backdrop is served as the image its bytes are, since a cached one has no extension to read its format from
     if (backdropPath) {
