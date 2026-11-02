@@ -18,7 +18,7 @@ import type { Except } from "type-fest";
 import { MockBlobClient } from "#src/models/container/MockBlobClient";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
-import { CONDITION_NOT_MET_MESSAGE } from "#src/services/constants";
+import { assertMockBlobIfMatch } from "#src/services/container/assertMockBlobIfMatch";
 import { bodyToBuffer } from "#src/services/container/bodyToBuffer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobMetadata } from "#src/services/container/storeMockBlobMetadata";
@@ -61,17 +61,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     const buffer = await bodyToBuffer(body);
     if (options?.conditions?.ifNoneMatch === "*" && this.container.has(this.name))
       throw new MockRestError("The specified blob already exists.", 409);
-    // `ifMatch` is the claim: the write lands only if the blob still carries the etag the caller read. Whoever
-    // Writes first re-mints it, so every other holder of the old value is refused — which is how concurrent
-    // Workers agree on one owner without a lock. A blob that is not there carries no etag at all, so the claim
-    // Is refused rather than falling back to the seeded value a reader would have been given: a worker holding
-    // The etag of a blob somebody has since deleted would otherwise win the race against its own absence
-    if (
-      options?.conditions?.ifMatch !== undefined &&
-      options.conditions.ifMatch !==
-        (this.container.has(this.name) ? readMockBlobDates(this.containerName, this.name).etag : undefined)
-    )
-      throw new MockRestError(CONDITION_NOT_MET_MESSAGE, 412);
+    assertMockBlobIfMatch(this.containerName, this.name, options?.conditions?.ifMatch);
     storeMockBlobWrite(this.containerName, this.name, this.container.has(this.name));
     // Replaced rather than merged, so an upload naming none clears what the previous write set
     storeMockBlobMetadata(this.containerName, this.name, options?.metadata);

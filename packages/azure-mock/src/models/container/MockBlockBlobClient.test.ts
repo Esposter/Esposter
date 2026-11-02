@@ -90,6 +90,34 @@ describe(MockBlockBlobClient, () => {
     );
   });
 
+  // A conditional delete is the same claim as a conditional write: a blob re-written since the caller read it keeps its
+  // Content, which is what keeps a re-uploaded asset from being deleted under the hash of the bytes it replaced
+  test.for(["delete", "deleteIfExists"] as const)("%s refuses a stale ifMatch and keeps the blob", async (method) => {
+    expect.hasAssertions();
+
+    const client = getClient();
+    const { etag: staleEtag } = await client.upload("a", 1);
+    await client.upload(" ", 1);
+
+    expect(() => client[method]({ conditions: { ifMatch: staleEtag } })).toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: The condition specified using HTTP conditional header(s) is not met.]`,
+    );
+    expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(true);
+  });
+
+  test.for(["delete", "deleteIfExists"] as const)(
+    "%s deletes a blob whose current etag ifMatch names",
+    async (method) => {
+      expect.hasAssertions();
+
+      const client = getClient();
+      const { etag } = await client.upload("", 0);
+      await client[method]({ conditions: { ifMatch: etag } });
+
+      expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(false);
+    },
+  );
+
   // A listing and `getProperties` describe the same blob, so seeded content reads as pre-existing on both
   test("reports a seeded blob's dates from getProperties", async () => {
     expect.hasAssertions();

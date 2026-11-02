@@ -8,6 +8,7 @@ import type {
   BlobCreateSnapshotResponse,
   BlobDeleteIfExistsResponse,
   BlobDeleteImmutabilityPolicyResponse,
+  BlobDeleteOptions,
   BlobDeleteResponse,
   BlobDownloadResponseParsed,
   BlobGenerateSasUrlOptions,
@@ -33,6 +34,7 @@ import type { Except } from "type-fest";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { BLOB_NOT_FOUND_MESSAGE } from "#src/services/constants";
+import { assertMockBlobIfMatch } from "#src/services/container/assertMockBlobIfMatch";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
@@ -105,13 +107,13 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     throw new NotImplementedError(this.createSnapshot.name);
   }
 
-  delete(): Promise<BlobDeleteResponse> {
-    if (!deleteMockBlob(this.containerName, this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
+  delete(options?: BlobDeleteOptions): Promise<BlobDeleteResponse> {
+    if (!this.#deleteIfPresent(options?.conditions?.ifMatch)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
     return Promise.resolve({ _response: createMockResponse(200) });
   }
 
-  deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
-    const succeeded = deleteMockBlob(this.containerName, this.name);
+  deleteIfExists(options?: BlobDeleteOptions): Promise<BlobDeleteIfExistsResponse> {
+    const succeeded = this.#deleteIfPresent(options?.conditions?.ifMatch);
     return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
 
@@ -240,5 +242,13 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
 
   withVersion(): BlobClient {
     throw new NotImplementedError(this.withVersion.name);
+  }
+
+  // Both deletes share this: a blob that is not there is reported as absent, which each answers its own way, and one
+  // That is there is refused when its etag has moved on, as the service refuses a conditional delete, before it is removed
+  #deleteIfPresent(ifMatch: string | undefined): boolean {
+    if (!this.container.has(this.name)) return false;
+    assertMockBlobIfMatch(this.containerName, this.name, ifMatch);
+    return deleteMockBlob(this.containerName, this.name);
   }
 }
