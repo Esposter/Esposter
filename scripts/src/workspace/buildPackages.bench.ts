@@ -75,7 +75,7 @@ test.skipIf(!isBenchable)("build - packages", async ({ bench }) => {
         // A package that ever turned `clean` off would otherwise be measured incrementally without the report
         // Saying so. The removal is milliseconds against a build of seconds.
         rmSync(join(directory, "dist"), { force: true, recursive: true });
-        runPnpm(["--filter", packageName, "run", "build"]);
+        runPnpm(["--filter", packageName, "build"]);
       }),
     ),
     // A build is seconds, so the shared ten iterations would put this bench in the tens of minutes. Three is what
