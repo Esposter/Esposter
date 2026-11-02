@@ -394,6 +394,18 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(isPauseMenuOpen.value).toBe(false);
   });
 
+  test("unpairs a pairing still under way by closing its socket", () => {
+    expect.hasAssertions();
+
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    agentConsoleConnectionStore.pairLinkedHost(LOCAL_HOST_ADDRESS, crypto.randomUUID());
+    const socket = takeOne(FakeWebSocket.sockets);
+    socket.dispatchEvent(new Event("open"));
+    agentConsoleConnectionStore.unpair();
+
+    expect(socket.close).toHaveBeenCalledExactlyOnceWith();
+  });
+
   // A host stopped from its own window says so first, and the page waits to be asked rather than retrying forever,
   // While every other host it holds stays as it was
   test("shows a stopped host stopped with its sessions closed, and leaves another host connected", async () => {
