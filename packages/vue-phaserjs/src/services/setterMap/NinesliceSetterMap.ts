@@ -4,6 +4,7 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
+import { NinesliceSetter } from "#src/models/setterMap/NinesliceSetter";
 import { AlphaSingleSetterMap } from "#src/services/setterMap/components/AlphaSingleSetterMap";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 import { OriginSetterMap } from "#src/services/setterMap/components/OriginSetterMap";
@@ -12,10 +13,55 @@ import { TextureSetterMap } from "#src/services/setterMap/components/TextureSett
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
 
+// setSlices takes the size and all four slices in one call, so each slice setter passes the rest back as they are
 export const NinesliceSetterMap: SetterMap<NinesliceConfiguration, GameObjects.NineSlice, NinesliceEventEmitsOptions> =
   {
     [ComputedSizeSetter.Height]: ComputedSizeSetterMap[ComputedSizeSetter.Height],
     [ComputedSizeSetter.Width]: ComputedSizeSetterMap[ComputedSizeSetter.Width],
+    [NinesliceSetter.BottomHeight]: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSlices(
+        gameObject.width,
+        gameObject.height,
+        gameObject.leftWidth,
+        gameObject.rightWidth,
+        gameObject.topHeight,
+        value,
+      );
+    },
+    [NinesliceSetter.LeftWidth]: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSlices(
+        gameObject.width,
+        gameObject.height,
+        value,
+        gameObject.rightWidth,
+        gameObject.topHeight,
+        gameObject.bottomHeight,
+      );
+    },
+    [NinesliceSetter.RightWidth]: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSlices(
+        gameObject.width,
+        gameObject.height,
+        gameObject.leftWidth,
+        value,
+        gameObject.topHeight,
+        gameObject.bottomHeight,
+      );
+    },
+    [NinesliceSetter.TopHeight]: (gameObject) => (value) => {
+      if (value === undefined) return;
+      gameObject.setSlices(
+        gameObject.width,
+        gameObject.height,
+        gameObject.leftWidth,
+        gameObject.rightWidth,
+        value,
+        gameObject.bottomHeight,
+      );
+    },
     ...AlphaSingleSetterMap,
     ...SceneObjectSetterMap,
     ...OriginSetterMap,
