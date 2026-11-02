@@ -6,11 +6,13 @@ import { useRoleStore } from "@/store/message/room/role";
 import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface Props {
+  // The role is one the reader does not outrank, whose save is refused whole, so every switch is held
+  isDisabled?: true;
   roomId: RoomInMessage["id"];
 }
 
 const modelValue = defineModel<bigint>({ required: true });
-const { roomId } = defineProps<Props>();
+const { isDisabled, roomId } = defineProps<Props>();
 const { getMyPermissions } = useRoleStore();
 // A role may carry no permission its author lacks, and the save judges the whole bitfield it writes. So a switch is
 // Offered only when the bitfield with that switch flipped stays within what the reader holds, the owner and an
@@ -36,7 +38,7 @@ const isFlippable = (permission: bigint) => {
         :key="title"
         v-model="modelValue"
         :description
-        :is-disabled="!isFlippable(permission) || undefined"
+        :is-disabled="isDisabled || !isFlippable(permission) || undefined"
         :permission
         :title
       />

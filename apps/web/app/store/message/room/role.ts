@@ -78,6 +78,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
       );
     else return false;
   };
+  // A role is changed or deleted only by a reader who outranks it, so every surface that offers one asks it this way
+  const checkIsRoleManageable = (roomId: string, rolePosition: number) => {
+    const roomPermissions = getMyPermissions(roomId);
+    if (roomPermissions)
+      return baseCheckIsManageable(roomPermissions.topRolePosition, rolePosition, roomPermissions.isRoomOwner);
+    else return false;
+  };
   const {
     data: memberRoleMap,
     getData: getMemberRoleMap,
@@ -275,6 +282,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     assignRole,
     checkHasMyPermission,
     checkIsManageable,
+    checkIsRoleManageable,
     createRole,
     deleteMemberPermissionOverride,
     deleteRole,
