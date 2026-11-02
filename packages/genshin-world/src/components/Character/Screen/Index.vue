@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
@@ -22,23 +21,18 @@ import CharacterScreenEquip from "#src/components/Character/Screen/Equip/Index.v
 import CharacterScreenFoot from "#src/components/Character/Screen/Foot/Index.vue";
 import CharacterScreenTalents from "#src/components/Character/Screen/Talents/Index.vue";
 import CharacterScreenWeapons from "#src/components/Character/Screen/Weapons/Index.vue";
-import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { ElementNameGameTextKeyMap } from "#src/services/character/ElementNameGameTextKeyMap";
-import { getCharacterElement } from "#src/services/character/getCharacterElement";
-import { ElementMarkPathMap } from "#src/services/loading/ElementMarkPathMap";
-import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
+import { useCharacterArtifactPicker } from "#src/composables/useCharacterArtifactPicker";
+import { useCharacterMenuLabels } from "#src/composables/useCharacterMenuLabels";
 import {
   CharacterMenu,
   CharacterMenuTab,
-  CharacterMenuTabs,
   CloseButton,
   CloseButtonMark,
   GAME_CREAM,
   GAME_REPLY_HOVER_INK,
   GameScreen,
 } from "genshin-interface";
-import { fillLinePlaceholders, GameLanguage, GameTextKey } from "genshin-text";
+import { GameLanguage, GameTextKey } from "genshin-text";
 
 interface Props {
   // The character the screen opens on, the one on the field
@@ -121,44 +115,19 @@ const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
 const character = computed(() => characters.value.find(({ id }) => id === characterId.value));
-// The slot each picker is open for: the Artifacts panel's Equip and Enhance buttons open it, and the picker's close clears it
-const equipSlot = ref<ArtifactSlot>();
-const enhanceSlot = ref<ArtifactSlot>();
-// The bag's artifacts chosen as fodder and the ore counts chosen by item id, which the Artifacts panel's Enhance button
-// Clears each time it opens the picker, so a choice never carries over from one enhancement to the next
-const enhanceFodderIds = ref<number[]>([]);
-const enhanceMaterialCounts = ref<Record<number, number>>({});
-// The notice the artifact panel shows, the game's card for a refusal, kept across tabs until the next artifact action
-const artifactNotice = ref("");
-// The Traveler's name is the game's own, and every other character's is the name its table cites
-const menuEntries = computed(() =>
-  characters.value.map(({ id }) => ({
-    id,
-    name:
-      id === TRAVELER_CHARACTER_ID
-        ? fillLinePlaceholders(gameText[GameTextKey.Traveler], "", LOGIN_TRAVELER_GENDER)
-        : nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
-  })),
-);
-const characterName = computed(() => menuEntries.value.find(({ id }) => id === characterId.value)?.name ?? "");
-// The element of the chosen character, its own or, for the Traveler, the one it holds, none while it has none
-const characterElement = computed(() =>
-  getCharacterElement(characterId.value, statTables.characterDataMap, travelerElement),
-);
-// The element mark at the chosen character's name, its element's or, for the Traveler, its alignment's, empty while
-// It has none
-const elementMarkPath = computed(() => {
-  const element = characterElement.value;
-  return element === undefined ? "" : ElementMarkPathMap[element];
-});
-// The element's name in the reader's language, which the band sets before the chosen character's, empty if none
-const elementName = computed(() => {
-  const element = characterElement.value;
-  return element === undefined ? "" : gameText[ElementNameGameTextKeyMap[element]];
-});
-const tabLabels = computed(() =>
-  Object.fromEntries(CharacterMenuTabs.map((menuTab) => [menuTab, gameText[CharacterMenuTabGameTextKeyMap[menuTab]]])),
-);
+// The artifact picker the Artifacts panel opens and the notice it shows, which the Equip and Enhance overlays read
+const { artifactNotice, enhanceFodderIds, enhanceMaterialCounts, enhanceSlot, equipSlot } =
+  useCharacterArtifactPicker();
+// The menu's labels: each character's name and element, and the tabs' labels, from the characters and the game's text
+const { characterElement, characterName, elementMarkPath, elementName, menuEntries, tabLabels } =
+  useCharacterMenuLabels({
+    characterId,
+    characters,
+    gameText: () => gameText,
+    nameText: () => nameText,
+    statTables: () => statTables,
+    travelerElement: () => travelerElement,
+  });
 </script>
 
 <template>

@@ -11,6 +11,7 @@ import type { GameText } from "genshin-text";
 import { useMapPan } from "#src/composables/useMapPan";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import MapJumpList from "#src/components/Map/JumpList/Index.vue";
+import MapOverlayClose from "#src/components/Map/Overlay/Close/Index.vue";
 import MapOverlayDomainsOnly from "#src/components/Map/Overlay/DomainsOnly/Index.vue";
 import MapOverlayLabels from "#src/components/Map/Overlay/Labels/Index.vue";
 import MapOverlayRegionTag from "#src/components/Map/Overlay/RegionTag/Index.vue";
@@ -27,7 +28,6 @@ import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findAreaNameAt } from "#src/services/map/findAreaNameAt";
 import { projectMapPoint } from "#src/services/map/projectMapPoint";
 import { GameScreen } from "genshin-interface";
-import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
 
 interface Props {
@@ -65,8 +65,6 @@ const {
   wallet,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
 // Button alone, so a stray click on the map never teleports
@@ -74,7 +72,6 @@ const chosenLandmark = shallowRef<Landmark>();
 const chooseLandmark = (landmark: Landmark) => {
   chosenLandmark.value = landmark;
 };
-const closeButton = useTemplateRef("closeButton");
 const map = useTemplateRef("map");
 // The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
 // Map is dragged to from the player
@@ -135,10 +132,6 @@ const regionTag = computed(() => {
 });
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
-// The map is a dialog over the world, so focus starts inside it
-onMounted(() => {
-  closeButton.value?.focus();
-});
 </script>
 
 <template>
@@ -181,19 +174,7 @@ onMounted(() => {
     <MapOverlayResin :game-text :now :wallet />
     <MapOverlayDomainsOnly :game-text />
     <MapOverlayTeleport v-model:landmark="chosenLandmark" :catalogue :game-text @jump="(pose) => emit('jump', pose)" />
-    <button
-      ref="closeButton"
-      class="close"
-      type="button"
-      :aria-label="gameText[GameTextKey.Back]"
-      @click="emit('close')"
-    >
-      <svg viewBox="-1 -1 2 2" aria-hidden="true">
-        <path
-          d="M -0.7 -0.7 L 0.7 0.7 M 0.7 -0.7 L -0.7 0.7 M -0.7 -0.7 h 0.45 M -0.7 -0.7 v 0.45 M 0.7 -0.7 h -0.45 M 0.7 -0.7 v 0.45 M -0.7 0.7 h 0.45 M -0.7 0.7 v -0.45 M 0.7 0.7 h -0.45 M 0.7 0.7 v -0.45"
-        />
-      </svg>
-    </button>
+    <MapOverlayClose :game-text @close="emit('close')" />
   </GameScreen>
 </template>
 
@@ -223,57 +204,5 @@ onMounted(() => {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 19.5);
-  right: calc(var(--unit) * 49);
-  display: grid;
-  width: calc(var(--unit) * 57);
-  height: calc(var(--unit) * 57);
-  padding: calc(var(--unit) * 7);
-  border: calc(var(--unit) * 5) solid #849493;
-  border-radius: 50%;
-  background: #ece5d7;
-  cursor: inherit;
-  place-items: center;
-  transition:
-    background-color v-bind(restDuration),
-    border-color v-bind(restDuration);
-}
-
-.close svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: #384150;
-  stroke-width: 0.26;
-}
-
-/* Lit as the Pill's ring is, white over its rim and disc, and pressed the disc turns over: ink with its cross cream.
-   Provisional, as no recording shows the close lit */
-.close:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  border-color: #fff;
-  background: #fff;
-  transition-duration: v-bind(hoverDuration);
-}
-
-@media (hover: hover) {
-  .close:hover {
-    border-color: #fff;
-    background: #fff;
-    transition-duration: v-bind(hoverDuration);
-  }
-}
-
-.close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  border-color: v-bind(GAME_INK);
-  background: v-bind(GAME_INK);
-  transition-duration: 0s;
-}
-
-.close:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) svg {
-  stroke: v-bind(GAME_CREAM);
 }
 </style>

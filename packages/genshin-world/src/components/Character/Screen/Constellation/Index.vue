@@ -27,11 +27,8 @@ const { character, characterIdConstellationsMap, gameText, nameText } = definePr
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < character.constellationCount),
 );
-// The set the Activate button presses the next of, and whether that is refused now, a character with no set refused too
+// The set the Activate button presses the next of, a character with no set given none
 const constellations = computed(() => characterIdConstellationsMap.get(character.id) ?? []);
-const isActivateDisabled = computed(
-  () => getConstellationActivationRefusal(character, constellations.value) !== undefined,
-);
 // Each constellation's name, in the order its set gives them, read by the text id the set cites
 const names = computed(() => constellations.value.map(({ nameTextId }) => nameText[nameTextId] ?? ""));
 </script>
@@ -40,7 +37,7 @@ const names = computed(() => constellations.value.map(({ nameTextId }) => nameTe
   <CharacterMenuConstellation
     :activate-label="gameText[GameTextKey.Activate]"
     :activated="constellationsActivated"
-    :is-activate-disabled
+    :is-activate-disabled="getConstellationActivationRefusal(character, constellations) !== undefined"
     :names
     @activate="characters = replaceCharacterInRoster(characters, activateConstellation(character, constellations))"
   />

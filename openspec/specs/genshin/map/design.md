@@ -46,31 +46,32 @@ The overlay is scored against two references, each over its interface alone, the
 
 ## Key files
 
-| File                                                                      | Role                                                                                                                              |
-| :------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Map/Drawing/Index.vue`             | The one drawing of the catalogue, which both views draw                                                                           |
-| `packages/genshin-world/src/components/Map/Overlay/Index.vue`             | The map on M: the drawing placed on the player, the pointer and the close button, and the children that draw its names and chrome |
-| `packages/genshin-world/src/components/Map/Overlay/Zoom/Index.vue`        | The zoom slider, its track labelled Zoom and its thumb where the view's zoom shows                                                |
-| `packages/genshin-world/src/components/Map/Overlay/Labels/Index.vue`      | Each area's and subarea's name at its place, sized to the view                                                                    |
-| `packages/genshin-world/src/components/Map/Overlay/Teleport/Index.vue`    | The teleport panel of a chosen landmark: its place, its close and its Teleport button                                             |
-| `packages/genshin-world/src/components/Map/Overlay/Resin/Index.vue`       | The Original Resin counter on the top bar, read when the map opens                                                                |
-| `packages/genshin-world/src/components/Map/Overlay/RegionTag/Index.vue`   | The region tag at the bottom right: the area's name and its exploration progress                                                  |
-| `packages/genshin-world/src/components/Map/Overlay/DomainsOnly/Index.vue` | The domains-only switch at the bottom left, drawn off                                                                             |
-| `packages/genshin-world/src/components/Map/Overlay/Index.fixture.ts`      | The state the parity page shoots, the player in the Sea of Clouds                                                                 |
-| `packages/genshin-world/src/components/Map/JumpList/Index.vue`            | Every jump, grouped by region, as buttons, visually hidden on the overlay                                                         |
-| `packages/genshin-world/src/components/Map/Pointer/Index.vue`             | The player on the map: a disc with a cap pointing the way the view faces                                                          |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`              | Every region's landmarks a jump lands at, read once                                                                               |
-| `packages/genshin-world/src/services/map/computeJumpPose.ts`              | Where a jump to a landmark lands, and which way it faces                                                                          |
-| `packages/genshin-world/src/services/map/computeAreaLabels.ts`            | Where each area's name is written                                                                                                 |
-| `packages/genshin-world/src/services/map/constants.ts`                    | The kinds a jump lands at, the view's metres and zoom range, the marks' and names' sizes                                          |
-| `packages/genshin-world/src/services/map/projectMapPoint.ts`              | The map's frame: where a catalogue point stands in the view, x up and z right                                                     |
-| `packages/genshin-world/src/services/map/unprojectMapPoint.ts`            | The frame's inverse, which turns a drag back into the catalogue                                                                   |
-| `packages/genshin-world/src/services/map/computeMapFrameTransform.ts`     | The same frame as the SVG transform the drawing is turned by                                                                      |
-| `packages/genshin-world/src/services/map/computeZoomShare.ts`             | Where a view's metres sit on the zoom slider's track, on a logarithm                                                              |
-| `packages/genshin-world/src/services/map/computeZoomMetresAtShare.ts`     | The metres a place on the track shows, clamped at either end                                                                      |
-| `packages/genshin-world/src/services/map/computeWheelZoomMetres.ts`       | The metres after a wheel turn, along the same track                                                                               |
-| `packages/genshin-world/src/components/World/Session/Index.vue`           | Opens the map, fades and places on a jump, and exposes both to its host                                                           |
-| `packages/genshin-world/src/components/World/Character/Index.vue`         | Places the body at a pose, the follow camera level behind it                                                                      |
+| File                                                                      | Role                                                                                                         |
+| :------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Map/Drawing/Index.vue`             | The one drawing of the catalogue, which both views draw                                                      |
+| `packages/genshin-world/src/components/Map/Overlay/Index.vue`             | The map on M: the drawing placed on the player, the pointer, and the children that draw its names and chrome |
+| `packages/genshin-world/src/components/Map/Overlay/Close/Index.vue`       | The close button, which takes the keyboard's focus when the map opens                                        |
+| `packages/genshin-world/src/components/Map/Overlay/Zoom/Index.vue`        | The zoom slider, its track labelled Zoom and its thumb where the view's zoom shows                           |
+| `packages/genshin-world/src/components/Map/Overlay/Labels/Index.vue`      | Each area's and subarea's name at its place, sized to the view                                               |
+| `packages/genshin-world/src/components/Map/Overlay/Teleport/Index.vue`    | The teleport panel of a chosen landmark: its place, its close and its Teleport button                        |
+| `packages/genshin-world/src/components/Map/Overlay/Resin/Index.vue`       | The Original Resin counter on the top bar, read when the map opens                                           |
+| `packages/genshin-world/src/components/Map/Overlay/RegionTag/Index.vue`   | The region tag at the bottom right: the area's name and its exploration progress                             |
+| `packages/genshin-world/src/components/Map/Overlay/DomainsOnly/Index.vue` | The domains-only switch at the bottom left, drawn off                                                        |
+| `packages/genshin-world/src/components/Map/Overlay/Index.fixture.ts`      | The state the parity page shoots, the player in the Sea of Clouds                                            |
+| `packages/genshin-world/src/components/Map/JumpList/Index.vue`            | Every jump, grouped by region, as buttons, visually hidden on the overlay                                    |
+| `packages/genshin-world/src/components/Map/Pointer/Index.vue`             | The player on the map: a disc with a cap pointing the way the view faces                                     |
+| `packages/genshin-world/src/composables/useJumpLandmarks.ts`              | Every region's landmarks a jump lands at, read once                                                          |
+| `packages/genshin-world/src/services/map/computeJumpPose.ts`              | Where a jump to a landmark lands, and which way it faces                                                     |
+| `packages/genshin-world/src/services/map/computeAreaLabels.ts`            | Where each area's name is written                                                                            |
+| `packages/genshin-world/src/services/map/constants.ts`                    | The kinds a jump lands at, the view's metres and zoom range, the marks' and names' sizes                     |
+| `packages/genshin-world/src/services/map/projectMapPoint.ts`              | The map's frame: where a catalogue point stands in the view, x up and z right                                |
+| `packages/genshin-world/src/services/map/unprojectMapPoint.ts`            | The frame's inverse, which turns a drag back into the catalogue                                              |
+| `packages/genshin-world/src/services/map/computeMapFrameTransform.ts`     | The same frame as the SVG transform the drawing is turned by                                                 |
+| `packages/genshin-world/src/services/map/computeZoomShare.ts`             | Where a view's metres sit on the zoom slider's track, on a logarithm                                         |
+| `packages/genshin-world/src/services/map/computeZoomMetresAtShare.ts`     | The metres a place on the track shows, clamped at either end                                                 |
+| `packages/genshin-world/src/services/map/computeWheelZoomMetres.ts`       | The metres after a wheel turn, along the same track                                                          |
+| `packages/genshin-world/src/components/World/Session/Index.vue`           | Opens the map, fades and places on a jump, and exposes both to its host                                      |
+| `packages/genshin-world/src/components/World/Character/Index.vue`         | Places the body at a pose, the follow camera level behind it                                                 |
 
 ## Notes
 

@@ -65,22 +65,24 @@ The Artifacts and Constellation references are timed to where their tabs have se
 
 ## Key files
 
-| File                                                                              | Role                                                                                                     |
-| :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-interface/src/components/CharacterMenu/Index.vue`               | The frame: the characters, the name, the tabs and the panel                                              |
-| `packages/genshin-interface/src/components/CharacterMenu/Index.fixture.ts`        | Xilonen on Attributes, the reference's state                                                             |
-| `packages/genshin-interface/src/models/CharacterMenuTab.ts`                       | The six tabs, and their order down the screen                                                            |
-| `packages/genshin-interface/src/components/CharacterMenu/Weapons/Index.vue`       | The Weapons panel: the weapon, its stats, level, refinement and passive's name                           |
-| `packages/genshin-interface/src/components/CharacterMenu/Artifacts/Index.vue`     | The Artifacts panel: the slots, the stats, the set bonus block and the actions (see the artifact screen) |
-| `packages/genshin-interface/src/components/CharacterMenu/Constellation/Index.vue` | The Constellation panel: six rings, activated ones lit                                                   |
-| `packages/genshin-interface/src/components/CharacterMenu/Talents/Index.vue`       | The Talents panel: the three combat talents' names and rows with their Upgrade, and the passives' names  |
-| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters, the way back, and a child per tab and picker                      |
-| `packages/genshin-world/src/components/Character/Screen/<Part>/Index.vue`         | Attributes, Artifacts, Enhance, Talents, Weapons, Equip and Constellation, each a piece of the screen    |
-| `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group                                                       |
-| `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                                                                       |
-| `packages/genshin-world/src/services/character/constants.ts`                      | The Traveler's id and the advanced and elemental groups                                                  |
-| `packages/genshin-world/src/services/character/readStatTables.ts`                 | The stat tables fetched by their keys and parsed against their schemas                                   |
-| `packages/genshin-world/src/components/Character/Screen/Index.fixture.ts`         | The roster and Xilonen's tables, the parity page's state                                                 |
+| File                                                                              | Role                                                                                                                                    |
+| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/src/components/CharacterMenu/Index.vue`               | The frame: the characters, the name, the tabs and the panel                                                                             |
+| `packages/genshin-interface/src/components/CharacterMenu/Index.fixture.ts`        | Xilonen on Attributes, the reference's state                                                                                            |
+| `packages/genshin-interface/src/models/CharacterMenuTab.ts`                       | The six tabs, and their order down the screen                                                                                           |
+| `packages/genshin-interface/src/components/CharacterMenu/Weapons/Index.vue`       | The Weapons panel: the weapon, its stats, level, refinement and passive's name                                                          |
+| `packages/genshin-interface/src/components/CharacterMenu/Artifacts/Index.vue`     | The Artifacts panel: the slots, the stats, the set bonus block and the actions (see the artifact screen)                                |
+| `packages/genshin-interface/src/components/CharacterMenu/Constellation/Index.vue` | The Constellation panel: six rings, activated ones lit                                                                                  |
+| `packages/genshin-interface/src/components/CharacterMenu/Talents/Index.vue`       | The Talents panel: the three combat talents' names and rows with their Upgrade, and the passives' names                                 |
+| `packages/genshin-world/src/components/Character/Screen/Index.vue`                | The screen: the words, the characters, the way back, and a child per tab and picker                                                     |
+| `packages/genshin-world/src/components/Character/Screen/<Part>/Index.vue`         | Attributes, Artifacts, Enhance, Talents, Weapons, Equip and Constellation, each a piece of the screen                                   |
+| `packages/genshin-world/src/components/Character/AttributeList/Index.vue`         | The Attributes tab's level and attributes by group                                                                                      |
+| `packages/genshin-world/src/composables/useCharacterArtifactPicker.ts`            | The state the Artifacts panel and the Equip and Enhance overlays share: the notice, the picked slot, the fodder and the material counts |
+| `packages/genshin-world/src/composables/useCharacterMenuLabels.ts`                | The menu's entries, the chosen character's name and element, and each tab's label, joined from the screen's sources                     |
+| `packages/genshin-world/src/services/character/CharacterMenuTabGameTextKeyMap.ts` | Each tab's name in the game's text                                                                                                      |
+| `packages/genshin-world/src/services/character/constants.ts`                      | The Traveler's id and the advanced and elemental groups                                                                                 |
+| `packages/genshin-world/src/services/character/readStatTables.ts`                 | The stat tables fetched by their keys and parsed against their schemas                                                                  |
+| `packages/genshin-world/src/components/Character/Screen/Index.fixture.ts`         | The roster and Xilonen's tables, the parity page's state                                                                                |
 
 ## Sources
 
