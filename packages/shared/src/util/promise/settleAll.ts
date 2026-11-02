@@ -1,3 +1,5 @@
+import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
+import { Operation } from "#src/models/shared/Operation";
 import { toAppError } from "#src/services/error/toAppError";
 import { chunk } from "#src/util/array/chunk";
 import { takeOne } from "#src/util/array/takeOne";
@@ -14,6 +16,13 @@ export const settleAll = async <T>(
   concurrencyLimit: number = tasks.length,
 ): Promise<T[]> => {
   if (tasks.length === 0) return [];
+  // `chunk` advances by the limit, so a limit below one never ends the loop, and NaN runs no task at all
+  if (!Number.isInteger(concurrencyLimit) || concurrencyLimit < 1)
+    throw new InvalidOperationError(
+      Operation.Read,
+      settleAll.name,
+      "the concurrency limit is not a whole number of at least one",
+    );
 
   const values: T[] = [];
   for (const tasksChunk of chunk(tasks, concurrencyLimit)) {
