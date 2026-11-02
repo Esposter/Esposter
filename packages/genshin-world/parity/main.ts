@@ -102,8 +102,8 @@ if (screen && root) {
     // A backdrop that is the reference's own frame is the world as the game shows it behind the screen, its blur and wash
     // Already in it, so a screen's own world blur and wash are not drawn over it a second time
     if (searchParameters.has("backdropBlurred"))
-      document.head.append(
-        Object.assign(document.createElement("style"), { textContent: ".world-backdrop { display: none; }" }),
+      window.document.head.append(
+        Object.assign(window.document.createElement("style"), { textContent: ".world-backdrop { display: none; }" }),
       );
   }
   const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
