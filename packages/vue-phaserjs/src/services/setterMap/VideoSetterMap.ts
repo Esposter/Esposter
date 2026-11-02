@@ -19,9 +19,11 @@ export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, Vi
     gameObject.changeSource(value);
   },
   [VideoSetter.Muted]: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setMute(value);
   },
   [VideoSetter.Volume]: (gameObject) => (value) => {
+    if (value === undefined) return;
     gameObject.setVolume(value);
   },
   ...AlphaSetterMap,
