@@ -48,7 +48,7 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 ### Request size
 
-`requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`, the same constants that bound the tRPC body and the upload SAS. Those values and the upload path they govern are documented in [file uploads](../file-uploads/design.md) — this config is only where the module is told about them.
+`requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` alone, the constant that bounds the tRPC body. The module reads a request's limit from the route it matches, never from its `Content-Type`, so a request claiming `multipart/form-data` is held to the same limit as any other, and no route names a larger one, since no route reads a multipart body: files travel to Blob Storage by SAS. `MAX_FILE_REQUEST_SIZE` bounds the declared size of an upload and is not a body limit. The upload path is documented in [file uploads](../file-uploads/design.md) — this config is only where the module is told about the body limit.
 
 ### The image policy
 

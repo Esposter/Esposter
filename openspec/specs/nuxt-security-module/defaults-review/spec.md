@@ -134,19 +134,25 @@ Web workers SHALL load only from the app's own origin or from blob addresses, wh
 - **WHEN** the viewer starts
 - **THEN** its worker loads from the app's origin or a blob address
 
-### Requirement: Request bodies above the app's size limits are refused
+### Requirement: Request bodies above the app's size limit are refused
 
-The app SHALL refuse any request whose body is larger than its configured size limit, with those limits taken from shared constants. A request that declares its length is refused before a handler runs; one that does not is refused when a handler reads past the limit.
+The app SHALL refuse any request whose body is larger than the size limit its route sets, with that limit taken from a shared constant, whatever `Content-Type` the request claims. A request that declares its length is refused before a handler runs; one that does not is refused when a handler reads past the limit.
 
 #### Scenario: An oversized request body is refused
 
-- **GIVEN** a request that declares a body length larger than the limit for its kind
+- **GIVEN** a request that declares a body length larger than the limit its route sets
 - **WHEN** the request is received
 - **THEN** the request is refused
 
+#### Scenario: A file upload is held to the same limit
+
+- **GIVEN** a request claiming a `multipart/form-data` body that is larger than the limit its route sets
+- **WHEN** a handler reads the body
+- **THEN** the read fails with a 413
+
 #### Scenario: A chunked body past the limit is refused as it is read
 
-- **GIVEN** a POST request with no declared body length whose body is larger than the limit for its kind
+- **GIVEN** a POST request with no declared body length whose body is larger than the limit its route sets
 - **WHEN** a handler reads the body
 - **THEN** the read fails with a 413, and the bytes past the limit never reach the handler
 - **AND** a handler that wraps its own read reports that failure under its own status: tRPC and better-auth answer 500 and the MCP route 400, because the limiter cannot see the failure from outside them. Reporting 413 for them would take a counting stream the app owns beside h3's, which is kept until a client is found retrying on that 5xx

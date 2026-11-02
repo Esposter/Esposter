@@ -55,8 +55,6 @@ export const HTML_TAG_REGEX: RegExp = new RegExp(
 export const NONCE_TAG_NAMES: readonly string[] = ["link", "script", "style"];
 // The sections of a rendered page's HTML, in the order the document holds them
 export const HTML_SECTIONS = ["head", "bodyPrepend", "body", "bodyAppend"] as const;
-// The content type a file upload is sent with, which takes the larger request size limit
-export const FILE_UPLOAD_CONTENT_TYPE = "multipart/form-data";
 // The methods that carry a body the request size limit measures
 export const SIZE_LIMITED_METHODS: readonly string[] = STATE_CHANGING_METHODS;
 // The realm a basic auth challenge names when the configuration sets no message

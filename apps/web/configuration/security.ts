@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MEDIAPIPE_TASKS_VISION_URL } from "../app/services/message/room/liveKit/constants.ts";
-import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
+import { MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
 import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
 
 export const security: NuxtConfig["security"] = {
@@ -87,7 +87,9 @@ export const security: NuxtConfig["security"] = {
     },
   },
   rateLimiter: false,
-  requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE, maxUploadFileRequestInBytes: MAX_FILE_REQUEST_SIZE },
+  // No route takes a larger body, since files travel to Blob Storage by SAS. Any route that takes one
+  // Names its own limit in a route rule
+  requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE },
   // The module has no XSS validator: its filter rejects ordinary text a message carries, and passes a script once
   // `escapeHtml` is off. Rich text is sanitised at its Zod boundary instead
 };

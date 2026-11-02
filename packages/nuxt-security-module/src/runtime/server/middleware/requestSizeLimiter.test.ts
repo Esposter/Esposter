@@ -8,13 +8,14 @@ vi.mock(import("#src/runtime/services/getSecurityRules"), () => ({
 }));
 
 describe(requestSizeLimiter, () => {
-  const LIMITS = { maxRequestSizeInBytes: 10, maxUploadFileRequestInBytes: 20 };
+  const LIMITS = { maxRequestSizeInBytes: 10 };
   const URL = "https://localhost/api";
   const JSON_TYPE = "application/json";
+  const UPLOAD_TYPE = "multipart/form-data; boundary=x";
 
   // A body given as a string is sent with no Content-Length, as a chunked transfer is
-  const createEvent = (body: string): H3Event =>
-    new H3Event(new Request(URL, { body, headers: { "content-type": JSON_TYPE }, method: "POST" }));
+  const createEvent = (body: string, contentType: string): H3Event =>
+    new H3Event(new Request(URL, { body, headers: { "content-type": contentType }, method: "POST" }));
 
   beforeEach(() => {
     vi.mocked(getSecurityRules).mockReturnValue({ enabled: true, requestSizeLimiter: LIMITS });
@@ -23,7 +24,7 @@ describe(requestSizeLimiter, () => {
   test("refuses a chunked body past the limit with no content length", async () => {
     expect.hasAssertions();
 
-    const event = createEvent(" ".repeat(LIMITS.maxRequestSizeInBytes + 1));
+    const event = createEvent(" ".repeat(LIMITS.maxRequestSizeInBytes + 1), JSON_TYPE);
 
     requestSizeLimiter(event, () => undefined);
 
@@ -35,11 +36,22 @@ describe(requestSizeLimiter, () => {
     await expect(read).rejects.toMatchObject({ status: 413 });
   });
 
+  // A client writes its own Content-Type, so a body claiming a file upload must meet the route's limit, not a larger one
+  test("refuses a file upload past the route's limit, whatever its Content-Type claims", async () => {
+    expect.hasAssertions();
+
+    const event = createEvent(" ".repeat(LIMITS.maxRequestSizeInBytes + 1), UPLOAD_TYPE);
+
+    requestSizeLimiter(event, () => undefined);
+
+    await expect(event.req.text()).rejects.toMatchObject({ status: 413 });
+  });
+
   test("a chunked body exactly at the limit is read whole", async () => {
     expect.hasAssertions();
 
     const body = " ".repeat(LIMITS.maxRequestSizeInBytes);
-    const event = createEvent(body);
+    const event = createEvent(body, JSON_TYPE);
 
     requestSizeLimiter(event, () => undefined);
 
@@ -52,7 +64,7 @@ describe(requestSizeLimiter, () => {
     expect.hasAssertions();
 
     const body = " ".repeat(LIMITS.maxRequestSizeInBytes - 1);
-    const event = createEvent(body);
+    const event = createEvent(body, JSON_TYPE);
 
     requestSizeLimiter(event, () => undefined);
 

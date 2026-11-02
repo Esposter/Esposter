@@ -136,10 +136,10 @@ export const OPTION_PARITY: OptionParity[] = [
     verdict: OptionParityVerdict.ChangedDefault,
   },
   {
-    note: "Same defaults: 2 MB for a request and 8 MB for a file upload, declared in `getDefaultModuleOptions`. The app sets its own from `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`",
+    note: "Same default for a request: 2 MB, declared in `getDefaultModuleOptions`. Upstream also takes an 8 MB limit for a request claiming `multipart/form-data`, which ours drops, since a client writes that header and the limit is the route's. A route that takes a larger body names its own limit in its route rule. The app sets its limit from `MAX_REQUEST_SIZE`",
     ours: "requestSizeLimiter",
     upstream: "requestSizeLimiter",
-    verdict: OptionParityVerdict.Ported,
+    verdict: OptionParityVerdict.ChangedDefault,
   },
   { note: "Same default: on", ours: "sri", upstream: "sri", verdict: OptionParityVerdict.Ported },
   {

@@ -51,6 +51,18 @@ export default defineNuxtConfig({
 });
 ```
 
+A request's body limit is the one its route sets, whatever its `Content-Type` claims, since a client writes that header. A route that takes a larger body names its own limit in its route rule:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  routeRules: {
+    // Lets a request to this route carry a 10 MB body, where the rest of the app takes the 2 MB default
+    "/api/import/**": { security: { requestSizeLimiter: { maxRequestSizeInBytes: 10_000_000 } } },
+  },
+});
+```
+
 ## <a name="license">⚖️ License</a>
 
 Licensed under [Apache-2.0][url-license].

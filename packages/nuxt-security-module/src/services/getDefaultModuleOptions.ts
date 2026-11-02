@@ -25,7 +25,7 @@ export const getDefaultModuleOptions = (
   nonce: true,
   rateLimiter: false,
   removeLoggers: false,
-  requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 8_000_000 },
+  requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000 },
   sri: true,
   ssg: { hashScripts: true, hashStyles: false, meta: true },
   strict: isStrict,

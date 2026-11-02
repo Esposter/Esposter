@@ -46,7 +46,7 @@ describe(parseModuleOptions, () => {
   test("a request size limit that is not a positive whole number is refused with its path", () => {
     expect.hasAssertions();
 
-    const requestSizeLimiter = { maxRequestSizeInBytes: 1.5, maxUploadFileRequestInBytes: 8_000_000 };
+    const requestSizeLimiter = { maxRequestSizeInBytes: 1.5 };
 
     expect(() =>
       parseModuleOptions({ ...getDefaultModuleOptions(true, DEV_SERVER_URL, false), requestSizeLimiter }),

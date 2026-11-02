@@ -1,6 +1,6 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 
-const REQUEST_SIZE_LIMITER = { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 10_000_000 };
+const REQUEST_SIZE_LIMITER = { maxRequestSizeInBytes: 2_000_000 };
 
 // The app's security options as its configuration file states them. Its environment-derived origins are placeholders of
 // The same shape, so the bench reads the same directive counts without the app's environment. Only the options that
