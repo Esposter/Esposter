@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WeaponScreenCellsEnhanceOre from "#src/components/Weapon/Screen/Cells/Enhance/Ore/Index.vue";
-import { GameButton, GameButtonKind } from "genshin-interface";
+import WeaponScreenCellsPick from "#src/components/Weapon/Screen/Cells/Pick/Index.vue";
 
 interface Props {
   // The bag's other weapons the Enhance tab offers as fodder, each with its name, its level and whether it is picked
@@ -22,17 +22,12 @@ const emit = defineEmits<{ pickOre: [id: number]; toggleFodder: [id: number]; un
     @unpick="emit('unpickOre', ore.id)"
   />
   <div v-for="fodder of fodderCells" :key="fodder.id" class="cell">
-    <GameButton
-      class="pick"
-      :aria-pressed="fodder.picked"
-      :kind="GameButtonKind.Row"
-      tip=""
-      @click="emit('toggleFodder', fodder.id)"
-    >
-      <span class="cell-name">{{ fodder.name }}</span>
-      <span class="plus" aria-hidden="true" />
-      <span class="caption" aria-hidden="true">{{ fodder.levelText }}</span>
-    </GameButton>
+    <WeaponScreenCellsPick
+      :caption="fodder.levelText"
+      :is-pressed="fodder.picked"
+      :name="fodder.name"
+      @pick="emit('toggleFodder', fodder.id)"
+    />
   </div>
 </template>
 

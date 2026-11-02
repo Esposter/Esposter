@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GameButton, GameButtonKind } from "genshin-interface";
+import WeaponScreenCellsPick from "#src/components/Weapon/Screen/Cells/Pick/Index.vue";
 
 interface Props {
   // The copies of the weapon the bag holds beside it, which the Refine tab offers, each with its name and level
@@ -18,30 +18,20 @@ const emit = defineEmits<{ pickCopy: [id: number]; pickMaterial: [] }>();
 
 <template>
   <div v-if="refinementMaterial && isRefinementMaterialHeld" class="cell">
-    <GameButton
-      class="pick"
-      :aria-pressed="pickedCopyId === undefined"
-      :kind="GameButtonKind.Row"
-      tip=""
-      @click="emit('pickMaterial')"
-    >
-      <span class="cell-name">{{ refinementMaterial.name }}</span>
-      <span class="plus" aria-hidden="true" />
-      <span class="caption" aria-hidden="true">{{ refinementMaterial.count }}</span>
-    </GameButton>
+    <WeaponScreenCellsPick
+      :caption="refinementMaterial.count"
+      :is-pressed="pickedCopyId === undefined"
+      :name="refinementMaterial.name"
+      @pick="emit('pickMaterial')"
+    />
   </div>
   <div v-for="copy of copyCells" :key="copy.id" class="cell">
-    <GameButton
-      class="pick"
-      :aria-pressed="pickedCopyId === copy.id"
-      :kind="GameButtonKind.Row"
-      tip=""
-      @click="emit('pickCopy', copy.id)"
-    >
-      <span class="cell-name">{{ copy.name }}</span>
-      <span class="plus" aria-hidden="true" />
-      <span class="caption" aria-hidden="true">{{ copy.levelText }}</span>
-    </GameButton>
+    <WeaponScreenCellsPick
+      :caption="copy.levelText"
+      :is-pressed="pickedCopyId === copy.id"
+      :name="copy.name"
+      @pick="emit('pickCopy', copy.id)"
+    />
   </div>
 </template>
 

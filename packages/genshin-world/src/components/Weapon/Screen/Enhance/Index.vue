@@ -30,8 +30,6 @@ const { baseAttackText, gameText, maxLevel, pickedMaterialCount, requiredExp, se
   defineProps<Props>();
 // The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}`));
-// The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level
-const experienceText = computed(() => (weapon.level >= maxLevel ? "" : `${weapon.experience}/${requiredExp}`));
 const consumedText = computed(() =>
   fillGameTextValues(gameText[GameTextKey.WeaponEnhanceMaterialsConsumed], pickedMaterialCount, ENHANCE_MATERIAL_LIMIT),
 );
@@ -40,7 +38,8 @@ const consumedText = computed(() =>
 <template>
   <p class="level">{{ levelText }}</p>
   <p class="exp-tag">{{ gameText[GameTextKey.WeaponExp] }}</p>
-  <p class="experience-text">{{ experienceText }}</p>
+  <!-- The EXP the weapon holds towards the next level over what that level takes; a weapon at its cap has no next level -->
+  <p class="experience-text">{{ weapon.level >= maxLevel ? "" : `${weapon.experience}/${requiredExp}` }}</p>
   <span class="exp-track" aria-hidden="true" />
   <p class="consumed">{{ consumedText }}</p>
   <p class="stat stat-sparkle base-attack">{{ gameText[GameTextKey.AttributeBaseAttack] }}</p>

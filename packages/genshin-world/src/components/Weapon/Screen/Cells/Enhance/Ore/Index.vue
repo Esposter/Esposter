@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WeaponScreenCellsPick from "#src/components/Weapon/Screen/Cells/Pick/Index.vue";
 import { GameButton, GameButtonKind } from "genshin-interface";
 
 interface Props {
@@ -12,17 +13,12 @@ const emit = defineEmits<{ pick: []; unpick: [] }>();
 
 <template>
   <div class="cell">
-    <GameButton
-      class="pick"
-      :disabled="ore.pickedCount >= ore.ownedCount"
-      :kind="GameButtonKind.Row"
-      tip=""
-      @click="emit('pick')"
-    >
-      <span class="cell-name">{{ ore.name }}</span>
-      <span class="plus" aria-hidden="true" />
-      <span class="caption" aria-hidden="true">{{ ore.pickedCount || "--" }}</span>
-    </GameButton>
+    <WeaponScreenCellsPick
+      :caption="ore.pickedCount || '--'"
+      :is-disabled="ore.pickedCount >= ore.ownedCount"
+      :name="ore.name"
+      @pick="emit('pick')"
+    />
     <GameButton v-if="ore.pickedCount > 0" class="unpick" :kind="GameButtonKind.Row" tip="" @click="emit('unpick')">
       −
     </GameButton>
