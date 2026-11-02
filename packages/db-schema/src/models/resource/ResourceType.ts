@@ -11,6 +11,7 @@ export enum ResourceType {
   Survey = "Survey",
   TodoList = "TodoList",
   Webpage = "Webpage",
+  Whiteboard = "Whiteboard",
 }
 
 export const resourceTypeSchema = z.enum(ResourceType) satisfies z.ZodType<ResourceType>;

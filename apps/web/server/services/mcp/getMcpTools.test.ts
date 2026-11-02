@@ -85,6 +85,7 @@ describe(getMcpTools, () => {
           "resource_deleteResources",
           "resource_duplicateResource",
           "resource_readActivities",
+          "resource_readCritique",
           "resource_readResource",
           "resource_readResourceContent",
           "resource_readResourceContentSchema",
@@ -103,6 +104,7 @@ describe(getMcpTools, () => {
           "survey_readSurveyResponseRecords",
           "survey_readSurveyResponsesCount",
           "todoList_toggleTodoCompleted",
+          "whiteboard_moveWhiteboardElement",
         ],
       }
     `);
@@ -114,7 +116,7 @@ describe(getMcpTools, () => {
 
     const humanOnlyRouter = router({
       purge: publicProcedure
-        .meta({ humanOnly: "Nothing restores it", mcp: { description: "Purge", scope: McpScope.Resources } })
+        .meta({ humanOnly: " ", mcp: { description: " ", scope: McpScope.Resources } })
         .mutation<void>(() => undefined),
     });
 

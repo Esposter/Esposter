@@ -88,6 +88,8 @@ describe(getAgentJsonSchema, () => {
     [ResourceType.Survey]: [],
     [ResourceType.TodoList]: [],
     [ResourceType.Webpage]: [...richTextPaths("/content/-"), "/html"],
+    // An arrow end's connection point is the one the core derives from its binding
+    [ResourceType.Whiteboard]: ["/elements/-/end/point", "/elements/-/start/point"],
   } as const satisfies Record<ResourceType, string[]>;
 
   test.each(ResourceTypes)("a type whose content schema is not an object fails CI: %s", (type) => {

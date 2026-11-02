@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
@@ -26,10 +27,19 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
+import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
+import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
+import { createTestImageNode, TEST_ID, TEST_SURVEY_ID } from "#shared/services/pageBuilder/constants.test";
+import {
+  createTestSectionNode,
+  createTestSurveyInviteNode,
+  createTestTextNode,
+  TEST_GREY_VALUE,
+} from "#shared/services/pageBuilder/critique/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -533,6 +543,95 @@ describe("resourceRouter", () => {
     const references = await callAgentTool<ResourceReferences>("resource_readResourceReferences", { id: sheet.id });
 
     expect(references.consumers).toStrictEqual([{ id: emailResource.id, name, type: ResourceType.Email }]);
+  });
+
+  test("a type without a critique is refused, naming the type", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const sheet = await sheetCaller.createResource({ name });
+
+    await expect(callAgentTool("resource_readCritique", { id: sheet.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Invalid operation: Read, name: Sheet, the type declares no critique]`,
+    );
+  });
+
+  test("an agent reads the critique of a saved webpage", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    const savedResource = await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({
+        content: [
+          createTestSectionNode(TEST_ID, [], { [StyleBreakpoint.Base]: { [StyleState.Default]: { width: "800px" } } }),
+        ],
+      }),
+    );
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: webpageResource.id });
+
+    expect(critique).toStrictEqual({
+      contentVersion: savedResource.contentVersion,
+      findings: [{ kind: CritiqueFindingKind.WideFixedWidth, nodeId: TEST_ID, phoneWidthInPixels: 800 }],
+    });
+  });
+
+  test("an agent reads no findings for a webpage never saved", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: webpageResource.id });
+
+    expect(critique).toStrictEqual({ contentVersion: webpageResource.contentVersion, findings: [] });
+  });
+
+  test("an agent's read reports colour checks as unchecked", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({
+        content: [
+          createTestTextNode(TEST_ID, { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_VALUE } } }),
+        ],
+      }),
+    );
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: webpageResource.id });
+
+    expect(critique.findings).toStrictEqual([{ kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID }]);
+  });
+
+  test("an agent's read reports an invite to an unpublished survey", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(
+      webpageResource,
+      new WebpageEditor({ content: [createTestSurveyInviteNode(TEST_ID, TEST_SURVEY_ID)] }),
+    );
+    const critique = await callAgentTool<ReadCritiqueResult>("resource_readCritique", { id: webpageResource.id });
+
+    expect(critique.findings).toStrictEqual([{ kind: CritiqueFindingKind.UnpublishedSurvey, nodeId: TEST_ID }]);
+  });
+
+  test("a resource the key does not own is refused", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    await mockSessionOnce(mockContext.db);
+    const otherUserResource = await webpageCaller.createResource({ name });
+
+    await expect(
+      callAgentTool("resource_readCritique", { id: otherUserResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
+    await expect(
+      callAgentTool("resource_readCritique", { id: crypto.randomUUID() }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
   });
 
   test("a link written into a document appears in references", async () => {

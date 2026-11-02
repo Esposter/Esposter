@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "shared/services/pageBuilder/critique/critiqueWebpage.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.9753333333333103,
+              "name": "a tenth of the nodes",
+              "p99": 1.1207079999999496,
+              "rme": 34.704294204117986,
+              "sampleCount": 3
+            },
+            {
+              "mean": 6.8191666666668125,
+              "name": "all the nodes",
+              "p99": 9.851760000000258,
+              "rme": 98.61622006132905,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "critiqueWebpage > 2000 nodes"
+        }
+      ]
+    }
+  ]
+}

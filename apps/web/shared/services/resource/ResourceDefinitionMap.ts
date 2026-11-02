@@ -10,6 +10,7 @@ import { programResourceSchema } from "#shared/models/resource/program/ProgramRe
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
+import { whiteboardResourceSchema } from "#shared/models/resource/whiteboard/WhiteboardResource";
 import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -73,5 +74,11 @@ export const ResourceDefinitionMap = {
     contentSchema: webpageEditorSchema,
     icon: "i-mdi:language-html5",
     title: ResourceType.Webpage,
+  },
+  [ResourceType.Whiteboard]: {
+    capabilities: { fileAssets: true, portable: true },
+    contentSchema: whiteboardResourceSchema,
+    icon: "i-mdi:draw",
+    title: ResourceType.Whiteboard,
   },
 } as const satisfies Record<ResourceType, ResourceDefinition>;

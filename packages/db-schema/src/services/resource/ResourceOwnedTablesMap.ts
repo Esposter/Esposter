@@ -16,4 +16,5 @@ export const ResourceOwnedTablesMap: Record<ResourceType, AzureTable[]> = {
   [ResourceType.Survey]: [AzureTable.SurveyResponses],
   [ResourceType.TodoList]: [],
   [ResourceType.Webpage]: [],
+  [ResourceType.Whiteboard]: [],
 };

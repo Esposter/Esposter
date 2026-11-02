@@ -1,6 +1,7 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { LinkedResource } from "#shared/models/resource/LinkedResource";
+import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
 import type { ReadResourceContentSchemaResult } from "#shared/models/resource/ReadResourceContentSchemaResult";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
@@ -39,6 +40,7 @@ import { readResourceListPage } from "#server/services/resource/readResourceList
 import { readStoredResourceContent } from "#server/services/resource/readStoredResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
+import { ResourceCritiqueMap } from "#server/services/resource/ResourceCritiqueMap";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
@@ -51,6 +53,7 @@ import { withResourceRollback } from "#server/services/resource/withResourceRoll
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { router } from "#server/trpc";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -89,7 +92,7 @@ import {
   SnapshotChannel,
   SnapshotReason,
 } from "@esposter/db-schema";
-import { getSynchronizedFunction, MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
+import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, asc, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
@@ -210,6 +213,24 @@ export const resourceRouter = router({
         limit,
         sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
       });
+    }),
+  // The critique the owner's Check panel shows, answered beside the content version it was read at. A type that declares
+  // No critique is refused by name, so an empty list is never read as a clean page
+  readCritique: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read the critique of a resource's saved content: each finding of its checks with the node it names, and the contentVersion it was read at. A colour this read cannot see is listed as unchecked, never as passing. A type with no critique is refused by name.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<ReadCritiqueResult>(async ({ ctx }) => {
+      const readFindings = ResourceCritiqueMap[ctx.resource.type];
+      if (!readFindings)
+        throw getInvalidOperationError(Operation.Read, ctx.resource.type, "the type declares no critique");
+
+      const findings = await readFindings(ctx.db, ctx.getSessionPayload.user.id, ctx.resource.id);
+      return { contentVersion: ctx.resource.contentVersion, findings };
     }),
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)

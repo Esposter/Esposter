@@ -16,6 +16,7 @@ import { flowchartRouter } from "#server/trpc/routers/flowchart";
 import { noteRouter } from "#server/trpc/routers/note";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
 import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
@@ -45,6 +46,7 @@ const resourceCallers = {
   [ResourceType.Note]: (ctx: Context) => createCallerFactory(noteRouter)(ctx),
   [ResourceType.Survey]: (ctx: Context) => createCallerFactory(surveyRouter)(ctx),
   [ResourceType.Webpage]: (ctx: Context) => createCallerFactory(webpageRouter)(ctx),
+  [ResourceType.Whiteboard]: (ctx: Context) => createCallerFactory(whiteboardRouter)(ctx),
 };
 
 const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = resourceCallers;
@@ -54,6 +56,7 @@ const fileCallers: Record<FileAssetsResourceType, (ctx: Context) => FileCaller> 
   [ResourceType.Note]: resourceCallers[ResourceType.Note],
   [ResourceType.Survey]: resourceCallers[ResourceType.Survey],
   [ResourceType.Webpage]: resourceCallers[ResourceType.Webpage],
+  [ResourceType.Whiteboard]: resourceCallers[ResourceType.Whiteboard],
 };
 
 // Typeless, so one tool serves a resource of any type: the type decides whether the operation exists at all, and a type

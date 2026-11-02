@@ -36,6 +36,7 @@ import { userRouter } from "#server/trpc/routers/user";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const trpcRouter = router({
@@ -75,6 +76,7 @@ export const trpcRouter = router({
   userToRoom: userToRoomRouter,
   webhook: webhookRouter,
   webpage: webpageRouter,
+  whiteboard: whiteboardRouter,
 });
 
 export type TRPCRouter = typeof trpcRouter;
