@@ -12,7 +12,7 @@ const { role, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { checkIsRoleManageable, updateRole } = roleStore;
 const { draft: permissions, isDirty, reset, settle } = useStoredDraft(() => role.permissions);
-// UpdateRole refuses a role at or above the reader's top role, so a role the reader does not outrank is held read-only
+// `updateRole` refuses a role at or above the reader's top role, so a role the reader does not outrank is held read-only
 // Rather than offered a save that cannot land
 const isRoleManageable = computed(() => checkIsRoleManageable(roomId, role.position));
 </script>
