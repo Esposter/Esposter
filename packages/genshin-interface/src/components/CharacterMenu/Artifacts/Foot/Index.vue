@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
+import type { CharacterMenuArtifactEmits } from "#src/models/CharacterMenuArtifactEmits";
 
 import CharacterMenuButtons from "#src/components/CharacterMenu/Buttons/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
@@ -45,13 +46,7 @@ const {
   unequipLabel,
   unlockLabel,
 } = defineProps<Props>();
-// Each action names the slot it is taken on by its index
-const emit = defineEmits<{
-  enhance: [index: number];
-  equip: [index: number];
-  lock: [index: number];
-  unequip: [index: number];
-}>();
+const emit = defineEmits<CharacterMenuArtifactEmits>();
 const isSelectedWorn = computed(() => selectedStats !== undefined);
 </script>
 

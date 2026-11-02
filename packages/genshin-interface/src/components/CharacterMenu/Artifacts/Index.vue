@@ -2,6 +2,7 @@
 import type { ArtifactSetBonusGroup } from "#src/models/ArtifactSetBonusGroup";
 import type { ArtifactSlotStats } from "#src/models/ArtifactSlotStats";
 import type { ArtifactStatLine } from "#src/models/ArtifactStatLine";
+import type { CharacterMenuArtifactEmits } from "#src/models/CharacterMenuArtifactEmits";
 
 import CharacterMenuArtifactsDetails from "#src/components/CharacterMenu/Artifacts/Details/Index.vue";
 import CharacterMenuArtifactsFoot from "#src/components/CharacterMenu/Artifacts/Foot/Index.vue";
@@ -63,13 +64,7 @@ const {
   unequipLabel,
   unlockLabel,
 } = defineProps<Props>();
-// Each action names the slot it is taken on by its index
-const emit = defineEmits<{
-  enhance: [index: number];
-  equip: [index: number];
-  lock: [index: number];
-  unequip: [index: number];
-}>();
+const emit = defineEmits<CharacterMenuArtifactEmits>();
 // The slot the actions are for, the first until Switch moves it on, and whether the details are open in place of the totals
 const selectedIndex = ref(0);
 const isDetailsOpen = ref(false);
