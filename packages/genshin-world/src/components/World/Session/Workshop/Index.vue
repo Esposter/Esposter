@@ -1,0 +1,189 @@
+<script setup lang="ts">
+import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
+import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
+import type { CookingTalent } from "#src/models/cooking/CookingTalent";
+import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
+import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
+import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
+import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
+import type { ForgeProgress } from "#src/models/forging/ForgeProgress";
+import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { Wallet } from "#src/models/inventory/Wallet";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
+import type { CraftingCell, ForgeTab } from "genshin-interface";
+import type { GameText } from "genshin-text";
+
+import { ScreenKind } from "#src/models/screen/ScreenKind";
+import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
+import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
+import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
+import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
+
+interface Props {
+  adventureRank: number;
+  adventureRankTables: AdventureRankTables;
+  artifactDropTables: ArtifactDropTables;
+  avatarId: number;
+  completedMainQuestIds: ReadonlySet<string>;
+  cookingRecipes: CookingRecipe[];
+  craftingProgress: CraftingProgress;
+  craftingRecipes: CraftingRecipe[];
+  crafters: CraftingCell[];
+  forgeDefinitions: Map<number, ItemDefinition>;
+  forgeNow: Temporal.Instant;
+  forgeRecipes: ForgeRecipe[];
+  forgeWeapons: Map<number, Pick<ItemDefinition, "name"> & WeaponData>;
+  gameText: GameText;
+  getWorldNow: () => Temporal.Instant;
+  initialCrafterId: number;
+  inventory: Inventory;
+  materialDataMap: ReadonlyMap<number, MaterialData>;
+  nameText: Readonly<Record<string, string>>;
+  partyCharacterIds: number[];
+  processingRecipes: ProcessingRecipe[];
+  random: () => number;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  screenKind: ScreenKind;
+  strongboxes: CraftingStrongboxData[];
+  // The talent of the character on the field, which the cooking screen's kit reads
+  talent?: CookingTalent;
+  wallet: Wallet;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
+  worldNow: Temporal.Instant;
+}
+
+const emit = defineEmits<{
+  achievementEvents: [achievementEvents: AchievementEvent[]];
+  close: [];
+  updateInventory: [inventory: Inventory];
+  updateWallet: [wallet: Wallet];
+}>();
+const adventureExp = defineModel<number>("adventureExp", { required: true });
+const cookingProgress = defineModel<CookingProgress>("cookingProgress", { required: true });
+const cookingRecipe = defineModel<CookingRecipe>("cookingRecipe");
+const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
+const forgeAmount = defineModel<number>("forgeAmount", { required: true });
+const forgeProgress = defineModel<ForgeProgress>("forgeProgress", { required: true });
+const forgeRecipeId = defineModel<number>("forgeRecipeId", { required: true });
+const forgeTab = defineModel<ForgeTab>("forgeTab", { required: true });
+const processingJobs = defineModel<Record<number, ProcessingJob>>("processingJobs", { required: true });
+const {
+  adventureRank,
+  adventureRankTables,
+  artifactDropTables,
+  avatarId,
+  completedMainQuestIds,
+  cookingRecipes,
+  craftingProgress,
+  craftingRecipes,
+  crafters,
+  forgeDefinitions,
+  forgeNow,
+  forgeRecipes,
+  forgeWeapons,
+  gameText,
+  getWorldNow,
+  initialCrafterId,
+  inventory,
+  materialDataMap,
+  nameText,
+  partyCharacterIds,
+  processingRecipes,
+  random,
+  reliquaryPieceEntryMap,
+  screenKind,
+  strongboxes,
+  talent,
+  wallet,
+  weaponDataMap,
+  worldNow,
+} = defineProps<Props>();
+</script>
+
+<template>
+  <CookingScreen
+    v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
+    v-model:progress="cookingProgress"
+    v-model:recipe="cookingRecipe"
+    :avatar-id="avatarId"
+    :game-text
+    :inventory
+    :material-data-map="materialDataMap"
+    :name-text="nameText"
+    :random
+    :recipes="cookingRecipes"
+    :talent
+    @close="emit('close')"
+    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+  />
+  <ProcessingScreen
+    v-if="screenKind === ScreenKind.Processing"
+    v-model:jobs="processingJobs"
+    :game-text
+    :inventory
+    :material-data-map="materialDataMap"
+    :name-text="nameText"
+    :now="getWorldNow"
+    :recipes="processingRecipes"
+    @close="emit('close')"
+    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+  />
+  <CraftingScreen
+    v-if="screenKind === ScreenKind.Crafting"
+    v-model:crafted-count-map="craftedCountMap"
+    :adventure-rank
+    :artifact-drop-tables="artifactDropTables"
+    :crafters
+    :game-text
+    :get-world-now="getWorldNow"
+    :initial-crafter-id="initialCrafterId"
+    :inventory
+    :material-data-map="materialDataMap"
+    :name-text="nameText"
+    :now="worldNow"
+    :progress="craftingProgress"
+    :random
+    :recipes="craftingRecipes"
+    :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+    :strongboxes
+    :wallet
+    :weapon-data-map="weaponDataMap"
+    @achievement-events="(achievementEvents) => emit('achievementEvents', achievementEvents)"
+    @close="emit('close')"
+    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+  />
+  <ForgeScreen
+    v-if="screenKind === ScreenKind.Forge"
+    v-model:adventure-exp="adventureExp"
+    v-model:amount="forgeAmount"
+    v-model:progress="forgeProgress"
+    v-model:recipe-id="forgeRecipeId"
+    v-model:tab="forgeTab"
+    :adventure-rank
+    :adventure-rank-tables="adventureRankTables"
+    :completed-main-quest-ids="completedMainQuestIds"
+    :definitions="forgeDefinitions"
+    :game-text
+    :inventory
+    :is-in-realm="false"
+    :now="forgeNow"
+    :party-character-ids="partyCharacterIds"
+    :random
+    :recipes="forgeRecipes"
+    :wallet
+    :weapons="forgeWeapons"
+    @achievement-events="(achievementEvents) => emit('achievementEvents', achievementEvents)"
+    @close="emit('close')"
+    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+  />
+</template>

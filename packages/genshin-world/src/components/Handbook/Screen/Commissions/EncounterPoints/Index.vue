@@ -5,7 +5,7 @@ import { GameTextKey } from "genshin-text";
 
 interface Props {
   // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  canUseLongTermEncounterPoints: boolean;
+  isLongTermEncounterPointUsable: boolean;
   // The most daily Encounter Points the storage holds, in whole points, which the panel's count reads against
   encounterPointLimit: number;
   // The daily Encounter Points held, as whole points, which the panel's count shows
@@ -16,13 +16,8 @@ interface Props {
   longTermEncounterPoints: number;
 }
 
-const {
-  canUseLongTermEncounterPoints,
-  encounterPointLimit,
-  encounterPoints,
-  gameText,
-  longTermEncounterPoints,
-} = defineProps<Props>();
+const { isLongTermEncounterPointUsable, encounterPointLimit, encounterPoints, gameText, longTermEncounterPoints } =
+  defineProps<Props>();
 const emit = defineEmits<{ useLongTermEncounterPoints: [] }>();
 </script>
 
@@ -37,7 +32,7 @@ const emit = defineEmits<{ useLongTermEncounterPoints: [] }>();
     </p>
     <button
       class="encounter-points-use"
-      :disabled="!canUseLongTermEncounterPoints"
+      :disabled="!isLongTermEncounterPointUsable"
       type="button"
       @click="emit('useLongTermEncounterPoints')"
     >

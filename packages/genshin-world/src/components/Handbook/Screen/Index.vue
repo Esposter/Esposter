@@ -16,7 +16,7 @@ import { GameScreen } from "genshin-interface";
 
 interface Props {
   // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  canUseLongTermEncounterPoints: boolean;
+  isLongTermEncounterPointUsable: boolean;
   // The investigation's commissions, top to bottom
   commissions: HandbookCommission[];
   // The panel's ring and bar: how many of its investigations are done out of how many
@@ -45,7 +45,7 @@ interface Props {
 }
 
 const {
-  canUseLongTermEncounterPoints,
+  isLongTermEncounterPointUsable,
   commissions,
   completedCount,
   dayCommissions,
@@ -93,7 +93,7 @@ const tab = ref(HandbookTab.Experience);
       />
       <HandbookScreenCommissions
         v-else-if="tab === HandbookTab.Commissions"
-        :can-use-long-term-encounter-points="canUseLongTermEncounterPoints"
+        :is-long-term-encounter-point-usable="isLongTermEncounterPointUsable"
         :day-commissions="dayCommissions"
         :encounter-point-limit="encounterPointLimit"
         :encounter-points="encounterPoints"

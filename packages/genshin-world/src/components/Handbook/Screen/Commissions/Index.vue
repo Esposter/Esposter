@@ -9,7 +9,7 @@ import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGam
 
 interface Props {
   // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  canUseLongTermEncounterPoints: boolean;
+  isLongTermEncounterPointUsable: boolean;
   // The day's four commissions, top to bottom, as the Commissions tab lists them
   dayCommissions: HandbookDayCommission[];
   // The most daily Encounter Points the storage holds, in whole points, which the panel's count reads against
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const {
-  canUseLongTermEncounterPoints,
+  isLongTermEncounterPointUsable,
   dayCommissions,
   encounterPointLimit,
   encounterPoints,
@@ -36,10 +36,7 @@ const {
   longTermEncounterPoints,
   nameText,
 } = defineProps<Props>();
-const emit = defineEmits<{
-  claimCommission: [commissionId: number];
-  useLongTermEncounterPoints: [];
-}>();
+const emit = defineEmits<{ claimCommission: [commissionId: number]; useLongTermEncounterPoints: [] }>();
 </script>
 
 <template>
@@ -56,7 +53,7 @@ const emit = defineEmits<{
     <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
     <HandbookScreenCommissionsEncounterPoints
       v-if="isAdventureEncountersUnlocked"
-      :can-use-long-term-encounter-points="canUseLongTermEncounterPoints"
+      :is-long-term-encounter-point-usable="isLongTermEncounterPointUsable"
       :encounter-point-limit="encounterPointLimit"
       :encounter-points="encounterPoints"
       :game-text="gameText"

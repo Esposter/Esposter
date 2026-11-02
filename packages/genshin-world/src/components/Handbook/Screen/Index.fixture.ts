@@ -2,7 +2,7 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
 // The Experience page of the English client's Adventurer Handbook, Chapter 9, with every investigation done
 export const props = {
-  canUseLongTermEncounterPoints: false,
+  isLongTermEncounterPointUsable: false,
   commissions: [
     {
       progress: 3,
