@@ -25,7 +25,7 @@ export const onUntilDeparture = <TKey extends keyof TEventMap, TEventMap extends
     getResultAsync(() => events.next()).match(
       (result) => result,
       (error) => {
-        if (departure.signal.aborted) return { done: true, value: undefined };
+        if (departure.signal.aborted) return { done: true, value: undefined } satisfies IteratorReturnResult<undefined>;
         throw error;
       },
     );

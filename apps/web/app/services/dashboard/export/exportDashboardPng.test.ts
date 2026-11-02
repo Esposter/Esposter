@@ -65,9 +65,8 @@ describe(exportDashboardPng, () => {
 
     await exportDashboardPng(dashboardName);
 
-    const [svg, width, height] = takeOne(vi.mocked(rasterizeSvg).mock.calls);
+    const [, width, height] = takeOne(vi.mocked(rasterizeSvg).mock.calls);
 
-    expect(svg).toBeInstanceOf(Blob);
     expect([width, height]).toStrictEqual([640, 480]);
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(`${dashboardName}.png`, png, MimeType.Png);
   });

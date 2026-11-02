@@ -42,6 +42,6 @@ describe("messageModelRoomSettingsTypeWordFilterForm", () => {
       .find((button) => button.text() === "Save changes")
       ?.trigger("click");
 
-    expect(await upsertedWords).toStrictEqual(["a", "c", "b"]);
+    await expect(upsertedWords).resolves.toStrictEqual(["a", "c", "b"]);
   });
 });
