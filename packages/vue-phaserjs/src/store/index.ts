@@ -7,7 +7,7 @@ import { Game } from "phaser";
 export const usePhaserStore = defineStore("phaser", () => {
   // The Game is markRaw'd as it enters the ref, so Vue's deep reactive Proxy never wraps it: Phaser's InputManager
   // Sorts/finds objects by === identity, and a proxied object differs from the raw one Phaser stored, silently breaking
-  // SetInteractive priority. The ref is what makes the getter's reads tracked, which a plain variable behind it never was
+  // `setInteractive` priority. The ref is what makes the getter's reads tracked, which a plain variable behind it never was
   const baseGame = ref<Game>();
   // No scene has mounted until the first `switchToScene`, which no key of the consumer's enum can stand for
   const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();

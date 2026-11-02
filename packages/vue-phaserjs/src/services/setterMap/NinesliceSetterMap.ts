@@ -13,7 +13,7 @@ import { TextureSetterMap } from "#src/services/setterMap/components/TextureSett
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
 
-// SetSlices takes the size and all four slices in one call, so each slice setter passes the rest back as they are
+// `setSlices` takes the size and all four slices in one call, so each slice setter passes the rest back as they are
 export const NinesliceSetterMap: SetterMap<NinesliceConfiguration, GameObjects.NineSlice, NinesliceEventEmitsOptions> =
   {
     [ComputedSizeSetter.Height]: ComputedSizeSetterMap[ComputedSizeSetter.Height],
