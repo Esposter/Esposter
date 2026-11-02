@@ -1,6 +1,6 @@
 # content-mapper: a generic component with `inheritAttrs: false` rejects an attribute it does not declare (TS2353), and `checkUnknownProps: false` has no effect
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
 
 A generic component that sets `defineOptions({ inheritAttrs: false })` makes the mapper report TS2353 for any undeclared attribute written as a plain name, for example `p0`. `vue-tsc` accepts the same file unless `strictTemplates` is on. A component that is not generic accepts the attribute with the same option. Forwarding the attributes with `v-bind="$attrs"` opens the type, and forwarding them through `mergeProps(x, $attrs)` does not.
 

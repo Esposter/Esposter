@@ -77,7 +77,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 
 ## Keep out
 
-- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink.
+- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a first run reported 103 diagnostics, and a run on `<tool>` 0.652.0 reports 15"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
 - **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
 - **A date, a session or a link to a chat.**
 - **A request for more than the oracle already does.** The ask is "no diagnostic, as with the oracle".

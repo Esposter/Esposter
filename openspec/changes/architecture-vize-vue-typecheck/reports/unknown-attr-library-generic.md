@@ -1,6 +1,6 @@
 # content-mapper: an undeclared attribute on a library function component reports TS2353 when the project and `vize` do not share one `vue`
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue is none of those 15, because the app now lists `vue` beside `vize` in its root manifest. It stays open because the mapper then reports a false error with no warning when it cannot find that `vue`.
 
 This is one of a batch of issues filed together, all from that attempt:
 
