@@ -42,39 +42,34 @@ import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
-import WorldStandIns from "#src/components/World/StandIns/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWaterfalls from "#src/components/World/Waterfalls/Index.vue";
 import WorldWeather from "#src/components/World/Weather/Index.vue";
 import WorldWildlife from "#src/components/World/Wildlife/Index.vue";
+import PlaceStandIns from "#src/components/World/Windrise/PlaceStandIns/Index.vue";
 import { useAreaWeather } from "#src/composables/useAreaWeather";
 import { useCharacterAvatar } from "#src/composables/useCharacterAvatar";
 import { useFloatingOrigin } from "#src/composables/useFloatingOrigin";
 import { useGenshinTuning } from "#src/composables/useGenshinTuning";
-import { usePostPipeline } from "#src/composables/usePostPipeline";
+import { usePostChain } from "#src/composables/usePostChain";
 import { useRegionData } from "#src/composables/useRegionData";
 import { useResidentSpots } from "#src/composables/useResidentSpots";
 import { useSceneExports } from "#src/composables/useSceneExports";
-import { useSheerCold } from "#src/composables/useSheerCold";
-import { useSky } from "#src/composables/useSky";
-import { useSunShadow } from "#src/composables/useSunShadow";
-import { SeelieState } from "#src/models/puzzle/SeelieState";
+import { useSceneReady } from "#src/composables/useSceneReady";
+import { useSheerColdGauge } from "#src/composables/useSheerColdGauge";
+import { useSightTrailEnds } from "#src/composables/useSightTrailEnds";
+import { useWindriseSky } from "#src/composables/useWindriseSky";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
-import { StandInShape } from "#src/models/world/StandInShape";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
 import { getCharacterPackReader } from "#src/services/character/getCharacterPackReader";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
-import { computeQuestClueTrailEnds } from "#src/services/elementalSight/computeQuestClueTrailEnds";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
-import { MINING_OUTCROP_STAND_IN_COLOR, MINING_OUTCROP_STAND_IN_RADIUS } from "#src/services/gathering/constants";
-import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { createMondstadtWindUniforms } from "#src/services/mondstadt/createMondstadtWindUniforms";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { LEAF_SHADER, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
-import { OCULUS_STAND_IN_COLOR, OCULUS_STAND_IN_RADIUS } from "#src/services/statue/constants";
 import {
   CLOUD_COVERAGE,
   FOG_DENSITY,
@@ -86,8 +81,6 @@ import {
   NEAR_GRASS_RING,
   RIM_STRENGTH,
   SHADOW_MAX_FAR,
-  SUN_DISTANCE,
-  SUN_TILT,
   UNDERWATER_FOG_COLOR,
   UNDERWATER_FOG_DENSITY,
   WATER_CAUSTIC_STRENGTH,
@@ -98,17 +91,13 @@ import {
   WINDRISE_GRADE_OPTIONS,
   WINDRISE_RAMP_OPTIONS,
   WINDRISE_SCENE_EXPORT_COMPONENT,
-  WINDRISE_SKY_KEYFRAMES,
-  WINDRISE_START_MINUTES,
 } from "#src/services/windrise/constants";
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
 import { createTreeSpeciesOptionsMap } from "#src/services/world/createTreeSpeciesOptionsMap";
 import { WorldSceneExportFamilyMeshRegexMap } from "#src/services/world/WorldSceneExportFamilyMeshRegexMap";
-import { getResultAsync, noop } from "@esposter/shared";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
-import { whenever } from "@vueuse/core";
 import {
   createFogUniforms,
   createGradeLutTexture,
@@ -310,6 +299,12 @@ const pavingMaterial = createToonMaterial({
   lightUniforms,
   rampTexture,
 });
+// The families the ground, paving and grass groups mark themselves as, held once so each group is handed the same object
+const groundUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground };
+const pavingUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Paving };
+const grassUserData = { [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass };
+// The two rings the grass is drawn in, held once so the grass is handed the same array each render
+const grassRings = [NEAR_GRASS_RING, MIDDLE_GRASS_RING];
 
 const windUniforms = createMondstadtWindUniforms();
 // The tier is read once: its cascades are built with the sun, and the scene is remounted to change it
@@ -352,7 +347,7 @@ const postUniforms = createPostUniforms();
 const sightScene = new Scene();
 const sightUniforms = createSightUniforms();
 const { onBeforeRender } = useLoop();
-const { advance, renderer } = useTres();
+const { renderer } = useTres();
 onBeforeRender(() => {
   if (drawnCharacterAvatar.value) updateAvatarFaces(drawnCharacterAvatar.value, lightUniforms.sunDirection.value);
   sightScene.position.set(-origin.x, 0, -origin.z);
@@ -371,53 +366,32 @@ waterUniforms.shallowColor.value.set(WATER_SHALLOW_COLOR);
 waterUniforms.underwaterFogColor.value.set(UNDERWATER_FOG_COLOR);
 waterUniforms.underwaterFogDensity.value = UNDERWATER_FOG_DENSITY;
 const skyUniforms = createSkyUniforms();
-// Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone
-const baseCloudCoverage = computed(() => (witness?.isAlone.value ? 0 : CLOUD_COVERAGE));
-const baseFogDensity = computed(() => (witness?.isAlone.value ? 0 : FOG_DENSITY));
-const gameClock = useSky({
+const gameClock = useWindriseSky({
   checkIsHeld: () => Boolean(isHeld) || heldMinutes !== undefined || (witness?.isClockHeld.value ?? false),
-  skyKeyframes: WINDRISE_SKY_KEYFRAMES,
-  skyTargets: {
-    fogUniforms,
-    hemisphere,
-    light: sun,
-    lightDistance: SUN_DISTANCE,
-    lightUniforms,
-    postUniforms,
-    skyUniforms,
-  },
-  startMinutes: heldMinutes ?? WINDRISE_START_MINUTES,
-  tilt: SUN_TILT,
-  windUniforms,
-});
-// The sun's shadows are drawn again only when the sun, the view or a caster has moved, after the sky has turned the sun
-useSunShadow({
   enemyMap,
+  fogUniforms,
   getCharacterBody: () => characterBody,
   getCharacterLocomotion: () => characterLocomotion,
+  getHeldMinutes: () => heldMinutes,
+  hemisphere,
+  lightUniforms,
+  postUniforms,
+  skyUniforms,
   sunLight: { cascadedShadowNode, light: sun },
+  windUniforms,
 });
-// The clock only starts at its held minute, so a minute held anew is set on it
-watch(
-  () => heldMinutes,
-  (minutes) => {
-    if (minutes !== undefined) gameClock.minutes = minutes;
-  },
-);
 // Where the residents stand at the clock's minute, which the quest's target and the world's prompts read
 const { residentSpots } = useResidentSpots(regionDataMap, gameClock, origin, getGroundHeight);
 const questTargetPosition = computed(() =>
   questTargetId ? findQuestTargetPosition(regionDataMap, residentSpots.value, questTargetId) : undefined,
 );
-// The courts of the Seelies still resting, which the sight leads a trail to while it is on
-const seelieCourts = computed(() =>
-  seelies.filter(({ state }) => state === SeelieState.Resting).map(({ court }) => court),
-);
-// The go-to places the quests' clues name, which the sight leads a trail to once each is placed in the region data
-const questClueTrailEnds = computed(() => computeQuestClueTrailEnds(regionDataMap, questClueTargetIds));
-// The ends the sight's trails lead to: the courts of the Seelies still resting, the bounties' targets standing, and the
-// Go-to places the quests' clues name
-const sightTrailEnds = computed(() => [...seelieCourts.value, ...bountyTrailEnds, ...questClueTrailEnds.value]);
+// The ends the sight's trails lead to, which the world's trails are drawn to
+const sightTrailEnds = useSightTrailEnds({
+  getBountyTrailEnds: () => bountyTrailEnds,
+  getQuestClueTargetIds: () => questClueTargetIds,
+  getSeelies: () => seelies,
+  regionDataMap,
+});
 // The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack for
 const characterPackReader = computed(() => getCharacterPackReader(characterPackReaders, activeCharacterId));
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
@@ -427,63 +401,32 @@ const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const groundCapture = createGroundCapture(GRASS_CAPTURE_SIZE, GRASS_CAPTURE_RESOLUTION);
 // The weather of the area the camera stands in, which Windrise's is clear in, as its reference screenshots are
 const areaWeather = useAreaWeather(origin, catalogue);
-// The Sheer Cold gauge of the character on the field, which the HUD reads from the value emitted each change. No campfire
-// Is placed in the world yet, so no heat source drains it
-const sheerCold = useSheerCold(
+useSheerColdGauge({
   catalogue,
-  () => {
-    const character = getCharacter();
-    return characterBody && character ? { ...character, position: characterBody.position } : undefined;
-  },
-  () => [],
   getAntiColdRatio,
-  () => areaWeather.value,
-  (damage) => emit("coldDamage", damage),
-);
-watch(sheerCold, (value) => emit("sheerCold", value));
+  getCharacter,
+  getCharacterBody: () => characterBody,
+  getWeather: () => areaWeather.value,
+  onColdDamage: (damage) => emit("coldDamage", damage),
+  onSheerCold: (value) => emit("sheerCold", value),
+});
 const gradeLutTexture = createGradeLutTexture(WINDRISE_GRADE_OPTIONS);
-// A developer switches TRAA off to see what its resolve costs, and the world's chain falls back to SMAA meanwhile
-const isTemporalAntialiasingOn = ref(true);
-// No god rays and no bloom: neither is measured off a reference of Windrise, and drawn as they stand they veil the
-// Whole frame, the god rays marching hundreds of metres of lit air to their most opacity and bloom lifting the whole
-// Sky past its threshold, so the frame is drawn through the haze, the grade and the tone mapping alone. No occlusion
-// Either, and the sky handed on with it as the login's is, which the parity page's tools read each pixel's ray under
-const postPipeline = usePostPipeline(
-  () => qualityTier,
-  {
-    fogUniforms,
-    gradeLutTexture,
-    isBloomed: false,
-    postUniforms,
-    sight: { litScene: sightScene, uniforms: sightUniforms },
-  },
-  0,
+const { isTemporalAntialiasingOn, postPipeline } = usePostChain({
+  fogUniforms,
+  getQualityTier: () => qualityTier,
+  gradeLutTexture,
+  postUniforms,
+  sightScene,
+  sightUniforms,
   skyUniforms,
-  undefined,
-  isTemporalAntialiasingOn,
-);
-// The world is ready once the ground of its first view and the regions in reach of it have arrived, so what shows it
-// Never shows the bare water under a ground still streaming in
-const isTerrainSettled = ref(false);
-whenever(
-  () => isTerrainSettled.value && isRegionDataSettled.value,
-  async () => {
-    // The view's pipelines, outlines included, compile before the world shows, so its first frame builds none. A compile
-    // That fails is logged and the world shows anyway, drawn without the warm-up, rather than never being ready
-    await getResultAsync(async () => {
-      if (!postPipeline.value) return;
-      const compiled = postPipeline.value.compileAsync();
-      // The compile waits on the next frame, and a world paused under the opening draws only the frames it is asked for,
-      // So a paused world asks for that frame; a running world draws it anyway, and its canvas refuses `advance`
-      if (isPaused) advance();
-      await measureLoadStep("compile", compiled);
-    }).match(noop, (error) => {
-      console.error("The Windrise post pipeline failed to compile", error);
-    });
-    emit("ready");
-  },
-  { once: true },
-);
+});
+// The terrain's ready event settles the ground, and the world is ready once the regions in reach have arrived too
+const settleTerrain = useSceneReady({
+  getIsPaused: () => isPaused,
+  isRegionDataSettled,
+  onReady: () => emit("ready"),
+  postPipeline,
+});
 if (devRegistry)
   useGenshinTuning({
     devRegistry,
@@ -532,7 +475,7 @@ onUnmounted(() => {
     <!-- Hidden rather than unmounted where the witness draws the ground, since the world is ready once its ground is -->
     <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Ground)">
       <!-- Marked as the ground's family alone, so the grass, which a witness render never draws, is left out of ours -->
-      <TresGroup :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Ground }">
+      <TresGroup :user-data="groundUserData">
         <WorldTerrain
           :create-terrain-worker
           :draws="terrainDraws"
@@ -546,7 +489,7 @@ onUnmounted(() => {
           :terrain-worker-ground
           :water-uniforms
           :wind-uniforms
-          @ready="isTerrainSettled = true"
+          @ready="settleTerrain"
         />
       </TresGroup>
       <WorldGrass
@@ -558,7 +501,7 @@ onUnmounted(() => {
         :origin
         :quality-tier
         :ramp-texture
-        :rings="[NEAR_GRASS_RING, MIDDLE_GRASS_RING]"
+        :rings="grassRings"
         :terrain-draws
         :terrain-options
         :water-uniforms
@@ -566,16 +509,14 @@ onUnmounted(() => {
       />
     </TresGroup>
     <!-- Marked as the paving family alone, so a witness render draws ours of the stones round the statue in place of the exports' -->
-    <TresGroup
-      :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Paving)"
-      :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Paving }"
-    >
+    <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Paving)" :user-data="pavingUserData">
       <TresMesh :geometry="pavingGeometry" :material="pavingMaterial" cast-shadow receive-shadow />
     </TresGroup>
     <!-- Ahead of the water, whose haze replaces the weather's under its surface -->
+    <!-- Alone, the witness's exports are drawn with no haze and no clouds, so a pose is matched on their edges alone -->
     <WorldWeather
-      :base-cloud-coverage
-      :base-fog-density
+      :base-cloud-coverage="witness?.isAlone.value ? 0 : CLOUD_COVERAGE"
+      :base-fog-density="witness?.isAlone.value ? 0 : FOG_DENSITY"
       :fog-uniforms
       :get-ground-height
       :ground-capture
@@ -605,10 +546,7 @@ onUnmounted(() => {
       :wind-uniforms
     />
     <!-- The plants the game places round the oak, instanced once per prefab, drawn as the grass family alone where the witness does not -->
-    <TresGroup
-      :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)"
-      :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass }"
-    >
+    <TresGroup :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)" :user-data="grassUserData">
       <WorldPlants
         :get-ground-height
         :light-uniforms
@@ -671,27 +609,13 @@ onUnmounted(() => {
       :places="frostbearingTreePlaces"
       :ramp-texture
     />
-    <WorldStandIns
-      v-if="!witness && oculusPlaces.length > 0"
-      :key="oculusPlaces.length"
-      :color="OCULUS_STAND_IN_COLOR"
+    <PlaceStandIns
+      v-if="!witness"
       :get-ground-height
       :light-uniforms
-      :places="oculusPlaces"
-      :radius="OCULUS_STAND_IN_RADIUS"
+      :mining-outcrop-places
+      :oculus-places
       :ramp-texture
-      :shape="StandInShape.Sphere"
-    />
-    <WorldStandIns
-      v-if="!witness && miningOutcropPlaces.length > 0"
-      :key="miningOutcropPlaces.length"
-      :color="MINING_OUTCROP_STAND_IN_COLOR"
-      :get-ground-height
-      :light-uniforms
-      :places="miningOutcropPlaces"
-      :radius="MINING_OUTCROP_STAND_IN_RADIUS"
-      :ramp-texture
-      :shape="StandInShape.Rock"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
