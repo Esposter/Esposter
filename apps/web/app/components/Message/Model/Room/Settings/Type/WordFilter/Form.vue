@@ -53,15 +53,15 @@ const saveFilter = async () => {
       // Read when the write is sent, since another moderator may have changed the words since this form read them.
       // The write keeps those changes and applies only the words and fields the reader changed
       const currentFilter = await $trpc.room.filter.readRoomFilter.query({ roomId });
-      const { action, timeoutDurationMs, words } = mergeWordFilterFormData(
-        baseFormData,
-        issuedFormData,
-        getWordFilterFormData(currentFilter),
-      );
+      const {
+        action,
+        timeoutDurationMs: mergedTimeoutDurationMs,
+        words,
+      } = mergeWordFilterFormData(baseFormData, issuedFormData, getWordFilterFormData(currentFilter));
       return $trpc.room.filter.upsertRoomFilter.mutate({
         action,
         roomId,
-        ...(action === WordFilterAction.Timeout && { timeoutDurationMs }),
+        ...(action === WordFilterAction.Timeout && { timeoutDurationMs: mergedTimeoutDurationMs }),
         words,
       });
     },

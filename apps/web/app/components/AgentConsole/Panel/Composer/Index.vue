@@ -83,14 +83,14 @@ const { createAlert } = alertStore;
 // The attachments of one prompt share one ceiling, so a file that would take the prompt past it is left out and named.
 // A file too large by its size alone is named the same way, and is refused before it is read
 const attach = async (fileList: FileList | undefined) => {
-  const files = [...(fileList ?? [])];
-  const newAttachments = await Promise.all(files.map((file) => readAttachment(file)));
+  const newFiles = [...(fileList ?? [])];
+  const newAttachments = await Promise.all(newFiles.map((file) => readAttachment(file)));
   const { fitted, refused } = fitAttachments(
     attachments.value,
     newAttachments.filter((attachment) => attachment !== undefined),
   );
   attachments.value = [...attachments.value, ...fitted];
-  for (const { name } of [...files.filter((file) => checkIsFileTooLarge(file)), ...refused])
+  for (const { name } of [...newFiles.filter((file) => checkIsFileTooLarge(file)), ...refused])
     createAlert(
       `"${name}" would take the prompt's attachments over ${getFileSize(ATTACHMENTS_MAX_BYTE_LENGTH)} — it was not attached`,
       "error",
