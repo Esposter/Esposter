@@ -29,8 +29,11 @@ export const useMessageSubscribables = () => {
                 (userId) => userId !== undefined,
               );
               if (userIds.length > 0) await readMembersByIds(roomId, userIds);
-              // oxlint-disable-next-line no-await-in-loop -- Order is the contract: messages enter the list in the order they were sent
-              for (const newMessage of data) await storeCreateMessage(newMessage);
+              // Each message is its own unit: one whose Create hooks reject stays out of the list and is logged, and the
+              // Rest of the batch still lands behind it
+              for (const newMessage of data)
+                // oxlint-disable-next-line no-await-in-loop -- Order is the contract: messages enter the list in the order they were sent
+                await getResultAsync(() => storeCreateMessage(newMessage)).match(noop, console.error);
             }).match(noop, console.error),
           ),
         },
