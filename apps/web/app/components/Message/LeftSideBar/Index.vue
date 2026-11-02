@@ -5,13 +5,17 @@ import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTa
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DraftsAndSentTabMetadataMap } from "@/services/message/draftsAndSent/DraftsAndSentTabMetadataMap";
 import { useInputStore } from "@/store/message/input";
+import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { RoutePath } from "@esposter/shared";
 
-const { $trpc } = useNuxtApp();
 const { currentRoute } = useRouter();
 const inputStore = useInputStore();
 const { drafts } = storeToRefs(inputStore);
-const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
+// The count is the store's, so a job scheduled or cancelled moves this badge as it moves the Scheduled tab
+const scheduledMessageJobStore = useScheduledMessageJobStore();
+const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
+const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
+await readScheduledMessageJobs();
 const items = computed<UiListItem<string>[]>(() => [
   {
     isCurrent: currentRoute.value.path === RoutePath.MessagesFriends,
@@ -32,7 +36,7 @@ const items = computed<UiListItem<string>[]>(() => [
 const badges = computed(() =>
   [DraftsAndSentTab.Drafts, DraftsAndSentTab.Scheduled]
     .map((tab) => ({
-      count: tab === DraftsAndSentTab.Drafts ? drafts.value.size : scheduledMessageJobCount,
+      count: tab === DraftsAndSentTab.Drafts ? drafts.value.size : scheduledMessageJobCount.value,
       icon: DraftsAndSentTabMetadataMap[tab].icon,
       title: DraftsAndSentTabMetadataMap[tab].title,
     }))

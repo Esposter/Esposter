@@ -1,7 +1,12 @@
+import type { createErrorAlert } from "@/services/trpc/createErrorAlert";
+
 import { useAutoSearch } from "@/composables/useAutoSearch";
 import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
+import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/services/trpc/createErrorAlert"), () => ({ createErrorAlert: vi.fn<typeof createErrorAlert>() }));
 
 const setupAutoSearch = () => {
   const searchQuery = ref("");
@@ -73,5 +78,21 @@ describe(useAutoSearch, () => {
     await vi.advanceTimersByTimeAsync(AUTO_SEARCH_THROTTLE_MS);
 
     expect(searchedQueries).toStrictEqual([searchQueryValue]);
+  });
+
+  // A failure is about the query the screen showed, and emptying the box is what discards that query's results
+  test("clears a failed search's error when the box is emptied", async () => {
+    expect.hasAssertions();
+
+    const searchQuery = ref("");
+    const { isError } = useAutoSearch(searchQuery, { reset: noop, search: () => Promise.reject(new Error(" ")) });
+    searchQuery.value = searchQueryValue;
+    await flushPromises();
+    expect(isError.value).toBe(true);
+
+    searchQuery.value = "";
+    await flushPromises();
+
+    expect(isError.value).toBe(false);
   });
 });

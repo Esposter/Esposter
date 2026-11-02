@@ -57,6 +57,8 @@ export const useAutoSearch = (
     if (isIncludeEmptySearchQuery || !newIsSearchQueryEmpty) return;
     abortController?.abort();
     isPending.value = false;
+    // A failure is about a query that no longer has results on screen, so emptying the box clears it too
+    isError.value = false;
     searchedQuery = undefined;
     reset();
   });
