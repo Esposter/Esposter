@@ -89,8 +89,8 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
 
 .card::after {
   top: calc(var(--unit) * 453);
-  left: calc(var(--unit) * 338);
-  width: calc(var(--unit) * 6);
+  left: calc(var(--unit) * 337);
+  width: calc(var(--unit) * 7);
   height: calc(var(--unit) * 292);
   background: #524c50;
 }
@@ -110,19 +110,19 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
 
 .card-title {
   position: absolute;
-  top: calc(var(--unit) * 243);
+  top: calc(var(--unit) * 248);
   left: calc(var(--unit) * 374);
   width: calc(var(--unit) * 450);
   margin: 0;
   color: #3e3c3d;
   font-size: calc(var(--unit) * 63);
   letter-spacing: calc(var(--unit) * 4.5);
-  line-height: calc(var(--unit) * 74);
+  line-height: calc(var(--unit) * 71);
 }
 
 .probability {
   position: absolute;
-  top: calc(var(--unit) * 451);
+  top: calc(var(--unit) * 454);
   left: calc(var(--unit) * 377);
   margin: 0;
   color: #3e3c3d;
@@ -147,7 +147,7 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
 
 .notice {
   position: absolute;
-  top: calc(var(--unit) * 601);
+  top: calc(var(--unit) * 602);
   left: calc(var(--unit) * 377);
   width: calc(var(--unit) * 465);
   margin: 0;
