@@ -120,6 +120,9 @@ jobs:
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: false
 
+      - name: 💾 Add swap
+        uses: ./.github/actions/add-swap
+
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
@@ -185,6 +188,9 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: false
+
+      - name: 💾 Add swap
+        uses: ./.github/actions/add-swap
 
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
