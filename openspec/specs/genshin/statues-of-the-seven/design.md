@@ -57,10 +57,9 @@ flowchart TD
 
 ## Open
 
-- [ ] **Four words of the popup have no key** — "Statue's Rewards", "Owned", "Offer" and "Offer All" are in no `GameTextKey` (`packages/genshin-text/src/models/GameTextKey.ts`), so the rewards heading draws as its two rules, the requirement draws its count without "Owned", and the offer pills draw their arrows alone. "Required Anemoculus" is the "Required" key with the Oculus's item name. Needs the four keys added by the machine that holds the game install.
 - [ ] **The Blessing's glass is solved over nothing the game draws under it** — the reference's panel lies over the blurred world, and the parity page stands the screen on white, so the glass stays at 75 percent until the page backdrop or the screen's own world blur is decided; `statue-blessing` is scored over a plate of the screen's six pieces, so the world and the glass between them are the reference's own and the glass does not move its mean.
 - [ ] **The popup's parchment, emblem, icons, padlock and offer arrows are placeholders** — the client's UI atlas and the item icons are not checked, so each draws as a plain tile, disc or stroke (the roadmap's Worship asset rows).
-- [ ] **The published level two pays 80 Adventure EXP** where the completionist clip shows 120, so the statues table is to be checked against a current recording before the popup's rewards are trusted.
+- [ ] **The published level two takes one Anemoculus and pays 80 Adventure EXP** where the completionist clip's "Lv. 2" panel shows "Anemoculus 0/2" and 120: the published level three is the row that reads 2 and 120, so either the clip's popup is the next level's under the previous label or the table is a version off. The statues table is to be checked against a current recording before the popup's rewards are trusted.
 - [ ] **The Blessing switch sits off the panel** — the reference's panel draws no switch, so the switch is a provisional control at the window's top left, outside the judged region; where the game leads from the popup to the Blessing is not recorded.
 - [ ] **Offer and Offer All make the same offer** — the model offers every held Oculus at once, so both pills emit the one offer until the game's split between a single offer and all is modelled.
 

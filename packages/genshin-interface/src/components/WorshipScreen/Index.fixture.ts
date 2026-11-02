@@ -17,7 +17,11 @@ export const props = {
     state: WorshipLevelState.Locked,
   },
   levelLabel: "Lv.",
+  offerAllLabel: "Offer All",
+  offerLabel: "Offer",
+  ownedLabel: "Owned",
   requiredLabel: "Required",
+  rewardsLabel: "Statue's Rewards",
   staminaLabel: "Stamina",
   title: "Worship Statue",
 };

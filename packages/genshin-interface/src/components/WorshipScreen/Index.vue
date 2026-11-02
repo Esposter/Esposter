@@ -23,24 +23,46 @@ interface Props {
     staminaShare: number;
     state: WorshipLevelState;
   };
-  // The words the level's number, its stamina and its requirement open with, in the reader's language
+  // The word the level's number opens with, in the reader's language
   levelLabel: string;
+  // The words on the Offer All pill, which offers every Oculus held at once
+  offerAllLabel: string;
+  // The words on the Offer pill, which offers the Oculi held one at a time
+  offerLabel: string;
+  // The line set over the count of the Oculi held
+  ownedLabel: string;
+  // The word the requirement's heading opens with, in the reader's language
   requiredLabel: string;
+  // The heading over the rewards the level pays
+  rewardsLabel: string;
+  // The word the stamina reward opens with, in the reader's language
   staminaLabel: string;
   // The title the game shows at the top left of the panel
   title: string;
 }
 
-const { blessingTitle, closeLabel, heldCount, level, levelLabel, requiredLabel, staminaLabel, title } =
-  defineProps<Props>();
+const {
+  blessingTitle,
+  closeLabel,
+  heldCount,
+  level,
+  levelLabel,
+  offerAllLabel,
+  offerLabel,
+  ownedLabel,
+  requiredLabel,
+  rewardsLabel,
+  staminaLabel,
+  title,
+} = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 </script>
 
 <template>
   <!-- The Worship Statue's popup as the game draws it: a panel 614 units across on the window's right, 1080 high, showing the
        one level the region is reaching under its emblem, its rewards, the Oculus it takes against the Oculi held, and the two
-       offer buttons. The parchment, emblem, icons, padlock and offer arrows are plain until the game's art is recorded, and
-       the words the game sets with no key yet stay undrawn. The Blessing switch sits off the panel, which draws none -->
+       offer buttons. The parchment, emblem, icons, padlock and offer arrows are plain until the game's art is recorded. The
+       Blessing switch sits off the panel, which draws none -->
   <div class="worship-screen">
     <GameButton class="blessing" :kind="GameButtonKind.Row" tip="" @click="emit('blessing')">
       {{ blessingTitle }}
@@ -56,9 +78,9 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
       <p v-if="level.oculus" class="held-count">{{ level.oculus.name }} {{ heldCount }} / {{ level.oculus.count }}</p>
       <span class="bar" aria-hidden="true" />
-      <div class="heading rewards-heading" aria-hidden="true">
+      <div class="heading rewards-heading">
         <span class="rule" />
-        <span class="unset-words" />
+        <span class="words">{{ rewardsLabel }}</span>
         <span class="rule" />
       </div>
       <Level
@@ -77,11 +99,13 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
         </div>
         <div class="requirement">
           <span class="requirement-icon" aria-hidden="true" />
+          <span class="owned-label">{{ ownedLabel }}</span>
           <span class="owned">× {{ heldCount }}</span>
           <span class="help" aria-hidden="true">?</span>
         </div>
         <GameButton class="offer" :disabled="heldCount === 0" :kind="GameButtonKind.Pill" tip="" @click="emit('offer')">
           <span class="offer-icon" aria-hidden="true" />
+          <span class="offer-label">{{ offerLabel }}</span>
         </GameButton>
         <GameButton
           class="offer-all"
@@ -91,6 +115,7 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
           @click="emit('offer')"
         >
           <span class="offer-icon" aria-hidden="true" />
+          <span class="offer-label">{{ offerAllLabel }}</span>
         </GameButton>
       </template>
       <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
@@ -223,13 +248,13 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
   width: calc(var(--unit) * 546);
   align-items: center;
   color: #545954;
-  font-size: calc(var(--unit) * 22);
+  font-size: calc(var(--unit) * 25);
   font-weight: 600;
   line-height: calc(var(--unit) * 26);
 }
 
 .rewards-heading {
-  top: calc(var(--unit) * 252);
+  top: calc(var(--unit) * 254);
 }
 
 .required-heading {
@@ -240,12 +265,6 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
   flex: 1;
   height: calc(var(--unit) * 2);
   background: #d4cfbe;
-}
-
-/* The words the rewards heading holds are undrawn until the game's key exists, and the gap keeps the rules where they sit */
-.unset-words {
-  flex: none;
-  width: calc(var(--unit) * 222);
 }
 
 .words {
@@ -279,13 +298,23 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
   background: #7b7566;
 }
 
-.owned {
+.owned,
+.owned-label {
   position: absolute;
-  top: calc(var(--unit) * 34);
   left: calc(var(--unit) * 100);
   color: #5f5b4f;
-  font-size: calc(var(--unit) * 30);
   font-weight: 600;
+}
+
+.owned-label {
+  top: calc(var(--unit) * 9);
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 26);
+}
+
+.owned {
+  top: calc(var(--unit) * 34);
+  font-size: calc(var(--unit) * 30);
   line-height: calc(var(--unit) * 40);
 }
 
@@ -339,6 +368,20 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 
 .offer-all .offer-icon {
   left: calc(var(--unit) * 7);
+}
+
+/* Positioned, so the words show over the pill's press light, and drawn at three quarters of the pill's opacity, which fits
+   the faint words of the reference's disabled pills */
+.offer-label {
+  position: absolute;
+  top: calc(var(--unit) * 16);
+  left: calc(var(--unit) * 84);
+  font-size: calc(var(--unit) * 28);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 28);
+  letter-spacing: calc(var(--unit) * 4);
+  white-space: nowrap;
+  opacity: 0.75;
 }
 
 .panel .close {
