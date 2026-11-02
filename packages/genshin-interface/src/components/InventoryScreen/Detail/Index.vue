@@ -64,7 +64,8 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 /* The info block's purple runs from under the name band to the cream body at 286 units, measured off the recording */
 .detail {
   --detail-head-color: #635687;
-  --detail-head-end-color: #a176b5;
+  --detail-head-end-color: #a77fbe;
+  --detail-ink: #57585d;
 
   position: absolute;
   top: calc(var(--unit) * 114);
@@ -130,7 +131,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 .weapon-kind {
   top: calc(var(--unit) * 70);
   color: #ffffff;
-  font-size: calc(var(--unit) * 20);
+  font-size: calc(var(--unit) * 25);
   font-weight: 600;
   line-height: calc(var(--unit) * 24);
 }
@@ -138,7 +139,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 .weapon-stat-label {
   top: calc(var(--unit) * 100);
   color: #b3add3;
-  font-size: calc(var(--unit) * 20);
+  font-size: calc(var(--unit) * 25);
   line-height: calc(var(--unit) * 24);
 }
 
@@ -157,7 +158,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 .weapon-base-value {
   top: calc(var(--unit) * 187);
   color: #ffffff;
-  font-size: calc(var(--unit) * 40);
+  font-size: calc(var(--unit) * 50);
   font-weight: 600;
   line-height: calc(var(--unit) * 48);
 }
@@ -181,7 +182,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 
 .weapon-passive-name {
   top: calc(var(--unit) * 396);
-  color: v-bind(GAME_REPLY_HOVER_INK);
+  color: var(--detail-ink);
   font-size: calc(var(--unit) * 24);
   font-weight: 600;
   line-height: calc(var(--unit) * 28);
@@ -189,14 +190,14 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
 
 .weapon-passive {
   top: calc(var(--unit) * 424);
-  color: v-bind(GAME_REPLY_HOVER_INK);
+  color: var(--detail-ink);
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 29);
 }
 
 .weapon-description {
   top: calc(var(--unit) * 648);
-  color: #6c6762;
+  color: #7d7a79;
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 29);
 }
@@ -209,7 +210,7 @@ const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defin
   border-radius: calc(var(--unit) * 4);
   background: rgb(45 48 60 / 0.9);
   color: #ece3d8;
-  font-size: calc(var(--unit) * 24);
+  font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: calc(var(--unit) * 20);
 }

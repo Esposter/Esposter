@@ -52,7 +52,7 @@ committed.
 | `interaction-prompts-jueyun-chili`     | `InteractionPromptList`     |                                                                          4.63% | 0.954 |  1.79% | 0.2034 |
 | `interaction-prompts-pickup`           | `InteractionPromptList`     |                                                                          5.07% | 0.937 |  2.64% | 0.2181 |
 | `inventory-food`                       | `InventoryScreen`           |                                                                          3.00% | 0.994 |  1.96% | 0.1851 |
-| `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.91% | 0.752 |  5.68% | 0.3656 |
+| `inventory-weapons`                    | `InventoryScreen`           |                                                                          9.78% | 0.759 |  5.67% | 0.3633 |
 | `liyue-harbor-location`                | `WorldScreen`               |                                                                         19.83% | 0.392 | 17.24% | 0.6757 |
 | `loading-startup`                      | `LoadingStartup`            |                                                                          0.07% | 0.765 |  0.04% | 0.0027 |
 | `loading-startup-failed`               | `LoadingStartup`            |  pending: the game's download state of the startup screen has no sampled frame |       |        |        |
