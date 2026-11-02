@@ -1,7 +1,6 @@
 import type { TextChunk } from "#src/models/data/TextChunk";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Mail } from "#src/models/mail/Mail";
+import type { MailboxState } from "#src/models/mail/MailboxState";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 
@@ -17,47 +16,48 @@ import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, noop } from "@esposter/shared";
-import { storeToRefs } from "pinia";
-import { shallowRef } from "vue";
+import { defineStore } from "pinia";
+import { ref, shallowRef } from "vue";
 
 // The mailbox's rows and texts, read as the world starts, with the Traveler's birthday mail delivered and the expired mails
 // Removed as the clock stands then. A claim takes a mail's items into the bag and wallet once, and a claim the bag cannot
-// Take whole leaves the mail held and says so
-export const useWorldMail = ({
-  savedMails,
-  savedTravelerBirthday,
-}: {
-  savedMails: MailSave[];
-  savedTravelerBirthday?: TravelerBirthdaySave;
-}) => {
+// Take whole leaves the mail held and says so. The session starts it after the session store and stops it as it unmounts
+export const useWorldMailStore = defineStore("world/mail", () => {
   const worldSessionStore = useWorldSessionStore();
-  const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory, setWallet } = worldSessionStore;
-  const mails = shallowRef<MailSave[]>(savedMails);
+  const mails = shallowRef<MailSave[]>([]);
   const mailData = shallowRef<{
     birthdayMailIds: ReadonlySet<number>;
     mailRows: ReadonlyMap<number, Mail>;
     textMap: TextChunk;
   }>();
-  const isBagFull = shallowRef(false);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(async () => {
-    const birthdayMailRows = await readBirthdayMailRows(worldSessionStore.gameDataBaseUrl);
-    const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
-    const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
-    const [mailRows, textMap] = await Promise.all([
-      readMailRows(worldSessionStore.gameDataBaseUrl, [...mailIds]),
-      readMailText(worldSessionStore.gameDataBaseUrl, worldSessionStore.language),
-    ]);
-    const now = getWorldNow();
-    const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
-    mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
-    mailData.value = { birthdayMailIds, mailRows, textMap };
-  }).match(noop, (error) => {
-    console.error(error);
-  });
+  const isBagFull = ref(false);
 
-  const applyMailboxState = (nextState: { inventory: Inventory; mails: MailSave[]; wallet: Wallet }) => {
+  const start = (savedMails: MailSave[], savedTravelerBirthday?: TravelerBirthdaySave) => {
+    mails.value = savedMails;
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    getResultAsync(async () => {
+      const birthdayMailRows = await readBirthdayMailRows(worldSessionStore.gameDataBaseUrl);
+      const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
+      const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
+      const [mailRows, textMap] = await Promise.all([
+        readMailRows(worldSessionStore.gameDataBaseUrl, [...mailIds]),
+        readMailText(worldSessionStore.gameDataBaseUrl, worldSessionStore.language),
+      ]);
+      const now = getWorldNow();
+      const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
+      mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
+      mailData.value = { birthdayMailIds, mailRows, textMap };
+    }).match(noop, (error) => {
+      console.error(error);
+    });
+  };
+  const stop = () => {
+    mails.value = [];
+    mailData.value = undefined;
+    isBagFull.value = false;
+  };
+  const applyMailboxState = (nextState: MailboxState) => {
     setInventory(nextState.inventory);
     setWallet(nextState.wallet);
     mails.value = nextState.mails;
@@ -66,7 +66,7 @@ export const useWorldMail = ({
     const mailRow = mailData.value?.mailRows.get(held.id);
     if (!mailRow) return;
     const nextState = claimMail(
-      { inventory: inventory.value, mails: mails.value, wallet: wallet.value },
+      { inventory: worldSessionStore.inventory, mails: mails.value, wallet: worldSessionStore.wallet },
       held,
       mailRow,
       worldSessionStore.nameText,
@@ -83,7 +83,7 @@ export const useWorldMail = ({
     const mailRows = mailData.value?.mailRows;
     if (!mailRows) return;
     const nextState = claimAllMails(
-      { inventory: inventory.value, mails: mails.value, wallet: wallet.value },
+      { inventory: worldSessionStore.inventory, mails: mails.value, wallet: worldSessionStore.wallet },
       mailRows,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
@@ -112,5 +112,17 @@ export const useWorldMail = ({
     );
   };
 
-  return { claim, claimAll, deleteGift, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailPin };
-};
+  return {
+    claim,
+    claimAll,
+    deleteGift,
+    deleteRead,
+    isBagFull,
+    mailData,
+    mails,
+    markMailRead,
+    start,
+    stop,
+    toggleMailPin,
+  };
+});

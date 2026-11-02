@@ -20,8 +20,8 @@ Each task fits one session. The order is the dependency order. A session that ta
 
 ## 3. The mailbox
 
-- [ ] 3.1 Make the mailbox a feature store that reads the session store and owns the mails, the delivered rows and the bag-full flag, with the claim, delete, read and pin actions. Verify: a test written first and seen failing drives each action over a seeded store, including a claim the bag cannot hold whole.
-- [ ] 3.2 Mount the Mail page with the mailbox store, read the mails from it when the save is written, and remove the mailbox's destructure, options list and bindings from the root. Verify: the save written after a claim holds the claimed mail, and the package's typecheck reports nothing.
+- [x] 3.1 Make the mailbox a feature store that reads the session store and owns the mails, the delivered rows and the bag-full flag, with the claim, delete, read and pin actions. Verify: a test written first and seen failing drives each action over a seeded store, including a claim the bag cannot hold whole.
+- [x] 3.2 Mount the Mail page with the mailbox store, read the mails from it when the save is written, and remove the mailbox's destructure, options list and bindings from the root. Verify: the save written after a claim holds the claimed mail, and the package's typecheck reports nothing.
 
 ## 4. The gate
 

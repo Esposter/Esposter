@@ -30,7 +30,6 @@ import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import HudShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
 import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
-import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
@@ -48,6 +47,7 @@ import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
+import WorldMail from "#src/components/World/Mail/Index.vue";
 import WorldRealm from "#src/components/World/Realm/Index.vue";
 import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
@@ -82,7 +82,6 @@ import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldHudVisibility } from "#src/composables/useWorldHudVisibility";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
-import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
@@ -128,6 +127,7 @@ import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { useWorldMailStore } from "#src/store/mail";
 import { useWorldSessionStore } from "#src/store/session";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
@@ -388,17 +388,11 @@ const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, sp
 const { achievementData } = useWorldAchievements({ achievementProgressMap, screenKind });
 // The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
 // The Mail screen claims them into the bag and wallet
-const {
-  claim: claimMail,
-  claimAll: claimAllMails,
-  deleteGift: deleteGiftMail,
-  deleteRead: deleteReadMails,
-  isBagFull: isMailBagFull,
-  mailData,
-  mails,
-  markMailRead,
-  toggleMailPin,
-} = useWorldMail({ savedMails: savedState.mails, savedTravelerBirthday: savedState.travelerBirthday });
+const worldMailStore = useWorldMailStore();
+const { mailData, mails } = storeToRefs(worldMailStore);
+const { start: startMail, stop: stopMail } = worldMailStore;
+startMail(savedState.mails, savedState.travelerBirthday);
+onUnmounted(stopMail);
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
 const {
   bagFullHint,
@@ -1441,26 +1435,7 @@ useWorldSaveSync({
         />
       </template>
       <template v-if="mailData" #[ScreenKind.Mail]>
-        <!-- eslint-disable vue/no-restricted-syntax -- the Mail screen's own confirm dialog asks first and emits a delete only once the player confirms -->
-        <MailScreen
-          :birthday-mail-ids="mailData.birthdayMailIds"
-          :game-text
-          :is-bag-full="isMailBagFull"
-          :mail-rows="mailData.mailRows"
-          :mails
-          :material-data-map
-          :names="nameText"
-          :now="worldNow"
-          :text-map="mailData.textMap"
-          @claim="(mail) => claimMail(mail)"
-          @claim-all="claimAllMails()"
-          @close="closeScreen()"
-          @delete-gift="(mail) => deleteGiftMail(mail)"
-          @delete-read="deleteReadMails()"
-          @read="(mail) => markMailRead(mail)"
-          @pin="(mail) => toggleMailPin(mail)"
-        />
-        <!-- eslint-enable vue/no-restricted-syntax -->
+        <WorldMail @close="closeScreen()" />
       </template>
       <template #[ScreenKind.Quests]>
         <QuestScreen

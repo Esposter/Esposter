@@ -98,7 +98,7 @@ None. Where state lives changes and the player sees no difference; the session's
 | :-------------------------------------------------------------------------- | :---------------------------------------------- |
 | `packages/genshin-world/src/components/World/Session/Index.vue`             | The root whose options lists the stores replace |
 | `packages/genshin-world/src/composables/useWorldSave.ts`                    | Owns the bag today, and emits its events        |
-| `packages/genshin-world/src/composables/useWorldMail.ts`                    | The first feature                               |
+| `packages/genshin-world/src/store/mail.ts`                                  | The first feature                               |
 | `packages/genshin-world/src/composables/useWorldFrame.ts`                   | The per-frame step the change must not slow     |
 | `.agents/skills/vue-component-patterns/references/splitting-a-component.md` | The measure every cut is judged by              |
 | `.agents/skills/pinia/SKILL.md`                                             | How a store is consumed, owned and torn down    |

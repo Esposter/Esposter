@@ -181,3 +181,7 @@ It prints `51 518 128` on the tree at the time of writing. The change's outcomes
 ## After the bag and the context moved (task 2.2)
 
 The same script prints `49 390 0`: 49 calls with an options object, 390 option keys in all, and no shared key in any of them (from `51 518 128`). The root is 1,943 lines (from 2,082) and the package's chunk 2 netted about 450 lines fewer (65 files). The four composables that took the data URL as a lone argument (`useWorldConstellations`, `useWorldDishes`, `useWorldFriendship`, `useWorldCooking`) read it from the store too, which the script does not count.
+
+## After the mailbox (tasks 3.1 and 3.2)
+
+The script prints `48 388 0`. The mailbox is `src/store/mail.ts` and its page `components/World/Mail/Index.vue`, and the root is 1,918 lines (from 1,943). The mailbox alone adds lines (191 added, 69 removed over its four files, 99 of them the store's test and 36 the page), as a first feature store carrying its test and its page does; the gate in task 4.1 counts the whole slice.

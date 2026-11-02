@@ -88,7 +88,7 @@ scripts/src/services/genshinAssets/commands/mailCommand.ts ← the `genshin:asse
 scripts/src/models/genshinAssets/mail/ExcelBirthdayMailRow.ts ← the birthday mail table's named keys
 packages/genshin-world/src/models/mail/MailData.ts     ← the mail's and the birthday rows' schemas, read from the game data
 packages/genshin-world/src/models/mail/BirthdayMailRow.ts ← a row of the birthday mail table, its type inferred from the schema
-packages/genshin-world/src/composables/useWorldMail.ts ← the mailbox read as the world starts, the birthday due, the claims applied
+packages/genshin-world/src/store/mail.ts ← the mailbox read as the world starts, the birthday due, the claims applied
 packages/genshin-world/src/services/mail/readMailText.ts ← one language's mail text, read by its key
 packages/genshin-world/src/services/mail/readMailRows.ts ← the held mails' rows by id, the ones the mail table no longer names left out
 packages/genshin-world/src/services/mail/getMailExpiresAt.ts ← the instant a mail expires, which getMailExpiry and removeExpiredMails both read
