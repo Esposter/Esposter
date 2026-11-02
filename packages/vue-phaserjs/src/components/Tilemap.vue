@@ -18,23 +18,23 @@ const sceneKey = useInjectSceneKey();
 const tilemap = shallowRef<Tilemaps.Tilemap>();
 const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
 
-lifecycleHook((newScene) => {
-  tilemap.value = newScene.make.tilemap(configuration);
-  onComplete?.(newScene, tilemap.value);
-});
+// Every build goes through here, so the tilemap it replaces is destroyed rather than left in the scene
+const createTilemap = (scene: SceneWithPlugins) => {
+  tilemap.value?.destroy();
+  tilemap.value = scene.make.tilemap(configuration);
+  onComplete?.(scene, tilemap.value);
+};
+
+lifecycleHook(createTilemap);
 
 watch(
   () => configuration.key,
   (newKey) => {
-    const scene = getScene(sceneKey);
-    const oldTilemap = tilemap.value;
-
-    if (newKey) {
-      tilemap.value = scene.make.tilemap(configuration);
-      onComplete?.(scene, tilemap.value);
-    } else tilemap.value = undefined;
-
-    if (oldTilemap) oldTilemap.destroy();
+    if (newKey) createTilemap(getScene(sceneKey));
+    else {
+      tilemap.value?.destroy();
+      tilemap.value = undefined;
+    }
   },
 );
 

@@ -2,7 +2,8 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { Tilemaps } from "phaser";
 
 import Tilemap from "#src/components/Tilemap.vue";
-import { startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
+import { createSceneClass } from "#src/services/shared/createSceneClass";
+import { getTestGame, startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
 import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
@@ -64,6 +65,32 @@ describe("tilemap", () => {
     unmountGameObject();
 
     expect(destroySpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("destroys the tilemap a key change built before its scene created, when the scene creates", async () => {
+    expect.hasAssertions();
+
+    const completedTilemaps: Tilemaps.Tilemap[] = [];
+
+    getTestGame().scene.add(sceneKey, createSceneClass(sceneKey), false);
+    const wrapper = mountGameObject(Tilemap, {
+      props: {
+        configuration: {},
+        onComplete: (_scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
+          completedTilemaps.push(tilemap);
+        },
+      },
+    });
+
+    await wrapper.setProps({ configuration: { key: " " } });
+
+    const keyChangedTilemap = takeOne(completedTilemaps);
+    const destroySpy = vi.spyOn(keyChangedTilemap, "destroy");
+
+    getTestGame().scene.start(sceneKey);
+
+    expect(destroySpy).toHaveBeenCalledTimes(1);
+    expect(completedTilemaps).toHaveLength(2);
   });
 
   test("builds no tilemap when it unmounts before its scene creates", () => {
