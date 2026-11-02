@@ -3,6 +3,7 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkMjmlAttributeValues } from "#src/services/checkMjmlAttributeValues";
 import { ALL_ATTRIBUTES_KEY, MJML_BODY_ATTRIBUTES, MJML_BREAKPOINT_ATTRIBUTES } from "#src/services/constants";
+import { getMjmlAttributeSchema } from "#src/services/getMjmlAttributeSchema";
 import { mjmlRootPropsSchema } from "#src/services/mjmlRootPropsSchema";
 
 // The document's head and body, checked against the definitions it may name: each per-type attribute map is one the type takes
@@ -24,13 +25,25 @@ export const createMjmlRootPropsSchema = (
     for (const [type, values] of Object.entries(props.attributes ?? {})) {
       const segments = ["attributes", type];
       if (type === ALL_ATTRIBUTES_KEY) {
-        for (const name of Object.keys(values))
-          if (!definitions.some((definition) => Object.hasOwn(definition.allowedAttributes, name)))
+        // A default for all components lands on every type that takes its name, so it is refused only when none of
+        // those types accepts it
+        for (const [name, value] of Object.entries(values)) {
+          const schemas = definitions
+            .map((definition) => getMjmlAttributeSchema(definition.allowedAttributes, name))
+            .filter((schema) => schema !== undefined);
+          if (schemas.length === 0)
             context.addIssue({
               code: "custom",
               message: `"${name}" is not an attribute any type takes`,
               path: [...segments, name],
             });
+          else if (!schemas.some((schema) => schema.safeParse(value).success))
+            context.addIssue({
+              code: "custom",
+              message: `"${value}" is not a value any type that takes "${name}" accepts`,
+              path: [...segments, name],
+            });
+        }
 
         continue;
       }

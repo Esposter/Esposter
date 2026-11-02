@@ -358,6 +358,34 @@ describe(parseMjmlDocument, () => {
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['"all" is not in the registry']);
   });
 
+  test("a default for all components that no type taking its name accepts is refused at its path", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-attributes><mj-all padding="banana"></mj-all></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_BODY_CHILDREN_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([
+      '"banana" is not a value any type that takes "padding" accepts',
+    ]);
+  });
+
+  test("a default for all components that one type takes and another refuses is kept", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-attributes><mj-all align="justify"></mj-all></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_BODY_CHILDREN_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.success).toBe(true);
+  });
+
   test("an attribute on the title is refused by name", () => {
     expect.hasAssertions();
 

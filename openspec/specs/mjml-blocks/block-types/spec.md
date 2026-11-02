@@ -167,6 +167,19 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names `all` as a type the registry does not hold
 
+#### Scenario: A default for all components that no type taking its name accepts is refused
+
+- **GIVEN** MJML source whose `mj-all` sets a `padding` that no type's grammar for `padding` accepts, such as `banana`
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `padding` under `mj-all`
+
+#### Scenario: A default for all components that one type takes and another refuses is kept
+
+- **GIVEN** MJML source whose `mj-all` sets an `align` of `justify`, which the text's grammar takes and the social's refuses
+- **WHEN** it is read into a document
+- **THEN** the read succeeds
+
 ### Requirement: The head and its defaults take no attribute of their own
 
 The MJML blocks SHALL refuse an attribute on the `mjml` element beyond `lang` and `dir`, on the head, or on the defaults element, and SHALL refuse a style that carries an attribute other than `inline` set to `inline`, each refusal naming the element.
