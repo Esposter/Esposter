@@ -1,45 +1,31 @@
-import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 import type { PublicUser } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
-import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const { executeMutation, executeQuery } = useMutation();
+  const { executeMutation } = useMutation();
   const friends = ref<PublicUser[]>([]);
-  // The writes that land while the friends read is in flight, kept until its answer is merged with them
-  let readingPushes: SnapshotPush<PublicUser>[] | undefined;
-  const recordReadingPush = (push: SnapshotPush<PublicUser>) => {
-    readingPushes?.push(push);
-  };
+  const friendsReadKey = "friends";
+  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<PublicUser>();
   const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
     friends,
     ["id"],
     DatabaseEntityType.Friend,
   );
   const storeCreateFriend = (friend: PublicUser) => {
-    recordReadingPush({ item: friend, type: "set" });
+    recordReadingPush(friendsReadKey, { item: friend, type: "set" });
     baseStoreCreateFriend(friend);
   };
   const storeDeleteFriend = (friendId: PublicUser["id"]) => {
-    recordReadingPush({ checkIsRemoved: ({ id }) => id === friendId, type: "remove" });
+    recordReadingPush(friendsReadKey, { checkIsRemoved: ({ id }) => id === friendId, type: "remove" });
     baseStoreDeleteFriend({ id: friendId });
   };
-  // The read's answer is merged with the friends a push added or removed while it was in flight, so a response taken
-  // Before the push does not write the list back without it
-  const readFriends = async (read: () => Promise<PublicUser[]>) => {
-    const pushes: SnapshotPush<PublicUser>[] = [];
-    readingPushes = pushes;
-    await executeQuery(read, {
-      key: "friends",
-      onSuccess: (newFriends) => {
-        friends.value = mergeSnapshot(newFriends, pushes);
-      },
+  const readFriends = (read: () => Promise<PublicUser[]>) =>
+    readWithReplayedPushes(friendsReadKey, read, (newFriends) => {
+      friends.value = newFriends;
     });
-    if (readingPushes === pushes) readingPushes = undefined;
-  };
   // Single source of truth for "is this user already a friend" — every surface offering the add-friend
   // Affordance asks it, and each one deriving its own predicate is how the profile card and the search
   // Results end up disagreeing about the same pair

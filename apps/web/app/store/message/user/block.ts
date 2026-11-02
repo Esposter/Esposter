@@ -1,8 +1,6 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
-import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
@@ -12,31 +10,21 @@ export const useBlockStore = defineStore("message/user/block", () => {
   // The shared `key: userId` reads as if a block and an unblock of the same user serialised while they in fact
   // Raced, and they write the same two lists — the unblock could put a row back that the block beside it had
   // Just removed
-  const { executeMutation: executeBlockMutation, executeQuery: executeReadBlockedUsersQuery } = useMutation();
+  const { executeMutation: executeBlockMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
   const { getFriendRequestsByUser, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const blockedUsers = ref<PublicUser[]>([]);
-  // The writes that land while the blocked-users read is in flight, kept until its answer is merged with them
-  let readingPushes: SnapshotPush<PublicUser>[] | undefined;
-  const recordReadingPush = (push: SnapshotPush<PublicUser>) => {
-    readingPushes?.push(push);
-  };
+  const blockedUsersReadKey = "blockedUsers";
+  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<PublicUser>();
 
   // The read's answer is merged with the blocks and unblocks that landed while it was in flight, so a response taken
   // Before one does not write the list back without it
-  const readBlockedUsers = async (read: () => Promise<PublicUser[]>) => {
-    const pushes: SnapshotPush<PublicUser>[] = [];
-    readingPushes = pushes;
-    await executeReadBlockedUsersQuery(read, {
-      key: "blockedUsers",
-      onSuccess: (newBlockedUsers) => {
-        blockedUsers.value = mergeSnapshot(newBlockedUsers, pushes);
-      },
+  const readBlockedUsers = (read: () => Promise<PublicUser[]>) =>
+    readWithReplayedPushes(blockedUsersReadKey, read, (newBlockedUsers) => {
+      blockedUsers.value = newBlockedUsers;
     });
-    if (readingPushes === pushes) readingPushes = undefined;
-  };
 
   const createBlock = async (userId: FriendUserIdInput) => {
     await executeBlockMutation(() => $trpc.block.createBlock.mutate(userId), {
@@ -54,7 +42,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
       key: userId,
       // The blocked-user row is server-resolved, so it lands in onSuccess rather than optimistically
       onSuccess: (user) => {
-        recordReadingPush({ item: user, type: "set" });
+        recordReadingPush(blockedUsersReadKey, { item: user, type: "set" });
         if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
       },
     });
@@ -66,12 +54,12 @@ export const useBlockStore = defineStore("message/user/block", () => {
       // Back at the end rather than where it stood, which is a cosmetic loss
       applyOptimistic: () => {
         const deletedBlockedUser = blockedUsers.value.find(({ id }) => id === blockedUserId);
-        recordReadingPush({ checkIsRemoved: ({ id }) => id === blockedUserId, type: "remove" });
+        recordReadingPush(blockedUsersReadKey, { checkIsRemoved: ({ id }) => id === blockedUserId, type: "remove" });
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
         return () => {
           if (!deletedBlockedUser) return;
 
-          recordReadingPush({ item: deletedBlockedUser, type: "set" });
+          recordReadingPush(blockedUsersReadKey, { item: deletedBlockedUser, type: "set" });
           blockedUsers.value = [...blockedUsers.value, deletedBlockedUser];
         };
       },

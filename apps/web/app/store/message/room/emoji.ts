@@ -3,7 +3,6 @@ import type { DeleteRoomEmojiInput } from "#shared/models/db/roomEmoji/DeleteRoo
 import type { UpdateRoomEmojiInput } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
 import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
@@ -12,7 +11,6 @@ import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntiti
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
-import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -27,11 +25,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   // Room they are for: a read, a mutation and a subscription all know their room, and each names it once up front
   const getRoomOperationData = (roomId: RoomInMessage["id"]) =>
     createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.RoomEmoji);
-  // The writes that land while a room's read is in flight, kept until its answer is merged with them
-  const readingPushesMap = new Map<RoomInMessage["id"], SnapshotPush<RoomEmojiWithSasUrl>[]>();
-  const recordReadingPush = (roomId: RoomInMessage["id"], push: SnapshotPush<RoomEmojiWithSasUrl>) => {
-    readingPushesMap.get(roomId)?.push(push);
-  };
+  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<RoomEmojiWithSasUrl, RoomInMessage["id"]>();
   const storeCreateRoomEmoji = (roomId: RoomInMessage["id"], newRoomEmoji: RoomEmojiWithSasUrl) => {
     recordReadingPush(roomId, { item: newRoomEmoji, type: "set" });
     getRoomOperationData(roomId).createRoomEmoji(newRoomEmoji);
@@ -57,22 +51,18 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const customEmojiMap = computed(
     () => new Map(customEmojis.value.map((customEmoji) => [customEmoji.id, customEmoji])),
   );
-  const { executeQuery: executeReadRoomEmojisQuery } = useMutation();
-  const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
-    // The room's subscription has started before this read, so what lands while the read is in flight is replayed over
-    // Its answer rather than lost in the gap between the two. Keyed by the room, so re-entering it supersedes the read
-    // It interrupted: the room lifecycle issues one read per activation, and A→B→A would otherwise let the first A
-    // Response land last and overwrite the newer list
-    const readPushes: SnapshotPush<RoomEmojiWithSasUrl>[] = [];
-    readingPushesMap.set(roomId, readPushes);
-    await executeReadRoomEmojisQuery(() => $trpc.room.emoji.readRoomEmojis.query({ roomId }), {
-      key: roomId,
-      onSuccess: (roomEmojis) => {
-        getSlice(roomId).items.value = mergeSnapshot(roomEmojis, readPushes);
+  // The room's subscription has started before this read, so what lands while the read is in flight is replayed over
+  // Its answer rather than lost in the gap between the two. Keyed by the room, so re-entering it supersedes the read
+  // It interrupted: the room lifecycle issues one read per activation, and A→B→A would otherwise let the first A
+  // Response land last and overwrite the newer list
+  const readRoomEmojis = (roomId: RoomInMessage["id"]) =>
+    readWithReplayedPushes(
+      roomId,
+      () => $trpc.room.emoji.readRoomEmojis.query({ roomId }),
+      (roomEmojis) => {
+        getSlice(roomId).items.value = roomEmojis;
       },
-    });
-    if (readingPushesMap.get(roomId) === readPushes) readingPushesMap.delete(roomId);
-  };
+    );
   const { executeMutation: executeCreateRoomEmojiMutation } = useMutation();
   const { executeMutation: executeUpdateRoomEmojiMutation } = useMutation();
   const { executeMutation: executeDeleteRoomEmojiMutation } = useMutation();
