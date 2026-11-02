@@ -12,8 +12,6 @@ import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOf
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { Party } from "#src/models/party/Party";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
@@ -38,7 +36,9 @@ import { refillOriginalResinWithFragileResin } from "#src/services/originalResin
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The ley line outcrops standing in the region: a daily reset draws each open kind's blossom to a fitted place. A
@@ -54,45 +54,36 @@ export const useWorldOutcrops = ({
   characters,
   completedMainQuestIds,
   enemyMap,
-  events,
   friendshipLevels,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   placements,
   rank,
   regionStatueProgressMap,
-  setInventory,
-  setWallet,
-  wallet,
-}: WorldBagDependencies & {
+}: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   characters: Ref<Character[]>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
-  events: WorldEvents;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  gameDataBaseUrl: string;
-  gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   rank: Readonly<Ref<number>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, setInventory, setWallet } = worldSessionStore;
   const outcrops = shallowRef<Outcrop[]>([]);
   // The region's kinds, read by the key its publish wrote. A region no publish wrote opens no kind
   const kindRules = shallowRef<OutcropKindRule[]>([]);
   const regionKey: `leyLine/regions/${string}` = `leyLine/regions/${RegionIdCityIdMap[OUTCROP_REGION_ID]}`;
   if (checkIsGameDataKey(regionKey))
     getSynchronizedFunction(() =>
-      getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
+      getResultAsync(() => readOutcropRegion(worldSessionStore.gameDataBaseUrl, regionKey)).match(
         ({ kinds }) => {
           kindRules.value = kinds;
         },
@@ -110,7 +101,7 @@ export const useWorldOutcrops = ({
     }),
   );
   const outcropInteractables = computed(() =>
-    computeOutcropInteractables(outcrops.value, placements.value, gameText, getGroundHeight),
+    computeOutcropInteractables(outcrops.value, placements.value, worldSessionStore.gameText, getGroundHeight),
   );
   // The claims F offers at a cleared outcrop's blossom, and the place they are offered at, none where the held resin
   // Affords none and no Fragile Resin can restore it
@@ -210,8 +201,8 @@ export const useWorldOutcrops = ({
       adventureExp.value,
       completedMainQuestIds.value,
       now,
-      nameText,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     if (!claim) return;
     setWallet(claim.wallet);

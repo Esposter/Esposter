@@ -13,9 +13,9 @@ import { GCG_OPEN_ADVENTURE_RANK, GCG_TUTORIAL_QUEST_ID } from "#src/services/gc
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { flushReads } from "#src/services/shared/flushReads.test";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { useWorldSessionStore } from "#src/store/session";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { jsonDateParse } from "@esposter/shared";
-import { GameLanguage } from "genshin-text";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
@@ -36,18 +36,15 @@ const useMondstadtTalks = async (adventureRank: number) => {
   const { residents } = regionDataSchema.parse(
     jsonDateParse(await readFile(join(import.meta.dirname, "../data/regions/mondstadt.json"), "utf8")),
   );
+  startTestWorldSession({ gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL });
   const talks = useWorldTalks({
     closeScreen: vi.fn<() => void>(),
-    events: createWorldEvents(),
-    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     getAdventureRank: () => adventureRank,
     getCardGameExp: () => 0,
     getCompletedMainQuestIds: () => new Set([GCG_TUTORIAL_QUEST_ID]),
     getGroundHeight: () => 0,
     getResidents: () => residents,
     getResidentSpot: () => undefined,
-    language: GameLanguage.English,
-    nameText: {},
     questProgressMap: shallowRef(new Map<string, QuestProgress>()),
     questsInProgress: computed<Quest[]>(() => []),
     questsOffered: computed<Quest[]>(() => []),
@@ -77,7 +74,7 @@ describe(useWorldTalks, () => {
   // A resident seated at the duel, with the card game's EXP the player holds, read as the world opens
   const useSeatedTalks = (
     cardGameExp: number,
-    { closeScreen = vi.fn<() => void>(), events = createWorldEvents(), standingTalks = [] as Talk[] } = {},
+    { closeScreen = vi.fn<() => void>(), standingTalks = [] as Talk[] } = {},
   ) => {
     vi.mocked(readGcgLevels).mockResolvedValue({
       challengerGames: { 0: [{ gameId: DUEL_GAME_ID, level: OPENING_LEVEL }] },
@@ -85,18 +82,15 @@ describe(useWorldTalks, () => {
       playerLevels: PLAYER_LEVELS,
     });
     vi.mocked(readStandingTalks).mockResolvedValue(standingTalks);
+    startTestWorldSession();
     return useWorldTalks({
       closeScreen,
-      events,
-      gameDataBaseUrl: "",
       getAdventureRank: () => GCG_OPEN_ADVENTURE_RANK,
       getCardGameExp: () => cardGameExp,
       getCompletedMainQuestIds: () => new Set([GCG_TUTORIAL_QUEST_ID]),
       getGroundHeight: () => 0,
       getResidents: () => [RESIDENT],
       getResidentSpot: () => undefined,
-      language: GameLanguage.English,
-      nameText: {},
       questProgressMap: shallowRef(new Map<string, QuestProgress>()),
       questsInProgress: computed<Quest[]>(() => []),
       questsOffered: computed<Quest[]>(() => []),
@@ -117,13 +111,13 @@ describe(useWorldTalks, () => {
     expect.hasAssertions();
 
     const closeScreen = vi.fn<() => void>();
-    const events = createWorldEvents();
     const questEvents: QuestEvent[] = [];
-    events.on("questEvent", (questEvent) => {
+    const standingTalks: Talk[] = [{ id: TALK_ID, lines: [], npcIds: [], startLineId: "line" }];
+    const talks = useSeatedTalks(1, { closeScreen, standingTalks });
+    const worldSessionStore = useWorldSessionStore();
+    worldSessionStore.events.on("questEvent", (questEvent) => {
       questEvents.push(questEvent);
     });
-    const standingTalks: Talk[] = [{ id: TALK_ID, lines: [], npcIds: [], startLineId: "line" }];
-    const talks = useSeatedTalks(1, { closeScreen, events, standingTalks });
     await flushReads();
     talks.beginTalk(TALK_ID);
     talks.endTalk();

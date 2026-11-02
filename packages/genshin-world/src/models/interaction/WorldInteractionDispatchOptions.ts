@@ -37,7 +37,6 @@ export interface WorldInteractionDispatchOptions {
   getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getTalkDuelGameId: (talkId: string) => number | undefined;
-  getWorldNow: () => Temporal.Instant;
   grantRewards: (rewards: QuestRewardItem[]) => void;
   jumpTo: HomeRealmToggleOptions["jumpTo"];
   materialSources: Readonly<Ref<readonly MaterialSourcePlace[]>>;

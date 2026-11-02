@@ -16,17 +16,18 @@ import {
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
+import { useWorldSessionStore } from "#src/store/session";
 import { computed, shallowRef } from "vue";
 
 export const useWorldRestorativePower = ({
   finishedMainQuestIds,
-  getWorldNow,
   unlockedLandmarkIds,
 }: {
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  getWorldNow: () => Temporal.Instant;
   unlockedLandmarkIds: ReadonlySet<string>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { getWorldNow } = worldSessionStore;
   // The regions whose statues the Traveler resonated with, which give its element and, once Welkin Moon's Homecoming is
   // Done, its bonuses. The unlocked landmarks, which hold the resonances, set them again as they change, below the map
   const resonatedRegionIds = shallowRef(getResonatedRegionIds(unlockedLandmarkIds));

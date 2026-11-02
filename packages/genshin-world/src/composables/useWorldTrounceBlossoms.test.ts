@@ -2,9 +2,9 @@ import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { WorldSessionContext } from "#src/models/world/WorldSessionContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
@@ -39,10 +39,11 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { readCatalogue } from "#src/services/world/readCatalogue";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
+import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 import { computed, ref, shallowRef } from "vue";
 
@@ -82,33 +83,30 @@ describe(useWorldTrounceBlossoms, () => {
     uniqueDropId: UNIQUE_DROP_ID,
   });
 
+  // The session as it stands at the epoch, with the given context and a wallet to pay and spend from
+  const startEpochSession = (overrides: Partial<WorldSessionContext> = {}, wallet: Wallet = { ...EMPTY_WALLET }) =>
+    startTestWorldSession(
+      { getWorldNow: () => epoch, worldNow: shallowRef(epoch), ...overrides },
+      { inventory: { ...EMPTY_INVENTORY }, wallet },
+    );
+
   // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an
   // Entry of the traits map, and its defeat must still reach the listeners after the blossom's
   test("a defeat of a kind outside the enum reaches the listeners after the trounce blossom's", () => {
     expect.hasAssertions();
 
     const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !checkIsEnemyKindId(id)));
-    const events = createWorldEvents();
+    const { events } = startEpochSession();
     useWorldTrounceBlossoms({
       catalogue,
       characters: shallowRef<Character[]>([]),
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
-      events,
       friendshipLevels: shallowRef<FriendshipLevels>(),
       gainWorldAdventureExp: () => {},
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: () => epoch,
-      inventory: shallowRef(EMPTY_INVENTORY),
-      materialDataMap: new Map(),
-      nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: () => {},
-      setWallet: () => {},
-      wallet: shallowRef(EMPTY_WALLET),
-      worldNow: shallowRef(epoch),
     });
     const defeatListener = vi.fn<(enemy: Enemy) => void>();
     events.on("defeatEnemy", defeatListener);
@@ -126,27 +124,17 @@ describe(useWorldTrounceBlossoms, () => {
   test("a teleport is kept under the area it lands in, and a landing outside every area under the empty id", () => {
     expect.hasAssertions();
 
-    const events = createWorldEvents();
+    const { events } = startEpochSession();
     const { lastTeleportAts } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      events,
       friendshipLevels: ref<FriendshipLevels>(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: () => epoch,
-      inventory: ref<Inventory>(EMPTY_INVENTORY),
-      materialDataMap: new Map(),
-      nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
-      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
-      wallet: ref(EMPTY_WALLET),
-      worldNow: ref(epoch),
     });
     // The map fixture's player stands in the Sea of Clouds, and the far point is past every outline
     events.emit("teleport", { heightOffset: 0, point: { x: -2390, z: -1560 }, yaw: 0 });
@@ -158,26 +146,17 @@ describe(useWorldTrounceBlossoms, () => {
   test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {
     expect.hasAssertions();
     const clock = createWorldClock(epoch.add({ hours: 1 }));
+    startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: clock.getWorldNow,
-      inventory: ref<Inventory>(EMPTY_INVENTORY),
-      materialDataMap: new Map(),
-      nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
-      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
-      wallet: ref(EMPTY_WALLET),
-      worldNow: clock.worldNow,
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([
       [SPAWN_KEY, { claimedAts: [epoch], kind: BlossomKind.WeeklyBoss, place: { x: 1, z: 2 } }],
@@ -194,28 +173,22 @@ describe(useWorldTrounceBlossoms, () => {
   test("a normal boss's claim pays its Adventure EXP once, the resin's own EXP not written back", async () => {
     expect.hasAssertions();
     const adventureExp = ref(0);
+    startEpochSession(
+      { materialDataMap, nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" } },
+      { ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] },
+    );
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
         adventureExp.value += amount;
       },
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: () => epoch,
-      inventory: ref<Inventory>(EMPTY_INVENTORY),
-      materialDataMap,
-      nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
-      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
-      wallet: ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] }),
-      worldNow: ref(epoch),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
     await flushReads();
@@ -229,46 +202,28 @@ describe(useWorldTrounceBlossoms, () => {
   test("a normal boss claim at the Adventure Rank cap pays the boss's EXP overflow once", () => {
     expect.hasAssertions();
 
-    const events = createWorldEvents();
-    const wallet = ref<Wallet>({
-      ...EMPTY_WALLET,
-      [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss],
-    });
+    const worldSessionStore = startEpochSession(
+      { materialDataMap, nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" } },
+      { ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] },
+    );
+    const { wallet } = storeToRefs(worldSessionStore);
     const adventureRank = useWorldAdventureRank({
       adventureRankTables,
-      events,
       finishedMainQuestIds: computed(() => ascensionQuestIds),
-      getWorldNow: () => epoch,
       savedAdventureExp: maxAdventureExp,
       savedAdventureRankRewardsClaimed: [],
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
     });
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      events,
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: adventureRank.gainWorldAdventureExp,
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: () => epoch,
-      inventory: ref<Inventory>(EMPTY_INVENTORY),
-      materialDataMap,
-      nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
-      worldNow: ref(epoch),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
     openTrounceBlossomClaim(SPAWN_KEY, epoch);
@@ -304,34 +259,23 @@ describe(useWorldTrounceBlossoms, () => {
     );
     const offer = takeOne(computeBlossomClaimOffers(BlossomKind.WeeklyBoss, 0), 0);
     const adventureExp = ref(0);
-    const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: offer.resin + 1 });
-    const inventory = ref<Inventory>(EMPTY_INVENTORY);
+    const worldSessionStore = startEpochSession(
+      { materialDataMap: weeklyMaterialDataMap, nameText: names },
+      { ...EMPTY_WALLET, [Currency.OriginalResin]: offer.resin + 1 },
+    );
+    const { inventory, wallet } = storeToRefs(worldSessionStore);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
         adventureExp.value += amount;
       },
-      gameText: {},
       getGroundHeight: () => 0,
-      getWorldNow: () => epoch,
-      inventory,
-      materialDataMap: weeklyMaterialDataMap,
-      nameText: names,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
-      setInventory: (nextInventory) => {
-        inventory.value = nextInventory;
-      },
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
-      worldNow: ref(epoch),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([
       [SPAWN_KEY, { claimedAts: [], kind: BlossomKind.WeeklyBoss, place: { x: 1, z: 2 } }],

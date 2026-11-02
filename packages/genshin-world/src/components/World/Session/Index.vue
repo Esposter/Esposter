@@ -4,7 +4,6 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance } from "@tresjs/core";
@@ -272,10 +271,8 @@ const {
   wishHistory,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), savedState });
-// The bag, the wallet and their setters, and the item data and names the composables that take from or pay into them read
-const bag: WorldBagDependencies = { inventory, materialDataMap, nameText, setInventory, setWallet, wallet };
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
-const { closeTip, showingTip } = useWorldTips({ events, queuedTipIds, shownTipIds, tips });
+const { closeTip, showingTip } = useWorldTips({ queuedTipIds, shownTipIds, tips });
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
 const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.characterCopyCountMap);
 // The carried quests, read as the world starts with their words in the reader's language, and how far each has come
@@ -293,7 +290,7 @@ const {
   questTextMap,
   trackedQuestId,
   trackerQuest,
-} = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
+} = useWorldQuests({ savedQuestProgressMap: savedState.quests });
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const {
   castView,
@@ -305,18 +302,11 @@ const {
   openFishingPoint,
   stepFishing,
 } = useWorldFishing({
-  gameDataBaseUrl,
   getRegionIds: () => [...(windrise.value?.regionDataMap.keys() ?? [])],
-  getWorldNow,
-  inventory,
-  materialDataMap,
-  names: nameText,
   questProgressMap,
   quests,
   random: () => kitContext.random(),
   savedFishingCatchAts: savedState.fishingCatchAts,
-  setInventory,
-  worldNow,
 });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
@@ -333,14 +323,10 @@ const {
   worldLevelAdjustment,
 } = useWorldAdventureRank({
   adventureRankTables,
-  events,
   finishedMainQuestIds,
-  getWorldNow,
   savedAdventureExp: savedState.adventureExp,
   savedAdventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
   savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
-  setWallet,
-  wallet,
 });
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
@@ -355,27 +341,19 @@ const {
   wholeEncounterPoints,
   wholeLongTermEncounterPoints,
 } = useWorldCommissions({
-  events,
   finishedMainQuestIds,
-  gameDataBaseUrl,
-  getWorldNow,
   questTargetIds,
   rank,
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
-  worldNow,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
 const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap, viewViewpoint } = useWorldArchive({
   archiveKillsMap,
   archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
-  events,
   finishedMainQuestIds,
-  gameDataBaseUrl,
-  inventory,
-  language,
   reliquaryPieceEntryMap,
   reliquarySets,
   screenKind,
@@ -407,16 +385,7 @@ const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
-const { achievementData } = useWorldAchievements({
-  achievementProgressMap,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
-  language,
-  screenKind,
-  setWallet,
-  wallet,
-});
+const { achievementData } = useWorldAchievements({ achievementProgressMap, screenKind });
 // The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
 // The Mail screen claims them into the bag and wallet
 const {
@@ -429,19 +398,7 @@ const {
   mails,
   markMailRead,
   toggleMailPin,
-} = useWorldMail({
-  gameDataBaseUrl,
-  getWorldNow,
-  inventory,
-  language,
-  materialDataMap,
-  names: nameText,
-  savedMails: savedState.mails,
-  savedTravelerBirthday: savedState.travelerBirthday,
-  setInventory,
-  setWallet,
-  wallet,
-});
+} = useWorldMail({ savedMails: savedState.mails, savedTravelerBirthday: savedState.travelerBirthday });
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
 const {
   bagFullHint,
@@ -455,14 +412,9 @@ const {
   strikeGatheringOres,
   worldDrops,
 } = useWorldPickups({
-  ...bag,
   archive: { archiveData, archiveProgressMap },
-  events,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
   getServerClockOffsetMs: () => serverClockOffsetMs,
-  getWorldNow,
   reliquaryPieceEntryMap,
   weaponDataMap: statTables.weaponDataMap,
 });
@@ -486,23 +438,12 @@ const {
   timeTrialPlaces,
 });
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
-const { openShrineById, shrineInteractables } = useWorldShrines({
-  gameText,
-  getGroundHeight,
-  inventory,
-  setInventory,
-  shrineKeySources,
-  shrineMarkers,
-});
+const { openShrineById, shrineInteractables } = useWorldShrines({ getGroundHeight, shrineKeySources, shrineMarkers });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
-  ...bag,
   artifactMainAffixPools,
   artifactRarityDataMap,
-  events,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -515,10 +456,7 @@ const { campLockSources, chestInteractables, digChestById, openChestById, worldC
   weaponDataMap: statTables.weaponDataMap,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets({
-  gameDataBaseUrl,
-  inventory,
-});
+const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
 const {
   claimWorship,
@@ -532,12 +470,9 @@ const {
   worshipLevels,
   worshipRegionId,
 } = useWorldStatues({
-  ...bag,
   characterBody,
-  events,
   foundOculusIds,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
   placeWorldDrops,
   regionStatueProgressMap,
   screenKind,
@@ -545,11 +480,8 @@ const {
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
-  ...bag,
-  events,
   frostbearingTreeProgress,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
   placeWorldDrops,
 });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
@@ -560,15 +492,11 @@ const {
   stepAutoRecover,
   travelerBonusLines,
   travelerElement,
-} = useWorldRestorativePower({
-  finishedMainQuestIds,
-  getWorldNow,
-  unlockedLandmarkIds: savedState.unlockedLandmarkIds,
-});
+} = useWorldRestorativePower({ finishedMainQuestIds, unlockedLandmarkIds: savedState.unlockedLandmarkIds });
 // The bonus lines the Spiral Abyss's chamber gives the whole party, held here as the combat and the chamber both read them
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 // The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the wish read
-const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations(gameDataBaseUrl);
+const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations();
 // The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
   activeCharacterId,
@@ -590,8 +518,6 @@ const {
 } = useWorldCombat({
   characterIdConstellationsMap,
   enemyTables,
-  events,
-  gameDataBaseUrl,
   onPartyDown: () => {
     // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
     if (trialArena.value) {
@@ -626,7 +552,6 @@ const {
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
 const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
-    ...bag,
     artifactRarityDataMap,
     characterBody,
     characterDataMap: statTables.characterDataMap,
@@ -634,7 +559,6 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     characters,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
     closeScreen,
-    gameDataBaseUrl,
     getGroundHeight,
     jumpTo: (pose) => jumpTo(pose),
     party,
@@ -643,23 +567,16 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
   characters,
-  events,
   gainAdventureExp: gainWorldAdventureExp,
   getDeployedCharacterIds: () => getDeployedCharacterIds(party),
   getMaxLevel: (character) =>
     statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
-  inventory,
-  materialDataMap,
-  names: nameText,
   setCharacters: (nextCharacters) => {
     characters.value = nextCharacters;
   },
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
-const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
+const { dishUseMap } = useWorldDishes();
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
 const {
@@ -670,7 +587,7 @@ const {
   instructionRecipeMap,
   openCookingRecipes,
   processingRecipes,
-} = useWorldCooking({ gameDataBaseUrl });
+} = useWorldCooking();
 const {
   blacksmithPlace,
   forgeAmount,
@@ -681,15 +598,8 @@ const {
   forgeRecipes,
   forgeTab,
   forgeWeapons,
-} = useWorldForging({
-  gameDataBaseUrl,
-  getWorldNow,
-  materialDataMap,
-  nameText,
-  screenKind,
-  weaponDataMap: statTables.weaponDataMap,
-});
-const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
+} = useWorldForging({ screenKind, weaponDataMap: statTables.weaponDataMap });
+const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
   useWorldCommissionClaims({
@@ -701,20 +611,12 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
     completedMainQuestIds,
     encounterPoints,
     friendshipLevels,
-    getWorldNow,
-    inventory,
     longTermEncounterPoints,
-    materialDataMap,
-    names: nameText,
     party,
     rank,
     setCharacters: (nextCharacters) => {
       characters.value = nextCharacters;
     },
-    setInventory,
-    setWallet,
-    wallet,
-    worldNow,
   });
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards({
@@ -723,28 +625,20 @@ const { profileNamecards } = useWorldProfileNamecards({
   characters,
   friendshipLevels,
   friendshipNamecards,
-  materialDataMap,
-  nameText,
 });
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
   cookingProgress,
   dishUseMap,
   getMemberMaxHealth,
-  getWorldNow,
   instructionRecipeMap,
-  inventory,
   kitContext,
   party,
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
 const { cardGameExp, cardGameRewardedGameIds, payCardGameReward } = useWorldCardGame({
-  ...bag,
   getResidents,
   savedCardGameExp: savedState.cardGameExp,
   savedRewardedGameIds: savedState.cardGameRewardedGameIds,
@@ -764,16 +658,12 @@ const {
   talkTextMap,
 } = useWorldTalks({
   closeScreen,
-  events,
-  gameDataBaseUrl,
   getAdventureRank: () => rank.value,
   getCardGameExp: () => cardGameExp.value,
   getCompletedMainQuestIds: () => completedMainQuestIds.value,
   getGroundHeight,
   getResidents,
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
-  language,
-  nameText,
   questProgressMap,
   questsInProgress,
   questsOffered,
@@ -797,12 +687,8 @@ const {
   openAbyssEntrance,
   stepAbyss,
 } = useWorldSpiralAbyss({
-  ...bag,
   areaId: findAreaAt(catalogue, ABYSS_ENTRANCE_POSITION.x, ABYSS_ENTRANCE_POSITION.z)?.id ?? "",
   bonusLines: abyssBonusLines,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
   party,
   savedProgressMap: savedState.spiralAbyssProgressMap,
 });
@@ -811,7 +697,6 @@ const reputationLevel = shallowRef(reputation.value.level);
 const { findTouchedOculus, nearOculusPlaces, oculusPlaces, unfoundOculusPlaces } = useWorldOculi({
   characterBody,
   foundOculusIds,
-  gameDataBaseUrl,
   getMapCamera: () => mapCamera.value,
 });
 // The doings the world places and the ids the save records of them as done, which each area's exploration counts
@@ -844,10 +729,7 @@ const {
 } = useWorldMap({
   catalogue,
   completedMainQuestIds,
-  events,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  getWorldNow,
   placedDoings,
   questStepTargets,
   recordedDoingIds,
@@ -857,16 +739,12 @@ const {
   setReputation: (nextReputation) => {
     reputation.value = nextReputation;
   },
-  setWallet,
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
-  wallet,
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
 // Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty } =
   useWorldReputationBounty({
-    events,
-    getWorldNow,
     payReputationReward,
     random: () => kitContext.random(),
     reputation,
@@ -879,7 +757,6 @@ const { acceptReputationOffer, drawReputationOffer, reputationOfferTitle } = use
   acceptQuest,
   bountyHunt,
   claimBounty,
-  getWorldNow,
   questProgressMap,
   quests,
   questTextMap,
@@ -928,8 +805,6 @@ const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_R
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
   breakOre,
-  gameDataBaseUrl,
-  getWorldNow,
   rank,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
   savedMinedOutcrops: savedState.minedOutcrops,
@@ -945,17 +820,13 @@ const {
   restoreOutcropClaim,
   touchOutcropsNear,
 } = useWorldOutcrops({
-  ...bag,
   adventureExp,
   adventureRankTables,
   areaId: ref(OUTCROP_REGION_ID),
   characters,
   completedMainQuestIds,
   enemyMap: kitContext.enemyMap,
-  events,
   friendshipLevels,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
   party,
   placements: outcropPlaces,
@@ -973,20 +844,15 @@ const {
   trounceBlossomInteractables,
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
-  ...bag,
   catalogue,
   characters,
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
-  events,
   friendshipLevels,
   gainWorldAdventureExp,
-  gameText,
   getGroundHeight,
-  getWorldNow,
   party,
   savedState,
-  worldNow,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
@@ -1009,7 +875,6 @@ const {
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
-  ...bag,
   adventureExp,
   adventureRankTables,
   artifactMainAffixPools,
@@ -1018,9 +883,6 @@ const {
   closeScreen,
   completedMainQuestIds,
   domainChallengeLevels,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
   jumpLandmarks,
   jumpTo,
   kitEffectState: kitContext.kitEffectState,
@@ -1031,7 +893,6 @@ const {
   reliquarySets,
   unlockedLandmarks,
   weaponDataMap: statTables.weaponDataMap,
-  worldNow,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
 const fightingCamps = computed(() => [
@@ -1060,7 +921,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   getGroundHeight,
   getResidents,
   getTalkDuelGameId,
-  getWorldNow,
   grantRewards,
   jumpTo,
   materialSources,
@@ -1107,7 +967,6 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   domainArena,
   fishingPointPlaces,
   frostbearingTreePlaces,
-  gameText,
   getGroundHeight,
   homePotPoint,
   homeRealmVisit,
@@ -1178,7 +1037,6 @@ const { stepFrame } = useWorldFrame({
   findTouchedOculus,
   getEquippedGadgetCooldown,
   getMemberMaxHealth,
-  getWorldNow,
   hudFrame,
   input,
   inputState,
@@ -1220,7 +1078,6 @@ const getCharacter = () => {
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
 // Where the quests' targets stand from the character, which the quest screen and the tracker read
 const { questDistanceMap, questMark } = useWorldQuestTargets({
-  events,
   getGroundHeight,
   mapCamera,
   questProgressMap,

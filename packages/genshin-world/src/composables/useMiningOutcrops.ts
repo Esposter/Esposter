@@ -13,6 +13,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMiningOutcropStanding";
 import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastMiningOutcropDraw";
 import { computeNextMiningOutcropRespawn } from "#src/services/leyLine/computeNextMiningOutcropRespawn";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
@@ -22,19 +23,17 @@ import { computed, shallowRef } from "vue";
 // Chunks and leaving it gone until its respawn. The mined ones are the save's, held until then
 export const useMiningOutcrops = ({
   breakOre,
-  gameDataBaseUrl,
-  getWorldNow,
   rank,
   regionIds,
   savedMinedOutcrops,
 }: {
   breakOre: (place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
   rank: Readonly<Ref<number>>;
   regionIds: Readonly<Ref<string[]>>;
   savedMinedOutcrops: readonly MinedOutcrop[];
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { getWorldNow } = worldSessionStore;
   // Each region's places, read as the world loads it. A region no publish wrote holds none, so it draws none
   const placesMap = shallowRef(new Map<string, GatheringPlace[]>());
   const requestedRegionIds = new Set<string>();
@@ -49,7 +48,7 @@ export const useMiningOutcrops = ({
       if (requestedRegionIds.has(regionId)) continue;
       requestedRegionIds.add(regionId);
       requests.push(
-        getResultAsync(() => readMiningOutcropPlaces(gameDataBaseUrl, regionId)).match(
+        getResultAsync(() => readMiningOutcropPlaces(worldSessionStore.gameDataBaseUrl, regionId)).match(
           (places) => {
             placesMap.value = new Map([...placesMap.value, [regionId, places]]);
           },

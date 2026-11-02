@@ -4,15 +4,17 @@ import type { WorldOculiOptions } from "#src/models/oculus/WorldOculiOptions";
 import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The Oculi of the region published, read as the world starts. Those not yet found are stood in, a touch within the
 // Touch radius finds one, and those near the camera within the minimap's distance are marked on it
-export const useWorldOculi = ({ characterBody, foundOculusIds, gameDataBaseUrl, getMapCamera }: WorldOculiOptions) => {
+export const useWorldOculi = ({ characterBody, foundOculusIds, getMapCamera }: WorldOculiOptions) => {
+  const worldSessionStore = useWorldSessionStore();
   const oculusPlaces = shallowRef<OculusPlace[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readOculusPlaces(gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
+  getResultAsync(() => readOculusPlaces(worldSessionStore.gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
     (places) => {
       oculusPlaces.value = places;
     },

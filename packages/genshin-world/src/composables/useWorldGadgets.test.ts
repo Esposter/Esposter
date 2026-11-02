@@ -4,10 +4,10 @@ import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { GadgetKind } from "#src/models/gadget/GadgetKind";
 import { QUICK_SWAP_HOLD_SECONDS } from "#src/services/gadget/constants";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
-import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { flushReads } from "#src/services/shared/flushReads.test";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
-import { ref } from "vue";
 
 vi.mock(import("#src/services/gadget/readGadgetRows"));
 
@@ -37,10 +37,11 @@ describe(useWorldGadgets, () => {
     expect.hasAssertions();
 
     vi.mocked(readGadgetRows).mockResolvedValue([GADGET]);
-    const { stepQuickUse } = useWorldGadgets({
-      gameDataBaseUrl: "",
-      inventory: ref({ ...EMPTY_INVENTORY, equippedGadgetItemId: GADGET.id }),
-    });
+    startTestWorldSession(
+      {},
+      { inventory: { ...EMPTY_INVENTORY, equippedGadgetItemId: GADGET.id }, wallet: { ...EMPTY_WALLET } },
+    );
+    const { stepQuickUse } = useWorldGadgets();
     await flushReads();
 
     expect(tap(stepQuickUse)).toStrictEqual(GADGET);

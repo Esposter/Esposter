@@ -6,9 +6,7 @@ import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -22,6 +20,8 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
+import { startTestWorldSession } from "#src/store/session.fixture";
+import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 import { computed, shallowRef } from "vue";
 
@@ -109,24 +109,26 @@ describe(useWorldCommissionClaims, () => {
       halfPoints: longTermHalfPoints,
       majorVersion: LONG_TERM_MAJOR_VERSION,
     });
-    const wallet = shallowRef<Wallet>({
-      ...EMPTY_WALLET,
-      [Currency.Mora]: STARTING_MORA,
-      [Currency.OriginalResin]: resin,
-      originalResinChangedAt: NOW,
-    });
+    const worldSessionStore = startTestWorldSession(
+      { getWorldNow: clock.getWorldNow, materialDataMap, nameText: {}, worldNow: clock.worldNow },
+      {
+        inventory: { ...EMPTY_INVENTORY },
+        wallet: {
+          ...EMPTY_WALLET,
+          [Currency.Mora]: STARTING_MORA,
+          [Currency.OriginalResin]: resin,
+          originalResinChangedAt: NOW,
+        },
+      },
+    );
+    const { wallet } = storeToRefs(worldSessionStore);
     const adventureExp = shallowRef(0);
     const characters = shallowRef<Character[]>([{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER]);
     const friendshipLevels = shallowRef<FriendshipLevels | undefined>([
       { exp: 0, level: 1 },
       { exp: 100, level: 2 },
     ]);
-    const inventory = shallowRef(EMPTY_INVENTORY);
     const setCharacters = vi.fn<(nextCharacters: Character[]) => void>();
-    const setInventory = vi.fn<(nextInventory: Inventory) => void>();
-    const setWallet = vi.fn<(nextWallet: Wallet) => void>((nextWallet) => {
-      wallet.value = nextWallet;
-    });
     const claims = useWorldCommissionClaims({
       adventureExp,
       adventureRankTables,
@@ -136,18 +138,10 @@ describe(useWorldCommissionClaims, () => {
       completedMainQuestIds: computed(() => new Set<string>()),
       encounterPoints,
       friendshipLevels,
-      getWorldNow: clock.getWorldNow,
-      inventory,
       longTermEncounterPoints,
-      materialDataMap,
-      names: {},
       party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
       rank: computed(() => DEALT_RANK),
       setCharacters,
-      setInventory,
-      setWallet,
-      wallet,
-      worldNow: clock.worldNow,
     });
     return { claims, commissionDay, encounterPoints, friendshipLevels, longTermEncounterPoints, setCharacters, wallet };
   };

@@ -11,6 +11,7 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 
@@ -31,7 +32,6 @@ export const useWorldFrame = ({
   findTouchedOculus,
   getEquippedGadgetCooldown,
   getMemberMaxHealth,
-  getWorldNow,
   hudFrame,
   input,
   inputState,
@@ -61,6 +61,8 @@ export const useWorldFrame = ({
   trackerQuest,
   unlockedLandmarkIds,
 }: WorldFrameOptions) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { getWorldNow } = worldSessionStore;
   // Whether the world is in play: not paused and on the world's own screen, which a step changes as the frame goes on
   const checkIsWorldInPlay = () => !checkIsPaused() && screenKind.value === ScreenKind.World;
   // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing

@@ -1,5 +1,3 @@
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
 import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssFloorReward } from "#src/models/spiralAbyss/AbyssFloorReward";
@@ -17,7 +15,7 @@ import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
@@ -94,23 +92,16 @@ describe(useWorldSpiralAbyss, () => {
 
   test("a Moon Spire chamber's clear is recorded in its period's cycle, and its period's group pays", async () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const setInventory = vi.fn<(inventory: Inventory) => void>();
-    const setWallet = vi.fn<(wallet: Wallet) => void>();
+    const worldSessionStore = startTestWorldSession(
+      { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL, getWorldNow: () => NOW },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET } },
+    );
+    const { events } = worldSessionStore;
     const abyss = useWorldSpiralAbyss({
       areaId: AREA_ID,
       bonusLines: shallowRef([]),
-      events,
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      getWorldNow: () => NOW,
-      inventory: shallowRef(EMPTY_INVENTORY),
-      materialDataMap: new Map(),
-      nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedProgressMap: new Map(),
-      setInventory,
-      setWallet,
-      wallet: shallowRef(EMPTY_WALLET),
     });
     await flushReads();
 
@@ -123,8 +114,8 @@ describe(useWorldSpiralAbyss, () => {
       chamberIdProgressMap: new Map([[CHAMBER_ID, { isCleared: true, stars: 0 }]]),
       claimedRewardIds: new Set([REWARD_ID]),
     });
-    expect(setWallet).toHaveBeenCalledWith({ ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT });
-    expect(setInventory).toHaveBeenCalledWith(EMPTY_INVENTORY);
+    expect(worldSessionStore.wallet).toStrictEqual({ ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT });
+    expect(worldSessionStore.inventory).toStrictEqual(EMPTY_INVENTORY);
     expect(abyss.abyssCamps.value).toStrictEqual([]);
   });
 });

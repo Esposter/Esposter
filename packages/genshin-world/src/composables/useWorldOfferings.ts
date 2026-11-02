@@ -1,6 +1,5 @@
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
 import type { ShallowRef } from "vue";
 
@@ -8,7 +7,9 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 
 // The Frostbearing Tree's offering: every offering item the bag holds is offered to it at once, its levels reached, their
 // Adventure EXP gained at the Adventure Rank and their other rewards paid in, what the bag has no room for dropped at the
@@ -17,29 +18,24 @@ import { getResultAsync } from "@esposter/shared";
 // And the bag is read once they have arrived, so an offer made while another's levels are still arriving offers the bag
 // That one left
 export const useWorldOfferings = ({
-  events,
   frostbearingTreeProgress,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
   placeWorldDrops,
-  setInventory,
-  setWallet,
-  wallet,
-}: WorldOfferingDependencies & { events: WorldEvents; frostbearingTreeProgress: ShallowRef<OfferingProgressSave> }) => {
+}: WorldOfferingDependencies & { frostbearingTreeProgress: ShallowRef<OfferingProgressSave> }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, setInventory, setWallet } = worldSessionStore;
   // Levels that fail to arrive are logged and the bag is left as it was
   const offerFrostbearingTree = (frostbearingTreePlace: FrostbearingTreePlace) =>
-    getResultAsync(() => readFrostbearingTreeLevels(gameDataBaseUrl)).match(
+    getResultAsync(() => readFrostbearingTreeLevels(worldSessionStore.gameDataBaseUrl)).match(
       (levels) => {
         const previousLevel = frostbearingTreeProgress.value.level;
         const offer = offerBagItems(
           inventory.value,
           wallet.value,
           { ...frostbearingTreeProgress.value, levels },
-          nameText,
-          materialDataMap,
+          worldSessionStore.nameText,
+          worldSessionStore.materialDataMap,
         );
         setInventory(offer.inventory);
         setWallet(offer.wallet);

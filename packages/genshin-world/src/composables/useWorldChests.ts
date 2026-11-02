@@ -8,9 +8,7 @@ import type { TimeTrialMarker } from "#src/models/puzzle/TimeTrialMarker";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -22,7 +20,9 @@ import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChest
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // Mondstadt's chests, fetched by their key as the world opens, and each one offered on the ground beneath its point: an
@@ -35,33 +35,21 @@ import { computed, shallowRef } from "vue";
 export const useWorldChests = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
-  events,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
-  inventory,
-  materialDataMap,
-  nameText,
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
-  setInventory,
-  setWallet,
   solvedPuzzleIds,
   timeTrialMarkers,
-  wallet,
   waterLevel,
   weaponDataMap,
-}: WorldBagDependencies & {
+}: {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
-  events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
-  gameDataBaseUrl: string;
-  gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
@@ -73,9 +61,12 @@ export const useWorldChests = ({
   waterLevel: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, setInventory, setWallet } = worldSessionStore;
   const chestPlaces = shallowRef<ChestPlace[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtChestPlaces(gameDataBaseUrl)).match(
+  getResultAsync(() => readMondstadtChestPlaces(worldSessionStore.gameDataBaseUrl)).match(
     (places) => {
       chestPlaces.value = places;
     },
@@ -97,7 +88,7 @@ export const useWorldChests = ({
       worldChestPlaces.value,
       openedChestIds.value,
       dugChestIds.value,
-      gameText,
+      worldSessionStore.gameText,
       getGroundHeight,
       lockSources.value,
     ),
@@ -130,9 +121,9 @@ export const useWorldChests = ({
       const { itemId } = dropped;
       const definition = getDroppedItemDefinition(
         itemId,
-        nameText,
+        worldSessionStore.nameText,
         weaponDataMap,
-        materialDataMap,
+        worldSessionStore.materialDataMap,
         reliquaryPieceEntryMap,
       );
       const addition = addDroppedItem(nextInventory, dropped, definition);

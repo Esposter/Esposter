@@ -2,8 +2,7 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { ComputedRef, Ref } from "vue";
+import type { ComputedRef } from "vue";
 
 import { advanceCommissionForQuest } from "#src/services/commission/advanceCommissionForQuest";
 import { checkIsAdventureEncountersUnlocked } from "#src/services/commission/checkIsAdventureEncountersUnlocked";
@@ -24,35 +23,32 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
 import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The day's commissions the session holds: every region's daily tasks read as the world opens, and the day dealt again from
 // Them once the save is loaded when it was dealt before the latest daily reset. A quest in progress that finishes finishes
 // Its quest task, and a load that fails is logged and left with no day dealt, so no commission is offered rather than a wrong one
 export const useWorldCommissions = ({
-  events,
   finishedMainQuestIds,
-  gameDataBaseUrl,
-  getWorldNow,
   questTargetIds,
   rank,
   savedCommissionDay,
   savedEncounterPoints,
   savedLongTermEncounterPoints,
-  worldNow,
 }: {
-  events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
   questTargetIds: ComputedRef<string[]>;
   rank: ComputedRef<number>;
   savedCommissionDay: CommissionDay;
   savedEncounterPoints: EncounterPoints;
   savedLongTermEncounterPoints: LongTermEncounterPoints;
-  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { worldNow } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow } = worldSessionStore;
   const commissionSlices = shallowRef<CommissionSlice[]>([]);
   const commissionDay = shallowRef<CommissionDay>(savedCommissionDay);
   const encounterPoints = shallowRef<EncounterPoints>(savedEncounterPoints);
@@ -68,7 +64,7 @@ export const useWorldCommissions = ({
     };
   });
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readCommissionSlices(gameDataBaseUrl)).match(
+  getResultAsync(() => readCommissionSlices(worldSessionStore.gameDataBaseUrl)).match(
     (slices) => {
       commissionSlices.value = slices;
       const now = getWorldNow();

@@ -2,6 +2,7 @@ import type { WorldProfileNamecardsOptions } from "#src/models/profile/WorldProf
 
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
+import { useWorldSessionStore } from "#src/store/session";
 import { computed } from "vue";
 
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
@@ -11,9 +12,8 @@ export const useWorldProfileNamecards = ({
   characters,
   friendshipLevels,
   friendshipNamecards,
-  materialDataMap,
-  nameText,
 }: WorldProfileNamecardsOptions) => {
+  const worldSessionStore = useWorldSessionStore();
   const profileNamecards = computed(() =>
     computeProfileNamecardItemIds({
       achievements: achievementData.value?.achievements ?? [],
@@ -23,8 +23,11 @@ export const useWorldProfileNamecards = ({
       friendshipNamecards: friendshipNamecards.value,
       progressMap: achievementProgressMap.value,
     })
-      .filter((itemId) => materialDataMap.has(itemId))
-      .map((itemId) => ({ itemId, name: getItemDefinition(itemId, nameText, materialDataMap).name })),
+      .filter((itemId) => worldSessionStore.materialDataMap.has(itemId))
+      .map((itemId) => ({
+        itemId,
+        name: getItemDefinition(itemId, worldSessionStore.nameText, worldSessionStore.materialDataMap).name,
+      })),
   );
   return { profileNamecards };
 };

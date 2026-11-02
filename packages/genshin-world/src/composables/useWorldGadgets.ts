@@ -1,29 +1,25 @@
 import type { CooldownGroupReadyAtMap } from "#src/models/gadget/CooldownGroupReadyAtMap";
 import type { GadgetRow } from "#src/models/gadget/GadgetRow";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Ref } from "vue";
 
 import { checkIsQuickSwapOpen } from "#src/services/gadget/checkIsQuickSwapOpen";
 import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
 import { stepQuickUseHeldSeconds } from "#src/services/gadget/stepQuickUseHeldSeconds";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The widget config's gadgets, fetched by their key as the world opens, and the gadget equipped to the quick-use slot,
 // Which Z uses once its cooldown group is ready. A load that fails is logged and left off, so no gadget is used rather
 // Than a wrong one
-export const useWorldGadgets = ({
-  gameDataBaseUrl,
-  inventory,
-}: {
-  gameDataBaseUrl: string;
-  inventory: Ref<Inventory>;
-}) => {
+export const useWorldGadgets = () => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory } = storeToRefs(worldSessionStore);
   const gadgetRows = shallowRef<GadgetRow[]>([]);
   getSynchronizedFunction(() =>
-    getResultAsync(() => readGadgetRows(gameDataBaseUrl)).match(
+    getResultAsync(() => readGadgetRows(worldSessionStore.gameDataBaseUrl)).match(
       (rows) => {
         gadgetRows.value = rows;
       },

@@ -3,17 +3,19 @@ import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNameca
 
 import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { readFriendshipNamecards } from "#src/services/friendship/readFriendshipNamecards";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { shallowRef } from "vue";
 
 // The Friendship levels and the namecards each character's Friendship opens, read from the hosted game data as the world starts
-export const useWorldFriendship = (gameDataBaseUrl: string) => {
+export const useWorldFriendship = () => {
+  const worldSessionStore = useWorldSessionStore();
   const friendshipLevels = shallowRef<FriendshipLevels>();
   const friendshipNamecards = shallowRef<FriendshipNamecard[]>([]);
   // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits while
   // They are unread, since the EXP has no top to stop at without them
   getSynchronizedFunction(() =>
-    getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
+    getResultAsync(() => readFriendshipLevels(worldSessionStore.gameDataBaseUrl)).match(
       (levels) => {
         friendshipLevels.value = levels;
       },
@@ -23,7 +25,7 @@ export const useWorldFriendship = (gameDataBaseUrl: string) => {
     ),
   )();
   getSynchronizedFunction(() =>
-    getResultAsync(() => readFriendshipNamecards(gameDataBaseUrl)).match(
+    getResultAsync(() => readFriendshipNamecards(worldSessionStore.gameDataBaseUrl)).match(
       (namecards) => {
         friendshipNamecards.value = namecards;
       },

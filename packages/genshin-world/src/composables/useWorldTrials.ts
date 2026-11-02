@@ -1,9 +1,6 @@
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterData } from "#src/models/character/CharacterData";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Kit } from "#src/models/kit/Kit";
 import type { Party } from "#src/models/party/Party";
 import type { Trial } from "#src/models/trial/Trial";
@@ -29,7 +26,9 @@ import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The character trials on the world: their tables read once, a trial entered in place of the player's roster with its party
@@ -44,16 +43,9 @@ export const useWorldTrials = ({
   characters,
   claimedStageIds,
   closeScreen,
-  gameDataBaseUrl,
   getGroundHeight,
-  inventory,
   jumpTo,
-  materialDataMap,
-  nameText,
   party,
-  setInventory,
-  setWallet,
-  wallet,
   weaponDataMap,
 }: {
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
@@ -63,18 +55,14 @@ export const useWorldTrials = ({
   characters: Ref<Character[]>;
   claimedStageIds: ReadonlySet<number>;
   closeScreen: () => void;
-  gameDataBaseUrl: string;
   getGroundHeight: (x: number, z: number) => number;
-  inventory: Ref<Inventory>;
   jumpTo: (pose: WorldJumpPose) => void;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   party: Party;
-  setInventory: (inventory: Inventory) => void;
-  setWallet: (wallet: Wallet) => void;
-  wallet: Ref<Wallet>;
   weaponDataMap: ReadonlyMap<number, Pick<WeaponData, "ascensionPhases">>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { setInventory, setWallet } = worldSessionStore;
   const trialTables = shallowRef<CharacterTrialTables>();
   // The stages whose first clear has paid, which the save keeps: the ones the save held when the world loaded, and each first
   // Clear since
@@ -90,7 +78,7 @@ export const useWorldTrials = ({
       : undefined,
   );
   getSynchronizedFunction(() =>
-    getResultAsync(() => readCharacterTrials(gameDataBaseUrl)).match(
+    getResultAsync(() => readCharacterTrials(worldSessionStore.gameDataBaseUrl)).match(
       (tables) => {
         trialTables.value = tables;
       },
@@ -121,7 +109,10 @@ export const useWorldTrials = ({
     const character = createTrialCharacter(trial, tables, { artifactRarityDataMap, characterDataMap, weaponDataMap });
     if (!stage || !character) return false;
     const kits = await getResultAsync(() =>
-      readCharacterKits(gameDataBaseUrl, new Map([[character.id, getPlayedTalentLevels(character, [])]])),
+      readCharacterKits(
+        worldSessionStore.gameDataBaseUrl,
+        new Map([[character.id, getPlayedTalentLevels(character, [])]]),
+      ),
     ).match(
       (newCharacterIdKitMap) => newCharacterIdKitMap,
       (error) => {
@@ -164,8 +155,8 @@ export const useWorldTrials = ({
       trialClaimedStageIds.value,
       inventory.value,
       wallet.value,
-      nameText,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     if (!claim) {
       console.error(`the bag has no room for trial stage ${stageId}'s reward, so its clear is not recorded`);

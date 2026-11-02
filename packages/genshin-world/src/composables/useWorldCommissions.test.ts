@@ -2,7 +2,6 @@ import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
@@ -14,7 +13,7 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { computed } from "vue";
 
@@ -50,7 +49,6 @@ describe(useWorldCommissions, () => {
   const nextReset = todayReset.add({ hours: 24 });
   const baseCommissions = {
     finishedMainQuestIds: computed(() => new Set<number>()),
-    gameDataBaseUrl: "",
     questTargetIds: computed<string[]>(() => []),
     rank: computed(() => RANK),
     savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
@@ -58,32 +56,32 @@ describe(useWorldCommissions, () => {
 
   // The commissions composable as a load of the save reads it an hour past the daily reset, holding the given Encounter Points
   const useAfterReset = (
-    events: WorldEvents,
     savedEncounterPoints: EncounterPoints = { earnedOn: todayReset, halfPoints: 0 },
     { getWorldNow, worldNow } = createWorldClock(afterReset),
-  ) =>
-    useWorldCommissions({
-      ...baseCommissions,
+  ) => {
+    const { events } = startTestWorldSession({ gameDataBaseUrl: "", getWorldNow, worldNow });
+    return {
+      ...useWorldCommissions({
+        ...baseCommissions,
+        savedCommissionDay: {
+          claimedCommissionIds: [],
+          dealtAt: todayReset,
+          dealtCommissions: [],
+          isBonusClaimed: false,
+        },
+        savedEncounterPoints,
+      }),
       events,
-      getWorldNow,
-      savedCommissionDay: {
-        claimedCommissionIds: [],
-        dealtAt: todayReset,
-        dealtCommissions: [],
-        isBonusClaimed: false,
-      },
-      savedEncounterPoints,
-      worldNow,
-    });
+    };
+  };
 
   // The four unfinished commissions of a kept day, with one whole Encounter Point held, read as the world opens at the given rank
   const useUnfinishedDay = (rank: number) => {
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
+    startTestWorldSession({ getWorldNow, worldNow });
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     return useWorldCommissions({
       ...baseCommissions,
-      events: createWorldEvents(),
-      getWorldNow,
       rank: computed(() => rank),
       savedCommissionDay: {
         claimedCommissionIds: [],
@@ -92,18 +90,16 @@ describe(useWorldCommissions, () => {
         isBonusClaimed: false,
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
-      worldNow,
     });
   };
 
   test("a day dealt before the daily reset is dealt again", async () => {
     expect.hasAssertions();
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
+    startTestWorldSession({ getWorldNow, worldNow });
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     const { commissionDay } = useWorldCommissions({
       ...baseCommissions,
-      events: createWorldEvents(),
-      getWorldNow,
       savedCommissionDay: {
         claimedCommissionIds: [1],
         dealtAt: todayReset.subtract({ minutes: 1 }),
@@ -112,7 +108,6 @@ describe(useWorldCommissions, () => {
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
-      worldNow,
     });
     await flushReads();
     expect(commissionDay.value.dealtCommissions).toHaveLength(4);
@@ -122,8 +117,7 @@ describe(useWorldCommissions, () => {
 
   test("a finished Archon quest earns four Encounter Points, and a World quest earns none", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { encounterPoints } = useAfterReset(events);
+    const { encounterPoints, events } = useAfterReset();
     events.emit(
       "finishQuest",
       { id: "archon", kind: QuestKind.World } as Quest,
@@ -142,8 +136,7 @@ describe(useWorldCommissions, () => {
 
   test("a finished Archon quest past the storage keeps the overflow as Long-Term Encounter Points", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { longTermEncounterPoints } = useAfterReset(events, { earnedOn: todayReset, halfPoints: 4 });
+    const { events, longTermEncounterPoints } = useAfterReset({ earnedOn: todayReset, halfPoints: 4 });
     events.emit(
       "finishQuest",
       { id: "archon", kind: QuestKind.Archon } as Quest,
@@ -156,7 +149,7 @@ describe(useWorldCommissions, () => {
   test("the whole Encounter Points held lapse at the next daily reset with no write", () => {
     expect.hasAssertions();
     const clock = createWorldClock(afterReset);
-    const { wholeEncounterPoints } = useAfterReset(createWorldEvents(), { earnedOn: todayReset, halfPoints: 2 }, clock);
+    const { wholeEncounterPoints } = useAfterReset({ earnedOn: todayReset, halfPoints: 2 }, clock);
     expect(wholeEncounterPoints.value).toBe(1);
     clock.moveTo(nextReset);
     expect(wholeEncounterPoints.value).toBe(0);
@@ -164,8 +157,7 @@ describe(useWorldCommissions, () => {
 
   test("a collected item the wiki lists earns a half point, and an item it does not list earns none", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { encounterPoints } = useAfterReset(events);
+    const { encounterPoints, events } = useAfterReset();
     events.emit("gatheringPickedUp", "107010");
     expect(encounterPoints.value.halfPoints).toBe(1);
     events.emit("gatheringPickedUp", "107033");
@@ -174,16 +166,14 @@ describe(useWorldCommissions, () => {
 
   test("a Crimson Agate held by a chest earns nothing, as a chest raises only the quest event", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { encounterPoints } = useAfterReset(events);
+    const { encounterPoints, events } = useAfterReset();
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: "107010" });
     expect(encounterPoints.value.halfPoints).toBe(0);
   });
 
   test("an Oculus found the first time earns a half point", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { encounterPoints } = useAfterReset(events);
+    const { encounterPoints, events } = useAfterReset();
     events.emit("oculusFound");
     expect(encounterPoints.value.halfPoints).toBe(1);
   });

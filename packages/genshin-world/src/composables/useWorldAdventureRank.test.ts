@@ -4,11 +4,12 @@ import { Currency } from "#src/models/inventory/Currency";
 import { computeAdventureExpAtRank } from "#src/services/adventureRank/computeAdventureExpAtRank";
 import { MAX_ADVENTURE_RANK, MORA_PER_EXCESS_ADVENTURE_EXP } from "#src/services/adventureRank/constants";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
+import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
-import { computed, nextTick, ref, shallowRef } from "vue";
+import { computed, nextTick, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
@@ -19,32 +20,25 @@ describe(useWorldAdventureRank, () => {
   const GAIN = 100;
   const noFinishedMainQuestIds = new Set<number>();
 
-  const createAdventureRank = (
-    savedAdventureExp: number,
-    finishedMainQuestIds: ReadonlySet<number>,
-    events = createWorldEvents(),
-  ) => {
-    const wallet = ref(savedState.wallet);
+  const createAdventureRank = (savedAdventureExp: number, finishedMainQuestIds: ReadonlySet<number>) => {
+    const worldSessionStore = startTestWorldSession(
+      { getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0) },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: savedState.wallet },
+    );
     const questIds = shallowRef(finishedMainQuestIds);
     const adventureRank = useWorldAdventureRank({
       adventureRankTables,
-      events,
       finishedMainQuestIds: computed(() => questIds.value),
-      getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
       savedAdventureExp,
       savedAdventureRankRewardsClaimed: [],
       savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
     });
     return {
       adventureRank,
       setFinishedMainQuestIds: (nextFinishedMainQuestIds: ReadonlySet<number>) => {
         questIds.value = nextFinishedMainQuestIds;
       },
-      wallet,
+      worldSessionStore,
     };
   };
 
@@ -71,23 +65,23 @@ describe(useWorldAdventureRank, () => {
   test("a gain past rank 60's total with every ascension quest done pays Mora into the wallet", () => {
     expect.hasAssertions();
 
-    const { adventureRank, wallet } = createAdventureRank(maxAdventureExp, ascensionQuestIds);
+    const { adventureRank, worldSessionStore } = createAdventureRank(maxAdventureExp, ascensionQuestIds);
     adventureRank.gainWorldAdventureExp(GAIN);
 
-    expect(wallet.value[Currency.Mora]).toBe(savedState.wallet[Currency.Mora] + GAIN * MORA_PER_EXCESS_ADVENTURE_EXP);
+    expect(worldSessionStore.wallet[Currency.Mora]).toBe(
+      savedState.wallet[Currency.Mora] + GAIN * MORA_PER_EXCESS_ADVENTURE_EXP,
+    );
   });
 
   test("a world level reached raises its event once for each level", async () => {
     expect.hasAssertions();
 
-    const events = createWorldEvents();
     const worldLevelUps = vi.fn<(worldLevel: number) => void>();
-    events.on("worldLevelUp", worldLevelUps);
-    const { adventureRank, setFinishedMainQuestIds } = createAdventureRank(
+    const { adventureRank, setFinishedMainQuestIds, worldSessionStore } = createAdventureRank(
       maxAdventureExp,
       noFinishedMainQuestIds,
-      events,
     );
+    worldSessionStore.events.on("worldLevelUp", worldLevelUps);
     const startingWorldLevel = adventureRank.worldLevel.value;
     setFinishedMainQuestIds(ascensionQuestIds);
     await nextTick();

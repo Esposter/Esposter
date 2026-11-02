@@ -22,9 +22,10 @@ net lines into the package, with 10 to 28 options each: 640 net lines added to t
 
 So a cut is made in this order, and each step is judged by the lines it leaves behind:
 
-1. **Bundle what the calls repeat.** The members one call after another lists (the bag, the wallet and their setters, the
-   item data and names) are one typed object declared once (`WorldBagDependencies`) and spread into the calls whose option
-   types declare it whole, which took 47 lines out of the session root and added none.
+1. **Read what the calls repeat from a store.** The members one call after another lists (the bag, the wallet and their
+   setters, the item data, the names, the text, the language, the data URL and the events emitter) are the session store's,
+   which the composables that need them read themselves; a bundled object spread into every call only moved the list
+   (the `genshin-session-store` change, which took the shared keys from 128 to 0 and the root by 139 lines).
 2. **Cut a group only when it has fewer inputs than statements.** A group with a short options list (a handful of values)
    and a name that says one feature is a composable; a group whose list runs to twenty values is the root's wiring under
    another name. The root that stays long because of its arguments is the integration root the form allows, and it is

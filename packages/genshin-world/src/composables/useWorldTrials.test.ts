@@ -1,7 +1,5 @@
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { Character } from "#src/models/character/Character";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Kit } from "#src/models/kit/Kit";
 import type { Trial } from "#src/models/trial/Trial";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -10,13 +8,14 @@ import type { CharacterTrialTables } from "#src/services/trial/readCharacterTria
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
-import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { Object3D } from "three";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -72,16 +71,9 @@ describe(useWorldTrials, () => {
     characters: shallowRef<Character[]>([]),
     claimedStageIds: new Set<number>(),
     closeScreen: vi.fn<() => void>(),
-    gameDataBaseUrl: "https://example.test/game-data/",
     getGroundHeight: () => 0,
-    inventory: shallowRef(EMPTY_INVENTORY),
     jumpTo: vi.fn<(pose: WorldJumpPose) => void>(),
-    materialDataMap: new Map(),
-    nameText: {},
     party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
-    setInventory: vi.fn<(inventory: Inventory) => void>(),
-    setWallet: vi.fn<(wallet: Wallet) => void>(),
-    wallet: shallowRef(EMPTY_WALLET),
     weaponDataMap: new Map([
       [
         2001,
@@ -90,8 +82,10 @@ describe(useWorldTrials, () => {
     ]),
   });
 
-  const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) =>
-    useWorldTrials({ ...createDependencies(), ...overrides });
+  const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
+    const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
+    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), worldSessionStore };
+  };
 
   beforeEach(() => {
     vi.mocked(readCharacterKits).mockResolvedValue(new Map([[CHARACTER_ID, TRIAL_KIT]]));
@@ -99,9 +93,8 @@ describe(useWorldTrials, () => {
 
   test("a trial's timer runs out and its first clear pays the reward once", async () => {
     expect.hasAssertions();
-    const setWallet = vi.fn<(wallet: Wallet) => void>();
     const reward = { ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT };
-    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ setWallet });
+    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials, worldSessionStore } = setUpTrials();
     await flushReads();
     expect(trials.value).toHaveLength(1);
     const trial: Trial = takeOne(trials.value);
@@ -111,11 +104,11 @@ describe(useWorldTrials, () => {
     stepTrial(TIMED_OUT_STEP);
     expect(trialArena.value).toBeUndefined();
     expect(trialClaimedStageIds.value).toStrictEqual(new Set([STAGE_ID]));
-    expect(setWallet).toHaveBeenCalledExactlyOnceWith(reward);
+    expect(worldSessionStore.wallet).toStrictEqual(reward);
 
     await enterTrial(trial, RETURN_POSE);
     stepTrial(TIMED_OUT_STEP);
-    expect(setWallet).toHaveBeenCalledExactlyOnceWith(reward);
+    expect(worldSessionStore.wallet).toStrictEqual(reward);
   });
 
   test("a trial opened from the Wish screen leaves the screen and lands on its stand-in arena", async () => {
@@ -155,10 +148,11 @@ describe(useWorldTrials, () => {
 
   test("a party down ends a trial with no reward and gives the player's roster back", async () => {
     expect.hasAssertions();
-    const setWallet = vi.fn<(wallet: Wallet) => void>();
     const characters = shallowRef<Character[]>([]);
     const ownedCharacters = characters.value;
-    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials } = setUpTrials({ characters, setWallet });
+    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials, worldSessionStore } = setUpTrials({
+      characters,
+    });
     await flushReads();
 
     await enterTrial(takeOne(trials.value), RETURN_POSE);
@@ -166,7 +160,7 @@ describe(useWorldTrials, () => {
     expect(trialArena.value).toBeUndefined();
     expect(characters.value).toBe(ownedCharacters);
     expect(trialClaimedStageIds.value.size).toBe(0);
-    expect(setWallet).not.toHaveBeenCalled();
+    expect(worldSessionStore.wallet).toStrictEqual(EMPTY_WALLET);
   });
 
   test("a claim saved and loaded again keeps its stage's reward unpaid", async () => {
@@ -180,13 +174,12 @@ describe(useWorldTrials, () => {
     expect(save).toStrictEqual({ claimedStageIds: [STAGE_ID] });
 
     // A reload starts the world with the save's claims, so the stage's clear pays nothing the second time
-    const setWallet = vi.fn<(wallet: Wallet) => void>();
-    const second = setUpTrials({ claimedStageIds: new Set(save.claimedStageIds), setWallet });
+    const second = setUpTrials({ claimedStageIds: new Set(save.claimedStageIds) });
     await flushReads();
     await second.enterTrial(trial, RETURN_POSE);
     second.stepTrial(TIMED_OUT_STEP);
     expect(second.trialClaimedStageIds.value).toStrictEqual(new Set([STAGE_ID]));
-    expect(setWallet).not.toHaveBeenCalled();
+    expect(second.worldSessionStore.wallet).toStrictEqual(EMPTY_WALLET);
   });
 
   test("a trial's end returns the player to the pose it was entered from", async () => {

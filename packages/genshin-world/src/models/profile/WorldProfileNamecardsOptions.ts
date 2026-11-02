@@ -4,7 +4,6 @@ import type { AchievementProgress } from "#src/models/achievement/AchievementPro
 import type { Character } from "#src/models/character/Character";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNamecard";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Ref } from "vue";
 
 // What the profile's namecards are read from: the achievements and each category's progress, the characters and the
@@ -15,6 +14,4 @@ export interface WorldProfileNamecardsOptions {
   characters: Readonly<Ref<readonly Pick<Character, "friendshipExp" | "id">[]>>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   friendshipNamecards: Readonly<Ref<readonly FriendshipNamecard[]>>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
 }

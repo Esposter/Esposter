@@ -177,3 +177,7 @@ console.log(calls, keys.length, keys.filter((k) => shared.has(k)).length);
 ```
 
 It prints `51 518 128` on the tree at the time of writing. The change's outcomes are stated against it.
+
+## After the bag and the context moved (task 2.2)
+
+The same script prints `49 390 0`: 49 calls with an options object, 390 option keys in all, and no shared key in any of them (from `51 518 128`). The root is 1,943 lines (from 2,082) and the package's chunk 2 netted about 450 lines fewer (65 files). The four composables that took the data URL as a lone argument (`useWorldConstellations`, `useWorldDishes`, `useWorldFriendship`, `useWorldCooking`) read it from the store too, which the script does not count.

@@ -7,8 +7,6 @@ import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOf
 import type { Party } from "#src/models/party/Party";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
@@ -35,7 +33,9 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
+import { useWorldSessionStore } from "#src/store/session";
 import { takeOne } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
@@ -47,42 +47,36 @@ export const useWorldTrounceBlossoms = ({
   characters,
   emitGrant,
   enemyKindMap,
-  events,
   friendshipLevels,
   gainWorldAdventureExp,
-  gameText,
   getGroundHeight,
-  getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   savedState,
-  setInventory,
-  setWallet,
-  wallet,
-  worldNow,
-}: WorldBagDependencies & {
+}: {
   catalogue: Catalogue;
   characters: Ref<Character[]>;
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
-  events: WorldEvents;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   gainWorldAdventureExp: (amount: number) => void;
-  gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
-  getWorldNow: () => Temporal.Instant;
   party: Party;
   savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
-  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(savedState.trounceBlossoms);
   // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its defeat
   const lastTeleportAts = shallowRef<ReadonlyMap<string, Temporal.Instant>>(savedState.lastTeleportAts);
   const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; spawnKey: string }>();
   const trounceBlossomInteractables = computed(() =>
-    computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, worldNow.value),
+    computeTrounceBlossomInteractables(
+      trounceBlossoms.value,
+      worldSessionStore.gameText,
+      getGroundHeight,
+      worldNow.value,
+    ),
   );
   const writeTrounceBlossom = (spawnKey: string, trounceBlossom: TrounceBlossom) => {
     trounceBlossoms.value = new Map(trounceBlossoms.value).set(spawnKey, trounceBlossom);
@@ -167,7 +161,15 @@ export const useWorldTrounceBlossoms = ({
             resin: BlossomClaimResinMap[BlossomKind.NormalBoss],
             rewards: drawNormalBossReward(worldLevel, trounceBlossom.uniqueDropId, random),
           };
-    const claim = claimTrounceBlossom(wallet.value, inventory.value, resin, rewards, now, nameText, materialDataMap);
+    const claim = claimTrounceBlossom(
+      wallet.value,
+      inventory.value,
+      resin,
+      rewards,
+      now,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
+    );
     if (!claim) return;
     setWallet(claim.wallet);
     setInventory(claim.inventory);

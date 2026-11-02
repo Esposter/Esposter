@@ -1,11 +1,9 @@
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
 import type { TransPointUnlock } from "#src/models/transPoint/TransPointUnlock";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { Ref } from "vue";
@@ -33,7 +31,9 @@ import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHidd
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
 // The landmarks the world holds and the ones the player has unlocked, the first unlock of each paid, and the pose a jump
@@ -42,10 +42,7 @@ import { computed, shallowRef, watch } from "vue";
 export const useWorldMap = ({
   catalogue,
   completedMainQuestIds,
-  events,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  getWorldNow,
   placedDoings,
   questStepTargets,
   recordedDoingIds,
@@ -53,17 +50,12 @@ export const useWorldMap = ({
   reputation,
   savedRequestClaimedAts,
   setReputation,
-  setWallet,
   unlockedLandmarkIds: savedUnlockedLandmarkIds,
-  wallet,
 }: {
   catalogue: Catalogue;
   // The main quests the player has done, which open a weekly boss's Trounce Domain entrance
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
-  events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
   // The placed doings the world holds, each a chest, an Oculus, a puzzle or a camp, by the point it stands at
   placedDoings: Readonly<Ref<PlacedDoing[]>>;
   questStepTargets: Readonly<Ref<{ named: ReadonlySet<string>; reached: ReadonlySet<string> }>>;
@@ -75,22 +67,23 @@ export const useWorldMap = ({
   // Request taken before it still pays when it finishes
   savedRequestClaimedAts: readonly Temporal.Instant[];
   setReputation: (nextReputation: ReputationProgress) => void;
-  setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
-  wallet: Ref<Wallet>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { wallet } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setWallet } = worldSessionStore;
   // Every landmark a jump lands at, and the ones the player has unlocked: the map, the minimap, the jump list and a revive
   // Offer only those. A new player has unlocked none, and each is unlocked by resonating with it
   const { isLoaded: isJumpLandmarksLoaded, jumpLandmarks } = useJumpLandmarks(regionDataBaseUrl, catalogue);
   // The areas the map counts the exploration of, read as the world opens, each with the placed doings that stand in it
-  const explorationAreas = useExplorationAreas(gameDataBaseUrl);
+  const explorationAreas = useExplorationAreas(worldSessionStore.gameDataBaseUrl);
   const placedExplorationAreas = computed(() =>
     placeExplorationDoings(explorationAreas.value, catalogue, placedDoings.value),
   );
   // Mondstadt's Reputation, read as the world opens: its levels, and the exploration thresholds a statue's unlock can pass
   const mondstadtReputation = shallowRef<ReputationCity>();
   getSynchronizedFunction(() =>
-    getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
+    getResultAsync(() => readMondstadtReputation(worldSessionStore.gameDataBaseUrl)).match(
       (reputationCity) => {
         mondstadtReputation.value = reputationCity;
       },
@@ -102,7 +95,7 @@ export const useWorldMap = ({
   // The subarea labels the open world publishes, read as the world starts, each named by its text id in the world's names
   const subareaLabels = shallowRef<MapSubareaLabel[]>([]);
   getSynchronizedFunction(() =>
-    getResultAsync(() => readMapSubareaLabels(gameDataBaseUrl)).match(
+    getResultAsync(() => readMapSubareaLabels(worldSessionStore.gameDataBaseUrl)).match(
       (labels) => {
         subareaLabels.value = labels;
       },
@@ -115,7 +108,7 @@ export const useWorldMap = ({
   // From the map and the prompt list until that step is reached
   const transPointUnlocks = shallowRef<TransPointUnlock[]>([]);
   getSynchronizedFunction(() =>
-    getResultAsync(() => readOpenWorldTransPointUnlocks(gameDataBaseUrl)).match(
+    getResultAsync(() => readOpenWorldTransPointUnlocks(worldSessionStore.gameDataBaseUrl)).match(
       (unlocks) => {
         transPointUnlocks.value = unlocks;
       },
@@ -152,7 +145,7 @@ export const useWorldMap = ({
   const payFirstUnlockReward = getSynchronizedFunction(async (landmarkId: string) => {
     const pointId = computeLandmarkPointId(landmarkId);
     if (pointId === undefined) return;
-    await getResultAsync(() => readOpenWorldTransPointRewards(gameDataBaseUrl)).match(
+    await getResultAsync(() => readOpenWorldTransPointRewards(worldSessionStore.gameDataBaseUrl)).match(
       (rewards) => {
         const reward = rewards.find((transPointReward) => transPointReward.pointId === pointId);
         if (!reward) return;

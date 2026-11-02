@@ -3,7 +3,6 @@ import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBoun
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ReputationReward } from "#src/models/reputation/ReputationReward";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
@@ -13,12 +12,11 @@ import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
 import { takeReputationBounty } from "#src/services/reputation/takeReputationBounty";
+import { useWorldSessionStore } from "#src/store/session";
 import { takeRandom } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 interface Props {
-  events: WorldEvents;
-  getWorldNow: () => Temporal.Instant;
   payReputationReward: (reward: ReputationReward) => void;
   random: () => number;
   reputation: Readonly<Ref<ReputationProgress>>;
@@ -33,8 +31,6 @@ interface Props {
 // The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims made.
 // Both are the save's, so a reload finds the hunt and the week's count where they were left
 export const useWorldReputationBounty = ({
-  events,
-  getWorldNow,
   payReputationReward,
   random,
   reputation,
@@ -43,6 +39,8 @@ export const useWorldReputationBounty = ({
   savedBountyHunt,
   worldLevel,
 }: Props) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { events, getWorldNow } = worldSessionStore;
   const bountyHunt = shallowRef<ReputationBountyHunt | undefined>(savedBountyHunt);
   const bountyClaimedAts = shallowRef<readonly Temporal.Instant[]>(savedBountyClaimedAts);
   // The camp of the taken bounty while its target stands, made from the hunt once at the world level held then, so the enemy

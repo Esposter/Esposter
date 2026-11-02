@@ -1,8 +1,7 @@
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
 
@@ -11,30 +10,22 @@ vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
 }));
 
 const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["puzzleChestPlaces"]) => {
+  startTestWorldSession();
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
   return {
     openedChestIds,
     ...useWorldChests({
       artifactMainAffixPools: [],
       artifactRarityDataMap: new Map(),
-      events: createWorldEvents(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
-      gameDataBaseUrl: "",
-      gameText: {},
       getGroundHeight: () => 0,
-      inventory: ref({ ...EMPTY_INVENTORY }),
-      materialDataMap: new Map(),
-      nameText: {},
       openedChestIds,
       placeWorldDrops: vi.fn<() => void>(),
       puzzleChestPlaces,
       reliquaryPieceEntryMap: new Map(),
       reliquarySets: [],
-      setInventory: vi.fn<() => void>(),
-      setWallet: vi.fn<() => void>(),
       solvedPuzzleIds: ref<ReadonlySet<string>>(new Set()),
       timeTrialMarkers: [],
-      wallet: ref({ ...EMPTY_WALLET }),
       waterLevel: -1,
       weaponDataMap: new Map(),
     }),

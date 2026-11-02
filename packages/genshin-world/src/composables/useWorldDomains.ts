@@ -18,9 +18,7 @@ import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
@@ -59,7 +57,9 @@ import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItem
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The arena a domain's level is entered into: its stand-in beside the entrance, the level it runs, and the reward items its
@@ -106,27 +106,17 @@ export const useWorldDomains = ({
   closeScreen,
   completedMainQuestIds,
   domainChallengeLevels,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
-  inventory,
   jumpLandmarks,
   jumpTo,
   kitEffectState,
-  materialDataMap,
-  nameText,
   party,
   random,
   rank,
   reliquaryPieceEntryMap,
   reliquarySets,
-  setInventory,
-  setWallet,
   unlockedLandmarks,
-  wallet,
   weaponDataMap,
-  worldNow,
-}: WorldBagDependencies & {
+}: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   artifactMainAffixPools: ArtifactMainAffixPool[];
@@ -135,9 +125,6 @@ export const useWorldDomains = ({
   closeScreen: () => void;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   domainChallengeLevels: DomainChallengeLevelMap;
-  events: WorldEvents;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
   jumpLandmarks: Readonly<Ref<Landmark[]>>;
   jumpTo: (pose: WorldJumpPose) => void;
   kitEffectState: KitEffectState;
@@ -148,8 +135,10 @@ export const useWorldDomains = ({
   reliquarySets: readonly ReliquarySetData[];
   unlockedLandmarks: Ref<Landmark[]>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
-  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
   const unlockedDomainEntrances = computed(() =>
     unlockedLandmarks.value.filter(
       (landmark): landmark is DomainEntranceLandmark => landmark.kind === LandmarkKind.DomainEntrance,
@@ -170,10 +159,15 @@ export const useWorldDomains = ({
   // A weekly boss's trounce domain is read from the weekly record, which holds none before a publish, so its schedule is empty then
   const readDomainSchedule = async (landmark: DomainEntranceLandmark): Promise<DomainSchedule> => {
     if (landmark.domainKind === DomainKind.Trounce) {
-      const domains = await readWeeklyBossDomains(gameDataBaseUrl);
+      const domains = await readWeeklyBossDomains(worldSessionStore.gameDataBaseUrl);
       return toWeeklyBossSchedule(domains[String(landmark.entryId)] ?? { levels: [] });
     }
-    return readGameDataEntry(gameDataBaseUrl, GameDataset.Domains, String(landmark.entryId), domainScheduleSchema);
+    return readGameDataEntry(
+      worldSessionStore.gameDataBaseUrl,
+      GameDataset.Domains,
+      String(landmark.entryId),
+      domainScheduleSchema,
+    );
   };
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
@@ -370,7 +364,13 @@ export const useWorldDomains = ({
   const claimWeeklyBossFirstClearReward = (entryId: number) => {
     if (!checkIsWeeklyBossFirstClaimable(clearedDomainIds.value, entryId)) return;
     const claim = claimWeeklyBossFirstClear(clearedDomainIds.value, String(entryId));
-    const granted = grantRewardItems(wallet.value, inventory.value, claim.rewards, nameText, materialDataMap);
+    const granted = grantRewardItems(
+      wallet.value,
+      inventory.value,
+      claim.rewards,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
+    );
     if (!granted) return;
     setWallet(granted.wallet);
     setInventory(granted.inventory);
@@ -454,8 +454,8 @@ export const useWorldDomains = ({
       adventureExp.value,
       completedMainQuestIds.value,
       now,
-      nameText,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     if (!claim) return;
     // Each artifact goes into the bag as an entry of its own with the stats it rolled, so each one keeps its own
@@ -464,7 +464,13 @@ export const useWorldDomains = ({
         addDroppedItem(
           bag,
           dropped,
-          getDroppedItemDefinition(dropped.itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
+          getDroppedItemDefinition(
+            dropped.itemId,
+            worldSessionStore.nameText,
+            weaponDataMap,
+            worldSessionStore.materialDataMap,
+            reliquaryPieceEntryMap,
+          ),
         ).inventory,
       claim.inventory,
     );

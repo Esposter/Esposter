@@ -2,17 +2,20 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
 import type { ShrineMarker } from "#src/models/puzzle/ShrineMarker";
+import type { GameText } from "genshin-text";
 
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { InteractionKind } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
+import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 
 const createMaterialData = (id: number): MaterialData => ({
   id,
@@ -46,7 +49,7 @@ describe(useWorldShrines, () => {
     questId: 2,
     rewardId: 2,
   };
-  const GAME_TEXT: Readonly<Record<string, string>> = { [GameTextKey.ShrineOfDepths]: "Made-up Shrine" };
+  const GAME_TEXT: GameText = { ...ENGLISH_GAME_TEXT, [GameTextKey.ShrineOfDepths]: "Made-up Shrine" };
   const GROUND_HEIGHT = 3;
   const SHRINE_ID = "shrine";
   const SHRINE_POSITION = { x: 1, z: 2 };
@@ -59,18 +62,17 @@ describe(useWorldShrines, () => {
     );
 
   const setup = (bag: Inventory, keySources: ShrineKeySource[]) => {
-    const inventory = ref<Inventory>(bag);
-    const setInventory = vi.fn<(nextInventory: Inventory) => void>((nextInventory) => {
-      inventory.value = nextInventory;
-    });
+    const worldSessionStore = startTestWorldSession(
+      { gameText: GAME_TEXT },
+      { inventory: bag, wallet: { ...EMPTY_WALLET } },
+    );
+    const setInventory = vi.spyOn(worldSessionStore, "setInventory");
+    const { inventory } = storeToRefs(worldSessionStore);
     const shrineMarkers = reactive<ShrineMarker[]>([
       { id: SHRINE_ID, position: SHRINE_POSITION, shrine: { isOpen: false, region: SHRINE_REGION_ID } },
     ]);
     const { openShrineById, shrineInteractables } = useWorldShrines({
-      gameText: GAME_TEXT,
       getGroundHeight: () => GROUND_HEIGHT,
-      inventory,
-      setInventory,
       shrineKeySources: keySources,
       shrineMarkers,
     });

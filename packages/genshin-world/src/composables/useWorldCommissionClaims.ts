@@ -6,9 +6,6 @@ import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Party } from "#src/models/party/Party";
 import type { ComputedRef, Ref } from "vue";
 
@@ -18,6 +15,8 @@ import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { convertLongTermEncounterPoint } from "#src/services/commission/convertLongTermEncounterPoint";
 import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
 import { takeKatheryneBonus } from "#src/services/commission/takeKatheryneBonus";
+import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The claims a screen makes with the points the save holds: a dealt commission claimed for its reward, free when it is
@@ -32,18 +31,10 @@ export const useWorldCommissionClaims = ({
   completedMainQuestIds,
   encounterPoints,
   friendshipLevels,
-  getWorldNow,
-  inventory,
   longTermEncounterPoints,
-  materialDataMap,
-  names,
   party,
   rank,
   setCharacters,
-  setInventory,
-  setWallet,
-  wallet,
-  worldNow,
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
@@ -53,19 +44,14 @@ export const useWorldCommissionClaims = ({
   completedMainQuestIds: ComputedRef<ReadonlySet<string>>;
   encounterPoints: Ref<EncounterPoints>;
   friendshipLevels: Ref<FriendshipLevels | undefined>;
-  getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
   longTermEncounterPoints: Ref<LongTermEncounterPoints>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  names: Readonly<Record<string, string>>;
   party: Party;
   rank: ComputedRef<number>;
   setCharacters: (nextCharacters: Character[]) => void;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
-  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
+  const { getWorldNow, setInventory, setWallet } = worldSessionStore;
   // Where a routing's items land: the Adventure EXP, the characters, the bag and the wallet
   const writeRouting = (routing: CommissionRouting) => {
     adventureExp.value = routing.adventureExp;
@@ -87,8 +73,8 @@ export const useWorldCommissionClaims = ({
       encounterPoints: encounterPoints.value,
       friendshipLevels: friendshipLevels.value,
       inventory: inventory.value,
-      materialDataMap,
-      names,
+      materialDataMap: worldSessionStore.materialDataMap,
+      names: worldSessionStore.nameText,
       now: getWorldNow(),
       party,
       random: Math.random,
@@ -115,8 +101,8 @@ export const useWorldCommissionClaims = ({
       completedMainQuestIds.value,
       friendshipLevels.value,
       inventory.value,
-      materialDataMap,
-      names,
+      worldSessionStore.materialDataMap,
+      worldSessionStore.nameText,
       party,
       wallet.value,
     );

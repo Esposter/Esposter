@@ -16,7 +16,7 @@ Each task fits one session. The order is the dependency order. A session that ta
 ## 2. The bag
 
 - [x] 2.1 Move the inventory, the wallet and their setters from `useWorldSave` into the session store, with the bag-change and obtain events emitted from the setters as now. Verify: `useWorldSave`'s test, converted to a seeded store, fails before the move and passes after, and the save sync still writes the same save.
-- [ ] 2.2 Make the composables that took the bag, its setters, the context keys or the events emitter read the session store, and remove the bag spreads and the keys from the root. Verify: the investigation's count script reports 0 shared keys in every call, the package's typecheck through the mapper reports nothing, and the touched composables' tests pass.
+- [x] 2.2 Make the composables that took the bag, its setters, the context keys or the events emitter read the session store, and remove the bag spreads and the keys from the root. Verify: the investigation's count script reports 0 shared keys in every call, the package's typecheck through the mapper reports nothing, and the touched composables' tests pass.
 
 ## 3. The mailbox
 

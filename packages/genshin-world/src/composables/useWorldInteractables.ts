@@ -20,6 +20,7 @@ import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmar
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
+import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
@@ -37,7 +38,6 @@ export const useWorldInteractables = ({
   domainArena,
   fishingPointPlaces,
   frostbearingTreePlaces,
-  gameText,
   getGroundHeight,
   homePotPoint,
   homeRealmVisit,
@@ -55,6 +55,7 @@ export const useWorldInteractables = ({
   unlockedLandmarks,
   viewpointPlaceMap,
 }: WorldInteractablesOptions) => {
+  const worldSessionStore = useWorldSessionStore();
   // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
   const domainArenaInteractables = computed<Interactable[]>(() => {
     if (!domainArena.value) return [];
@@ -64,7 +65,7 @@ export const useWorldInteractables = ({
       {
         id: DOMAIN_LEAVE_INTERACTABLE_ID,
         kind: InteractionKind.Activate,
-        name: gameText[GameTextKey.DomainLeave],
+        name: worldSessionStore.gameText[GameTextKey.DomainLeave],
         position: { x: x - DOMAIN_ARENA_PROMPT_OFFSET, y, z },
       },
       ...(isDomainTreeRaised.value
@@ -72,7 +73,7 @@ export const useWorldInteractables = ({
             {
               id: DOMAIN_TREE_INTERACTABLE_ID,
               kind: InteractionKind.Activate,
-              name: gameText[GameTextKey.PetrifiedTree],
+              name: worldSessionStore.gameText[GameTextKey.PetrifiedTree],
               position: { x: x + DOMAIN_ARENA_PROMPT_OFFSET, y, z },
             },
           ]
@@ -91,13 +92,13 @@ export const useWorldInteractables = ({
       : [],
   );
   const interactables = computed<Interactable[]>(() => {
-    if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
+    if (homeRealmVisit.value) return computeHomeRealmInteractables(worldSessionStore.gameText);
     // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
     const { x: abyssX, z: abyssZ } = ABYSS_ENTRANCE_POSITION;
     const abyssEntrance: Interactable = {
       id: ABYSS_ENTRANCE_INTERACTABLE_ID,
       kind: InteractionKind.Activate,
-      name: gameText[GameTextKey.AbyssMoonSpire],
+      name: worldSessionStore.gameText[GameTextKey.AbyssMoonSpire],
       position: { x: abyssX, y: getGroundHeight(abyssX, abyssZ), z: abyssZ },
     };
     // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a
@@ -105,14 +106,14 @@ export const useWorldInteractables = ({
     const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
       id,
       kind: InteractionKind.Activate,
-      name: gameText[GameTextKey.FrostbearingTree],
+      name: worldSessionStore.gameText[GameTextKey.FrostbearingTree],
       position: { x, y: getGroundHeight(x, z), z },
     }));
     // A locked landmark is resonated with on the key, named by the game's text for its kind
     const toLandmarkInteractable = ({ id, position: { x, z } }: Landmark, textKey: GameTextKey): Interactable => ({
       id,
       kind: InteractionKind.Activate,
-      name: gameText[textKey],
+      name: worldSessionStore.gameText[textKey],
       position: { x, y: getGroundHeight(x, z), z },
     });
     return [
@@ -125,7 +126,11 @@ export const useWorldInteractables = ({
       ...frostbearingTrees,
       ...viewpointInteractables.value,
       abyssEntrance,
-      ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueWorship], getGroundHeight),
+      ...computeStatueInteractables(
+        unlockedLandmarks.value,
+        worldSessionStore.gameText[GameTextKey.StatueWorship],
+        getGroundHeight,
+      ),
       ...lockedJumpLandmarks.value.map((landmark) =>
         toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
       ),
@@ -135,22 +140,32 @@ export const useWorldInteractables = ({
       ...computePlaceInteractables(
         CRAFTING_BENCH_INTERACTABLE_ID,
         craftingBenchPlace,
-        gameText[GameTextKey.CraftingTitle],
+        worldSessionStore.gameText[GameTextKey.CraftingTitle],
         getGroundHeight,
       ),
       ...computeCookingStoveInteractables(
         cookingStovePlace.value,
-        { cooking: gameText[GameTextKey.CookingTitle], processing: gameText[GameTextKey.ProcessingStart] },
+        {
+          cooking: worldSessionStore.gameText[GameTextKey.CookingTitle],
+          processing: worldSessionStore.gameText[GameTextKey.ProcessingStart],
+        },
         getGroundHeight,
       ),
       ...computePlaceInteractables(
         FORGE_INTERACTABLE_ID,
         blacksmithPlace.value,
-        gameText[GameTextKey.ForgeTitle],
+        worldSessionStore.gameText[GameTextKey.ForgeTitle],
         getGroundHeight,
       ),
-      ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
-      ...(homePotPoint.value ? [computeHomePotInteractable(gameText, homePotPoint.value, getGroundHeight)] : []),
+      ...computeFishingInteractables(
+        fishingPointPlaces.value,
+        isFishingOpen.value,
+        worldSessionStore.gameText,
+        getGroundHeight,
+      ),
+      ...(homePotPoint.value
+        ? [computeHomePotInteractable(worldSessionStore.gameText, homePotPoint.value, getGroundHeight)]
+        : []),
     ];
   });
   const interaction = useInteraction(() => interactables.value, characterBody);

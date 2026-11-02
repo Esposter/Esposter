@@ -2,9 +2,6 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { Wallet } from "#src/models/inventory/Wallet";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { GameLanguage } from "genshin-text";
 import type { Ref } from "vue";
 
 import { Currency } from "#src/models/inventory/Currency";
@@ -12,30 +9,23 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { readAchievements } from "#src/services/achievement/readAchievements";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 
 // The achievements, their categories and their words in the reader's language, read the first time the Achievements
 // Screen opens rather than with the world. A finished step or quest moves the achievements whatever screen is open, and
 // The Primogems of those finished are paid into the wallet
 export const useWorldAchievements = ({
   achievementProgressMap,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
-  language,
   screenKind,
-  setWallet,
-  wallet,
 }: {
   achievementProgressMap: Ref<ReadonlyMap<number, AchievementProgress>>;
-  events: WorldEvents;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
-  language: GameLanguage;
   screenKind: Ref<ScreenKind>;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { wallet } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setWallet } = worldSessionStore;
   const achievementData = shallowRef<{
     achievements: Achievement[];
     categories: AchievementCategory[];
@@ -47,8 +37,8 @@ export const useWorldAchievements = ({
     getSynchronizedFunction(() =>
       getResultAsync(async () => {
         const [{ achievements, categories }, textMap] = await Promise.all([
-          readAchievements(gameDataBaseUrl),
-          AchievementTextLoaderMap[language](gameDataBaseUrl),
+          readAchievements(worldSessionStore.gameDataBaseUrl),
+          AchievementTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl),
         ]);
         return { achievements, categories, textMap };
       }).match(
@@ -64,7 +54,7 @@ export const useWorldAchievements = ({
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readAchievements(gameDataBaseUrl)).match(
+    getResultAsync(() => readAchievements(worldSessionStore.gameDataBaseUrl)).match(
       ({ achievements }) => {
         const now = getWorldNow();
         let primogems = 0;

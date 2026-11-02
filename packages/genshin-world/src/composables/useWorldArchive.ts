@@ -2,13 +2,10 @@ import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref, ShallowRef } from "vue";
 
 import { bookBodySchema } from "#src/models/archive/ArchiveBook";
@@ -32,7 +29,9 @@ import { readTravelLogEntries } from "#src/services/archive/readTravelLogEntries
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readSceneGroups } from "#src/services/sceneGroup/readSceneGroups";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 
 // The Archive's entries, the volumes it reads and the defeats it counts. Its entries are read once the quest it opens after
 // Is done, as the game opens it, and its progress and defeats are the save's, the bag's items and the defeats opening its
@@ -41,11 +40,7 @@ export const useWorldArchive = ({
   archiveKillsMap,
   archiveProgressMap,
   enemyKindMap,
-  events,
   finishedMainQuestIds,
-  gameDataBaseUrl,
-  inventory,
-  language,
   reliquaryPieceEntryMap,
   reliquarySets,
   screenKind,
@@ -53,19 +48,18 @@ export const useWorldArchive = ({
   archiveKillsMap: ShallowRef<ArchiveKills>;
   archiveProgressMap: ShallowRef<ArchiveProgress>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
-  events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  gameDataBaseUrl: string;
-  inventory: Ref<Inventory>;
-  language: GameLanguage;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
   screenKind: Ref<ScreenKind>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory } = storeToRefs(worldSessionStore);
+  const { events } = worldSessionStore;
   const archiveData = shallowRef<ArchiveData>();
   // The place each viewpoint stands at, as the scene group record gives it, read with the Archive's entries
   const viewpointPlaceMap = shallowRef<ReadonlyMap<number, SceneGroupPlace>>(new Map());
-  // The volume the Archive is reading, its title and its text in the reader's language
+  // The volume the Archive is reading, its title and its text in the reader's worldSessionStore.language
   const bookReading = shallowRef<{ body: string; title: string }>();
   // The volume last chosen whose text is still loading, let go once the Archive closes, so a text that arrives for another
   // Volume or after the Archive has closed opens no reader
@@ -73,7 +67,7 @@ export const useWorldArchive = ({
   watch(screenKind, (newScreenKind) => {
     if (newScreenKind !== ScreenKind.Archive) loadingBookId = undefined;
   });
-  // A volume the Archive's Books section opens has its text read from the hosted game data in the reader's language,
+  // A volume the Archive's Books section opens has its text read from the hosted game data in the reader's worldSessionStore.language,
   // When it opens
   const readBook = async (bookId: number) => {
     if (!archiveData.value) return;
@@ -82,7 +76,12 @@ export const useWorldArchive = ({
     if (!book) return;
     loadingBookId = bookId;
     await getResultAsync(() =>
-      readGameDataEntry(gameDataBaseUrl, `${GameDataset.BookBody}/${language}`, String(book.bodyId), bookBodySchema),
+      readGameDataEntry(
+        worldSessionStore.gameDataBaseUrl,
+        `${GameDataset.BookBody}/${worldSessionStore.language}`,
+        String(book.bodyId),
+        bookBodySchema,
+      ),
     ).match(
       (body) => {
         if (loadingBookId !== bookId) return;
@@ -115,9 +114,9 @@ export const useWorldArchive = ({
       if (!newIsArchiveUnlocked || archiveData.value) return;
       await getResultAsync(async () => {
         const [sectionEntriesMap, textMap, sceneGroups] = await Promise.all([
-          readArchiveEntries(gameDataBaseUrl),
-          ArchiveTextLoaderMap[language](gameDataBaseUrl),
-          readSceneGroups(gameDataBaseUrl),
+          readArchiveEntries(worldSessionStore.gameDataBaseUrl),
+          ArchiveTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl),
+          readSceneGroups(worldSessionStore.gameDataBaseUrl),
         ]);
         return {
           placeMap: getViewpointPlaces(sceneGroups, sectionEntriesMap[ArchiveSection.Geography]),
@@ -140,7 +139,7 @@ export const useWorldArchive = ({
   // First needed, since the Archive's own screen may not have been opened
   events.on("parentQuestFinish", () => {
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readTravelLogEntries(gameDataBaseUrl)).match(
+    getResultAsync(() => readTravelLogEntries(worldSessionStore.gameDataBaseUrl)).match(
       (entries) => {
         archiveProgressMap.value = openTravelLogEntries(archiveProgressMap.value, entries, finishedMainQuestIds.value);
       },

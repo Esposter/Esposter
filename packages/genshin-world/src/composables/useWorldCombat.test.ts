@@ -13,7 +13,8 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER, REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { useWorldSessionStore } from "#src/store/session";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { STAMINA_MAX } from "genshin-engine";
 import { assert, describe, expect, test, vi } from "vitest";
 import { nextTick, shallowRef } from "vue";
@@ -21,12 +22,11 @@ import { nextTick, shallowRef } from "vue";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> = {}) =>
-  useWorldCombat({
+const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> = {}) => {
+  startTestWorldSession({ gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL });
+  return useWorldCombat({
     characterIdConstellationsMap: shallowRef(new Map()),
     enemyTables,
-    events: createWorldEvents(),
-    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     onPartyDown: () => {},
     onPartyRevived: () => {},
     partyBonusLines: shallowRef([]),
@@ -41,6 +41,7 @@ const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> =
     wildlifePlaces: [],
     ...overrides,
   });
+};
 
 describe(useWorldCombat, () => {
   test("a new player starts with the Traveler alone", () => {
@@ -52,9 +53,9 @@ describe(useWorldCombat, () => {
 
   test("a chest opened in the world reaches the combat", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const { kitContext } = createCombat({ events });
-    events.emit("chestOpened");
+    const { kitContext } = createCombat();
+    const worldSessionStore = useWorldSessionStore();
+    worldSessionStore.events.emit("chestOpened");
 
     expect(kitContext.outbox).toStrictEqual([{ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.ChestOpened }]);
   });

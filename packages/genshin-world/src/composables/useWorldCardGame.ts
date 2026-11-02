@@ -2,20 +2,15 @@ import type { WorldCardGameOptions } from "#src/models/gcg/WorldCardGameOptions"
 
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
+import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
-export const useWorldCardGame = ({
-  getResidents,
-  inventory,
-  materialDataMap,
-  nameText,
-  savedCardGameExp,
-  savedRewardedGameIds,
-  setInventory,
-  setWallet,
-  wallet,
-}: WorldCardGameOptions) => {
+export const useWorldCardGame = ({ getResidents, savedCardGameExp, savedRewardedGameIds }: WorldCardGameOptions) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { setInventory, setWallet } = worldSessionStore;
   const cardGameExp = ref(savedCardGameExp);
   const cardGameRewardedGameIds = ref(savedRewardedGameIds);
   // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
@@ -32,8 +27,8 @@ export const useWorldCardGame = ({
       },
       weekGame.gameId,
       toGcgWeekGameRewards(weekGame),
-      nameText,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     cardGameExp.value = granted.cardGameExp;
     cardGameRewardedGameIds.value = granted.rewardedGameIds;

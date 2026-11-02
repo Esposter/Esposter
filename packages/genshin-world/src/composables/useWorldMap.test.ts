@@ -18,7 +18,7 @@ import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMondstadtExplorationAreas } from "#src/services/exploration/readMondstadtExplorationAreas";
-import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
@@ -26,11 +26,12 @@ import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constant
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { readRegionData } from "#src/services/world/readRegionData";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
+import { storeToRefs } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { computed, ref, shallowRef } from "vue";
+import { computed, shallowRef } from "vue";
 
 vi.mock(import("#src/services/exploration/readMondstadtExplorationAreas"));
 vi.mock(import("#src/services/reputation/readMondstadtReputation"));
@@ -197,7 +198,6 @@ describe(useWorldMap, () => {
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
   const createWorldMap = (
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
-    events = createWorldEvents(),
     questStepTargets = shallowRef({ named: new Set<string>(), reached: new Set<string>() }),
     savedRequestClaimedAts: readonly Temporal.Instant[] = [],
   ) => {
@@ -205,7 +205,12 @@ describe(useWorldMap, () => {
     const reputation = shallowRef({ exp: 0, level: 1 });
     const placedDoings = shallowRef<PlacedDoing[]>([]);
     const recordedDoingIds = shallowRef<ReadonlySet<string>>(new Set<string>());
-    const wallet = ref(EMPTY_WALLET);
+    const worldSessionStore = startTestWorldSession(
+      { gameDataBaseUrl: "game-data", getWorldNow: () => epoch },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: EMPTY_WALLET },
+    );
+    const { events } = worldSessionStore;
+    const { wallet } = storeToRefs(worldSessionStore);
     return {
       events,
       gainWorldAdventureExp,
@@ -214,10 +219,7 @@ describe(useWorldMap, () => {
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
         completedMainQuestIds: shallowRef(new Set<string>()),
-        events,
         gainWorldAdventureExp,
-        gameDataBaseUrl: "game-data",
-        getWorldNow: () => epoch,
         placedDoings,
         questStepTargets,
         recordedDoingIds,
@@ -227,11 +229,7 @@ describe(useWorldMap, () => {
         setReputation: (nextReputation) => {
           reputation.value = nextReputation;
         },
-        setWallet: (nextWallet) => {
-          wallet.value = nextWallet;
-        },
         unlockedLandmarkIds,
-        wallet,
       }),
     };
   };
@@ -279,7 +277,6 @@ describe(useWorldMap, () => {
     expect.hasAssertions();
 
     const { events, reputation, wallet } = createWorldMap(
-      undefined,
       undefined,
       undefined,
       Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => epoch),
@@ -427,12 +424,11 @@ describe(useWorldMap, () => {
       talks: [],
       titleTextId: "",
     };
-    const events = createWorldEvents();
     const questEvents: QuestEvent[] = [];
+    const { activateLandmark, events } = createWorldMap(new Set());
     events.on("questEvent", (questEvent) => {
       questEvents.push(questEvent);
     });
-    const { activateLandmark } = createWorldMap(new Set(), events);
     await waitForReads();
 
     activateLandmark(waypoint.id);
@@ -448,8 +444,7 @@ describe(useWorldMap, () => {
     expect.hasAssertions();
 
     // No quest step unlocks a waypoint outright, so an Interact on the point a step names leaves it locked until F
-    const events = createWorldEvents();
-    const { lockedJumpLandmarks, unlockedLandmarkIds } = createWorldMap(new Set(), events);
+    const { events, lockedJumpLandmarks, unlockedLandmarkIds } = createWorldMap(new Set());
     await waitForReads();
 
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: String(TRANS_POINT_ID) });
@@ -486,7 +481,7 @@ describe(useWorldMap, () => {
     // The unlock table lists the waypoint's point and a quest step names it, so the waypoint is hidden until that step is reached
     vi.mocked(readOpenWorldTransPointUnlocks).mockResolvedValue([{ pointId: TRANS_POINT_ID, sceneId: 3 }]);
     const questStepTargets = shallowRef({ named: new Set([String(TRANS_POINT_ID)]), reached: new Set<string>() });
-    const { lockedJumpLandmarks } = createWorldMap(new Set(), createWorldEvents(), questStepTargets);
+    const { lockedJumpLandmarks } = createWorldMap(new Set(), questStepTargets);
     await waitForReads();
 
     expect(lockedJumpLandmarks.value.map(({ id }) => id)).not.toContain(waypoint.id);
@@ -540,10 +535,9 @@ describe(useWorldMap, () => {
 
   test("the first unlock of a domain entrance emits its entry id, and a later unlock emits nothing", async () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
     const domainEntryUnlocked = vi.fn<(entryId: number) => void>();
+    const { activateLandmark, events } = createWorldMap(new Set());
     events.on("domainEntryUnlocked", domainEntryUnlocked);
-    const { activateLandmark } = createWorldMap(new Set(), events);
     await waitForReads();
 
     activateLandmark(domainEntrance.id);
@@ -554,10 +548,9 @@ describe(useWorldMap, () => {
 
   test("the first unlock of a waypoint emits no domain entry", async () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
     const domainEntryUnlocked = vi.fn<(entryId: number) => void>();
+    const { activateLandmark, events } = createWorldMap(new Set());
     events.on("domainEntryUnlocked", domainEntryUnlocked);
-    const { activateLandmark } = createWorldMap(new Set(), events);
     await waitForReads();
 
     activateLandmark(waypoint.id);

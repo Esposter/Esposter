@@ -13,7 +13,6 @@ export interface ReputationRequestOptions {
   acceptQuest: (questId: string) => void;
   bountyHunt: Readonly<Ref<ReputationBountyHunt | undefined>>;
   claimBounty: () => void;
-  getWorldNow: () => Temporal.Instant;
   questProgressMap: Readonly<Ref<ReadonlyMap<string, QuestProgress>>>;
   quests: Readonly<Ref<Quest[]>>;
   questTextMap: Readonly<Ref<Readonly<Record<string, string>>>>;

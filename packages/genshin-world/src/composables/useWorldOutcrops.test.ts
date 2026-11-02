@@ -1,8 +1,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -19,9 +17,10 @@ import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimRe
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
+import { storeToRefs } from "pinia";
 import { assert, describe, expect, test } from "vitest";
 import { ref } from "vue";
 
@@ -62,12 +61,15 @@ describe(useWorldOutcrops, () => {
 
   // A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
   const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
-    const events = createWorldEvents();
+    const worldSessionStore = startTestWorldSession(
+      { gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET, [Currency.OriginalResin]: resin } },
+    );
+    const { events } = worldSessionStore;
+    const { inventory, wallet } = storeToRefs(worldSessionStore);
     const adventureExp = ref(0);
     const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
-    const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
     const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
-    const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
     const outcrops = useWorldOutcrops({
       adventureExp,
       adventureRankTables,
@@ -75,25 +77,12 @@ describe(useWorldOutcrops, () => {
       characters,
       completedMainQuestIds: ref(new Set<string>()),
       enemyMap: new Map(),
-      events,
       friendshipLevels,
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-      gameText: {},
       getGroundHeight: () => 0,
-      inventory,
-      materialDataMap: new Map(),
-      nameText: {},
       party: createParty([CHARACTER_ID]),
       placements: ref(PLACEMENTS),
       rank: ref(30),
       regionStatueProgressMap: ref(new Map()),
-      setInventory: (nextInventory) => {
-        inventory.value = nextInventory;
-      },
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
     });
     outcrops.kindRules.value = KIND_RULES;
     outcrops.drawDayOutcrops(epoch, () => 0);

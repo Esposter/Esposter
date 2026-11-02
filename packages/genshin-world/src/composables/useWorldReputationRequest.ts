@@ -4,13 +4,13 @@ import type { ReputationRequestOptions } from "#src/models/reputation/Reputation
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
+import { useWorldSessionStore } from "#src/store/session";
 import { computed, shallowRef } from "vue";
 
 export const useWorldReputationRequest = ({
   acceptQuest,
   bountyHunt,
   claimBounty,
-  getWorldNow,
   questProgressMap,
   quests,
   questTextMap,
@@ -20,6 +20,8 @@ export const useWorldReputationRequest = ({
   requestClaimedAts,
   takeBounty,
 }: ReputationRequestOptions) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { getWorldNow } = worldSessionStore;
   // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
   // Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
   const reputationOffer = shallowRef<ReputationRequest>();

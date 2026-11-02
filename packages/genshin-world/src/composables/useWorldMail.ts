@@ -1,12 +1,9 @@
 import type { TextChunk } from "#src/models/data/TextChunk";
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
-import type { GameLanguage } from "genshin-text";
-import type { Ref } from "vue";
 
 import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
@@ -18,37 +15,24 @@ import { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, noop } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { shallowRef } from "vue";
 
 // The mailbox's rows and texts, read as the world starts, with the Traveler's birthday mail delivered and the expired mails
 // Removed as the clock stands then. A claim takes a mail's items into the bag and wallet once, and a claim the bag cannot
 // Take whole leaves the mail held and says so
 export const useWorldMail = ({
-  gameDataBaseUrl,
-  getWorldNow,
-  inventory,
-  language,
-  materialDataMap,
-  names,
   savedMails,
   savedTravelerBirthday,
-  setInventory,
-  setWallet,
-  wallet,
 }: {
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
-  language: GameLanguage;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  names: Readonly<Record<string, string>>;
   savedMails: MailSave[];
   savedTravelerBirthday?: TravelerBirthdaySave;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { getWorldNow, setInventory, setWallet } = worldSessionStore;
   const mails = shallowRef<MailSave[]>(savedMails);
   const mailData = shallowRef<{
     birthdayMailIds: ReadonlySet<number>;
@@ -58,12 +42,12 @@ export const useWorldMail = ({
   const isBagFull = shallowRef(false);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(async () => {
-    const birthdayMailRows = await readBirthdayMailRows(gameDataBaseUrl);
+    const birthdayMailRows = await readBirthdayMailRows(worldSessionStore.gameDataBaseUrl);
     const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
     const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
     const [mailRows, textMap] = await Promise.all([
-      readMailRows(gameDataBaseUrl, [...mailIds]),
-      readMailText(gameDataBaseUrl, language),
+      readMailRows(worldSessionStore.gameDataBaseUrl, [...mailIds]),
+      readMailText(worldSessionStore.gameDataBaseUrl, worldSessionStore.language),
     ]);
     const now = getWorldNow();
     const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
@@ -85,8 +69,8 @@ export const useWorldMail = ({
       { inventory: inventory.value, mails: mails.value, wallet: wallet.value },
       held,
       mailRow,
-      names,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     if (!nextState) {
       isBagFull.value = mails.value.some((mail) => checkIsSameHeldMail(mail, held) && !mail.isClaimed);
@@ -101,8 +85,8 @@ export const useWorldMail = ({
     const nextState = claimAllMails(
       { inventory: inventory.value, mails: mails.value, wallet: wallet.value },
       mailRows,
-      names,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
     );
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);

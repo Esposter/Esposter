@@ -1,7 +1,5 @@
 import type { Character } from "#src/models/character/Character";
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 
@@ -13,7 +11,8 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { CHARACTER_EXP_ITEM_ID, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
+import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 import { ref } from "vue";
 
@@ -67,30 +66,22 @@ describe(useWorldQuestRewards, () => {
 
   test("finishing a quest grants its rewards", () => {
     expect.hasAssertions();
-    const events = createWorldEvents();
-    const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
-    const wallet = ref<Wallet>({ ...EMPTY_WALLET });
+    const worldSessionStore = startTestWorldSession(
+      { materialDataMap: new Map([[ITEM_ID, MATERIAL_DATA]]), nameText: { "1": "Made-up Ore" } },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET } },
+    );
+    const { events } = worldSessionStore;
+    const { inventory, wallet } = storeToRefs(worldSessionStore);
     const characters = ref<Character[]>([CHARACTER, BENCHED_CHARACTER]);
     const gainAdventureExp = vi.fn<(amount: number) => void>();
     useWorldQuestRewards({
       characters,
-      events,
       gainAdventureExp,
       getDeployedCharacterIds: () => [CHARACTER.id],
       getMaxLevel: () => MAX_LEVEL,
-      inventory,
-      materialDataMap: new Map([[ITEM_ID, MATERIAL_DATA]]),
-      names: { "1": "Made-up Ore" },
       setCharacters: (nextCharacters) => {
         characters.value = nextCharacters;
       },
-      setInventory: (nextInventory) => {
-        inventory.value = nextInventory;
-      },
-      setWallet: (nextWallet) => {
-        wallet.value = nextWallet;
-      },
-      wallet,
     });
     events.emit("finishQuest", QUEST, PROGRESS, PROGRESS);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 2);

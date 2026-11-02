@@ -7,6 +7,5 @@ import type { ShallowRef } from "vue";
 export interface WorldOculiOptions {
   characterBody: { position: GroundPoint };
   foundOculusIds: Readonly<ShallowRef<ReadonlySet<string>>>;
-  gameDataBaseUrl: string;
   getMapCamera: () => MapCamera;
 }

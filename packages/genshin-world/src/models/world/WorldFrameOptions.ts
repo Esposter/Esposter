@@ -30,7 +30,6 @@ export interface WorldFrameOptions {
   findTouchedOculus: () => OculusPlace | undefined;
   getEquippedGadgetCooldown: (now: Temporal.Instant) => number;
   getMemberMaxHealth: (characterId: number) => number | undefined;
-  getWorldNow: () => Temporal.Instant;
   hudFrame: HudFrame;
   input: Input;
   inputState: InputState;

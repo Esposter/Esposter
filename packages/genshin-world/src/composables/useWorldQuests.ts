@@ -3,8 +3,6 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestChapter } from "#src/models/quest/QuestChapter";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { GameLanguage } from "genshin-text";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
@@ -16,6 +14,7 @@ import { QuestTextLoaderMap } from "#src/services/quest/QuestTextLoaderMap";
 import { readQuestChapters } from "#src/services/quest/readQuestChapters";
 import { readQuests } from "#src/services/quest/readQuests";
 import { startQuests } from "#src/services/quest/startQuests";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 
 // The carried quests, read as the world starts, with how far each has come. A quest shows once it starts, and a finished
@@ -23,16 +22,12 @@ import { getResultAsync } from "@esposter/shared";
 // Quest event the world records is handed to every quest in progress, the steps and quests it finishes reach the
 // Achievements and the Travel Log, and a talk that ends starts each quest it offers
 export const useWorldQuests = ({
-  events,
-  gameDataBaseUrl,
-  language,
   savedQuestProgressMap,
 }: {
-  events: WorldEvents;
-  gameDataBaseUrl: string;
-  language: GameLanguage;
   savedQuestProgressMap: ReadonlyMap<string, QuestProgress>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { events } = worldSessionStore;
   const quests = shallowRef<Quest[]>([]);
   const questChapters = shallowRef<QuestChapter[]>([]);
   const questProgressMap = shallowRef<ReadonlyMap<string, QuestProgress>>(savedQuestProgressMap);
@@ -76,7 +71,7 @@ export const useWorldQuests = ({
   );
   // A chapter read that fails is logged and leaves the series unlisted, so the quests still load without them
   const readQuestChaptersOrEmpty = () =>
-    getResultAsync(() => readQuestChapters(gameDataBaseUrl)).match(
+    getResultAsync(() => readQuestChapters(worldSessionStore.gameDataBaseUrl)).match(
       (newQuestChapters) => newQuestChapters,
       (error) => {
         console.error(error);
@@ -84,7 +79,7 @@ export const useWorldQuests = ({
       },
     );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => Promise.all([readQuests(gameDataBaseUrl), readQuestChaptersOrEmpty()])).match(
+  getResultAsync(() => Promise.all([readQuests(worldSessionStore.gameDataBaseUrl), readQuestChaptersOrEmpty()])).match(
     ([newQuests, newQuestChapters]) => {
       quests.value = newQuests;
       questChapters.value = newQuestChapters;
@@ -95,7 +90,7 @@ export const useWorldQuests = ({
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => QuestTextLoaderMap[language](gameDataBaseUrl)).match(
+  getResultAsync(() => QuestTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
     (newQuestTextMap) => {
       questTextMap.value = newQuestTextMap;
     },

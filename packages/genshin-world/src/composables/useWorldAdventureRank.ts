@@ -1,8 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
-import type { Wallet } from "#src/models/inventory/Wallet";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { ComputedRef, Ref } from "vue";
+import type { ComputedRef } from "vue";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { claimRankRewards } from "#src/services/adventureRank/claimRankRewards";
@@ -12,6 +10,8 @@ import { computeWorldLevel } from "#src/services/adventureRank/computeWorldLevel
 import { WORLD_LEVEL_LOWERING_MINIMUM } from "#src/services/adventureRank/constants";
 import { gainAdventureExp } from "#src/services/adventureRank/gainAdventureExp";
 import { toggleWorldLevelLowering } from "#src/services/adventureRank/toggleWorldLevelLowering";
+import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef, watch } from "vue";
 
 // The Adventure EXP the session holds live, and the rank and World Level it stands at with the main quests done. A gain
@@ -19,25 +19,20 @@ import { computed, shallowRef, watch } from "vue";
 // Step the player has lowered it by
 export const useWorldAdventureRank = ({
   adventureRankTables,
-  events,
   finishedMainQuestIds,
-  getWorldNow,
   savedAdventureExp,
   savedAdventureRankRewardsClaimed,
   savedWorldLevelAdjustment,
-  setWallet,
-  wallet,
 }: {
   adventureRankTables: AdventureRankTables;
-  events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
-  getWorldNow: () => Temporal.Instant;
   savedAdventureExp: number;
   savedAdventureRankRewardsClaimed: number[];
   savedWorldLevelAdjustment: WorldLevelAdjustment;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { wallet } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setWallet } = worldSessionStore;
   const adventureExp = shallowRef(savedAdventureExp);
   const worldLevelAdjustment = shallowRef(savedWorldLevelAdjustment);
   const claimedRanks = shallowRef(savedAdventureRankRewardsClaimed);

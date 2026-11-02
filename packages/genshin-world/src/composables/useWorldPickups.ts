@@ -8,10 +8,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
-import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { GameText } from "genshin-text";
 import type { ShallowRef } from "vue";
 
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
@@ -34,54 +31,45 @@ import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { pickUpMaterialSource } from "#src/services/wildlife/pickUpMaterialSource";
 import { readMondstadtMaterialSourcePlaces } from "#src/services/wildlife/readMondstadtMaterialSourcePlaces";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
+import { storeToRefs } from "pinia";
 
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a point
 // Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once
 export const useWorldPickups = ({
   archive,
-  events,
-  gameDataBaseUrl,
-  gameText,
   getGroundHeight,
   getServerClockOffsetMs,
-  getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   reliquaryPieceEntryMap,
-  setInventory,
-  setWallet,
-  wallet,
   weaponDataMap,
-}: WorldBagDependencies & {
+}: {
   archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
-  events: WorldEvents;
-  gameDataBaseUrl: string;
-  gameText: GameText;
   getGroundHeight: (x: number, z: number) => number;
   getServerClockOffsetMs: () => number;
-  getWorldNow: () => Temporal.Instant;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
   // Which numbers the next ones
   const worldDrops = shallowRef<WorldDrop[]>([]);
   let placedDropCount = 0;
   // Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the instant
   // It was picked, and stands again once its respawn has come, read each time the clock is looked at
-  const { gatheringItems, gatheringPlaces } = useGatheringPoints(gameDataBaseUrl);
+  const { gatheringItems, gatheringPlaces } = useGatheringPoints(worldSessionStore.gameDataBaseUrl);
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
   const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
   // Mondstadt's material sources, the crystalflies picked up whole, fetched as the world opens. A load that fails is logged
   // And left off, so no source is offered rather than a wrong one
   const materialSources = shallowRef<MaterialSourcePlace[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtMaterialSourcePlaces(gameDataBaseUrl)).match(
+  getResultAsync(() => readMondstadtMaterialSourcePlaces(worldSessionStore.gameDataBaseUrl)).match(
     (places) => {
       materialSources.value = places;
     },
@@ -100,8 +88,14 @@ export const useWorldPickups = ({
       kind: InteractionKind.PickUp,
       name:
         itemId === MORA_ITEM_ID
-          ? gameText[GameTextKey.Mora]
-          : getDroppedItemDefinition(itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap).name,
+          ? worldSessionStore.gameText[GameTextKey.Mora]
+          : getDroppedItemDefinition(
+              itemId,
+              worldSessionStore.nameText,
+              weaponDataMap,
+              worldSessionStore.materialDataMap,
+              reliquaryPieceEntryMap,
+            ).name,
       position: { x, y: getGroundHeight(x, z), z },
     }));
     const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + getServerClockOffsetMs());
@@ -118,7 +112,7 @@ export const useWorldPickups = ({
         {
           id,
           kind: InteractionKind.PickUp,
-          name: toItemDefinition(item, nameText).name,
+          name: toItemDefinition(item, worldSessionStore.nameText).name,
           position: { x, y: getGroundHeight(x, z), z },
         },
       ];
@@ -126,7 +120,7 @@ export const useWorldPickups = ({
     const sources = materialSources.value.map(({ id, kind, position: { x, z } }) => ({
       id,
       kind: InteractionKind.PickUp,
-      name: getItemDefinition(kind, nameText, materialDataMap).name,
+      name: getItemDefinition(kind, worldSessionStore.nameText, worldSessionStore.materialDataMap).name,
       position: { x, y: getGroundHeight(x, z), z },
     }));
     return [...drops, ...gatherings, ...sources];
@@ -153,14 +147,14 @@ export const useWorldPickups = ({
       worldDrop,
       inventory.value,
       wallet.value,
-      nameText,
-      materialDataMap,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
       reliquaryPieceEntryMap,
       weaponDataMap,
     );
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);
-    bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+    bagFullHint.value = pickUp.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";
     if (worldDrop.itemId === MORA_ITEM_ID) events.emit("pickUpMora");
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(worldDrop.itemId) });
     worldDrops.value =
@@ -174,9 +168,9 @@ export const useWorldPickups = ({
     if (!place) return;
     const item = idGatheringItemMap.value.get(place.kind);
     if (!item) return;
-    const addition = addInventoryItem(inventory.value, toItemDefinition(item, nameText), 1);
+    const addition = addInventoryItem(inventory.value, toItemDefinition(item, worldSessionStore.nameText), 1);
     setInventory(addition.inventory);
-    bagFullHint.value = addition.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+    bagFullHint.value = addition.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
     if (addition.overflow === 0) {
       events.emit("gatheringPickedUp", String(item.id));
@@ -186,9 +180,15 @@ export const useWorldPickups = ({
   // A material source is picked into the bag as its item and taken out of the world, which keeps it where it lies when the bag
   // Has no room for it
   const pickUpMaterialSourcePlace = (placeId: string) => {
-    const pickUp = pickUpMaterialSource(materialSources.value, placeId, inventory.value, nameText, materialDataMap);
+    const pickUp = pickUpMaterialSource(
+      materialSources.value,
+      placeId,
+      inventory.value,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
+    );
     setInventory(pickUp.inventory);
-    bagFullHint.value = pickUp.overflow > 0 ? gameText[GameTextKey.BagFull] : "";
+    bagFullHint.value = pickUp.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";
     materialSources.value = pickUp.materialSources;
   };
   // An ore's break: its drops are placed where it stood and counted as obtained. The gathering ores and the mining

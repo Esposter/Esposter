@@ -6,8 +6,6 @@ import type { FishingPool } from "#src/models/fishing/FishingPool";
 import type { FishProficient } from "#src/models/fishing/FishProficient";
 import type { FishReward } from "#src/models/fishing/FishReward";
 import type { FishRod } from "#src/models/fishing/FishRod";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Ref } from "vue";
@@ -34,39 +32,30 @@ import { startFishingCast } from "#src/services/fishing/startFishingCast";
 import { stepFishingCast } from "#src/services/fishing/stepFishingCast";
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 import { computeGameHour } from "#src/services/time/computeGameHour";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The fishing of the world: the points in reach and whether fishing is open at them, the one cast held while a point is
 // Fished, and the catch it puts in the bag. Each stock's catches are held until they return, so a stock refills fish by
 // Fish. The game's tables are read once as the world starts
 export const useWorldFishing = ({
-  gameDataBaseUrl,
   getRegionIds,
-  getWorldNow,
-  inventory,
-  materialDataMap,
-  names,
   questProgressMap,
   quests,
   random,
   savedFishingCatchAts,
-  setInventory,
-  worldNow,
 }: {
-  gameDataBaseUrl: string;
   getRegionIds: () => string[];
-  getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  names: Readonly<Record<string, string>>;
   questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
   quests: Ref<Quest[]>;
   random: () => number;
   savedFishingCatchAts: ReadonlyMap<string, readonly Temporal.Instant[]>;
-  setInventory: (nextInventory: Inventory) => void;
-  worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, worldNow } = storeToRefs(worldSessionStore);
+  const { getWorldNow, setInventory } = worldSessionStore;
   const fishingPoints = shallowRef<Readonly<Record<string, FishingPointPlace[]>>>({});
   const pools = shallowRef<Readonly<Record<string, FishingPool[]>>>({});
   const fishMap = shallowRef<ReadonlyMap<number, Fish>>(new Map());
@@ -79,13 +68,13 @@ export const useWorldFishing = ({
   getSynchronizedFunction(() =>
     getResultAsync(() =>
       Promise.all([
-        readFishingPoints(gameDataBaseUrl),
-        readFishingPools(gameDataBaseUrl),
-        readFish(gameDataBaseUrl),
-        readFishBaits(gameDataBaseUrl),
-        readFishRods(gameDataBaseUrl),
-        readFishProficiencies(gameDataBaseUrl),
-        readFishRewards(gameDataBaseUrl),
+        readFishingPoints(worldSessionStore.gameDataBaseUrl),
+        readFishingPools(worldSessionStore.gameDataBaseUrl),
+        readFish(worldSessionStore.gameDataBaseUrl),
+        readFishBaits(worldSessionStore.gameDataBaseUrl),
+        readFishRods(worldSessionStore.gameDataBaseUrl),
+        readFishProficiencies(worldSessionStore.gameDataBaseUrl),
+        readFishRewards(worldSessionStore.gameDataBaseUrl),
       ]),
     ).match(
       ([points, regionPools, fishes, fishBaits, fishRods, proficiencies, rewards]) => {
@@ -180,7 +169,15 @@ export const useWorldFishing = ({
     }
     const next = stepFishingCast(cast.value, { isReeling, isStruck, seconds });
     if (next.phase === FishingPhase.Caught) {
-      setInventory(addFishingCatch(inventory.value, next.fish, rewardMap.value, names, materialDataMap).inventory);
+      setInventory(
+        addFishingCatch(
+          inventory.value,
+          next.fish,
+          rewardMap.value,
+          worldSessionStore.nameText,
+          worldSessionStore.materialDataMap,
+        ).inventory,
+      );
       caughtAtMap.value = computeFishingCatchAts(caughtAtMap.value, next.stockKey, getWorldNow());
       cast.value = undefined;
     } else cast.value = next.phase === FishingPhase.Aiming || next.phase === FishingPhase.Lost ? undefined : next;

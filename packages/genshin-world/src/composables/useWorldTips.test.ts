@@ -6,7 +6,7 @@ import type { Tip, TipTrigger } from "#src/models/tip/Tip";
 import { useWorldTips } from "#src/composables/useWorldTips";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { TipTriggerType } from "#src/models/tip/TipTriggerType";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
@@ -33,10 +33,10 @@ const inventoryOf = (itemIds: number[]): Inventory => ({
   quickSwapItemIds: [],
 });
 const createWorldTips = (tips: Tip[], shown: ReadonlySet<number> = new Set(), queued: readonly number[] = []) => {
-  const events = createWorldEvents();
+  const { events } = startTestWorldSession();
   const queuedTipIds = shallowRef<readonly number[]>(queued);
   const shownTipIds = shallowRef<ReadonlySet<number>>(shown);
-  return { events, queuedTipIds, shownTipIds, ...useWorldTips({ events, queuedTipIds, shownTipIds, tips }) };
+  return { events, queuedTipIds, shownTipIds, ...useWorldTips({ queuedTipIds, shownTipIds, tips }) };
 };
 
 describe(useWorldTips, () => {

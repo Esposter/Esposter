@@ -1,7 +1,6 @@
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
 import type { Group } from "three";
 import type { Ref, ShallowRef } from "vue";
@@ -18,7 +17,9 @@ import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
@@ -27,26 +28,20 @@ import { computed, ref, shallowRef } from "vue";
 // What the bag has no room for drops where the claim was made
 export const useWorldStatues = ({
   characterBody,
-  events,
   foundOculusIds,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
   placeWorldDrops,
   regionStatueProgressMap,
   screenKind,
-  setInventory,
-  setWallet,
-  wallet,
 }: WorldOfferingDependencies & {
   characterBody: Group;
-  events: WorldEvents;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
   screenKind: Ref<ScreenKind>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, setInventory, setWallet } = worldSessionStore;
   // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
   // Achievement event for its city, read against the level the region held before it
   const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
@@ -58,7 +53,13 @@ export const useWorldStatues = ({
   const getRegionProgress = (regionId: string): StatueRegionProgressSave =>
     regionStatueProgressMap.value.get(regionId) ?? { claimedLevel: 0, heldCount: 0, level: 0 };
   const payLevels = (gainedLevels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
-    const paid = payOfferingLevels(gainedLevels, inventory.value, wallet.value, nameText, materialDataMap);
+    const paid = payOfferingLevels(
+      gainedLevels,
+      inventory.value,
+      wallet.value,
+      worldSessionStore.nameText,
+      worldSessionStore.materialDataMap,
+    );
     setInventory(paid.inventory);
     setWallet(paid.wallet);
     placeWorldDrops(source, paid.overflowItems);
@@ -70,7 +71,7 @@ export const useWorldStatues = ({
   // Wrote has no levels to pay
   const readRegionStatueLevels = async (regionId: string): Promise<StatueLevel[]> => {
     const key: `statueLevels/${string}` = `statueLevels/${regionId}`;
-    const levels = checkIsGameDataKey(key) ? await readStatueLevels(gameDataBaseUrl, key) : [];
+    const levels = checkIsGameDataKey(key) ? await readStatueLevels(worldSessionStore.gameDataBaseUrl, key) : [];
     regionLevelsMap.value = new Map([...regionLevelsMap.value, [regionId, levels]]);
     return levels;
   };
@@ -177,7 +178,8 @@ export const useWorldStatues = ({
     });
   };
   // The name of a reward's item in the reader's language, which a level pays by its material
-  const getWorshipItemName = (itemId: number) => nameText[materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
+  const getWorshipItemName = (itemId: number) =>
+    worldSessionStore.nameText[worldSessionStore.materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
   return {
     claimWorship,
     collectOculus,

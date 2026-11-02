@@ -1,8 +1,6 @@
 import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -21,12 +19,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
-import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
@@ -102,7 +99,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
       },
     },
   };
-  const events = createWorldEvents();
+  const { events } = startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const closeScreen = vi.fn<() => void>();
   const domains = useWorldDomains({
@@ -114,26 +111,16 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     closeScreen,
     completedMainQuestIds: shallowRef(new Set<string>()),
     domainChallengeLevels,
-    events,
-    gameDataBaseUrl: "",
-    getWorldNow: clock.getWorldNow,
-    inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpLandmarks: ref<Landmark[]>([createDomainEntrance()]),
     jumpTo,
     kitEffectState: { effects: [] },
-    materialDataMap: new Map(),
-    nameText: {},
     party: createParty([TRAVELER_CHARACTER_ID]),
     random: () => 0.5,
     rank: ref(40),
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],
-    setInventory: vi.fn<() => void>(),
-    setWallet: vi.fn<() => void>(),
     unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),
-    wallet: ref<Wallet>(EMPTY_WALLET),
     weaponDataMap: new Map(),
-    worldNow: clock.worldNow,
   });
   return { closeScreen, domains, events, jumpTo };
 };

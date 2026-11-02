@@ -7,18 +7,20 @@ import { readCookingRecipes } from "#src/services/cooking/readCookingRecipes";
 import { readCookingTalents } from "#src/services/cooking/readCookingTalents";
 import { readMondstadtCookingStovePlace } from "#src/services/cooking/readMondstadtCookingStovePlace";
 import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The cooking recipes, the processing recipes, the cooks' talents by character id and the stove's place in Mondstadt as
 // The world starts, each read from the hosted game data
-export const useWorldCooking = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }) => {
+export const useWorldCooking = () => {
+  const worldSessionStore = useWorldSessionStore();
   const cookingRecipes = shallowRef<CookingRecipe[]>([]);
   const cookingTalents = shallowRef<Record<string, CookingTalent>>({});
   const cookingStovePlace = shallowRef<SceneGroupPlace | undefined>();
   const processingRecipes = shallowRef<ProcessingRecipe[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readCookingRecipes(gameDataBaseUrl)).match(
+  getResultAsync(() => readCookingRecipes(worldSessionStore.gameDataBaseUrl)).match(
     (recipes) => {
       cookingRecipes.value = recipes;
     },
@@ -27,7 +29,7 @@ export const useWorldCooking = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readCookingTalents(gameDataBaseUrl)).match(
+  getResultAsync(() => readCookingTalents(worldSessionStore.gameDataBaseUrl)).match(
     (talents) => {
       cookingTalents.value = talents;
     },
@@ -36,7 +38,7 @@ export const useWorldCooking = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readProcessingRecipes(gameDataBaseUrl)).match(
+  getResultAsync(() => readProcessingRecipes(worldSessionStore.gameDataBaseUrl)).match(
     (recipes) => {
       processingRecipes.value = recipes;
     },
@@ -45,7 +47,7 @@ export const useWorldCooking = ({ gameDataBaseUrl }: { gameDataBaseUrl: string }
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtCookingStovePlace(gameDataBaseUrl)).match(
+  getResultAsync(() => readMondstadtCookingStovePlace(worldSessionStore.gameDataBaseUrl)).match(
     (place) => {
       cookingStovePlace.value = place;
     },

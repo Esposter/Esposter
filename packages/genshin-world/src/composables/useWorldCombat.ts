@@ -16,7 +16,6 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -49,6 +48,7 @@ import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom, createStamina, LocomotionState } from "genshin-engine";
@@ -60,8 +60,6 @@ import { computed, shallowReactive, shallowRef, watch } from "vue";
 export const useWorldCombat = ({
   characterIdConstellationsMap,
   enemyTables,
-  events,
-  gameDataBaseUrl,
   onPartyDown,
   onPartyRevived,
   partyBonusLines,
@@ -77,8 +75,6 @@ export const useWorldCombat = ({
 }: {
   characterIdConstellationsMap: Readonly<Ref<ReadonlyMap<number, Constellation[]>>>;
   enemyTables: EnemyTables;
-  events: WorldEvents;
-  gameDataBaseUrl: string;
   onPartyDown: () => void;
   onPartyRevived: () => void;
   // The bonuses the whole party holds from the Spiral Abyss's chamber, which every character of the party takes
@@ -96,6 +92,8 @@ export const useWorldCombat = ({
   travelerElement: Readonly<Ref<Element | undefined>>;
   wildlifePlaces: readonly WildlifePlace[];
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { events } = worldSessionStore;
   // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party
   const characters = shallowRef<Character[]>(
     savedCharacters.length > 0
@@ -131,7 +129,7 @@ export const useWorldCombat = ({
       ),
     );
     getSynchronizedFunction(() =>
-      getResultAsync(() => readCharacterKits(gameDataBaseUrl, characterTalentLevelMap)).match(
+      getResultAsync(() => readCharacterKits(worldSessionStore.gameDataBaseUrl, characterTalentLevelMap)).match(
         (newCharacterIdKitMap) => {
           // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
           characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);

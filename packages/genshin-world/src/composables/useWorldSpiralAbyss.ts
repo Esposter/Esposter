@@ -1,7 +1,4 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Party } from "#src/models/party/Party";
 import type { AbyssArena } from "#src/models/spiralAbyss/AbyssArena";
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
@@ -13,7 +10,6 @@ import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import type { AbyssRewards } from "#src/models/spiralAbyss/AbyssRewards";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { applyAbyssBlessingReaction } from "#src/services/spiralAbyss/applyAbyssBlessingReaction";
@@ -42,6 +38,8 @@ import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
 import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
 import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
+import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // A Benediction a Corridor chamber offers before it starts, with the chamber and floor it starts
@@ -58,32 +56,17 @@ interface AbyssPendingChoice {
 export const useWorldSpiralAbyss = ({
   areaId,
   bonusLines,
-  events,
-  gameDataBaseUrl,
-  getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   savedProgressMap,
-  setInventory,
-  setWallet,
-  wallet,
 }: {
   areaId: string;
   bonusLines: Ref<AttributeLine[]>;
-  events: WorldEvents;
-  gameDataBaseUrl: string;
-  getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   party: Party;
   savedProgressMap: ReadonlyMap<string, AbyssProgress>;
-  setInventory: (inventory: Inventory) => void;
-  setWallet: (wallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { inventory, wallet } = storeToRefs(worldSessionStore);
+  const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
   const abyssPeriods = shallowRef<AbyssPeriod[]>([]);
   const abyssFloors = shallowRef<AbyssFloor[]>([]);
   const abyssEnemyKinds = shallowRef<Record<string, number>>({});
@@ -102,31 +85,31 @@ export const useWorldSpiralAbyss = ({
   const abyssCarry = shallowRef<AbyssCarryMember[]>([]);
 
   readAbyssData(
-    () => readAbyssPeriods(gameDataBaseUrl),
+    () => readAbyssPeriods(worldSessionStore.gameDataBaseUrl),
     (periods) => {
       abyssPeriods.value = periods;
     },
   );
   readAbyssData(
-    () => readAbyssFloors(gameDataBaseUrl),
+    () => readAbyssFloors(worldSessionStore.gameDataBaseUrl),
     (floors) => {
       abyssFloors.value = floors;
     },
   );
   readAbyssData(
-    () => readAbyssEnemyKinds(gameDataBaseUrl),
+    () => readAbyssEnemyKinds(worldSessionStore.gameDataBaseUrl),
     (enemyKinds) => {
       abyssEnemyKinds.value = enemyKinds;
     },
   );
   readAbyssData(
-    () => readAbyssBenedictionChoices(gameDataBaseUrl),
+    () => readAbyssBenedictionChoices(worldSessionStore.gameDataBaseUrl),
     (choices) => {
       abyssBenedictionChoices.value = choices;
     },
   );
   readAbyssData(
-    () => readAbyssFloorRewards(gameDataBaseUrl),
+    () => readAbyssFloorRewards(worldSessionStore.gameDataBaseUrl),
     (rewards) => {
       abyssRewards.value = rewards;
     },
@@ -229,8 +212,8 @@ export const useWorldSpiralAbyss = ({
       characterIdMemberMap: party.characterIdMemberMap,
       floor: arena.floor,
       inventory: inventory.value,
-      materialDataMap,
-      names: nameText,
+      materialDataMap: worldSessionStore.materialDataMap,
+      names: worldSessionStore.nameText,
       progress: abyssProgressMap.value.get(cycleKey) ?? {
         chamberIdProgressMap: new Map(),
         claimedRewardIds: new Set(),

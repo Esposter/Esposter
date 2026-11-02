@@ -1,26 +1,26 @@
 import type { Tip } from "#src/models/tip/Tip";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ShallowRef } from "vue";
 
 import { TipTriggerType } from "#src/models/tip/TipTriggerType";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getTipsTriggered } from "#src/services/tip/getTipsTriggered";
+import { useWorldSessionStore } from "#src/store/session";
 import { shallowRef } from "vue";
 
 // The tips the world shows: each tip a world event triggers and the save has not shown is shown in turn, the next only
 // Once the one on screen is closed. A tip is kept in the save once it is shown, so it is shown once per save. A tip still
 // Waiting in the queue is kept in the save too, so a reload shows it on the next event, as the save left it
 export const useWorldTips = ({
-  events,
   queuedTipIds,
   shownTipIds,
   tips,
 }: {
-  events: WorldEvents;
   queuedTipIds: ShallowRef<readonly number[]>;
   shownTipIds: ShallowRef<ReadonlySet<number>>;
   tips: readonly Tip[];
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { events } = worldSessionStore;
   const showingTip = shallowRef<Tip>();
   const showTip = (tip: Tip) => {
     shownTipIds.value = new Set(shownTipIds.value).add(tip.id);

@@ -5,8 +5,6 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { GameLanguage } from "genshin-text";
 import type { ComputedRef, Ref } from "vue";
 
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
@@ -19,6 +17,7 @@ import { listGcgOpenGameIds } from "#src/services/gcg/listGcgOpenGameIds";
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
+import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
 import { computed, shallowRef } from "vue";
@@ -28,24 +27,18 @@ import { computed, shallowRef } from "vue";
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   closeScreen,
-  events,
-  gameDataBaseUrl,
   getAdventureRank,
   getCardGameExp,
   getCompletedMainQuestIds,
   getGroundHeight,
   getResidents,
   getResidentSpot,
-  language,
-  nameText,
   questProgressMap,
   questsInProgress,
   questsOffered,
   questTextMap,
 }: {
   closeScreen: () => void;
-  events: WorldEvents;
-  gameDataBaseUrl: string;
   // The Adventure Rank the player stands at, which opens the card game's duels from its rank
   getAdventureRank: () => number;
   // The card game's EXP the player holds, which with the main quests they have finished sets their Player Level
@@ -55,14 +48,14 @@ export const useWorldTalks = ({
   getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
-  language: GameLanguage;
   // The world's names by text id, which name a resident's row
-  nameText: Readonly<Record<string, string>>;
   questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
   questsInProgress: ComputedRef<Quest[]>;
   questsOffered: ComputedRef<Quest[]>;
   questTextMap: Ref<Readonly<Record<string, string>>>;
 }) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { events } = worldSessionStore;
   const talk = shallowRef<Talk>();
   // The game of the card game the resident's talk offers a duel of, if it offers one, and the game being played now
   const talkDuelGameId = shallowRef<number>();
@@ -73,7 +66,7 @@ export const useWorldTalks = ({
   // Cannot be read, no duel is offered
   const gcgLevels = shallowRef<GcgLevels>();
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readGcgLevels(gameDataBaseUrl)).match(
+  getResultAsync(() => readGcgLevels(worldSessionStore.gameDataBaseUrl)).match(
     (newGcgLevels) => {
       gcgLevels.value = newGcgLevels;
     },
@@ -82,7 +75,7 @@ export const useWorldTalks = ({
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readStandingTalks(gameDataBaseUrl)).match(
+  getResultAsync(() => readStandingTalks(worldSessionStore.gameDataBaseUrl)).match(
     (newStandingTalks) => {
       standingTalks.value = newStandingTalks;
     },
@@ -91,7 +84,7 @@ export const useWorldTalks = ({
     },
   );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => StandingTalkTextLoaderMap[language](gameDataBaseUrl)).match(
+  getResultAsync(() => StandingTalkTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
     (newStandingTalkTextMap) => {
       standingTalkTextMap.value = newStandingTalkTextMap;
     },
@@ -155,7 +148,7 @@ export const useWorldTalks = ({
         {
           id: residentTalkId,
           kind: InteractionKind.Talk,
-          name: nameText[nameTextId] ?? "",
+          name: worldSessionStore.nameText[nameTextId] ?? "",
           position: { x, y: getGroundHeight(x, z), z },
         },
       ];

@@ -16,6 +16,7 @@ import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen"
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldSessionStore } from "#src/store/session";
 import { InteractionKind } from "genshin-interface";
 
 // What using the interactable the player is prompted on does: the open world's pickups, chests, claims and landmarks run
@@ -40,7 +41,6 @@ export const useWorldInteractionDispatch = ({
   getGroundHeight,
   getResidents,
   getTalkDuelGameId,
-  getWorldNow,
   grantRewards,
   jumpTo,
   materialSources,
@@ -76,6 +76,8 @@ export const useWorldInteractionDispatch = ({
   viewViewpoint,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
+  const worldSessionStore = useWorldSessionStore();
+  const { getWorldNow } = worldSessionStore;
   // A talk opens the screen its resident's talk is, and Katheryne's opens the expedition screen in place of the talk once
   // She stands in the world
   const openTalk = (talkId: string) => {
