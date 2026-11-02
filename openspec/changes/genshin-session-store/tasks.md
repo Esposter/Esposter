@@ -5,7 +5,7 @@ Each task fits one session. The order is the dependency order. A session that ta
 ## 0. Baseline
 
 - [x] 0.1 Re-run the investigation's count script and `git diff --shortstat` baselines on the current tree, and record the root's line count, the option keys and the shared keys at the top of the investigation. Verify: the script prints the numbers the investigation records, or the investigation is updated to the new ones.
-- [ ] 0.2 Measure the frame step and the mount, and the cost of a ref read against a store read. Build the smallest harness that runs the session's frame step without a canvas if none exists, and a bench for the read comparison. Verify: a committed bench report for the read comparison, and the frame and mount numbers recorded in the design's performance section as the baseline.
+- [ ] 0.2 Measure the frame step and the mount, and the cost of a ref read against a store read. Build the smallest harness that runs the session's frame step without a canvas if none exists, and a bench for the read comparison. Verify: a committed bench report for the read comparison, and the frame and mount numbers recorded in the design's performance section as the baseline. Started: the read comparison is committed (`src/store/session.bench.md`) and its figures are in the design; the frame and mount baseline needs the hosted data and a browser, which this container cannot reach.
 - [x] 0.3 Settle where the package's stores live, what their ids and files are called, whether the package's lint and module-cycle tests reach them, and why its generated auto-import declarations mention Pinia while its manifest does not. Verify: the answers are written into the design's guidelines, and a throwaway store in the package passes ESLint and oxlint.
 
 ## 1. The session store
@@ -25,6 +25,6 @@ Each task fits one session. The order is the dependency order. A session that ta
 
 ## 4. The gate
 
-- [ ] 4.1 Count the slice by the definition of done and decide. Verify: the count is recorded in the design and is negative, or the change is moved to `openspec/rejected/genshin/` with the numbers.
+- [x] 4.1 Count the slice by the definition of done and decide. Verify: the count is recorded in the design and is negative, or the change is moved to `openspec/rejected/genshin/` with the numbers.
 - [ ] 4.2 Measure the frame step, the mount and the size snapshot against the baseline. Verify: the numbers are within the noise recorded in 0.2, or the cause is found and fixed in this task.
 - [ ] 4.3 State the pattern in the guides and write the second change from the fan-out table. Verify: the splitting guide, the integration-root page and the `vue` skill agree that a feature's shared inputs are read from a store, the exception that lets an overlay layer take as many props as its block reads is removed, and `openspec validate` passes for both changes.

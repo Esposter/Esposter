@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "src/store/session.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.34377770000000396,
+              "name": "a ref",
+              "p99": 0.4082849500000054,
+              "rme": 6.930826241277242,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.5654981000000021,
+              "name": "a store's getter",
+              "p99": 0.9198516200000029,
+              "rme": 18.114852331153934,
+              "sampleCount": 10
+            },
+            {
+              "mean": 0.7813150999999892,
+              "name": "a field of a store's ref",
+              "p99": 0.9436439299999717,
+              "rme": 5.931790989131579,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "a read of the session's context > read one thousand times"
+        }
+      ]
+    }
+  ]
+}
