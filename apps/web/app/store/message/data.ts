@@ -14,7 +14,6 @@ import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualCo
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
@@ -192,8 +191,6 @@ export const useDataStore = defineStore("message/data", () => {
     baseStoreDeleteMessage(input);
   };
 
-  const inputStore = useInputStore();
-  const { clearComposer } = inputStore;
   const sendMessage = async (
     input: StandardCreateMessageInput,
     editor?: Editor,
@@ -204,15 +201,15 @@ export const useDataStore = defineStore("message/data", () => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
     // The attachments leave the composer here too, but only held — they are dropped on `CommitSend` once the
-    // Server has accepted the message, and handed back on `RollbackSend` if it rejects
-    if (
-      await createMessage(
-        input,
-        (sentFileIds) => MessageHookMap[MessageHook.ResetSend].run(target, sentFileIds, editor),
-        target,
-      )
-    )
-      clearComposer(target);
+    // Server has accepted the message, and handed back on `RollbackSend` if it rejects. The acknowledgement clears
+    // Nothing: the reset is the one clear of the text that was sent, while text typed during the round trip, or text
+    // A command never sent, stays in the composer — clearing the input now would leave the editor showing text the
+    // Store no longer holds
+    await createMessage(
+      input,
+      (sentFileIds) => MessageHookMap[MessageHook.ResetSend].run(target, sentFileIds, editor),
+      target,
+    );
   };
   MessageHookMap[MessageHook.ResetSend].register((_target, _fileIds, editor) => {
     editor?.commands.clearContent(true);

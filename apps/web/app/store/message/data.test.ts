@@ -11,6 +11,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
+import { useInputStore } from "@/store/message/input";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -33,6 +34,7 @@ describe(useDataStore, () => {
   const message = "message";
   const updatedMessage = "updatedMessage";
   const rejectedMessage = "rejectedMessage";
+  const typedMessage = "typedMessage";
   const filename = "a";
   const mimetype = MimeType.PlainText;
   const size = 1;
@@ -138,6 +140,26 @@ describe(useDataStore, () => {
     await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(resetSendSpy).toHaveBeenCalledExactlyOnceWith(target, [], undefined);
+  });
+
+  // The composer keeps accepting input for the whole round trip, and the acknowledgement must leave what was typed
+  // Meanwhile alone: clearing the input would empty the store while the editor still shows that text, so the next
+  // Send would post an empty message
+  test("sendMessage keeps the text typed while the send is in flight", async () => {
+    expect.hasAssertions();
+
+    signIn();
+    const dataStore = useDataStore();
+    const inputStore = useInputStore();
+    const { sendMessage } = dataStore;
+    const { input } = storeToRefs(inputStore);
+    trpcMsw.message.createMessage.mutation(() => {
+      input.value = typedMessage;
+      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    });
+    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+
+    expect(input.value).toBe(typedMessage);
   });
 
   // The composer keeps accepting Enter for the whole round trip, so the attachments a send took leave it at the
