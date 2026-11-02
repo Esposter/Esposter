@@ -311,6 +311,15 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
   height: calc(var(--unit) * 22);
 }
 
+/* The reference's tab row stands where the title does, so the title stays for a reader and is not drawn under the tabs */
+.paimons-bargains-shop :deep(.heading) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
 /* The tab row is the reference's, measured off its pixels: the picked tab a cream pill across 140 to 516 and 8 to 76 down, and
    the other two set in their own text, Stardust centred at 716 and Primogems, two lines, at 1104 */
 .paimons-bargains-shop :deep(.tabs) {
