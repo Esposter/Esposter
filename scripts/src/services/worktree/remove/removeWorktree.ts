@@ -1,3 +1,5 @@
+import { checkIsLinkedWorktree } from "#src/services/queue/checkIsLinkedWorktree";
+import { readMainCheckoutRoot } from "#src/services/queue/readMainCheckoutRoot";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { checkIsOrphanPath } from "#src/services/worktree/remove/checkIsOrphanPath";
@@ -12,10 +14,12 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-// Removes a linked worktree, and its branch once that has landed, or a folder under the worktrees folder that git no
-// Longer lists. Git still refuses a dirty linked worktree; on Windows the junctions and the loaded binaries are dealt
-// With first, so no deletion walks out of the worktree or stops part way on a long path. The git calls that act on the
-// Repository run from `repositoryRoot`, so a removal run from inside the worktree it removes still has a checkout to ask
+// Removes a linked worktree, and its branch once that has landed, or a folder under this checkout's worktrees folder that
+// Git no longer lists. Nothing is deleted for a path git would refuse: the main checkout, a linked worktree with uncommitted
+// Changes and a folder in another checkout are refused before any install is touched. On Windows the junctions and the
+// Loaded binaries are dealt with after that, so no deletion walks out of the worktree or stops part way on a long path.
+// The git calls that act on the repository run from `repositoryRoot`, so a removal run from inside the worktree it removes
+// Still has a checkout to ask
 export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY_ROOT): void => {
   checkWorktreePath(path);
   const worktreePath = resolve(path);
@@ -25,12 +29,20 @@ export const removeWorktree = (path: string, repositoryRoot: string = REPOSITORY
     throw new InvalidOperationError(Operation.Delete, worktreePath, "there is no folder at this path");
   }
   const isLinked = existsSync(join(worktreePath, GIT_FOLDER));
-  if (!isLinked && !checkIsOrphanPath(worktreePath))
+  if (!isLinked && !checkIsOrphanPath(worktreePath, readMainCheckoutRoot(repositoryRoot)))
     throw new InvalidOperationError(
       Operation.Delete,
       worktreePath,
       "it is not a worktree, nor a folder in the worktrees folder",
     );
+  if (isLinked && !checkIsLinkedWorktree(worktreePath))
+    throw new InvalidOperationError(
+      Operation.Delete,
+      worktreePath,
+      "it is the main checkout, and only a linked worktree is removed",
+    );
+  if (isLinked && runGit(["status", "--porcelain"], worktreePath).trim() !== "")
+    throw new InvalidOperationError(Operation.Delete, worktreePath, "it has uncommitted or untracked changes");
   const branch = isLinked
     ? getResult(() => runGit(["symbolic-ref", "--quiet", "--short", "HEAD"], worktreePath)).match(
         (ref) => ref.trim(),
