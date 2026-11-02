@@ -64,7 +64,7 @@ const completedListItems = computed(() => {
 const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
 const toggle = async (id: TodoListItem["id"]) => {
   const isCompleting = !checkIsCompleted(id);
-  const hold = Symbol();
+  const hold = Symbol("completionHold");
   // An untick during the hold cancels the move, since the todo it was holding is open again
   if (isCompleting) {
     holdingIds.value.set(id, hold);
