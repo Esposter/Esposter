@@ -1,5 +1,6 @@
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
+import { stopStartedScene } from "#src/services/shared/stopStartedScene";
 import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";
 
@@ -28,7 +29,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     // Wait for the new scene's vue components to render and their hooks to run before starting it.
     await nextTick();
     // Cleanup old scene resources
-    if (oldSceneKey && activeGame.scene.isActive(oldSceneKey)) activeGame.scene.stop(oldSceneKey);
+    if (oldSceneKey) stopStartedScene(activeGame, oldSceneKey);
     activeGame.scene.start(newSceneKey);
   };
 

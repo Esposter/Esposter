@@ -130,4 +130,24 @@ describe("scene", () => {
 
     expect(shutdownScene).toBe(scene);
   });
+
+  test("emits shutdown when the component unmounts while its scene is paused", () => {
+    expect.hasAssertions();
+
+    const game = getTestGame();
+    let shutdownScene: SceneWithPlugins | undefined;
+    const mounted = mountScene({
+      onShutdown: (scene: SceneWithPlugins) => {
+        shutdownScene = scene;
+      },
+    });
+
+    game.scene.start(sceneKey);
+    const scene = game.scene.getScene(sceneKey);
+    game.scene.pause(sceneKey);
+    mounted.unmount();
+    wrapper = undefined;
+
+    expect(shutdownScene).toBe(scene);
+  });
 });

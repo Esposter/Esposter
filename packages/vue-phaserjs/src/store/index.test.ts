@@ -1,6 +1,7 @@
 import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { usePhaserStore } from "#src/store/index";
 import { getTestGame, getTestPinia, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
+import { Scenes } from "phaser";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(usePhaserStore, () => {
@@ -34,6 +35,30 @@ describe(usePhaserStore, () => {
     expect(rootSceneKey.value).toBe(otherSceneKey);
     expect(stopSpy).toHaveBeenCalledWith(sceneKey);
     expect(startSpy).toHaveBeenCalledWith(otherSceneKey);
+
+    removeTestScene(sceneKey);
+    removeTestScene(otherSceneKey);
+  });
+
+  test("switchToScene shuts down a paused old root scene", async () => {
+    expect.hasAssertions();
+
+    setActivePinia(getTestPinia());
+    const phaserStore = usePhaserStore();
+    const { switchToScene } = phaserStore;
+    const { rootSceneKey } = storeToRefs(phaserStore);
+    const game = getTestGame();
+
+    startTestScene(sceneKey);
+    rootSceneKey.value = sceneKey;
+    game.scene.pause(sceneKey);
+
+    const OtherScene = createSceneClass(otherSceneKey);
+    game.scene.add(otherSceneKey, OtherScene, false);
+
+    await switchToScene(otherSceneKey);
+
+    expect(game.scene.getScene(sceneKey).sys.settings.status).toBe(Scenes.SHUTDOWN);
 
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);

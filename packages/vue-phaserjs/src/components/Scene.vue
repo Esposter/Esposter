@@ -8,6 +8,7 @@ import { runSceneShutdown } from "#src/services/hooks/runSceneShutdown";
 import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { getScene } from "#src/services/shared/getScene";
 import { InjectionKeyMap } from "#src/services/shared/InjectionKeyMap";
+import { stopStartedScene } from "#src/services/shared/stopStartedScene";
 import { useCameraStore } from "#src/store/camera";
 import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { usePhaserStore } from "#src/store/index";
@@ -86,9 +87,9 @@ onUnmounted(() => {
   if (!isSceneAdded) return;
 
   const game = useGame();
+  // Removing a scene destroys it without the shutdown its hooks and ready flag wait on, so a started one stops first
+  stopStartedScene(game, sceneKey);
   const scene = getScene(sceneKey);
-  // Removing a scene destroys it without the shutdown its hooks and ready flag wait on, so a running one stops first
-  if (game.scene.isActive(sceneKey)) game.scene.stop(sceneKey);
   scene.events.off(Scenes.Events.READY, readyListener);
   scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);
