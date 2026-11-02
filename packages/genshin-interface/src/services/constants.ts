@@ -109,6 +109,9 @@ export const CONSTELLATION_NODE_PLACES: readonly { left: number; top: number }[]
 // Game's own button controllers (block 07356235): a hover in 0.05 seconds, back to rest in 0.1 and a press at once
 export const INTERACTION_HOVER_MS = 50;
 export const INTERACTION_REST_MS = 100;
+// The same two times as a CSS duration, which a style block reads through `v-bind`
+export const INTERACTION_HOVER_DURATION = `${INTERACTION_HOVER_MS}ms`;
+export const INTERACTION_REST_DURATION = `${INTERACTION_REST_MS}ms`;
 // The cream pill's own controllers take twice as long back to rest
 export const INTERACTION_PILL_REST_MS = 200;
 // A press plays its own clip over its 10 frames at 60: a cream pill's gold light fading as its words turn cream

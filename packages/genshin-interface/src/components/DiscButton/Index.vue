@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GAME_WHITE, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_WHITE, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // What the button does, for a screen reader, since it shows its content alone
@@ -10,8 +10,6 @@ interface Props {
 
 const { label, size } = defineProps<Props>();
 defineSlots<{ default: () => unknown }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -28,8 +26,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .disc-button {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   display: grid;
   width: calc(var(--unit) * var(--size));
   height: calc(var(--unit) * var(--size));

@@ -2,7 +2,7 @@
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The costs the card takes to play, whose dice its corner shows
@@ -14,8 +14,6 @@ interface Props {
 
 const { costs, isSelected, name } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -30,7 +28,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* A card's frame is measured off the game's frame at 1080 high: its cream border, and its plate the mean of the hand's
    visible art. Its cost is the game's hexagon, and its name is only the button's label */
 .card {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   flex: none;
   width: calc(var(--unit) * 175);
@@ -54,13 +52,13 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
 @media (hover: hover) {
   .card:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     outline-color: #f6e3a1;
   }
 }
 
 .card:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   outline-color: #f6e3a1;
 }
 

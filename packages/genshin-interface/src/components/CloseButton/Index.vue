@@ -2,7 +2,7 @@
 import type { CloseButtonMark } from "#src/models/CloseButtonMark";
 
 import { CloseButtonMarkGlyphMap } from "#src/services/CloseButtonMarkGlyphMap";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // What the button does, for a screen reader, since it shows its own glyph alone
@@ -12,8 +12,6 @@ interface Props {
 }
 
 defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -29,8 +27,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .close-button {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   top: calc(var(--unit) * 19);
   right: calc(var(--unit) * 48);

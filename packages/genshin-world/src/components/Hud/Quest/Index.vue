@@ -10,7 +10,12 @@ import { QUEST_MARK_MIN_HEIGHT } from "#src/services/quest/constants";
 import { getQuestCounter } from "#src/services/quest/getQuestCounter";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { InputAction } from "genshin-engine";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface/constants";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -29,8 +34,6 @@ interface Props {
 
 const { gameText, input, mark, quest, questProgress, textMap } = defineProps<Props>();
 const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -93,18 +96,18 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   background-color: v-bind(GAME_ROW_HOVER);
   opacity: 0;
   pointer-events: none;
-  transition: opacity v-bind(restDuration);
+  transition: opacity v-bind(INTERACTION_REST_DURATION);
 }
 
 .quest-tracker:is(:focus-visible, [data-interaction-state="Hover"] *)::before {
   opacity: 1;
-  transition-duration: v-bind(hoverDuration);
+  transition-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .quest-tracker:hover::before {
     opacity: 1;
-    transition-duration: v-bind(hoverDuration);
+    transition-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // The share of the member's Max HP it holds, which its health bar shows
@@ -12,8 +12,6 @@ interface Props {
 
 const { healthShare, levelText, name } = defineProps<Props>();
 const emit = defineEmits<{ heal: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -28,7 +26,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .member {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   width: calc(var(--unit) * 120);
   height: calc(var(--unit) * 169);
@@ -42,13 +40,13 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 /* A card lights by its brightness when hovered or focused, and a press dims it at once, its size held */
 .member:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   filter: brightness(1.15);
 }
 
 @media (hover: hover) {
   .member:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     filter: brightness(1.15);
   }
 }

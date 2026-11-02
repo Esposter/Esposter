@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import {
+  GAME_CREAM,
+  GAME_INK,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -12,8 +17,6 @@ interface Props {
 const { gameText } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const closeButton = useTemplateRef("closeButton");
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 // The map is a dialog over the world, so focus starts inside it
 onMounted(() => {
   closeButton.value?.focus();
@@ -45,8 +48,8 @@ onMounted(() => {
   cursor: inherit;
   place-items: center;
   transition:
-    background-color v-bind(restDuration),
-    border-color v-bind(restDuration);
+    background-color v-bind(INTERACTION_REST_DURATION),
+    border-color v-bind(INTERACTION_REST_DURATION);
 }
 
 .close svg {
@@ -62,14 +65,14 @@ onMounted(() => {
 .close:is(:focus-visible, [data-interaction-state="Hover"] *) {
   border-color: #fff;
   background: #fff;
-  transition-duration: v-bind(hoverDuration);
+  transition-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .close:hover {
     border-color: #fff;
     background: #fff;
-    transition-duration: v-bind(hoverDuration);
+    transition-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

@@ -5,13 +5,11 @@ import {
   GAME_GOLD,
   GAME_ROW_HOVER,
   GAME_ROW_PRESS,
-  INTERACTION_HOVER_MS,
-  INTERACTION_REST_MS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
 } from "genshin-interface";
 
 defineSlots<{ default: () => VNode }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -26,7 +24,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 .tab {
   --row-press: v-bind(GAME_ROW_PRESS);
   --row-tint: v-bind(GAME_ROW_HOVER);
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   display: flex;
   height: calc(var(--unit) * 76);
@@ -48,12 +46,12 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    This tab wears. No reference frame shows either state */
 @media (hover: hover) {
   .tab:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 
 .tab:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 .tab:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {

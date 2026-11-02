@@ -8,7 +8,12 @@ import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmar
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { findLandmarkArea } from "#src/services/map/findLandmarkArea";
 import { GameButton, GameButtonKind } from "genshin-interface";
-import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import {
+  GAME_CREAM,
+  GAME_INK,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -23,8 +28,6 @@ interface Props {
 const landmark = defineModel<Landmark | undefined>("landmark");
 const { catalogue, gameText } = defineProps<Props>();
 const emit = defineEmits<{ jump: [pose: WorldJumpPose] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const chosenArea = computed(() => landmark.value && findLandmarkArea(catalogue, landmark.value));
 </script>
 
@@ -93,7 +96,7 @@ const chosenArea = computed(() => landmark.value && findLandmarkArea(catalogue, 
   border-radius: 50%;
   background: none;
   color: inherit;
-  transition: background-color v-bind(restDuration);
+  transition: background-color v-bind(INTERACTION_REST_DURATION);
 }
 
 .teleport-close svg {
@@ -106,13 +109,13 @@ const chosenArea = computed(() => landmark.value && findLandmarkArea(catalogue, 
 
 .teleport-close:is(:focus-visible, [data-interaction-state="Hover"] *) {
   background: rgb(30 49 63 / 0.5);
-  transition-duration: v-bind(hoverDuration);
+  transition-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .teleport-close:hover {
     background: rgb(30 49 63 / 0.5);
-    transition-duration: v-bind(hoverDuration);
+    transition-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

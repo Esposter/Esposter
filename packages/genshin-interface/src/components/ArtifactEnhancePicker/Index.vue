@@ -2,7 +2,12 @@
 import GameButton from "#src/components/GameButton/Index.vue";
 import PickerShell from "#src/components/PickerShell/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "#src/services/constants";
 
 // One artifact the picker offers as fodder: its name, its caption, its rarity in stars and whether it is chosen
 interface EnhanceFodderOption {
@@ -59,8 +64,6 @@ const {
   notice,
   title,
 } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const emit = defineEmits<{
   autoAdd: [];
   cancel: [];
@@ -145,8 +148,8 @@ const emit = defineEmits<{
 }
 
 .option {
-  --hover-duration: v-bind(hoverDuration);
-  --rest-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --rest-duration: v-bind(INTERACTION_REST_DURATION);
   --row-tint: v-bind(GAME_ROW_HOVER);
   padding: calc(var(--unit) * 10) calc(var(--unit) * 14);
 }

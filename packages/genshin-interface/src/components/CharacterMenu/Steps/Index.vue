@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // The characters either side of the chosen one, which the arrows at the frame's left and right edges step to
@@ -11,8 +11,6 @@ interface Props {
 
 const { next, previous } = defineProps<Props>();
 const emit = defineEmits<{ step: [characterId: number] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const steps = computed(() => [
   { character: previous, className: "previous" },
   { character: next, className: "next" },
@@ -41,7 +39,7 @@ const steps = computed(() => [
 /* The arrows stepping to the characters either side, centred down the frame's left and right edges, their heads 129.75
    units from the edge and their backs 153.75 */
 .step {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   top: calc(50% - var(--unit) * 21);
   width: calc(var(--unit) * 32.25);
@@ -54,13 +52,13 @@ const steps = computed(() => [
 }
 
 .step:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   filter: brightness(1.2);
 }
 
 @media (hover: hover) {
   .step:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     filter: brightness(1.2);
   }
 }

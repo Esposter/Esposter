@@ -2,7 +2,7 @@
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The costs the skill takes to use, whose dice its token shows
@@ -13,8 +13,6 @@ interface Props {
 
 const { costs, isDisabled } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -26,7 +24,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .skill {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   width: calc(var(--unit) * 94);
   height: calc(var(--unit) * 94);
@@ -46,13 +44,13 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
 @media (hover: hover) {
   .skill:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     outline-color: #fff;
   }
 }
 
 .skill:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   outline-color: #fff;
 }
 

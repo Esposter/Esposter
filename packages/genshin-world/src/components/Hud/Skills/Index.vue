@@ -11,7 +11,12 @@ import { ElementBurstColorsMap } from "#src/services/hud/ElementBurstColorsMap";
 import { pressCapturedPointer } from "#src/services/hud/pressCapturedPointer";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { InputAction } from "genshin-engine";
-import { GAME_CREAM, GAME_INK, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import {
+  GAME_CREAM,
+  GAME_INK,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -56,8 +61,6 @@ const {
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const burstColors = computed(() => (element === undefined ? undefined : ElementBurstColorsMap[element]));
 // The share of a cooldown left, none for a kit whose cooldown is no time at all, and all of it while more is left than the
 // Kit's own, as a stance's end sets
@@ -129,9 +132,9 @@ onUnmounted(() => {
 <style scoped>
 .skill,
 .burst {
-  --lit-hover-duration: v-bind(hoverDuration);
+  --lit-hover-duration: v-bind(INTERACTION_HOVER_DURATION);
   --lit-press-color: v-bind(GAME_CREAM);
-  --lit-rest-duration: v-bind(restDuration);
+  --lit-rest-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   display: grid;
   place-items: center;

@@ -2,7 +2,7 @@
 import type { GameText } from "genshin-text";
 
 import { PAIMON_EMBLEM_LAYERS } from "#src/services/hud/constants";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -12,8 +12,6 @@ interface Props {
 
 const { gameText } = defineProps<Props>();
 const emit = defineEmits<{ press: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -35,9 +33,9 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* The corner button is a lit disc, pressed into a deeper navy with its emblem drawn in a little, provisionally, as no
    Recording shows the emblem lit */
 .paimon-button {
-  --lit-hover-duration: v-bind(hoverDuration);
+  --lit-hover-duration: v-bind(INTERACTION_HOVER_DURATION);
   --lit-press-color: rgb(30 49 63 / 0.85);
-  --lit-rest-duration: v-bind(restDuration);
+  --lit-rest-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   width: 100%;
   height: 100%;

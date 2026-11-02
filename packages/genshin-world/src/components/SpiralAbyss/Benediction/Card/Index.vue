@@ -4,7 +4,7 @@ import type { AbyssBenedictionScope } from "#src/models/spiralAbyss/AbyssBenedic
 import type { GameText } from "genshin-text";
 
 import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The game's words in the reader's language, which the tag of the card's scope is read from
@@ -21,8 +21,6 @@ interface Props {
 
 const { gameText, icon, isLit, name, scope } = defineProps<Props>();
 const emit = defineEmits<{ choose: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -48,7 +46,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .card {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   --lit-border: calc(var(--unit) * 4) solid #263d57;
   --lit-shadow:
     0 0 0 calc(var(--unit) * 2) #8599a9, 0 0 calc(var(--unit) * 12) calc(var(--unit) * 2) rgb(70 120 180 / 40%);
@@ -84,7 +82,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    Pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
 @media (hover: hover) {
   .card:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     border: var(--lit-border);
     box-shadow: var(--lit-shadow);
     transform: scale(1.035);
@@ -93,7 +91,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 .card.lit,
 .card:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   transform: scale(1.035);
   border: var(--lit-border);
   box-shadow: var(--lit-shadow);

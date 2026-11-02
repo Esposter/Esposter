@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CharacterMenuEntry } from "#src/models/CharacterMenuEntry";
 
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // The player's characters, across the screen's top in the order given
@@ -10,8 +10,6 @@ interface Props {
 
 const characterId = defineModel<number>("characterId", { required: true });
 const { characters } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -46,8 +44,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 79 units below
    the top of its portrait */
 .character {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   display: grid;
   width: calc(var(--unit) * 69);

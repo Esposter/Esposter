@@ -19,7 +19,7 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_SKILL_KIND_DISPLAY_ORDER } from "#src/services/gcg/constants";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { takeOne } from "@esposter/shared";
-import { GameScreen, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { GameScreen, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
@@ -48,8 +48,6 @@ const emit = defineEmits<{
   tuneDie: [handIndex: number, dieIndex: number];
   useSkill: [skillId: number, dieIndices: number[]];
 }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const {
   addRerollGroup,
   armedHandIndex,
@@ -172,8 +170,8 @@ const battleLabel = computed(() =>
 /* The board's places and colours are measured off the game's frame at 1080 high; its table's texture and the frame's
    ornament are not drawn. The buttons read their durations from the screen, so each is set once here */
 .gcg-screen {
-  --hover-duration: v-bind(hoverDuration);
-  --rest-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --rest-duration: v-bind(INTERACTION_REST_DURATION);
   background: #524236;
 }
 

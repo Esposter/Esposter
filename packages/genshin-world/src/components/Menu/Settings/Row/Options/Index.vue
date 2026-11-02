@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import type { SettingsOption } from "#src/models/menu/SettingsOption";
 
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface";
 
 interface Props {
   // The label of the row the list opens under, which names the list
@@ -10,8 +15,6 @@ interface Props {
   options: SettingsOption[];
 }
 
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const { label, options } = defineProps<Props>();
 </script>
 
@@ -47,7 +50,7 @@ const { label, options } = defineProps<Props>();
 .option {
   --row-press: v-bind(GAME_ROW_PRESS);
   --row-tint: v-bind(GAME_ROW_HOVER);
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
   height: calc(var(--unit) * 56);
   padding: 0 calc(var(--unit) * 29);
@@ -64,12 +67,12 @@ const { label, options } = defineProps<Props>();
 }
 
 .option:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .option:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

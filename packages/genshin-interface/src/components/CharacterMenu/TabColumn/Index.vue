@@ -6,8 +6,8 @@ import {
   GAME_CREAM,
   GAME_ROW_HOVER,
   GAME_ROW_PRESS,
-  INTERACTION_HOVER_MS,
-  INTERACTION_REST_MS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
 } from "#src/services/constants";
 
 interface Props {
@@ -17,8 +17,6 @@ interface Props {
 
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
 const { tabLabels } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -54,8 +52,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* A closed tab's word starts 216 units in, its ascenders 25.5 units tall in a cream a little short of white, letter-spaced
    out to the game's width, with a faint shadow round it */
 .tab {
-  --hover-duration: v-bind(hoverDuration);
-  --rest-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --rest-duration: v-bind(INTERACTION_REST_DURATION);
   --row-tint: v-bind(GAME_ROW_HOVER);
   position: relative;
   display: block;

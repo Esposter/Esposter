@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GameText } from "genshin-text";
 
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -18,8 +18,6 @@ const emit = defineEmits<{
   // The button that closes the tip, after which the next tip waiting is shown
   close: [];
 }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -73,8 +71,8 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* Provisional: no reference frame shows the tip's button, so its states are the cream pill's own: a white ring lights at
    its edge when hovered or focused (`ringButton.css`), and a press tints it slate with its words cream */
 .dismiss {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   padding: 0.25rem 1rem;
   border-radius: 0.25rem;
   background: #fff;

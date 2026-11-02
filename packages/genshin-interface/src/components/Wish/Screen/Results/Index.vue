@@ -2,7 +2,7 @@
 import type { WishResultCell } from "#src/models/WishResultCell";
 
 import RarityStars from "#src/components/RarityStars/Index.vue";
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface Props {
   // What the last wishes drew, one card each in the order the game shows them, over the screen until a click goes on
@@ -11,8 +11,6 @@ interface Props {
 
 const emit = defineEmits<{ dismiss: [] }>();
 const { results } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -36,7 +34,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 <style scoped>
 .results {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   inset: 0;
   display: grid;
@@ -52,7 +50,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* The overlay is one click that goes on, so hovering or focusing it lights its results together, and a press
    dims them at once */
 .results:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 .results:is(:focus-visible, [data-interaction-state="Hover"] *) .result {
@@ -61,7 +59,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 
 @media (hover: hover) {
   .results:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 
   .results:hover .result {

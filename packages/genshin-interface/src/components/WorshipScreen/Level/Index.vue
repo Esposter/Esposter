@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { WorshipLevelState } from "#src/models/WorshipLevelState";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "#src/services/constants";
 
 interface Props {
   // The rewards the level pays, each by its name and its count, in the order it pays them
@@ -14,8 +19,6 @@ interface Props {
 
 const { rewards, staminaLabel, staminaShare, state } = defineProps<Props>();
 const emit = defineEmits<{ claim: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 // The lines the level pays: its stamina first, then each reward by its name and its count
 const lines = computed(() => [
   `${staminaLabel} +${staminaShare}`,
@@ -40,7 +43,7 @@ const lines = computed(() => [
 
 <style scoped>
 .reward-list {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -56,12 +59,12 @@ const lines = computed(() => [
 /* Claimable, the whole list is one button, so hovering or focusing it lights every strip with a list row's tint, behind
    the strip's words, and a press tints it stronger at once */
 .reward-list:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .reward-list:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

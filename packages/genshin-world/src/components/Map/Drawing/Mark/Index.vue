@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Landmark } from "#src/models/world/Landmark";
 
-import { GAME_CREAM, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The landmark the mark stands on, drawn at its place in the catalogue's metres
@@ -12,8 +12,6 @@ interface Props {
 
 const { landmark, markRadius } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -29,14 +27,14 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   stroke: #fff;
   stroke-width: 2;
   cursor: inherit;
-  transition: fill v-bind(restDuration);
+  transition: fill v-bind(INTERACTION_REST_DURATION);
   vector-effect: non-scaling-stroke;
 }
 
 @media (hover: hover) {
   .mark:hover {
     fill: color-mix(in srgb, rgb(96 178 196) 60%, #fff);
-    transition-duration: v-bind(hoverDuration);
+    transition-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

@@ -14,10 +14,10 @@ import {
   GAME_ROW_HOVER,
   GAME_ROW_PRESS,
   GAME_SMOOTHSTEP_EASING,
-  INTERACTION_HOVER_MS,
+  INTERACTION_HOVER_DURATION,
   INTERACTION_PILL_REST_MS,
   INTERACTION_PRESS_MS,
-  INTERACTION_REST_MS,
+  INTERACTION_REST_DURATION,
 } from "#src/services/constants";
 
 interface Props {
@@ -30,8 +30,6 @@ interface Props {
 const { kind, tip } = defineProps<Props>();
 defineSlots<{ default?: () => VNode }>();
 const button = useTemplateRef("button");
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const pillRestDuration = `${INTERACTION_PILL_REST_MS}ms`;
 const pressDuration = `${INTERACTION_PRESS_MS}ms`;
 // A dialog moves the keyboard's focus to its button
@@ -74,19 +72,19 @@ defineExpose({ focus: () => button.value?.focus() });
 /* Each state is reached over its own crossfade: the duration is the state's being entered, so a hover fades in over
    The hover's and out over the rest's, and a press shows at once */
 .game-button {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   transition: color var(--state-duration);
 }
 
 /* A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap. Focus from
    The keyboard and the forced Hover state draw the hover unguarded, and the press applies everywhere */
 .game-button:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .game-button:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 
@@ -363,7 +361,7 @@ defineExpose({ focus: () => button.value?.focus() });
    Words when hovered, focused or selected by its screen. Its press holds that lit look at once. Provisional past the rest, see
    The constants */
 .game-button[data-kind="Reply"] {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   border-radius: calc(var(--unit) * 23);
   background-color: v-bind(GAME_REPLY_REST);
   color: #fff;
@@ -375,7 +373,7 @@ defineExpose({ focus: () => button.value?.focus() });
 }
 
 .game-button[data-kind="Reply"]:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   outline: none;
   background-color: v-bind(GAME_REPLY_HOVER);
   color: v-bind(GAME_REPLY_HOVER_INK);
@@ -383,7 +381,7 @@ defineExpose({ focus: () => button.value?.focus() });
 
 @media (hover: hover) {
   .game-button[data-kind="Reply"]:enabled:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     outline: none;
     background-color: v-bind(GAME_REPLY_HOVER);
     color: v-bind(GAME_REPLY_HOVER_INK);

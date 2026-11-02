@@ -2,7 +2,7 @@
 import type { Element } from "#src/models/Element";
 import type { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The face the die shows: one of the seven elements, or Omni
@@ -12,8 +12,6 @@ interface Props {
 
 const { face, isSelected } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -24,7 +22,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 <style scoped>
 /* A die is the game's hexagon in its element's colour, 36 by 40 at 1080 high; the frame's dice sit 45 apart */
 .die {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   width: calc(var(--unit) * 36);
   height: calc(var(--unit) * 40);
   padding: 0;
@@ -40,13 +38,13 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* The hexagon's clip cuts off any ring, so a hovered die lights by its brightness, and a pressed one dims at once */
 @media (hover: hover) {
   .die:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     filter: brightness(1.2);
   }
 }
 
 .die:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   filter: brightness(1.2);
 }
 

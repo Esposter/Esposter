@@ -2,7 +2,7 @@
 import type { Element } from "#src/models/Element";
 import type { GcgAura } from "#src/models/gcg/GcgAura";
 
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The aura the character holds: an element, or none
@@ -21,8 +21,6 @@ interface Props {
 
 const { aura, energy, hp, isChoosable, maxEnergy, name, shield } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -48,7 +46,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
 /* The card's art is not drawn: its plate is the mean colour of the six cards' art in the frame, and its frame is the cream
    border the game draws. The game shows no name on a card in this frame, so the name is only the button's label */
 .character {
-  --state-duration: v-bind(restDuration);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   width: calc(var(--unit) * 165);
   height: calc(var(--unit) * 284);
@@ -70,13 +68,13 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
    At once. A pointer's hover is guarded by `(hover: hover)`, so a touch screen leaves nothing lit after a tap */
 @media (hover: hover) {
   .character.choosable:hover {
-    --state-duration: v-bind(hoverDuration);
+    --state-duration: v-bind(INTERACTION_HOVER_DURATION);
     box-shadow: 0 0 0 calc(var(--unit) * 3) #f6e3a1;
   }
 }
 
 .character.choosable:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  --state-duration: v-bind(hoverDuration);
+  --state-duration: v-bind(INTERACTION_HOVER_DURATION);
   box-shadow: 0 0 0 calc(var(--unit) * 3) #f6e3a1;
 }
 

@@ -7,7 +7,12 @@ import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { getActionKeyCode } from "#src/services/shared/getActionKeyCode";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "genshin-interface/constants";
+import {
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_DURATION,
+  INTERACTION_REST_DURATION,
+} from "genshin-interface/constants";
 
 interface Props {
   // The input action the row's slot's key taps
@@ -27,8 +32,6 @@ interface Props {
 }
 
 const { action, characterId, index, input, isTouch, name, party, switchCooldownShare } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 </script>
 
 <template>
@@ -108,18 +111,18 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   background-color: v-bind(GAME_ROW_HOVER);
   opacity: 0;
   pointer-events: none;
-  transition: opacity v-bind(restDuration);
+  transition: opacity v-bind(INTERACTION_REST_DURATION);
 }
 
 .member:is(:focus-visible, [data-interaction-state="Hover"] *)::after {
   opacity: 1;
-  transition-duration: v-bind(hoverDuration);
+  transition-duration: v-bind(INTERACTION_HOVER_DURATION);
 }
 
 @media (hover: hover) {
   .member:hover::after {
     opacity: 1;
-    transition-duration: v-bind(hoverDuration);
+    transition-duration: v-bind(INTERACTION_HOVER_DURATION);
   }
 }
 

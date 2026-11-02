@@ -4,7 +4,7 @@ import CloseButton from "#src/components/CloseButton/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
 import { CloseButtonMark } from "#src/models/CloseButtonMark";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "#src/services/constants";
 
 interface BlessingMember {
   // The share of the member's Max HP it holds, which its health bar shows
@@ -48,8 +48,6 @@ const {
   waitingMembers = [],
   worshipTitle,
 } = defineProps<Props>();
-const hoverDuration = `${INTERACTION_HOVER_MS}ms`;
-const restDuration = `${INTERACTION_REST_MS}ms`;
 const emit = defineEmits<{
   close: [];
   heal: [characterId: number];
@@ -346,8 +344,8 @@ const emit = defineEmits<{
 
 /* The threshold's two round buttons either side of its figure, the figure centred on the panel */
 .step {
-  --hover-duration: v-bind(hoverDuration);
-  --state-duration: v-bind(restDuration);
+  --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
+  --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
   top: calc(var(--unit) * 798);
   width: calc(var(--unit) * 40);
