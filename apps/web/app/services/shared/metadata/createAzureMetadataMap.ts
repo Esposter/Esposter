@@ -10,11 +10,9 @@ import { getOrCreate, uncapitalize } from "@esposter/shared";
 export const createAzureMetadataMap = <TType extends string>(azureEntityTypeKey: TType) => {
   // Map<partitionKey, Map<rowKey, T[]>>
   const metadataMap: Ref<Map<string, Map<string, AzureMetadataEntity<TType>[]>>> = ref(new Map());
-  const getMetadatas = (partitionKey: string, rowKey: string) => {
-    const dataMap = metadataMap.value.get(partitionKey);
-    if (dataMap) return getOrCreate(dataMap, rowKey, () => []);
-    else return [];
-  };
+  // A read never writes, since a read can run during a render: a row nothing has set reads as none, and only a set
+  // Makes an entry
+  const getMetadatas = (partitionKey: string, rowKey: string) => metadataMap.value.get(partitionKey)?.get(rowKey) ?? [];
   const setMetadatas = (partitionKey: string, rowKey: string, metadatas: AzureMetadataEntity<TType>[]) => {
     getOrCreate(metadataMap.value, partitionKey, () => new Map<string, AzureMetadataEntity<TType>[]>()).set(
       rowKey,
