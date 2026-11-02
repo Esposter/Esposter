@@ -27,6 +27,12 @@ describe(getClaimDecision, () => {
     expect(getClaimDecision(createClaim(HOLDER, RECENT), HOLDER, NOW)).toBe(ClaimDecision.Adopt);
   });
 
+  test("takes back its own stale claim under its lease rather than adopting a claim nothing renews", () => {
+    expect.hasAssertions();
+
+    expect(getClaimDecision(createClaim(HOLDER, OLD), HOLDER, NOW)).toBe(ClaimDecision.Take);
+  });
+
   test("takes back its own missed claim as a fresh one, and leaves another worker's missed claim", () => {
     expect.hasAssertions();
 
