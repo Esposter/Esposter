@@ -21,7 +21,7 @@ Nothing is dropped unnoticed: each feature the Flowchart has is checked against 
 | ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
 | Labelled step nodes                               | Node label                                                       | Covered                                                    |
 | Node colour                                       | Node colour                                                      | Covered                                                    |
-| Node resize with a minimum size                   | Node resize                                                      | Covered, changed: one minimum for every element           |
+| Node resize with a minimum size                   | Node resize                                                      | Covered, changed: one minimum for every element            |
 | Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                                    |
 | Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                                |
 | Connector labels, edited inline                   | Edge label                                                       | Covered                                                    |
