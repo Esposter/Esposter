@@ -671,6 +671,8 @@ const emit = defineEmits<{
 
 ## The root's changes in that build
 
+The formatter removes the one space that a unified diff puts on a blank context line, so apply this diff with `git apply --ignore-whitespace`.
+
 ```diff
 diff --git a/packages/genshin-world/src/components/World/Session/Index.vue b/packages/genshin-world/src/components/World/Session/Index.vue
 index dc6d88fa18..767fa6870b 100644
