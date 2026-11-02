@@ -3,6 +3,7 @@ import WorldScreen from "#src/components/World/Screen/Index.vue";
 import liyueRegionJson from "#src/data/regions/liyue.json";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import { WINDRISE_START_MINUTES } from "#src/services/windrise/constants";
+import { createPinia } from "pinia";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
@@ -76,6 +77,7 @@ describe("worldScreen", () => {
       await render(WorldScreen, {
         attrs: { onReady: resolveReady },
         container: host,
+        global: { plugins: [createPinia()] },
         props: { ...props, heldMinutes: WINDRISE_START_MINUTES },
       });
       await ready;
@@ -114,7 +116,11 @@ describe("worldScreen", () => {
       expect.hasAssertions();
 
       const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-      await render(WorldScreen, { attrs: { onReady: resolveReady }, props: { ...props, isPaused: true } });
+      await render(WorldScreen, {
+        attrs: { onReady: resolveReady },
+        global: { plugins: [createPinia()] },
+        props: { ...props, isPaused: true },
+      });
 
       await expect(ready).resolves.toBeUndefined();
     },
@@ -150,7 +156,11 @@ describe("worldScreen", () => {
         fetchSpy.mockRestore();
       });
       const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
-      await render(WorldScreen, { attrs: { onReady: resolveReady }, props: { ...props, cameraPose: liyueReachPose } });
+      await render(WorldScreen, {
+        attrs: { onReady: resolveReady },
+        global: { plugins: [createPinia()] },
+        props: { ...props, cameraPose: liyueReachPose },
+      });
       await ready;
 
       expect(readLoadStepEnd("terrain", since)).toBeGreaterThanOrEqual(readLoadStepEnd("regions", since));

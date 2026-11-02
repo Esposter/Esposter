@@ -5,32 +5,26 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
-import type { WorldEvents } from "#src/models/world/WorldEvents";
 
-import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
+import { useWorldSessionStore } from "#src/store/session";
 import { ref, shallowRef, watch } from "vue";
 
-// The bag, the wallet, the wish counters, the achievements' progress, the bench's crafting and the Archive's entries and
-// Defeats the player holds. A change to any of them is a grant the host saves: the changes made in one tick are one grant,
-// So a pickup is one save, a wish is one save with its spend and its pity, and an achievement's progress is saved with the
-// Primogems it paid. Every change to the
-// Bag is also announced to the systems that read what it takes in
+// The wish counters, the achievements' progress, the bench's crafting and the Archive's entries and defeats the player
+// Holds, beside the bag and the wallet the session store holds. A change to any of them is a grant the host saves: the
+// Changes made in one tick are one grant, so a pickup is one save, a wish is one save with its spend and its pity, and an
+// Achievement's progress is saved with the Primogems it paid
 export const useWorldSave = ({
   emitGrant,
-  events,
   savedState,
 }: {
   emitGrant: () => void;
-  events: WorldEvents;
   savedState: Pick<
     GenshinSaveState,
     | "achievementProgressMap"
@@ -45,7 +39,6 @@ export const useWorldSave = ({
     | "enemyRespawnMap"
     | "foundOculusIds"
     | "frostbearingTreeProgress"
-    | "inventory"
     | "namecardItemId"
     | "openedChestIds"
     | "processingJobs"
@@ -53,13 +46,11 @@ export const useWorldSave = ({
     | "regionStatueProgressMap"
     | "shownTipIds"
     | "travelerBirthday"
-    | "wallet"
     | "wishHistory"
     | "wishPityMap"
   >;
 }) => {
-  const inventory = ref<Inventory>(savedState.inventory);
-  const wallet = ref<Wallet>(savedState.wallet);
+  const worldSessionStore = useWorldSessionStore();
   const namecardItemId = ref(savedState.namecardItemId);
   // The Traveler's birthday, set once from the profile and kept with the save once it is set
   const travelerBirthday = shallowRef<TravelerBirthdaySave | undefined>(savedState.travelerBirthday);
@@ -90,8 +81,8 @@ export const useWorldSave = ({
   );
   watch(
     [
-      inventory,
-      wallet,
+      () => worldSessionStore.inventory,
+      () => worldSessionStore.wallet,
       wishPityMap,
       achievementProgressMap,
       archiveKillsMap,
@@ -115,23 +106,12 @@ export const useWorldSave = ({
     },
     { flush: "pre" },
   );
-  // Every change to the bag goes through here, so the Archive opens the entries of what the bag takes in, and the
-  // Achievements count what it takes in as their obtain doings
-  const setInventory = (nextInventory: Inventory) => {
-    const obtainEvents = computeBagObtainEvents(inventory.value.items, nextInventory.items);
-    inventory.value = nextInventory;
-    events.emit("bagChange", nextInventory);
-    if (obtainEvents.length > 0) events.emit("achievementEvents", obtainEvents);
-  };
-  const setWallet = (nextWallet: Wallet) => {
-    wallet.value = nextWallet;
-  };
   // A destroy's bag and wallet are applied together, since what it returns may be currency
   const applyDestruction = ({ inventory: nextInventory, wallet: nextWallet }: InventoryDestruction) => {
-    setInventory(nextInventory);
-    setWallet(nextWallet);
+    worldSessionStore.setInventory(nextInventory);
+    worldSessionStore.setWallet(nextWallet);
   };
-  events.on("campCleared", (camp) => {
+  worldSessionStore.events.on("campCleared", (camp) => {
     if (clearedCamps.value.some(({ id }) => id === camp.id)) return;
     clearedCamps.value = [...clearedCamps.value, camp];
   });
@@ -170,7 +150,6 @@ export const useWorldSave = ({
     forgetBossDefeat,
     foundOculusIds,
     frostbearingTreeProgress,
-    inventory,
     namecardItemId,
     openedChestIds,
     processingJobs,
@@ -178,12 +157,9 @@ export const useWorldSave = ({
     regionStatueProgressMap,
     setBossDefeatAt,
     setEnemyRespawnAt,
-    setInventory,
     setNamecardItemId,
-    setWallet,
     shownTipIds,
     travelerBirthday,
-    wallet,
     wishHistory,
     wishPityMap,
   };

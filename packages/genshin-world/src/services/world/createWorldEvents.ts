@@ -26,6 +26,10 @@ export const createWorldEvents = (): WorldEvents => {
     worldLevelUp: [],
   };
   return {
+    // Forgets every listener, so an emitter that outlives a session starts the next one with none
+    clear: () => {
+      for (const listeners of Object.values(listenerMap)) listeners.length = 0;
+    },
     emit: (eventName, ...payload) => {
       for (const listener of listenerMap[eventName]) listener(...payload);
     },

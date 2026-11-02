@@ -4,18 +4,18 @@ Each task fits one session. The order is the dependency order. A session that ta
 
 ## 0. Baseline
 
-- [ ] 0.1 Re-run the investigation's count script and `git diff --shortstat` baselines on the current tree, and record the root's line count, the option keys and the shared keys at the top of the investigation. Verify: the script prints the numbers the investigation records, or the investigation is updated to the new ones.
+- [x] 0.1 Re-run the investigation's count script and `git diff --shortstat` baselines on the current tree, and record the root's line count, the option keys and the shared keys at the top of the investigation. Verify: the script prints the numbers the investigation records, or the investigation is updated to the new ones.
 - [ ] 0.2 Measure the frame step and the mount, and the cost of a ref read against a store read. Build the smallest harness that runs the session's frame step without a canvas if none exists, and a bench for the read comparison. Verify: a committed bench report for the read comparison, and the frame and mount numbers recorded in the design's performance section as the baseline.
-- [ ] 0.3 Settle where the package's stores live, what their ids and files are called, whether the package's lint and module-cycle tests reach them, and why its generated auto-import declarations mention Pinia while its manifest does not. Verify: the answers are written into the design's guidelines, and a throwaway store in the package passes ESLint and oxlint.
+- [x] 0.3 Settle where the package's stores live, what their ids and files are called, whether the package's lint and module-cycle tests reach them, and why its generated auto-import declarations mention Pinia while its manifest does not. Verify: the answers are written into the design's guidelines, and a throwaway store in the package passes ESLint and oxlint.
 
 ## 1. The session store
 
-- [ ] 1.1 Add Pinia as a peer of the package and the session store, holding the context, the events emitter, and the start and stop actions. Verify: a store test written first and seen failing seeds the store and reads each value back, and the build still externalizes Pinia.
-- [ ] 1.2 Start the store from the session on mount and stop it on unmount, and give the suites that mount the session a Pinia. Verify: a test that mounts and unmounts the session twice finds the store empty between, and the package's visual and browser suites pass unchanged.
+- [x] 1.1 Add Pinia as a peer of the package and the session store, holding the context, the events emitter, and the start and stop actions. Verify: a store test written first and seen failing seeds the store and reads each value back, and the build still externalizes Pinia. Done: `packages/genshin-world/src/store/session.ts` and its test, and the build passes.
+- [ ] 1.2 Start the store from the session on mount and stop it on unmount, and give the suites that mount the session a Pinia. Verify: a test that mounts and unmounts the session twice finds the store empty between, and the package's visual and browser suites pass unchanged. Started: the session starts and stops the store and the parity page and the browser test install Pinia; the store's own stop is tested, and the two-mount browser test and the browser suites are still to run, since they need a browser and the hosted data.
 
 ## 2. The bag
 
-- [ ] 2.1 Move the inventory, the wallet and their setters from `useWorldSave` into the session store, with the bag-change and obtain events emitted from the setters as now. Verify: `useWorldSave`'s test, converted to a seeded store, fails before the move and passes after, and the save sync still writes the same save.
+- [x] 2.1 Move the inventory, the wallet and their setters from `useWorldSave` into the session store, with the bag-change and obtain events emitted from the setters as now. Verify: `useWorldSave`'s test, converted to a seeded store, fails before the move and passes after, and the save sync still writes the same save.
 - [ ] 2.2 Make the composables that took the bag, its setters, the context keys or the events emitter read the session store, and remove the bag spreads and the keys from the root. Verify: the investigation's count script reports 0 shared keys in every call, the package's typecheck through the mapper reports nothing, and the touched composables' tests pass.
 
 ## 3. The mailbox

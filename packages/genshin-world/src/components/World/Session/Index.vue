@@ -128,8 +128,8 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
-import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { useWorldSessionStore } from "#src/store/session";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
 import {
@@ -231,8 +231,18 @@ const savedState = readGenshinSave(
   materialDataMap,
   reliquaryPieceEntryMap,
 );
-// The cross-system reactions of this screen, one emitter the systems share
-const events = createWorldEvents();
+// The world's time: every saved timer is read against the server's clock, and a ref the computeds read
+const { getWorldNow, worldNow } = useWorldClock(() => serverClockOffsetMs);
+// What the systems share and none owns: the context the world starts with, the one emitter they react through, and the bag
+// And the wallet, which the session stops as it unmounts so a second session starts from nothing
+const worldSessionStore = useWorldSessionStore();
+const { events, setInventory, setWallet, start, stop } = worldSessionStore;
+const { inventory, wallet } = storeToRefs(worldSessionStore);
+start(
+  { gameDataBaseUrl, gameText, getWorldNow, language, materialDataMap, nameText, worldNow },
+  { inventory: savedState.inventory, wallet: savedState.wallet },
+);
+onUnmounted(stop);
 const {
   achievementProgressMap,
   applyDestruction,
@@ -249,7 +259,6 @@ const {
   forgetBossDefeat,
   foundOculusIds,
   frostbearingTreeProgress,
-  inventory,
   namecardItemId,
   openedChestIds,
   processingJobs,
@@ -257,15 +266,12 @@ const {
   regionStatueProgressMap,
   setBossDefeatAt,
   setEnemyRespawnAt,
-  setInventory,
   setNamecardItemId,
-  setWallet,
   shownTipIds,
   travelerBirthday,
-  wallet,
   wishHistory,
   wishPityMap,
-} = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
+} = useWorldSave({ emitGrant: () => emit("grant"), savedState });
 // The bag, the wallet and their setters, and the item data and names the composables that take from or pay into them read
 const bag: WorldBagDependencies = { inventory, materialDataMap, nameText, setInventory, setWallet, wallet };
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
@@ -288,8 +294,6 @@ const {
   trackedQuestId,
   trackerQuest,
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
-// The world's time: every saved timer is read against the server's clock, and a ref the computeds read
-const { getWorldNow, worldNow } = useWorldClock(() => serverClockOffsetMs);
 // The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
 const {
   castView,

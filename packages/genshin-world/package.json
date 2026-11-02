@@ -103,6 +103,7 @@
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",
     "genshin-text": "workspace:*",
+    "pinia": "catalog:",
     "three": "catalog:",
     "vue": "catalog:",
     "zod": "catalog:"

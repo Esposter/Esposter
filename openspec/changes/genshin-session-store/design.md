@@ -48,7 +48,7 @@ flowchart TD
 - **No bridging.** No component copies its refs onto a store for another feature to read. If a feature's state is read elsewhere, it is born in a store.
 - **No `provide` / `inject`,** and no store reading a component's props.
 - **A feature that only itself reads stays a composable** with its own options. The change moves what is shared, not everything.
-- **Names:** a store is `useWorld<Feature>Store`, its id is `worldFeature` under the package's naming for ids, and a file is one store, as the app's are. The first task confirms where the files go and whether the package's lint reaches them, since the package does not list Pinia today.
+- **Names and places, settled by the first slice:** a store is `useWorld<Feature>Store`, in `src/store/<feature>.ts` as `vue-phaserjs` keeps its stores, with the id `world/<feature>`, one store per file. The binding is named after it (`worldSessionStore`, enforced by `pinia-store/require-store-binding`). `defineStore`, `storeToRefs` and the Vue functions are explicit imports in a `.ts` file here, as the composables write them, and the shared build and test configuration auto-imports them in a `.vue` file. A suite that tests a feature over the store starts it with `startTestWorldSession` from `src/store/session.fixture.ts`, which sets a fresh active Pinia. `toThrow` is replaced by an inline snapshot, and a throw names its store by a literal, since `defineStore` returns a function named `useStore`. The package's lint reaches the stores; the only change to the package's manifest is the Pinia peer.
 
 ## Testing
 

@@ -40,6 +40,7 @@ import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { capitalize, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 import { StoneNodeMaterial } from "genshin-engine";
 import { checkIsGameLanguage, GameTextLoaderMap } from "genshin-text";
+import { createPinia } from "pinia";
 
 // One screen at a time, by `?screen=<Name>`, or the list of them. `&motion` asks for a motion held at its start for the
 // Tool that shoots it to set each moment: `entry` holds the screen's own animations as it mounts, and `props` lets
@@ -164,6 +165,8 @@ if (screen && root) {
   };
   // NuxtTime is the Nuxt app's component, which the page has no Nuxt app to register, so the stub stands in for it
   app.component("NuxtTime", NuxtTimeStub);
+  // The session keeps what its features share in a store, which the host installs
+  app.use(createPinia());
   app.mount(root);
   Reflect.set(window, "setScreenProps", (screenProps: Record<string, unknown>) => Object.assign(props, screenProps));
   Reflect.set(window, "benchScene", (frameCount: number) => benchScene(sceneContext.value, frameCount));
