@@ -40,6 +40,15 @@ describe(coerceValue, () => {
     expect(coerceValue(String(Number.NaN), ColumnType.Number)).toBeNull();
   });
 
+  test.each(["1e400", "Infinity", "0x1F", "0b1", "0o7"])(
+    `%s is not a finite decimal, so it returns null for ${ColumnType.Number}`,
+    (value) => {
+      expect.hasAssertions();
+
+      expect(coerceValue(value, ColumnType.Number)).toBeNull();
+    },
+  );
+
   test.each(DateFormats)(`keeps a %s date as the ${ColumnType.Date} string it was written in`, (format) => {
     expect.hasAssertions();
 
