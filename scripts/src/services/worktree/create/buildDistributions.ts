@@ -1,4 +1,5 @@
 import { MAX_BUFFER_BYTES } from "#src/services/shared/constants";
+import { WORKTREE_REMOVE_COMMAND } from "#src/services/worktree/create/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 
@@ -15,7 +16,7 @@ export const buildDistributions = (worktreePath: string, directories: string[]):
       throw new InvalidOperationError(
         Operation.Create,
         directory,
-        `its build failed; vp run build:${directory} in ${worktreePath} reproduces it`,
+        `its build failed; vp run build:${directory} in ${worktreePath} reproduces it; ${WORKTREE_REMOVE_COMMAND} ${worktreePath} removes the worktree`,
       );
   }
 };

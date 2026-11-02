@@ -5,6 +5,7 @@ import {
   INSTALL_FROZEN_ARGUMENTS,
   INSTALL_OFFLINE_ARGUMENTS,
   SCRIPTS_PACKAGE_NAME,
+  WORKTREE_REMOVE_COMMAND,
 } from "#src/services/worktree/create/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -15,6 +16,10 @@ export const installWorktree = (worktreePath: string, packageNames: string[]): v
   for (const command of [INSTALL_FROZEN_ARGUMENTS, INSTALL_OFFLINE_ARGUMENTS]) {
     const { status, stderr } = spawnPnpm([...command, ...filters], { cwd: worktreePath, maxBuffer: MAX_BUFFER_BYTES });
     if (status !== 0)
-      throw new InvalidOperationError(Operation.Create, worktreePath, `the install failed: ${readFirstLine(stderr)}`);
+      throw new InvalidOperationError(
+        Operation.Create,
+        worktreePath,
+        `the install failed: ${readFirstLine(stderr)}; ${WORKTREE_REMOVE_COMMAND} ${worktreePath} removes the worktree`,
+      );
   }
 };
