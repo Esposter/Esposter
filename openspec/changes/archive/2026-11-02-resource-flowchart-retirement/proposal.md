@@ -29,7 +29,7 @@ Blobs follow one ordering rule: a blob is deleted only inside the purge of its o
 
 ## Bundle measurement
 
-The five Vue Flow packages the app no longer depends on built to about 505 KB of ESM, about 110 KB gzipped: core 345 KB (73 KB), minimap 99 KB (23 KB), node-resizer 47 KB (11 KB), controls 9 KB (2 KB) and background 5 KB (1.5 KB). That is a ceiling on the client bytes removed, since the app's build tree-shakes and minifies what it takes. The app's own bundle is ungated and a local app build is not run (SCORE.md, "Bundle & Performance"), so the exact client delta between the last release and this one is not measured, and no gate is added for a figure a one-time removal produced.
+The five Vue Flow packages the app no longer depends on built to about 505 KB of ESM, about 110 KB gzipped: core 345 KB (73 KB), minimap 99 KB (23 KB), node-resizer 47 KB (11 KB), controls 9 KB (2 KB) and background 5 KB (1.5 KB). That is a ceiling on the client bytes removed, since the app's build tree-shakes and minifies what it takes. The app's own bundle is ungated (SCORE.md, "Bundle & Performance"), so the exact client delta between the last release and this one is not measured, and no gate is added for a figure a one-time removal produced.
 
 ## Waiting on
 
