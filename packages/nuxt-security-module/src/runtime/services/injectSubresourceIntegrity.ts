@@ -14,7 +14,7 @@ export const injectSubresourceIntegrity = (html: string, hashes: Record<string, 
     if (!resourceAttributeName || readHtmlTagAttribute(attributes, "integrity") !== undefined) return undefined;
 
     const resource = readHtmlTagAttribute(attributes, resourceAttributeName);
-    if (resource === undefined || hashes[resource] === undefined) return undefined;
+    if (resource === undefined || !Object.hasOwn(hashes, resource)) return undefined;
     if (tagName.toLowerCase() === "link" && !INTEGRITY_LINK_RELS.has(readHtmlTagAttribute(attributes, "rel") ?? ""))
       return undefined;
 

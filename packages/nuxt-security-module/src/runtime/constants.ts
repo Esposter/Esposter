@@ -53,6 +53,8 @@ export const HTML_TAG_REGEX: RegExp = new RegExp(
 );
 // The elements a nonce is written onto, each of which the policy's `script-src`, `style-src` or preload rules govern
 export const NONCE_TAG_NAMES: readonly string[] = ["link", "script", "style"];
+// The sections of a rendered page's HTML, in the order the document holds them
+export const HTML_SECTIONS = ["head", "bodyPrepend", "body", "bodyAppend"] as const;
 // The content type a file upload is sent with, which takes the larger request size limit
 export const FILE_UPLOAD_CONTENT_TYPE = "multipart/form-data";
 // The methods that carry a body the request size limit measures

@@ -1,10 +1,9 @@
 import type { NitroAppPlugin } from "nitro/types";
 
+import { HTML_SECTIONS } from "#src/runtime/constants";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { injectSubresourceIntegrity } from "#src/runtime/services/injectSubresourceIntegrity";
 import { definePlugin } from "nitro";
-
-const HTML_SECTIONS = ["body", "bodyAppend", "bodyPrepend", "head"] as const;
 
 // The plugin the module's server template calls with the hashes the build computed.
 // Each script and stylesheet the build hashed gets its integrity attribute in the markup the page renders.

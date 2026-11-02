@@ -1,13 +1,12 @@
 import type { NitroAppPlugin } from "nitro/types";
 
+import { HTML_SECTIONS } from "#src/runtime/constants";
 import { collectSsgHashes } from "#src/runtime/services/collectSsgHashes";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { getSecurityState } from "#src/runtime/services/getSecurityState";
 import { insertContentSecurityPolicyMeta } from "#src/runtime/services/insertContentSecurityPolicyMeta";
 import { updateContentSecurityPolicy } from "#src/runtime/services/updateContentSecurityPolicy";
 import { definePlugin } from "nitro";
-
-const HTML_SECTIONS = ["head", "bodyPrepend", "body", "bodyAppend"] as const;
 
 // A prerendered page has no response to carry its policy.
 // So the policy is written as a `<meta>` element at the start of its head.
@@ -22,7 +21,8 @@ const ssgHashes: NitroAppPlugin = definePlugin((nitroApp) => {
 
     const state = getSecurityState(event);
     state.hashes = await collectSsgHashes(HTML_SECTIONS.map((section) => html[section].join("")).join(""), rules.ssg);
-    if (!rules.ssg.meta) return;
+    // A meta element is enforced whatever its policy is called, so a report-only policy is not written into one
+    if (!rules.ssg.meta || rules.contentSecurityPolicyReportOnly) return;
 
     const policy = updateContentSecurityPolicy(rules.headers.contentSecurityPolicy, state);
     html.head = [insertContentSecurityPolicyMeta(html.head.join(""), policy)];

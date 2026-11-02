@@ -1,12 +1,11 @@
 import type { NitroAppPlugin } from "nitro/types";
 
+import { HTML_SECTIONS } from "#src/runtime/constants";
 import { generateNonce } from "#src/runtime/services/generateNonce";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { getSecurityState } from "#src/runtime/services/getSecurityState";
 import { injectNonce } from "#src/runtime/services/injectNonce";
 import { definePlugin } from "nitro";
-
-const HTML_SECTIONS = ["body", "bodyAppend", "bodyPrepend", "head"] as const;
 
 // A nonce for every request that is not a prerender, written into the page's own tags.
 // So the policy's nonce matches the nonce the markup carries.

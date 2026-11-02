@@ -32,4 +32,11 @@ describe(injectSubresourceIntegrity, () => {
     const html = '<script src="/unknown.js"></script>';
     expect(injectSubresourceIntegrity(html, HASHES)).toBe(html);
   });
+
+  test("a resource named by a property the hash map inherits, not hashed by the build, is left alone", () => {
+    expect.hasAssertions();
+
+    const html = '<script src="constructor"></script>';
+    expect(injectSubresourceIntegrity(html, HASHES)).toBe(html);
+  });
 });
