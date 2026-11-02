@@ -1,18 +1,19 @@
 ---
 name: run-app
-description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives over the app, and no app screenshot suite (rejected: a production build per run, no findings); the Genshin parity loop is the one exception.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout, drag, remount or dialog change works. Esposter — how a UI change is verified: a browser the agent drives, once after the edits, over a claim no test reaches; no committed app screenshot suite (rejected: a production build per run, no findings); the Genshin parity loop compares its screens with the game.
 ---
 
 # Verifying a UI Change
 
-Typecheck cannot see layout, so the question of what proves a visual change is real comes up on every one. The answer here is **not** a browser an agent drives.
+Typecheck cannot see layout, so the question of what proves a visual change is real comes up on every one. The answer here is a browser an agent drives, **once, after the edits, and only for a claim a test cannot reach** — never inside the edit loop.
 
 ## Settled — do not re-propose
 
 - **A screenshot suite against approved baselines** (`@nuxt/test-utils`' end-to-end mode, `createPage`, a Playwright-driven browser). Every run pays a production build of the whole app, many minutes before the first capture, and the captures find nothing the user's own look does not. The Genshin world package's visual suite is not this: it renders its own screens on plain Vite in seconds, with no app build (`genshin-parity` skill).
+- **"Never a browser the agent drives over the app."** Rejected by one run that drove the dev server in Chrome and found three defects the suites and lint had passed: a drag rule that made the whole calendar inert, a second visit to the dungeons that threw, and a WebSocket upgrade answered twice. A claim whose evidence is hit-testing, drag and drop, a remount, or the real browser's lifecycle is checked in one, as `references/driven-browser.md` sets out.
 - **A component gallery** (Storybook, Histoire) — the same cost, plus a second app to keep working with Nuxt and stories that rot.
 
-## The one exception: Genshin parity
+## Genshin parity
 
 A Genshin screen is compared with the game by `pnpm -C scripts genshin:parity compare`, which drives the machine's own Edge against the world package's parity page on plain Vite, never the app. It costs seconds, not a Nuxt build, and the user asked for it so the agent checks its own screens. The `genshin-parity` skill owns it.
 
@@ -25,7 +26,8 @@ No headless Chrome, no CDP, no screenshot after each edit, no poll loop for asyn
 1. **For a styling change, generate the CSS and read it** — a form that generates nothing is the finding (`references/css-generation.md`).
 2. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
 3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, a third-party component's internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
-4. **The user's own eyes** are the acceptance check for layout. Hand over what changed and what to look at, rather than claiming a look you did not take.
+4. **A driven browser, once, after the edits,** when the claim is one no test reaches: hit-testing, drag and drop, a second visit to a page, a Phaser or three.js lifecycle (`references/driven-browser.md`).
+5. **The user's own eyes** are the acceptance check for layout. Hand over what changed and what to look at, rather than claiming a look you did not take.
 
 Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the steps above happened.
 
@@ -35,5 +37,6 @@ Never report a visual change as verified on the strength of typecheck, lint or a
 
 ## Reference pages
 
+- `references/driven-browser.md` — when a claim needs a browser: the server, the script, the throwaway page and what to leave behind.
 - `references/css-generation.md` — when a styling question can be settled by the CSS UnoCSS generates.
 - `references/dev-server.md` — when starting a dev server for the user, or reading what Vite serves.
