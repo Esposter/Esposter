@@ -11,6 +11,7 @@ import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureV
 import { signNonce } from "#src/services/handshake/signNonce";
 import { HOST_PROBE_TIMEOUT_MS } from "#src/services/server/constants";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { waitForSocketClose } from "#src/services/shared/waitForSocketClose";
 import { getResultAsync } from "@esposter/shared";
 import { createPublicKey, randomBytes } from "node:crypto";
 import { once } from "node:events";
@@ -44,7 +45,20 @@ export const sendToRunningHost = async (
       return false;
     if (!createMessage) return true;
 
-    const pendingClose = once(webSocket, "close", { signal });
+    // The holder has proved itself, so it is the host whatever the hand-off then does. Its close is waited on through the
+    // Shared helper, which an error before the close does not end, and an error is logged as the socket's own. A holder
+    // That never closes is terminated when the probe's time is up
+    const pendingClose = waitForSocketClose(webSocket);
+    webSocket.on("error", (error) => {
+      console.error(error);
+    });
+    signal.addEventListener(
+      "abort",
+      () => {
+        webSocket.terminate();
+      },
+      { once: true },
+    );
     webSocket.send(
       JSON.stringify(createMessage(signNonce(hostKey, SignaturePurpose.OwnerProof, port, serverMessage.nonce))),
     );
