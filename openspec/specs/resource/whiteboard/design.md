@@ -163,7 +163,7 @@ A commit the document check refuses leaves the open document unchanged, and the 
 | `apps/web/app/store/resource/whiteboard/dialog.ts`                                    | the delete confirmation's target                                                                            |
 | `apps/web/server/trpc/routers/whiteboard.ts`                                          | the whiteboard router, which holds the typed move beside the generic procedures                             |
 | `apps/web/server/services/resource/whiteboard/moveWhiteboardElement.ts`               | the typed move: the core's move saved in one write at the content version read                              |
-| `apps/web/server/db/migrations/20261102022836_whiteboard_resource_type/migration.sql` | adds the whiteboard value to the resource type enum                                                         |
+| `apps/web/server/db/migrations/20261102082233_whiteboard_resource_type/migration.sql` | adds the whiteboard value to the resource type enum                                                         |
 | `packages/db-schema/src/models/resource/ResourceType.ts`                              | the resource type enum, which holds the whiteboard                                                          |
 | `packages/db-schema/src/services/resource/ResourceOwnedTablesMap.ts`                  | the whiteboard's entry, with no table of its own                                                            |
 | `packages/db-schema/src/schema/resource/resourcesInResource.ts`                       | the resource type column the migration extends                                                              |
