@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
 
-import { GameButton, GameButtonKind, ScreenTitle, ShopScreenCloseButton, useShopGoodPick } from "genshin-interface";
+import {
+  GAME_CREAM,
+  GAME_INK,
+  GameButton,
+  GameButtonKind,
+  ScreenTitle,
+  ShopScreenCloseButton,
+  useShopGoodPick,
+} from "genshin-interface";
 
 interface Props {
   // The currencies the player holds, shown across the head
@@ -106,11 +114,23 @@ const buy = () => {
 </template>
 
 <style scoped>
+/* The world behind the list is the reference's own: its clear left and right margins read dark at the top and light at the
+   bottom, so the screen fills the backdrop with the colour each height of those margins reads */
 .shop-list {
   position: absolute;
   inset: 0;
   color: #f5f0e4;
-  background: rgb(30 36 47 / 0.8);
+  background: linear-gradient(
+    rgb(37 36 48) calc(var(--unit) * 0),
+    rgb(54 57 74) calc(var(--unit) * 100),
+    rgb(64 68 81) calc(var(--unit) * 250),
+    rgb(81 81 84) calc(var(--unit) * 400),
+    rgb(95 98 102) calc(var(--unit) * 550),
+    rgb(141 118 112) calc(var(--unit) * 700),
+    rgb(128 153 155) calc(var(--unit) * 850),
+    rgb(138 168 172) calc(var(--unit) * 960),
+    rgb(138 166 171) calc(var(--unit) * 1040)
+  );
 }
 
 .heading {
@@ -219,11 +239,11 @@ const buy = () => {
   left: calc(var(--unit) * 5);
   width: calc(var(--unit) * 96);
   height: calc(var(--unit) * 96);
-  background: rgb(96 108 128);
+  background: rgb(93 99 110);
 }
 
 .good[aria-pressed="true"] .good-icon {
-  background: #d6d0c1;
+  background: rgb(145 146 147);
 }
 
 .good-name {
@@ -283,7 +303,7 @@ const buy = () => {
   height: calc(var(--unit) * 54);
   padding: 0 calc(var(--unit) * 28);
   border: calc(var(--unit) * 2) solid #a9b0c0;
-  background: #7d8598;
+  background: rgb(113 118 138);
   color: #f7f2e6;
 }
 
@@ -300,7 +320,7 @@ const buy = () => {
   left: 0;
   width: 100%;
   height: calc(var(--unit) * 225);
-  background: #aab0bf;
+  background: linear-gradient(rgb(115 121 130), rgb(101 106 119));
 }
 
 .detail-picture {
@@ -309,7 +329,7 @@ const buy = () => {
   left: calc(var(--unit) * 312);
   width: calc(var(--unit) * 110);
   height: calc(var(--unit) * 150);
-  background: #e3e5ea;
+  background: rgb(167 171 177);
 }
 
 .detail-body {
@@ -337,7 +357,7 @@ const buy = () => {
   left: 0;
   width: 100%;
   height: calc(var(--unit) * 48);
-  background: #f0d78f;
+  background: rgb(254 231 186);
 }
 
 .amount-picker {
@@ -384,10 +404,10 @@ const buy = () => {
   width: calc(var(--unit) * 222);
   height: calc(var(--unit) * 60);
   padding: 0 0 0 calc(var(--unit) * 14);
-  border: calc(var(--unit) * 2) solid rgb(230 225 210 / 0.6);
+  border: none;
   border-radius: calc(var(--unit) * 30);
-  background: rgb(28 34 46 / 0.85);
-  color: #f7f1e3;
+  background: v-bind(GAME_CREAM);
+  color: v-bind(GAME_INK);
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 30);
   cursor: inherit;
@@ -400,6 +420,7 @@ const buy = () => {
   flex: none;
   border: calc(var(--unit) * 4) solid #e8c46a;
   border-radius: 50%;
+  background: v-bind(GAME_INK);
 }
 
 .buy:disabled {
