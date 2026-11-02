@@ -454,7 +454,7 @@ describe(createPanzoom, () => {
     expect(element.style.getPropertyValue("transform")).toBe("");
   });
 
-  test("resetStyle restores the interaction styles and leaves the transform as it is", () => {
+  test("resetStyle restores the interaction styles and leaves the transform and its origin as they are", () => {
     expect.hasAssertions();
 
     const element = getElement();
@@ -467,6 +467,7 @@ describe(createPanzoom, () => {
 
     expect(getParent().style.getPropertyValue("overflow")).toBe("");
     expect(element.style.getPropertyValue("transform")).toBe("scale(2) translate(0px, 0px)");
+    expect(element.style.getPropertyValue("transform-origin")).toBe("50% 50%");
   });
 
   test("createPanzoom refuses an element that is not attached to a document", () => {

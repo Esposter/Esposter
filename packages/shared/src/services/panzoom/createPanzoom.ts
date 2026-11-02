@@ -81,7 +81,7 @@ export const createPanzoom = (element: PanzoomElement, options: PanzoomOptions =
     pan: (x, y, panOptions = {}) => panPanzoom(context, { x, y }, panOptions),
     reset: (resetOptions = {}) => resetPanzoom(context, resetOptions),
     resetStyle: () => {
-      restorePanzoomStyles(context, ["cursor", "overflow", "touch-action", "transform-origin", "user-select"]);
+      restorePanzoomStyles(context, ["cursor", "overflow", "touch-action", "user-select"]);
     },
     setOptions: (newOptions = {}) => {
       const previousTarget = getPanzoomTarget(context);
