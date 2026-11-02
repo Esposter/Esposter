@@ -18,7 +18,7 @@ flowchart LR
 
 The name is matched against a pattern of sixty-four lowercase hex digits before anything joins it into a path, so a name carrying separators or parent segments never reaches the filesystem. A held object is read without being hashed again, because the only way a file gets under its name is a verified download. A miss runs the caller's download function once, hashes the result with node's `crypto`, and compares the digest with the name. Only a match creates the content folder, writes the bytes to a part file named with a random UUID beside the target, and renames that file onto the object's name.
 
-Two callers can fetch the same object at once. The later rename fails because the earlier one has already put the file in place. The later caller then deletes its own part file and returns its bytes, since both wrote identical content. The error is rethrown only when the target is still missing after the failed rename.
+Two callers can fetch the same object at once. The later rename fails because the earlier one has already put the file in place. The later caller then deletes its own part file and returns its bytes, since both wrote identical content. The error of a failed write or rename is rethrown only when the target is still missing after it.
 
 ## Where the cache lives
 
@@ -27,7 +27,7 @@ Two callers can fetch the same object at once. The later rename fails because th
 ## Notes
 
 - Keying by the hash of the bytes rather than by the URL that served them is deliberate. Two sources that serve the same bytes share one copy, and the name is the integrity check, so nothing else has to be agreed between the callers.
-- A refused download leaves nothing behind. A part file exists only under its random name until the rename, so an interrupted write cannot be mistaken for a complete object.
+- A refused download leaves nothing behind. A part file exists only under its random name until the rename, and a write or rename that fails removes it, so an interrupted write cannot be mistaken for a complete object.
 - Nothing in this package removes a cached object. The content folder grows until someone deletes it, and that is safe because a name only ever matches the bytes it was computed from.
 - The callers are the game data readers, `readPublishedGameDataObject` and `readPublishedGameDataObjectIfStored` in `scripts/src/services/gameData`, and `readMirroredGameDataObject` and `readMirroredGameDataFile` in `packages/genshin-world/scripts/gameData/mirror`. The [hosted game data](../../genshin/hosted-game-data/design.md) page owns the flow they serve. Several other scripts take `CACHE_ROOT` as the parent of their own folders.
 

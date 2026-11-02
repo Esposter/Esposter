@@ -32,6 +32,17 @@ The download cache SHALL keep a downloaded object only when its bytes hash to th
 - **THEN** the download is refused
 - **AND** nothing is kept in the cache
 
+### Requirement: A failed write leaves no part file behind
+
+The download cache SHALL remove the part file of a write or rename that fails, so an object that did not reach its name leaves nothing in the content folder.
+
+#### Scenario: removes the part file a failed write leaves behind
+
+- **GIVEN** an object that is not yet cached and whose bytes hash to the requested name
+- **WHEN** writing its part file fails after the file is created
+- **THEN** the part file is removed
+- **AND** the write's error is raised, since no cached object holds the name
+
 ### Requirement: A name is refused before any path is built from it
 
 The download cache SHALL refuse a name that is not a SHA-256 hex digest before it builds a path from the name.

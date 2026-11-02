@@ -25,8 +25,10 @@ export const readContentAddressedObject = async (
     throw new InvalidOperationError(Operation.Read, hash, "does not hash to its name");
   await mkdir(directory, { recursive: true });
   const temporaryPath = `${path}.${crypto.randomUUID()}.part`;
-  await writeFile(temporaryPath, bytes);
-  await getResultAsync(() => rename(temporaryPath, path)).match(noop, async (error) => {
+  await getResultAsync(async () => {
+    await writeFile(temporaryPath, bytes);
+    await rename(temporaryPath, path);
+  }).match(noop, async (error) => {
     await rm(temporaryPath, { force: true });
     if (!existsSync(path)) throw error;
   });

@@ -5,6 +5,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+vi.mock(import("node:fs/promises"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, writeFile: vi.fn<typeof actual.writeFile>(actual.writeFile) };
+});
+
 describe(readContentAddressedObject, () => {
   // The SHA-256 of the empty string
   const hash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
@@ -47,6 +52,23 @@ describe(readContentAddressedObject, () => {
       `[InvalidOperationError: Invalid operation: Read, name: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, does not hash to its name]`,
     );
     expect(existsSync(join(directory, hash))).toBe(false);
+  });
+
+  // A write that fails after it creates its part file leaves that file behind unless the failure removes it, and each
+  // Failed download would leave one more
+  test("removes the part file a failed write leaves behind", async () => {
+    expect.hasAssertions();
+
+    const actual = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
+    vi.mocked(writeFile).mockImplementationOnce(async (file, data) => {
+      await actual.writeFile(file, data);
+      throw new Error(" ");
+    });
+
+    await expect(
+      readContentAddressedObject(hash, () => Promise.resolve(new Uint8Array()), directory),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+    await expect(readdir(directory)).resolves.toStrictEqual([]);
   });
 
   // A name climbing out of the directory would read a file outside the cache, so it is refused before any read
