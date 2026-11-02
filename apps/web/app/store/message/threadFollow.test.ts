@@ -41,7 +41,7 @@ describe(useThreadFollowStore, () => {
     const author = createUser();
     const thread = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
     trpcMsw.message.readFollowedThreads.query(() => ({ threadRootRowKeys: [thread.rowKey], threads: [thread] }));
-    trpcMsw.room.readMembersByIds.query(() => [{ ...author, displayName: "displayName" }]);
+    trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     const threadFollowStore = useThreadFollowStore();
     const { readFollowedThreads } = threadFollowStore;
     const creator = useCreator(() => thread);

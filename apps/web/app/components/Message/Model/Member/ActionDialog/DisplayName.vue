@@ -26,7 +26,7 @@ const save = () =>
       targetUserId: user.id,
     });
     // No subscription reaches the member who wrote this, so the row is read back for the name the server resolved
-    storeUpdateMembers(roomId, await $trpc.room.readMembersByIds.query({ roomId, userIds: [user.id] }));
+    storeUpdateMembers(roomId, await $trpc.room.readUsersByIds.query({ roomId, userIds: [user.id] }));
   });
 </script>
 

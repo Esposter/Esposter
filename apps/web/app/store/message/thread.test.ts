@@ -29,7 +29,7 @@ describe(useThreadStore, () => {
   beforeEach(() => {
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
     // Test here is about
-    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.readMessagesByRowKeys.query(() => []);
     trpcMsw.message.emoji.readEmojis.query(() => []);
   });

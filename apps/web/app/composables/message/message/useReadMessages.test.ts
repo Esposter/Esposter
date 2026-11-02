@@ -32,7 +32,7 @@ describe(useReadMessages, () => {
       await readGate;
       return { hasMore: false, items: [message], nextCursor: "" };
     });
-    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.emoji.readEmojis.query(({ input }) => (input.roomId === roomId ? [emoji] : []));
     await mountSuspended(
       defineComponent({

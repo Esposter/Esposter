@@ -1,8 +1,8 @@
 import { roomIdSchema, userIdsSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const readMembersByIdsInputSchema = z.object({
+export const readUsersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
   userIds: userIdsSchema.shape.userIds.min(1),
 });
-export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
+export type ReadUsersByIdsInput = z.infer<typeof readUsersByIdsInputSchema>;

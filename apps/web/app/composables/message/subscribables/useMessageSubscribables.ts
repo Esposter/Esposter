@@ -12,7 +12,7 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
-  const readMembersByIds = useReadMembersByIds();
+  const readUsersByIds = useReadUsersByIds();
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return undefined;
@@ -45,7 +45,7 @@ export const useMessageSubscribables = () => {
               const userIds = Array.from(new Set(data), ({ userId }) => userId).filter(
                 (userId) => userId !== undefined,
               );
-              if (userIds.length > 0) await readMembersByIds(roomId, userIds);
+              if (userIds.length > 0) await readUsersByIds(roomId, userIds);
               // Each message is its own unit: one whose Create hooks reject stays out of the list and is logged, and the
               // Rest of the batch still lands behind it
               for (const newMessage of data)

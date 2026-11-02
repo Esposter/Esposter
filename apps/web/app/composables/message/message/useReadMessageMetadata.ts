@@ -5,7 +5,7 @@ import { MessageType } from "@esposter/db-schema";
 // Everything a rendered message reads besides itself — its author, the message it replies to, its attachments'
 // Urls and its reactions — for a room's page read and a thread's read alike
 export const useReadMessageMetadata = () => {
-  const readMembersByIds = useReadMembersByIds();
+  const readUsersByIds = useReadUsersByIds();
   const readMessageCreators = useReadMessageCreators();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
@@ -18,13 +18,13 @@ export const useReadMessageMetadata = () => {
     const standardMessages: StandardMessageEntity[] = [];
 
     for (const message of messages) if (message.type !== MessageType.Webhook) standardMessages.push(message);
-    // A reactor is named by its member row, so the reactors of the emojis read are read as members too
+    // A reactor is named by its row in the room, so the reactors of the emojis read are read too
     const readReactorMembers = async () => {
       const emojis = await readEmojis(
         roomId,
         messages.map(({ rowKey }) => rowKey),
       );
-      await readMembersByIds(
+      await readUsersByIds(
         roomId,
         emojis.flatMap(({ userIds }) => userIds),
       );

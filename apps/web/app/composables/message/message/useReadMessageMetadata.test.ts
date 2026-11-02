@@ -29,7 +29,7 @@ describe(useReadMessageMetadata, () => {
       readMessagesByRowKeysInputs.push(input);
       return [reply];
     });
-    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.emoji.readEmojis.query(() => []);
     await mountSuspended(
       defineComponent({

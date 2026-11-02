@@ -175,14 +175,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
       input.roomId,
       new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
     );
-    // An override names no one, so the room's member rows for the overridden members are read alongside it
+    // An override names no one, so the rows of the overridden users are read alongside it
     if (overrides.length === 0) return;
 
-    const members = await $trpc.room.readMembersByIds.query({
+    const users = await $trpc.room.readUsersByIds.query({
       roomId: input.roomId,
       userIds: overrides.map(({ userId }) => userId),
     });
-    storeRoomMembers(input.roomId, members);
+    storeRoomMembers(input.roomId, users);
   };
   // The write's answer is the state the server left, so the entry is right whatever order the events arrived in
   const upsertMemberPermissionOverride = async (input: UpsertMemberPermissionOverrideInput) => {

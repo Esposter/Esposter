@@ -30,9 +30,9 @@ describe("messageModelMemberActionDialogDisplayName", () => {
       updateUserToRoom(input);
       return createUserToRoom({ displayName: newDisplayName, roomId, userId: user.id });
     });
-    trpcMsw.room.readMembersByIds.query(() => {
+    trpcMsw.room.readUsersByIds.query(() => {
       signalReadBack();
-      return [{ ...user, displayName: newDisplayName }];
+      return [{ ...user, displayName: newDisplayName, isMember: true }];
     });
     return { readBack, updateUserToRoom };
   };

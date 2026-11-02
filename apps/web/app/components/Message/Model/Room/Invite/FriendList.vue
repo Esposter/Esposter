@@ -32,16 +32,19 @@ const recipients = computed(() =>
 );
 const recipientItems = computed(() => searchItems(recipients.value, searchQuery.value, ({ name }) => ({ name })));
 // Which friends are already members is read once the friends are, since a member row reads Joined and is disabled. With
-// No friends there is nobody to ask about, and the read would refuse an empty list
-const { data: roomMembers, refresh: readRoomMembers } = useQuery(
-  () => $trpc.room.readMembersByIds.query({ roomId: room.id, userIds: friends.value.map(({ id }) => id) }),
+// No friends there is nobody to ask about, and the read would refuse an empty list. The read names a friend who has left
+// The room too, so membership is the `isMember` flag and not the row's presence
+const { data: roomUsers, refresh: readRoomUsers } = useQuery(
+  () => $trpc.room.readUsersByIds.query({ roomId: room.id, userIds: friends.value.map(({ id }) => id) }),
   { isLazy: true },
 );
-const memberIdSet = computed(() => new Set((roomMembers.value ?? []).map(({ id }) => id)));
+const memberIdSet = computed(
+  () => new Set((roomUsers.value ?? []).filter(({ isMember }) => isMember).map(({ id }) => id)),
+);
 // The list shows skeleton rows rather than its empty state while the first read of the friends is on its way
 const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
   onSuccess: () => {
-    if (friends.value.length > 0) getSynchronizedFunction(readRoomMembers)();
+    if (friends.value.length > 0) getSynchronizedFunction(readRoomUsers)();
   },
 });
 </script>

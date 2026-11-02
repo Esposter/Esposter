@@ -839,7 +839,7 @@ describe("roomRouter", () => {
     expect(takeOne(globalNameMembers.items).displayName).toBe(displayName);
   });
 
-  test("reads members by ids with the display name they have in the room", async () => {
+  test("reads users by ids with the display name they have in the room", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -849,13 +849,30 @@ describe("roomRouter", () => {
       .update(usersToRoomsInMessage)
       .set({ displayName })
       .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
-    const members = await roomCaller.readMembersByIds({ roomId: newRoom.id, userIds: [user.id] });
+    const users = await roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [user.id] });
 
-    expect(takeOne(members).id).toBe(user.id);
-    expect(takeOne(members).displayName).toBe(displayName);
+    expect(takeOne(users).id).toBe(user.id);
+    expect(takeOne(users).displayName).toBe(displayName);
+    expect(takeOne(users).isMember).toBe(true);
   });
 
-  test("fails read members by ids with wrong user", async () => {
+  // A user who has left still reads by id, named by their account, so a message they wrote is named where the room
+  // Shows it. The room no longer holds their membership, which is what `isMember` tells a caller
+  test("reads a user who has left the room by id, named by their account", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
+    await roomCaller.leaveRoom(newRoom.id);
+    const users = await roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [member.id] });
+
+    expect(takeOne(users).id).toBe(member.id);
+    expect(takeOne(users).displayName).toBe(member.name);
+    expect(takeOne(users).isMember).toBe(false);
+  });
+
+  test("fails read users by ids with wrong user", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -863,7 +880,7 @@ describe("roomRouter", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      roomCaller.readMembersByIds({ roomId: newRoom.id, userIds: [userId] }),
+      roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [userId] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

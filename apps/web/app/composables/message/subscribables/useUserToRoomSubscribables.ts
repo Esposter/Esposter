@@ -25,11 +25,11 @@ export const useUserToRoomSubscribables = () => {
             setMyUserToRoom(userToRoom.roomId, userToRoom);
             // A display name is a server row, so the room's copy of this member is re-read rather than written here
             await getResultAsync(async () => {
-              const members = await $trpc.room.readMembersByIds.query({
+              const users = await $trpc.room.readUsersByIds.query({
                 roomId: userToRoom.roomId,
                 userIds: [userToRoom.userId],
               });
-              storeUpdateMembers(userToRoom.roomId, members);
+              storeUpdateMembers(userToRoom.roomId, users);
             }).match(noop, console.error);
           }),
         }),

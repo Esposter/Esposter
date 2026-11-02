@@ -190,7 +190,7 @@ describe(useReadSearchedMessages, () => {
       await isStaleResponseReleased;
       return { count: newCount, data: { hasMore: false, items: [staleMessage] } };
     });
-    trpcMsw.room.readMembersByIds.query(() => []);
+    trpcMsw.room.readUsersByIds.query(() => []);
     await mountRead();
     searchQuery.value = query;
     const staleSearch = readSearchedMessages();
@@ -210,7 +210,7 @@ describe(useReadSearchedMessages, () => {
     const author = createUser();
     const hit = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
     trpcMsw.message.searchMessages.query(() => ({ count: newCount, data: { hasMore: false, items: [hit] } }));
-    trpcMsw.room.readMembersByIds.query(() => [{ ...author, displayName: "displayName" }]);
+    trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     await mountRead();
     searchQuery.value = query;
     await readSearchedMessages();

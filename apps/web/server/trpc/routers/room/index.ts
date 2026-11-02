@@ -1,5 +1,6 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
@@ -43,10 +44,10 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
-import { readMembersByIdsInputSchema } from "#shared/models/db/room/ReadMembersByIdsInput";
 import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput";
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
+import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
@@ -335,18 +336,6 @@ export const baseRoomRouter = router({
       return getCursorPaginationData(members, limit, sortBy);
     },
   ),
-  // Only the ids that are members of the room come back, which is how a caller tells who has joined
-  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<MemberInRoom[]>(
-    ({ ctx, input: { roomId, userIds } }) =>
-      ctx.db
-        .select({
-          ...getPublicUserColumns(usersInAuth),
-          displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
-        })
-        .from(usersInAuth)
-        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
-        .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(usersInAuth.id, userIds))),
-  ),
   readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
@@ -468,6 +457,23 @@ export const baseRoomRouter = router({
     if (room) cursorPaginationData.items.push(room);
     return cursorPaginationData;
   }),
+  // Every id asked for comes back, a user who has left the room included, so a message whose author has left is still
+  // named. `isMember` tells the two apart, and a user with no membership is named by their account
+  readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
+    ({ ctx, input: { roomId, userIds } }) =>
+      ctx.db
+        .select({
+          ...getPublicUserColumns(usersInAuth),
+          displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
+          isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`,
+        })
+        .from(usersInAuth)
+        .leftJoin(
+          usersToRoomsInMessage,
+          and(eq(usersToRoomsInMessage.userId, usersInAuth.id), eq(usersToRoomsInMessage.roomId, roomId)),
+        )
+        .where(inArray(usersInAuth.id, userIds)),
+  ),
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],

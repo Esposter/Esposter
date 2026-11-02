@@ -89,6 +89,6 @@ because the batch takes several of what it selects on: `readFoosByBar` stays `re
 
 **A `By<Selector>` separating two reads of the same rows is not one of these.** The ban is on a suffix that only
 says "several", so the test is whether dropping it leaves two procedures that mean different things:
-`readMembersByIds` beside a paginated `readMembers` names _which_ rows are being asked for rather than how many,
+`readMessagesByRowKeys` beside a paginated `readMessages` names _which_ rows are being asked for rather than how many,
 and dropping it collides. This is a **function's** name — the same words on a map are the `<key><value>Map` rule
 in `SKILL.md`.
