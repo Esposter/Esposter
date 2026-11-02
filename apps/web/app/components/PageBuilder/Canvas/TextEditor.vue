@@ -52,7 +52,7 @@ const editor = useEditor({
     ).match(noop, console.error);
   },
 });
-// Escape ends the edit; the stop keeps the shell from acting on the same key
+// Escape ends the edit; the stop keeps the canvas from acting on the same key
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key !== "Escape") return;
 

@@ -1,9 +1,12 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { UiCommand } from "@/models/ui/UiCommand";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
+import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
@@ -69,6 +72,23 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
+  // Escape cancels the drag in progress, so it is bound only while there is one, and listed in the shortcuts dialog only then
+  const cancelDrag = shallowRef<() => void>();
+  useCommands((): UiCommand[] => {
+    const cancel = cancelDrag.value;
+    if (!cancel) return [];
+
+    return [
+      {
+        group: PAGE_BUILDER_COMMAND_GROUP,
+        id: "page-builder-cancel-drag",
+        meaning: UiIconMeaning.Close,
+        run: cancel,
+        shortcut: "escape",
+        title: "Cancel the drag",
+      },
+    ];
+  });
   // Tracks a press until its release, a cancel or Escape. Each move past the threshold reaches onMove, and the release reaches
   // `onRelease` with its point only while the press was dragging
   const trackDrag = (
@@ -80,6 +100,7 @@ export const usePageBuilderDrag = <
     const { clientX: startX, clientY: startY } = event;
     const endDrag = () => {
       abortController.abort();
+      cancelDrag.value = undefined;
       dropTarget.value = undefined;
       isDragging.value = false;
     };
@@ -95,14 +116,11 @@ export const usePageBuilderDrag = <
       }
       endDrag();
     };
-    const onKeydown = (keyEvent: KeyboardEvent) => {
-      if (keyEvent.key === "Escape") endDrag();
-    };
     const { signal } = abortController;
+    cancelDrag.value = endDrag;
     window.addEventListener("pointermove", onPointerMove, { signal });
     window.addEventListener("pointerup", onPointerUp, { signal });
     window.addEventListener("pointercancel", endDrag, { signal });
-    window.addEventListener("keydown", onKeydown, { signal });
   };
 
   const startPaletteDrag = (

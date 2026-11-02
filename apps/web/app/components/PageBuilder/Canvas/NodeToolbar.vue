@@ -14,6 +14,8 @@ interface Props {
   resourceId: string;
 }
 
+// The delete's confirm is held by the editor, which binds no key while it asks
+const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
 const { announce, kind, position, resourceId } = defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
@@ -30,7 +32,6 @@ const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = use
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
 const { selectParent } = usePageBuilderSelection(kind, getPageDocument, () => resourceId);
-const isDeleteOpen = ref(false);
 </script>
 
 <!-- Placed by the canvas above the selected node, or below it when the frame has no room above -->

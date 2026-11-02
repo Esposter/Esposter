@@ -2,21 +2,22 @@
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { UiCommand } from "@/models/ui/UiCommand";
 import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
-import { KeyAction } from "@/models/pageBuilder/KeyAction";
-import { KeyScope } from "@/models/pageBuilder/KeyScope";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
-import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { ResourceType } from "@esposter/db-schema";
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
   resourceId: string;
 }
 
+const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
 const { announce, dropTarget, kind, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
@@ -69,18 +71,48 @@ watch(
   },
   { flush: "post" },
 );
-// The canvas takes its own keys, and forwards every other key to the editor
-// A text edit's own keys stay with it, and a modified key keeps the meaning the editor gives it, so an Alt chord still moves the node
+// The arrows and Escape, unmodified, are the canvas's own: the next node, the previous one and the parent. Every other key is
+// Handed to the editor, and a text edit's own keys stay with it, so an Alt chord still reaches the editor's commands
+const frameKeyActions: Partial<Record<string, () => void>> = {
+  ArrowDown: () => selectAdjacentNode(1),
+  ArrowUp: () => selectAdjacentNode(-1),
+  Escape: selectParent,
+};
+// Listed in the shortcuts dialog and never bound, since the arrows also walk the layers tree and the palette, so only the frame takes them
+useCommands((): UiCommand[] => [
+  {
+    group: PAGE_BUILDER_COMMAND_GROUP,
+    id: "page-builder-next-node",
+    meaning: UiIconMeaning.ArrowDown,
+    shortcut: "arrowdown",
+    title: "Select the next block",
+  },
+  {
+    group: PAGE_BUILDER_COMMAND_GROUP,
+    id: "page-builder-previous-node",
+    meaning: UiIconMeaning.ArrowUp,
+    shortcut: "arrowup",
+    title: "Select the previous block",
+  },
+  {
+    group: PAGE_BUILDER_COMMAND_GROUP,
+    id: "page-builder-parent-node",
+    meaning: UiIconMeaning.Collapse,
+    shortcut: "escape",
+    title: "Select the parent block",
+  },
+]);
 const onFrameKeydown = (event: KeyboardEvent) => {
-  const action = getKeyAction(event, KeyScope.Canvas);
-  if (!action) {
+  if (checkIsEditableTarget(event.target)) return;
+
+  const frameKeyAction = frameKeyActions[event.key];
+  if (!frameKeyAction || event.altKey || event.ctrlKey || event.metaKey) {
     emit("canvasKeydown", event);
     return;
   }
 
   event.preventDefault();
-  if (action === KeyAction.ParentNode) selectParent();
-  else selectAdjacentNode(action === KeyAction.NextNode ? 1 : -1);
+  frameKeyAction();
 };
 // The frame's document is the one the keys are pressed in, so its listener is attached once the page is drawn in it and removed with it
 watch(contentRoot, (element, _previousElement, onCleanup) => {
@@ -148,6 +180,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
   </PageBuilderCanvasFrame>
   <PageBuilderCanvasNodeToolbar
     v-if="selectedNodeId && toolbarPosition"
+    v-model:is-delete-open="isDeleteOpen"
     :announce
     :kind
     :position="toolbarPosition"

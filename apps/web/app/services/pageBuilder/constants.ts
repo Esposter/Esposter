@@ -83,6 +83,8 @@ export const DEFAULT_SIDE_PANE_WIDTH = 260;
 export const CONTENT_PANEL = "Content";
 // The theme panel's title, which is also its value in the node settings tabs
 export const THEME_PANEL = "Theme";
+// The check panel's title, which is also its value in the node settings tabs
+export const CHECK_PANEL = "Check";
 // The colour a new theme colour starts as, until the colour field changes it
 export const DEFAULT_THEME_COLOR = "#000000";
 // The stack a new font-stack token starts as, until its field changes it
@@ -173,3 +175,5 @@ export const STYLE_SECTORS = [
   { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
   { properties: ["opacity", "box-shadow"], title: "Effects" },
 ] satisfies { properties: StyleProperty[]; title: string }[];
+// The largest value of one 8-bit colour channel, which a colour the browser computes in rgb and a canvas pixel both state
+export const MAX_COLOR_CHANNEL = 255;

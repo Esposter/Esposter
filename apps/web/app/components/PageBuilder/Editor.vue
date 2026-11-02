@@ -2,16 +2,17 @@
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
-import { KeyAction } from "@/models/pageBuilder/KeyAction";
-import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { CONTENT_PANEL, DEFAULT_SIDE_PANE_WIDTH, STYLE_PANEL, THEME_PANEL } from "@/services/pageBuilder/constants";
-import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import {
+  CHECK_PANEL,
+  CONTENT_PANEL,
+  DEFAULT_SIDE_PANE_WIDTH,
+  STYLE_PANEL,
+  THEME_PANEL,
+} from "@/services/pageBuilder/constants";
 import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { getBlockNode } from "headless-block-editor";
 
 interface Props {
   // The kind the resource's document is edited through, which the page builder's kind holds with the document
@@ -20,11 +21,16 @@ interface Props {
 }
 
 const { kind, resourceId } = defineProps<Props>();
-// The settings tabs the kind has content for: an email has no theme, so its tabs stop at content and style
+// The settings tabs the kind has content for: an email has no theme or check yet, so its tabs stop at content and style
 const panelItems = computed<UiTabItem<string>[]>(() => [
   { title: CONTENT_PANEL, value: CONTENT_PANEL },
   { title: STYLE_PANEL, value: STYLE_PANEL },
-  ...(kind.editor === PageBuilderEditor.Email ? [] : [{ title: THEME_PANEL, value: THEME_PANEL }]),
+  ...(kind.editor === PageBuilderEditor.Email
+    ? []
+    : [
+        { title: THEME_PANEL, value: THEME_PANEL },
+        { title: CHECK_PANEL, value: CHECK_PANEL },
+      ]),
 ]);
 
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -33,7 +39,7 @@ const { getHeldDocument } = pageBuilderDocumentStore;
 const getPageDocument = () => getHeldDocument(resourceId)?.document;
 const pageDocument = computed(getPageDocument);
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-const { getEditingNodeId, getSelectedNodeId, setEditingNodeId } = pageBuilderCanvasStore;
+const { getEditingNodeId } = pageBuilderCanvasStore;
 const shell = useTemplateRef("shell");
 const leftWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
 const rightWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
@@ -46,18 +52,14 @@ const announce = (message: string) => {
     announcement.value = message;
   });
 };
-const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(
+// The node delete a toolbar asks for is held here, since the editor's keys are not bound while it asks
+const isDeleteOpen = ref(false);
+const { handleCanvasKeydown, handleEnterKeydown } = usePageBuilderKeyCommands(
   kind,
   getPageDocument,
   () => resourceId,
   announce,
-);
-const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
-  kind,
-  getPageDocument,
-  () => resourceId,
-  announce,
-  deleteNode,
+  isDeleteOpen,
 );
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
@@ -70,16 +72,6 @@ const { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag } = usePag
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
-// Enter edits the selected node in place when it is a text node, and does nothing for any other node
-const startTextEdit = () => {
-  const currentDocument = getPageDocument();
-  const nodeId = getSelectedNodeId(resourceId);
-  const nodePointer = currentDocument && getNodePointer(kind, currentDocument, nodeId);
-  if (!currentDocument || nodePointer === undefined) return;
-  if (getBlockNode(currentDocument, nodePointer, kind.children)?.type !== kind.textType) return;
-
-  setEditingNodeId(resourceId, nodeId);
-};
 // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame
 watch(
   () => getEditingNodeId(resourceId),
@@ -89,26 +81,6 @@ watch(
     shell.value?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)?.focus();
   },
 );
-// The command each key the editor takes runs, by the action the key table gives it. The canvas's own keys are not among them
-const editorKeyCommands: Partial<Record<KeyAction, () => void>> = {
-  [KeyAction.Copy]: copySelected,
-  [KeyAction.Cut]: cutSelected,
-  [KeyAction.Delete]: deleteSelected,
-  [KeyAction.MoveDown]: moveDown,
-  [KeyAction.MoveLeft]: moveLeft,
-  [KeyAction.MoveRight]: moveRight,
-  [KeyAction.MoveUp]: moveUp,
-  [KeyAction.Paste]: pasteSelected,
-  [KeyAction.StartTextEdit]: startTextEdit,
-};
-// The canvas forwards the keys its frame takes no command for, so the frame's keys reach the same handler as the shell's own
-const handleEditorKeydown = (event: KeyboardEvent) => {
-  const action = getKeyAction(event, KeyScope.Editor);
-  if (!action) return;
-  // Starting a text edit leaves Enter's default alone, while every other command the key takes prevents it
-  if (action !== KeyAction.StartTextEdit) event.preventDefault();
-  editorKeyCommands[action]?.();
-};
 </script>
 
 <template>
@@ -120,7 +92,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
     gap-2
     h-full
     min-h-0
-    @keydown="handleEditorKeydown($event)"
+    @keydown="handleEnterKeydown($event)"
   >
     <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col gap-4 min-h-0 relative>
       <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
@@ -147,12 +119,13 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" />
       <PageBuilderCanvas
         v-else
+        v-model:is-delete-open="isDeleteOpen"
         ref="canvas"
         :announce
         :drop-target
         :kind
         :resource-id
-        @canvas-keydown="handleEditorKeydown($event)"
+        @canvas-keydown="handleCanvasKeydown($event)"
       />
     </div>
     <div :style="{ width: `${rightWidth}px` }" shrink-0 min-h-0 relative>
@@ -171,6 +144,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         />
         <PageBuilderStylePanel v-else-if="panel === STYLE_PANEL" :resource-id />
         <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
+        <PageBuilderCheck v-if="panel === CHECK_PANEL" :resource-id />
       </UiTabs>
     </div>
     <div role="status" aria-live="polite" sr-only>{{ announcement }}</div>

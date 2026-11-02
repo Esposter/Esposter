@@ -25,7 +25,13 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, onTestFinished, test, vi } from "vitest";
+
+// The editor's keys are bound on the page's window, so a key is pressed on the element that has focus and bubbles up to it
+const pressKey = (init: KeyboardEventInit, target: EventTarget = document.body) => {
+  target.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, ...init }));
+  return nextTick();
+};
 
 describe("pageBuilderEditor", () => {
   afterEach(() => {
@@ -72,6 +78,23 @@ describe("pageBuilderEditor", () => {
     expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual(["Content", "Style"]);
   });
 
+  test("a webpage's settings tabs end with the check", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
+
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+
+    expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual([
+      "Content",
+      "Style",
+      "Theme",
+      "Check",
+    ]);
+  });
+
   test("a block can be moved with the keyboard alone", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -86,9 +109,9 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+    await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    await component.trigger("keydown", { altKey: true, key: "ArrowDown" });
+    await pressKey({ altKey: true, key: "ArrowDown" });
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
       TEST_OTHER_ID,
@@ -110,11 +133,41 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+    await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    await component.trigger("keydown", { key: "Delete" });
+    await pressKey({ key: "Delete" });
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+      TEST_OTHER_ID,
+    ]);
+  });
+
+  test("a key typed into a text field is no edit key", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+      ],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+    const input = document.createElement("input");
+    document.body.append(input);
+    onTestFinished(() => {
+      input.remove();
+    });
+    input.focus();
+
+    await pressKey({ key: "Delete" }, input);
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+      TEST_ROOT_TEXT_ID,
       TEST_OTHER_ID,
     ]);
   });
@@ -135,7 +188,7 @@ describe("pageBuilderEditor", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    await component.trigger("keydown", { altKey: true, key: "ArrowDown" });
+    await pressKey({ altKey: true, key: "ArrowDown" });
     await nextTick();
 
     expect(component.get('[role="status"]').text()).toBe(
@@ -336,9 +389,9 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+    await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    await component.trigger("keydown", { ctrlKey: true, key: "c" });
+    await pressKey({ ctrlKey: true, key: "c" });
 
     expect(
       writeText.mock.calls.map(([text]) => parseClipboardNodes(webpageKind, text)?.nodes.map(({ props }) => props.id)),
