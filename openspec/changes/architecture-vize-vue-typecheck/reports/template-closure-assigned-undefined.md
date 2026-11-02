@@ -1,6 +1,8 @@
 # content-mapper: an assignment in an inline callback prop does not narrow in the inference-only copy, so a later read reports TS18048
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -10,7 +12,7 @@ An inline callback prop with a block body assigns a ref and reads the ref on the
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -129,7 +131,7 @@ The cause is confirmed on the saved generated file (`vize check --save-virtual-t
 - Write `(baz: Foo) =>` in the first copy.
 - Write `// @ts-ignore` before line 65.
 
-The fix is likely to type the parameters of the first copy as the mapped copy types them, or to cover every line of the first copy. The code is unchanged on `main` and in 0.651.0.
+The fix is likely to type the parameters of the first copy as the mapped copy does. Another option is to cover every line of the first copy. The code is unchanged in 0.653.0 and on `main`.
 
 ## Real occurrence
 
@@ -157,7 +159,7 @@ Errors with `vize` 0.638.0, 0.645.0 and 0.651.0 on the same file: 1 each. `vue-t
 
 Versions before 0.638.0 are not tested for this input. The fix is confirmed on the generated file and not applied to the source of `vize`.
 
-With the extra line `console.log(foo.nope);`, `tsrs` reports TS2339 twice: once at the mapped position, as `vue-tsc` does, and once at a position in the first copy that has no mapping. Only the first is expected. This may share a cause with #11374.
+With the extra line `console.log(foo.nope);`, `tsrs` reports TS2339 twice. One report is at the mapped position, as `vue-tsc` does. The other is at a position in the first copy that has no mapping. Only the first is expected. This may share a cause with #11374.
 
 In the real app, one file reports this shape. Many other templates assign in an inline callback prop. I did not count which of them read the value again on a later line.
 
@@ -165,6 +167,8 @@ In the real app, one file reports this shape. Many other templates assign in an 
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for TS18048, narrowing, assignment, callbacks and inference-only copies. The search matches words, not meaning. The nearest are #11374 (open; an authored error that the mapper copies report again, because one `@ts-ignore` covers one line) and #11380 (closed; plain parameters of nested callbacks). #11374 has a real error in the source and this input has none. #11380 gives the parameters of nested callbacks a directive and does not change the typing of the first copy. This report may share a root cause with #11374 and #11361: the first copy keeps the whole body, and one line of suppression covers it.
+Searched open and closed issues and pull requests for TS18048, narrowing, assignment, callbacks and inference-only copies. The search matches words, not meaning. The nearest are #11374 (open) and #11380 (closed). #11374 is about an authored error that the mapper copies report again, because one `@ts-ignore` covers one line. #11380 is about plain parameters of nested callbacks.
+
+#11374 has a real error in the source and this input has none. #11380 gives the parameters of nested callbacks a directive and does not change the typing of the first copy. This report may share a root cause with #11374 and #11361: the first copy keeps the whole body, and one line of suppression covers it.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

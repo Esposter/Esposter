@@ -1,16 +1,18 @@
 # content-mapper: an undeclared attribute on a library function component reports TS2353 when the project and `vize` do not share one `vue`
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue is none of those 15, because the app now lists `vue` beside `vize` in its root manifest. It stays open because the mapper then reports a false error with no warning when it cannot find that `vue`.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue is none of those 15, because the app now lists `vue` beside `vize` in its root manifest. It stays open because the mapper then reports a false error with no warning when it cannot find that `vue`.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
-A library component declared as a function that returns `VNode & { __ctx }` (the form `vue-tsc` writes for a generic SFC) gives TS2353 for an attribute that no prop declares. `vue-tsc` accepts the same file. The mapper accepts the attribute only when it can use its shared helpers, and in a monorepo where `vue` and `vize` sit in different `node_modules` folders it cannot.
+A library component declared as a function that returns `VNode & { __ctx }` gives TS2353 for an attribute that no prop declares. `vue-tsc` writes this form for a generic SFC. `vue-tsc` accepts the same file. The mapper accepts the attribute only when it can use its shared helpers. In a monorepo where `vue` and `vize` sit in different `node_modules` folders, it cannot.
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux 6.18. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux 6.18. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -109,7 +111,7 @@ No diagnostic, as with `vue-tsc`. The type that `vue-tsc` checks for `Foo` ends 
 
 ## Cause
 
-The cause is confirmed by two runs in Isolation (the `vue` change and the declaration change). The source is read at the tag `v0.650.0` of `ubugeeei-prod/vize`.
+The cause is confirmed by two runs in Isolation (the `vue` change and the declaration change). The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`.
 
 `content_mapper_helper_capability` returns `None` when the `vue` that the project resolves is not the `vue` that `vize` resolves (`crates/vize/src/commands/content_mapper/project.rs:192-197`):
 
@@ -168,16 +170,22 @@ One change at a time from the reproduction. Errors on `vize` 0.650.0, `tsrs` and
 
 The real library `@vuetify/v0` 1.3.1 in place of `foo-lib`, with `<Treeview.Item :data-item-id="'a'" />`, gives 1 error in `tsrs` and 0 in `vue-tsc` in the workspace layout. The same file in a single project, where `vue` and `vize` share one `node_modules` folder, gives 0 and 0.
 
-Three conditions are needed together: a function-style library component with `__ctx` in its return type, an undeclared attribute, and a project where the shared helpers are off. A generic declaration, a dotted tag and a bound attribute are not needed. The `checkUnknownProps: false` option has no effect here because the fallback, not the option, opens the call.
+Three conditions must hold: a library component with `__ctx`, an undeclared attribute, and a project with the shared helpers off. A generic declaration, a dotted tag and a bound attribute are not needed. The `checkUnknownProps: false` option has no effect here because the fallback, not the option, opens the call.
 
 The mapper generates the shared mode with `import type {} from "vize/virtual-ts"` and the embedded mode with inline helpers. The dump of `Probe.vue` shows the first with `vue` in the root manifest and the second with `vue` only in `app`.
 
 ## Not known
 
-Versions older than 0.638.0 are not tested. The fix is read from the source and not applied: the run that removes the error declares the same variable in the project, which is the same declaration as the shared header. Other differences between the embedded mode and the shared mode are not checked. The `None` result for a `vize` folder without `content-mapper-helpers.d.ts` is not tested. The TS2353 message names the first undeclared attribute of a call only, so the number of undeclared attributes in a real file is not known.
+Versions older than 0.638.0 are not tested. The fix is read from the source and not applied. The run that removes the error declares the same variable in the project. That is the same declaration as the shared header.
+
+Other differences between the embedded mode and the shared mode are not checked. The `None` result for a `vize` folder without `content-mapper-helpers.d.ts` is not tested. The TS2353 message names the first undeclared attribute of a call only, so the number of undeclared attributes in a real file is not known.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `__VLS_PROPS_FALLBACK`, `checkUnknownProps`, TS2353 and the mapper's shared helpers. The search matches words, not meaning. The nearest are #9103 (closed pull request; adds `__VLS_PROPS_FALLBACK` to the shared helpers for generic library children, and does not add it to the embedded helpers), #9383 and #10373 (closed; `checkUnknownProps: true` is ignored or reports intrinsic attributes, the opposite direction), and #10406 (closed pull request; the title says it shares the content mapper attribute helpers; the description is not read). Each differs: none covers an undeclared attribute on a library component with the default option.
+Searched open and closed issues and pull requests for `__VLS_PROPS_FALLBACK`, `checkUnknownProps`, TS2353 and the mapper's shared helpers. The search matches words, not meaning. The nearest are listed here. Each differs: none covers an undeclared attribute on a library component with the default option.
+
+- #9103 (closed pull request): adds `__VLS_PROPS_FALLBACK` to the shared helpers for generic library children. It does not add it to the embedded helpers.
+- #9383 and #10373 (closed): `checkUnknownProps: true` is ignored or reports intrinsic attributes, the opposite direction.
+- #10406 (merged pull request): publishes the shared attribute helpers as a type-only subpath. It adds the condition that the project and the helper package resolve the same `vue`, which is the condition that fails here.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

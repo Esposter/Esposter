@@ -1,6 +1,8 @@
 # check --declaration: the emitted component type still refuses undeclared attributes when the component has an emit or two required props (#11364 closed, reduction too narrow)
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of the type check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue is none of those 15. It blocks the declaration emit that replaces `vue-tsc --declaration`.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of the type check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue is none of those 15. It blocks the declaration emit that replaces `vue-tsc --declaration`.
 
 #11364 reported that a `.vue.d.ts` written by `vize check --declaration` makes `vue-tsc` report TS2345 for an attribute that the component does not declare, for example `disabled`. The issue is closed, but the bug is not fixed on 0.650.0. The reduction in #11364 (one required prop, no emits) already passes on every release I tried, so the closing change could not show the bug. A component with one emit, or with two required props, still fails.
 
@@ -10,7 +12,7 @@ This is one of a batch of 14 issues filed together, all from that attempt, so th
 
 ## Environment
 
-`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Linux. Source of truth: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`. The consumer check below gives the same error, at the same position, on `vize` 0.652.0 (macOS on Apple silicon).
+`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Linux. Source of truth: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the consumer check below gives the same error at the same position.
 
 ## Reproduction
 
@@ -106,11 +108,11 @@ and requires a property that no caller can give when a key remains:
 readonly __vizeInvalidComponentProps: {
 ```
 
-The shipped helper has a rule, `$RelaxedDynamicUnionExtra` (line 217), that the guard reads. It appears to let the extra key pass for a component with one required prop and no emits, which would explain why the reduction in #11364 passes, and not to apply when the component has an emit or a second required prop. That reading comes from the Isolation table and not from a trace of the type. The emitted `Foo.vue.d.ts` of 0.638.0 and 0.650.0 is byte-identical for the producer above.
+The shipped helper has a rule, `$RelaxedDynamicUnionExtra` (line 217), that the guard reads. The extra key passes for a component with one required prop and no emits, which is why the reduction in #11364 passes. It does not pass when the component has an emit or a second required prop. This reading comes from the Isolation table and not from a trace of the type. The emitted `Foo.vue.d.ts` of 0.638.0 and 0.650.0 is byte-identical for the producer above.
 
 In the mapper's own check, `$ComponentCheckTail` adds the global HTML attributes first (`crates/vize_canon/src/virtual_ts/scope/component_prop_checker/check_helpers.rs`). A consumer of the `.d.ts` has no such tail.
 
-The fix is likely to drop the extra-key half of the guard from the declaration, or to allow fallthrough keys: pass `$ComponentInputProps<T, Declared> & Record<string, unknown>` as `Allowed` to `$ComponentInputGuardFor`. That edit, made in the emitted `__vize_helpers.d.ts` on 0.638.0, cleared the errors for a consumer of 57 components. It was not applied to 0.650.0.
+The fix is likely to drop the extra-key half of the guard from the declaration. Another option allows fallthrough keys: pass `$ComponentInputProps<T, Declared> & Record<string, unknown>` as `Allowed` to `$ComponentInputGuardFor`. That edit, made in the emitted `__vize_helpers.d.ts` on 0.638.0, cleared the errors for a consumer of 57 components. It was not applied to 0.650.0.
 
 ## Real occurrence
 
@@ -128,7 +130,7 @@ One change at a time from `producer/src/Foo.vue`. Errors for the `vue-tsc` consu
 | `bar: number`, `change` emit, `vue-tsc` declaration | `:bar="1" disabled`          |                0 |
 | `bar: number`, `change` emit                        | `bar="baz"` (real error)     |       1 (TS2322) |
 
-The first row gives the same error on `vize` 0.652.0, the newest release at the time of writing.
+The first row gives the same error on `vize` 0.652.0 and 0.653.0.
 
 ## Not known
 

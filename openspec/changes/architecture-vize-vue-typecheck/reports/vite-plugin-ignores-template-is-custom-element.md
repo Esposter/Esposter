@@ -1,6 +1,8 @@
 # vite-plugin: `template.compilerOptions.isCustomElement` is accepted and ignored, so a custom-renderer tag compiles as a component
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the second step, the compile of the component libraries, and is one of a few I ran into. The type check of the first step is in separate issues.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the second step, the compile of the component libraries, and is one of a few I ran into. The type check of the first step is in separate issues.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -12,7 +14,7 @@ The option `customElements`, a list of names and `*` patterns, works. With `cust
 
 ## Environment
 
-`@vizejs/vite-plugin` 0.652.0, `@vitejs/plugin-vue` 6.0.10, `vite` 8.3.5, `vue` 3.5.44, macOS on Apple silicon. Source of truth: `@vitejs/plugin-vue`, which applies the function. The rule that `@tresjs/core` 5.10.1 ships is `(tag) => (/^Tres[A-Z]/.test(tag) || tag.startsWith("tres-")) && !whitelist.includes(tag) || tag === "primitive"`, and its whitelist holds `TresCanvas`, `TresCanvasContext`, `TresLeches` and `TresScene`.
+`@vizejs/vite-plugin` 0.653.0, `@vitejs/plugin-vue` 6.0.10, `vite` 8.3.5, `vue` 3.5.44, macOS on Apple silicon. Source of truth: `@vitejs/plugin-vue`, which applies the function. The rule that `@tresjs/core` 5.10.1 ships is `(tag) => (/^Tres[A-Z]/.test(tag) || tag.startsWith("tres-")) && !whitelist.includes(tag) || tag === "primitive"`, and its whitelist holds `TresCanvas`, `TresCanvasContext`, `TresLeches` and `TresScene`.
 
 ## Reproduction
 
@@ -24,7 +26,7 @@ The option `customElements`, a list of names and `*` patterns, works. With `cust
   "type": "module",
   "devDependencies": {
     "@vitejs/plugin-vue": "6.0.10",
-    "@vizejs/vite-plugin": "0.652.0",
+    "@vizejs/vite-plugin": "0.653.0",
     "vite": "8.3.5",
     "vue": "3.5.44"
   }
@@ -107,7 +109,7 @@ The plugin reads the file and compiles it: the other four builds change the outp
 
 The cause is confirmed by a run. The plugin copies five fields of `template.compilerOptions` and never reads `isCustomElement`. The type allows the key because `compilerOptions` has an index signature, so the call type checks. A function cannot reach the native compiler. The native option is a list of strings, and a function in `customElements` fails in the binding.
 
-The source is read at the tag `v0.652.0` of `ubugeeei-prod/vize`. The type accepts any key (`npm/builder/vite/src/plugin-vue-types.ts:27`):
+The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`. The type accepts any key (`npm/builder/vite/src/plugin-vue-types.ts:27`):
 
 ```ts
   [key: string]: unknown;
@@ -133,7 +135,9 @@ A function given as `customElements` stops the build with this error:
 Error: Failed to get Array length on BatchCompileOptionsNapi.customElements
 ```
 
-The smallest fix is a warning when the function is set, as #7107 does in the Nuxt module. A fuller fix calls `isCustomElement` in JavaScript for each tag of the template before the native compile. It passes the tags that answer true through `customElements`. A copy of the built plugin calls the function over a fixed tag list and passes the answers as the list. Its output equals the output of the `vize-list` build. That copy confirms the path. It does not collect the tags of a template.
+The smallest fix is a warning when the function is set, as #7107 does in the Nuxt module. A fuller fix calls `isCustomElement` in JavaScript for each tag of the template before the native compile. It passes the tags that answer true through `customElements`.
+
+A copy of the built plugin calls the function over a fixed tag list and passes the answers as the list. Its output equals the output of the `vize-list` build. That copy confirms the path. It does not collect the tags of a template.
 
 ## Real occurrence
 
@@ -141,7 +145,7 @@ https://github.com/Esposter/Esposter/blob/6f6212cd7bfccb9acc3bc13c6a64c0429f2e83
 
 ## Isolation
 
-One change at a time from `vite.config.ts`, on `vize` 0.652.0. The column shows the calls in the output.
+One change at a time from `vite.config.ts`, on `vize` 0.653.0. The column shows the calls in the output.
 
 | Build                                                      | `TresCanvas`         | `TresMesh`           |
 | :--------------------------------------------------------- | :------------------- | :------------------- |
@@ -166,7 +170,7 @@ The trigger is a function in `template.compilerOptions.isCustomElement`. The `vi
 
 `@vizejs/unplugin` has no `template` option. It takes `customElements` and `customRenderer`. A build with its rolldown entry gives the same results as the Vite plugin for the list, the glob, and the glob with `customRenderer: true`. A function in `customElements` stops that build with `Failed to get Array length on SfcCompileOptionsNapi.customElements`.
 
-The `@tresjs/core` rule keeps four names as components, `TresCanvas`, `TresCanvasContext`, `TresLeches` and `TresScene`. A file that imports a tag keeps it a component when `customRenderer: true` is set, as the test of #4275 shows. A file that does not import it, because the app registers it globally, loses it to the pattern, and a pattern cannot exclude a name. Whether the pattern alone should keep an imported tag a component is not known. A way to exclude a name from a pattern would be a request for more than the source of truth does, so it is not the ask of this report.
+The `@tresjs/core` rule keeps four names as components, `TresCanvas`, `TresCanvasContext`, `TresLeches` and `TresScene`. A file that imports a tag keeps it a component when `customRenderer: true` is set, as the test of #4275 shows. A file that does not import it, because the app registers it globally, loses it to the pattern, and a pattern cannot exclude a name. It is not known if the pattern alone is meant to keep an imported tag a component. A way to exclude a name from a pattern is a request for more than the source of truth does. This report does not ask for it.
 
 ## Not a duplicate of
 

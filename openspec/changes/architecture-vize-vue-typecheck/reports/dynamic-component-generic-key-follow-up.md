@@ -1,18 +1,20 @@
 # content-mapper: `<component :is="map[foo]">` with a generic key still fails the generated component check (TS2345 and TS2322) when `map` holds different components
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
-`<component :is="map[foo]" />` gives TS2345 on the props argument and TS2322 on the required slots when `foo` has a generic type and the entries of `map` are different components. `vue-tsc` accepts the same file.
+`<component :is="map[foo]" />` gives TS2345 on the props argument and TS2322 on the required slots. This happens when `foo` has a generic type and the entries of `map` are different components. `vue-tsc` accepts the same file.
 
 The issue #11366 reported the same two errors for a map that holds one component twice. The input of #11366 fails on 0.638.0 and passes on 0.649.0, 0.650.0 and 0.651.0. This input fails on all of them. A key that is a member expression, such as `foo.type`, also fails when the map holds one component twice.
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -94,7 +96,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `const qux: n
 
 ## Cause
 
-The cause is that the mapper writes the alias of the `:is` expression with no type annotation. The alias then has the deferred type `{ a: …; b: … }[TFoo]`, and the check helpers cannot resolve it (see #11366). The source is read at the tag `v0.650.0` of `ubugeeei-prod/vize`.
+The cause is that the mapper writes the alias of the `:is` expression with no type annotation. The alias then has the deferred type `{ a: …; b: … }[TFoo]`, and the check helpers cannot resolve it (see #11366). The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`.
 
 The generated code for the reproduction is:
 
@@ -106,7 +108,7 @@ const __vize_dynamic_is_3 = map[foo];
 The code that writes the alias adds an annotation only when `homogeneous_index::value` returns a value (`crates/vize_canon/src/virtual_ts/scope/dynamic_component.rs:84-86`):
 
 ```rust
-let annotation = homogeneous_index::value(summary, root, &usage)
+let annotation = homogeneous_index::value(summary, root, usage)
     .map(|value| vize_carton::cstr!(": {value}"))
     .unwrap_or_default();
 ```
@@ -169,6 +171,8 @@ The trigger is a generic key together with either of two conditions. One conditi
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `component :is`, generic key, `ComponentCheckProps`, `RequiredSlots` and `homogeneous`. The search matches words, not meaning. The nearest are #11366 (closed; one component twice and a bare identifier key, fixed before 0.649.0) and #11382 (merged; it adds the annotation only for equal imports and a bare identifier key). Both leave the inputs above unchanged. Also #10272 (closed; the union of a dynamic template ref target) and #10048 (closed; listener inference for a union of dynamic components). Neither changes the type of an indexed `:is` expression.
+Searched open and closed issues and pull requests for `component :is`, generic key, `ComponentCheckProps`, `RequiredSlots` and `homogeneous`. The search matches words, not meaning. The nearest are #11366 and #11382. #11366 (closed) is one component twice and a bare identifier key, fixed before 0.649.0. #11382 (merged) adds the annotation only for equal imports and a bare identifier key.
+
+Both leave the inputs above unchanged. Also #10272 (closed; the union of a dynamic template ref target) and #10048 (closed; listener inference for a union of dynamic components). Neither changes the type of an indexed `:is` expression.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

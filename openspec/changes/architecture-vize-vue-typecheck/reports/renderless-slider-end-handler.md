@@ -1,6 +1,8 @@
 # content-mapper: a component that declares an event in both camelCase and kebab-case gives TS2345 on a listener of that event (`[value: number] & [value: number]`)
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -10,7 +12,7 @@ A component that declares both `barBaz` and `bar-baz` gives TS2345 on a listener
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -92,7 +94,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `value.nope()` in pl
 
 ## Cause
 
-The cause is `__EmitProps`: it maps two events to one handler key. The source is read at the tag `v0.650.0` of `ubugeeei-prod/vize`.
+The cause is `__EmitProps`: it maps two events to one handler key. The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`.
 
 `crates/vize_canon/src/virtual_ts/helpers/declarations/shared-emit-props.d.ts.txt:2` (shipped as `npm/cli/virtual-ts.d.ts:92-96`):
 
@@ -162,10 +164,12 @@ The first reproduction gives one error on `vize` 0.638.0, 0.640.0, 0.644.0, 0.64
 
 ## Not known
 
-For `Slider.Root`, the generated code adds a call of `__vize_emit_props_0` (`$EmitPropsFactory`) only when the file passes an attribute. The call returns `__EmitProps<E>`, where `E` is the `$emit` type of the library component. Without an attribute the generated code has no such call and `Slider.Root` gives no error. This is read from the generated code and not from the Rust source. The patch is applied to a copy of the installed helper and not to the Rust source. Versions before 0.638.0 are not tested. `vize check` reports no error for the reproduction.
+For `Slider.Root`, the generated code adds a call of `__vize_emit_props_0` (`$EmitPropsFactory`) only when the file passes an attribute. The call returns `__EmitProps<E>`, where `E` is the `$emit` type of the library component. Without an attribute the generated code has no such call and `Slider.Root` gives no error.
+
+This is read from the generated code and not from the Rust source. The patch is applied to a copy of the installed helper and not to the Rust source. Versions before 0.638.0 are not tested. `vize check` reports no error for the reproduction.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `__EmitProps`, `HandlerKey`, `update:model-value`, TS2345 and `Target requires 1 element`. The search matches words, not meaning. The nearest are #9639 (closed; it added the raw kebab-case key `on${Capitalize<K>}` next to the camelized key, which is the origin of the two keys that collide here) and #10026 (closed; TS2345 on a listener of a dynamic component union). Neither names two events that camelize to one key.
+Searched open and closed issues and pull requests for `__EmitProps`, `HandlerKey`, `update:model-value`, TS2345 and `Target requires 1 element`. The search matches words, not meaning. The nearest are #9639 and #10026 (both closed). #9639 added the raw kebab-case key `on${Capitalize<K>}` next to the camelized key, which is the origin of the two keys that collide here. #10026 reports TS2345 on a listener of a dynamic component union. Neither names two events that camelize to one key.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

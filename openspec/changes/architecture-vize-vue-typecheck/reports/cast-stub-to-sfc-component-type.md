@@ -1,6 +1,8 @@
 # content-mapper: `defineComponent(…) as typeof Foo` gives TS2352 for any `.vue` component when `ComponentCustomProperties` has a `` `$${string}` `` index signature
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -10,7 +12,7 @@ A cast of a `defineComponent` stub to the type of a `.vue` component gives TS235
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -96,7 +98,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `export const
 
 ## Cause
 
-The cause is `$ComponentPublicBase`: `Omit` removes the public instance members when `ComponentCustomProperties` has a `` `$${string}` `` key. The source is read at the tag `v0.650.0` of `ubugeeei-prod/vize`.
+The cause is `$ComponentPublicBase`: `Omit` removes the public instance members when `ComponentCustomProperties` has a `` `$${string}` `` key. The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`.
 
 The alias is `crates/vize_canon/src/virtual_ts/component_prop_helpers.txt:31` (shipped as `npm/cli/virtual-ts-globals.d.ts:309-313`):
 
@@ -150,10 +152,12 @@ The first reproduction gives one error on `vize` 0.638.0, 0.645.0 and 0.651.0.
 
 ## Not known
 
-The real app also reports TS2590 ("Expression produces a union type that is too complex to represent") at the same expression. The index signature does not cause it. A second input reproduces TS2590 alone: 300 or more members in `ComponentCustomProperties` (for example `prop0: string;` to `prop299: string;`), a `.vue` component without `defineProps`, and the same cast. With 250 members, `vue-tsc` and `tsrs` report no error. With 300 members, `tsrs` reports TS2590 and `vue-tsc` reports no error. A component with `defineProps` does not report it. The patch above does not remove it. The cause of TS2590 is not known and it needs its own report. Versions before 0.638.0 are not tested. The fix is read from the source and the patch is not applied to the Rust source.
+The real app also reports TS2590 ("Expression produces a union type that is too complex to represent") at the same expression. The index signature does not cause it. A second input reproduces TS2590 alone. It has 300 or more members in `ComponentCustomProperties` (for example `prop0: string;` to `prop299: string;`), a `.vue` component without `defineProps`, and the same cast. With 250 members, `vue-tsc` and `tsrs` report no error. With 300 members, `tsrs` reports TS2590 and `vue-tsc` reports no error.
+
+A component with `defineProps` does not report it. The patch above does not remove it. The cause of TS2590 is not known and it needs its own report. Versions before 0.638.0 are not tested. The fix is read from the source and the patch is not applied to the Rust source.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `ComponentPublicBase`, `ComponentCustomProperties`, `__vizeComponentMarker`, TS2352 and TS2590. The search matches words, not meaning. The nearest is #10195 (closed; the same `` `$${string}` `` key made `Omit<__VizeComponentInstance, "$props">` drop `$emit`, which gave TS2345 on a component with an attribute and a listener). The fix there did not change `$ComponentPublicBase`, which still uses `Omit`. The input and the error differ.
+Searched open and closed issues and pull requests for `ComponentPublicBase`, `ComponentCustomProperties`, `__vizeComponentMarker`, TS2352 and TS2590. The search matches words, not meaning. The nearest is #10195 (closed). The same `` `$${string}` `` key made `Omit<__VizeComponentInstance, "$props">` drop `$emit`, which gave TS2345 on a component with an attribute and a listener. The fix there did not change `$ComponentPublicBase`, which still uses `Omit`. The input and the error differ.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

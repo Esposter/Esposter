@@ -1,6 +1,8 @@
 # content-mapper: a generic component with `inheritAttrs: false` rejects an attribute it does not declare (TS2353), and `checkUnknownProps: false` has no effect
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 A generic component that sets `defineOptions({ inheritAttrs: false })` makes the mapper report TS2353 for any undeclared attribute written as a plain name, for example `p0`. `vue-tsc` accepts the same file unless `strictTemplates` is on. A component that is not generic accepts the attribute with the same option. Forwarding the attributes with `v-bind="$attrs"` opens the type, and forwarding them through `mergeProps(x, $attrs)` does not.
 
@@ -10,7 +12,7 @@ This is one of a batch of 14 issues filed together, all from that attempt, so th
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports nothing for the file. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports nothing for the file. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -101,9 +103,9 @@ if summary.template_info.inherit_attrs_disabled {
 }
 ```
 
-The template of `Foo.vue` has no such forwarding, and `explicit_attrs_targets` does not look inside a call that takes `$attrs`, so the result is `None`, and `fallthrough_props_type_ref` returns `None` (`types.rs:99-108`). The generator passes that value to `emit_default_export_declaration` (`crates/vize_canon/src/virtual_ts/generator.rs:849`). A component that is not generic with the same option is accepted, so another path handles it. That path is not traced.
+The template of `Foo.vue` has no such forwarding. `explicit_attrs_targets` does not look inside a call that takes `$attrs`, so the result is `None`. Then `fallthrough_props_type_ref` returns `None` (`types.rs:99-108`). The generator passes that value to `emit_default_export_declaration` (`crates/vize_canon/src/virtual_ts/generator.rs:849`). A component that is not generic with the same option is accepted, so another path handles it. That path is not traced.
 
-The fix is likely to treat `$attrs` inside a call argument as forwarding, and to leave the props open, as `checkUnknownProps: false` asks, when `inheritAttrs` is `false` and no `$attrs` target is found.
+The fix is likely to treat `$attrs` inside a call argument as forwarding. It is also likely to leave the props open, as `checkUnknownProps: false` asks, when `inheritAttrs` is `false` and no `$attrs` target is found.
 
 ## Real occurrence
 
@@ -129,10 +131,10 @@ One change at a time from `src/Probe.vue` and `src/Foo.vue`. Errors on `vize` 0.
 
 ## Not known
 
-Why the same file without `generic` is accepted is not traced. The call sites in the real app that pass a name such as `p0`, `px0` or `shrink0` to a component of this kind all report it; that count is not checked against every such component. Releases before 0.638.0 are not tested.
+Why the same file without `generic` is accepted is not traced. In the real app, a call site that passes a name such as `p0`, `px0` or `shrink0` to a component of this kind reports it. The count is not checked against every such component. Releases before 0.638.0 are not tested.
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `inheritAttrs`, `checkUnknownProps`, TS2353 and `generic`. The nearest are #7874 (closed; `checkUnknownProps` is ignored on 0.432.0, for a component that is not generic and has no `inheritAttrs`), #10363 (closed; intrinsic HTML attribute names assigned `never`) and #8075 (closed; opt-in strict component attributes). The inputs differ: this one needs `generic` with `inheritAttrs: false`.
+Searched open and closed issues and pull requests for `inheritAttrs`, `checkUnknownProps`, TS2353 and `generic`. The nearest are #7874, #10363 and #8075 (all closed). #7874 is about `checkUnknownProps` being ignored on 0.432.0, for a component that is not generic and has no `inheritAttrs`. #10363 is about intrinsic HTML attribute names assigned `never`. #8075 is about opt-in strict component attributes. The inputs differ: this one needs `generic` with `inheritAttrs: false`.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

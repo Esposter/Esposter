@@ -1,12 +1,14 @@
 # unplugin: a `<style src>` block is dropped from a Rolldown build, and no warning says so
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the second step, the compile of the component libraries, and is one of a few I ran into. The type check of the first step is in separate issues.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the second step, the compile of the component libraries, and is one of a few I ran into. The type check of the first step is in separate issues.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
-A library build that runs `tsdown` (Rolldown) with `@vizejs/unplugin/rolldown` drops the CSS of every `<style src="...">` block. The build exits 0, writes no CSS, and prints no warning. `@vizejs/vite-plugin` and `@vitejs/plugin-vue` write the CSS of the same file in a Vite build.
+A library build that runs `tsdown` (Rolldown) with `@vizejs/unplugin/rolldown` drops the CSS of every `<style src="...">` block. The build exits 0, writes no CSS, and prints no warning. `@vizejs/vite-plugin` and `@vitejs/plugin-vue` write the CSS of the same file in a Vite build. The project lists `@vizejs/unplugin` as a compatibility preview, and whether CSS is in its scope is not known (see Not known).
 
 CSS support in this entry may be limited by design. The README of the package says that the Vite integration is the most complete one. It says that CSS Modules and preprocessors depend on the bundler's own CSS pipeline. The plugin hands a block in a preprocessor language, and a CSS module, to that pipeline.
 
@@ -16,7 +18,7 @@ The ask depends on the scope. If plain CSS from a file is out of scope, the plug
 
 ## Environment
 
-`@vizejs/unplugin` 0.652.0, `@vizejs/vite-plugin` 0.652.0, `tsdown` 0.23.2 with `rolldown` 1.2.16, `@tsdown/css` 0.23.2, `vite` 8.3.5, `vue` 3.5.44, macOS on Apple silicon. Source of truth: `@vitejs/plugin-vue` 6.0.10 in a Vite library build, which writes the CSS of the file below.
+`@vizejs/unplugin` 0.653.0, `@vizejs/vite-plugin` 0.653.0, `tsdown` 0.23.2 with `rolldown` 1.2.16, `@tsdown/css` 0.23.2, `vite` 8.3.5, `vue` 3.5.44, macOS on Apple silicon. Source of truth: `@vitejs/plugin-vue` 6.0.10 in a Vite library build, which writes the CSS of the file below.
 
 ## Reproduction
 
@@ -29,8 +31,8 @@ The ask depends on the scope. If plain CSS from a file is out of scope, the plug
   "devDependencies": {
     "@tsdown/css": "0.23.2",
     "@vitejs/plugin-vue": "6.0.10",
-    "@vizejs/unplugin": "0.652.0",
-    "@vizejs/vite-plugin": "0.652.0",
+    "@vizejs/unplugin": "0.653.0",
+    "@vizejs/vite-plugin": "0.653.0",
     "tsdown": "0.23.2",
     "vite": "8.3.5",
     "vue": "3.5.44"
@@ -147,9 +149,11 @@ The CSS of the block reaches the output, as it does for an inline block. `@vitej
 
 ## Cause
 
-The cause is confirmed by a run. The rolldown transform hands the raw `.vue` source to `compileSfc`. The parser takes the body of a `<style>` element as its content. A `<style src>` element has no body, so the content and the compiled `css` are empty. The code that appends the style injection then skips an empty `css` and reports nothing. The Vite builder reads each `src` file and puts its text into the source before `compileSfc`. The rolldown builder does not.
+The cause is confirmed by a run. The rolldown transform hands the raw `.vue` source to `compileSfc`. The parser takes the body of a `<style>` element as its content. A `<style src>` element has no body, so the content and the compiled `css` are empty. The code that appends the style injection then skips an empty `css` and reports nothing.
 
-The source is read at the tag `v0.652.0` of `ubugeeei-prod/vize`. The rolldown path calls the compiler with the raw source (`npm/builder/unplugin/src/compiler.ts:60`):
+The Vite builder reads each `src` file and puts its text into the source before `compileSfc`. The rolldown builder does not.
+
+The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`. The rolldown path calls the compiler with the raw source (`npm/builder/unplugin/src/compiler.ts:60`):
 
 ```ts
   const result = compileSfc(source, {
@@ -177,7 +181,7 @@ The injection is skipped when `css` is empty (`npm/builder/unplugin/src/style.ts
     output = prependInlineStyleInjection(output, compiled.css, compiled.scopeId);
 ```
 
-If CSS is in scope, the fix is to inline each `<style src>` file into the source before `compileSfc` in `compileVueModule`, with the helper `resolveSfcSrcImports` that the Vite builder uses. A copy of the built plugin with that one change keeps the CSS. The CSS of a `<style scoped src>` block and of a `<style src>` block reaches the output JavaScript, as the CSS of an inline block does.
+If CSS is in scope, the fix is to inline each `<style src>` file into the source before `compileSfc` in `compileVueModule`. The Vite builder does this with the helper `resolveSfcSrcImports`. A copy of the built plugin with that one change keeps the CSS. The CSS of a `<style scoped src>` block and of a `<style src>` block reaches the output JavaScript, as the CSS of an inline block does.
 
 ## Real occurrence
 
@@ -201,7 +205,7 @@ The trigger is a block that needs a file read.
 
 Whether a plain `src` block belongs in the scope of the rolldown entry is not known. The stability page of the project lists `@vizejs/unplugin` as a compatibility preview, and its README says to test carefully before depending on it in production. A library build that ships a stylesheet is likely outside what that tier promises. This report asks only that the plugin does not drop a block without a message.
 
-It is also not known whether the plugin should write a CSS asset for a plain inline block, as the Vite plugin does. Today the JavaScript appends the CSS as a string at run time. A library that ships a stylesheet and renders on a server needs the asset.
+It is also not known if the plugin is meant to write a CSS asset for a plain inline block, as the Vite plugin does. Today the JavaScript appends the CSS as a string at run time. A library that ships a stylesheet and renders on a server needs the asset.
 
 Two cases were read and not run. The first is `<style lang="scss" src="...">`, which the plugin hands to the bundler as a style request. The second is `<style module src="...">`. Whether the change in the Cause covers them is not known.
 

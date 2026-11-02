@@ -1,6 +1,8 @@
 # content-mapper: a declaration that uses a generic type alias in a generic component is also written at module scope, where nothing reads it, so `noUnusedLocals` reports TS6196
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -12,7 +14,7 @@ This is the component's own props interface, so every file with this shape fails
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -104,7 +106,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file. A line `const bad: n
 
 ## Cause
 
-The cause is: a declaration that depends on a generic alias goes to module scope and to `__setup`, and only the copy in `__setup` has a reader.
+The cause is that a declaration that depends on a generic alias goes to module scope and to `__setup`. Only the copy in `__setup` has a reader.
 
 `module_spans` puts every hoisted type declaration at module scope (`crates/vize_canon/src/virtual_ts/generator/script_blocks.rs:110`):
 
@@ -122,7 +124,7 @@ for declaration in &self.dependent_declarations {
 }
 ```
 
-Nothing removes them from the module-scope spans. The alias `Foo` keeps its module-scope copy for a reason: `$HoistedGeneric0` reads it. A dependent declaration has no such reader, so TypeScript reports it. When a dependent declaration is another dependent's input (`type Baz = Foo[]` and `interface Bar { items: Baz }`), only the last one is reported, because the module-scope copy of the next one reads the first.
+Nothing removes them from the module-scope spans. The alias `Foo` keeps its module-scope copy for a reason: `$HoistedGeneric0` reads it. A dependent declaration has no such reader, so TypeScript reports it. A dependent declaration can be another dependent's input (`type Baz = Foo[]` and `interface Bar { items: Baz }`). Then only the last one is reported, because the module-scope copy of the next one reads the first.
 
 A run confirmed the cause. `vize check --save-virtual-ts-for` wrote the generated file. `tsrs` on that file with `noUnusedLocals` reports TS6196 for the module-scope `Bar`. After the module-scope `interface Bar { … }` is deleted from that file, TS6196 for `Bar` is gone.
 
@@ -154,7 +156,7 @@ The trigger is a generic component, a type alias that names a generic parameter,
 
 ## Not known
 
-The fix is read from the source and not applied. The confirming run removed the module-scope copy by hand in the generated file. The `main` branch has the same code at the same lines. It was read and not run. `vize` 0.651.0 gives the same result as 0.650.0.
+The fix is read from the source and not applied. The confirming run removed the module-scope copy by hand in the generated file. The 0.653.0 release and the `main` branch have the same code at the same lines. It was read and not run. `vize` 0.653.0 gives the same result as 0.650.0.
 
 ## Not a duplicate of
 

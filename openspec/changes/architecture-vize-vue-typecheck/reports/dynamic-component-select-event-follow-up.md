@@ -1,6 +1,8 @@
 # content-mapper: a listener on `<component :is="map[key]">` with `v-if` inside a slot is typed as the DOM `Event`, not as the child's payload
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -12,7 +14,7 @@ The issue #11367 reported the same symptom for the same element without `v-if`. 
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -113,7 +115,7 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: adding `const qux: n
 
 ## Cause
 
-The cause is that the mapper emits no alias for the `:is` expression, so the `select` listener has no component target. The listener then takes the native-element branch, which types it by event name. `select` is a DOM event name, so the result is `Event`. The source is read at the tag `v0.650.0` of `ubugeeei-prod/vize`.
+The cause is that the mapper emits no alias for the `:is` expression, so the `select` listener has no component target. The listener then takes the native-element branch, which types it by event name. `select` is a DOM event name, so the result is `Event`. The source is read at the tag `v0.653.0` of `ubugeeei-prod/vize`.
 
 The generated code for the reproduction has no `__vize_dynamic_is_*` line, and the handler is typed by the DOM event:
 
@@ -191,6 +193,8 @@ The fix is read from the source and not applied. A guard that reads a slot bindi
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for `component :is`, dynamic component, listener, `Event`, `v-if` and slot. The search matches words, not meaning. The nearest are #11367 (closed; the same symptom for the same element without `v-if`, and with a bare key) and #11382 (merged; it admits the alias in a slot for a bare identifier key and no `v-if`). Both leave the inputs above unchanged. Also #10048 (closed; listener inference for a union of dynamic components), which does not cover a missing alias.
+Searched open and closed issues and pull requests for `component :is`, dynamic component, listener, `Event`, `v-if` and slot. The search matches words, not meaning. The nearest are #11367 and #11382. #11367 (closed) is the same symptom for the same element without `v-if`, and with a bare key. #11382 (merged) admits the alias in a slot for a bare identifier key and no `v-if`.
+
+Both leave the inputs above unchanged. Also #10048 (closed; listener inference for a union of dynamic components), which does not cover a missing alias.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

@@ -1,6 +1,8 @@
 # content-mapper: a destructured parameter of a callback nested in an inline callback prop gets an implicit `any` (TS7031) in the inference-only copy
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -10,7 +12,7 @@ An inline callback prop with a block body that holds a second callback gives TS7
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -129,7 +131,7 @@ foo.bar((
 
 `tsrs` then reports no error.
 
-The fix is likely to insert the directive before an object pattern, an array pattern and a rest parameter, as the code does for an identifier. The code is unchanged on `main` and in 0.651.0.
+The fix is likely to insert the directive before an object pattern, an array pattern and a rest parameter. The code already does this for an identifier. The code is unchanged in 0.653.0 and on `main`.
 
 ## Real occurrence
 
@@ -165,6 +167,8 @@ In the real component, four other nested callbacks have a destructured parameter
 
 ## Not a duplicate of
 
-Searched open and closed issues and pull requests for TS7031, TS7006, binding element, callbacks and inference. The search matches words, not meaning. The nearest are #11361 (closed; a plain parameter of a nested callback, fixed by #11380) and #10220 (closed; the parameters of the callback itself on a later line). The input of #11361 gives no diagnostic on 0.650.0. This report is the same mechanism for a parameter that is a pattern. #11374 (open) reports authored errors that the mapper copies report again. That differs: this input has no authored error.
+Searched open and closed issues and pull requests for TS7031, TS7006, binding element, callbacks and inference. The search matches words, not meaning. The nearest are #11361 and #10220 (both closed). #11361 is a plain parameter of a nested callback, fixed by #11380. #10220 is the parameters of the callback itself on a later line.
+
+The input of #11361 gives no diagnostic on 0.650.0. This report is the same mechanism for a parameter that is a pattern. #11374 (open) reports authored errors that the mapper copies report again. That differs: this input has no authored error.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

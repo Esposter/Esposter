@@ -1,6 +1,8 @@
 # content-mapper: the event payload of a generic library component is `any`, so a `typeof` guard narrows it to `string` and a generic target rejects it
 
-I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reported 15. This issue explains some of those 15.
 
 This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
@@ -12,7 +14,7 @@ This is the "second symptom" of the closed #11363, after the dotted tag was link
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction. On `vize` 0.652.0 and 0.653.0 (macOS on Apple silicon), the reproduction below gives the same diagnostics at the same positions. `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -126,7 +128,7 @@ type $NativeEmitPropsFactory<C> = C extends new (...args: any[]) => { $emit: any
 
 So every source of the arguments is `unknown[]`. The event type is `any` (`component_events.rs:334`, `unknown[] extends __A ? any`) and the listener is `(...args: any[]) => any` (`component_events.rs:391`). The `any` is not neutral: the guard turns it into `string`, and an assignment to a generic target fails. The comment says "untyped rather than wrong". The result is wrong for a guarded payload.
 
-The change is likely: for a function component with `__ctx`, take the payload from the call that already instantiates the generic from the bound props (the call that checks the props), as `vue-tsc` does.
+The change is likely this: for a function component with `__ctx`, take the payload from the call that checks the props. That call already instantiates the generic from the bound props, as `vue-tsc` does.
 
 ## Real occurrence
 
