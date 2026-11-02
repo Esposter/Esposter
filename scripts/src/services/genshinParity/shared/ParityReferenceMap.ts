@@ -27,8 +27,8 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
   { height: 200, width: 280, x: 1640, y: 880 },
 ];
 // The details column's own pieces on the still, the title, its place and journal with the emblem, the divider, the
-// Objective's rule and the description, each filled from the world round it, so the still's world between them is
-// The overview frame's and the rows and gaps between the pieces are scored over it as drawn
+// Objective's rule and the description, each filled from the world round it. The world between them is the still's own
+// Pixels, so the rows and gaps between the pieces are scored over it as drawn
 const QUEST_SCREEN_DETAILS_PLATE = [
   { height: 46, width: 512, x: 877, y: 118 },
   { height: 26, width: 26, x: 874, y: 170 },
