@@ -3,7 +3,7 @@ import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
-import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
+import { getEffectCompleteEventKey } from "@/services/dungeons/scene/world/getEffectCompleteEventKey";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
@@ -15,7 +15,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
   if (!effect) return;
 
   const onComplete = () => {
-    phaserEventEmitter.emit(`${npc.name}${EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`);
+    phaserEventEmitter.emit(getEffectCompleteEventKey(npc.name));
   };
 
   switch (effect.type) {

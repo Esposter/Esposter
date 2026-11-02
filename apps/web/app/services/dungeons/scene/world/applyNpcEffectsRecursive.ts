@@ -3,14 +3,14 @@ import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { applyNpcEffect } from "@/services/dungeons/scene/world/applyNpcEffect";
-import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
+import { getEffectCompleteEventKey } from "@/services/dungeons/scene/world/getEffectCompleteEventKey";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const applyNpcEffectsRecursive = async (scene: SceneWithPlugins, npc: Npc, effects: Effect[]) => {
   if (effects.length > 1)
     phaserEventEmitter.once(
-      `${npc.name}${EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`,
+      getEffectCompleteEventKey(npc.name),
       // Nothing awaits the listener, so the chain terminates itself — an effect that rejects stops the
       // Sequence where it stands, and unreported it stops it silently
       getSynchronizedFunction(() =>

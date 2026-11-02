@@ -5,5 +5,5 @@ import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constan
 import type { ID_SEPARATOR } from "@esposter/shared";
 
 export type SceneEventKeys =
-  | `${NpcId}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`
+  | `${NpcId}${typeof ID_SEPARATOR}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}`
   | `${SceneEventKey}${typeof ID_SEPARATOR}${keyof typeof SceneKey}`;
