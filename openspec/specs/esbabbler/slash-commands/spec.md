@@ -82,10 +82,16 @@ The poll, remind and schedule commands SHALL open a dialog to complete the actio
 
 ### Requirement: Typed parameters turn back into plain text on Escape
 
-Pressing Escape while parameters are being filled in SHALL turn them back into the command's text in the composer.
+Pressing Escape while the focus is in the parameter row SHALL turn the parameters back into the command's text in the composer.
 
 #### Scenario: a member presses Escape while filling a parameter
 
 - **GIVEN** a command with parameters filled in as chips
 - **WHEN** the member presses Escape
 - **THEN** the composer shows the command as text with its values
+
+#### Scenario: Escape pressed elsewhere on the page
+
+- **GIVEN** a command with parameters filled in as chips, and the focus outside the parameter row
+- **WHEN** the member presses Escape, for a dialog or menu elsewhere on the page
+- **THEN** the command stays as chips

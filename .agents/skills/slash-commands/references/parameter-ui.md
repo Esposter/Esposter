@@ -27,8 +27,4 @@ setErrors(
 
 ## Dismissal — collapse to text, never discard
 
-Escape (and Backspace at `COMMAND_INPUT_INDEX`) calls `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input:
-
-```ts
-onKeyStroke("Escape", () => collapseToText());
-```
+Escape pressed inside the pending row, and Backspace in an empty command name, call `collapseToText()`, which round-trips the pending command back into the composer via `getText()` (`/type name:value …`) rather than dropping the user's input. Escape is the row's own `@keydown.esc`, and Backspace is the command input's `delete` emit, which fires only when that input is empty. Neither is a window listener: an Escape that belongs to another surface, or a Backspace that deletes a character, never collapses the command.

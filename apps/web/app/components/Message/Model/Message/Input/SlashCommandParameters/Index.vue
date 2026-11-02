@@ -56,15 +56,10 @@ const deleteLastParameter = () => {
   const lastIndex = activeParameters.value.length - 1;
   if (lastIndex >= 0) deleteParameter(lastIndex);
 };
-
-onKeyStroke("Escape", () => collapseToText());
-onKeyStroke("Backspace", () => {
-  if (focusedIndex.value === COMMAND_INPUT_INDEX) collapseToText();
-});
 </script>
 
 <template>
-  <div v-if="pendingSlashCommand" flex flex-col gap-1 w-full>
+  <div v-if="pendingSlashCommand" flex flex-col gap-1 w-full @keydown.esc="collapseToText()">
     <div py-1 pl-3 pr-1 flex gap-2 items-center ui-frame>
       <MessageModelMessageInputSlashCommandParametersCommandInput
         v-model="editedCommandType"
