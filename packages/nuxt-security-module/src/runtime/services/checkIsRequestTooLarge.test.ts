@@ -26,6 +26,12 @@ describe(checkIsRequestTooLarge, () => {
     expect(checkIsRequestTooLarge("GET", "100", JSON_TYPE, LIMITS)).toBe(false);
   });
 
+  test("a PATCH carries a body, so it is measured as a POST is", () => {
+    expect.hasAssertions();
+
+    expect(checkIsRequestTooLarge("PATCH", "11", JSON_TYPE, LIMITS)).toBe(true);
+  });
+
   test("a request with no declared length is left to the count its body is read through", () => {
     expect.hasAssertions();
 

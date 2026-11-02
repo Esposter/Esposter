@@ -21,4 +21,10 @@ describe(checkIsBasicAuthorized, () => {
 
     expect(checkIsBasicAuthorized(null, OPTIONS)).toBe(false);
   });
+
+  test("a name and password the configuration left empty authorise nothing, not even empty credentials", () => {
+    expect.hasAssertions();
+
+    expect(checkIsBasicAuthorized(`Basic ${btoa(":")}`, { name: "", pass: "" })).toBe(false);
+  });
 });

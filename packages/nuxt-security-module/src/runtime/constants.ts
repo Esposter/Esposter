@@ -25,8 +25,10 @@ export const CONTENT_SECURITY_POLICY_REPORT_ONLY_HEADER_NAME = "Content-Security
 // The most keys the in-memory rate limiter counts at once, and the key every request with no address is counted under
 export const MAX_RATE_LIMIT_ENTRIES = 10_000;
 export const UNKNOWN_CLIENT_KEY = "unknown";
+// The methods that change state and carry a body, declared once for the CSRF check and the size limit that read it
+const STATE_CHANGING_METHODS: readonly string[] = ["DELETE", "PATCH", "POST", "PUT"];
 // The methods that change state, which a CSRF check guards, and the random bytes behind a CSRF token
-export const CSRF_UNSAFE_METHODS: readonly string[] = ["DELETE", "PATCH", "POST", "PUT"];
+export const CSRF_UNSAFE_METHODS: readonly string[] = STATE_CHANGING_METHODS;
 export const CSRF_TOKEN_BYTE_LENGTH = 32;
 // The number of random bytes behind a nonce, which base64 encodes to a value no guess reproduces
 export const NONCE_BYTE_LENGTH = 18;
@@ -54,7 +56,7 @@ export const NONCE_TAG_NAMES: readonly string[] = ["link", "script", "style"];
 // The content type a file upload is sent with, which takes the larger request size limit
 export const FILE_UPLOAD_CONTENT_TYPE = "multipart/form-data";
 // The methods that carry a body the request size limit measures
-export const SIZE_LIMITED_METHODS: readonly string[] = ["DELETE", "POST", "PUT"];
+export const SIZE_LIMITED_METHODS: readonly string[] = STATE_CHANGING_METHODS;
 // The realm a basic auth challenge names when the configuration sets no message
 export const DEFAULT_BASIC_AUTH_REALM = "Please enter username and password";
 // The scheme an authorization header takes for name and password credentials

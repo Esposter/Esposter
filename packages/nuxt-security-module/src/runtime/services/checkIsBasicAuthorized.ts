@@ -5,8 +5,11 @@ import { getBasicAuthCredentials } from "#src/runtime/services/getBasicAuthCrede
 
 // The request is authorised when its credentials are the configured name and password.
 // Each is compared without leaking how much of it matched, and both are always compared, so the time taken does not
-// Show whether the name alone was right
+// Show whether the name alone was right.
+// A name or password left empty authorises nothing, since empty credentials would match it
 export const checkIsBasicAuthorized = (authorization: null | string, { name, pass }: BasicAuthOptions): boolean => {
+  if (!name || !pass) return false;
+
   const credentials = getBasicAuthCredentials(authorization);
   if (!credentials) return false;
 

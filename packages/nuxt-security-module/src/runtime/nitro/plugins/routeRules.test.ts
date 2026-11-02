@@ -7,6 +7,7 @@ import {
 } from "#src/runtime/nitro/plugins/page.fixture";
 import { createRouteRulesPlugin } from "#src/runtime/nitro/plugins/routeRules";
 import securityHeaders from "#src/runtime/nitro/plugins/securityHeaders";
+import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
 import { describe, expect, test } from "vitest";
 
 describe(createRouteRulesPlugin, () => {
@@ -31,6 +32,24 @@ describe(createRouteRulesPlugin, () => {
 
     expect(event.res.headers.get(SECURITY_HEADER_NAMES.contentSecurityPolicy)).toBe(
       "base-uri 'self'; connect-src 'self'; default-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data: https:; object-src 'none'; script-src 'self' 'strict-dynamic'; style-src 'self' 'unsafe-inline';",
+    );
+  });
+
+  test("a route rules hook that throws leaves every request failing, rather than served with none of its rules", async () => {
+    expect.hasAssertions();
+
+    const app = createNitroApp();
+    await createRouteRulesPlugin(PAGE_ROUTE_RULES)(app.nitroApp);
+    app.nitroApp.hooks.hook(ROUTE_RULES_HOOK, () => {
+      throw new Error(" ");
+    });
+
+    const event = createPageEvent();
+
+    await app.nitroApp.hooks.callHook("request", event);
+
+    expect(() => getSecurityRules(event)).toThrowErrorMatchingInlineSnapshot(
+      `[Error: The security route rules did not resolve]`,
     );
   });
 });

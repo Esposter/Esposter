@@ -6,6 +6,8 @@ import { addRoute, createRouter, findAllRoutes } from "rou3";
 // Built once, when the route rules are resolved at startup, and read by every request after.
 // The router holds each pattern's rules as they were resolved, so a request never copies them to match its path
 let securityRouter: RouterContext<SecurityRules> | undefined;
+// The error that stopped the rules resolving, which every lookup then throws, so no request is served without its rules
+let securityRouteFailure: Error | undefined;
 
 export const setSecurityRouteMatcher = (routes: Record<string, SecurityRules>): void => {
   const router = createRouter<SecurityRules>();
@@ -13,6 +15,13 @@ export const setSecurityRouteMatcher = (routes: Record<string, SecurityRules>): 
   securityRouter = router;
 };
 
+export const setSecurityRouteMatcherFailure = (cause: unknown): void => {
+  securityRouteFailure = new Error("The security route rules did not resolve", { cause });
+};
+
 // The rules of every pattern that matches the path, the least specific first, `undefined` before startup has run
-export const findSecurityRules = (pathname: string): SecurityRules[] | undefined =>
-  securityRouter && findAllRoutes(securityRouter, "", pathname).flatMap(({ data }) => (data ? [data] : []));
+export const findSecurityRules = (pathname: string): SecurityRules[] | undefined => {
+  if (securityRouteFailure) throw securityRouteFailure;
+
+  return securityRouter && findAllRoutes(securityRouter, "", pathname).flatMap(({ data }) => (data ? [data] : []));
+};
