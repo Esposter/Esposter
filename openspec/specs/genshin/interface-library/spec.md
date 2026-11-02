@@ -135,7 +135,7 @@ A pill SHALL show its words in ink at rest, SHALL light a white ring over its ed
 
 ### Requirement: A dialogue reply lights white on hover
 
-A dialogue reply SHALL be a translucent black pill at rest, and SHALL turn a white pill with slate words when hovered, focused or lit (`GAME_REPLY_REST` at rest; `GAME_REPLY_HOVER` and `GAME_REPLY_HOVER_INK` when hovered, focused or lit).
+A dialogue reply SHALL be a translucent slate pill at rest (`DIALOGUE_REPLY_REST`), and SHALL turn a white pill with slate words when hovered, focused or lit (`GAME_REPLY_HOVER` and `GAME_REPLY_HOVER_INK`). The Wish and Talents reply kind keeps the translucent black at rest, `GAME_REPLY_REST`.
 
 #### Scenario: A hovered reply turns white
 
