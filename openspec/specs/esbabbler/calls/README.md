@@ -146,6 +146,7 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)                            |
 | `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                                    |
 | `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership or a standalone leave |
+| `apps/web/server/services/message/call/onWhileJoinedCall.ts`     | the same stream behind the join gate, for the participant subscriptions     |
 | `apps/web/server/api/webhooks/livekit.post.ts`                   | webhook backup for join/leave                                               |
 | `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                                 |
 | `apps/web/app/store/message/room/liveKit.ts`                     | LiveKit `Room` bridge                                                       |

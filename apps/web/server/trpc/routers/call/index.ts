@@ -10,7 +10,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { createStandaloneCallSessionId } from "#server/services/message/call/createStandaloneCallSessionId";
 import { joinLiveKitCall } from "#server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
-import { onWhileCallRoomMember } from "#server/services/message/call/onWhileCallRoomMember";
+import { onWhileJoinedCall } from "#server/services/message/call/onWhileJoinedCall";
 import { readCallSessionId } from "#server/services/message/call/readCallSessionId";
 import { requireCallParticipant } from "#server/services/message/call/requireCallParticipant";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
@@ -87,13 +87,7 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = await onWhileCallRoomMember(ctx.db, "joinCall", {
-      callSessionId: input,
-      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
-    });
+    const events = await onWhileJoinedCall(ctx, "joinCall", input, signal);
 
     for await (const [{ callSessionId, participant, sessionId }] of events) {
       if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
@@ -105,13 +99,7 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = await onWhileCallRoomMember(ctx.db, "leaveCall", {
-      callSessionId: input,
-      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
-    });
+    const events = await onWhileJoinedCall(ctx, "leaveCall", input, signal);
 
     for await (const [{ callSessionId, id }] of events) {
       if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
@@ -123,13 +111,7 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = await onWhileCallRoomMember(ctx.db, "videoChanged", {
-      callSessionId: input,
-      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
-    });
+    const events = await onWhileJoinedCall(ctx, "videoChanged", input, signal);
 
     for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
       if (callSessionId !== input) continue;
@@ -141,13 +123,7 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = await onWhileCallRoomMember(ctx.db, "handRaisedChanged", {
-      callSessionId: input,
-      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
-    });
+    const events = await onWhileJoinedCall(ctx, "handRaisedChanged", input, signal);
 
     for await (const [{ callSessionId, id, isHandRaised }] of events) {
       if (callSessionId !== input) continue;
@@ -159,13 +135,7 @@ export const baseCallRouter = router({
     input,
     signal,
   }) {
-    const events = await onWhileCallRoomMember(ctx.db, "muteChanged", {
-      callSessionId: input,
-      gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
-    });
+    const events = await onWhileJoinedCall(ctx, "muteChanged", input, signal);
 
     for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
