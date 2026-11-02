@@ -160,7 +160,7 @@ catalog:
   eslint-plugin-vuejs-accessibility: ^2.6.3
   fake-indexeddb: ^6.2.7
   fflate: ^0.8.3
-  grid-engine: ^2.53.0
+  grid-engine: ^2.54.0
   h3: ^2.0.8
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6

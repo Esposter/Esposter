@@ -520,8 +520,8 @@ catalogs:
       specifier: ^0.8.3
       version: 0.8.3
     grid-engine:
-      specifier: ^2.53.0
-      version: 2.53.0
+      specifier: ^2.54.0
+      version: 2.54.0
     h3:
       specifier: ^2.0.8
       version: 2.0.8
@@ -1123,7 +1123,7 @@ importers:
         version: link:../../packages/genshin-world
       grid-engine:
         specifier: 'catalog:'
-        version: 2.53.0(phaser@4.2.1)
+        version: 2.54.0(phaser@4.2.1)
       headless-block-editor:
         specifier: workspace:*
         version: link:../../packages/headless-block-editor
@@ -9609,8 +9609,8 @@ packages:
     peerDependencies:
       graphology-types: '>=0.24.0'
 
-  grid-engine@2.53.0:
-    resolution: {integrity: sha512-6Il+L4yWKfKcS7xJdzRUPaS1d8uEUDEiyO8Vo/j8KpsTw4FEljS4Je+DLmG3nH7jXnhAM4h5sHzGFf9/+rAQdg==}
+  grid-engine@2.54.0:
+    resolution: {integrity: sha512-VP+xXgRets2+daCxH6IbQcqX0r5XpWKF6xKGEjIpxjhcKtjO+laF56OR7m1YZ1vb1aeufzi1M8F5q9iIVl39iQ==}
     peerDependencies:
       phaser: ~4.0.0
 
@@ -22095,7 +22095,7 @@ snapshots:
       graphology-types: 0.24.8
       obliterator: 2.0.5
 
-  grid-engine@2.53.0(phaser@4.2.1):
+  grid-engine@2.54.0(phaser@4.2.1):
     dependencies:
       mnemonist: 0.40.6
       phaser: 4.2.1
