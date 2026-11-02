@@ -15,12 +15,15 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
     const messageValue = toValue(message);
     if (!messageValue) return undefined;
 
-    if (messageValue.type === MessageType.Webhook) {
+    if (messageValue.type === MessageType.Webhook)
       // An app user is not a member of the room, so it has no room display name to resolve. The identity its message
       // Carries wins over the cache, so a webhook the cache never held is still named
-      const { id } = messageValue.appUser;
-      return { id, image: "", name: UNKNOWN_USER_NAME, ...appUserMap.value.get(id), ...messageValue.appUser };
-    }
+      return {
+        image: "",
+        name: UNKNOWN_USER_NAME,
+        ...appUserMap.value.get(messageValue.appUser.id),
+        ...messageValue.appUser,
+      };
 
     const user = userMap.value.get(messageValue.userId);
     // The creator is named on every message it wrote, so it takes the room display name its member row carries,

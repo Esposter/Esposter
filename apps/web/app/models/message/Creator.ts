@@ -1,3 +1,4 @@
-import type { AppUserInMessage, PublicUser } from "@esposter/db-schema";
+import type { AppUserInMessage } from "@esposter/db-schema";
 
-export type Creator = AppUserInMessage | PublicUser;
+// Who a message is drawn under: the identity alone, since a webhook's app user and an author nobody can resolve carry no more
+export type Creator = Pick<AppUserInMessage, "id" | "image" | "name">;
