@@ -17,11 +17,13 @@ const { $trpc } = useNuxtApp();
 const { data: consumers } = useQuery(async () => {
   const idSet = new Set(ids);
   const idConsumerMap = new Map<ResourceInResource["id"], LinkedResource>();
-  // The chunks are read together and their answers fold in chunk order, so the map is the same whichever answers first
+  // One chunk at a time, since requests issued in one tick join a single batch and its URL again; the answers fold in
+  // Chunk order
   const chunkConsumers = await settleAll(
     chunk(ids, READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH).map(
       (chunkIds) => () => $trpc.resource.readResourceConsumers.query({ ids: chunkIds }),
     ),
+    1,
   );
   for (const consumer of chunkConsumers.flat())
     // A chunk leaves out only its own ids, so one deleted in another chunk is left out here, and one using several
