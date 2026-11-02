@@ -4,11 +4,11 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
-import { DRAG_THRESHOLD } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
+import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { noop } from "@esposter/shared";
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
@@ -85,7 +85,7 @@ export const usePageBuilderDrag = <
     };
     const onPointerMove = (moveEvent: PointerEvent) => {
       const point = { x: moveEvent.clientX, y: moveEvent.clientY };
-      if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_THRESHOLD) isDragging.value = true;
+      if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_START_DISTANCE) isDragging.value = true;
       if (isDragging.value) onMove(point);
     };
     const onPointerUp = (upEvent: PointerEvent) => {

@@ -97,6 +97,10 @@ export const CALENDAR_CLOSING_HOUR = 17;
 export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
 export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
+// The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the page
+// Builder's panes
+export const MIN_SIDE_PANE_WIDTH = 200;
+export const MAX_SIDE_PANE_WIDTH = 480;
 // What an event calendar's keys are listed under in the shortcuts dialog and the palette
 export const CALENDAR_COMMAND_GROUP = "Calendar";
 // How often a calendar reads the clock, so today's ring and the current-time line move on without a reload

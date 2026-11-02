@@ -49,8 +49,6 @@ export const WEBPAGE_NODE_TYPE_ICON_MAP: Readonly<Record<WebpageNodeType, UiIcon
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
-// The distance a palette press must travel before it is a drag rather than a click on the block's button
-export const DRAG_THRESHOLD = 4;
 // The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are not
 // Listed, since only Columns and Tabs hold them
 export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<WebpageNode>[] = Object.freeze([
@@ -79,9 +77,7 @@ export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<Web
 // The pointer and history interaction of the root, whose props are edited when no node is selected
 export const ROOT_POINTER = "/root";
 export const ROOT_INTERACTION_ID = "content:root";
-// The bounds and starting width of the page builder's side panes, in pixels
-export const MIN_SIDE_PANE_WIDTH = 200;
-export const MAX_SIDE_PANE_WIDTH = 480;
+// The width the page builder's side panes start at, in pixels, within the bounds every side pane shares
 export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // The content panel's title, which is also its value in the node settings tabs
 export const CONTENT_PANEL = "Content";

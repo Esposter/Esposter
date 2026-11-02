@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LEFT_DRAWER_WIDTH, PAGE_TITLE_SEPARATOR, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { MAX_SIDE_BAR_WIDTH, MIN_SIDE_BAR_WIDTH } from "@/services/message/ui/constants";
+import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useMessageLayoutStore } from "@/store/message/ui/layout";
@@ -47,8 +47,8 @@ const rightDrawerWidth = computed(() => {
         v-if="isDesktop"
         v-model="leftSideBarWidth"
         label="Resize rooms"
-        :max="MAX_SIDE_BAR_WIDTH"
-        :min="MIN_SIDE_BAR_WIDTH"
+        :max="MAX_SIDE_PANE_WIDTH"
+        :min="MIN_SIDE_PANE_WIDTH"
       />
     </template>
     <template #right>
@@ -58,8 +58,8 @@ const rightDrawerWidth = computed(() => {
         v-model="rightSideBarWidth"
         is-reversed
         label="Resize the side panel"
-        :max="MAX_SIDE_BAR_WIDTH"
-        :min="MIN_SIDE_BAR_WIDTH"
+        :max="MAX_SIDE_PANE_WIDTH"
+        :min="MIN_SIDE_PANE_WIDTH"
       />
     </template>
   </NuxtLayout>

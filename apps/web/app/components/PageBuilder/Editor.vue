@@ -6,16 +6,10 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { KeyAction } from "@/models/pageBuilder/KeyAction";
 import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import {
-  CONTENT_PANEL,
-  DEFAULT_SIDE_PANE_WIDTH,
-  MAX_SIDE_PANE_WIDTH,
-  MIN_SIDE_PANE_WIDTH,
-  STYLE_PANEL,
-  THEME_PANEL,
-} from "@/services/pageBuilder/constants";
+import { CONTENT_PANEL, DEFAULT_SIDE_PANE_WIDTH, STYLE_PANEL, THEME_PANEL } from "@/services/pageBuilder/constants";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { getBlockNode } from "headless-block-editor";
