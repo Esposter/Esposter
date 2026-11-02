@@ -12,22 +12,27 @@ interface Props {
 
 const { room } = defineProps<Props>();
 const saveRoom = useSaveRoom(() => room);
-const editedMaxFileSizeBytes = ref(room.maxFileSizeBytes);
-const editedAllowedMimeCategories = ref([...room.allowedMimeCategories]);
+const {
+  draft: editedMaxFileSizeBytes,
+  isDirty: isMaxFileSizeBytesDirty,
+  settle: settleMaxFileSizeBytes,
+} = useStoredDraft(() => room.maxFileSizeBytes);
+const {
+  draft: editedAllowedMimeCategories,
+  isDirty: isAllowedMimeCategoriesDirty,
+  settle: settleAllowedMimeCategories,
+} = useStoredDraft(() => room.allowedMimeCategories);
 const maxFileSizeMegabytes = MAX_FILE_REQUEST_SIZE / MEGABYTE;
 const maxFileSizeRules = [UiRules.minValue(1), UiRules.maxValue(maxFileSizeMegabytes)];
-const isDirty = computed(
-  () =>
-    editedMaxFileSizeBytes.value !== room.maxFileSizeBytes ||
-    editedAllowedMimeCategories.value.join(",") !== room.allowedMimeCategories.join(","),
-);
 const save = async () => {
-  if (!isDirty.value) return;
+  if (!isMaxFileSizeBytesDirty.value && !isAllowedMimeCategoriesDirty.value) return;
 
   await saveRoom({
     allowedMimeCategories: editedAllowedMimeCategories.value,
     maxFileSizeBytes: editedMaxFileSizeBytes.value,
   });
+  settleMaxFileSizeBytes();
+  settleAllowedMimeCategories();
 };
 </script>
 

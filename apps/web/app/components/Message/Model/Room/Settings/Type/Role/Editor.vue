@@ -11,17 +11,22 @@ interface Props {
 const { role, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { updateRole } = roleStore;
-const editedPermissions = ref(role.permissions);
+const { draft: permissions, isDirty, reset, settle } = useStoredDraft(() => role.permissions);
 </script>
 
 <template>
   <div flex flex-col gap-4>
     <h3 truncate ui-heading>{{ role.name }}</h3>
-    <MessageModelRoomSettingsTypeRolePermissionList v-model="editedPermissions" />
+    <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" />
     <MessageModelRoomSettingsUnsavedChangesBar
-      v-if="editedPermissions !== role.permissions"
-      @reset="editedPermissions = role.permissions"
-      @save="updateRole({ id: role.id, permissions: editedPermissions, roomId })"
+      v-if="isDirty"
+      @reset="reset()"
+      @save="
+        async () => {
+          await updateRole({ id: role.id, permissions, roomId });
+          settle();
+        }
+      "
     />
   </div>
 </template>
