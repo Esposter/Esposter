@@ -32,12 +32,6 @@ const { cells, isDestroying, selectedCell } = defineProps<Props>();
 
 <style scoped>
 .grid {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.grid {
   position: absolute;
   top: calc(var(--unit) * 114);
   left: calc(var(--unit) * 207);
@@ -47,6 +41,9 @@ const { cells, isDestroying, selectedCell } = defineProps<Props>();
   grid-template-columns: repeat(7, calc(var(--unit) * 124));
   grid-auto-rows: calc(var(--unit) * 152);
   gap: calc(var(--unit) * 24) calc(var(--unit) * 23);
+  margin: 0;
+  padding: 0;
   overflow-y: auto;
+  list-style: none;
 }
 </style>

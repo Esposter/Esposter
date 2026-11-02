@@ -73,6 +73,7 @@ flowchart TD
 | `packages/genshin-world/src/components/Inventory/Screen/Index.fixture.ts`           | The weapons tab sorted by quality, its first entry selected: the parity page's and the visual suite's state                                              |
 | `packages/genshin-interface/src/components/InventoryScreen/Index.vue`               | The bag's props, focus and footer, which mounts a child per region                                                                                       |
 | `packages/genshin-interface/src/components/InventoryScreen/<Part>/Index.vue`        | The tabs and capacity, the grid and its cells, the detail, the actions and the amount picker, the destroy foot, the sort, the currencies and the confirm |
+| `packages/genshin-interface/src/services/useDestroyFocus.ts`                        | The destroy dialog's focus: it takes the focus as it opens, and the focus goes back to what held it, or to the trash, once it closes                     |
 | `packages/genshin-interface/src/models/InventoryWeaponDetails.ts`                   | The weapon's details the detail panel draws, handed to the screen by entry id                                                                            |
 | `packages/genshin-interface/src/models/ItemCategory.ts`                             | The nine tabs, in the game's order                                                                                                                       |
 

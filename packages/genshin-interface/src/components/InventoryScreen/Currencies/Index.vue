@@ -23,12 +23,6 @@ const { currencies } = defineProps<Props>();
 </template>
 
 <style scoped>
-.currencies {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 /* The pills sit at the game's left edges, 40 units apart, their figures 19 units high in the game's face. The Primogem and Mora
    marks are drawn in the game's colours until the glyph pass traces them from the game's own icons */
 .currencies {
@@ -37,8 +31,11 @@ const { currencies } = defineProps<Props>();
   left: calc(var(--unit) * 139);
   display: flex;
   gap: calc(var(--unit) * 40);
+  margin: 0;
+  padding: 0;
   font-size: calc(var(--unit) * 29);
   font-weight: 600;
+  list-style: none;
 }
 
 .currency {

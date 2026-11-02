@@ -17,6 +17,7 @@ import Header from "#src/components/InventoryScreen/Header/Index.vue";
 import Sort from "#src/components/InventoryScreen/Sort/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
+import { useDestroyFocus } from "#src/services/useDestroyFocus";
 
 interface Props {
   // The slider's name for assistive tech, the game's "Amount to use" line in the reader's language
@@ -136,22 +137,7 @@ const emit = defineEmits<{
   use: [id: string, amount: number];
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
-// The dialog takes the focus as it opens, the bag behind it inert until it closes, so nothing behind it changes what OK
-// Destroys, and the focus goes back to what held it once it closes, or to the trash where a confirmed destroy closed the
-// Destroy mode and its Destroy button with it
-const confirm = useTemplateRef("confirm");
-const trashButton = useTemplateRef("trashButton");
-let returnFocus: HTMLElement | undefined;
-watch(
-  () => isConfirming,
-  async (isOpen) => {
-    if (isOpen)
-      returnFocus = window.document.activeElement instanceof HTMLElement ? window.document.activeElement : undefined;
-    await nextTick();
-    if (isOpen) confirm.value?.focus();
-    else (returnFocus?.isConnected ? returnFocus : trashButton.value)?.focus();
-  },
-);
+useDestroyFocus(() => isConfirming);
 </script>
 
 <template>
