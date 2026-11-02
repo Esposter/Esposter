@@ -2,9 +2,11 @@
 import { WEBPAGE_DESCRIPTION_MAX_LENGTH } from "#shared/services/resource/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
+import { getResultAsync } from "@esposter/shared";
 
 const webpageEditorStore = useWebpageEditorStore();
 const { loadContent, saveWebpage } = webpageEditorStore;
@@ -13,12 +15,16 @@ const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => currentResourceId.value);
 const shareImageFiles = ref<File[]>([]);
-// A picked image uploads at once and only its url is kept, so the file never waits in the form
+// A picked image uploads at once and only its url is kept, so the file never waits in the form. A failed upload alerts
+// And keeps the share image as it was
 watch(shareImageFiles, async (files) => {
   const [file] = files;
   if (!file) return;
   shareImageFiles.value = [];
-  webpageEditor.value.imageUrl = await uploadFile(file);
+  const uploadResult = await getResultAsync(() => uploadFile(file));
+  uploadResult.match((imageUrl) => {
+    webpageEditor.value.imageUrl = imageUrl;
+  }, createErrorAlert);
 });
 // Autosave the share preview as it is edited, the same as the Sheet's Settings blade. The save writes the page builder's
 // Document too, so an unsaved edit of the page is never written over by the share preview's older tree

@@ -36,19 +36,22 @@ const hasRestorePoint = computed(() =>
   resource.revisionTakenAt ? resource.revisionTakenAt > getSnapshotRetainedSince(SnapshotChannel.Revisions) : false,
 );
 const publicUrl = computed(() => (publication.value ? RoutePath.View(resource.type, resource.id) : undefined));
-// The page is keyed by resource id, so this instance only ever describes one resource — the count is
-// Read once rather than watching an id that cannot change underneath it. A failed count leaves the row out
+// The page is keyed by resource id, so this instance only ever describes one resource. The count is read once the
+// Resource is published, and again on each publish made while the page is open. A failed count leaves the row out
 // Only a published resource has views, and only its row renders the count — reading it for a draft spends
 // A round trip on a number nothing displays. The capability is what makes the procedure reachable, so the
 // Guard and the availability are one fact
 // Called on the local `type` rather than read off `isPublishable`, because it is the type guard that narrows
 // The router to the one carrying `readResourceViewCount`
-const { data: viewCount } = useQuery(() => {
+const { data: viewCount, refresh: refreshViewCount } = useQuery(() => {
   const { type } = resource;
   if (!publication.value || !checkHasCapability(type, "publishable")) return Promise.resolve(undefined);
 
   const { readResourceViewCount } = getResourceRouter(type);
   return readResourceViewCount.query({ id: resource.id });
+});
+watch(publication, async (newPublication) => {
+  if (newPublication) await refreshViewCount();
 });
 </script>
 

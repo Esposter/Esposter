@@ -14,7 +14,8 @@ interface Props {
 const { initialValues = { description: "", title: "" }, isCreate, isPending } = defineProps<Props>();
 const emit = defineEmits<{ submit: [values: NonNullable<Props["initialValues"]>] }>();
 const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.isNotProfanity()];
-const values = ref(initialValues);
+// A copy, so typing edits the form's own values rather than the object the caller passed in
+const values = ref({ ...initialValues });
 const isValid = ref(true);
 </script>
 

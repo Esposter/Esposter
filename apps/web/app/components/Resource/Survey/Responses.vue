@@ -30,10 +30,11 @@ const emptyStateAttributes = {
   meaning: UiIconMeaning.Comment,
   title: "No responses yet",
 };
+// A question's key is prefixed, so a question named like the actions column never shares its key or its cell's menu
 const tableColumns = computed<UiDataTableColumn<SurveyResponseRecord & { id: string }>[]>(() => [
   ...(records.value?.columns.map(({ name }) => ({
     getValue: (row: SurveyResponseRecord) => String(row[name] ?? ""),
-    key: name,
+    key: `question:${name}`,
     title: name,
   })) ?? []),
   { isSortable: false, key: "actions", title: "" },

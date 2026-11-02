@@ -71,4 +71,22 @@ describe("resourceSurveyResponses", () => {
 
     expect(component.text()).toContain("Teal");
   });
+
+  // A question named like the actions column is a column of answers, so it keeps its own cells and gets no menu of its own
+  test("a question named actions shows its answers, not the response menu", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.survey.readSurveyResponseRecords.query(() => ({
+      columns: [{ name: "actions", type: ColumnType.String }],
+      rows: [{ actions: "Teal", rowKey: "response-1" }],
+      totalRows: 1,
+    }));
+    const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });
+    const individualTab = component.findAll('[role="tab"]').find((tab) => tab.text() === "Individual");
+    assert.exists(individualTab);
+    await individualTab.trigger("click");
+    await flushPromises();
+
+    expect(component.findAll("td").map((cell) => cell.text())).toContain("Teal");
+  });
 });

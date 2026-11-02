@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TagRow } from "@/models/resource/TagRow";
 import type { ResourceTags } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -21,7 +22,10 @@ const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.
 // An empty trailing row means the first thing the user sees is somewhere to type.
 const isValid = ref(true);
-const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags) : [{ name: "", value: "" }]);
+// A row is keyed by its own id rather than its place, so removing one leaves each remaining row's field, and the error
+// Its field shows, with the row it belongs to
+const createRow = (row: TagRow = { name: "", value: "" }) => ({ ...row, id: crypto.randomUUID() });
+const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => createRow(row)) : [createRow()]);
 const { answer } = useDialogAnswer(isOpen);
 </script>
 
@@ -35,7 +39,7 @@ const { answer } = useDialogAnswer(isOpen);
       gap-3
       @submit="answer(() => updateTags(getResourceTags(rows)), true)"
     >
-      <div v-for="(row, index) of rows" :key="index" flex gap-2 items-end>
+      <div v-for="(row, index) of rows" :key="row.id" flex gap-2 items-end>
         <UiTextField v-model="row.name" label="Name" :rules="nameRules" flex-1 />
         <UiTextField v-model="row.value" label="Value" :rules="valueRules" flex-1 />
         <UiIconButton
@@ -45,7 +49,7 @@ const { answer } = useDialogAnswer(isOpen);
           @click="rows = rows.toSpliced(index, 1)"
         />
       </div>
-      <UiButton v-if="rows.length < MAX_TAGS_COUNT" self-start @click="rows = [...rows, { name: '', value: '' }]">
+      <UiButton v-if="rows.length < MAX_TAGS_COUNT" self-start @click="rows = [...rows, createRow()]">
         <UiIcon :meaning="UiIconMeaning.Create" />
         Add tag
       </UiButton>

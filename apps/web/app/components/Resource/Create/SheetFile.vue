@@ -21,7 +21,11 @@ const emit = defineEmits<{ parse: [name: string] }>();
 const dropZone = useTemplateRef("dropZone");
 const fileInput = useTemplateRef("fileInput");
 const file = ref<File>();
+// A file picked or dropped while one is still parsing waits behind it, since the picker is off until it lands, so two parses
+// Never race for the form's sheet
 const parseFile = async (newFile: File) => {
+  if (isParsing.value) return;
+
   file.value = newFile;
   sheetResource.value = undefined;
   const type = getDataSourceTypeByFilename(newFile.name);
@@ -79,7 +83,7 @@ const onUpdateFile = async (newFile?: File | File[]) => {
         hidden
         @change="onUpdateFile(fileInput?.files?.[0])"
       />
-      <UiButton @click="fileInput?.click()">
+      <UiButton :disabled="isParsing" @click="fileInput?.click()">
         <UiIcon :meaning="UiIconMeaning.Attach" />
         {{ file ? "Choose another file" : "Choose a file" }}
       </UiButton>

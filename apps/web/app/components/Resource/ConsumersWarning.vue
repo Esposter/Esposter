@@ -6,7 +6,7 @@ import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { pluralize } from "#shared/util/text/pluralize";
-import { chunk } from "@esposter/shared";
+import { chunk, settleAll } from "@esposter/shared";
 
 interface Props {
   ids: ResourceInResource["id"][];
@@ -17,11 +17,16 @@ const { $trpc } = useNuxtApp();
 const { data: consumers } = useQuery(async () => {
   const idSet = new Set(ids);
   const idConsumerMap = new Map<ResourceInResource["id"], LinkedResource>();
-  for (const chunkIds of chunk(ids, READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH))
-    for (const consumer of await $trpc.resource.readResourceConsumers.query({ ids: chunkIds }))
-      // A chunk leaves out only its own ids, so one deleted in another chunk is left out here, and one using several
-      // Of the ids is named once
-      if (!idSet.has(consumer.id)) idConsumerMap.set(consumer.id, consumer);
+  // The chunks are read together and their answers fold in chunk order, so the map is the same whichever answers first
+  const chunkConsumers = await settleAll(
+    chunk(ids, READ_RESOURCE_CONSUMERS_IDS_MAX_LENGTH).map(
+      (chunkIds) => () => $trpc.resource.readResourceConsumers.query({ ids: chunkIds }),
+    ),
+  );
+  for (const consumer of chunkConsumers.flat())
+    // A chunk leaves out only its own ids, so one deleted in another chunk is left out here, and one using several
+    // Of the ids is named once
+    if (!idSet.has(consumer.id)) idConsumerMap.set(consumer.id, consumer);
   return [...idConsumerMap.values()].toSorted((firstConsumer, secondConsumer) =>
     EN_US_COMPARATOR.compare(firstConsumer.name, secondConsumer.name),
   );
