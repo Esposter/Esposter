@@ -65,6 +65,13 @@ const {
 // Every landmark of every region in reach, built by its kind's kit, so a region's landmarks appear as its data
 // Arrives and go when it is released
 const regionLandmarks = computed(() => [...regionDataMap.values()].flatMap(({ landmarks }) => landmarks));
+// Each landmark with the user data its group is given, made once per landmark rather than on every render of the list
+const regionLandmarkEntries = computed(() =>
+  regionLandmarks.value.map((landmark) => ({
+    landmark,
+    userData: { [SCENE_FAMILY_KEY]: kindFamilyMap[landmark.kind] },
+  })),
+);
 // The landmarks the exports draw in place of ours, read again as a region or a component's exports arrive or go
 const exportedLandmarkIds = computed(() => getExportedLandmarkIds(regionLandmarks.value, sceneExportMap.values()));
 // The palettes every region in reach read with its data, which each of its buildings is drawn in
@@ -130,10 +137,10 @@ onUnmounted(() => {
 <template>
   <primitive :object="landmarksGroup">
     <TresGroup
-      v-for="landmark of regionLandmarks"
+      v-for="{ landmark, userData } of regionLandmarkEntries"
       :key="landmark.id"
       :visible="!hiddenKinds.includes(landmark.kind) && !exportedLandmarkIds.has(landmark.id)"
-      :user-data="{ [SCENE_FAMILY_KEY]: kindFamilyMap[landmark.kind] }"
+      :user-data="userData"
     >
       <WorldLandmarkTree
         v-if="landmark.kind === LandmarkKind.Tree"

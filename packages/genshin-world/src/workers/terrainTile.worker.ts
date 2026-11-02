@@ -65,8 +65,7 @@ const answerTile = async (request: TerrainTileRequest, terrainWorkerContext: Ter
   if (outcome.status === "rejected") {
     console.error(outcome.reason);
     const failure: TerrainWorkerFailure = { key: request.key, kind: TerrainWorkerMessageKind.Failed };
-    // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Worker's postMessage takes no origin
-    self.postMessage(failure);
+    self.postMessage(failure, { transfer: [] });
     return;
   }
   const { coarseColors, coarseNormals, coarsePositions, colors, normals, plantColors, plantMatrices, positions } =

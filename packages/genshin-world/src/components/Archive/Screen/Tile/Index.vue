@@ -24,6 +24,10 @@ interface Props {
 
 const { gameText, isDimmed, isNew, isSelected, kills, name, rarity } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
+// The face gradient of a four or five star tile, held as one style so the button is not handed a fresh object on each render
+const faceStyle = computed(() => ({
+  background: rarity !== undefined && rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined,
+}));
 </script>
 
 <template>
@@ -35,7 +39,7 @@ const emit = defineEmits<{ click: [] }>();
     :data-dimmed="isDimmed || undefined"
     :data-rarity="rarity"
     :kind="GameButtonKind.Row"
-    :style="{ background: rarity !== undefined && rarity >= 4 ? ItemRarityFaceGradientMap[rarity] : undefined }"
+    :style="faceStyle"
     tip=""
     @click="emit('click')"
   >
