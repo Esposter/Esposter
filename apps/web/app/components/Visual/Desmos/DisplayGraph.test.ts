@@ -28,6 +28,7 @@ const mountGraph = (expressions: Expression[]) =>
 describe("visualDesmosDisplayGraph", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   // The expression sets are module constants shared by every mount, so the defaults go on copies
@@ -43,6 +44,40 @@ describe("visualDesmosDisplayGraph", () => {
     expect(calculator.setExpressions).toHaveBeenCalledExactlyOnceWith([{ color: Colors.Black, latex: "y=x" }]);
     expect(expressions).toStrictEqual([{ latex: "y=x" }]);
     component.unmount();
+  });
+
+  test("an animation stops drawing once its component unmounts, though its run has expressions left", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    const calculator = {
+      setBlank: vi.fn<() => void>(),
+      setExpression: vi.fn<(expression: Expression) => void>(),
+      setExpressions: vi.fn<(expressions: Expression[]) => void>(),
+      settings: {},
+      updateSettings: vi.fn<(settings: object) => void>(),
+    };
+    // The animate button is drawn into the expression panel a calculator builds, so the mock builds one too
+    GraphingCalculator.mockImplementationOnce(async (element: HTMLElement) => {
+      const panel = document.createElement("div");
+      panel.className = "dcg-exppanel-outer";
+      element.append(panel);
+      return calculator;
+    });
+    const component = await mountGraph([{ latex: "y=x" }, { latex: "y=2x" }]);
+    await flushPromises();
+    await component
+      .findAll("button")
+      .find((button) => button.text() === "Animate")
+      ?.trigger("click");
+    vi.advanceTimersByTime(2500);
+
+    expect(calculator.setExpression).toHaveBeenCalledExactlyOnceWith({ color: Colors.Black, latex: "y=x" });
+
+    component.unmount();
+    vi.advanceTimersByTime(5000);
+
+    expect(calculator.setExpression).toHaveBeenCalledExactlyOnceWith({ color: Colors.Black, latex: "y=x" });
   });
 
   test("a calculator that fails to build says so in place of the drawing", async () => {

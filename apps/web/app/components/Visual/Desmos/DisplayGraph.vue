@@ -75,6 +75,22 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   return newCalculator;
 });
 
+// Created at setup, where its teardown registers with the component, and started by an animation rather than by mounting
+const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
+let expressionIndex = 0;
+const { pause, resume } = useIntervalFn(
+  () => {
+    const expression = takeOne(expressions, expressionIndex++);
+    calculator.value?.setExpression(withDefaultExpressionColor(expression));
+    if (expressionIndex === expressions.length) {
+      pause();
+      isAnimating.value = false;
+    }
+  },
+  () => drawingTime / expressions.length,
+  { immediate: false },
+);
+
 const animate = () => {
   if (!calculator.value) return;
   isAnimating.value = true;
@@ -85,16 +101,8 @@ const animate = () => {
     calculator.value?.updateSettings(savedSettings);
   });
 
-  const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
-  let expressionIndex = 0;
-  const { pause } = useIntervalFn(() => {
-    const expression = takeOne(expressions, expressionIndex++);
-    calculator.value?.setExpression(withDefaultExpressionColor(expression));
-    if (expressionIndex === expressions.length) {
-      pause();
-      isAnimating.value = false;
-    }
-  }, drawingTime / expressions.length);
+  expressionIndex = 0;
+  resume();
 };
 
 watch(isDark, (newIsDark) => {
