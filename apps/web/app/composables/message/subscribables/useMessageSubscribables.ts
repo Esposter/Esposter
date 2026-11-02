@@ -17,6 +17,23 @@ export const useMessageSubscribables = () => {
   useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return undefined;
 
+    // The only step that can reject is the WebPubSub start, so it runs before any tRPC subscription is opened: a
+    // Rejected start then leaves nothing open for the next attempt to stack another set beside
+    const stopWebPubSubClient = await useWebPubSubClient(
+      (signal) => $trpc.message.generateWebPubSubClientAccessUrl.query({ roomId }, { signal }),
+      getSynchronizedFunction(({ message: { data } }) =>
+        getResultAsync(async () => {
+          // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
+          // `jsonDateParse` can revive ISO date strings back to Date instances
+          const parsedData = jsonDateParse<MessageEntity>(JSON.stringify(data));
+          const entity =
+            parsedData.type === MessageType.Webhook
+              ? new WebhookMessageEntity(parsedData)
+              : new StandardMessageEntity(parsedData);
+          await storeCreateMessage(entity);
+        }).match(noop, console.error),
+      ),
+    );
     const unsubscribe = getUnsubscribe(
       $trpc.message.onCreateMessage.subscribe(
         { roomId },
@@ -53,21 +70,6 @@ export const useMessageSubscribables = () => {
             getResultAsync(() => storeDeleteMessage(deleteInput)).match(noop, console.error),
           ),
         },
-      ),
-    );
-    const stopWebPubSubClient = await useWebPubSubClient(
-      (signal) => $trpc.message.generateWebPubSubClientAccessUrl.query({ roomId }, { signal }),
-      getSynchronizedFunction(({ message: { data } }) =>
-        getResultAsync(async () => {
-          // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
-          // `jsonDateParse` can revive ISO date strings back to Date instances
-          const parsedData = jsonDateParse<MessageEntity>(JSON.stringify(data));
-          const entity =
-            parsedData.type === MessageType.Webhook
-              ? new WebhookMessageEntity(parsedData)
-              : new StandardMessageEntity(parsedData);
-          await storeCreateMessage(entity);
-        }).match(noop, console.error),
       ),
     );
 
