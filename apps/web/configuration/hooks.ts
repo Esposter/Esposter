@@ -1,15 +1,8 @@
-import type { IncomingMessage } from "node:http";
-import type { Duplex } from "node:stream";
 import type { NuxtHooks } from "nuxt/schema";
 
 import { useNuxt } from "nuxt/kit";
 
-import type { NitroDevEnvironment } from "./models/NitroDevEnvironment.ts";
-
-const checkIsNitroDevEnvironment = (environment: object): environment is NitroDevEnvironment =>
-  "devServer" in environment;
-
-export const hooks: Pick<NuxtHooks, "listen" | "modules:before" | "ready"> = {
+export const hooks: Pick<NuxtHooks, "listen" | "modules:before"> = {
   // The CLI hands a raw upgrade socket on before anything attaches an error listener to it, and a websocket client
   // Resetting in that window emits an unhandled 'error' on a bare socket, which kills the dev process
   listen: (listenerServer) => {
@@ -27,27 +20,5 @@ export const hooks: Pick<NuxtHooks, "listen" | "modules:before" | "ready"> = {
     const nuxt = useNuxt();
     // oxlint-disable-next-line no-underscore-dangle -- `_version` is Nuxt's own field, the one kit reads the version from
     nuxt._version = nuxt._version.replace(/-\d+-[\da-f]+$/u, "");
-  },
-  // @TODO: no upstream issue — under Nuxt 5's Nitro Vite environment the dev server Nuxt hands the CLI has no
-  // `upgrade`, so `nuxt dev` drops every WebSocket upgrade; each is forwarded to the Nitro environment as Nitro's
-  // Own listener would
-  ready: (nuxt) => {
-    if (!nuxt.options.dev) return;
-    // Registered from here rather than in the configuration's hooks so it runs after the Nitro server's own, which is
-    // What sets `nuxt.server`
-    nuxt.hook("vite:serverCreated", (viteServer, { isServer }) => {
-      const environment = viteServer.environments.nitro;
-      if (!isServer || !nuxt.server || !environment || !checkIsNitroDevEnvironment(environment)) return;
-      // The CLI neither awaits nor catches the upgrade, and Nitro's rejects when its runner cannot proxy one — an
-      // Unhandled rejection that would end the dev process — so a failed one is logged and its socket closed here
-      nuxt.server.upgrade = async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
-        const [outcome] = await Promise.allSettled([
-          Promise.try(() => environment.devServer.upgrade?.({ node: { head, req, socket } })),
-        ]);
-        if (outcome.status === "fulfilled") return;
-        console.error(outcome.reason);
-        socket.destroy();
-      };
-    });
   },
 };
