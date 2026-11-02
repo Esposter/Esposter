@@ -98,7 +98,7 @@ A formula that cannot be parsed SHALL be refused with an error naming the charac
 
 #### Scenario: Nesting beyond the limit
 
-- **GIVEN** a formula whose parentheses nest deeper than the parser's depth limit
+- **GIVEN** a formula whose nesting goes deeper than the parser's depth limit, through parentheses, prefix operators, assignments, a chain of powers or a chain of conditionals
 - **WHEN** a caller parses it
 - **THEN** the parse fails with an error instead of exhausting the stack
 
