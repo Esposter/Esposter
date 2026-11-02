@@ -39,7 +39,8 @@ const openLinkInPane = (event: MouseEvent) => {
     openRepositoryFile(path);
     return;
   }
-  if (!link || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  // A link whose href the sanitizer dropped has none to open, and its `href` reads as the empty string
+  if (!link?.href || event.ctrlKey || event.metaKey || event.shiftKey) return;
   const url = new URL(link.href);
   if (
     url.origin !== window.location.origin ||

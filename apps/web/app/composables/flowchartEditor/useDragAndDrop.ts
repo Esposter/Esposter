@@ -17,7 +17,8 @@ export const useDragAndDrop = () => {
 
     nodeType.value = newNodeType;
     isDragging.value = true;
-    window.document.addEventListener("drop", onDragEnd);
+    // Every drag ends on its source, a drop or not, so a cancelled one or one released off a target still ends here
+    window.document.addEventListener("dragend", onDragEnd);
   };
 
   const onDragOver = (event: DragEvent) => {
@@ -36,7 +37,7 @@ export const useDragAndDrop = () => {
     isDragging.value = false;
     isDragOver.value = false;
     nodeType.value = GeneralNodeType.Rectangle;
-    window.document.removeEventListener("drop", onDragEnd);
+    window.document.removeEventListener("dragend", onDragEnd);
   };
 
   const onDrop = (event: DragEvent) => {

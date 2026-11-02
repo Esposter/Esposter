@@ -31,6 +31,21 @@ describe(AgentConsoleMarkdown, () => {
     expect(currentPagePath.value).toBe("/docs?a=1");
   });
 
+  test("leaves a link whose href the sanitizer dropped to the browser, without an error from reading the address it lacks", async () => {
+    expect.hasAssertions();
+
+    const agentConsolePaneStore = useAgentConsolePaneStore();
+    const { pagePaths } = storeToRefs(agentConsolePaneStore);
+    const onError = vi.fn<(event: ErrorEvent) => void>();
+    window.addEventListener("error", onError);
+    const component = await mountSuspended(AgentConsoleMarkdown, { props: { source: "[page](javascript:alert(1))" } });
+    await component.get("a").trigger("click");
+    window.removeEventListener("error", onError);
+
+    expect(onError).not.toHaveBeenCalled();
+    expect(pagePaths.value).toStrictEqual([]);
+  });
+
   test("opens an anchor on this page under another query in the side pane", async () => {
     expect.hasAssertions();
 

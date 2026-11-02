@@ -129,6 +129,7 @@ const submit = () => {
         @drop.prevent="attach($event.dataTransfer?.files)"
         @keydown.enter.exact="
           (event: KeyboardEvent) => {
+            if (event.isComposing) return;
             if (event.defaultPrevented) return;
             event.preventDefault();
             submit();
