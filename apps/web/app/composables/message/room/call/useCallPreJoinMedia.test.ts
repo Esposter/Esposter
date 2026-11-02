@@ -16,15 +16,15 @@ describe(useCallPreJoinMedia, () => {
   let media: ReturnType<typeof useCallPreJoinMedia>;
 
   // Each request stays pending until the test grants it, so a toggle can land while the mount's probe is still waiting
-  const grantRequests = (kind: "audio" | "video") => {
+  const grantRequests = (kind: "audio" | "video", stream = { getTracks: () => [] } as unknown as MediaStream) => {
     const granted = pendingRequests.filter(({ constraints }) => Boolean(constraints[kind]));
     pendingRequests = pendingRequests.filter((request) => !granted.includes(request));
-    for (const { resolve } of granted) resolve({ getTracks: () => [] } as unknown as MediaStream);
+    for (const { resolve } of granted) resolve(stream);
   };
   const countRequests = (kind: "audio" | "video") =>
     getUserMedia.mock.calls.filter(([constraints]) => Boolean(constraints[kind])).length;
-  const mountCallPreJoinMedia = async () => {
-    await mountSuspended(
+  const mountCallPreJoinMedia = async () =>
+    mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
@@ -32,7 +32,6 @@ describe(useCallPreJoinMedia, () => {
         },
       }),
     );
-  };
 
   beforeEach(() => {
     pendingRequests = [];
@@ -69,5 +68,17 @@ describe(useCallPreJoinMedia, () => {
     await flushPromises();
 
     expect(media.isMicrophoneEnabled.value).toBe(false);
+  });
+
+  test("a camera granted after the page is left is stopped rather than kept live", async () => {
+    expect.hasAssertions();
+
+    const wrapper = await mountCallPreJoinMedia();
+    const stopTrack = vi.fn<() => void>();
+    wrapper.unmount();
+    grantRequests("video", { getTracks: () => [{ stop: stopTrack }] } as unknown as MediaStream);
+    await flushPromises();
+
+    expect(stopTrack).toHaveBeenCalledOnce();
   });
 });

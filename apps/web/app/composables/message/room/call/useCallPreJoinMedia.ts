@@ -24,6 +24,10 @@ export const useCallPreJoinMedia = () => {
     constraints: microphoneConstraints,
   });
   const { executeQuery } = useMutation();
+  let isDisposed = false;
+  onScopeDispose(() => {
+    isDisposed = true;
+  });
   // A device's stream is requested once while it is pending: the mount probe and a toggle that lands during it share
   // One call, since a second request overwrites the first stream and leaves its tracks running.
   // A refused or unavailable device is logged rather than dropped: the reason is only in the error, and the pre-join
@@ -44,6 +48,11 @@ export const useCallPreJoinMedia = () => {
   });
   const startCamera = async () => {
     const outcome = await startDevice("camera", startCameraStream);
+    // A page left during the permission prompt has no owner for the stream that prompt then delivers, so it is stopped here
+    if (isDisposed) {
+      stopCameraStream();
+      return;
+    }
     isCameraEnabled.value = outcome.status === MutationStatus.Succeeded && Boolean(outcome.result);
   };
   const stopCamera = () => {
