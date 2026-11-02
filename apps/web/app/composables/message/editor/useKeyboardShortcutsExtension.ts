@@ -16,7 +16,7 @@ import { Extension } from "@tiptap/vue-3";
 // The same reason: ArrowUp edits the last own message of the conversation the composer is in, not the room's
 export const useKeyboardShortcutsExtension = async (
   send: (editor: Editor) => Promisable<void>,
-  messages: MaybeRefOrGetter<MessageEntity[]>,
+  messages: MaybeRefOrGetter<readonly MessageEntity[]>,
 ) => {
   const { data: session } = await useAuthSession();
   const messageStore = useMessageStore();

@@ -5,15 +5,18 @@ import MessageModelRoomSettingsTypeWordFilterForm from "@/components/Message/Mod
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { WordFilterAction } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeWordFilterForm", () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   const createFilter = (words: string[]): RoomFilterInMessage => ({
     action: WordFilterAction.Reject,
+    createdAt: new Date(0),
+    deletedAt: null,
     roomId,
     timeoutDurationMs: null,
+    updatedAt: new Date(0),
     words,
   });
 
@@ -22,10 +25,10 @@ describe("messageModelRoomSettingsTypeWordFilterForm", () => {
   test("keeps a word another moderator added after the form read the list", async () => {
     expect.hasAssertions();
 
-    const upsertedWords: string[][] = [];
+    const { promise: upsertedWords, resolve: resolveUpsertedWords } = Promise.withResolvers<string[]>();
     trpcMsw.room.filter.readRoomFilter.query(() => createFilter(["a", "c"]));
     trpcMsw.room.filter.upsertRoomFilter.mutation(({ input }) => {
-      upsertedWords.push(input.words);
+      resolveUpsertedWords(input.words);
       return createFilter(input.words);
     });
     const component = await mountSuspended(MessageModelRoomSettingsTypeWordFilterForm, {
@@ -34,13 +37,11 @@ describe("messageModelRoomSettingsTypeWordFilterForm", () => {
     const wordInput = component.get('input[placeholder="Add a word..."]');
     await wordInput.setValue("b");
     await wordInput.trigger("keydown.enter");
-    component
+    await component
       .findAll("button")
       .find((button) => button.text() === "Save changes")
       ?.trigger("click");
 
-    await vi.waitFor(() => {
-      expect(upsertedWords).toStrictEqual([["a", "c", "b"]]);
-    });
+    expect(await upsertedWords).toStrictEqual(["a", "c", "b"]);
   });
 });

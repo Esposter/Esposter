@@ -210,6 +210,7 @@ describe(useCallStore, () => {
       registerJoin: (participantMap) => {
         trpcMsw.callSession.joinCallByRoomId.mutation(() => ({
           callSessionId,
+          isDoorkeeper: false,
           liveKitToken: "",
           liveKitUrl: "",
           participantMap,

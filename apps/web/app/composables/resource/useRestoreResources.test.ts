@@ -20,9 +20,12 @@ describe(useRestoreResources, () => {
 
     const readFavorites = vi.fn<() => ResourceListItem[]>(() => []);
     let chunkCount = 0;
-    trpcMsw.resource.restoreResources.mutation(() => {
+    // The restored rows the server answers with, one per id the chunk restored
+    trpcMsw.resource.restoreResources.mutation(({ input: { ids } }) => {
       chunkCount += 1;
       if (chunkCount > 1) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+
+      return ids.map((id) => createResourceListItem({ id }));
     });
     trpcMsw.resource.readFavorites.query(readFavorites);
     // The favorites cache is loaded by the time a restore runs, so the invalidation has something to re-read

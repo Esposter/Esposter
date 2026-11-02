@@ -12,14 +12,9 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
 import { noop } from "@esposter/shared";
+import { BackgroundTransformer, ProcessorWrapper } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
 import { afterEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("@livekit/track-processors"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  BackgroundProcessor: () => ({ processedTrack: undefined, switchTo: () => Promise.resolve() }),
-  supportsBackgroundProcessors: () => true,
-}));
 
 describe(useLiveKitStore, () => {
   const imagePath = "imagePath";
@@ -33,6 +28,9 @@ describe(useLiveKitStore, () => {
   test("drops a virtual background whose camera switched off while the background was being read", async () => {
     expect.hasAssertions();
 
+    // The test environment has no media pipeline, so the two support checks the processor makes are answered here
+    vi.spyOn(BackgroundTransformer, "isSupported", "get").mockReturnValue(true);
+    vi.spyOn(ProcessorWrapper, "isSupported", "get").mockReturnValue(true);
     const callBackgroundStore = useCallBackgroundStore();
     const readStarted = Promise.withResolvers<void>();
     const imagePathRead = Promise.withResolvers<string>();
