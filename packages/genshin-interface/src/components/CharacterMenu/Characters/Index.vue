@@ -41,7 +41,7 @@ const { characters } = defineProps<Props>();
 }
 
 /* The portraits are the game's own art, which the app does not carry, so each is a disc of the art's mean tone across the
-   roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 79 units below
+   roster, measured off the frame's portraits, with its name on it. The chosen one's cyan underline sits 76 units below
    the top of its portrait */
 .character {
   --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
@@ -75,7 +75,7 @@ const { characters } = defineProps<Props>();
 
 .character[aria-pressed="true"]::after {
   position: absolute;
-  top: calc(var(--unit) * 79);
+  top: calc(var(--unit) * 76);
   left: calc(var(--unit) * -13.5);
   width: calc(var(--unit) * 96);
   height: calc(var(--unit) * 4);

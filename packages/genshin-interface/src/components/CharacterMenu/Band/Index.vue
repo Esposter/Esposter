@@ -29,14 +29,17 @@ const characterName = computed(() => characters.find(({ id }) => id === characte
 </template>
 
 <style scoped>
+/* The game's cap height at the substitute face's size, its words letter-spaced out to the line's width, which the face
+   sets narrower at one cap height */
 .breadcrumb {
   position: absolute;
   top: calc(var(--unit) * 29);
   left: calc(var(--unit) * 216);
   margin: 0;
   color: #e6d6a8;
-  font-size: calc(var(--unit) * 30);
+  font-size: calc(var(--unit) * 26);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.5);
   line-height: calc(var(--unit) * 36);
 }
 

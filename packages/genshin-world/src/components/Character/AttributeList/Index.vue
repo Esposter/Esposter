@@ -151,10 +151,13 @@ const detailGroups = computed(() =>
   font-size: calc(var(--unit) * 26);
 }
 
+/* The name's cap height is the game's at the substitute face's size, its letters spaced out to the game's width; its line
+   sits 3 units lower, and the stars' margin takes that back so they stay where the game puts them */
 .name {
-  margin: 0;
+  margin: calc(var(--unit) * 3) 0 0;
   font-size: calc(var(--unit) * 36);
   font-weight: 600;
+  letter-spacing: calc(var(--unit) * 1.9);
   line-height: calc(var(--unit) * 40);
   text-shadow: 0 calc(var(--unit) * 1) calc(var(--unit) * 3) rgb(0 0 0 / 0.4);
 }
@@ -163,7 +166,7 @@ const detailGroups = computed(() =>
   display: flex;
   gap: calc(var(--unit) * 6.75);
   padding-left: calc(var(--unit) * 27.75);
-  margin-top: calc(var(--unit) * 9.6);
+  margin-top: calc(var(--unit) * 6.6);
 }
 
 .stars svg {
@@ -200,7 +203,7 @@ const detailGroups = computed(() =>
   font: inherit;
   width: 100%;
   height: calc(var(--unit) * 40);
-  margin-top: calc(var(--unit) * 17.5);
+  margin-top: calc(var(--unit) * 15.5);
   border: calc(var(--unit) * 1.5) solid rgb(255 255 255 / 0.25);
   border-radius: calc(var(--unit) * 20);
   background: rgb(255 255 255 / 0.08);
@@ -213,7 +216,7 @@ const detailGroups = computed(() =>
 .friendship {
   display: flex;
   justify-content: space-between;
-  margin: calc(var(--unit) * 17) 0 0;
+  margin: calc(var(--unit) * 16) 0 0;
   padding-left: calc(var(--unit) * 27);
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 36);
