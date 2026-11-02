@@ -11,7 +11,7 @@ export const reference: ComponentReference = {
       capture: "yt-2_e7S_J9yAA-quest-overview.mp4",
       kind: GameSourceKind.Capture,
       name: "The 6.3 Quest Overview showcase (2_e7S_J9yAA, English PC client at 1080p60)",
-      role: "The world just before J, 0.9 seconds in, and the quest screen over it with no quest in progress, 2.8 seconds in",
+      role: "The world just before J, 0.9 seconds in: the plate the header is scored over, its band's world. The whole screen and the list take the still's own world instead",
     },
     screenStill: {
       kind: GameSourceKind.Capture,

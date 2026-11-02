@@ -58,7 +58,14 @@ export const layoutTopic: ReferenceTopic = {
         "Drawing that blur and wash on the screen itself, as a backdrop-filter layer in GameScreen behind the screen's own pieces, the list's top band drawn over it",
       outcome: InvestigationOutcome.Adopted,
       result:
-        "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. On the parity page the four quest ids' means are their rows in `ParityReferenceMap.snapshot.md`. The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The plate is darker than the still's world on the strip 340 high, so the remaining gap is the plate's, not the layer's",
+        "The layer blurs the world with a 16 unit blur and keeps 0.65 of it, the wash added as light down the screen. On the parity page the four quest ids' means are their rows in `ParityReferenceMap.snapshot.md`. The blur radius moves the mean by under 0.2 between 10 and 24 units. The page's plate is the world the layer blurs, and the layer reproduces 0.65 times the plate plus the wash to within a few levels per band. The header keeps the overview clip's frame as its plate, which is darker than the still's world on the strip 340 high, so its remaining gap is the plate's, not the layer's",
+    },
+    {
+      method:
+        "The overview clip's plate against the still's own pixels as the plate, the whole screen and the list each with their pieces filled from the world round them, the header with its band filled from the world below it",
+      outcome: InvestigationOutcome.Adopted,
+      result:
+        "The whole screen 9.54% to 8.31% (shape 0.844 to 0.891, FLIP 0.3506 to 0.2996) and the list 6.18% to 5.12% (shape 0.892 to 0.910, FLIP 0.2657 to 0.2270), both kept as measurements, since the still's world is the one the reference shows. The header rose 3.37% to 4.09%, the still's band sitting darker than the world under it, so the header keeps the overview clip. Because the layer blurs and washes its plate again, the still's own wash is applied twice: the whole screen's bottom row reads brighter than the still, 151 against 106 in its worst cells",
     },
     {
       method:

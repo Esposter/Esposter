@@ -26,6 +26,19 @@ const QUEST_SCREEN_BACKDROP_PLATE = [
   { height: 45, width: 400, x: 730, y: 990 },
   { height: 200, width: 280, x: 1640, y: 880 },
 ];
+// The list's own pieces on the still: its three commission rows, the World Quests heading, the Hesperides series row
+// with its quests' panel, the In the Dwelling of Life series row and the first quest under it, each filled from the
+// World round it. The bright gaps between the rows stay the still's own pixels
+const QUEST_SCREEN_LIST_PLATE = [
+  { height: 80, width: 666, x: 150, y: 106 },
+  { height: 77, width: 666, x: 150, y: 198 },
+  { height: 77, width: 666, x: 150, y: 287 },
+  { height: 34, width: 205, x: 165, y: 386 },
+  { height: 85, width: 666, x: 150, y: 432 },
+  { height: 270, width: 652, x: 157, y: 517 },
+  { height: 84, width: 666, x: 150, y: 811 },
+  { height: 58, width: 652, x: 157, y: 897 },
+];
 // The details column's own pieces on the still, the title, its place and journal with the emblem, the divider, the
 // Objective's rule and the description, each filled from the world round it. The world between them is the still's own
 // Pixels, so the rows and gaps between the pieces are scored over it as drawn
@@ -38,6 +51,21 @@ const QUEST_SCREEN_DETAILS_PLATE = [
   { height: 60, width: 899, x: 877, y: 238 },
   { height: 64, width: 904, x: 874, y: 312 },
 ];
+// The still's own interface that the whole quest screen is scored over: the list and the details column, the band across
+// the top, the rewards row with its caption, the rules, both buttons, the list's scroll bar and the recording's UID, each
+// Filled from the world round it, so the still's world is what the screen sits on
+const QUEST_SCREEN_CHROME_PLATE = [
+  { height: 96, width: 1920, x: 0, y: 0 },
+  { height: 14, width: 920, x: 877, y: 766 },
+  { height: 100, width: 540, x: 877, y: 830 },
+  { height: 28, width: 882, x: 876, y: 788 },
+  { height: 14, width: 1860, x: 30, y: 956 },
+  { height: 64, width: 288, x: 144, y: 988 },
+  { height: 64, width: 288, x: 1512, y: 988 },
+  { height: 842, width: 12, x: 822, y: 112 },
+  { height: 28, width: 232, x: 1688, y: 1050 },
+];
+const QUEST_SCREEN_PLATE = [...QUEST_SCREEN_LIST_PLATE, ...QUEST_SCREEN_DETAILS_PLATE, ...QUEST_SCREEN_CHROME_PLATE];
 // The bag's own pieces at the weapons tab: the header band across the top, the four visible columns of its grid's
 // Cards, the detail panel, its Details pill and the arrow past the panel, each filled from the recording's world round
 // It. The world between them, the gaps between cards and the margin, stays the recording's own pixels
@@ -1091,12 +1119,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "publisher-splash": { screen: "SplashPublisher", source: "session-2.mp4 at 1s" },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
-  // World behind it is the overview clip's frame at 0.9 seconds, drawn as the recording shows it: the plate draws no
-  // Blur, so none is fitted to the still's blurred world
+  // World behind it is the still's own pixels, its interface filled from the world round it (QUEST_SCREEN_PLATE), so
+  // the world is the one the reference shows rather than the overview clip's sharper, darker frame
   "quest-screen": {
     isBackdrop: true,
-    plate: QUEST_SCREEN_BACKDROP_PLATE,
-    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
+    plate: QUEST_SCREEN_PLATE,
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",
   },
@@ -1118,11 +1145,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     wikiTitle: "File:Quest Screen.png",
   },
   // The same still's list down the left, its quest rows and series panels, the translucent glass scored as drawn over the
-  // Same world frame the whole screen is scored over
+  // Still's own world between them, each row and panel filled from the world round it (QUEST_SCREEN_LIST_PLATE)
   "quest-screen-list": {
     isBackdrop: true,
-    plate: QUEST_SCREEN_BACKDROP_PLATE,
-    plateSource: "yt-2_e7S_J9yAA-quest-overview.mp4 at 0.9s",
+    plate: QUEST_SCREEN_LIST_PLATE,
     region: { height: 850, width: 666, x: 150, y: 105 },
     screen: "QuestScreen",
     wikiTitle: "File:Quest Screen.png",

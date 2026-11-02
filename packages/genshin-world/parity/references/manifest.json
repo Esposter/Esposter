@@ -1792,16 +1792,10 @@
         "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
       },
       "bytes": 635098,
-      "capturedAt": "2026-10-08T05:52:38.368Z",
+      "capturedAt": "2026-10-08T05:52:38.000Z",
       "height": 1080,
       "id": "quest-screen",
       "kind": "wiki",
-      "plate": {
-        "bytes": 766574,
-        "height": 1080,
-        "sha256": "968a4797cfe93d476b19eedd775891ed3283f105591ee137b1fbb21c72540dd1",
-        "width": 1920
-      },
       "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
       "sourceFormat": "png",
       "width": 1920
@@ -1846,16 +1840,10 @@
         "wikiUrl": "https://genshin-impact.fandom.com/wiki/File%3AQuest_Screen.png"
       },
       "bytes": 635098,
-      "capturedAt": "2026-10-11T05:20:43.035Z",
+      "capturedAt": "2026-10-11T21:00:14.544Z",
       "height": 1080,
       "id": "quest-screen-list",
       "kind": "wiki",
-      "plate": {
-        "bytes": 766574,
-        "height": 1080,
-        "sha256": "968a4797cfe93d476b19eedd775891ed3283f105591ee137b1fbb21c72540dd1",
-        "width": 1920
-      },
       "sha256": "0eb7ed001de95d89d992e128e04b161a03c203bca0a95c913c5d505e562d85c6",
       "sourceFormat": "png",
       "width": 1920
