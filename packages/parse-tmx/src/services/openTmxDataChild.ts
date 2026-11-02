@@ -32,7 +32,7 @@ export const openTmxDataChild = (
       parent.owner.chunks.push(chunk);
       source.chunked = true;
       const chunkSource = createDataSource(source.compression, source.encoding);
-      context.pending.push({ owner: chunk, source: chunkSource });
+      context.pending.push({ expectedCount: chunk.width * chunk.height, owner: chunk, source: chunkSource });
       return { tag, target: chunkSource, text: "" };
     }
     case TMXTagName.Tile:

@@ -247,6 +247,22 @@ describe(parseTmx, () => {
     });
   });
 
+  test("refuses a chunk whose cells do not fill it", async () => {
+    expect.hasAssertions();
+
+    const tmxParsed = await parseTmx(
+      `<map width="2" height="2" infinite="1"><layer id="1" name="layer" width="2" height="2"><data encoding="csv"><chunk x="0" y="0" width="2" height="2">0,1,2</chunk></data></layer></map>`,
+    );
+
+    tmxParsed.match(noop, (error) => {
+      expect(() => {
+        throw error;
+      }).toThrowErrorMatchingInlineSnapshot(
+        `[InvalidOperationError: Invalid operation: Read, name: TMXLayer, expected 4 tiles, received 3]`,
+      );
+    });
+  });
+
   test("refuses a compression it does not decode", async () => {
     expect.hasAssertions();
 
