@@ -7,7 +7,7 @@ import * as interfaceConstants from "genshin-interface/constants";
 // Without the scan being told. A plain `.css` sheet cannot read a constant, so it keeps the literal its component restates
 export const readRestatedGameColourFindings = (): string[] => {
   const colourMap = Object.fromEntries(
-    Object.entries(interfaceConstants).filter(
+    Object.entries<unknown>(interfaceConstants).filter(
       (entry): entry is [string, string] => typeof entry[1] === "string" && /^#[\da-f]{6}$/iu.test(entry[1]),
     ),
   );
