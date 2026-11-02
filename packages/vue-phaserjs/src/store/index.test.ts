@@ -129,4 +129,21 @@ describe(usePhaserStore, () => {
     expect(rootSceneKey.value).toBeUndefined();
     expect(parallelSceneKeys.value).toStrictEqual([]);
   });
+
+  test("clearing the game after reading it leaves no game to read", () => {
+    expect.hasAssertions();
+
+    setActivePinia(getTestPinia());
+    const phaserStore = usePhaserStore();
+    const { game } = storeToRefs(phaserStore);
+    const testGame = getTestGame();
+    game.value = testGame;
+    expect(game.value).toBe(testGame);
+
+    game.value = undefined;
+
+    expect(game.value).toBeUndefined();
+
+    game.value = testGame;
+  });
 });

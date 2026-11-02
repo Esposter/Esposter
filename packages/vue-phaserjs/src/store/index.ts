@@ -5,18 +5,18 @@ import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  let baseGame: Game | undefined;
+  // The Game is markRaw'd as it enters the ref, so Vue's deep reactive Proxy never wraps it: Phaser's InputManager
+  // sorts/finds objects by === identity, and a proxied object differs from the raw one Phaser stored, silently breaking
+  // setInteractive priority. The ref is what makes the getter's reads tracked, which a plain variable behind it never was
+  const baseGame = ref<Game>();
   // No scene has mounted until the first `switchToScene`, which no key of the consumer's enum can stand for
   const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
   const parallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
-  // Use a writable computed, not a ref, to keep the Game object unproxied: ref() would wrap it in
-  // Vue's deep reactive Proxy, and Phaser's InputManager sorts/finds objects by === identity — proxied
-  // Objects differ from the raw ones Phaser stored, silently breaking setInteractive priority.
   // The scene keys name scenes of the game they were launched in, so setting a game, or clearing it, starts with none
   const game = computed({
-    get: () => baseGame,
+    get: () => baseGame.value,
     set: (newGame) => {
-      baseGame = newGame;
+      baseGame.value = newGame && markRaw(newGame);
       sceneKey.value = undefined;
       parallelSceneKeys.value = [];
     },
