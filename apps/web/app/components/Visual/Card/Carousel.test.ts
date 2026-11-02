@@ -6,6 +6,10 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+// The cycle's timer runs on the worker timers, which the test environment has no Web Worker for: the stand-in runs it
+// On the fake timers this suite advances
+vi.mock(import("@/services/shared/getWorkerTimers"), () => import("@/services/shared/getWorkerTimersStandIn.test"));
+
 describe("visualCardCarousel", () => {
   const DURATION = 1000;
   const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];

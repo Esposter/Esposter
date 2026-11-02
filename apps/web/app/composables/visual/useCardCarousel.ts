@@ -14,8 +14,6 @@ export const useCardCarousel = ({ cards, duration }: UseCardCarouselOptions) => 
   // The active card is the card that's moving from right -> left -> right.
   const activeCardId = ref<number>();
   const inactiveCardId = ref<number>();
-  // Main timer driving card movement.
-  const moveCardsTimer = ref<number>();
   const moveOneCard = () => {
     inactiveCardId.value = activeCardId.value;
     if (activeCardId.value === undefined) activeCardId.value = cardIds.value[0];
@@ -34,17 +32,10 @@ export const useCardCarousel = ({ cards, duration }: UseCardCarouselOptions) => 
     }
   };
 
+  // Comment this line out when debugging animations so the cards stop moving on you.
+  if (duration > 0) useWorkerInterval(moveCards, duration);
   onMounted(() => {
-    // Comment this line out when debugging animations so the cards stop moving on you.
-    if (duration > 0)
-      moveCardsTimer.value = window.setInterval(() => {
-        moveCards();
-      }, duration);
     moveCards();
-  });
-
-  onUnmounted(() => {
-    clearInterval(moveCardsTimer.value);
   });
   // Refresh the entire display back to the first step whenever cards update.
   watch(cards, (newCards) => {
