@@ -31,9 +31,9 @@ So a cut is made in this order, and each step is judged by the lines it leaves b
    dated with that reading.
 3. **A root's size is not cut by moving a call**; a call is moved when its state and its handlers move with it.
 
-## A component declares at most fourteen events
+## A cut never bends to the checker
 
-Count a component's `defineEmits` keys and add one for every `defineModel`: past fourteen, the vize-based typecheck loses the component's whole event map and reports every declared emit as `Property '<name>' does not exist on type '$StaticEventMap'`, in a virtual file whose line numbers map to nothing in the source. A component declaring fourteen passes and one declaring twenty-two fails, so the real ceiling sits between them and fourteen is the bar until a probe pins it. A layer that would declare more is cut into several, grouped by the events that belong together, never given the root's events renamed or merged to fit. The package typecheck is the only check that sees it, so run it before the cut is committed.
+A cut is decided by role, in the order above, and by nothing the typecheck tolerates. A layer is never split, merged, renamed or thinned so that a tool passes it, and a rule that counts something the checker happens to limit is not written. When the right cut makes the checker fail, the checker is what is wrong. The shape the cut calls for goes into a deferred page under `openspec/deferred/` with the trigger that unblocks it; the gap is drafted as an upstream report (the `todos` skill, `references/upstream-reports.md`); and the code keeps the working shape under an `@TODO` that the fix deletes. The session root's menu layer is the standing case: the checker drops every event past the sixteenth from the event map of a component that declares models, so the layer stays in the root under its marker, and `openspec/deferred/genshin/session-menu-layer/design.md` holds the child it becomes.
 
 ## Where the pieces live
 
