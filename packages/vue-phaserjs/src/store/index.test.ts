@@ -40,30 +40,6 @@ describe(usePhaserStore, () => {
     removeTestScene(otherSceneKey);
   });
 
-  test("switchToScene shuts down a paused old root scene", async () => {
-    expect.hasAssertions();
-
-    setActivePinia(getTestPinia());
-    const phaserStore = usePhaserStore();
-    const { switchToScene } = phaserStore;
-    const { rootSceneKey } = storeToRefs(phaserStore);
-    const game = getTestGame();
-
-    startTestScene(sceneKey);
-    rootSceneKey.value = sceneKey;
-    game.scene.pause(sceneKey);
-
-    const OtherScene = createSceneClass(otherSceneKey);
-    game.scene.add(otherSceneKey, OtherScene, false);
-
-    await switchToScene(otherSceneKey);
-
-    expect(game.scene.getScene(sceneKey).sys.settings.status).toBe(Scenes.SHUTDOWN);
-
-    removeTestScene(sceneKey);
-    removeTestScene(otherSceneKey);
-  });
-
   test("launchParallelScene adds the scene key to parallelSceneKeys and launches the scene", () => {
     expect.hasAssertions();
 
@@ -113,5 +89,44 @@ describe(usePhaserStore, () => {
 
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);
+  });
+
+  test("switchToScene shuts down a paused old root scene", async () => {
+    expect.hasAssertions();
+
+    setActivePinia(getTestPinia());
+    const phaserStore = usePhaserStore();
+    const { switchToScene } = phaserStore;
+    const { rootSceneKey } = storeToRefs(phaserStore);
+    const game = getTestGame();
+
+    startTestScene(sceneKey);
+    rootSceneKey.value = sceneKey;
+    game.scene.pause(sceneKey);
+
+    const OtherScene = createSceneClass(otherSceneKey);
+    game.scene.add(otherSceneKey, OtherScene, false);
+
+    await switchToScene(otherSceneKey);
+
+    expect(game.scene.getScene(sceneKey).sys.settings.status).toBe(Scenes.SHUTDOWN);
+
+    removeTestScene(sceneKey);
+    removeTestScene(otherSceneKey);
+  });
+
+  test("setting the game clears the rootSceneKey and parallelSceneKeys of the game before it", () => {
+    expect.hasAssertions();
+
+    setActivePinia(getTestPinia());
+    const phaserStore = usePhaserStore();
+    const { game, parallelSceneKeys, rootSceneKey } = storeToRefs(phaserStore);
+    rootSceneKey.value = sceneKey;
+    parallelSceneKeys.value = [otherSceneKey];
+
+    game.value = undefined;
+
+    expect(rootSceneKey.value).toBeUndefined();
+    expect(parallelSceneKeys.value).toStrictEqual([]);
   });
 });

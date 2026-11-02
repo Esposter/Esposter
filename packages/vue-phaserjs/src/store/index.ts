@@ -5,18 +5,22 @@ import { NotInitializedError } from "@esposter/shared";
 import { Game } from "phaser";
 
 export const usePhaserStore = defineStore("phaser", () => {
+  let baseGame: Game | undefined;
+  // No scene has mounted until the first `switchToScene`, which no key of the consumer's enum can stand for
+  const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
+  const parallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
   // Use a writable computed, not a ref, to keep the Game object unproxied: ref() would wrap it in
   // Vue's deep reactive Proxy, and Phaser's InputManager sorts/finds objects by === identity — proxied
   // Objects differ from the raw ones Phaser stored, silently breaking setInteractive priority.
-  let baseGame: Game | undefined;
+  // The scene keys name scenes of the game they were launched in, so setting a game, or clearing it, starts with none
   const game = computed({
     get: () => baseGame,
     set: (newGame) => {
       baseGame = newGame;
+      sceneKey.value = undefined;
+      parallelSceneKeys.value = [];
     },
   });
-  // No scene has mounted until the first `switchToScene`, which no key of the consumer's enum can stand for
-  const sceneKey = ref<SceneWithPlugins["scene"]["key"]>();
   const isSameScene = (newSceneKey: SceneWithPlugins["scene"]["key"]) => newSceneKey === sceneKey.value;
   const switchToScene = async (newSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (isSameScene(newSceneKey)) return;
@@ -33,7 +37,6 @@ export const usePhaserStore = defineStore("phaser", () => {
     activeGame.scene.start(newSceneKey);
   };
 
-  const parallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
   const prioritizedParallelSceneKeys = ref<SceneWithPlugins["scene"]["key"][]>([]);
   const launchParallelScene = (scene: SceneWithPlugins, targetSceneKey: SceneWithPlugins["scene"]["key"]) => {
     if (parallelSceneKeys.value.includes(targetSceneKey)) return;
