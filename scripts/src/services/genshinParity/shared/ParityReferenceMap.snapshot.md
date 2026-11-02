@@ -105,7 +105,7 @@ committed.
 | `splash-title-chinese-traditional`     | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `splash-title-japanese`                | `SplashTitle`               |                                                                          0.16% | 1.000 |  0.39% | 0.0342 |
 | `splash-title-korean`                  | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |
-| `statue-blessing`                      | `StatueScreen`              |                                                                         12.34% | 0.949 | 12.05% | 0.4013 |
+| `statue-blessing`                      | `StatueScreen`              |                                                                          4.95% | 0.939 |  4.01% | 0.2340 |
 | `statue-worship`                       | `StatueWorship`             |                                                                          2.37% | 0.696 |  1.45% | 0.1510 |
 | `sumeru-city-location`                 | `WorldScreen`               |                                                                         23.89% | 0.273 | 21.35% | 0.6947 |
 | `title-splash`                         | `SplashTitle`               |                                                                          0.20% | 1.000 |  0.01% | 0.0089 |

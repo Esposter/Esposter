@@ -67,6 +67,17 @@ const INVENTORY_WEAPONS_PLATE = [
   { height: 63, width: 226, x: 1562, y: 987 },
   { height: 50, width: 40, x: 1836, y: 512 },
 ];
+// The statue panel's own pieces at 1080 high: its icon and title, the close button, the emblem's ring and glow, the
+// Restorative Power line and the auto-recover row, each filled from the recording's world round it. The panel's own
+// Ground and the world below it stay the recording's pixels
+const STATUE_BLESSING_PLATE = [
+  { height: 64, width: 64, x: 1400, y: 10 },
+  { height: 50, width: 260, x: 1510, y: 20 },
+  { height: 66, width: 66, x: 1820, y: 12 },
+  { height: 336, width: 335, x: 1443, y: 154 },
+  { height: 45, width: 505, x: 1390, y: 585 },
+  { height: 142, width: 546, x: 1372, y: 708 },
+];
 
 // A character screen's tab column, its words and diamonds clear of the scene's light, scored by the five tab entries
 const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
@@ -1241,6 +1252,8 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The member cards at the left are not scored, since the world shows through them blurred, which the component does not draw.
   // The recording's clock and the recorder's UID lie outside the region.
   "statue-blessing": {
+    isBackdrop: true,
+    plate: STATUE_BLESSING_PLATE,
     region: { height: 1040, width: 550, x: 1370, y: 0 },
     screen: "StatueScreen",
     source: "yt-0z3OdjIBuo8-wow-completionist.mp4 at 173s",
