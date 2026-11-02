@@ -11,6 +11,7 @@ import GcgScreenHand from "#src/components/Gcg/Screen/Hand/Index.vue";
 import GcgScreenHud from "#src/components/Gcg/Screen/Hud/Index.vue";
 import GcgScreenPlates from "#src/components/Gcg/Screen/Plates/Index.vue";
 import GcgScreenRoundControls from "#src/components/Gcg/Screen/RoundControls/Index.vue";
+import GcgScreenRoundControlsSynchro from "#src/components/Gcg/Screen/RoundControls/Synchro/Index.vue";
 import GcgScreenSkillRow from "#src/components/Gcg/Screen/SkillRow/Index.vue";
 import GcgScreenTable from "#src/components/Gcg/Screen/Table/Index.vue";
 import { useGcgSelection } from "#src/composables/useGcgSelection";
@@ -142,9 +143,13 @@ const battleLabel = computed(() =>
       :game-text="gameText"
       :is-action-locked="isActionLocked"
       :is-player-turn="isPlayerTurn"
-      :is-tuning="isTuning"
       :round-label="roundLabel"
       @declare-round-end="emit('declareRoundEnd')"
+    />
+    <GcgScreenRoundControlsSynchro
+      :game-text="gameText"
+      :is-action-locked="isActionLocked"
+      :is-tuning="isTuning"
       @toggle-tuning="toggleTuning"
     />
     <GcgScreenSkillRow :is-disabled="isActionLocked" :skills="activeSkills" @select="useSkill" />

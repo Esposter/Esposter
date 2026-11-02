@@ -15,13 +15,6 @@ interface Props {
 
 const { dice, paidDiceIndices, selectedDieIndices } = defineProps<Props>();
 const emit = defineEmits<{ select: [dieIndex: number] }>();
-// Each die's face and lit flag, worked out once for the column rather than on every row of every render
-const dieItems = computed(() =>
-  dice.map((face, index) => ({
-    face,
-    isSelected: selectedDieIndices.includes(index) || paidDiceIndices.includes(index),
-  })),
-);
 </script>
 
 <template>
@@ -29,10 +22,10 @@ const dieItems = computed(() =>
   <div class="dice-column">
     <span class="dice-count">{{ dice.length }}</span>
     <GcgScreenDie
-      v-for="(item, index) in dieItems"
+      v-for="(face, index) in dice"
       :key="index"
-      :face="item.face"
-      :is-selected="item.isSelected"
+      :face
+      :is-selected="selectedDieIndices.includes(index) || paidDiceIndices.includes(index)"
       @select="emit('select', index)"
     />
   </div>

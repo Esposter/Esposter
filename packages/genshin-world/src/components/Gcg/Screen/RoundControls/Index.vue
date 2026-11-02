@@ -10,19 +10,16 @@ interface Props {
   isActionLocked: boolean;
   // Whether the player is the one acting, which the now-acting line names
   isPlayerTurn: boolean;
-  // Whether the player has armed elemental tuning, which the synchro shows as pressed
-  isTuning: boolean;
   // The round's counter in the reader's language
   roundLabel: string;
 }
 
-const { gameText, isActionLocked, isPlayerTurn, isTuning, roundLabel } = defineProps<Props>();
-const emit = defineEmits<{ declareRoundEnd: []; toggleTuning: [] }>();
+const { gameText, isActionLocked, isPlayerTurn, roundLabel } = defineProps<Props>();
+const emit = defineEmits<{ declareRoundEnd: [] }>();
 </script>
 
 <template>
-  <!-- The end-round token with the round's counter beside it, the now-acting line under the player's plate, and the synchro
-       that arms elemental tuning -->
+  <!-- The end-round token with the round's counter beside it, and the now-acting line under the player's plate -->
   <button
     class="end-round"
     :aria-label="gameText[GameTextKey.GcgEndRound]"
@@ -32,15 +29,6 @@ const emit = defineEmits<{ declareRoundEnd: []; toggleTuning: [] }>();
   />
   <div class="round">{{ roundLabel }}</div>
   <div v-if="isPlayerTurn" class="acting">{{ gameText[GameTextKey.GcgNowActing] }}</div>
-  <button
-    class="synchro"
-    :aria-pressed="isTuning"
-    :disabled="isActionLocked"
-    type="button"
-    @click="emit('toggleTuning')"
-  >
-    {{ gameText[GameTextKey.GcgElementalTuning] }}
-  </button>
 </template>
 
 <style scoped src="../../../../styles/gcgBoardButton.css"></style>
@@ -75,11 +63,5 @@ const emit = defineEmits<{ declareRoundEnd: []; toggleTuning: [] }>();
   left: calc(var(--unit) * 146);
   color: #f6e3a1;
   font-size: calc(var(--unit) * 20);
-}
-
-.synchro {
-  position: absolute;
-  top: calc(var(--unit) * 780);
-  left: calc(var(--unit) * 1420);
 }
 </style>

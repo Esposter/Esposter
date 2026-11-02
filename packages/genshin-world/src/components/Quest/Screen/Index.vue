@@ -123,7 +123,7 @@ useEventListener("keydown", (event) => {
         :quest-progress-map="questProgressMap"
         :text-map="textMap"
         :tracked-quest-id="trackedQuestId"
-        @navigate="(questId) => navigate(questId)"
+        @navigate="navigate"
       />
       <QuestScreenFooter :game-text />
     </template>

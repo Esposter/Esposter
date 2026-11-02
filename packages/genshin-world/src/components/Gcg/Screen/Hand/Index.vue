@@ -2,7 +2,6 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
 
 import GcgScreenCard from "#src/components/Gcg/Screen/Card/Index.vue";
-import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 
 interface Props {
   // The hand card the player has armed to play onto a Character, by its hand index
@@ -19,25 +18,17 @@ interface Props {
 
 const { armedHandIndex, cards, rerollHandIndex, switchedHandIndices, textMap } = defineProps<Props>();
 const emit = defineEmits<{ select: [handIndex: number] }>();
-// Each card's dice cost, lit flag and name, worked out once for the hand rather than on every row of every render
-const handItems = computed(() =>
-  cards.map((card, index) => ({
-    diceCount: countGcgDiceCost(card.costs),
-    isSelected: armedHandIndex === index || rerollHandIndex === index || switchedHandIndices.includes(index),
-    name: textMap[card.nameTextId] ?? "",
-  })),
-);
 </script>
 
 <template>
   <!-- The hand fanned along the bottom of the board, each card lit as the choice it stands for is -->
   <div class="hand">
     <GcgScreenCard
-      v-for="(item, index) in handItems"
+      v-for="(card, index) in cards"
       :key="index"
-      :dice-count="item.diceCount"
-      :is-selected="item.isSelected"
-      :name="item.name"
+      :costs="card.costs"
+      :is-selected="armedHandIndex === index || rerollHandIndex === index || switchedHandIndices.includes(index)"
+      :name="textMap[card.nameTextId] ?? ''"
       @select="emit('select', index)"
     />
   </div>

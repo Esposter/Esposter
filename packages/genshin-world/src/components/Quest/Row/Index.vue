@@ -21,7 +21,7 @@ const { distance, isCommission, title } = defineProps<Props>();
 
 <template>
   <!-- One quest of the quest screen's list: its title over how far it stands, and its mark at its end, the commission's
-       Star drawn as the Commission tab's mark in its own purples -->
+       star drawn as the Commission tab's mark in its own purples -->
   <GameButton class="quest-row" :kind="GameButtonKind.Row" tip="">
     <span class="title">{{ title }}</span>
     <span v-if="distance" class="distance">{{ distance }}</span>

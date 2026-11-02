@@ -33,11 +33,16 @@ interface Props {
 const { chapters, gameText, questCategory, questDistanceMap, rowQuests, selectedQuestId, textMap } =
   defineProps<Props>();
 const emit = defineEmits<{ select: [questId: string] }>();
-// How far a quest stands in the reader's words, "" for a quest with no place
-const getQuestDistance = (questId: string): string => {
-  const distance = questDistanceMap.get(questId);
-  return distance === undefined ? "" : fillGameTextValues(gameText[GameTextKey.QuestDistance], Math.round(distance));
-};
+// How far each quest stands in the reader's words, by quest id, for those with a place to go to
+const questDistanceTexts = computed(
+  () =>
+    new Map(
+      [...questDistanceMap].map(
+        ([questId, distance]) =>
+          [questId, fillGameTextValues(gameText[GameTextKey.QuestDistance], Math.round(distance))] as const,
+      ),
+    ),
+);
 </script>
 
 <template>
@@ -53,7 +58,7 @@ const getQuestDistance = (questId: string): string => {
       :key="id"
       class="quest"
       :class="{ selected: id === selectedQuestId }"
-      :distance="getQuestDistance(id)"
+      :distance="questDistanceTexts.get(id) ?? ''"
       :is-commission="questCategory === QuestCategory.Commission"
       :title="textMap[titleTextId] ?? ''"
       @click="emit('select', id)"
@@ -71,7 +76,7 @@ const getQuestDistance = (questId: string): string => {
           :key="id"
           class="quest"
           :class="{ selected: id === selectedQuestId }"
-          :distance="getQuestDistance(id)"
+          :distance="questDistanceTexts.get(id) ?? ''"
           :title="textMap[titleTextId] ?? ''"
           @click="emit('select', id)"
         />
