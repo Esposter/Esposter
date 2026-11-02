@@ -12,7 +12,7 @@
 
 ## 3. Phase three: email editor
 
-- [ ] 3.1 Build the email canvas, preview, merge fields and personalised export, as the email change specifies. Verify: a test named after the scenario 'Preview shows the compiled email at mobile width' in the email change.
+- [x] 3.1 Build the email canvas, preview, merge fields and personalised export, as the email change specifies. Verify: a test named after the scenario 'Preview shows the compiled email at mobile width' in the email change.
 
 ## 4. Phase four: the proof
 

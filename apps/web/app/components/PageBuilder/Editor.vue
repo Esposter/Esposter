@@ -3,6 +3,7 @@ import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 import {
   CHECK_PANEL,
   CONTENT_PANEL,
@@ -136,7 +137,15 @@ watch(
         :max="MAX_SIDE_PANE_WIDTH"
         :min="MIN_SIDE_PANE_WIDTH"
       />
-      <UiTabs v-model="panel" :items="panelItems" label="Node settings" is-filling px-3 h-full>
+      <UiTabs
+        v-model="panel"
+        :items="panelItems"
+        label="Node settings"
+        is-filling
+        :variant="UiTabsVariant.Header"
+        px-3
+        h-full
+      >
         <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :kind :resource-id />
         <PageBuilderEmailStylePanel
           v-if="panel === STYLE_PANEL && kind.editor === PageBuilderEditor.Email"

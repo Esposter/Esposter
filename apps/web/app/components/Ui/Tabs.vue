@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
+import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 import { Tabs } from "@vuetify/v0";
 
 interface Props {
@@ -11,11 +12,13 @@ interface Props {
   items: UiTabItem<T>[];
   // The tab list's accessible name: what the tabs choose between
   label: string;
+  // The look a set of tabs heads a sheet or a pane with. Unset, the tabs are the default look every other set takes
+  variant?: UiTabsVariant;
 }
 
 defineSlots<{ default: (props: { value: T }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
-const { isFilling, items, label } = defineProps<Props>();
+const { isFilling, items, label, variant } = defineProps<Props>();
 </script>
 
 <template>
@@ -37,6 +40,7 @@ const { isFilling, items, label } = defineProps<Props>();
           v-for="{ count, icon, meaning, title, value } of items"
           :key="value"
           :value
+          :data-variant="variant"
           ui-tab
           flex
           gap-2
