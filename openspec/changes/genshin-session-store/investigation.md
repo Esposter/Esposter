@@ -6,7 +6,7 @@ What was measured before the change was written, so the next session starts from
 
 - The session root (`packages/genshin-world/src/components/World/Session/Index.vue`) is 2,082 lines: a script of about 1,291 lines and a template of about 720 and a style block of 68. Its history: 2,130 lines before the overlay layers were cut out (`ec11aadcd`), 1,933 after the cut and further work, 2,082 after the five forwarding layers were inlined again (`cdc82001f`). The cut had grown the package by about 540 lines and held no state or logic.
 - It declares 95 top-level constants, takes about 60 props (the loaded tables and the host's settings, from `WorldScreenProps` and `WorldTables`), and is mounted from one place, the world screen (`packages/genshin-world/src/components/World/Screen/Index.vue`).
-- 51 composable calls take an options object, with 519 option keys in all. The calls are in the table below, largest first, with the keys that are shared context and whether the composable has a test beside it.
+- 51 composable calls take an options object, with 518 option keys in all. The calls are in the table below, largest first, with the keys that are shared context and whether the composable has a test beside it.
 - 134 files in the composables folder, 25 of them tests. 21 of the 51 composables called from the root have a test.
 
 ## Which keys are shared context
@@ -16,7 +16,7 @@ The shared set is the data URL, the clock readers, the events emitter, the bag a
 | Key               | Calls that pass it |
 | :---------------- | -----------------: |
 | `gameDataBaseUrl` |                 22 |
-| `events`          |                 21 |
+| `events`          |                 20 |
 | `getWorldNow`     |                 19 |
 | `...bag`          |   10 (6 keys each) |
 | `inventory`       |                  8 |
@@ -30,7 +30,7 @@ The shared set is the data URL, the clock readers, the events emitter, the bag a
 | `names`           |                  4 |
 | `nameText`        |                  3 |
 
-That is 129 of the 519 keys, a quarter. Each `...bag` spread counts once here, and the ten spreads expand to six keys each on top of that. 39 of the 51 calls take at least one. 33 composables across the folder take the bag's setters. **The other three quarters are one feature's result given to another**, which no store of shared context removes; the dispatch, the frame and the interactables are mostly that.
+That is 128 of the 518 keys, a quarter. Each `...bag` spread counts once here, and the ten spreads expand to six keys each on top of that. 38 of the 51 calls take at least one. 33 composables across the folder take the bag's setters. **The other three quarters are one feature's result given to another**, which no store of shared context removes; the dispatch, the frame and the interactables are mostly that.
 
 ## Every call
 
@@ -80,7 +80,7 @@ That is 129 of the 519 keys, a quarter. Each `...bag` spread counts once here, a
 | `useWorldTips`                |           4 |           1 | yes            |
 | `useMenuNavigation`           |           3 |           0 | no             |
 | `useWorldRestorativePower`    |           3 |           1 | no             |
-| `useWorldSave`                |           3 |           1 | yes            |
+| `useWorldSave`                |           2 |           0 | yes            |
 | `useWorldScreenBehaviour`     |           3 |           0 | no             |
 | `useWorldGadgets`             |           2 |           2 | yes            |
 | `useWorldPointedLandmark`     |           2 |           0 | no             |
@@ -176,4 +176,4 @@ let calls = 0;
 console.log(calls, keys.length, keys.filter((k) => shared.has(k)).length);
 ```
 
-It prints `51 519 129` on the tree at the time of writing. The change's outcomes are stated against it.
+It prints `51 518 128` on the tree at the time of writing. The change's outcomes are stated against it.
