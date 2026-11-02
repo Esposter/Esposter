@@ -40,18 +40,18 @@ Replace each real Azure client with its mock equivalent. Make the replacement in
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Class                          | Azure Equivalent           | Description                                  |
-| ------------------------------ | -------------------------- | -------------------------------------------- |
-| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion              |
-| `MockBlobClient`               | `BlobClient`               | In-memory blob read, copy and delete         |
-| `MockBlockBlobClient`          | `BlockBlobClient`          | In-memory block blob upload and download     |
-| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                |
-| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                |
-| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index              |
-| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                  |
-| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | Stub: `group().sendToAll` and nothing else   |
+| Class                          | Azure Equivalent           | Description                                                                                |
+| ------------------------------ | -------------------------- | ------------------------------------------------------------------------------------------ |
+| `MockBlobBatchClient`          | `BlobBatchClient`          | In-memory batched blob deletion                                                            |
+| `MockBlobClient`               | `BlobClient`               | In-memory blob read, copy and delete                                                       |
+| `MockBlockBlobClient`          | `BlockBlobClient`          | In-memory block blob upload and download                                                   |
+| `MockContainerClient`          | `ContainerClient`          | In-memory blob container, listing and paging                                               |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                                                              |
+| `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                                                              |
+| `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index                                                            |
+| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                                                                |
+| `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                                                              |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory group membership: `group().addUser` and `removeUser`; `sendToAll` reaches nobody |
 
 Each client stores its state in an exported `Mock*Database` map, such as `MockTableDatabase` or `MockContainerDatabase`. To reset a test, clear the map that the test seeded.
 

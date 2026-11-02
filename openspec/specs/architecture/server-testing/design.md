@@ -30,24 +30,24 @@ flowchart LR
 
 **Why PGlite instead of a real PostgreSQL?** No external process, no port, no cleanup — each test suite gets an isolated in-memory database that vanishes when the worker exits.
 
-**Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable `context.test.ts` does not mock: the message router uses `useWebPubSubServiceClient` (which needs `useRuntimeConfig`), so `message/index.test.ts` and `message/scheduledMessageJob.test.ts` declare `// @vitest-environment nuxt` and pay the Nuxt environment build.
+**Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build. The Web PubSub service client is one of the registered doubles, so the message router's group calls need no Nuxt runtime.
 
 ### 2. `azure-mock` — in-memory Azure services
 
 `packages/azure-mock` ships mock implementations:
 
-| Mock class                     | Replaces                                                        | In-memory store                         |
-| ------------------------------ | --------------------------------------------------------------- | --------------------------------------- |
-| `MockTableClient`              | `CustomTableClient` (Azure Table Storage)                       | `MockTableDatabase` (static `Map`)      |
-| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)                          | `MockContainerDatabase` (static `Map`)  |
-| `MockBlobClient`               | `BlobClient` (single blob)                                      | `MockContainerDatabase`                 |
-| `MockBlockBlobClient`          | `BlockBlobClient` — what every SAS upload path resolves through | `MockContainerDatabase`                 |
-| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)                          | `MockContainerDatabase`                 |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient`                                      | `MockEventGridDatabase` (static `Map`)  |
-| `MockServiceBusSender`         | `ServiceBusSender`                                              | `MockServiceBusDatabase` (static `Map`) |
-| `MockQueueClient`              | `QueueClient` (Azure Storage Queue)                             | `MockQueueDatabase` (static `Map`)      |
-| `MockSearchClient`             | `SearchClient` (Azure AI Search)                                | `MockSearchDatabase` (static `Map`)     |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                                        | none (`sendToAll` no-op)                |
+| Mock class                     | Replaces                                                        | In-memory store                                                                       |
+| ------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `MockTableClient`              | `CustomTableClient` (Azure Table Storage)                       | `MockTableDatabase` (static `Map`)                                                    |
+| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)                          | `MockContainerDatabase` (static `Map`)                                                |
+| `MockBlobClient`               | `BlobClient` (single blob)                                      | `MockContainerDatabase`                                                               |
+| `MockBlockBlobClient`          | `BlockBlobClient` — what every SAS upload path resolves through | `MockContainerDatabase`                                                               |
+| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)                          | `MockContainerDatabase`                                                               |
+| `MockEventGridPublisherClient` | `EventGridPublisherClient`                                      | `MockEventGridDatabase` (static `Map`)                                                |
+| `MockServiceBusSender`         | `ServiceBusSender`                                              | `MockServiceBusDatabase` (static `Map`)                                               |
+| `MockQueueClient`              | `QueueClient` (Azure Storage Queue)                             | `MockQueueDatabase` (static `Map`)                                                    |
+| `MockSearchClient`             | `SearchClient` (Azure AI Search)                                | `MockSearchDatabase` (static `Map`)                                                   |
+| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                                        | `MockWebPubSubDatabase` (static `Map`) — group membership, `addUser` and `removeUser` |
 
 The static maps persist across calls within a test run, so **every store your suite writes to is cleared in `afterEach`** — the Store column above names the one behind each client. `MockEventGridPublisherClient.send` accumulates events, and a suite that fires events but clears only the blob and table stores leaks them into the next test; the same holds for a suite that enqueues Service Bus or storage-queue messages. The common three:
 
@@ -111,19 +111,20 @@ All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `b
 
 ## Key files
 
-| File                                                                              | Role                                                                     |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `packages/db-mock/src/createMockDb.ts`                                            | PGlite setup + snapshot loading                                          |
-| `packages/azure-mock/src/`                                                        | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient` |
-| `apps/web/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                   |
-| `apps/web/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`       |
-| `apps/web/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                          |
-| `apps/web/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                 |
-| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                         |
+| File                                                                              | Role                                                                                     |
+| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `packages/db-mock/src/createMockDb.ts`                                            | PGlite setup + snapshot loading                                                          |
+| `packages/azure-mock/src/`                                                        | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient`                 |
+| `apps/web/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                                   |
+| `apps/web/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`                       |
+| `apps/web/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                                          |
+| `apps/web/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                                 |
+| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                                         |
+| `apps/web/server/composables/azure/webPubSub/useWebPubSubServiceClient.test.ts`   | module double — re-exports `useWebPubSubServiceClient` over `MockWebPubSubServiceClient` |
 
 ## Adding a new router test
 
-1. No environment directive — router tests run in the default `node` environment. Add `// @vitest-environment nuxt` as the first line only when the router calls a Nuxt composable that `context.test.ts` does not mock (currently only `useWebPubSubServiceClient` in the message router).
+1. No environment directive — router tests run in the default `node` environment. Add `// @vitest-environment nuxt` as the first line only when the router calls a Nuxt composable that neither `context.test.ts` nor `shared/test/setup.ts` mocks.
 2. Import `createMockContext`, session helpers, and your router from their canonical locations.
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.

@@ -28,7 +28,7 @@ sequenceDiagram
     T->>T: roomEventEmitter.emit("updateRoom") — bumps room.updatedAt
 ```
 
-Real-time delivery is owned by [Azure services](../../architecture/azure-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. Clients get a scoped access URL via `generateWebPubSubClientAccessUrl`.
+Real-time delivery is owned by [Azure services](../../architecture/azure-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. Clients get a scoped access URL via `generateWebPubSubClientAccessUrl`, and a member who leaves or is removed is taken out of the room's group, device by device ([azure services](../../architecture/azure-services/design.md)).
 
 Push notification filtering and delivery detail lives in [push notifications](../push-notifications/design.md).
 

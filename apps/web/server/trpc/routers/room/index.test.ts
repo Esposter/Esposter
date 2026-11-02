@@ -5,12 +5,15 @@ import type { BlobDeletionEventGridData, StandardMessageEntity } from "@esposter
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { readUserDeviceIds } from "#server/services/auth/readUserDeviceIds";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
+import { joinRoomGroup } from "#server/trpc/routers/joinRoomGroup.test";
+import { readRoomGroupMembers } from "#server/trpc/routers/readRoomGroupMembers.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
@@ -674,6 +677,22 @@ describe("roomRouter", () => {
     const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
 
     expect(leftRoomId).toStrictEqual(newRoom.id);
+  });
+
+  // A member who left keeps every device connected to the room's group until it is taken out, and the group is what
+  // Carries the room's messages, so the leave has to take each of their devices out and no one else's
+  test("leaves and takes every device of the leaving member out of the room's group", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const otherMember = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
+    await joinRoomGroup(mockContext.db, newRoom.id, member.id);
+    await joinRoomGroup(mockContext.db, newRoom.id, otherMember.id);
+    await roomCaller.leaveRoom(newRoom.id);
+
+    expect(readRoomGroupMembers(newRoom.id)).toStrictEqual(await readUserDeviceIds(mockContext.db, otherMember.id));
   });
 
   test("leaves with creator to be deleted", async () => {

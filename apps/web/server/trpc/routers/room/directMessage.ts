@@ -3,6 +3,7 @@ import type { CursorPaginationData } from "#shared/models/pagination/cursor/Curs
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
+import { removeUserFromRoomGroup } from "#server/services/azure/webPubSub/removeUserFromRoomGroup";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
@@ -198,6 +199,7 @@ export const directMessageRouter = router({
       return { targetUser: removedUser, updatedRoom: updatedRoomRow };
     });
     roomEventEmitter.emit("leaveRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, userId });
+    await removeUserFromRoomGroup(ctx.db, roomId, userId);
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await createSystemRoomMessage(
       roomId,

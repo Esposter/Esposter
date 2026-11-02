@@ -7,6 +7,7 @@ import type { SQL } from "drizzle-orm";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { removeUserFromRoomGroup } from "#server/services/azure/webPubSub/removeUserFromRoomGroup";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -238,6 +239,7 @@ export const baseRoomRouter = router({
         sessionId: ctx.getSessionPayload.session.id,
         userId: userToRoom.userId,
       });
+      await removeUserFromRoomGroup(ctx.db, userToRoom.roomId, userId);
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
       // A failure costs the room one "X left" line, never the leave that already landed.
       await getResultAsync(async () => {

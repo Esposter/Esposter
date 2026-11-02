@@ -2,6 +2,7 @@ import type { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemo
 import type { Context } from "#server/trpc/context";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
+import { removeUserFromRoomGroup } from "#server/services/azure/webPubSub/removeUserFromRoomGroup";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -17,6 +18,8 @@ export const announceRoomMemberRemoval = async (
   action: RoomMemberRemovalAction,
 ): Promise<void> => {
   roomEventEmitter.emit("leaveRoom", { roomId, sessionId, userId });
+  // Out of the room's group before the line below is sent, so the removed member does not receive the line
+  await removeUserFromRoomGroup(db, roomId, userId);
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {
