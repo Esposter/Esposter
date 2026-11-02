@@ -15,6 +15,13 @@ const modelValue = defineModel<string>({ required: true });
 const { label, swatches = [] } = defineProps<Props>();
 const id = useId();
 const getReference = (name: string) => `var(--${name})`;
+// The browser's picker holds a hex colour and no reference, so a held reference shows the colour of the swatch it names
+const pickerValue = computed({
+  get: () => swatches.find(({ name }) => getReference(name) === modelValue.value)?.value ?? modelValue.value,
+  set: (value) => {
+    modelValue.value = value;
+  },
+});
 </script>
 
 <template>
@@ -43,7 +50,7 @@ const getReference = (name: string) => `var(--${name})`;
     <div flex gap-2 items-end>
       <label :for="id" flex flex-col gap-1>
         <span text-muted>{{ label }}</span>
-        <input :id v-model="modelValue" type="color" p-1 size-8 cursor-pointer ui-field />
+        <input :id v-model="pickerValue" type="color" p-1 size-8 cursor-pointer ui-field />
       </label>
       <code text-muted flex h-8 items-center>{{ modelValue }}</code>
     </div>

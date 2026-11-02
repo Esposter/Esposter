@@ -24,6 +24,20 @@ describe("uiColorField", () => {
       expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["#ffffff"]]);
     });
 
+    test("a held reference shows the colour of the swatch it names in the picker, which holds only a colour", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiColorField, {
+        props: {
+          label: "label",
+          modelValue: "var(--color-brand)",
+          swatches: [{ name: "color-brand", value: "#ff0000" }],
+        },
+      });
+
+      expect(component.get<HTMLInputElement>('input[type="color"]').element.value).toBe("#ff0000");
+    });
+
     test("picking a swatch stores a reference to its colour rather than the colour", async () => {
       expect.hasAssertions();
 
