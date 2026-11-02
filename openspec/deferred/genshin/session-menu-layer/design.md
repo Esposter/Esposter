@@ -16,15 +16,14 @@ The layer's block in the root is the menu's router table: one `MenuScreen` with 
 
 Judged by [the splitting guide](../../../../.agents/skills/vue-component-patterns/references/splitting-a-component.md)'s own test, what a cut leaves behind, it is a poor trade. The root sheds a bit over a hundred lines of template and the page imports, and the package grows by several hundred. That is more than twice what the root sheds, to add a hop that no page needs.
 
-The block is long because it repeats. The game text is bound in nearly every page, and every page closes the same way through the same handler. A cut earns its place when it removes that repetition, and the recorded build only moves it.
+The block is long because it repeats. The game text is bound in nearly every page, and every page binds its own close event to the same handler. A page signals only through its own events, so no shape removes those bindings without changing the pages. A cut earns its place when it removes that repetition, and the recorded build only moves it.
 
 ## Shapes to design before building any child
 
-None of these is decided. Each is judged by the lines it adds and removes on the real files, as the guide says, and not by a count of events.
+Neither is decided. Each is judged by the lines it adds and removes on the real files, as the guide says, and not by a count of events.
 
 1. **Hand each page one bundle in place of loose props.** The values that repeat across pages become one typed object per concern, declared once in the models and spread where the root builds it, as the bag's dependencies already are for the composables. This changes the pages' prop shapes, so their fixtures move with them.
-2. **Hand each page its close from `MenuScreen`.** The menu screen already owns the slot a page sits in. A slot prop that closes it removes the repeated handler from every page without a new component.
-3. **Leave the layer where it is.** An integration root that wires many features is the form the guide allows, and a block of bindings with no logic is not a defect on its own.
+2. **Leave the layer where it is.** An integration root that wires many features is the form the guide allows, and a block of bindings with no logic is not a defect on its own.
 
 A shape that gathers many events into one component forwards them, and that is the shape the checker's defect fails on. A shape that does not forward does not meet the defect at all, and that is a reason to prefer it only when it is the better design.
 
