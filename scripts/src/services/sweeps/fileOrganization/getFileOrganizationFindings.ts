@@ -8,7 +8,6 @@ import {
   COMPOSABLES_DIRECTORY,
   CONSTANTS_FILE_REGEX,
   ENUM_SUFFIX,
-  EXPORT_REGEX,
   LOCAL_TYPE_REGEX,
   MODEL_DIRECTORIES,
   SCHEMA_DIRECTORY,
@@ -17,6 +16,7 @@ import {
 } from "#src/services/sweeps/fileOrganization/constants";
 import { getNames } from "#src/services/sweeps/fileOrganization/getNames";
 import { getTopLevelFunctions } from "#src/services/sweeps/fileOrganization/getTopLevelFunctions";
+import { getNamedExports } from "#src/services/sweeps/getNamedExports";
 import { basename, extname } from "node:path";
 
 // The four shapes the file-organization skill states that a read of one file can decide, as candidates for the
@@ -35,10 +35,7 @@ export const getFileOrganizationFindings = (path: string, text: string): FileOrg
   const isComposable = path.includes(COMPOSABLES_DIRECTORY);
   const isConstantsFile = CONSTANTS_FILE_REGEX.test(path);
   // An enum's type and value twin, or a function's overloads, are one export declared twice
-  const exports = Array.from(text.matchAll(EXPORT_REGEX), (match) => ({
-    isType: TYPE_KINDS.includes(String(match.groups?.kind)),
-    name: String(match.groups?.name),
-  }));
+  const exports = getNamedExports(text).map(({ kind, name }) => ({ isType: TYPE_KINDS.includes(kind), name }));
   const exportNames = [...new Set(exports.map(({ name }) => name))];
   const findings: FileOrganizationFinding[] = [];
 

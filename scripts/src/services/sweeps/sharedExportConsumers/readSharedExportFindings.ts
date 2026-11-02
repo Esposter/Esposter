@@ -1,10 +1,10 @@
 import type { SharedExportFinding } from "#src/models/sweeps/sharedExportConsumers/SharedExportFinding";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { getNamedExports } from "#src/services/sweeps/getNamedExports";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { MINIMUM_CONSUMER_PACKAGES } from "#src/services/sweeps/sharedExportConsumers/constants";
 import { getConsumerPackagePaths } from "#src/services/sweeps/sharedExportConsumers/getConsumerPackagePaths";
-import { getExportNames } from "#src/services/sweeps/sharedExportConsumers/getExportNames";
 import { getIdentifiers } from "#src/services/sweeps/sharedExportConsumers/getIdentifiers";
 import { getPackageIdentifiersMap } from "#src/services/sweeps/sharedExportConsumers/getPackageIdentifiersMap";
 import { getPackagePath } from "#src/services/sweeps/sharedExportConsumers/getPackagePath";
@@ -43,7 +43,7 @@ export const readSharedExportFindings = (): SharedExportFinding[] => {
   );
 
   return sharedSources.flatMap(([path, text]) =>
-    getExportNames(text).flatMap((name) => {
+    getNamedExports(text).flatMap(({ name }) => {
       const consumerPackagePaths = getConsumerPackagePaths(name, packageIdentifiersMap);
       const isUsedInternally = sharedPathIdentifiersMap
         .entries()

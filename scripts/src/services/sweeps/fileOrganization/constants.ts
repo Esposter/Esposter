@@ -1,7 +1,3 @@
-// Every named export a file declares inline, which is the only export form the file-organization skill allows
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
-export const EXPORT_REGEX: RegExp =
-  /^export (?<kind>abstract class|async function|class|const|enum|function|interface|let|type) (?<name>\w+)/gmu;
 export const TYPE_KINDS: readonly string[] = ["interface", "type"];
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
