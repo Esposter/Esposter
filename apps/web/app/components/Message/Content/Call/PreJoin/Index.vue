@@ -2,6 +2,7 @@
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface Props {
   callId: string;
@@ -46,9 +47,15 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
         @click="
           async () => {
             isRequestingJoin = true;
-            if (isCreator) await joinCall(callId);
-            else await knockCall(callId);
-            isRequestingJoin = false;
+            await withFinalizerAsync(
+              async () => {
+                if (isCreator) await joinCall(callId);
+                else await knockCall(callId);
+              },
+              () => {
+                isRequestingJoin = false;
+              },
+            );
           }
         "
       >

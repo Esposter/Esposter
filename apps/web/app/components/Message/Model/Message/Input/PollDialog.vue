@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
+import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -19,7 +20,12 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(Array.from({ length: POLL_MIN_OPTIONS }, () => ""));
-const isValid = ref(true);
+// The shared schema decides validity: a whitespace-only question or option passes the field rule and fails on submit
+const isPollValid = computed(
+  () =>
+    pollMessageContentSchema.shape.question.safeParse(question.value).success &&
+    options.value.every((label) => pollOptionSchema.shape.label.safeParse(label).success),
+);
 const { answer } = useDialogAnswer(isOpen);
 const createPoll = async () => {
   const roomId = currentRoomId.value;
@@ -37,7 +43,7 @@ const createPoll = async () => {
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create Poll" w="[min(32rem,90vw)]">
-    <UiForm v-model:is-valid="isValid" flex flex-col min-h-0 @submit="answer(createPoll, true)">
+    <UiForm flex flex-col min-h-0 @submit="answer(createPoll, true)">
       <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
         <UiTextField v-model="question" is-autofocus label="Question" :rules="requiredRules" />
         <div v-for="(option, index) of options" :key="index" flex gap-2 items-end>
@@ -64,7 +70,7 @@ const createPoll = async () => {
       <footer p-3 flex gap-2 items-center>
         <span text-sm text-muted flex-1>{{ options.length }}/{{ POLL_MAX_OPTIONS }} options</span>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid" type="submit" :variant="UiButtonVariant.Accent"> Create Poll </UiButton>
+        <UiButton :disabled="!isPollValid" type="submit" :variant="UiButtonVariant.Accent"> Create Poll </UiButton>
       </footer>
     </UiForm>
   </UiDialog>
