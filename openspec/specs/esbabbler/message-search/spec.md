@@ -147,7 +147,7 @@ Two filters of the same type SHALL narrow results together, and an exact repeat 
 
 ### Requirement: A search is saved to the room's history and restored from it
 
-Each search SHALL be saved to the room's search history as the filters and text that ran, and selecting a history entry SHALL restore that search.
+Each search SHALL be saved to the room's search history as the filters and text that ran, once per combination of the two, and selecting a history entry SHALL restore that search.
 
 #### Scenario: Selecting a history entry
 
@@ -155,6 +155,13 @@ Each search SHALL be saved to the room's search history as the filters and text 
 - **WHEN** the reader selects it
 - **THEN** the same text and filter are restored
 - **AND** the search runs again
+
+#### Scenario: An identical search is not saved twice
+
+- **GIVEN** the room's history already holds a search with the same text and filters
+- **WHEN** the same search runs again
+- **THEN** the history still holds that one entry
+- **AND** no second entry is added
 
 #### Scenario: Waiting filter is not saved
 

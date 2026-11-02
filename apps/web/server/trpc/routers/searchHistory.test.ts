@@ -6,7 +6,7 @@ import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { searchHistoryRouter } from "#server/trpc/routers/searchHistory";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
-import { searchHistoriesInMessage } from "@esposter/db-schema";
+import { FilterType, FilterTypeHas, searchHistoriesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -80,6 +80,29 @@ describe("searchHistoryRouter", () => {
 
     expect(newSearchHistory.query).toBe(query);
     expect(newSearchHistory.roomId).toBe(roomId);
+  });
+
+  test("creates an identical search once", async () => {
+    expect.hasAssertions();
+
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const repeatedSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+
+    expect(repeatedSearchHistory.id).toBe(newSearchHistory.id);
+    expect(searchHistories.items).toHaveLength(1);
+  });
+
+  test("creates a search with other filters as its own entry", async () => {
+    expect.hasAssertions();
+
+    const filters = [{ type: FilterType.Has, value: FilterTypeHas.File }];
+    await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const filteredSearchHistory = await searchHistoryCaller.createSearchHistory({ filters, query, roomId });
+    const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
+
+    expect(filteredSearchHistory.filters).toStrictEqual(filters);
+    expect(searchHistories.items).toHaveLength(2);
   });
 
   test("updates", async () => {

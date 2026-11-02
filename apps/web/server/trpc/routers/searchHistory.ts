@@ -19,18 +19,31 @@ import { Operation } from "@esposter/shared";
 
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
-    async ({ ctx, input }) =>
-      requireMutation(
+    async ({ ctx, input }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      // An identical search is recorded once, so running one again, from Enter or from the history, adds no second row
+      const existingSearchHistory = await ctx.db.query.searchHistoriesInMessage.findFirst({
+        where: {
+          filters: { eq: input.filters ?? [] },
+          query: { eq: input.query },
+          roomId: { eq: input.roomId },
+          userId: { eq: userId },
+        },
+      });
+      if (existingSearchHistory) return existingSearchHistory;
+
+      return requireMutation(
         (
           await ctx.db
             .insert(searchHistoriesInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .values({ ...input, userId })
             .returning()
         )[0],
         Operation.Create,
         DatabaseEntityType.SearchHistory,
         JSON.stringify(input),
-      ),
+      );
+    },
   ),
   deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
