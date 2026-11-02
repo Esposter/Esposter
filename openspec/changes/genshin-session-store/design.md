@@ -79,11 +79,11 @@ For the change: the shared keys are 0 in every call the root makes, the keys tha
 
 ## The read bench
 
-`packages/genshin-world/src/store/session.bench.md` holds the cost of one thousand reads of the same value: a ref reads at about 0.34 ms, a store's getter at about 0.57 ms and a field of a store's ref at about 0.78 ms, so a store read costs between 0.2 and 0.45 microseconds more than a ref read. The frame step reads the context a few dozen times at most, which is under a hundredth of a millisecond against a sixteen-millisecond frame, and the guideline stands as written: per-frame state stays out of stores and is read once into a local where a loop needs it. The frame step and the mount have no canvas-free harness here, and the hosted data they read cannot be reached from this container, so their baseline (tasks 0.2 and 4.2) is still to measure on a machine that has it.
+`packages/genshin-world/src/store/session.bench.md` holds the cost of one thousand reads of the same value: a ref reads at about 0.34 ms, a store's getter at about 0.57 ms and a field of a store's ref at about 0.78 ms, so a store read costs between 0.2 and 0.45 microseconds more than a ref read. The frame step reads the context a few dozen times at most, which costs under a twentieth of a millisecond against a sixteen-millisecond frame, and the guideline stands as written: per-frame state stays out of stores and is read once into a local where a loop needs it. The frame step and the mount have no canvas-free harness here, and the hosted data they read cannot be reached from this container, so their baseline (tasks 0.2 and 4.2) is still to measure on a machine that has it.
 
 ## The count
 
-Over `packages/genshin-world`, from the commit before the session store to the mailbox store (`git diff --shortstat 2e8b89230~1 a4709257a`): 84 files, 1,043 added and 1,164 removed, **121 lines fewer**, with the stores' tests and the page counted among the additions. The count is negative, so the change goes on to the performance measures. The root went from 2,082 to 1,918 lines, and the script prints `48 388 0` from `51 518 128`.
+Over `packages/genshin-world`, from the commit before the session store to the mailbox store (`git diff --shortstat 2e8b89230~1 a4709257a -- packages/genshin-world`): 84 files, 1,043 added and 1,164 removed, **121 lines fewer**, with the stores' tests and the page counted among the additions. The count is negative, so the change goes on to the performance measures. The root went from 2,082 to 1,918 lines, and the script prints `48 388 0` from `51 518 128`.
 
 ## What it costs
 
