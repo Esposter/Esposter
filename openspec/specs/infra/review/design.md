@@ -26,9 +26,10 @@ flowchart TD
   P --> POOL[One pool of batches<br/>stopped at the run deadline]
   POOL -->|a window's last batch lands| W{Window status}
   W -->|passed, and the passed prefix reaches it| I[Open the window's review issues, each with its findings file]
+  W -->|passed, but its end lacks main| WAIT[Its issues wait for the window that holds main]
   I -->|an issue did not open| STOP[The prefix stops for this run]
-  I -->|steady mode| M[main fast-forwards to the window's end]
-  M -->|push rejected: main moved meanwhile| STOP
+  I -->|steady mode, and the end holds main| M[main fast-forwards to the window's end]
+  M -->|push rejected: main moved, or a rule refused it| STOP
   W -->|limited, failed or unreached| STOP
   POOL -->|the deadline left windows unreviewed| D[Dispatch the next run once]
   I --> FX[Fix job per issue: fixes what it can, then narrows or closes the issue]
@@ -43,10 +44,10 @@ flowchart TD
 5. **Batches.** Each window's changed files, after the excluded paths and binary files are dropped, are sorted by path so neighbours land together, then packed in order into batches under a file cap and a changed-line cap.
 6. **Reviewers.** One pool holds every batch of every window and runs at most `REVIEW_RUNNER_SESSION_CAP` sessions at once. Each window has one detached worktree at its end, shared by its reviewers and removed after the pool. A reviewer is read-only and answers with a JSON object of findings. A batch that fails is retried once.
 7. **Window status.** A window passes when every batch answered. It is limited when a batch hit the account's usage limit, failed when a batch still errored, and unreached when the deadline left a batch unstarted.
-8. **The prefix advances as it grows.** Whenever a window settles, the run acts on each window that has just joined the passed prefix, in window order. The prefix is the windows before the first one that did not pass, so a window after a stopped one never reads its base as landed. The run first opens each newly passed window's review issues, so no finding is held only in the run's memory once `main` moves past it. A window whose issues did not open ends the prefix there for the rest of the run, and the next run reviews it again. In steady mode the run then fast-forwards `main` to the end of the windows whose issues opened, once per advance and never forced. A rejected push means `main` moved meanwhile: the run stops advancing for the rest of the run, the issues it opened stay open, and the next run, which reviews those windows again, may raise their findings again.
+8. **The prefix advances as it grows.** Whenever a window settles, the run acts on each window that has just joined the passed prefix, in window order. The prefix is the windows before the first one that did not pass, so a window after a stopped one never reads its base as landed. The run opens the newly passed windows' review issues before it moves `main` past them, so no finding is held only in the run's memory once `main` moves past it. In steady mode `main` moves only to a window's end that holds it. Every window's end holds it while `main` is the reviewed prefix, but after a diverged `main` is merged into the queue the windows before the merge commit do not: they are reviewed and wait, unopened, until the window holding the merge passes, which opens every waiting window's issues in order and then fast-forwards `main` to its end, never forced. A window whose issues did not open ends the prefix there for the rest of the run, and the next run reviews it again. A rejected push means `main` moved meanwhile, or a rule refused it: the run stops advancing for the rest of the run, the issues it opened stay open, and the next run, which reviews those windows again, may raise their findings again.
 9. **Fix and settle.** Each issue's findings file goes to a fix job, and the settle job runs after every fix. Both are described below.
 
-Because the prefix advances as the pool runs, a timeout or a crash loses only the windows still in flight. Everything already passed has its issues open and, in steady mode, is on `main`. A batch's error is printed to the job's log as well as its summary, since GitHub's API reads a job's log but not its summary.
+Because the prefix advances as the pool runs, a timeout or a crash loses only the windows still in flight. Everything `main` has moved past has its issues open, and the windows waiting on a diverged `main` are reviewed again by the next run. A batch's error is printed to the job's log as well as its summary, since GitHub's API reads a job's log but not its summary.
 
 ### Review issues
 
@@ -112,7 +113,7 @@ The cost is the settler's and the fixer's sessions on the same subscription as t
 ## Decisions
 
 - **Limits are amounts, never time.** The window, the batch, the issue's findings, the matrix and the sessions one runner holds are each bounded by how much is read or how much a runner holds. The one time bound is the deadline, which leaves the rest for the next run rather than failing it.
-- **`main` advances as the prefix grows, behind its issues.** The windows that have passed open their issues at once and then move `main`, so a timeout or a crash loses only what is still in flight, and `main` never passes a finding no issue holds.
+- **`main` advances as the prefix grows, behind its issues.** The windows that have passed open their issues before `main` moves past them, and where `main` cannot move yet they wait with their issues, so a timeout or a crash loses only what is still in flight, and `main` never passes a finding no issue holds.
 - **Every finding is owed an issue.** A finding lives in an open issue until a terminal state closes it, so no finding can be lost to a job that ends early.
 - **No pull requests, no `develop`, no express lane, no repair.** A pull request is a review slot the bot must spend, and a `develop` branch is a second place the reviewed prefix would have to be kept. Every commit is reviewed in its window, however small, and a red `main` is fixed on `ai/queue` first, as the CI section below sets out.
 - **`main` is the reviewed prefix of `ai/queue`.** The review's fast-forward moves `main`, and so does the nightly release's version commit, which the run it starts merges back into `ai/queue`, so `main` is an ancestor of `ai/queue` again within one run, and what `main` holds is what a review has read plus the version bumps of what it read.

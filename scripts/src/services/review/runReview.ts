@@ -31,9 +31,9 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResult, noop, takeOne } from "@esposter/shared";
 
 // Plans every window owed, reviews all of their batches in one pool, and acts on each window as it joins the passed prefix:
-// In steady mode `main` advances to the prefix's end, then the window's findings open their issues. A window that did not
-// Pass stops the prefix, so `main` never moves past a window no review read in full. A deadline leaves the windows past it
-// For the next run, which the run dispatches once when nothing else stopped it.
+// its findings open their issues, and in steady mode `main` advances to the prefix's end once that end holds `main`. A
+// Window that did not pass stops the prefix, so `main` never moves past a window no review read in full. A deadline leaves
+// The windows past it for the next run, which the run dispatches once when nothing else stopped it.
 export const runReview = async ({ findingsDirectory, from, isDryRun, to }: ReviewRunInput): Promise<void> => {
   const mode = getMode(from, to);
   fetchRemote();
@@ -51,7 +51,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
         };
 
   // `main` pushed by hand past the queue is merged in first, and that push starts the next run
-  if (mode === ReviewMode.Steady && !checkIsMainAncestor()) {
+  if (mode === ReviewMode.Steady && !checkIsMainAncestor(REMOTE_QUEUE_REF)) {
     if (isDryRun) {
       console.info(`${MAIN_BRANCH} has diverged from ${QUEUE_BRANCH}: a run merges ${REMOTE_MAIN_REF} into it first`);
       return;
@@ -109,14 +109,24 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     );
   };
 
+  // In steady mode `main` moves only to a window's end that holds it. Once `main` was merged into the queue, the windows
+  // Before the merge do not, so they wait for the window that does. A range run never moves `main`, so nothing waits.
+  const checkIsAdvanceable = (index: number): boolean =>
+    mode !== ReviewMode.Steady || checkIsMainAncestor(takeOne(windows, index).end);
+
   // The one place the run acts on windows, called as each window settles. The pool's callbacks are synchronous, so the
   // Issues and advances run one at a time in window order without a queue of their own. A window's issues open before
-  // `main` moves past it, so a finding is never left only in a run's memory: a window whose issues did not open stops the
-  // Run's advances there, and the next run reviews it again.
+  // `main` moves past it, so a finding is never left only in a run's memory. The newly passed windows open together once
+  // The last of them can move `main`, so a window that cannot waits with its issues. A window whose issues did not open
+  // Stops the run's advances there, and the next run reviews it again.
   const advancePassedWindows = (): void => {
     if (isStopped) return;
+    const newlyPassed = getNewlyPassedWindowIndices(statuses, handledCount);
+    const lastNewlyPassed = newlyPassed.at(-1);
+    if (lastNewlyPassed === undefined || !checkIsAdvanceable(lastNewlyPassed)) return;
+
     let lastOpenedIndex = -1;
-    for (const index of getNewlyPassedWindowIndices(statuses, handledCount)) {
+    for (const index of newlyPassed) {
       if (!openIssuesFor(index)) {
         isStopped = true;
         break;
@@ -126,7 +136,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     if (lastOpenedIndex === -1) return;
 
     handledCount = lastOpenedIndex + 1;
-    if (mode !== ReviewMode.Steady) return;
+    if (mode !== ReviewMode.Steady || !checkIsAdvanceable(lastOpenedIndex)) return;
 
     const { end } = takeOne(windows, lastOpenedIndex);
     if (advanceMain(end)) {
@@ -134,7 +144,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
       return;
     }
     mainNotices.push(
-      `${MAIN_BRANCH} was not advanced, because it moved meanwhile. The next run reviews these windows again, and may raise the findings of their issues again.`,
+      `${MAIN_BRANCH} was not advanced, because its push was refused: it moved meanwhile, or a rule refused it. The next run reviews these windows again, and may raise the findings of their issues again.`,
     );
     isStopped = true;
   };
@@ -174,7 +184,8 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     "",
   ];
   if (mode === ReviewMode.Range) summary.push(`A range review never moves ${MAIN_BRANCH}.`);
-  else if (mainNotices.length === 0) summary.push(`${MAIN_BRANCH} did not move, because no window passed.`);
+  else if (mainNotices.length === 0)
+    summary.push(`${MAIN_BRANCH} did not move, because no window passed with its issues opened.`);
   else summary.push(...mainNotices);
   summary.push(
     issueNumbers.length > 0
