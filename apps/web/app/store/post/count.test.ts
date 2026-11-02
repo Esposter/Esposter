@@ -17,7 +17,8 @@ describe(usePostCountStore, () => {
     const readPostCounts = vi.fn<(postIds: string[]) => PostCounts>(() => []);
     trpcMsw.post.readPostCounts.query(({ input }) => readPostCounts(input));
     const postIds = Array.from({ length: MAX_POST_COUNTS_PER_READ + 1 }, () => crypto.randomUUID());
-    const { refreshPostCounts } = usePostCountStore();
+    const postCountStore = usePostCountStore();
+    const { refreshPostCounts } = postCountStore;
 
     await refreshPostCounts(postIds);
 

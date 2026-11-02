@@ -38,7 +38,9 @@ describe("messageModelRoomInviteRow", () => {
       expect.hasAssertions();
 
       trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions, roomId, topRolePosition: 0 }]);
-      await useRoleStore().readMyPermissions({ roomIds: [roomId] });
+      const roleStore = useRoleStore();
+      const { readMyPermissions } = roleStore;
+      await readMyPermissions({ roomIds: [roomId] });
       const component = await mountSuspended(MessageModelRoomInviteRow, { props: { invite, isCreator: true, roomId } });
 
       expect(component.findComponent(MessageModelRoomInviteEditButton).exists()).toBe(isOffered);

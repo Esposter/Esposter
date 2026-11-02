@@ -23,9 +23,10 @@ interface Props {
 const { room } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
-const { checkHasMyPermission } = useRoleStore();
 const { checkIsCreateInvitePending, createInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
+const roleStore = useRoleStore();
+const { checkHasMyPermission } = roleStore;
 // Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
 // Same room
 const invite = computed(() => invites.value.get(room.id));

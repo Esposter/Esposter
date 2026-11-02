@@ -20,7 +20,9 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
   const mountWithPendingCommand = async () => {
     const component = await mountSuspended(MessageModelMessageInputSlashCommandParameters, { attachTo: document.body });
     setCurrentRoomId(roomId);
-    useSlashCommandStore().setPendingSlashCommand(SlashCommandDefinitionMap[SlashCommandType.Me]);
+    const slashCommandStore = useSlashCommandStore();
+    const { setPendingSlashCommand } = slashCommandStore;
+    setPendingSlashCommand(SlashCommandDefinitionMap[SlashCommandType.Me]);
     await flushPromises();
     return component;
   };
@@ -29,7 +31,8 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     expect.hasAssertions();
 
     const component = await mountWithPendingCommand();
-    const { focusedIndex, pendingSlashCommand } = storeToRefs(useSlashCommandStore());
+    const slashCommandStore = useSlashCommandStore();
+    const { focusedIndex, pendingSlashCommand } = storeToRefs(slashCommandStore);
     focusedIndex.value = COMMAND_INPUT_INDEX;
     await flushPromises();
     await component.get('input[aria-label="Command"]').trigger("keydown", { key: "Backspace" });
@@ -41,7 +44,8 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     expect.hasAssertions();
 
     await mountWithPendingCommand();
-    const { pendingSlashCommand } = storeToRefs(useSlashCommandStore());
+    const slashCommandStore = useSlashCommandStore();
+    const { pendingSlashCommand } = storeToRefs(slashCommandStore);
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
     await flushPromises();
     expect(pendingSlashCommand.value?.type).toBe(SlashCommandType.Me);
@@ -51,10 +55,12 @@ describe("messageModelMessageInputSlashCommandParameters", () => {
     expect.hasAssertions();
 
     const component = await mountWithPendingCommand();
-    const { pendingSlashCommand } = storeToRefs(useSlashCommandStore());
+    const slashCommandStore = useSlashCommandStore();
+    const { pendingSlashCommand } = storeToRefs(slashCommandStore);
     await component.get(`input[aria-label="${parameterName}"]`).trigger("keydown", { key: "Escape" });
     await flushPromises();
     expect(pendingSlashCommand.value).toBeUndefined();
-    expect(useInputStore().input).toBe(`/${SlashCommandType.Me}`);
+    const inputStore = useInputStore();
+    expect(inputStore.input).toBe(`/${SlashCommandType.Me}`);
   });
 });

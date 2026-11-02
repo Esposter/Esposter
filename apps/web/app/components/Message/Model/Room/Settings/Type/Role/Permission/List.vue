@@ -13,7 +13,8 @@ interface Props {
 
 const modelValue = defineModel<bigint>({ required: true });
 const { isDisabled, roomId } = defineProps<Props>();
-const { getMyPermissions } = useRoleStore();
+const roleStore = useRoleStore();
+const { getMyPermissions } = roleStore;
 // A role may carry no permission its author lacks, and the save judges the whole bitfield it writes. So a switch is
 // Offered only when the bitfield with that switch flipped stays within what the reader holds, the owner and an
 // Administrator holding all of it

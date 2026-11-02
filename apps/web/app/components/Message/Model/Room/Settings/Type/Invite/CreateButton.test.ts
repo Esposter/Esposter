@@ -20,7 +20,9 @@ describe("messageModelRoomSettingsTypeInviteCreateButton", () => {
       expect.hasAssertions();
 
       trpcMsw.role.readMyPermissions.query(() => [{ isRoomOwner: false, permissions, roomId, topRolePosition: 0 }]);
-      await useRoleStore().readMyPermissions({ roomIds: [roomId] });
+      const roleStore = useRoleStore();
+      const { readMyPermissions } = roleStore;
+      await readMyPermissions({ roomIds: [roomId] });
       const component = await mountSuspended(MessageModelRoomSettingsTypeInviteCreateButton, { props: { roomId } });
 
       expect(component.text()).toBe(isOffered ? "Create invite" : "");

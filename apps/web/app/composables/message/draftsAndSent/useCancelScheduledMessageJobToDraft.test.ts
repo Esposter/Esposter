@@ -14,7 +14,8 @@ describe(useCancelScheduledMessageJobToDraft, () => {
 
     const scheduledMessageJob = createScheduledMessageJob();
     trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => scheduledMessageJob);
-    const { drafts } = storeToRefs(useInputStore());
+    const inputStore = useInputStore();
+    const { drafts } = storeToRefs(inputStore);
     const isCancelled = await useCancelScheduledMessageJobToDraft()(scheduledMessageJob);
 
     expect(isCancelled).toBe(true);
@@ -30,7 +31,8 @@ describe(useCancelScheduledMessageJobToDraft, () => {
     trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const { drafts } = storeToRefs(useInputStore());
+    const inputStore = useInputStore();
+    const { drafts } = storeToRefs(inputStore);
     const isCancelled = await useCancelScheduledMessageJobToDraft()(scheduledMessageJob);
 
     expect(isCancelled).toBe(false);
