@@ -77,7 +77,14 @@ export const watchMachine = async (): Promise<void> => {
       state,
     });
     lastState = state;
-    const profile = readMachineProfile();
+    // An unreadable profile is one line and no heartbeat this reading, so the watcher keeps sampling the machine
+    const profile = getResult(() => readMachineProfile()).match(
+      (machineProfile) => machineProfile,
+      (error) => {
+        console.error(`machine profile not read: ${error.message}`);
+        return undefined;
+      },
+    );
     const now = Temporal.Now.instant().epochMilliseconds;
     if (profile !== undefined && now - lastHeartbeatMilliseconds >= RENEW_MILLISECONDS) {
       lastHeartbeatMilliseconds = now;
