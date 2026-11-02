@@ -261,25 +261,42 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
 </template>
 
 <style scoped>
-/* The grid is the reference's top two rows at 1920 by 1080, measured off its pixels: four cards of 354 by 335 from 206 across and
-   128 down, with gaps of 35 across and 37 down. Each name sits over its limit line, and each price in a band of 57 */
+/* The grid is the reference's top two rows at 1920 by 1080, measured off its pixels: four cards of 353.5 by 335 from 206 across and
+   128 down, with gaps of 35.17 across (their lefts at 206, 594, 984 and 1372) and 37 down. Each name sits over its limit line, and
+   each price in a band of 57 */
 .paimons-bargains-shop :deep(.goods) {
   top: calc(var(--unit) * 128);
   left: calc(var(--unit) * 206);
   width: calc(var(--unit) * 1521);
   height: calc(var(--unit) * 952);
-  grid-template-columns: repeat(4, calc(var(--unit) * 354));
-  gap: calc(var(--unit) * 37) calc(var(--unit) * 35);
+  grid-template-columns: repeat(4, calc(var(--unit) * 353.5));
+  gap: calc(var(--unit) * 37) calc(var(--unit) * 35.17);
 }
 
+/* A card is a block, so its grid cell is its own height: an inline button leaves its line's descent under it, which put the
+   second row 5 pixels low. Its fill runs from the purple of its top left corner to a lighter bottom, measured at the same
+   corners of every card: top left (98, 89, 141), top right (120, 101, 150), bottom left (140, 118, 177), bottom right
+   (145, 122, 180) */
 .paimons-bargains-shop :deep(.good) {
+  display: block;
   height: calc(var(--unit) * 335);
-  background: #62578e;
+  background: linear-gradient(158deg, #62598d 0%, #786596 30%, #8c76b1 70%, #917ab4 100%);
 }
 
-/* The gold of the Fates, read from the reference's first two cards clear of their art */
+/* The card's frame is a lighter ridge 3 pixels wide, 5 in from its edge, read off the reference's clean edges at about 16
+   levels over the fill on each channel */
+.paimons-bargains-shop :deep(.good)::after {
+  position: absolute;
+  inset: calc(var(--unit) * 5);
+  border: calc(var(--unit) * 3) solid rgb(255 255 255 / 0.08);
+  content: "";
+  pointer-events: none;
+}
+
+/* The Fates' gold runs the same way: from (141, 99, 62) at the top left of the first two cards to (185, 135, 81) at the
+   bottom right, where the price band takes over */
 .paimons-bargains-shop :deep(.good[data-tone="gold"]) {
-  background: #9d6e3d;
+  background: linear-gradient(158deg, #8b613d 0%, #b2824e 50%, #c48e55 100%);
 }
 
 .paimons-bargains-shop :deep(.good-name) {
@@ -307,9 +324,11 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
   font-size: calc(var(--unit) * 28);
 }
 
+/* The price icon is a placeholder diamond; its side is set so its turned diagonal spans the reference's currency icon, 40 pixels
+   across centred at (371, 436) in the first card's band */
 .paimons-bargains-shop :deep(.good-price .price-icon) {
-  width: calc(var(--unit) * 22);
-  height: calc(var(--unit) * 22);
+  width: calc(var(--unit) * 28);
+  height: calc(var(--unit) * 28);
 }
 
 /* The reference's tab row stands where the title does, so the title stays for a reader and is not drawn under the tabs */
@@ -336,7 +355,26 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
 }
 
 .paimons-bargains-shop :deep(.tab[aria-pressed="true"]) {
-  background: #c4bbac;
+  background: #c9c1b6;
+}
+
+/* The rule under the tab row is the reference's: a light line 2 pixels wide at 68, a dark shadow beneath it at 74 to 76,
+   from the picked tab's edge at 520 to 1360 */
+.paimons-bargains-shop :deep(.tabs)::after {
+  position: absolute;
+  top: calc(var(--unit) * 59);
+  left: calc(var(--unit) * 380);
+  width: calc(var(--unit) * 840);
+  height: calc(var(--unit) * 10);
+  background: linear-gradient(
+    transparent calc(var(--unit) * 1),
+    #62666c calc(var(--unit) * 1) calc(var(--unit) * 3),
+    #464a51 calc(var(--unit) * 3) calc(var(--unit) * 4),
+    transparent calc(var(--unit) * 4) calc(var(--unit) * 7),
+    #25282f calc(var(--unit) * 7)
+  );
+  content: "";
+  pointer-events: none;
 }
 
 .paimons-bargains-shop :deep(.tabs li:nth-child(1) .tab) {
@@ -379,11 +417,16 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
   bottom: calc(var(--unit) * 155);
 }
 
-/* The world behind the shop is the reference's own: its margins measure dark at the top and light at the bottom, so the
-   game's blur wash is replaced with the colour each height of the clear margins reads */
+/* The world behind the shop is the reference's own, read as the average of its clear margins and gutters in each 40 to 80
+   pixel band down the frame. The stops from 460 down keep the screen's earlier values: a fit to the reference's lighter
+   bottom lowered the shape of the cards' edges against it (see the Open items in the shops design) */
 .paimons-bargains :deep(.world-wash) {
   background: linear-gradient(
-    #464a4f calc(var(--unit) * 120),
+    #2c3239 calc(var(--unit) * 40),
+    #2e333c calc(var(--unit) * 120),
+    #3d4146 calc(var(--unit) * 200),
+    #504e50 calc(var(--unit) * 280),
+    #48484e calc(var(--unit) * 360),
     #44464a calc(var(--unit) * 460),
     #8f8d86 calc(var(--unit) * 640),
     #8f8d86
