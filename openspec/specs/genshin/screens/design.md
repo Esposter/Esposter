@@ -60,20 +60,20 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## Key files
 
-| File                                                                     | Its role                                                                                            |
-| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | the world and every screen opened over it                                                           |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`       | what each screen does to the world under it                                                         |
-| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                                      |
-| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                                        |
-| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                             |
-| `packages/genshin-world/src/components/World/Session/Index.vue`          | keeps what is open, holds the world, lets the pointer go, and mounts the overlays its children draw |
-| `packages/genshin-world/src/composables/useWorldFrame.ts`                | reads the input once a frame and picks the screen it moves to                                       |
-| `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                      |
-| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them     |
-| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`     | the settings' tabs, each named in the game's words                                                  |
-| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`      | one settings row: its label, the slider or choice it draws, and its options list when open          |
-| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                              |
+| File                                                                     | Its role                                                                                                                                                      |
+| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | the world and every screen opened over it                                                                                                                     |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`       | what each screen does to the world under it                                                                                                                   |
+| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                                                                                                |
+| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                                                                                                  |
+| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                                                                                       |
+| `packages/genshin-world/src/components/World/Session/Index.vue`          | keeps what is open, holds the world, lets the pointer go, and draws the overlays itself, the HUD, menu, game-over, shop, statue and domain screens among them |
+| `packages/genshin-world/src/composables/useWorldFrame.ts`                | reads the input once a frame and picks the screen it moves to                                                                                                 |
+| `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                                                                                |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them                                                               |
+| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`     | the settings' tabs, each named in the game's words                                                                                                            |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`      | one settings row: its label, the slider or choice it draws, and its options list when open                                                                    |
+| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                                                                                        |
 
 ## Sources
 
