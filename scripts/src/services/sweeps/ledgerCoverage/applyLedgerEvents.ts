@@ -29,7 +29,8 @@ export const applyLedgerEvents = (text: string, ledger: string, events: LedgerEv
 
     const { rest = "", sweptCell = "", unitCell = "" } = groups;
     const unit = normalizeLedgerUnit(unitCell);
-    const cell = sweptCell.trim();
+    // A blank cell records no sweep, so it is the open dash, and a trailer naming its row can still date it
+    const cell = sweptCell.trim() || OPEN_CELL;
     const sweptGroups = SWEPT_CELL_REGEX.exec(cell)?.groups;
     if (cell !== OPEN_CELL && !sweptGroups) return line;
 

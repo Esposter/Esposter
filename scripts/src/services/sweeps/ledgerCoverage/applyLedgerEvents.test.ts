@@ -47,6 +47,15 @@ describe(applyLedgerEvents, () => {
     });
   });
 
+  // A blank cell records no sweep, so it is an open row, and the trailer naming that row still finds it
+  test("dates a row whose Swept cell is blank from its sweep trailer", () => {
+    expect.hasAssertions();
+
+    const event = getEvent(LedgerEventType.Ledger, earlier, bareUnit);
+
+    expect(applyLedgerEvents(getText(""), ledger, [event])).toStrictEqual({ matched: [event], text: getText(earlier) });
+  });
+
   test("names the model the sweep commit was co-authored by", () => {
     expect.hasAssertions();
 
