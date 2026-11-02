@@ -1,6 +1,6 @@
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
-import { getResultAsync } from "@esposter/shared";
 
 export const useCallPreJoinMedia = () => {
   const knockerStore = useKnockerStore();
@@ -23,6 +23,13 @@ export const useCallPreJoinMedia = () => {
   const { start: startMicrophoneStream, stop: stopMicrophoneStream } = useUserMedia({
     constraints: microphoneConstraints,
   });
+  const { executeQuery } = useMutation();
+  // A device's stream is requested once while it is pending: the mount probe and a toggle that lands during it share
+  // One call, since a second request overwrites the first stream and leaves its tracks running.
+  // A refused or unavailable device is logged rather than dropped: the reason is only in the error, and the pre-join
+  // Screen is where a wrong device id or a blocked permission is diagnosed.
+  const startDevice = (key: string, start: () => Promise<MediaStream | undefined>) =>
+    executeQuery(start, { isExclusive: true, key, onError: console.error });
   const isCameraEnabled = computed({
     get: () => joinCallOptions.value.isCameraEnabled,
     set: (value) => {
@@ -35,20 +42,9 @@ export const useCallPreJoinMedia = () => {
       joinCallOptions.value = { ...joinCallOptions.value, isMicrophoneEnabled: value };
     },
   });
-  // A refused or unavailable device leaves the toggle off, which is what the user sees — but the reason it
-  // Refused is only in the error, and the pre-join screen is where a wrong device id or a blocked permission is
-  // Diagnosed, so it is logged rather than dropped
   const startCamera = async () => {
-    await getResultAsync(startCameraStream)
-      .orTee(console.error)
-      .match(
-        (stream) => {
-          isCameraEnabled.value = Boolean(stream);
-        },
-        () => {
-          isCameraEnabled.value = false;
-        },
-      );
+    const outcome = await startDevice("camera", startCameraStream);
+    isCameraEnabled.value = outcome.status === MutationStatus.Succeeded && Boolean(outcome.result);
   };
   const stopCamera = () => {
     stopCameraStream();
@@ -59,25 +55,27 @@ export const useCallPreJoinMedia = () => {
     else await startCamera();
   };
   const startMicrophone = async () => {
-    await getResultAsync(startMicrophoneStream)
-      .orTee(console.error)
-      .match(
-        (stream) => {
-          isMicrophoneEnabled.value = Boolean(stream);
-          stopMicrophoneStream();
-        },
-        () => {
-          isMicrophoneEnabled.value = false;
-        },
-      );
+    const outcome = await startDevice("microphone", startMicrophoneStream);
+    stopMicrophoneStream();
+    return outcome;
+  };
+  // The probe reports only that the microphone is unavailable. A success leaves the join option alone, because the
+  // Member may have muted while the permission prompt was up, and that choice is the one the join keeps
+  const probeMicrophone = async () => {
+    const { status } = await startMicrophone();
+    if (status !== MutationStatus.Succeeded) isMicrophoneEnabled.value = false;
   };
   const toggleMicrophone = async () => {
-    if (isMicrophoneEnabled.value) isMicrophoneEnabled.value = false;
-    else await startMicrophone();
+    if (isMicrophoneEnabled.value) {
+      isMicrophoneEnabled.value = false;
+      return;
+    }
+    const { status } = await startMicrophone();
+    isMicrophoneEnabled.value = status === MutationStatus.Succeeded;
   };
 
   onMounted(async () => {
-    await Promise.all([startMicrophone(), startCamera()]);
+    await Promise.all([probeMicrophone(), startCamera()]);
   });
 
   return { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone };

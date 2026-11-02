@@ -30,28 +30,36 @@ export const useMicrophoneLevel = () => {
     { immediate: false },
   );
   let isDisposed = false;
+  const { executeQuery } = useMutation();
+  // A start that lands while one is pending joins it, so a double click cannot open a second stream beside the first
   const start = async () => {
-    await getResultAsync(startStream).match(
-      (stream) => {
+    await executeQuery(startStream, {
+      isExclusive: true,
+      key: "start",
+      onError: (error) => {
+        isTesting.value = false;
+        console.error(error);
+      },
+      onSuccess: async (stream) => {
         if (!stream) return;
         // A dispose can land while getUserMedia is still pending, and it cannot be cancelled.
         // `useUserMedia`'s own dispose then no-ops (its stream ref is still empty) and assigns the live
         // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
-        else if (isDisposed) stopStream();
-        else {
-          audioContext = new window.AudioContext();
-          analyser = audioContext.createAnalyser();
-          analyser.fftSize = 1024;
-          timeDomainData = new Float32Array(analyser.fftSize);
-          audioContext.createMediaStreamSource(stream).connect(analyser);
-          isTesting.value = true;
-          resume();
+        if (isDisposed) {
+          stopStream();
+          return;
         }
+        // A start that lands on a running test reuses its stream, so the context it replaces closes first
+        await audioContext?.close();
+        audioContext = new window.AudioContext();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 1024;
+        timeDomainData = new Float32Array(analyser.fftSize);
+        audioContext.createMediaStreamSource(stream).connect(analyser);
+        isTesting.value = true;
+        resume();
       },
-      () => {
-        isTesting.value = false;
-      },
-    );
+    });
   };
   const stop = async () => {
     pause();
