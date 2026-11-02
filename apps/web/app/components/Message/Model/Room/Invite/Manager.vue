@@ -12,6 +12,8 @@ import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/Inv
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
 import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
+import { useRoleStore } from "@/store/message/room/role";
+import { RoomPermission } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 interface Props {
@@ -21,6 +23,7 @@ interface Props {
 const { room } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const inviteStore = useInviteStore();
+const { checkHasMyPermission } = useRoleStore();
 const { checkIsCreateInvitePending, createInvite } = inviteStore;
 const { invites } = storeToRefs(inviteStore);
 // Display reads the shared per-room map so a link regenerated in one mount updates every other one open on the
@@ -41,7 +44,8 @@ useReadMyInvite(room.id, (newInvite) => {
   // Discord hands the reader a link the moment the dialog opens rather than an empty field with a button on it.
   // A member holds at most one, so a read that finds none mints it here — and one that finds a live link never
   // Replaces it, which is what asking for the create would have risked
-  if (!newInvite && !room.isInvitePaused) getSynchronizedFunction(createRoomInvite)();
+  if (!newInvite && !room.isInvitePaused && checkHasMyPermission(room.id, RoomPermission.ManageInvites))
+    getSynchronizedFunction(createRoomInvite)();
 });
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
 const onUpdateOptions = async () => {

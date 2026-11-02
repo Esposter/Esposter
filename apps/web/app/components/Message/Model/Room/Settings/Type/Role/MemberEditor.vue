@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { PermissionOverrideState } from "@/models/message/room/role/PermissionOverrideState";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { RoomPermissionCategoryItems } from "@/services/message/room/role/RoomPermissionCategoryItems";
+import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
 import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
@@ -14,14 +16,34 @@ interface Props {
 }
 
 const { roomId, userId } = defineProps<Props>();
+const roomStore = useRoomStore();
+const { rooms } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
 const {
+  checkHasMyPermission,
   deleteMemberPermissionOverride,
   getMemberPermissionOverride,
   getMemberRoles,
+  getMyPermissions,
   getRoles,
+  readMemberRoles,
   upsertMemberPermissionOverride,
 } = roleStore;
+// The member's roles place them against the reader, and an override can name a member the panel has not read yet
+await readMemberRoles({ roomId, userIds: [userId] });
+// Every write here is judged against the member the way the server places them, owner immunity included, so the
+// Entry is held as a whole when the reader cannot manage them
+const isManageable = computed(() => {
+  const myPermissions = getMyPermissions(roomId);
+  if (!myPermissions) return false;
+
+  const topPosition = Math.max(-1, ...getMemberRoles(roomId, userId).map(({ position }) => position));
+  const isOwner = rooms.value.find(({ id }) => id === roomId)?.userId === userId;
+  return checkIsMemberManageable(
+    { isOwner: myPermissions.isRoomOwner, topPosition: myPermissions.topRolePosition },
+    { isOwner, topPosition },
+  );
+});
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 const memberName = computed(() => getRoomMemberName(roomId, userId));
@@ -62,7 +84,9 @@ const setState = (permission: bigint, state: PermissionOverrideState) =>
   <div flex flex-col gap-4>
     <div flex gap-4 items-center>
       <h3 flex-1 truncate ui-heading>{{ memberName }}</h3>
-      <UiButton :variant="UiButtonVariant.Quiet" @click="isRemoveOpen = true">Remove override</UiButton>
+      <UiButton v-if="isManageable" :variant="UiButtonVariant.Quiet" @click="isRemoveOpen = true">
+        Remove override
+      </UiButton>
       <UiConfirmDialog
         v-model="isRemoveOpen"
         confirm-label="Remove"
@@ -81,6 +105,8 @@ const setState = (permission: bigint, state: PermissionOverrideState) =>
           :model-value="getState(permission)"
           :description
           :inherited-value="checkHasPermission(inheritedPermissions, permission, false)"
+          :is-allow-disabled="!checkHasMyPermission(roomId, permission) || undefined"
+          :is-disabled="!isManageable || undefined"
           :title
           @update:model-value="(state) => setState(permission, state)"
         />

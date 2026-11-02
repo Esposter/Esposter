@@ -17,7 +17,7 @@ const { draft: permissions, isDirty, reset, settle } = useStoredDraft(() => role
 <template>
   <div flex flex-col gap-4>
     <h3 truncate ui-heading>{{ role.name }}</h3>
-    <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" />
+    <MessageModelRoomSettingsTypeRolePermissionList v-model="permissions" :room-id />
     <MessageModelRoomSettingsUnsavedChangesBar
       v-if="isDirty"
       @reset="reset()"

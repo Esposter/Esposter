@@ -2,6 +2,7 @@
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
 
@@ -12,11 +13,22 @@ interface Props {
 
 const { roles, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
-const { selectMember, selectRole } = roleStore;
+const { getMyPermissions, selectMember, selectRole } = roleStore;
 const { memberPermissionOverrideMap, selectedMemberId, selectedRoleId } = storeToRefs(roleStore);
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
+// deleteRole refuses a role at or above the reader's top role, so a row offers Delete only for one they outrank
+const isDeletable = (roleId: string) => {
+  const role = roleMap.value.get(roleId);
+  const myPermissions = getMyPermissions(roomId);
+  return Boolean(
+    role &&
+    myPermissions &&
+    !role.isEveryone &&
+    checkIsManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner),
+  );
+};
 // Each row is marked by the role's own colour, which the mark's slot draws
 const roleItems = computed(() =>
   roles.map<UiListItem<string>>(({ id, name }) => ({
@@ -49,7 +61,7 @@ const memberItems = computed(() =>
       <MessageModelRoomSettingsTypeRoleColorDot :color="roleMap.get(item.value)?.color ?? ''" />
     </template>
     <template #actions="{ item }">
-      <MessageModelRoomSettingsTypeRoleDeleteButton v-if="!roleMap.get(item.value)?.isEveryone" :role-id="item.value" />
+      <MessageModelRoomSettingsTypeRoleDeleteButton v-if="isDeletable(item.value)" :role-id="item.value" />
     </template>
   </UiList>
   <UiList v-if="memberItems.length > 0" :items="memberItems" label="Members" @select="(userId) => selectMember(userId)">
