@@ -4,8 +4,7 @@ import { getPlainDate } from "@/util/date/getPlainDate";
 import { getTimelineDateLabel } from "@/util/date/getTimelineDateLabel";
 import { getOrCreate } from "@esposter/shared";
 
-// Keyed by the day, since the label names a day without its year: two days a year apart that share a weekday, month and
-// Day would otherwise share one section under the first one's heading
+// Keyed by the day, so each section is one day's items, whatever its heading reads
 export const getTimelineSections = <TItem>(items: TItem[], getDate: (item: TItem) => Date) => {
   const sectionMap = new Map<string, DraftsAndSentSection<TItem>>();
   for (const item of items) {

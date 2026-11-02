@@ -99,6 +99,12 @@ The message list's day labels SHALL follow the reader's own day boundary and sho
 - **WHEN** the reader views the list
 - **THEN** a day divider separates the two days
 
+#### Scenario: A day from an earlier year is headed with its year
+
+- **GIVEN** a day of this year and a day of an earlier year that share a weekday, month and day are next to each other in the list
+- **WHEN** the reader views the list
+- **THEN** the earlier day's heading names its year, so the two headings differ
+
 ### Requirement: A template formats dates only through the shared display
 
 A template SHALL show dates only through the shared date display, and the build's lint check SHALL fail any template that formats a date another way.
