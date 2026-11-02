@@ -20,12 +20,13 @@ A call is anchored to a `callSessionsInMessage` row, not a route:
 
 Leave happens only on: explicit **Leave Call**, moderation (`KickFromCall`/`KickFromRoom`/`TimeoutUser`/`CreateBan` on the call's room), real session loss (logout, tab close, LiveKit `participant_left` webhook), or `/calls/[id]` unmount (that page _is_ the call context — except when popped out to [picture-in-picture](picture-in-picture/design.md)).
 
-| Owner                       | Responsibility                                                                                      | Must not do                                         |
-| --------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `callStore.leaveCall()`     | the only normal path that leaves, disconnects LiveKit, and resets active state                      | run implicitly during room navigation               |
-| `useCallSubscribables()`    | observes the viewed room's session; updates `currentRoomCallSessionId` / participants               | remove the active participant or disconnect LiveKit |
-| `useCallIdSubscribables()`  | owns `/calls/[id]` membership; validates session, subscribes, leaves on unmount (unless popped out) | reuse room-navigation cleanup semantics             |
-| `LeftSideBar/StatusBar.vue` | surfaces **any** active call (room or standalone) and links back to it                              | decide membership from `currentRoomCallSessionId`   |
+| Owner                               | Responsibility                                                                                                                                           | Must not do                                         |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `callStore.leaveCall()`             | the only normal path that leaves, disconnects LiveKit, and resets active state                                                                           | run implicitly during room navigation               |
+| `useCallSubscribables()`            | observes the viewed room's session; updates `currentRoomCallSessionId`, and its participants unless the joined call holds that session                   | remove the active participant or disconnect LiveKit |
+| `useCallParticipantSubscribables()` | subscribes the joined call's participants, from the messages layout for a room call and the call page for a standalone one; a session has one such owner | subscribe a session the joined call does not hold   |
+| `useCallIdSubscribables()`          | owns `/calls/[id]` membership; validates session, subscribes, leaves on unmount (unless popped out)                                                      | reuse room-navigation cleanup semantics             |
+| `LeftSideBar/StatusBar.vue`         | surfaces **any** active call (room or standalone) and links back to it                                                                                   | decide membership from `currentRoomCallSessionId`   |
 
 ## Join flow
 

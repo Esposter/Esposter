@@ -67,15 +67,16 @@ Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (
 
 ## Key files
 
-| File                                                                   | Role                                                 |
-| :--------------------------------------------------------------------- | :--------------------------------------------------- |
-| `apps/web/app/pages/calls/index.vue`                                   | lobby/start page                                     |
-| `apps/web/app/pages/calls/[id].vue`                                    | fullscreen call route (prejoin → waiting → call)     |
-| `apps/web/app/components/Message/Content/Call/View.vue`                | full call surface + top bar                          |
-| `apps/web/app/components/Message/Content/Call/Stage.vue`               | shared presenter/grid stage                          |
-| `apps/web/app/components/Message/Content/Call/Participant/Tile.vue`    | participant tile                                     |
-| `apps/web/app/components/Message/Content/Call/Control/Bar.vue`         | the call view's controls                             |
-| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`         | the room's strip, and the call view over its content |
-| `apps/web/app/components/Message/Content/Call/Device/SectionList.vue`  | a device popover's listboxes, one per kind           |
-| `apps/web/app/components/Message/Content/Call/PreJoin/`                | prejoin preview                                      |
-| `apps/web/app/composables/message/room/call/useCallIdSubscribables.ts` | standalone page membership                           |
+| File                                                                            | Role                                                                |
+| :------------------------------------------------------------------------------ | :------------------------------------------------------------------ |
+| `apps/web/app/pages/calls/index.vue`                                            | lobby/start page                                                    |
+| `apps/web/app/pages/calls/[id].vue`                                             | fullscreen call route (prejoin → waiting → call)                    |
+| `apps/web/app/components/Message/Content/Call/View.vue`                         | full call surface + top bar                                         |
+| `apps/web/app/components/Message/Content/Call/Stage.vue`                        | shared presenter/grid stage                                         |
+| `apps/web/app/components/Message/Content/Call/Participant/Tile.vue`             | participant tile                                                    |
+| `apps/web/app/components/Message/Content/Call/Control/Bar.vue`                  | the call view's controls                                            |
+| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`                  | the room's strip, and the call view over its content                |
+| `apps/web/app/components/Message/Content/Call/Device/SectionList.vue`           | a device popover's listboxes, one per kind                          |
+| `apps/web/app/components/Message/Content/Call/PreJoin/`                         | prejoin preview                                                     |
+| `apps/web/app/composables/message/room/call/useCallIdSubscribables.ts`          | standalone page membership                                          |
+| `apps/web/app/composables/message/room/call/useCallParticipantSubscribables.ts` | the joined call's participants, on whichever surface shows the call |

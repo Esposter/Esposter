@@ -33,7 +33,7 @@ Only user intent, moderation, session loss and leaving `/calls/[id]` remove the 
 
 ## Deep Dives
 
-- `references/participant-state.md` — when reading, iterating or mutating call participants on the client, or adding a field that describes one.
+- `references/participant-state.md` — when reading, iterating or mutating call participants on the client, adding a field that describes one, or deciding which surface subscribes a session's participants.
 - `references/permissions-and-admin-actions.md` — when adding a `RoomPermission` bit or an `AdminActionType`, or wiring an admin action hook into the call stores.
 - `references/standalone-lobby.md` — when working on `/calls` or `/calls/[id]`: the shareable link, pre-join states, and knock/admit.
 - `references/session-lifecycle.md` — when changing what a call persists or holds in memory, or a join or leave step.
