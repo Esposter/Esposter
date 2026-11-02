@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { useCallPreJoinMedia } from "@/composables/message/room/call/useCallPreJoinMedia";
+import { MediaStreamKind } from "@/models/message/room/call/MediaStreamKind";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -16,14 +17,14 @@ describe(useCallPreJoinMedia, () => {
   let media: ReturnType<typeof useCallPreJoinMedia>;
 
   // Each request stays pending until the test grants it, so a toggle can land while the mount's probe is still waiting
-  const grantRequests = (kind: "audio" | "video", stream = { getTracks: () => [] } as unknown as MediaStream) => {
+  const grantRequests = (kind: MediaStreamKind, stream = { getTracks: () => [] } as unknown as MediaStream) => {
     const granted = pendingRequests.filter(({ constraints }) => Boolean(constraints[kind]));
     pendingRequests = pendingRequests.filter((request) => !granted.includes(request));
     for (const { resolve } of granted) resolve(stream);
   };
-  const countRequests = (kind: "audio" | "video") =>
+  const countRequests = (kind: MediaStreamKind) =>
     getUserMedia.mock.calls.filter(([constraints]) => Boolean(constraints[kind])).length;
-  const mountCallPreJoinMedia = async () =>
+  const mountCallPreJoinMedia = () =>
     mountSuspended(
       defineComponent({
         render: () => h("div"),
@@ -42,7 +43,9 @@ describe(useCallPreJoinMedia, () => {
         }),
     );
     Object.defineProperty(navigator, "mediaDevices", { configurable: true, value: { getUserMedia } });
-    useKnockerStore().resetKnockerState();
+    const knockerStore = useKnockerStore();
+    const { resetKnockerState } = knockerStore;
+    resetKnockerState();
   });
 
   test("a camera toggle during the mount's camera request joins it rather than requesting a second stream", async () => {
@@ -51,11 +54,11 @@ describe(useCallPreJoinMedia, () => {
     await mountCallPreJoinMedia();
     const toggling = media.toggleCamera();
     await flushPromises();
-    grantRequests("video");
+    grantRequests(MediaStreamKind.Video);
     await toggling;
     await flushPromises();
 
-    expect(countRequests("video")).toBe(1);
+    expect(countRequests(MediaStreamKind.Video)).toBe(1);
     expect(media.isCameraEnabled.value).toBe(true);
   });
 
@@ -64,7 +67,7 @@ describe(useCallPreJoinMedia, () => {
 
     await mountCallPreJoinMedia();
     await media.toggleMicrophone();
-    grantRequests("audio");
+    grantRequests(MediaStreamKind.Audio);
     await flushPromises();
 
     expect(media.isMicrophoneEnabled.value).toBe(false);
@@ -76,7 +79,7 @@ describe(useCallPreJoinMedia, () => {
     const wrapper = await mountCallPreJoinMedia();
     const stopTrack = vi.fn<() => void>();
     wrapper.unmount();
-    grantRequests("video", { getTracks: () => [{ stop: stopTrack }] } as unknown as MediaStream);
+    grantRequests(MediaStreamKind.Video, { getTracks: () => [{ stop: stopTrack }] } as unknown as MediaStream);
     await flushPromises();
 
     expect(stopTrack).toHaveBeenCalledTimes(1);
