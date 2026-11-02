@@ -33,6 +33,12 @@ describe(getHoldingRule, () => {
     expect(getHoldingRule({ ...dependency, latest: "1.0.1" }, [capped])).toBeUndefined();
   });
 
+  test("reads a digest row's version against the cap, not its short digest", () => {
+    expect.hasAssertions();
+
+    expect(getHoldingRule({ ...dependency, latest: "1.0.1@0000000" }, [capped])).toBeUndefined();
+  });
+
   test("ignores a rule naming another package", () => {
     expect.hasAssertions();
 

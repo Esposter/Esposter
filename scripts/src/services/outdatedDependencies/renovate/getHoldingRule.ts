@@ -19,9 +19,12 @@ export const getHoldingRule = (
     ({ allowedVersions, matchPackageNames }) =>
       allowedVersions !== undefined && matchPackageNames.includes(packageName),
   );
+  // A digest row's `latest` is its version with the short digest after an `@`, which no version parses, so the cap
+  // Reads the version alone
+  const version = latest.replace(/@.*$/u, "");
   if (
     allowedVersionsRule?.allowedVersions !== undefined &&
-    !checkIsVersionInRange(latest, allowedVersionsRule.allowedVersions, { includePrerelease: true })
+    !checkIsVersionInRange(version, allowedVersionsRule.allowedVersions, { includePrerelease: true })
   )
     return allowedVersionsRule;
   else return undefined;
