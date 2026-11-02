@@ -10,7 +10,7 @@ import type { PaimonsBargainsGood, PaimonsBargainsRotation } from "#src/models/s
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
-import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
+import type { CurrencyCount, ShopGoodCell, ShopTabCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import { useShopGoodCells } from "#src/composables/useShopGoodCells";
@@ -23,8 +23,10 @@ import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargai
 import { buyPaimonsBargainsWeapon } from "#src/services/shop/buyPaimonsBargainsWeapon";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
+import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/checkIsPaimonsBargainsCharacterBuyable";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
+import { PAIMON_BARGAINS_TABS } from "#src/services/shop/constants";
 import { getPaimonsBargainsGoods } from "#src/services/shop/getPaimonsBargainsGoods";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -105,6 +107,15 @@ const offers = computed<Offer[]>(() => {
     ...weaponGoods.map((good): Offer => ({ good, kind: ShopOfferKind.Weapon })),
   ];
 });
+// The tab the goods show on, the first until the player picks another, and the offers bought with its currency
+const tabId = ref(takeOne(PAIMON_BARGAINS_TABS, 0).id);
+const tabs = computed<ShopTabCell[]>(() =>
+  PAIMON_BARGAINS_TABS.map(({ id, nameKey }) => ({ id, name: gameText[nameKey] })),
+);
+const shownOffers = computed(() => {
+  const currency = PAIMON_BARGAINS_TABS.find(({ id }) => id === tabId.value)?.currency;
+  return offers.value.filter(({ good }) => good.costs.some(({ itemId }) => currencyOf(itemId) === currency));
+});
 const nameOfCharacter = (characterId: number): string =>
   nameText[characterDataMap.get(characterId)?.nameTextId ?? ""] ?? "";
 const getWeaponDefinition = (weaponId: number): ItemDefinition => {
@@ -126,7 +137,7 @@ const balances = computed<CurrencyCount[]>(() =>
 );
 // The name each offer is drawn under: a Fate's currency name, a character's name, or a weapon's name
 const offerNames = computed(() =>
-  offers.value.map(({ good, kind }) => ({
+  shownOffers.value.map(({ good, kind }) => ({
     good,
     name:
       kind === ShopOfferKind.Fate
@@ -143,12 +154,20 @@ const shopGoodCells = useShopGoodCells({
   goods: offerNames,
   purchases,
 });
-// The Fates are drawn in the gold tone the reference gives them, the characters and weapons in the plain one
+// The Fates are drawn in the gold tone the reference gives them, the characters and weapons in the plain one, and a character
+// The player holds at its sixth constellation shows the game's sold-out line in place of its limit
 const goodCells = computed(() => {
-  const fateIds = new Set(
-    offers.value.filter(({ kind }) => kind === ShopOfferKind.Fate).map(({ good }) => good.goodsId),
-  );
-  return shopGoodCells.value.map((cell): ShopGoodCell => (fateIds.has(cell.id) ? { ...cell, tone: "gold" } : cell));
+  const offerById = new Map(shownOffers.value.map((offer): [number, Offer] => [offer.good.goodsId, offer]));
+  return shopGoodCells.value.map((cell): ShopGoodCell => {
+    const offer = offerById.get(cell.id);
+    if (offer?.kind === ShopOfferKind.Fate) return { ...cell, tone: "gold" };
+    if (
+      offer?.kind === ShopOfferKind.Character &&
+      !checkIsPaimonsBargainsCharacterBuyable(characters.value.find(({ id }) => id === offer.good.itemId))
+    )
+      return { ...cell, soldOutLabel: gameText[GameTextKey.ShopMaximumStellaFortuna] };
+    return cell;
+  });
 });
 // The most the picked good can be bought for: a Fate counts its limit left and the player's currency, a character or a
 // Weapon of the rotation is bought one at a time
@@ -224,6 +243,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     <ShopScreen
       v-model:count="count"
       v-model:good-id="goodId"
+      v-model:tab-id="tabId"
       class="paimons-bargains-shop"
       :balances
       :buy-label="gameText[GameTextKey.ShopPurchase]"
@@ -231,7 +251,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-label="gameText[GameTextKey.CraftingAmount]"
       :count-maximum
       :goods="goodCells"
-      :tabs="[]"
+      :tabs
       :title="gameText[GameTextKey.PaimonsBargains]"
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
@@ -289,6 +309,64 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 .paimons-bargains-shop :deep(.good-price .price-icon) {
   width: calc(var(--unit) * 22);
   height: calc(var(--unit) * 22);
+}
+
+/* The tab row is the reference's, measured off its pixels: the picked tab a cream pill across 140 to 516 and 8 to 76 down, and
+   the other two set in their own text, Stardust centred at 716 and Primogems, two lines, at 1104 */
+.paimons-bargains-shop :deep(.tabs) {
+  top: calc(var(--unit) * 8);
+  left: calc(var(--unit) * 140);
+  gap: 0;
+}
+
+.paimons-bargains-shop :deep(.tab) {
+  height: calc(var(--unit) * 68);
+  font-size: calc(var(--unit) * 24);
+  line-height: calc(var(--unit) * 30);
+}
+
+.paimons-bargains-shop :deep(.tab[aria-pressed="true"]) {
+  background: #c4bbac;
+}
+
+.paimons-bargains-shop :deep(.tabs li:nth-child(1) .tab) {
+  width: calc(var(--unit) * 376);
+}
+
+.paimons-bargains-shop :deep(.tabs li:nth-child(2)) {
+  margin-left: calc(var(--unit) * 71);
+}
+
+.paimons-bargains-shop :deep(.tabs li:nth-child(2) .tab) {
+  width: calc(var(--unit) * 257);
+}
+
+.paimons-bargains-shop :deep(.tabs li:nth-child(3)) {
+  margin-left: calc(var(--unit) * 162);
+}
+
+.paimons-bargains-shop :deep(.tabs li:nth-child(3) .tab) {
+  width: calc(var(--unit) * 196);
+}
+
+/* A character held at its sixth constellation shows the game's sold-out line as a red band across its card, its name above
+   the band and its price band below, as the reference's Fischl card is drawn */
+.paimons-bargains-shop :deep(.good-sold-out) {
+  top: calc(var(--unit) * 186);
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--unit) * 86);
+  padding: 0 calc(var(--unit) * 8);
+  background: #c45a54;
+  font-size: calc(var(--unit) * 22);
+  line-height: calc(var(--unit) * 29);
+}
+
+.paimons-bargains-shop :deep(.good:has(.good-sold-out) .good-name) {
+  bottom: calc(var(--unit) * 155);
 }
 
 /* The world behind the shop is the reference's own: its margins measure dark at the top and light at the bottom, so the

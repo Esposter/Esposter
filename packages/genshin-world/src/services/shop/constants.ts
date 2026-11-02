@@ -1,5 +1,8 @@
 import type { GameDataKey } from "#src/generated/gameDataKeys";
 
+import { Currency } from "#src/models/inventory/Currency";
+import { GameTextKey } from "genshin-text";
+
 // The moment a good that never refreshes counts its purchases from, before any of them
 export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0);
 // How many pairs of characters Paimon's Bargains' rotation holds, and the offset that puts January on the fourth of them
@@ -13,6 +16,13 @@ export const DRAFF_SHOP_ID = 1017;
 export const DAY_VENDOR_SHOP_IDS: readonly number[] = [BROOK_SHOP_ID, DRAFF_SHOP_ID];
 // The shop Paimon's Bargains sells its Fates from, by the shop's id, which its screen reads the Fates of
 export const PAIMON_BARGAINS_SHOP_ID = 1001;
+// Paimon's Bargains' tabs in the order the screen shows them, each by its id, the currency its goods are bought with and the
+// Key of its name. The Primogem tab's Fates are the inventory's, which the slice does not hold, so that tab is empty for now
+export const PAIMON_BARGAINS_TABS: readonly { currency: Currency; id: number; nameKey: GameTextKey }[] = [
+  { currency: Currency.MasterlessStarglitter, id: 1, nameKey: GameTextKey.StarglitterExchange },
+  { currency: Currency.MasterlessStardust, id: 2, nameKey: GameTextKey.StardustExchange },
+  { currency: Currency.Primogem, id: 3, nameKey: GameTextKey.PurchaseWithPrimogems },
+];
 // The Realm Depot, Tubby's shop, which the realm's depot sells its goods from, by the shop's id
 export const REALM_DEPOT_SHOP_ID = 1048;
 // The keys of the Realm Depot's goods, one for each of its tabs, in the tabs' order

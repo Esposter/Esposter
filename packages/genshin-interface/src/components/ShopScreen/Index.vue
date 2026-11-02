@@ -85,7 +85,8 @@ const { pickedCount, pickedGood } = useShopGoodPick({
           @click="goodId = good.id"
         >
           <span class="good-name">{{ good.name }}</span>
-          <span v-if="good.limitLabel" class="good-limit">{{ good.limitLabel }}</span>
+          <span v-if="good.soldOutLabel" class="good-limit good-sold-out">{{ good.soldOutLabel }}</span>
+          <span v-else-if="good.limitLabel" class="good-limit">{{ good.limitLabel }}</span>
           <span v-for="cost of good.costs" :key="cost.name" class="good-price">
             <span class="price-icon" role="img" :aria-label="cost.name" />
             {{ cost.count }}

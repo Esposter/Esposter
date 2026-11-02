@@ -628,6 +628,8 @@ export enum GameTextKey {
   Primogem = "2696654964",
   // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
   ProcessingStart = "1809596508",
+  // The tab of Paimon's Bargains that sells its goods for Primogems, named by the goods' own tab text
+  PurchaseWithPrimogems = "2459557210",
   PyroSigil = "4277114300",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",
@@ -794,6 +796,8 @@ export enum GameTextKey {
   ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
   ShopLimitMonthly = "UI_MALL_LIMIT_BUY_INFO",
   ShopLimitWeekly = "UI_MALL_LIMIT_BUY_INFO_WEEKLY",
+  // The line a character a shop sells shows once the player holds it at its full constellations, in place of its limit
+  ShopMaximumStellaFortuna = "UI_MALL_NOTAVAILABLE_AVARTARTALENTFULL",
   // The shop's Buy button, which purchases the picked good
   ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
   // The Refreshes in line a shop's good shows, its countdown filled in
@@ -821,6 +825,10 @@ export enum GameTextKey {
   // The HUD's stamina meter, named for a screen reader
   Stamina = "133358079",
   Starconch = "1463427132",
+  // The tab of Paimon's Bargains that sells its goods for Masterless Stardust, named by the goods' own tab text
+  StardustExchange = "405681154",
+  // The tab of Paimon's Bargains that sells its goods for Masterless Starglitter, named by the goods' own tab text
+  StarglitterExchange = "2900970978",
   Starshroom = "2119751124",
   Starsilver = "1269908988",
   // The title of a Statue of The Seven's Blessing screen, which F on a resonated statue opens
