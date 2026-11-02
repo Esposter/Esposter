@@ -76,27 +76,28 @@ A reserve names the old content's assets and the new content's together, so a wr
 
 ## Key files
 
-| File                                                                            | Role                                                                            |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`                    | hashes the file, skips the PUT for a held address, returns the stable url       |
-| `apps/web/app/services/azure/container/commitBlockList.ts`                      | the create-only commit (`If-None-Match: *`) and its 412                         |
-| `apps/web/server/services/resource/generateReservedResourceAssetSasEntities.ts` | the held check, the reservation and the write SAS per address                   |
-| `apps/web/shared/models/resource/ResourceFileSasEntity.ts`                      | the write target, with `isHeld`                                                 |
-| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`             | the Blob Created handler                                                        |
-| `apps/functions/src/services/storage/verifyResourceAssetBlob.ts`                | the streamed hash check and the delete on mismatch                              |
-| `packages/db-schema/src/schema/resource/resourceVersionAssetsInResource.ts`     | the version reference table                                                     |
-| `packages/db-schema/src/schema/resource/resourceWorkingAssetsInResource.ts`     | the working-copy reference table                                                |
-| `apps/web/server/services/resource/saveResourceContent.ts`                      | the one content writer: reserves, prunes and releases its assets                |
-| `apps/web/server/services/resource/reserveWorkingAssets.ts`                     | the first half of a save, under the resource lock, before the upload            |
-| `apps/web/server/services/resource/pruneWorkingAssets.ts`                       | the second half of a save, in the write's transaction, returning dropped hashes |
-| `apps/web/server/services/resource/snapshot/getSnapshotAssetHashes.ts`          | the scan of a version's content for asset addresses                             |
-| `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`            | writes the version reference rows and checks the addresses exist                |
-| `apps/web/server/services/resource/snapshot/touchSnapshotAssets.ts`             | touches the stored assets a write names and hands back the missing ones         |
-| `apps/web/server/services/resource/snapshot/releaseResourceAssets.ts`           | the one release, with the lock, the grace window and the counting-only gate     |
-| `apps/web/shared/services/resource/constants.ts`                                | `ASSET_GRACE_MS` and `checkIsAssetCollectionEnabled()`                          |
-| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`             | the one read-access question, asked by the endpoint and by duplicate            |
-| `apps/web/server/services/resource/readResourceAccess.ts`                       | the owner and publication checks, made once for all its assets                  |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                       | duplicate's copy of referenced files                                            |
+| File                                                                            | Role                                                                              |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`                    | hashes the file, skips the PUT for a held address, returns the stable url         |
+| `apps/web/app/services/azure/container/commitBlockList.ts`                      | the create-only commit (`If-None-Match: *`) and its 412                           |
+| `apps/web/server/services/resource/generateReservedResourceAssetSasEntities.ts` | the held check, the reservation and the write SAS per address                     |
+| `apps/web/shared/models/resource/ResourceFileSasEntity.ts`                      | the write target, with `isHeld`                                                   |
+| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`             | the Blob Created handler                                                          |
+| `apps/functions/src/services/storage/verifyResourceAssetBlob.ts`                | the streamed hash check and the delete on mismatch                                |
+| `packages/db-schema/src/schema/resource/resourceVersionAssetsInResource.ts`     | the version reference table                                                       |
+| `packages/db-schema/src/schema/resource/resourceWorkingAssetsInResource.ts`     | the working-copy reference table                                                  |
+| `apps/web/server/services/resource/saveResourceContent.ts`                      | the one content writer: reserves, prunes and releases its assets                  |
+| `apps/web/server/services/resource/reserveWorkingAssets.ts`                     | the first half of a save, under the resource lock, before the upload              |
+| `apps/web/server/services/resource/pruneWorkingAssets.ts`                       | the second half of a save, in the write's transaction, returning dropped hashes   |
+| `apps/web/server/services/resource/snapshot/getSnapshotAssetHashes.ts`          | the scan of a version's content for asset addresses                               |
+| `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`            | writes the version reference rows and checks the addresses exist                  |
+| `apps/web/server/services/resource/snapshot/touchSnapshotAssets.ts`             | touches the stored assets a write names and hands back the missing ones           |
+| `apps/web/server/services/resource/snapshot/releaseResourceAssets.ts`           | the one release, with the lock, the grace window and the counting-only gate       |
+| `apps/web/shared/services/resource/constants.ts`                                | `ASSET_GRACE_MS` and `checkIsAssetCollectionEnabled()`                            |
+| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`             | the one read-access question, asked by the endpoint and by duplicate              |
+| `apps/web/server/services/resource/readResourceAccess.ts`                       | the owner and publication checks, made once for all its assets                    |
+| `apps/web/server/services/resource/collectResourceAssetPaths.ts`                | the scan of content for asset addresses, shared by the version scan and duplicate |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                       | duplicate's copy of referenced files                                              |
 
 ## Notes
 

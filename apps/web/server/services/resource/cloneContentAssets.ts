@@ -4,15 +4,13 @@ import type { Database, ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
+import { collectResourceAssetPaths } from "#server/services/resource/collectResourceAssetPaths";
 import { readResourceAccess } from "#server/services/resource/readResourceAccess";
-import { relativizeOwnAssetUrls } from "#server/services/resource/relativizeOwnAssetUrls";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
-import { RESOURCE_ASSET_URL_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
+import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
-import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
-import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { chargeAndCopyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
@@ -57,21 +55,15 @@ export const cloneContentAssets = async <TContent>(
   content: TContent,
   destinationResourceId: ResourceInResource["id"],
 ): Promise<TContent> => {
-  const relativizedContent = relativizeOwnAssetUrls(content);
-  const urls = new Set<string>();
-  deepVisitStrings(relativizedContent, (value) => {
-    for (const [url] of value.matchAll(RESOURCE_ASSET_URL_REGEX)) urls.add(url);
-  });
-  if (urls.size === 0) return relativizedContent;
+  const { content: relativizedContent, resourceAssetPaths } = collectResourceAssetPaths(content);
+  if (resourceAssetPaths.size === 0) return relativizedContent;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   // The promise is stored rather than its value, so the assets checked concurrently below share one read per resource
   const resourceIdAccessMap = new Map<ResourceInResource["id"], Promise<ResourceAccess>>();
   const clonableAssets = (
     await Promise.all(
-      Array.from(urls, async (url) => {
-        const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
-        if (!resourceAssetPath) return [];
+      Array.from(resourceAssetPaths, async ([url, resourceAssetPath]) => {
         const resourceAccess = await getOrCreate(resourceIdAccessMap, resourceAssetPath.resourceId, () =>
           readResourceAccess(db, resourceAssetPath.resourceId, userId),
         );
