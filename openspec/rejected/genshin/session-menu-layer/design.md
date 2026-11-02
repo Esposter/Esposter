@@ -30,8 +30,8 @@ A shape that gathers many events into one component forwards them, and that is t
 
 ## Key files
 
-| Path                                                                                 | Role                                                    |
-| :----------------------------------------------------------------------------------- | :------------------------------------------------------ |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                      | The root, which holds the menu layer inline             |
-| `.agents/skills/vue-component-patterns/references/splitting-a-component.md`          | How a cut is made, and that it never bends to the tool  |
-| `openspec/changes/architecture-vize-vue-typecheck/reports/event-map-overload-cap.md` | The draft report on the checker's defect, for the owner |
+| Path                                                                        | Role                                                                      |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `packages/genshin-world/src/components/World/Session/Index.vue`             | The root, which holds the menu layer inline                               |
+| `.agents/skills/vue-component-patterns/references/splitting-a-component.md` | How a cut is made, and that it never bends to the tool                    |
+| [vize issue 11390](https://github.com/ubugeeei-prod/vize/issues/11390)      | The report on the checker's defect, filed by the owner and fixed upstream |

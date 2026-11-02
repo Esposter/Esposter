@@ -14,7 +14,8 @@ export const inlineFontFace = async (rule: CSSFontFaceRule) => {
     throw new InvalidOperationError(Operation.Read, inlineFontFace.name, `Could not read font ${fontUrl.href}`);
   const contentType = response.headers.get("content-type") ?? "font/woff2";
   const fontData = encodeBase64(new Uint8Array(await response.arrayBuffer()));
-  const descriptors = [...rule.style]
+  // oxlint-disable-next-line unicorn/prefer-spread -- a font face's descriptors are array-like but not iterable in TypeScript 7.1's DOM typings, so a spread does not type
+  const descriptors = Array.from(rule.style)
     .filter((property) => property !== "src")
     .map((property) => `${property}:${rule.style.getPropertyValue(property)}`);
   return `@font-face{${descriptors.join(";")};src:url("data:${contentType};base64,${fontData}")}`;

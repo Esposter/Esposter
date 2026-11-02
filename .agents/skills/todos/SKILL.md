@@ -47,6 +47,7 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 - `apps/web/app/components/Ui/Slider.vue` — vuetifyjs/0: "Slider: `end` is emitted only on pointerup, never for a keyboard change"
 - `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
 - `packages/trpc-nuxt-module/src/runtime/client/models/TRPCNuxtClient.test-d.ts` — arktype/arktype: "attest: instantiation counts fail under a tsgo-backed `typescript` — `@typescript/vfs` reports the probe file as existing, then finds no source file for it"
+- `apps/web/app/types/vize.d.ts` — ubugeeei-prod/vize: "Content mapper: an undeclared attribute on a library generic component is rejected (TS2353) because the embedded helpers do not declare `__VLS_PROPS_FALLBACK`"
 - `apps/web/shared/types/nuxt.d.ts` — nuxt/nuxt: "The server project types neither `import.meta.env` for `shared/` code nor a module's Nitro runtime hooks"
 - `apps/web/app/composables/auth/useAuthSession.ts` — better-auth/better-auth: "Vue client: `useSession(useFetch)` no longer typechecks on Nuxt 5, whose `useFetch` overloads are generic over the route"
 - `apps/web/configuration/hooks.ts` — nuxt/nuxt: "The nightlies are versioned `5.0.0-<timestamp>-<sha>`, which kit's nightly-suffix strip leaves in place, so kit silently disables each module declaring a `^5.0.0` range"
