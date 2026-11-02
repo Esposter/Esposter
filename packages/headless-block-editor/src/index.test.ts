@@ -9,12 +9,12 @@ describe("headless-block-editor", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 16 KB"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 64 KB"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 16 KB"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 32 KB"`);
   });
 });

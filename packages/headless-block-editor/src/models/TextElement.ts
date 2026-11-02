@@ -1,0 +1,29 @@
+import type { ItemEntityType } from "@esposter/shared";
+
+import { PositionedElementType } from "#src/models/PositionedElementType";
+import { z } from "zod";
+
+// A text box: text wrapped at the width the person set. It stores no height, since its height follows from the lines its text wraps to
+export interface TextElement extends ItemEntityType<PositionedElementType.Text> {
+  id: string;
+  text: string;
+  width: number;
+  x: number;
+  y: number;
+}
+
+export const textElementSchema: z.ZodObject<{
+  id: z.ZodUUID;
+  text: z.ZodString;
+  type: z.ZodLiteral<PositionedElementType.Text>;
+  width: z.ZodNumber;
+  x: z.ZodNumber;
+  y: z.ZodNumber;
+}> = z.object({
+  id: z.uuid(),
+  text: z.string(),
+  type: z.literal(PositionedElementType.Text),
+  width: z.number().positive(),
+  x: z.number(),
+  y: z.number(),
+}) satisfies z.ZodType<TextElement>;
