@@ -76,9 +76,10 @@ export const useRowStore = defineStore("resource/sheet/row", () => {
   });
 
   // A new filter starts the rows over, but opening another sheet brings that sheet's own filters, and its page with
-  // Them
+  // Them. The stored filters are watched rather than the derived column filters, which a re-read of the open sheet
+  // Rebuilds with no filter changed — only a write to the stored ones replaces that object
   watch(
-    [() => resourceStore.currentResourceId, () => filterStore.columnFilters],
+    [() => resourceStore.currentResourceId, () => filterStore.storedColumnFilters],
     ([newResourceId], [oldResourceId]) => {
       if (newResourceId === oldResourceId) page.value = 1;
     },

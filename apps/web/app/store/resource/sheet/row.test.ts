@@ -69,6 +69,22 @@ describe(useRowStore, () => {
     expect(page.value).toBe(2);
   });
 
+  // The open sheet's columns are rebuilt when its content is read again — a restore, or another device's save — and
+  // That rebuilds the derived column filters without any filter having changed, so the page it was on has to stay
+  test("keeps a sheet's page when its content is read again", async () => {
+    expect.hasAssertions();
+
+    setupWithDataSource(createDataSource([createColumn("")], []));
+    const sheetStore = useSheetStore();
+    const rowStore = useRowStore();
+    const { page } = storeToRefs(rowStore);
+    page.value = 2;
+    sheetStore.sheetResource.data = createDataSource([createColumn("")], []);
+    await flushPromises();
+
+    expect(page.value).toBe(2);
+  });
+
   // An aggregation keeps nothing in its row, so its cell follows its source's cells: an edit to one of them has to
   // Reach the text the row shows
   test("an aggregation's cell text follows an edit to its source cell", () => {

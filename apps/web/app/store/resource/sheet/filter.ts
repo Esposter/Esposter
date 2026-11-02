@@ -26,5 +26,5 @@ export const useFilterStore = defineStore("resource/sheet/filter", () => {
     const { [columnName]: _removedFilter, ...rest } = storedColumnFilters.value;
     storedColumnFilters.value = filter ? { ...rest, [columnName]: filter } : rest;
   };
-  return { clearColumnFilters, columnFilters, setColumnFilter };
+  return { clearColumnFilters, columnFilters, setColumnFilter, storedColumnFilters };
 });
