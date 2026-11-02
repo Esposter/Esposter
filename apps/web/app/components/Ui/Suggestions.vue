@@ -67,7 +67,7 @@ useEventListener(
   () => field,
   "keydown",
   (event: KeyboardEvent) => {
-    if (!isOpen.value) return;
+    if (!isOpen.value || event.isComposing) return;
     const highlightedItem = items.find(({ value }) => value === highlightedId.value);
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();

@@ -22,8 +22,8 @@ describe("uiSuggestions", () => {
       const component = mount(UiSuggestions, { attachTo: document.body, props: { field, items, label } });
       field.focus();
       await flushPromises();
-      const press = (key: string) => {
-        const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, key });
+      const press = (key: string, isComposing = false) => {
+        const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, isComposing, key });
         field.dispatchEvent(event);
         return event;
       };
@@ -64,6 +64,21 @@ describe("uiSuggestions", () => {
         ["Enter", true],
       ]);
       expect(component.emitted("select")).toStrictEqual([["a"]]);
+    });
+
+    test("leaves the keys of an IME composition to the field, a highlighted suggestion and all", async () => {
+      expect.hasAssertions();
+
+      const { component, field, press } = await mountSuggestions();
+      press("ArrowDown");
+      await flushPromises();
+      const arrow = press("ArrowDown", true);
+      const enter = press("Enter", true);
+      await flushPromises();
+
+      expect([arrow.defaultPrevented, enter.defaultPrevented]).toStrictEqual([false, false]);
+      expect(component.emitted("select")).toBeUndefined();
+      expect(document.getElementById(field.getAttribute("aria-activedescendant") ?? "")?.textContent.trim()).toBe("a");
     });
 
     test("puts itself away on Escape without the key reaching the page", async () => {

@@ -92,12 +92,18 @@ watch(isFocusWithin, (newIsFocusWithin) => {
         @focus="isOpen = true"
         @input="isOpen = true"
         @keydown.backspace="
-          () => {
-            if (text || tokens.length === 0) return;
+          (event: KeyboardEvent) => {
+            if (event.isComposing || text || tokens.length === 0) return;
             tokens = tokens.slice(0, -1);
           }
         "
-        @keydown.enter.prevent="emit('submit')"
+        @keydown.enter="
+          (event: KeyboardEvent) => {
+            if (event.isComposing) return;
+            event.preventDefault();
+            emit('submit');
+          }
+        "
         @keydown.esc="
           () => {
             if (isOpen) isOpen = false;

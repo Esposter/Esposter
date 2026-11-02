@@ -40,6 +40,18 @@ describe("uiTokenField", () => {
       expect(component.emitted("update:tokens")).toStrictEqual([[["a"]]]);
     });
 
+    test("leaves Enter and Backspace in an IME composition to the field, which commits it", async () => {
+      expect.hasAssertions();
+
+      const component = await mountTokenField();
+      const input = component.get("input");
+      await input.trigger("keydown", { isComposing: true, key: "Enter" });
+      await input.trigger("keydown", { isComposing: true, key: "Backspace" });
+
+      expect(component.emitted("submit")).toBeUndefined();
+      expect(component.emitted("update:tokens")).toBeUndefined();
+    });
+
     test("opens its panel as the text is focused, submits on Enter, and closes on Escape", async () => {
       expect.hasAssertions();
 
