@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { CharacterMenuProfileEntry } from "#src/models/CharacterMenuProfileEntry";
 
-import Row from "#src/components/CharacterMenu/Profile/Row/Index.vue";
+import GameButton from "#src/components/GameButton/Index.vue";
+import { GameButtonKind } from "#src/models/GameButtonKind";
+import { GAME_CREAM } from "#src/services/constants";
 
 interface Props {
   // The character's stories and then its voice-overs, each in the order the game lists them, the first one open at the start
@@ -24,7 +26,16 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
     <div class="entries-column">
       <ul class="entries">
         <li v-for="(entry, index) of entries" :key="index">
-          <Row :entry :is-selected="index === entryIndex" @select="entryIndex = index" />
+          <GameButton
+            class="entry"
+            :aria-pressed="index === entryIndex"
+            :data-locked="entry.isLocked"
+            :kind="GameButtonKind.Row"
+            tip=""
+            @click="entryIndex = index"
+          >
+            {{ entry.title }}
+          </GameButton>
         </li>
       </ul>
       <p v-if="namecardName" class="namecard">{{ namecardName }}</p>
@@ -65,7 +76,7 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
   display: block;
   width: 100%;
   margin-bottom: calc(var(--unit) * 8);
-  color: rgb(236 229 216 / 0.7);
+  color: color-mix(in srgb, v-bind(GAME_CREAM) 70%, transparent);
   cursor: inherit;
   font: inherit;
   text-align: start;
@@ -73,7 +84,7 @@ const selectedEntry = computed(() => entries[entryIndex.value]);
 
 .entry,
 .namecard {
-  border: calc(var(--unit) * 1) solid rgb(236 229 216 / 0.4);
+  border: calc(var(--unit) * 1) solid color-mix(in srgb, v-bind(GAME_CREAM) 40%, transparent);
   border-radius: calc(var(--unit) * 4);
   background: rgb(20 40 70 / 0.5);
   padding: calc(var(--unit) * 12) calc(var(--unit) * 16);

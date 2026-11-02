@@ -90,6 +90,6 @@ const steps = computed(() => [
 }
 
 .mark {
-  fill: rgb(236 229 216 / 0.5);
+  fill: color-mix(in srgb, v-bind(GAME_CREAM) 50%, transparent);
 }
 </style>

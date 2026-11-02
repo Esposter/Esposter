@@ -2,7 +2,13 @@
 import type { CharacterMenuTab } from "#src/models/CharacterMenuTab";
 
 import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
-import { GAME_ROW_HOVER, GAME_ROW_PRESS, INTERACTION_HOVER_MS, INTERACTION_REST_MS } from "#src/services/constants";
+import {
+  GAME_CREAM,
+  GAME_ROW_HOVER,
+  GAME_ROW_PRESS,
+  INTERACTION_HOVER_MS,
+  INTERACTION_REST_MS,
+} from "#src/services/constants";
 
 interface Props {
   // Each tab's name in the reader's language
@@ -82,7 +88,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   left: calc(var(--unit) * 191.6);
   width: calc(var(--unit) * 10.6);
   height: calc(var(--unit) * 10.6);
-  background: rgb(236 229 216 / 0.5);
+  background: color-mix(in srgb, v-bind(GAME_CREAM) 50%, transparent);
   content: "";
   transform: translateY(-50%) rotate(45deg);
 }
@@ -107,7 +113,7 @@ const restDuration = `${INTERACTION_REST_MS}ms`;
   box-sizing: border-box;
   width: calc(var(--unit) * 20.2);
   height: calc(var(--unit) * 20.2);
-  border: calc(var(--unit) * 1.6) solid rgb(236 229 216 / 0.45);
+  border: calc(var(--unit) * 1.6) solid color-mix(in srgb, v-bind(GAME_CREAM) 45%, transparent);
   background: linear-gradient(45deg, transparent 30%, rgb(255 250 240 / 0.45) 68.75%, rgb(236 231 219) 68.75%)
     padding-box;
 }

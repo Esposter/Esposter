@@ -104,7 +104,7 @@ const emit = defineEmits<{ start: [] }>();
   width: calc(var(--unit) * 48.8);
   height: calc(var(--unit) * 48.8);
   border-radius: 50%;
-  background: rgb(236 229 216 / 0.9);
+  background: color-mix(in srgb, v-bind(GAME_CREAM) 90%, transparent);
   color: #3b3b3b;
   font-size: calc(var(--unit) * 31.7);
   line-height: calc(var(--unit) * 48.8);
