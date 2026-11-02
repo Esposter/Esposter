@@ -1,0 +1,179 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "aa073c57-68fb-4864-bab0-238bb7f74d69",
+  "prevIds": [
+    "a07e19da-8cd7-4a6a-bbf6-e937d3b84f84"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "rooms"
+      ],
+      "writes": [
+        "s|fk|message.rooms.rooms_categoryId_room_categories_id_fk",
+        "n|fk|message.rooms.rooms_categoryId_room_categories_id_fk",
+        "e|fk|message.rooms.rooms_categoryId_room_categories_id_fk",
+        "n|con|message.rooms.rooms_categoryId_room_categories_id_fk"
+      ],
+      "reads": [
+        "n|tbl|message.rooms",
+        "n|sch|message",
+        "e|col|message.rooms.categoryId"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "message",
+        "usersToRooms",
+        "categoryId"
+      ],
+      "writes": [
+        "s|col|message.usersToRooms.categoryId",
+        "n|col|message.usersToRooms.categoryId",
+        "e|col|message.usersToRooms.categoryId"
+      ],
+      "reads": [
+        "n|tbl|message.usersToRooms",
+        "n|sch|message"
+      ]
+    },
+    {
+      "statementType": "drop_column",
+      "statementTarget": [
+        "column",
+        "message",
+        "rooms",
+        "categoryId"
+      ],
+      "writes": [
+        "s|col|message.rooms.categoryId",
+        "n|col|message.rooms.categoryId",
+        "e|col|message.rooms.categoryId"
+      ],
+      "reads": [
+        "n|tbl|message.rooms",
+        "n|sch|message"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "message",
+        "usersToRooms",
+        "usersToRooms_categoryId_index"
+      ],
+      "writes": [
+        "s|idx|message.usersToRooms_categoryId_index",
+        "n|idx|message.usersToRooms_categoryId_index",
+        "e|idx|message.usersToRooms_categoryId_index",
+        "n|rel|message.usersToRooms_categoryId_index"
+      ],
+      "reads": [
+        "n|tbl|message.usersToRooms",
+        "n|sch|message",
+        "n|col|message.usersToRooms.categoryId"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "usersToRooms"
+      ],
+      "writes": [
+        "s|fk|message.usersToRooms.usersToRooms_categoryId_roomCategories_id_fkey",
+        "n|fk|message.usersToRooms.usersToRooms_categoryId_roomCategories_id_fkey",
+        "e|fk|message.usersToRooms.usersToRooms_categoryId_roomCategories_id_fkey",
+        "n|con|message.usersToRooms.usersToRooms_categoryId_roomCategories_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|message.usersToRooms",
+        "n|sch|message",
+        "n|tbl|message.roomCategories",
+        "n|sch|message",
+        "n|col|message.usersToRooms.categoryId",
+        "n|col|message.roomCategories.id",
+        "e|uniqueness|message.roomCategories.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "usersToRooms",
+        "name": "categoryId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "usersToRooms",
+        "name": "usersToRooms_categoryId_index",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "categoryId",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": "\"categoryId\" IS NOT NULL",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "usersToRooms",
+        "name": "usersToRooms_categoryId_roomCategories_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "categoryId"
+        ],
+        "schemaTo": "message",
+        "tableTo": "roomCategories",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "SET NULL",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"message\",\"rooms\",\"categoryId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"message\",\"rooms\",\"rooms_categoryId_room_categories_id_fk\"]"
+    }
+  ]
+}
