@@ -2,7 +2,7 @@
 
 ## Why
 
-The world session's root (`packages/genshin-world/src/components/World/Session/Index.vue`) is the one place every feature meets. Its script is about 1,300 lines: 46 composable calls that take an options object, 445 option keys in all, and the largest take 53 (`useWorldInteractionDispatch`), 41 (`useWorldFrame`) and 26 (`useWorldInteractables`). Most of those keys are the same few values passed again and again: the saved state, the bag and wallet with their setters, the language, the text maps, the material data and the clock.
+The world session's root (`packages/genshin-world/src/components/World/Session/Index.vue`) is the one place every feature meets. Its script is about 1,300 lines: 51 composable calls that take an options object, 519 option keys in all, and the largest take 53 (`useWorldInteractionDispatch`), 41 (`useWorldFrame`) and 26 (`useWorldInteractables`). Most of those keys are the same few values passed again and again: the saved state, the bag and wallet with their setters, the language, the text maps, the material data and the clock.
 
 That repeated list is the cost the splitting guide measures every cut by: a feature that leaves the root takes an options interface with it, so a cut adds more lines than it removes. It is why the menu layer, the five overlay layers and every group composable were judged not to pay, and why the five overlay children were inlined. A page cannot own its composable because the composable's inputs are the root's state.
 
@@ -18,7 +18,7 @@ Nothing a player sees changes.
 
 ## What the count says
 
-Of the 445 option keys the root's 46 calls pass, 111 (about a quarter) are the shared context: the data URL, the clock, the events emitter, the bag and wallet with their setters, the text and the language. The ten bag spreads expand to six keys each, which the 111 does not count. The other three quarters are one feature's results handed to another, and a store of shared context does not remove those. So a session store alone is a quarter of the win, and the rest comes only from each feature owning its state in a store the others read, as the app's features do, which is the change's second layer.
+Of the 519 option keys the root's 51 calls pass, 129 (about a quarter) are the shared context: the data URL, the clock, the events emitter, the bag and wallet with their setters, the text and the language. Each of the ten bag spreads counts once there and expands to six keys, which the 129 does not count. The other three quarters are one feature's results handed to another, and a store of shared context does not remove those. So a session store alone is a quarter of the win, and the rest comes only from each feature owning its state in a store the others read, as the app's features do, which is the change's second layer.
 
 ## Gate
 
@@ -31,4 +31,4 @@ A slice is judged on the lines it adds and removes, counted over the slice and n
 
 ## Open questions
 
-- Which of the 46 calls read only shared state and which also read another feature's results. The second kind stays together in one composable, since splitting it moves the forward reference.
+- Which of the 51 calls read only shared state and which also read another feature's results. The second kind stays together in one composable, since splitting it moves the forward reference.

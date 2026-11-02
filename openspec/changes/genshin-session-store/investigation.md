@@ -6,30 +6,31 @@ What was measured before the change was written, so the next session starts from
 
 - The session root (`packages/genshin-world/src/components/World/Session/Index.vue`) is 2,082 lines: a script of about 1,291 lines and a template of about 720 and a style block of 68. Its history: 2,130 lines before the overlay layers were cut out (`ec11aadcd`), 1,933 after the cut and further work, 2,082 after the five forwarding layers were inlined again (`cdc82001f`). The cut had grown the package by about 540 lines and held no state or logic.
 - It declares 95 top-level constants, takes about 60 props (the loaded tables and the host's settings, from `WorldScreenProps` and `WorldTables`), and is mounted from one place, the world screen (`packages/genshin-world/src/components/World/Screen/Index.vue`).
-- 46 composable calls take an options object, with 445 option keys in all. The calls are in the table below, largest first, with the keys that are shared context and whether the composable has a test beside it.
-- 134 files in the composables folder, 25 of them tests. 18 of the 46 composables called from the root have a test.
+- 51 composable calls take an options object, with 519 option keys in all. The calls are in the table below, largest first, with the keys that are shared context and whether the composable has a test beside it.
+- 134 files in the composables folder, 25 of them tests. 21 of the 51 composables called from the root have a test.
 
 ## Which keys are shared context
 
-The shared set is the data URL, the clock readers, the events emitter, the bag and wallet with their setters, the material data, the names, the text and the language. Counting them per key across the 46 calls:
+The shared set is the data URL, the clock readers, the events emitter, the bag and wallet with their setters, the material data, the names, the text and the language. Counting them per key across the 51 calls:
 
-| Key                 | Calls that pass it |
-| :------------------ | -----------------: |
-| `gameDataBaseUrl`   |                 19 |
-| `getWorldNow`       |                 17 |
-| `events`            |                 17 |
-| `...bag`            |    9 (6 keys each) |
-| `inventory`         |                  7 |
-| `setWallet`         |                  6 |
-| `wallet`            |                  6 |
-| `gameText`          |                  6 |
-| `materialDataMap`   |                  5 |
-| `setInventory`      |                  5 |
-| `worldNow`          |                  4 |
-| `language`          |                  4 |
-| `names`, `nameText` |             3 each |
+| Key               | Calls that pass it |
+| :---------------- | -----------------: |
+| `gameDataBaseUrl` |                 22 |
+| `events`          |                 21 |
+| `getWorldNow`     |                 19 |
+| `...bag`          |   10 (6 keys each) |
+| `inventory`       |                  8 |
+| `setWallet`       |                  7 |
+| `wallet`          |                  7 |
+| `gameText`        |                  6 |
+| `materialDataMap` |                  6 |
+| `setInventory`    |                  6 |
+| `worldNow`        |                  5 |
+| `language`        |                  5 |
+| `names`           |                  4 |
+| `nameText`        |                  3 |
 
-That is 111 of the 445 keys, a quarter, with the ten `...bag` spreads on top of it. 32 of the 46 calls take at least one. 33 composables across the folder take the bag's setters. **The other three quarters are one feature's result given to another**, which no store of shared context removes; the dispatch, the frame and the interactables are mostly that.
+That is 129 of the 519 keys, a quarter. Each `...bag` spread counts once here, and the ten spreads expand to six keys each on top of that. 39 of the 51 calls take at least one. 33 composables across the folder take the bag's setters. **The other three quarters are one feature's result given to another**, which no store of shared context removes; the dispatch, the frame and the interactables are mostly that.
 
 ## Every call
 
@@ -39,48 +40,53 @@ That is 111 of the 445 keys, a quarter, with the ten `...bag` spreads on top of 
 | `useWorldFrame`               |          41 |           1 | no             |
 | `useWorldInteractables`       |          26 |           1 | no             |
 | `useWorldDomains`             |          23 |           5 | yes            |
+| `useWorldCommissionClaims`    |          20 |           8 | yes            |
 | `useWorldChests`              |          17 |           4 | yes            |
 | `useWorldCombat`              |          16 |           2 | yes            |
 | `useWorldMap`                 |          16 |           5 | yes            |
 | `useWorldOutcrops`            |          16 |           4 | yes            |
 | `useWorldTalks`               |          15 |           4 | yes            |
 | `useWorldTrounceBlossoms`     |          14 |           5 | yes            |
+| `useWorldTrials`              |          13 |           2 | yes            |
 | `useWorldFishing`             |          12 |           7 | no             |
 | `useWorldQuestRewards`        |          12 |           7 | yes            |
 | `useWorldReputationRequest`   |          12 |           1 | no             |
 | `useWorldArchive`             |          11 |           4 | no             |
-| `useWorldMail`                |          11 |           9 | no             |
 | `useWorldBagUse`              |          11 |           5 | no             |
+| `useWorldMail`                |          11 |           9 | no             |
 | `useWorldCommissions`         |          10 |           4 | yes            |
-| `useWorldPickups`             |          10 |           5 | no             |
 | `useWorldDoings`              |          10 |           0 | no             |
+| `useWorldPickups`             |          10 |           5 | no             |
 | `useWorldAdventureRank`       |           9 |           4 | yes            |
+| `useWorldDevHandles`          |           9 |           0 | no             |
+| `useWorldReputationBounty`    |           9 |           2 | no             |
 | `useWorldStatues`             |           9 |           3 | no             |
 | `useWorldAchievements`        |           8 |           6 | no             |
 | `useWorldSpiralAbyss`         |           8 |           4 | yes            |
 | `useWorldProfileNamecards`    |           7 |           2 | no             |
 | `useWorldQuestTargets`        |           7 |           1 | no             |
+| `useMiningOutcrops`           |           6 |           2 | yes            |
+| `useWorldForging`             |           6 |           4 | no             |
+| `useWorldHudFrame`            |           6 |           0 | no             |
+| `useWorldOfferings`           |           6 |           3 | yes            |
 | `useWorldPuzzles`             |           6 |           0 | yes            |
 | `useWorldShrines`             |           6 |           3 | yes            |
-| `useWorldOfferings`           |           6 |           3 | yes            |
-| `useWorldForging`             |           6 |           4 | no             |
-| `useMiningOutcrops`           |           6 |           2 | yes            |
-| `useWorldHudFrame`            |           6 |           0 | no             |
+| `useWorldCamera`              |           4 |           0 | no             |
 | `useWorldCardGame`            |           4 |           1 | no             |
-| `useWorldOculi`               |           4 |           1 | no             |
 | `useWorldExpeditionRoster`    |           4 |           0 | no             |
 | `useWorldHudVisibility`       |           4 |           0 | no             |
-| `useWorldCamera`              |           4 |           0 | no             |
+| `useWorldOculi`               |           4 |           1 | no             |
+| `useWorldQuests`              |           4 |           3 | no             |
+| `useWorldTips`                |           4 |           1 | yes            |
+| `useMenuNavigation`           |           3 |           0 | no             |
 | `useWorldRestorativePower`    |           3 |           1 | no             |
+| `useWorldSave`                |           3 |           1 | yes            |
+| `useWorldScreenBehaviour`     |           3 |           0 | no             |
 | `useWorldGadgets`             |           2 |           2 | yes            |
-| `useWorldSave`                |           0 |           0 | yes            |
-| `useWorldTips`                |           0 |           0 | yes            |
-| `useWorldQuests`              |           0 |           0 | no             |
-| `useWorldScreenBehaviour`     |           0 |           0 | no             |
-| `useMenuNavigation`           |           0 |           0 | no             |
-| `useWorldCooking`             |           0 |           0 | no             |
-| `useWorldShortcutWheel`       |           0 |           0 | no             |
-| `useWorldPointedLandmark`     |           0 |           0 | no             |
+| `useWorldPointedLandmark`     |           2 |           0 | no             |
+| `useWorldSaveSync`            |           2 |           0 | yes            |
+| `useWorldCooking`             |           1 |           1 | no             |
+| `useWorldShortcutWheel`       |           1 |           0 | no             |
 
 ## Which features other features read
 
@@ -126,19 +132,48 @@ For each composable whose results the root destructures, the number of its resul
 
 ## The count, as a script
 
-```python
-import re
-s = open("packages/genshin-world/src/components/World/Session/Index.vue").read().split("</script>")[0]
-shared = {"inventory", "wallet", "setInventory", "setWallet", "materialDataMap", "names", "nameText",
-          "getWorldNow", "worldNow", "language", "gameDataBaseUrl", "events", "...bag", "gameText"}
-total = hit = calls = 0
-for m in re.finditer(r"= (use\w+)\(\{", s):
-    i = m.end(); depth = 1; j = i
-    while depth and j < len(s):
-        depth += (s[j] == "{") - (s[j] == "}"); j += 1
-    keys = [re.match(r"^  (\.\.\.\w+|\w+)", l).group(1) for l in s[i:j-1].split("\n") if re.match(r"^  (\.\.\.\w+|\w+)", l)]
-    calls += 1; total += len(keys); hit += sum(k in shared for k in keys)
-print(calls, total, hit)
+```js
+// Run from the repository root: node count.cjs
+// Parses the root's script with the repo's TypeScript, so a call counts whether its options open on the
+// same line, on the next line, or after a multi-line destructure, and whether or not its result is assigned.
+const fs = require("fs");
+const ts = require(require.resolve("typescript", { paths: [process.cwd()] }));
+const src = fs.readFileSync("packages/genshin-world/src/components/World/Session/Index.vue", "utf8");
+const script = src.slice(0, src.indexOf("</script>")).replace(/^[\s\S]*?<script[^>]*>/, "");
+const sf = ts.createSourceFile("Index.ts", script, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+const shared = new Set([
+  "inventory",
+  "wallet",
+  "setInventory",
+  "setWallet",
+  "materialDataMap",
+  "names",
+  "nameText",
+  "getWorldNow",
+  "worldNow",
+  "language",
+  "gameDataBaseUrl",
+  "events",
+  "...bag",
+  "gameText",
+]);
+const keys = [];
+let calls = 0;
+(function visit(node) {
+  if (
+    ts.isCallExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    /^use\w+$/.test(node.expression.text) &&
+    node.arguments[0] &&
+    ts.isObjectLiteralExpression(node.arguments[0])
+  ) {
+    calls++;
+    for (const p of node.arguments[0].properties)
+      keys.push(ts.isSpreadAssignment(p) ? "..." + p.expression.getText(sf) : p.name.getText(sf));
+  }
+  ts.forEachChild(node, visit);
+})(sf);
+console.log(calls, keys.length, keys.filter((k) => shared.has(k)).length);
 ```
 
-It prints `46 445 111` on the tree at the time of writing. The change's outcomes are stated against it.
+It prints `51 519 129` on the tree at the time of writing. The change's outcomes are stated against it.

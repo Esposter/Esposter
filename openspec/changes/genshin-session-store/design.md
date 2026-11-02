@@ -53,7 +53,7 @@ flowchart TD
 ## Testing
 
 - **A store has a test that seeds it and reads the state back,** and one that drives each action to its result, with an active Pinia created in the test.
-- **A composable that read options and now reads a store keeps its test,** with the options replaced by a seeded store. The 18 composables with a test beside them are converted, not deleted; the ones with none get a test where they hold logic, as the `testing` skill's "What to Test" decides.
+- **A composable that read options and now reads a store keeps its test,** with the options replaced by a seeded store. The 21 composables with a test beside them are converted, not deleted; the ones with none get a test where they hold logic, as the `testing` skill's "What to Test" decides.
 - **The suites that mount the session** (the package's visual and browser suites and the parity page) create a Pinia once. They stay otherwise unchanged and are the check that a player sees no difference.
 
 ## Performance
