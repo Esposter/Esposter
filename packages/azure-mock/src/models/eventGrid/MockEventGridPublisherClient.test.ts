@@ -5,16 +5,17 @@ import { MockEventGridDatabase } from "#src/store/MockEventGridDatabase";
 import { MAX_EVENT_GRID_PUBLISH_EVENT_COUNT, MAX_EVENT_GRID_PUBLISH_REQUEST_BYTES } from "@esposter/azure";
 import { afterEach, describe, expect, test } from "vitest";
 
+const createEvent = (data: string): EventGridEvent<unknown> => ({
+  data,
+  dataVersion: "",
+  eventTime: new Date(0),
+  eventType: "",
+  id: "",
+  subject: "",
+});
+
 describe(MockEventGridPublisherClient, () => {
   const endpoint = "";
-  const createEvent = (data: string): EventGridEvent<unknown> => ({
-    data,
-    dataVersion: "",
-    eventTime: new Date(0),
-    eventType: "",
-    id: "",
-    subject: "",
-  });
 
   afterEach(() => {
     MockEventGridDatabase.clear();

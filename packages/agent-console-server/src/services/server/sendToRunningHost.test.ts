@@ -7,7 +7,7 @@ import { signNonce } from "#src/services/handshake/signNonce";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
 import { listenOnFreePort } from "#src/services/shared/listenOnFreePort";
 import { readMessageText } from "#src/services/shared/readMessageText";
-import { jsonDateParse, noop } from "@esposter/shared";
+import { jsonDateParse, noop, takeOne } from "@esposter/shared";
 import { generateKeyPairSync } from "node:crypto";
 import { once } from "node:events";
 import { createServer } from "node:http";
@@ -97,8 +97,8 @@ describe(sendToRunningHost, () => {
         type: HandshakeMessageType.HandOff,
       })),
     ).resolves.toBe(true);
-    expect(consoleError).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ code: "WS_ERR_UNEXPECTED_RSV_2_3" }),
-    );
+    const [socketError] = takeOne(vi.mocked(consoleError).mock.calls);
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(socketError);
+    expect(socketError).toHaveProperty("code", "WS_ERR_UNEXPECTED_RSV_2_3");
   });
 });

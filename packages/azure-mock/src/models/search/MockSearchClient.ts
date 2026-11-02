@@ -133,7 +133,9 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   uploadDocuments(documents: TModel[], _options?: UploadDocumentsOptions): Promise<IndexDocumentsResult> {
     for (const document of documents) {
       const key = (document as Record<string, unknown>).rowKey;
-      const index = this.documents.findIndex((existing) => (existing as Record<string, unknown>).rowKey === key);
+      const index = this.documents.findIndex(
+        (existingDocument) => (existingDocument as Record<string, unknown>).rowKey === key,
+      );
       if (index === -1) this.documents.push(document);
       else this.documents[index] = document;
     }
