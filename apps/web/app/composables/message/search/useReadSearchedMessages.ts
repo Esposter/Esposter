@@ -36,7 +36,12 @@ export const useReadSearchedMessages = () => {
       // The input schema refuses a search with nothing in it, so the read that builds the request is where that
       // Stops rather than at each of the surfaces that can issue one — an Enter, a history row, a page change.
       // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
-      if (checkIsSearchQueryEmpty(query, filters)) return Promise.resolve({ hasMore: false, items: [] });
+      if (checkIsSearchQueryEmpty(query, filters)) {
+        // A search this read supersedes was aborted by beginSearch, and an aborted search skips clearing the flag it
+        // Raised, so the read that raised none clears it here rather than leaving the room rendered as searching
+        getBoundIsSearching().value = false;
+        return Promise.resolve({ hasMore: false, items: [] });
+      }
 
       isMenuOpen.value = false;
       // The pending flag is raised and cleared inside the read that owns it rather than by the paginator's own

@@ -93,7 +93,7 @@ Browsing a room's attachments is `has: file` and nothing more — a filter like 
 
 Results, totals and the current page are all keyed by room, so a response that lands after the user has moved on is filed under the room it was issued for rather than shown under the new one.
 
-Within a room, a newer search cancels the one still in flight, whichever surface issued it: the Enter key, a history entry or a page change. The store holds one `AbortController` per room and hands out its signal, so the cancelled request is actually stopped, and a response that arrives after the cancel writes nothing, as the [search design](../../architecture/search/design.md) requires of every search.
+Within a room, a newer search cancels the one still in flight, whichever surface issued it: the Enter key, a history entry or a page change. The store holds one `AbortController` per room and hands out its signal, so the cancelled request is actually stopped, and a response that arrives after the cancel writes nothing, as the [search design](../../architecture/search/design.md) requires of every search. An empty read cancels the search the same way, and it clears the pending flag that search leaves behind, since the cancelled search skips clearing its own flag and nothing else would.
 
 ## Key files
 

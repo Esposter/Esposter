@@ -134,6 +134,32 @@ describe(useReadSearchedMessages, () => {
     expect(isSearching.value).toBe(false);
   });
 
+  // An empty read raises no flag of its own, and the search it supersedes skips clearing the one it raised once aborted,
+  // So the empty read is what clears it — or the room would render as searching for good
+  test("clears the pending flag of a search that an empty read supersedes", async () => {
+    expect.hasAssertions();
+
+    const { promise: searchGate, resolve: releaseSearch } = Promise.withResolvers<void>();
+    trpcMsw.message.searchMessages.query(async () => {
+      await searchGate;
+      return { count: newCount, data: { hasMore: false, items: [] } };
+    });
+    await mountRead();
+    searchQuery.value = query;
+    const pendingSearch = readSearchedMessages();
+    await flushPromises();
+
+    expect(isSearching.value).toBe(true);
+
+    searchQuery.value = "";
+    await readSearchedMessages();
+
+    expect(isSearching.value).toBe(false);
+
+    releaseSearch();
+    await pendingSearch;
+  });
+
   // The schema refuses a search with nothing in it, so a read that would send one issues no request at all — the
   // Field clears itself on blur, and every surface that can search would otherwise have to remember that
   test("issues no request for a search with neither text nor a valued filter", async () => {
