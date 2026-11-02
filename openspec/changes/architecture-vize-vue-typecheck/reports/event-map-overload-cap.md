@@ -1,4 +1,4 @@
-# content-mapper: a component with `defineModel` loses every event past the sixteenth from its event map (TS2339)
+# content-mapper: a component with `defineModel` past sixteen events loses its earliest events from its event map (TS2339)
 
 I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
 
