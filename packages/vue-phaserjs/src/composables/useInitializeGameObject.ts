@@ -26,12 +26,14 @@ export const useInitializeGameObject = <
 ) => {
   let gameObject: TGameObject;
   let isCreated = false;
+  // The setters read this, since an update they queued for the next tick can fire after the unmount
   let isUnmounted = false;
   const { initializeGameObjectSetters, setterWatchHandles } = useInitializeGameObjectSetters(
     () => gameObject,
     configuration,
     emit,
     setterMap,
+    () => isUnmounted,
     immediate,
   );
   const { eventStopHandles, initializeGameObjectEvents } = useInitializeGameObjectEvents();
@@ -63,9 +65,6 @@ export const useInitializeGameObject = <
     });
   } else
     lifecycleHook((scene) => {
-      // A component unmounted before its scene created it has nothing left to create
-      if (isUnmounted) return;
-
       initializeGameObject(scene);
       pushToParentContainer();
     });

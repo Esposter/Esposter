@@ -15,15 +15,12 @@ export const useInitializeGameObjectSetters = <
   configuration: () => TConfiguration,
   emit: SetupContext<TEmitsOptions>["emit"],
   setterMap: SetterMap<TConfiguration, TGameObject, TEmitsOptions>,
+  checkIsUnmounted: () => boolean,
   immediate?: true,
 ) => {
   const sceneKey = useInjectSceneKey();
   const setters: ((gameObject: TGameObject) => void)[] = [];
   const setterWatchHandles: WatchHandle[] = [];
-  const isUnmounted = ref(false);
-  onUnmounted(() => {
-    isUnmounted.value = true;
-  });
 
   for (const [key, value] of Object.entries(toValue(configuration)) as [
     keyof TConfiguration,
@@ -54,7 +51,7 @@ export const useInitializeGameObjectSetters = <
 
           const updater = () => {
             // A value queued before unmount must not reach the game object the unmount destroyed
-            if (isUnmounted.value) return;
+            if (checkIsUnmounted()) return;
 
             applyValue(toValue(gameObject), newValue);
           };
