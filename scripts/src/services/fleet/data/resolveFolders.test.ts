@@ -15,4 +15,12 @@ describe(resolveFolders, () => {
       `[InvalidOperationError: Invalid operation: Read, name: fleet data, frames are never copied]`,
     );
   });
+
+  test("refuses a name the peer's shell would split, since it is not a plain folder name", () => {
+    expect.hasAssertions();
+
+    expect(() => resolveFolders("text,a b")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: fleet data, a b are not plain folder names of letters, digits, dashes and underscores]`,
+    );
+  });
 });
