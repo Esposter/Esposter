@@ -35,7 +35,9 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
       todoList.value.items = newItems;
     },
   });
-  const searchQuery = ref("");
+  // The search is a view over the open list, so it is keyed by that list as the sort is, and a search typed in one list
+  // Does not carry into another
+  const { data: searchQuery } = useDataMap(() => resourceStore.currentResourceId, "");
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
   const { editedItem, isEditFormDialogOpen, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),

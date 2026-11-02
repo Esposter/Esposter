@@ -346,4 +346,24 @@ describe(useTodoListStore, () => {
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName, adoptedItemName]);
   });
+
+  // The search is typed against the list on screen, so one carried into another list would hide its todos behind a
+  // Query it was never typed for. Coming back to the list it was typed in finds it still there
+  test("keeps a search to the list it was typed in", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    const firstResource = resource.value;
+    const todoListStore = await setupStore();
+    const { searchQuery } = storeToRefs(todoListStore);
+    searchQuery.value = itemName;
+    resource.value = createResourceListItem({ type: ResourceType.TodoList });
+
+    expect(searchQuery.value).toBe("");
+
+    resource.value = firstResource;
+
+    expect(searchQuery.value).toBe(itemName);
+  });
 });
