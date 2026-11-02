@@ -39,7 +39,7 @@ One file per shape the code under test can tell apart, each the least content th
 
 ## Dates and times
 
-**Every date is computed from the epoch; none is typed** — `new Date(0)`, a later one the epoch plus a Temporal duration, the clock pinned with `vi.useFakeTimers({ now: 0 })`. The typed half is `test-values/no-typed-date`; every form and the shape exception are `references/dates-and-times.md`.
+**Every date is computed from the epoch; none is typed** — `new Date(0)`, a later one the epoch plus a Temporal duration, the clock pinned with `vi.useFakeTimers({ now: 0 })` and moved to a `Temporal.Instant`. The typed half is `test-values/no-typed-date`, the clock half the selectors in `packages/configuration/eslint/restrictedTestSyntaxes.js`; every form and the shape exception are `references/dates-and-times.md`.
 
 ## Every string literal passes one of three checks
 

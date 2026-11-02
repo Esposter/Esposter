@@ -5,7 +5,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 // Starts
 const freezeAtHour = (hour: number, timeZone: string) => {
   const zonedDateTime = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO(timeZone).with({ hour });
-  vi.useFakeTimers({ now: zonedDateTime.epochMilliseconds, toFake: ["Date", "Temporal"] });
+  vi.useFakeTimers({ now: zonedDateTime, toFake: ["Date", "Temporal"] });
 };
 
 describe(isWithinTime, () => {

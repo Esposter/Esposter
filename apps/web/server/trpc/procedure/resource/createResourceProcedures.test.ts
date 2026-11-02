@@ -89,7 +89,7 @@ describe(createResourceProcedures, () => {
 
   // Off the epoch, which a channel with no age limit cuts off at: a version written at the epoch is not newer than it
   beforeEach(() => {
-    vi.useFakeTimers({ now: 1, toFake: ["Date"] });
+    vi.useFakeTimers({ now: Temporal.Instant.fromEpochMilliseconds(1), toFake: ["Date"] });
   });
 
   afterEach(async () => {

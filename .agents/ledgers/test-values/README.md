@@ -15,6 +15,7 @@ mirrors a production constant, a value further from the least than the case need
 | Shared data declared once; what production owns imported         | `test-values` — "Shared data"                              |
 | A date read by its shape moves by the smallest step, in 1970     | `test-values` — "Dates and times"                          |
 | No typed date                                                    | enforced: `test-values/no-typed-date` (the `oxlint` skill) |
+| The fake clock's moments are `Temporal.Instant`s                 | enforced: `eslint/restrictedTestSyntaxes.js`               |
 
 Every row resets when a rule joins this table: a unit dated against a narrower rule set is not swept against the
 current one, and there is no partially-swept state.

@@ -21,7 +21,6 @@ const writeGuestSave = (clicker: Clicker) => {
 };
 
 describe(useReadClicker, () => {
-  const hourMs = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
   let wrapper: undefined | VueWrapper;
   const mountReadClicker = async () => {
     wrapper = await mountSuspended(
@@ -66,7 +65,7 @@ describe(useReadClicker, () => {
   test("awards the production an absence earned while the page was closed", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: hourMs, toFake: ["Date"] });
+    vi.useFakeTimers({ now: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }), toFake: ["Date"] });
     writeGuestSave(
       new Clicker({
         boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
