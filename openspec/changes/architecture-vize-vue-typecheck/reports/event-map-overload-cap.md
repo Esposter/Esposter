@@ -110,7 +110,7 @@ The walk starts from the last overload, so the first events are the ones lost. A
 
 I confirmed this in plain TypeScript with the helper types copied from the binary. The same probe fails from 17 events with `tsrs` (with and without `--fast`), native TypeScript 7.0.2 and stock TypeScript 5.9.3, so the compiler is not the cause. With the depth set to 64, the 17-event and 22-event cases keep every event. At 32 events `tsrs` then stops the same recursion with `TS5114: Instantiations of type '$OverloadUnionRecursive' appear infinitely circular`. A higher limit alone does not fix this.
 
-The same helper reads `Emits` in more places than `$StaticEventMap`. `__EmitProps` is defined on `__EmitOptions<T>`, so the handler props of a component come from the same walk (read in the source, not observed in a component). The change that fixes it is to build the union of overloads with an accumulator, so that the recursion is in tail position and the depth limit is no longer reached at 16 events. A second fix is to pass a keyed type to the helpers. Both are described and tested below.
+The same helper reads `Emits` in more places than `$StaticEventMap`. `__EmitProps` is defined on `__EmitOptions<T>`, so the handler props of a component come from the same walk (read in the source, not observed in a component). The change that fixes it is to build the union of overloads with an accumulator, so that the recursion is in tail position and the depth limit is no longer reached at 16 events. A second idea is to pass a keyed type to the helpers. The fix is tested below, and the idea is tested only in part.
 
 ### Proposed fix
 
@@ -136,7 +136,7 @@ type $OverloadUnionRecursive<
     : TAccumulated;
 ```
 
-The larger fix passes a keyed type, and not the overloaded function, to `__EmitOptions` and `__EmitProps`. The generator passes `Emits` to them at eight lines in four files: `generator/emits.rs` (85, 310, 315 and 320), `generator/component_constructors.rs` (156 and 182), `generator/component_constructors/emission.rs` (91) and `generator/setup_props.rs` (292). A keyed type needs no walk, and the cost below is the lowest. Each of the eight lines must change, so this is the larger change.
+A second idea passes a keyed type, and not the overloaded function, to `__EmitOptions` and `__EmitProps`. The generator passes `Emits` to them at eight lines in four files: `generator/emits.rs` (85, 310, 315 and 320), `generator/component_constructors.rs` (156 and 182), `generator/component_constructors/emission.rs` (91) and `generator/setup_props.rs` (292). A keyed type needs no walk, so its cost is the lowest, and each of the eight lines would change. A first form for the model branch is `__EmitOptions<__EmitShape<Inner> & Models>`, where `Inner` is the authored events and `Models` is the `update:` events. It equals the current output by strict type identity for 11 of the 15 shapes below. It differs for a string-typed event, for literal events followed by a string fallback, for `Record<string, any[]>` and for a model that shares a name with an authored event, and in those four the two outputs are not assignable to each other. It is an idea that needs those four cases decided, and not a tested fix.
 
 ### Checks of the fix
 
@@ -153,13 +153,13 @@ The 15 shapes are the model branch with authored events, with models only and wi
 
 Cost on TypeScript 5.9.3, from `--extendedDiagnostics`, for the model branch:
 
-| Events | Current helper | Fix, instantiations | Fix, check time | Keyed type, instantiations |
-| -----: | -------------: | ------------------: | --------------: | -------------------------: |
-|     16 |          9,689 |               7,078 |          0.08 s |                        176 |
-|     22 |          fails |              11,479 |          0.11 s |                          - |
-|     40 |          fails |              30,946 |          0.25 s |                        368 |
-|    100 |          fails |             163,696 |          1.65 s |                        848 |
-|    400 |          fails |           2,393,446 |            95 s |                      3,248 |
+| Events | Current helper | Fix, instantiations | Fix, check time | Keyed type alone, instantiations |
+| -----: | -------------: | ------------------: | --------------: | -------------------------------: |
+|     16 |          9,689 |               7,078 |          0.08 s |                              176 |
+|     22 |          fails |              11,479 |          0.11 s |                                - |
+|     40 |          fails |              30,946 |          0.25 s |                              368 |
+|    100 |          fails |             163,696 |          1.65 s |                              848 |
+|    400 |          fails |           2,393,446 |            95 s |                            3,248 |
 
 On `tsrs --fast` the fix takes 0.3 s at 16 events, as the current helper does, 0.6 s at 100 events and 20 s at 400 events. The keyed type takes 0.3 s at every size. The fix costs more as the count grows, and the keyed type does not. A component with 100 events is far past any real use, and the current helper drops events silently from 17.
 
