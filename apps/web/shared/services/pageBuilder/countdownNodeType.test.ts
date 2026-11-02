@@ -8,15 +8,10 @@ import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Local midnight a number of days after the epoch, so every test date is computed and never typed
-const localDayFromEpoch = (days: number) => {
-  const day = new Date(0);
-  day.setDate(day.getDate() + days);
-  day.setHours(0, 0, 0, 0);
-  return day;
-};
+const localDayFromEpoch = (days: number) =>
+  Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO(Temporal.Now.timeZoneId()).add({ days }).startOfDay();
 
-const toDateInput = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+const toDateInput = (day: Temporal.ZonedDateTime) => day.toPlainDate().toString();
 
 // Date reads a year from 0 to 99 as 1900 to 1999, so the year is set on the epoch rather than given to it
 const endsAtOf = (year: number, month: number, day: number) => {
