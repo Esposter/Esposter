@@ -3,9 +3,12 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { resolveRoomCategoryId } from "@/services/message/roomCategory/resolveRoomCategoryId";
 import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 
 interface Props {
   room: RoomInMessage;
@@ -18,7 +21,14 @@ await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
 const { roomCategories } = storeToRefs(roomCategoryStore);
-const editedCategoryId = ref(room.categoryId);
+const userToRoomStore = useUserToRoomStore();
+const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
+const { $trpc } = useNuxtApp();
+const { executeMutation } = useMutation();
+// The category is the reader's own, so the field holds the reader's row for this room, resolved against the categories
+// the reader still has
+const myCategoryId = computed(() => resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId));
+const editedCategoryId = ref(myCategoryId.value);
 const editedIsReadOnly = ref(room.isReadOnly);
 const editedSlowmodeMs = ref(room.slowmodeMs);
 const editedTopic = ref(room.topic);
@@ -28,22 +38,40 @@ const categoryItems = computed<UiSelectItem<string>[]>(() =>
     "None (uncategorized)",
   ),
 );
-const isDirty = computed(
+const isCategoryDirty = computed(() => editedCategoryId.value !== myCategoryId.value);
+const isRoomDirty = computed(
   () =>
-    editedCategoryId.value !== room.categoryId ||
     editedIsReadOnly.value !== room.isReadOnly ||
     editedSlowmodeMs.value !== room.slowmodeMs ||
     selectRoomInMessageSchema.shape.topic.safeParse(editedTopic.value).data !== room.topic,
 );
-const save = async () => {
-  if (!isDirty.value) return;
+// The category is written to the reader's own membership, which the room's shared row does not carry
+const saveCategory = () => {
+  const categoryId = editedCategoryId.value;
+  return executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ categoryId, roomId: room.id }), {
+    applyOptimistic: () => {
+      const previousUserToRoom = getMyUserToRoom(room.id);
+      if (!previousUserToRoom) return noop;
 
-  await saveRoom({
-    categoryId: editedCategoryId.value,
-    isReadOnly: editedIsReadOnly.value,
-    slowmodeMs: editedSlowmodeMs.value,
-    topic: editedTopic.value,
+      const { categoryId: previousCategoryId } = previousUserToRoom;
+      setMyUserToRoom(room.id, { ...previousUserToRoom, categoryId });
+      return () => {
+        const currentUserToRoom = getMyUserToRoom(room.id);
+        if (currentUserToRoom) setMyUserToRoom(room.id, { ...currentUserToRoom, categoryId: previousCategoryId });
+      };
+    },
+    key: room.id,
   });
+};
+// Each write goes to the procedure that owns its field, and only when that field moved
+const save = async () => {
+  if (isRoomDirty.value)
+    await saveRoom({
+      isReadOnly: editedIsReadOnly.value,
+      slowmodeMs: editedSlowmodeMs.value,
+      topic: editedTopic.value,
+    });
+  if (isCategoryDirty.value) await saveCategory();
 };
 </script>
 

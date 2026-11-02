@@ -2,10 +2,12 @@
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { resolveRoomCategoryId } from "@/services/message/roomCategory/resolveRoomCategoryId";
 import { getMovedItems } from "@/services/shared/getMovedItems";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { REORDER_HANDLE_CLASS } from "@/services/ui/constants";
 import { useRoomStore } from "@/store/message/room";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { getOrCreate } from "@esposter/shared";
 
@@ -16,12 +18,20 @@ const { roomCategories } = storeToRefs(roomCategoryStore);
 const { reorderRoomCategories } = roomCategoryStore;
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
+const userToRoomStore = useUserToRoomStore();
+const { getMyUserToRoom } = userToRoomStore;
 const getDragReorderProps = useDragReorder();
 const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 const categoryIdRoomsMap = computed(() => {
   const newCategoryIdRoomsMap = new Map<null | string, RoomInMessage[]>();
-  for (const room of rooms.value) getOrCreate(newCategoryIdRoomsMap, room.categoryId, () => []).push(room);
+  // The category a room is listed under is the reader's own for it: another member's assignment is theirs alone
+  for (const room of rooms.value)
+    getOrCreate(
+      newCategoryIdRoomsMap,
+      resolveRoomCategoryId(roomCategories.value, getMyUserToRoom(room.id)?.categoryId),
+      () => [],
+    ).push(room);
   return newCategoryIdRoomsMap;
 });
 const uncategorizedRooms = computed(() => categoryIdRoomsMap.value.get(null) ?? []);
