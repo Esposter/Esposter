@@ -3,12 +3,19 @@ import type { Context } from "#server/trpc/context";
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
+import { ownedBy } from "#server/services/db/ownedBy";
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
+import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { checkHasPermission } from "@esposter/db";
-import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  roomCategoriesInMessage,
+  RoomPermission,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -17,7 +24,12 @@ import { TRPCError } from "@trpc/server";
 export const updateUserToRoom = async (
   db: Context["db"] | Transaction,
   userId: UserInAuth["id"],
-  { roomId, targetUserId, ...rest }: Partial<Pick<UserToRoomInMessage, "lastMessageAt">> & UpdateUserToRoomInput,
+  {
+    categoryId,
+    roomId,
+    targetUserId,
+    ...rest
+  }: Partial<Pick<UserToRoomInMessage, "lastMessageAt">> & UpdateUserToRoomInput,
 ) => {
   const effectiveUserId = targetUserId ?? userId;
 
@@ -28,10 +40,21 @@ export const updateUserToRoom = async (
     ]);
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+  // The foreign key proves only that the category exists, so the one named must be the caller's own, or a member could
+  // File the room under another member's category
+  if (categoryId) {
+    const ownedRoomCategory = (
+      await db
+        .select()
+        .from(roomCategoriesInMessage)
+        .where(ownedBy(roomCategoriesInMessage, categoryId, userId))
+    )[0];
+    requireRoomCategory(ownedRoomCategory, Operation.Update, categoryId, "NOT_FOUND");
+  }
 
   const updatedUserToRooms = await db
     .update(usersToRoomsInMessage)
-    .set(rest)
+    .set({ categoryId, ...rest })
     .where(getRoomMembershipWhere(roomId, effectiveUserId))
     .returning();
   const updatedUserToRoom = requireMutation(

@@ -7,7 +7,6 @@ import { describe } from "vitest";
 // Row too, so both suites build their fixtures from here
 export const createRoom = (name: string, type = RoomType.Room): RoomInMessage => ({
   allowedMimeCategories: [MimeCategory.Image],
-  categoryId: null,
   createdAt: new Date(0),
   deletedAt: null,
   id: crypto.randomUUID(),

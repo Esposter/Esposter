@@ -3,7 +3,6 @@ import { RoomType, roomTypeSchema } from "#src/models/message/RoomType";
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { ROOM_NAME_MAX_LENGTH, ROOM_TOPIC_MAX_LENGTH } from "#src/services/room/constants";
 import { URL_MAX_LENGTH } from "#src/services/shared/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
@@ -26,7 +25,6 @@ export const roomsInMessage = pgTable(
       .array()
       .notNull()
       .default([...MimeCategories]),
-    categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     id: uuid().primaryKey().defaultRandom(),
     image: text().notNull().default(""),
     // Closes the room to every existing invite link at once, without deleting any of them — the control for a

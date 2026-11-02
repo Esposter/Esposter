@@ -4,7 +4,6 @@ import { z } from "zod";
 
 const updatableRoomSchema = selectRoomInMessageSchema.pick({
   allowedMimeCategories: true,
-  categoryId: true,
   image: true,
   isInvitePaused: true,
   isReadOnly: true,

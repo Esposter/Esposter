@@ -131,7 +131,7 @@ describe("userToRoomRouter", () => {
         {
           "code": "custom",
           "path": [],
-          "message": "targetUserId requires displayName and must not include notificationType or lastReadAt"
+          "message": "targetUserId requires displayName and must not include categoryId, notificationType or lastReadAt"
         }
       ]]
     `);

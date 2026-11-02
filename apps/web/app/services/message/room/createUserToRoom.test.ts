@@ -4,6 +4,7 @@ import { NotificationType } from "@esposter/db-schema";
 import { describe } from "vitest";
 
 export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): UserToRoomInMessage => ({
+  categoryId: null,
   createdAt: new Date(0),
   deletedAt: null,
   displayName: "",
