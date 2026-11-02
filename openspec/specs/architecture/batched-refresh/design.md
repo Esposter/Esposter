@@ -16,7 +16,7 @@ flowchart TD
   Back --> Retry["one more run scheduled, paced by the backoff, up to five times"]
 ```
 
-A run takes every key marked before it starts, so a batch is one read. Runs do not overlap: a mark made during a run is read by the run owed after it, and the run that finishes last is always the newest. A run with no dirty keys makes no read.
+A run takes every key marked before it starts, so a batch is one read, or one read per chunk for a reader that caps its list (post counts, at `MAX_POST_COUNTS_PER_READ`). Runs do not overlap: a mark made during a run is read by the run owed after it, and the run that finishes last is always the newest. A run with no dirty keys makes no read.
 
 The caller that starts a flight awaits the run owed after it, and so does every call made while the flight is in progress: they all join that one run, so each settles only once the newest value is in. A mark made during a run is never answered with a value the run owed after it has not read.
 
