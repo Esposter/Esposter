@@ -33,8 +33,9 @@ const isCompletedOpen = computed({
     isCompletedCollapsed.value = !newIsCompletedOpen;
   },
 });
-// A ticked todo holds its place, struck through, before it moves under Completed, so the tick is seen to land first
-const holdingIds = ref(new Set<TodoListItem["id"]>());
+// A ticked todo holds its place, struck through, before it moves under Completed, so the tick is seen to land first.
+// Each tick takes its own hold, so a timer an earlier tick left running cannot end a later hold early
+const holdingIds = ref(new Map<TodoListItem["id"], symbol>());
 const searchedItems = computed(() => {
   const lowerCaseSearch = searchQuery.value.toLocaleLowerCase();
   // The notes are read as text rather than markup, so a search for "p" does not match every paragraph
@@ -63,16 +64,18 @@ const completedListItems = computed(() => {
 const checkIsCompleted = (id: TodoListItem["id"]) => Boolean(items.value.find((item) => item.id === id)?.completedAt);
 const toggle = async (id: TodoListItem["id"]) => {
   const isCompleting = !checkIsCompleted(id);
+  const hold = Symbol();
   // An untick during the hold cancels the move, since the todo it was holding is open again
   if (isCompleting) {
-    holdingIds.value.add(id);
+    holdingIds.value.set(id, hold);
     playTodoCompletionChime();
   } else holdingIds.value.delete(id);
   await toggleCompleted(id);
   if (!isCompleting) return;
 
   await promiseTimeout(TODO_COMPLETION_HOLD_MS);
-  holdingIds.value.delete(id);
+  // Only the hold this tick took is ended, so a todo unticked and ticked again inside the hold keeps its own
+  if (holdingIds.value.get(id) === hold) holdingIds.value.delete(id);
 };
 const completedActions = computed<Item[]>(() => [
   {

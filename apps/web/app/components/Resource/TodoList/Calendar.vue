@@ -2,6 +2,7 @@
 import type { UiCalendarEvent } from "@/models/ui/UiCalendarEvent";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { setDueAt } from "#shared/services/resource/todoList/setDueAt";
 import { useTodoListStore } from "@/store/resource/todoList";
 
 const todoListStore = useTodoListStore();
@@ -34,7 +35,7 @@ await loadContent();
         async (id, start) => {
           const item = items.find((todoListItem) => todoListItem.id === id);
           if (!item) return;
-          item.dueAt = start;
+          setDueAt(item, start);
           await saveTodoList();
         }
       "

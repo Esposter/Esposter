@@ -2,6 +2,7 @@
 import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 
 import { TODO_LIST_ITEM_NOTES_MAX_LENGTH } from "#shared/services/resource/item/constants";
+import { setDueAt } from "#shared/services/resource/todoList/setDueAt";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
@@ -31,14 +32,7 @@ const modelValue = defineModel<TodoListItem>({ required: true });
       is-time
       label="Due date"
       placeholder="No due date"
-      @update:model-value="
-        (newDueAt) => {
-          modelValue.dueAt = newDueAt;
-          if (!modelValue.recurrence) return;
-          // A repeat without a due date has nothing to roll forward, so clearing the date stops it
-          modelValue.recurrence = newDueAt ? { ...modelValue.recurrence, startsAt: newDueAt } : undefined;
-        }
-      "
+      @update:model-value="(newDueAt) => setDueAt(modelValue, newDueAt)"
     />
     <ResourceTodoListRepeatField v-if="modelValue.dueAt" v-model="modelValue.recurrence" :due-at="modelValue.dueAt" />
   </div>
