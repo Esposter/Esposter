@@ -1,7 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
-import { PUSH_SUBSCRIPTION_COLUMNS } from "#src/services/notification/constants";
+import { MAX_USER_IDS_PER_STATEMENT, PUSH_SUBSCRIPTION_COLUMNS } from "#src/services/notification/constants";
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
+import { chunk, settleAll } from "@esposter/shared";
 import { and, inArray, ne } from "drizzle-orm";
 
 // The one device lookup. Recipient resolution answers *who* in user ids, and this answers *where* — so a new
@@ -10,11 +11,19 @@ import { and, inArray, ne } from "drizzle-orm";
 //
 // `excludedSessionId` is the session that caused the notification. A subscription is per-session, so excluding it
 // Is what lets the acting tab keep its own synchronous toast while every other device of the same user is pushed.
-export const getPushSubscriptionsForUsers = (db: Database, userIds: string[], excludedSessionId?: string) => {
-  const wheres = [inArray(pushSubscriptionsInNotification.userId, userIds)];
-  if (excludedSessionId) wheres.push(ne(pushSubscriptionsInNotification.sessionId, excludedSessionId));
-  return db
-    .select({ ...PUSH_SUBSCRIPTION_COLUMNS })
-    .from(pushSubscriptionsInNotification)
-    .where(and(...wheres));
-};
+// A room too large for one statement is read in waves of MAX_USER_IDS_PER_STATEMENT users, one wave after another, so
+// a large room holds one connection rather than one per wave: each statement binds a parameter per user
+export const getPushSubscriptionsForUsers = async (db: Database, userIds: string[], excludedSessionId?: string) =>
+  (
+    await settleAll(
+      chunk(userIds, MAX_USER_IDS_PER_STATEMENT).map((userIdsChunk) => () => {
+        const wheres = [inArray(pushSubscriptionsInNotification.userId, userIdsChunk)];
+        if (excludedSessionId) wheres.push(ne(pushSubscriptionsInNotification.sessionId, excludedSessionId));
+        return db
+          .select({ ...PUSH_SUBSCRIPTION_COLUMNS })
+          .from(pushSubscriptionsInNotification)
+          .where(and(...wheres));
+      }),
+      1,
+    )
+  ).flat();
