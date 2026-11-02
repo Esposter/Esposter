@@ -6,6 +6,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { readUserDeviceIds } from "#server/services/auth/readUserDeviceIds";
+import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
@@ -720,6 +721,71 @@ describe("roomRouter", () => {
     );
 
     expect(data).toStrictEqual({ roomId: newRoom.id, userId: session.user.id });
+  });
+
+  test("on leaves yields the member's own departure to its other device", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
+    const subscription = await roomCaller.onLeaveRoom([newRoom.id]);
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        await mockSessionOnce(mockContext.db, member);
+        await roomCaller.leaveRoom(newRoom.id);
+      },
+    );
+
+    expect(data).toStrictEqual({ roomId: newRoom.id, userId: member.id });
+  });
+
+  // The stream was opened while the member was in both rooms, so the room it listed is still in its list. What the
+  // Member may see is decided by the member's current rooms, and the room it has left stops reaching it
+  test("on updates stops yielding a room the subscriber has left", async () => {
+    expect.hasAssertions();
+
+    const firstRoom = await roomCaller.createRoom({ name });
+    const secondRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, firstRoom.id);
+    await createRoomMember(mockContext, secondRoom.id, member);
+    await mockSessionOnce(mockContext.db, member);
+    const subscription = await roomCaller.onUpdateRoom([firstRoom.id, secondRoom.id]);
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        await mockSessionOnce(mockContext.db, member);
+        await roomCaller.leaveRoom(firstRoom.id);
+        roomEventEmitter.emit("updateRoom", { id: firstRoom.id, name });
+        roomEventEmitter.emit("updateRoom", { id: secondRoom.id, name });
+      },
+    );
+
+    expect(data).toStrictEqual({ id: secondRoom.id, name });
+  });
+
+  // A room the member joins while the stream is open is one it delivers for, from the join on
+  test("on updates yields a room the subscriber joins while it is open", async () => {
+    expect.hasAssertions();
+
+    const listedRoom = await roomCaller.createRoom({ name });
+    const joinedRoom = await roomCaller.createRoom({ name });
+    const joinedInvite = await createUnlimitedInvite(joinedRoom.id);
+    const member = await createRoomMember(mockContext, listedRoom.id);
+    await mockSessionOnce(mockContext.db, member);
+    const subscription = await roomCaller.onUpdateRoom([listedRoom.id]);
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        await mockSessionOnce(mockContext.db, member);
+        await roomCaller.joinRoom(joinedInvite.id);
+        roomEventEmitter.emit("updateRoom", { id: joinedRoom.id, name });
+        roomEventEmitter.emit("updateRoom", { id: listedRoom.id, name });
+      },
+    );
+
+    expect(data).toStrictEqual({ id: joinedRoom.id, name });
   });
 
   test("counts members", async () => {

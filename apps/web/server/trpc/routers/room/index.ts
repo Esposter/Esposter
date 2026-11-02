@@ -22,6 +22,7 @@ import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMes
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
+import { trackMemberRoomIds } from "#server/services/room/trackMemberRoomIds";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -264,17 +265,20 @@ export const baseRoomRouter = router({
     signal,
   }) {
     await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
+      if (!memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       yield roomId;
     }
   }),
   onJoinRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
+      if (!memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload))
+        continue;
       // One subscription spans every room the client is in, so the room the event happened in travels with it.
       // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
       // From is the room that happens to be open
@@ -285,9 +289,14 @@ export const baseRoomRouter = router({
   }),
   onLeaveRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+    const { user } = ctx.getSessionPayload;
+    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: user.id });
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (!input.includes(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
+      // The member's own departure still reaches its other devices as long as they listed the room: the device it
+      // Did not leave from still shows the room, and the removal of the membership is what this event tells it
+      const isReachable = userId === user.id ? input.includes(roomId) : memberRoomIds.has(roomId);
+      if (!isReachable || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
       // To be looking at removes a member who never left it
       yield { roomId, userId };
@@ -299,9 +308,10 @@ export const baseRoomRouter = router({
     signal,
   }) {
     await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
 
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
-      if (!input.includes(data.id)) continue;
+      if (!memberRoomIds.has(data.id)) continue;
       yield data;
     }
   }),

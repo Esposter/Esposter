@@ -41,7 +41,7 @@ sequenceDiagram
 
 ### A removal is a departure
 
-Kick, ban and soft ban all delete a membership row, and a deleted membership row that nobody is told about leaves every other client rendering a member the room no longer has. So each of them ends in the same announcement a voluntary leave makes — the `leaveRoom` event every member list prunes from, and the system line naming who went — through one `announceRoomMemberRemoval`, best-effort after the removal has committed ([persist then notify](../../architecture/persist-then-notify/design.md)). The same event ends the removed member's open room streams (`onWhileMember`), since a stream checks membership only when it opens and a client that kept one would otherwise go on receiving the room, and it takes each of the member's devices out of the room's Web PubSub group, which is what carries webhook messages ([azure services](../../architecture/azure-services/design.md)).
+Kick, ban and soft ban all delete a membership row, and a deleted membership row that nobody is told about leaves every other client rendering a member the room no longer has. So each of them ends in the same announcement a voluntary leave makes — the `leaveRoom` event every member list prunes from, and the system line naming who went — through one `announceRoomMemberRemoval`, best-effort after the removal has committed ([persist then notify](../../architecture/persist-then-notify/design.md)). The same event ends the removed member's open room streams (`onWhileMember`), since a stream checks membership only when it opens and a client that kept one would otherwise go on receiving the room, and it takes each of the member's devices out of the room's Web PubSub group, which is what carries webhook messages ([azure services](../../architecture/azure-services/design.md)). The multi-room streams (`onJoinRoom`, `onLeaveRoom`, `onUpdateRoom`, `onDeleteRoom`) read membership per event rather than at open: a room is delivered while the member is in it, so a room they left stops reaching a stream opened before the leave, and a room they join reaches it from the join on (`trackMemberRoomIds`). A member's own leave still reaches its other devices that listed the room, since the device it did not leave from still shows the room.
 
 **Nobody moderates themselves.** The hierarchy comparison cannot express it: an actor and a target at the same position fail the strict comparison, but a room owner is above every rule it knows and would pass against their own row. The self-target rejection therefore sits in front of the comparison rather than inside it, and a direct message is rejected in front of both — a pair with no roles has no moderators, and blocking is what it has instead.
 
@@ -69,22 +69,23 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                               | Role                                            |
-| :--------------------------------------------------------------------------------- | :---------------------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                                |
-| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                               |
-| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                    |
-| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line               |
-| `apps/web/server/services/azure/webPubSub/removeUserFromRoomGroup.ts`              | each departed device out of the room's group    |
-| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls             |
-| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts`                    | publish revokes at the SFU                      |
-| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                       |
-| `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target |
-| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers                 |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate                    |
-| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects                   |
-| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender                 |
-| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                                |
+| File                                                                               | Role                                                  |
+| :--------------------------------------------------------------------------------- | :---------------------------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                                      |
+| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                                     |
+| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                          |
+| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line                     |
+| `apps/web/server/services/azure/webPubSub/removeUserFromRoomGroup.ts`              | each departed device out of the room's group          |
+| `apps/web/server/services/room/trackMemberRoomIds.ts`                              | the rooms a multi-room stream delivers for, per event |
+| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls                   |
+| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts`                    | publish revokes at the SFU                            |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                             |
+| `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target       |
+| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers                       |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate                          |
+| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects                         |
+| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender                       |
+| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                                      |
 
 ## Notes
 
