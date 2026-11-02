@@ -1,0 +1,17 @@
+/* A gradient tint: a flat gradient laid over the element's own fill in its background image, lit as a row is, by a
+   pointer's hover, by focus or by the forced Hover state, and pressed at once. A pointer's hover is guarded by
+   `(hover: hover)`, so a touch screen leaves no tint after a tap. The element wears the `gradient-tint` class and sets
+   `--tint-hover` and `--tint-press` on its own base rule */
+@media (hover: hover) {
+  .gradient-tint:enabled:hover {
+    background-image: linear-gradient(var(--tint-hover), var(--tint-hover));
+  }
+}
+
+.gradient-tint:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
+  background-image: linear-gradient(var(--tint-hover), var(--tint-hover));
+}
+
+.gradient-tint:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
+  background-image: linear-gradient(var(--tint-press), var(--tint-press));
+}

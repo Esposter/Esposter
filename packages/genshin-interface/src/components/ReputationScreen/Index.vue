@@ -2,14 +2,11 @@
 import type { ReputationLevelCell } from "#src/models/ReputationLevelCell";
 import type { TextSegment } from "#src/models/TextSegment";
 
-import ItemTile from "#src/components/ItemTile/Index.vue";
-import {
-  CHECK_MARK_PATH,
-  GAME_CREAM,
-  GAME_REPLY_HOVER_INK,
-  GAME_ROW_HOVER,
-  GAME_ROW_PRESS,
-} from "#src/services/constants";
+import ReputationScreenDetail from "#src/components/ReputationScreen/Detail/Index.vue";
+import ReputationScreenHead from "#src/components/ReputationScreen/Head/Index.vue";
+import ReputationScreenLevel from "#src/components/ReputationScreen/Level/Index.vue";
+import ReputationScreenOffer from "#src/components/ReputationScreen/Offer/Index.vue";
+import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
 
 interface Props {
   // The achieved mark's words in the reader's language, read to assistive technology in place of the mark
@@ -46,54 +43,18 @@ const emit = defineEmits<{ accept: []; close: [] }>();
        their count beneath, its unlock line behind an info mark, and the tick or the not achieved block at its end. The
        head and the left column are still provisional: the reference frames only the level list -->
   <div class="reputation-screen">
-    <header class="head">
-      <p class="title" role="heading" aria-level="1">{{ title }}</p>
-      <button class="back" :aria-label="backLabel" type="button" @click="emit('close')">↶</button>
-    </header>
-    <section class="detail">
-      <p class="headline">{{ headline }}</p>
-      <p class="requirement">
-        <span v-for="({ color, text }, index) of requirement" :key="index" :style="{ color }">{{ text }}</span>
-      </p>
-    </section>
-    <section v-if="offer" class="offer">
-      <p class="offer-title">{{ offer.title }}</p>
-      <button class="accept" type="button" @click="emit('accept')">{{ offer.acceptLabel }}</button>
-    </section>
+    <ReputationScreenHead :back-label="backLabel" :title @close="emit('close')" />
+    <ReputationScreenDetail :headline :requirement />
+    <ReputationScreenOffer v-if="offer" :offer @accept="emit('accept')" />
     <ul class="levels">
       <li v-for="cell of levels" :key="cell.level">
-        <button
-          class="level"
-          :aria-pressed="cell.level === level"
-          :data-achieved="cell.isAchieved || undefined"
-          type="button"
-          @click="level = cell.level"
-        >
-          <span class="badge">
-            <span class="badge-face">
-              <span class="badge-word">{{ levelLabel }}</span>
-              <span class="badge-number">{{ cell.level }}</span>
-            </span>
-          </span>
-          <span class="items">
-            <ItemTile
-              v-for="({ count, label, rarity }, index) of cell.items"
-              :key="index"
-              class="item"
-              :aria-label="label"
-              count-size="21cqh"
-              :count
-              :rarity
-              role="img"
-            />
-          </span>
-          <span v-if="cell.unlockLabel" class="unlock">{{ cell.unlockLabel }}</span>
-          <span v-if="cell.isAchieved" class="achieved">
-            <svg class="check" viewBox="0 0 252 228" aria-hidden="true"><path :d="CHECK_MARK_PATH" /></svg>
-            <span class="hidden-label">{{ achievedLabel }}</span>
-          </span>
-          <span v-else class="status">{{ notAchievedLabel }}</span>
-        </button>
+        <ReputationScreenLevel
+          v-model:level="level"
+          :achieved-label="achievedLabel"
+          :cell
+          :level-label="levelLabel"
+          :not-achieved-label="notAchievedLabel"
+        />
       </li>
     </ul>
   </div>
@@ -105,78 +66,6 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   inset: 0;
   color: v-bind(GAME_REPLY_HOVER_INK);
   font-weight: 600;
-}
-
-/* The head: the title on two lines 250 wide past the emblem's place, the way back a 58 circle at the corner */
-.head {
-  position: absolute;
-  top: calc(var(--unit) * 19);
-  left: calc(var(--unit) * 137);
-  right: calc(var(--unit) * 48);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #f1e6c6;
-}
-
-.title {
-  width: calc(var(--unit) * 250);
-  margin: 0;
-  font-size: calc(var(--unit) * 24);
-  line-height: calc(var(--unit) * 27);
-}
-
-.back {
-  width: calc(var(--unit) * 58);
-  height: calc(var(--unit) * 58);
-  border: calc(var(--unit) * 4) solid rgb(128 128 128 / 0.7);
-  border-radius: 50%;
-  background: #ece8df;
-  color: #33333a;
-  font: inherit;
-  font-size: calc(var(--unit) * 30);
-}
-
-.detail {
-  position: absolute;
-  top: calc(var(--unit) * 165);
-  left: calc(var(--unit) * 85);
-  width: calc(var(--unit) * 520);
-  color: v-bind(GAME_CREAM);
-}
-
-.headline {
-  margin: 0;
-  font-size: calc(var(--unit) * 46);
-}
-
-.requirement {
-  margin: calc(var(--unit) * 16) 0 0;
-  font-size: calc(var(--unit) * 26);
-}
-
-/* The offer sits under the requirement, provisionally, until the reference frames it */
-.offer {
-  position: absolute;
-  top: calc(var(--unit) * 380);
-  left: calc(var(--unit) * 85);
-  width: calc(var(--unit) * 520);
-  color: v-bind(GAME_CREAM);
-}
-
-.offer-title {
-  margin: 0 0 calc(var(--unit) * 16);
-  font-size: calc(var(--unit) * 26);
-}
-
-.accept {
-  padding: calc(var(--unit) * 12) calc(var(--unit) * 32);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: v-bind(GAME_CREAM);
-  color: v-bind(GAME_REPLY_HOVER_INK);
-  font: inherit;
-  font-size: calc(var(--unit) * 26);
 }
 
 /* The list's panel, its rows 126 apart from 27 down and 32 in, a row 1145 wide */
@@ -197,166 +86,4 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   list-style: none;
   scrollbar-width: none;
 }
-
-.level {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: calc(var(--unit) * 121);
-  padding: 0;
-  box-sizing: border-box;
-  border: calc(var(--unit) * 2) solid #dad4cd;
-  border-width: calc(var(--unit) * 3) calc(var(--unit) * 2);
-  border-left-color: #c8c2b6;
-  background: #f6f1e8;
-  color: #5a5758;
-  font: inherit;
-  text-align: left;
-}
-
-.level[data-achieved] {
-  background: #e9e3d9;
-}
-
-.level[aria-pressed="true"] {
-  background: rgb(255 255 255 / 0.6);
-}
-
-/* The way back, the offer's button and each level are lit as a row is, a tint over their own boxes behind their words (the
-   round way back takes the tint in its curve): on a pointer's hover only, so a tap leaves none, and on focus or the forced
-   hover; pressed at once. Provisional, as no recording shows them under the pointer */
-@media (hover: hover) {
-  .back:enabled:hover,
-  .accept:enabled:hover,
-  .level:enabled:hover {
-    background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
-  }
-}
-
-.back:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
-.accept:enabled:is(:focus-visible, [data-interaction-state="Hover"] *),
-.level:enabled:is(:focus-visible, [data-interaction-state="Hover"] *) {
-  background-image: linear-gradient(v-bind(GAME_ROW_HOVER), v-bind(GAME_ROW_HOVER));
-}
-
-.back:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
-.accept:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *),
-.level:enabled:is(:active, [data-pressed], [data-interaction-state="Pressed"] *) {
-  background-image: linear-gradient(v-bind(GAME_ROW_PRESS), v-bind(GAME_ROW_PRESS));
-}
-
-/* The level's pentagon, the row's height, its point 166 in; its drop shadow falls on the row to its right */
-.badge {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: calc(var(--unit) * 166);
-  filter: drop-shadow(calc(var(--unit) * 6) 0 calc(var(--unit) * 5) rgb(120 100 80 / 0.22));
-}
-
-.badge-face {
-  position: absolute;
-  inset: 0;
-  background: #f8f4ee;
-  clip-path: polygon(0 0, 83% 0, 100% 50%, 83% 100%, 0 100%);
-}
-
-.level[data-achieved] .badge-face {
-  background: #f4eee4;
-}
-
-.badge-word,
-.badge-number {
-  position: absolute;
-  left: 0;
-  width: calc(var(--unit) * 146);
-  color: #6a645b;
-  line-height: 1;
-  text-align: center;
-}
-
-.badge-word {
-  top: calc(var(--unit) * 22);
-  font-size: calc(var(--unit) * 22);
-  letter-spacing: calc(var(--unit) * 2);
-}
-
-.badge-number {
-  top: calc(var(--unit) * 49.5);
-  font-size: calc(var(--unit) * 41);
-}
-
-.items {
-  position: absolute;
-  top: calc(var(--unit) * 20);
-  left: calc(var(--unit) * 238);
-  display: flex;
-  gap: calc(var(--unit) * 12);
-}
-
-/* The clip's slots, 76 square, their counts at 16 */
-.item {
-  width: calc(var(--unit) * 76);
-  height: calc(var(--unit) * 76);
-}
-
-/* The unlock line, wrapped at 320 and set centred on the row two units lower, as the clip's lines sit; its info mark
-   stands 41 to the left of the line */
-.unlock {
-  position: absolute;
-  top: calc(50% + var(--unit) * 2);
-  left: calc(var(--unit) * 528);
-  width: calc(var(--unit) * 320);
-  font-size: calc(var(--unit) * 27);
-  letter-spacing: calc(var(--unit) * 2);
-  line-height: calc(var(--unit) * 32);
-  translate: 0 -50%;
-}
-
-.unlock::before {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--unit) * -41);
-  width: calc(var(--unit) * 25);
-  height: calc(var(--unit) * 25);
-  border: calc(var(--unit) * 1) solid #d4cfc8;
-  border-radius: 50%;
-  background: #fbfaf4;
-  color: #36362f;
-  content: "i";
-  font-size: calc(var(--unit) * 20);
-  letter-spacing: 0;
-  line-height: calc(var(--unit) * 25);
-  text-align: center;
-  translate: 0 -50%;
-}
-
-/* The row's end, 189 wide: the tick where the level is achieved, else the not achieved block */
-.achieved,
-.status {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  width: calc(var(--unit) * 189);
-  align-items: center;
-  justify-content: center;
-}
-
-.check {
-  width: calc(var(--unit) * 52);
-  height: calc(var(--unit) * 47);
-  margin-bottom: calc(var(--unit) * 4);
-  fill: #8cbc2c;
-}
-
-.status {
-  background: #ebe3d9;
-  color: #92867a;
-  font-size: calc(var(--unit) * 31);
-}
 </style>
-
-<style scoped src="../../styles/visuallyHidden.css"></style>
