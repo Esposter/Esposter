@@ -1,6 +1,8 @@
 import type { ResourceAccess } from "#server/models/resource/ResourceAccess";
 import type { Database, ResourceInResource } from "@esposter/db-schema";
 
+import { findOwnedResource } from "#server/services/resource/findOwnedResource";
+
 // The answers every asset of one resource shares, so a caller reads them once per resource rather than once per asset.
 // Ownership is asked first and the publication only when it is not owned, so an owner's read is one query
 // Read per call and never cached across calls: unpublish revokes anonymous access by deleting the publication row, and
@@ -11,9 +13,7 @@ export const readResourceAccess = async (
   userId?: string,
 ): Promise<ResourceAccess> => {
   if (userId) {
-    const resource = await db.query.resourcesInResource.findFirst({
-      where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },
-    });
+    const resource = await findOwnedResource(db, userId, resourceId, undefined);
     if (resource) return { isOwned: true };
   }
 

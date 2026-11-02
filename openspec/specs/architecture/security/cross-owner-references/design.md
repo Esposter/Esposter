@@ -30,7 +30,8 @@ Paths relative to `apps/web`.
 
 | File                                                       | Role                                                                |
 | ---------------------------------------------------------- | ------------------------------------------------------------------- |
-| `server/services/resource/readOwnedResource.ts`            | the owner and type lookup every owned read shares                   |
+| `server/services/resource/findOwnedResource.ts`            | the owner and type lookup every owned read shares, by db and user   |
+| `server/services/resource/readOwnedResource.ts`            | the same lookup for a caller with a session                         |
 | `server/services/resource/requireOwnedResource.ts`         | the same lookup as an access check, refusing what it cannot resolve |
 | `server/services/resource/checkIsResourceAssetReadable.ts` | whether a caller may read one asset path                            |
 | `server/services/resource/readResourceAccess.ts`           | the caller's ownership and the resource's publication, read once    |
