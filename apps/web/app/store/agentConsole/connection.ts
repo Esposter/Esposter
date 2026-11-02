@@ -8,6 +8,7 @@ import type { DistributedOmit } from "type-fest";
 
 import { AgentConsoleThemeType } from "@/models/agentConsole/AgentConsoleThemeType";
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
+import { checkIsCommandTooLarge } from "@/services/agentConsole/checkIsCommandTooLarge";
 import { checkIsHostProofValid } from "@/services/agentConsole/checkIsHostProofValid";
 import { checkIsPairingProofValid } from "@/services/agentConsole/checkIsPairingProofValid";
 import { checkIsProofPortMismatched } from "@/services/agentConsole/checkIsProofPortMismatched";
@@ -20,6 +21,7 @@ import {
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
 import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
+import { getFileSize } from "@/services/file/getFileSize";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
@@ -40,6 +42,7 @@ import {
   HandshakeMessageType,
   HOST_SCHEME,
   HostCloseCode,
+  MESSAGE_MAX_BYTE_LENGTH,
   PAIRING_CODE_BYTE_LENGTH,
   PAIRING_CODE_PARAMETER,
   SCHEME_PAIRING_CODE_DURATION_MS,
@@ -426,6 +429,16 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     (sessionId && sessionId === agentConsoleSideChatStore.sideChatSessionId
       ? agentConsoleSideChatStore.sideChatConnectionId
       : undefined);
+  // The host closes the socket of a message over its limit, so a command over it is not sent, and the reader is told why
+  const checkIsSendable = (command: DistributedOmit<Command, "id">) => {
+    if (!checkIsCommandTooLarge(command)) return true;
+
+    createAlert(
+      `The message is over ${getFileSize(MESSAGE_MAX_BYTE_LENGTH)}, the most the host takes at once — it was not sent`,
+      "error",
+    );
+    return false;
+  };
   // A command about a session or a shell goes to the host holding it; one that opens a session goes where the reader
   // Chose, or to the first host reached. Returns whether the command was sent
   const sendCommand = (
@@ -449,6 +462,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       createAlert("Not connected to the host — the command was not sent", "error");
       return false;
     }
+
+    if (!checkIsSendable(command)) return false;
 
     if (command.type === CommandType.Fork && command.isSideChat)
       sideChatCommandIds.set(commandId, agentConsoleSideChatStore.pendingQuestion);
@@ -490,6 +505,9 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       return sendCommand(toPromptCommand(agentConsoleSideChatStore.sideChatSessionId, text, attachments));
     // The fork is still opening, and its question is the one asked when it has
     if (agentConsoleSideChatStore.pendingQuestion) return false;
+    // The question is sent once the fork has opened, so one the host would refuse is refused now, while the reader still
+    // Has it. The fork's own id is not known yet, so the question is measured under the console's session's
+    if (!checkIsSendable(toPromptCommand(agentConsoleSessionStore.currentSessionId, text, attachments))) return false;
 
     agentConsoleSideChatStore.pendingQuestion = { attachments, text };
     const isForkSent = sendCommand({

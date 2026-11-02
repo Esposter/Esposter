@@ -3,10 +3,12 @@ import type { AgentEvent } from "agent-console-server/contracts";
 
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { LOCAL_HOST_ADDRESS } from "@/services/agentConsole/constants";
+import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
+import { useAlertStore } from "@/store/alert";
 import { takeOne } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import {
@@ -16,6 +18,7 @@ import {
   getSignedText,
   HandshakeMessageType,
   HostCloseCode,
+  MESSAGE_MAX_BYTE_LENGTH,
   ServerMessageType,
   SessionState,
   SignaturePurpose,
@@ -571,5 +574,34 @@ describe(useAgentConsoleConnectionStore, () => {
 
     expect(socket.send).toHaveBeenCalledTimes(sentBefore + 1);
     expect(readLastCommand(socket).type).toBe(CommandType.Prompt);
+  });
+
+  test("a prompt over the host's message limit is not sent, and the reader is told why", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, sessionId, socket } = await openConsole();
+    const alertStore = useAlertStore();
+    const sentBefore = socket.send.mock.calls.length;
+    const isSent = agentConsoleConnectionStore.sendCommand(
+      toPromptCommand(sessionId, " ".repeat(MESSAGE_MAX_BYTE_LENGTH), []),
+    );
+
+    expect(isSent).toBe(false);
+    expect(socket.send).toHaveBeenCalledTimes(sentBefore);
+    expect(alertStore.alerts.map(({ type }) => type)).toStrictEqual(["error"]);
+  });
+
+  test("a side chat's first question over the host's message limit is refused before its fork is sent", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, socket } = await openConsole();
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    agentConsoleSideChatStore.isSideChatOpen = true;
+    const sentBefore = socket.send.mock.calls.length;
+    const isAsked = agentConsoleConnectionStore.askSideChat(" ".repeat(MESSAGE_MAX_BYTE_LENGTH), []);
+
+    expect(isAsked).toBe(false);
+    expect(socket.send).toHaveBeenCalledTimes(sentBefore);
+    expect(agentConsoleSideChatStore.pendingQuestion).toBeUndefined();
   });
 });
