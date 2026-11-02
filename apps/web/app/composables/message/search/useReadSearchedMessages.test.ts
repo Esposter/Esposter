@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { Filter } from "@esposter/db-schema";
+import type { Filter, MessageEntity } from "@esposter/db-schema";
 import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
@@ -7,7 +7,7 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { FilterType } from "@esposter/db-schema";
+import { createMessageEntity, FilterType, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
@@ -16,6 +16,7 @@ describe(useReadSearchedMessages, () => {
   const { trpcMsw } = setupMswTrpc();
   let count: Ref<number>;
   let isSearching: Ref<boolean>;
+  let items: Ref<MessageEntity[]>;
   let page: Ref<number>;
   let searchQuery: Ref<string>;
   let selectedFilters: Ref<Filter[]>;
@@ -29,6 +30,7 @@ describe(useReadSearchedMessages, () => {
   const query = "a";
   const pendingFilter = { type: FilterType.Has, value: "" };
   const filter = { type: FilterType.Pinned, value: false };
+  const latestQuery = "latest";
 
   const mountRead = async () => {
     await mountSuspended(
@@ -37,7 +39,7 @@ describe(useReadSearchedMessages, () => {
         setup: () => {
           setCurrentRoomId(roomId);
           const searchMessageStore = useSearchMessageStore();
-          ({ count, isSearching, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
+          ({ count, isSearching, items, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           // Each room's page starts at its own value, so a page written into the wrong slice is visible
           setCurrentRoomId(otherRoomId);
           page.value = otherRoomPage;
@@ -170,5 +172,31 @@ describe(useReadSearchedMessages, () => {
 
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith([filter]);
     expect(createSearchHistory).toHaveBeenCalledExactlyOnceWith({ filters: [filter], query, roomId });
+  });
+
+  // A search answered after a newer one was issued is cancelled by it, so the older response never replaces the results
+  // The newer search has already filed
+  test("drops the response of a search a newer search superseded", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const { promise: isStaleResponseReleased, resolve: releaseStaleResponse } = Promise.withResolvers<void>();
+    const staleMessage = createMessageEntity({ message: query, roomId, type: MessageType.Message, userId });
+    const latestMessage = createMessageEntity({ message: latestQuery, roomId, type: MessageType.Message, userId });
+    trpcMsw.message.searchMessages.query(async ({ input }) => {
+      if (input.query !== query) return { count: newCount, data: { hasMore: false, items: [latestMessage] } };
+
+      await isStaleResponseReleased;
+      return { count: newCount, data: { hasMore: false, items: [staleMessage] } };
+    });
+    await mountRead();
+    searchQuery.value = query;
+    const staleSearch = readSearchedMessages();
+    searchQuery.value = latestQuery;
+    await readSearchedMessages();
+    releaseStaleResponse();
+    await staleSearch;
+
+    expect(items.value).toStrictEqual([latestMessage]);
   });
 });

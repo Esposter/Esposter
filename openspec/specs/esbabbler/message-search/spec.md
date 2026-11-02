@@ -173,6 +173,18 @@ Search results SHALL stay with the room they were searched in, so that results a
 - **THEN** the results are kept under the room they were searched in
 - **AND** they do not appear in the room the reader is now viewing
 
+### Requirement: A newer search replaces the search still in flight in its room
+
+A search SHALL cancel the search still in flight in the same room, whichever surface issued it, and a cancelled search SHALL NOT replace the results of the search that replaced it.
+
+#### Scenario: A search is run while the one before it is still in flight
+
+- **GIVEN** a search in a room is still waiting for its results
+- **WHEN** the reader runs another search in that room, by Enter, from the history or by changing the page
+- **THEN** the earlier search's request is cancelled
+- **AND** its results never replace the results of the later search
+- **AND** no error is shown for the cancelled search
+
 ### Requirement: Browsing attachments is the file filter applied to search
 
 Browsing a room's attachments SHALL be a search filtered to files, not a separate view.
