@@ -49,8 +49,8 @@ export const useMicrophoneLevel = () => {
           stopStream();
           return;
         }
-        // A start that lands on a running test reuses its stream, so the context it replaces closes first
-        await audioContext?.close();
+        // A start that lands on a running test reuses its stream, so the context it replaces is taken out here
+        const previousAudioContext = audioContext;
         audioContext = new window.AudioContext();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 1024;
@@ -58,6 +58,9 @@ export const useMicrophoneLevel = () => {
         audioContext.createMediaStreamSource(stream).connect(analyser);
         isTesting.value = true;
         resume();
+        // Closed only after the new graph is in place: nothing this callback writes follows the await, so a stop()
+        // That lands during the close cannot be overtaken by a state write
+        if (previousAudioContext) await getResultAsync(() => previousAudioContext.close()).match(noop, console.error);
       },
     });
   };
