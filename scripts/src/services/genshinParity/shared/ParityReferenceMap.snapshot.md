@@ -26,7 +26,7 @@ committed.
 | `crafting-strongbox`                   | `CraftingStrongbox`         |                                       pending: no screenshot of the screen yet |       |        |        |
 | `crafting-table`                       | `CraftingScreen`            |                                          pending: its recording is not on disk |       |        |        |
 | `dialogue-choices-line`                | `DialogueTalk`              |                                                                          8.70% | 0.925 |  1.94% | 0.2502 |
-| `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         17.92% | 0.783 | 13.97% | 0.5292 |
+| `dialogue-choices-replies`             | `DialogueTalk`              |                                                                         13.02% | 0.856 |  8.34% | 0.4185 |
 | `dialogue-choices-speaker`             | `DialogueTalk`              |                                                                          6.37% | 0.798 |  4.63% | 0.2878 |
 | `dialogue-line`                        | `DialogueTalk`              |                                                                          8.52% | 0.987 |  1.64% | 0.2789 |
 | `dialogue-paimon-line`                 | `DialogueTalk`              |                                                                          8.56% | 0.962 |  1.36% | 0.2339 |

@@ -131,6 +131,10 @@ export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.26)";
 export const GAME_REPLY_HOVER = "rgb(255 255 255 / 0.85)";
 export const GAME_REPLY_HOVER_INK = "#3b4255";
+// The dialogue's reply pill at rest: the reference's pill is a neutral slate, not the warm black a 0.26 of black keeps of
+// The world beneath it, so the colour and alpha are the slate that matches its pill body over the world round it, swept
+// At 0.65 and 0.8 on `dialogue-choices-replies` and scored worse. The kind's rest, GAME_REPLY_REST, stays for the others
+export const DIALOGUE_REPLY_REST = "rgb(32 40 57 / 0.72)";
 // The weapon screen's Ascend pill, lit gold, and its label faded over the gold, read off its reference (`weapon-screen-ascend`)
 export const GAME_LIT_GOLD = "#ffeab4";
 export const GAME_LIT_GOLD_LABEL = "#d6cdb8";
