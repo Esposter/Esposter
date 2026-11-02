@@ -4,16 +4,13 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { useBanStore } from "@/store/message/user/ban";
 
 interface Props {
   room: RoomInMessage;
 }
 
 const { room } = defineProps<Props>();
-const { isPending, readMoreBans, searchQuery } = useReadBans(room.id);
-const banStore = useBanStore();
-const { hasMore, items } = storeToRefs(banStore);
+const { hasMore, isPending, items, readMoreBans, searchQuery } = useReadBans(room.id);
 </script>
 
 <template>

@@ -6,7 +6,8 @@ import { noop, normalizeString } from "@esposter/shared";
 export const useReadBans = (roomId: RoomInMessage["id"]) => {
   const { $trpc } = useNuxtApp();
   const banStore = useBanStore();
-  const { readItems, readMoreItems } = banStore;
+  const { getSliceOperationData } = banStore;
+  const { hasMore, items, readItems, readMoreItems } = getSliceOperationData(roomId);
   const searchQuery = ref("");
   const filter = computed(() => {
     const name = normalizeString(searchQuery.value);
@@ -29,5 +30,5 @@ export const useReadBans = (roomId: RoomInMessage["id"]) => {
       await readItems(() => $trpc.message.moderation.readBans.query({ filter: filter.value, roomId }, { signal }));
     },
   });
-  return { isPending, readMoreBans, searchQuery };
+  return { hasMore, isPending, items, readMoreBans, searchQuery };
 };
