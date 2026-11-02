@@ -73,22 +73,6 @@ interface Props {
   trounceClaimPrompt?: { offers: BlossomClaimOffer[] };
 }
 
-const emit = defineEmits<{
-  map: [];
-  menu: [];
-  // A row of the prompts pressed itself, which acts on it as F acts on the selected row
-  press: [id: string];
-  closeTip: [];
-  // An outcrop's claim: a row chosen, the choice left unmade, and the restore row chosen
-  chooseOutcrop: [offer: BlossomClaimOffer];
-  closeOutcrop: [];
-  restoreOutcrop: [];
-  chooseTrounce: [];
-  closeTrounce: [];
-  chooseDomain: [offer: BlossomClaimOffer];
-  closeDomain: [];
-}>();
-
 const {
   bagFullHint,
   camera,
@@ -129,6 +113,21 @@ const {
   trialSecondsRemaining,
   trounceClaimPrompt,
 } = defineProps<Props>();
+const emit = defineEmits<{
+  map: [];
+  menu: [];
+  // A row of the prompts pressed itself, which acts on it as F acts on the selected row
+  press: [id: string];
+  closeTip: [];
+  // An outcrop's claim: a row chosen, the choice left unmade, and the restore row chosen
+  chooseOutcrop: [offer: BlossomClaimOffer];
+  closeOutcrop: [];
+  restoreOutcrop: [];
+  chooseTrounce: [];
+  closeTrounce: [];
+  chooseDomain: [offer: BlossomClaimOffer];
+  closeDomain: [];
+}>();
 </script>
 
 <template>
@@ -160,6 +159,7 @@ const {
     :input
     :interaction-prompts="interactionPrompts"
     :interface-rects="interfaceRects"
+    :is-quick-swap-open="isQuickSwapOpen"
     :is-touch="isTouch"
     :landmarks
     :max-stamina="maxStamina"
@@ -170,7 +170,6 @@ const {
     :quest-mark="questMark"
     :quest-progress="questProgress"
     :quest-text-map="questTextMap"
-    :quick-swap-open="isQuickSwapOpen"
     :tracked-quest="trackedQuest"
     :traveler-name="travelerName"
     :trial-seconds-remaining="trialSecondsRemaining"
@@ -231,7 +230,7 @@ const {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(60vh, 60vw);
+  width: min(60dvh, 60vw);
   aspect-ratio: 1;
   pointer-events: none;
   transform: translate(-50%, -50%);

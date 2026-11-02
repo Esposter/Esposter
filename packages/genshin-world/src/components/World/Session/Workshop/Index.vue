@@ -60,12 +60,6 @@ interface Props {
   worldNow: Temporal.Instant;
 }
 
-const emit = defineEmits<{
-  achievementEvents: [achievementEvents: AchievementEvent[]];
-  close: [];
-  updateInventory: [inventory: Inventory];
-  updateWallet: [wallet: Wallet];
-}>();
 const adventureExp = defineModel<number>("adventureExp", { required: true });
 const cookingProgress = defineModel<CookingProgress>("cookingProgress", { required: true });
 const cookingRecipe = defineModel<CookingRecipe>("cookingRecipe");
@@ -106,6 +100,12 @@ const {
   weaponDataMap,
   worldNow,
 } = defineProps<Props>();
+const emit = defineEmits<{
+  achievementEvents: [achievementEvents: AchievementEvent[]];
+  close: [];
+  "update:inventory": [inventory: Inventory];
+  "update:wallet": [wallet: Wallet];
+}>();
 </script>
 
 <template>
@@ -122,7 +122,7 @@ const {
     :recipes="cookingRecipes"
     :talent
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
   />
   <ProcessingScreen
     v-if="screenKind === ScreenKind.Processing"
@@ -134,7 +134,7 @@ const {
     :now="getWorldNow"
     :recipes="processingRecipes"
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
   />
   <CraftingScreen
     v-if="screenKind === ScreenKind.Crafting"
@@ -158,8 +158,8 @@ const {
     :weapon-data-map="weaponDataMap"
     @achievement-events="(achievementEvents) => emit('achievementEvents', achievementEvents)"
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
-    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('update:wallet', nextWallet)"
   />
   <ForgeScreen
     v-if="screenKind === ScreenKind.Forge"
@@ -183,7 +183,7 @@ const {
     :weapons="forgeWeapons"
     @achievement-events="(achievementEvents) => emit('achievementEvents', achievementEvents)"
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
-    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('update:wallet', nextWallet)"
   />
 </template>

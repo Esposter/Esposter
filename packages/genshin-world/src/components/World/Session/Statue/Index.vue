@@ -24,7 +24,6 @@ interface Props {
   worshipRegionId?: string;
 }
 
-const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: []; worship: [] }>();
 const autoRecover = defineModel<AutoRecoverSetting>("autoRecover", { required: true });
 const power = defineModel<RestorativePower>("power", { required: true });
 const {
@@ -40,6 +39,7 @@ const {
   worshipLevels,
   worshipRegionId,
 } = defineProps<Props>();
+const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: []; worship: [] }>();
 </script>
 
 <template>

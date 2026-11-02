@@ -31,6 +31,7 @@ interface Props {
 const count = defineModel<number>("count", { default: 1 });
 const goodId = defineModel<number>("goodId", { default: 0 });
 const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, title } = defineProps<Props>();
+const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
 // The good the player picked, if any, and the good the detail shows, which is the first good until one is picked
 const { pickedCount, pickedGood, setCount } = useShopGoodPick({
   count,
@@ -39,10 +40,6 @@ const { pickedCount, pickedGood, setCount } = useShopGoodPick({
   goodId,
 });
 const shownGood = computed(() => pickedGood.value ?? goods[0]);
-const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
-const buy = () => {
-  if (pickedGood.value && countMaximum >= 1) emit("buy", pickedGood.value, pickedCount.value);
-};
 </script>
 
 <template>
@@ -106,7 +103,13 @@ const buy = () => {
       <p class="amount-value">{{ pickedCount }}</p>
     </div>
     <p v-if="shownGood?.refreshLabel" class="refresh">{{ shownGood.refreshLabel }}</p>
-    <GameButton class="buy" :disabled="countMaximum < 1" :kind="GameButtonKind.Row" tip="" @click="buy">
+    <GameButton
+      class="buy"
+      :disabled="countMaximum < 1"
+      :kind="GameButtonKind.Row"
+      tip=""
+      @click="pickedGood && emit('buy', pickedGood, pickedCount)"
+    >
       <span class="buy-icon" />
       {{ buyLabel }}
     </GameButton>

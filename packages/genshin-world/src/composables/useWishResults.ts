@@ -41,12 +41,10 @@ export const useWishResults = ({
   };
   const toResultCell = (wishResult: WishResult): WishResultCell => {
     const {
-      isCapturingRadiance,
       item: { name, rarity },
       wishReturn,
     } = wishResult;
     return {
-      isCapturingRadiance,
       name,
       rarity,
       stellaFortuna: toStellaFortunaText(wishResult),

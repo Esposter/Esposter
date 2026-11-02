@@ -1825,8 +1825,8 @@ useWorldSaveSync({
         reviveFallenParty();
         closeScreen();
       "
-      @update-inventory="(nextInventory) => setInventory(nextInventory)"
-      @update-wallet="(nextWallet) => setWallet(nextWallet)"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <WorldSessionStatue
       v-model:auto-recover="autoRecoverSetting"
@@ -1914,8 +1914,8 @@ useWorldSaveSync({
       :world-now="worldNow"
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="closeScreen()"
-      @update-inventory="(nextInventory) => setInventory(nextInventory)"
-      @update-wallet="(nextWallet) => setWallet(nextWallet)"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
     />
     <div
       class="teleport-fade"

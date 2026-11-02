@@ -65,22 +65,9 @@ export const variants = {
   },
   results: {
     results: [
+      { name: "Favonius Sword", rarity: 4, stellaFortuna: "", wishReturn: "Masterless Starglitter ×2" },
+      { name: "Cool Steel", rarity: 3, stellaFortuna: "", wishReturn: "Masterless Stardust ×15" },
       {
-        isCapturingRadiance: false,
-        name: "Favonius Sword",
-        rarity: 4,
-        stellaFortuna: "",
-        wishReturn: "Masterless Starglitter ×2",
-      },
-      {
-        isCapturingRadiance: false,
-        name: "Cool Steel",
-        rarity: 3,
-        stellaFortuna: "",
-        wishReturn: "Masterless Stardust ×15",
-      },
-      {
-        isCapturingRadiance: false,
         name: "Eula",
         rarity: 5,
         stellaFortuna: "Masterless Stella Fortuna ×1",

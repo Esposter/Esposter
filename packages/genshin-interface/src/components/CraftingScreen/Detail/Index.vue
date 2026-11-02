@@ -45,7 +45,7 @@ const {
   requiredLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{ craft: [] }>();
-const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === recipeId.value)?.name);
+const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === recipeId.value)?.name ?? "");
 </script>
 
 <template>
@@ -53,15 +53,15 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
     <div class="materials-band" aria-hidden="true" />
     <p class="recipe-title">{{ pickedRecipeName }}</p>
     <ul class="crafters">
-      <li v-for="crafter of crafters" :key="crafter.id">
+      <li v-for="{ id, name } of crafters" :key="id">
         <GameButton
           class="crafter"
-          :aria-pressed="crafter.id === crafterId"
+          :aria-pressed="id === crafterId"
           :kind="GameButtonKind.Row"
           tip=""
-          @click="crafterId = crafter.id"
+          @click="crafterId = id"
         >
-          <span class="crafter-name">{{ crafter.name }}</span>
+          <span class="crafter-name">{{ name }}</span>
         </GameButton>
       </li>
     </ul>
@@ -70,9 +70,7 @@ const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === r
     <p class="required">{{ requiredLabel }} {{ requiredCoins }}</p>
     <p class="materials-label">{{ craftingMaterialsLabel }}</p>
     <ul class="materials">
-      <li v-for="material of materials" :key="material.id" class="material">
-        {{ material.owned }} / {{ material.required }}
-      </li>
+      <li v-for="{ id, owned, required } of materials" :key="id" class="material">{{ owned }} / {{ required }}</li>
     </ul>
     <GameButton class="craft" :kind="GameButtonKind.Row" tip="" @click="emit('craft')">{{ craftLabel }}</GameButton>
   </div>

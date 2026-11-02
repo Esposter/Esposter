@@ -21,7 +21,6 @@ interface Props {
   isDestroyFull: boolean;
 }
 
-const emit = defineEmits<{ cancelDestroy: []; confirmDestroy: [] }>();
 const {
   cancelLabel,
   destroyConfirmButtonLabel,
@@ -34,6 +33,7 @@ const {
   destroyRecoveredNames,
   isDestroyFull,
 } = defineProps<Props>();
+const emit = defineEmits<{ cancelDestroy: []; confirmDestroy: [] }>();
 const cancelButton = useTemplateRef("cancelButton");
 
 // The screen moves the keyboard's focus to this Cancel as the dialog opens

@@ -13,6 +13,7 @@ interface Props {
   rect: FittedInterfaceRect;
 }
 
+defineSlots<{ default: (props: { rect: CanvasRect }) => unknown }>();
 const { parent = GAME_CANVAS_RECT, rect } = defineProps<Props>();
 const canvasRect = computed(() => toCanvasRect(rect));
 // A piece of the game's interface tree, placed by its RectTransform inside its parent's box, or on the canvas when its
@@ -27,7 +28,6 @@ const style = computed(() => {
     transformOrigin: `${pivotX * 100}% ${(1 - pivotY) * 100}%`,
   };
 });
-defineSlots<{ default: (props: { rect: CanvasRect }) => unknown }>();
 </script>
 
 <template>

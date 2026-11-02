@@ -13,6 +13,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { takeInventoryEntry } from "#src/services/inventory/takeInventoryEntry";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
+import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 import { ascendWeapon } from "#src/services/weapon/ascendWeapon";
 import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
@@ -111,10 +112,7 @@ export const useWeaponActions = ({
         (bagItems, id) => takeInventoryEntry(bagItems, id),
         inventory.value.items,
       );
-      const items = pickedOres.value.reduce(
-        (bagItems, { count, id }) => takeInventoryItems(bagItems, id, count),
-        withoutFodders,
-      );
+      const items = takeItemCounts(withoutFodders, pickedOres.value, 1);
       const returned = enhanced.returnedOres.reduce(
         (bag, { count, id }) =>
           addInventoryItem(bag, getItemDefinition(id, toValue(nameText), toValue(materialDataMap)), count).inventory,

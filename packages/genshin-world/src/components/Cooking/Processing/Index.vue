@@ -26,10 +26,10 @@ interface Props {
   recipes: ProcessingRecipe[];
 }
 
-const { gameText, materialDataMap, nameText, now, recipes } = defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const jobs = defineModel<Record<number, ProcessingJob>>("jobs", { required: true });
+const { gameText, materialDataMap, nameText, now, recipes } = defineProps<Props>();
+const emit = defineEmits<{ close: [] }>();
 // The processings offered: only the ones known from the start, since a processing not yet known is refused
 const knownRecipes = recipes.filter((recipe) => recipe.isDefaultUnlocked);
 // The units the player picked for each processing, one until picked

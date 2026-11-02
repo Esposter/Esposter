@@ -68,6 +68,11 @@ interface Props {
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }
 
+const characters = defineModel<Character[]>("characters", { required: true });
+const inventory = defineModel<Inventory>("inventory", { required: true });
+const wallet = defineModel<Wallet>("wallet", { required: true });
+// Every good bought, by its id and the moment it was bought, which each good's limit is counted from
+const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 const {
   adventureRank,
   characterDataMap,
@@ -82,11 +87,6 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const { count, goodId, resetShopPick } = useShopPick();
-const characters = defineModel<Character[]>("characters", { required: true });
-const inventory = defineModel<Inventory>("inventory", { required: true });
-const wallet = defineModel<Wallet>("wallet", { required: true });
-// Every good bought, by its id and the moment it was bought, which each good's limit is counted from
-const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 // The currency a cost is paid in; a cost the wallet does not trade is a bad row, as nothing here could pay for it
 const currencyOf = (itemId: number): Currency => {
   const currency = ShopItemCurrencyMap[itemId];
@@ -217,17 +217,6 @@ const buyOffer = (offer: Offer, buyCount: number): Bought | undefined => {
   );
   return bought && { ...bought, characters: characters.value };
 };
-// Buys the picked good and keeps what the purchase leaves, then clears the picked good
-const buy = (good: ShopGoodCell, buyCount: number) => {
-  const offer = offers.value.find(({ good: offered }) => offered.goodsId === good.id);
-  const bought = offer && buyOffer(offer, buyCount);
-  if (!bought) return;
-  characters.value = bought.characters;
-  inventory.value = bought.inventory;
-  purchases.value = bought.purchases;
-  wallet.value = bought.wallet;
-  resetShopPick();
-};
 </script>
 
 <template>
@@ -253,7 +242,19 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :goods="goodCells"
       :tabs
       :title="gameText[GameTextKey.PaimonsBargains]"
-      @buy="(good, count) => buy(good, count)"
+      @buy="
+        (good, buyCount) => {
+          // Buys the picked good and keeps what the purchase leaves, then clears the picked good
+          const offer = offers.find(({ good: offered }) => offered.goodsId === good.id);
+          const bought = offer && buyOffer(offer, buyCount);
+          if (!bought) return;
+          characters = bought.characters;
+          inventory = bought.inventory;
+          purchases = bought.purchases;
+          wallet = bought.wallet;
+          resetShopPick();
+        }
+      "
       @close="emit('close')"
     />
   </GameScreen>

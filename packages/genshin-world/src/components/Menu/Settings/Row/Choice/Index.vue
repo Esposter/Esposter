@@ -59,10 +59,14 @@ const languageValue = computed(() => getLanguageDisplayName(settings.value.langu
         : (openedList = openedList === row.kind ? undefined : row.kind)
     "
   >
-    <svg class="star" aria-hidden="true" viewBox="0 0 48 48">
-      <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
-    </svg>
-    <svg class="star faint" aria-hidden="true" viewBox="0 0 48 48">
+    <svg
+      v-for="isFaint of [false, true]"
+      :key="String(isFaint)"
+      class="star"
+      :class="{ faint: isFaint }"
+      aria-hidden="true"
+      viewBox="0 0 48 48"
+    >
       <path d="M 24 0 Q 31 17 48 24 Q 31 31 24 48 Q 17 31 0 24 Q 17 17 24 0 Z" />
     </svg>
     <span class="value">

@@ -7,10 +7,11 @@ interface Props {
 }
 
 const { label } = defineProps<Props>();
+const emit = defineEmits<{ close: [] }>();
 const backButton = useTemplateRef("backButton");
+
 // The menu's focus starts on Back when it opens, so the button is reached through this
 defineExpose({ focusBack: () => backButton.value?.focus() });
-const emit = defineEmits<{ close: [] }>();
 </script>
 
 <template>

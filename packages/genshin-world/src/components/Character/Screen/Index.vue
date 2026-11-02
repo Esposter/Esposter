@@ -83,6 +83,12 @@ defineSlots<{
   default?: (props: { characterId: number }) => unknown;
   scene?: (props: { element?: Element; tab: CharacterMenuTab }) => unknown;
 }>();
+// The player's characters, across the screen's top in the order given, a character's activated constellation and a
+// Talent's raised level written back into them
+const characters = defineModel<Character[]>("characters", { required: true });
+// The bag and the wallet a talent's next level takes its materials and Mora from
+const inventory = defineModel<Inventory>("inventory", { required: true });
+const wallet = defineModel<Wallet>("wallet", { required: true });
 const {
   activeCharacterId,
   adventureRank,
@@ -105,12 +111,6 @@ const {
   travelerElement,
   uid,
 } = defineProps<Props>();
-// The player's characters, across the screen's top in the order given, a character's activated constellation and a
-// Talent's raised level written back into them
-const characters = defineModel<Character[]>("characters", { required: true });
-// The bag and the wallet a talent's next level takes its materials and Mora from
-const inventory = defineModel<Inventory>("inventory", { required: true });
-const wallet = defineModel<Wallet>("wallet", { required: true });
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);

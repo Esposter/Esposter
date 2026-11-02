@@ -11,9 +11,9 @@ interface Props {
 }
 
 const { label } = defineProps<Props>();
+const emit = defineEmits<{ open: [] }>();
 // The info mark's box, which the button takes; its glyph is drawn beside the button at its own place, not inside it
 const infoMark = getMenuFrameMark(MenuFrameIcon.Info);
-const emit = defineEmits<{ open: [] }>();
 const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
 // The World Level dialog closes back to the info button, which lives here, so the menu focuses it through this
 defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() });

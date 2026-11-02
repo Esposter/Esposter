@@ -12,8 +12,8 @@ interface Props {
   selectedCell?: InventoryCell;
 }
 
-const emit = defineEmits<{ choose: [id: string]; select: [id: string] }>();
 const { cells, isDestroying, selectedCell } = defineProps<Props>();
+const emit = defineEmits<{ choose: [id: string]; select: [id: string] }>();
 </script>
 
 <template>

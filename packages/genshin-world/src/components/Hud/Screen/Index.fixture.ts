@@ -56,6 +56,7 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   input: createInput(window),
   interfaceRects: await readHudInterfaceRects(GAME_DATA_LOCAL_BASE_URL),
+  isQuickSwapOpen: false,
   isTouch: true,
   landmarks: [],
   maxStamina: STAMINA_MAX,
@@ -81,7 +82,6 @@ export const props = {
   questMark: { distance: 1540, height: QUEST_MARK_MIN_HEIGHT },
   questProgress: { objectiveCounts: [], stepIndex: 0 },
   questTextMap: { albedo: "Look for Albedo", albedoStep: "" },
-  quickSwapOpen: false,
   trackedQuest: {
     descriptionTextId: "albedo",
     id: ALBEDO_QUEST_ID,

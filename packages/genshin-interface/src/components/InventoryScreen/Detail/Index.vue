@@ -22,8 +22,8 @@ interface Props {
   unlockLabel: string;
 }
 
-const emit = defineEmits<{ lock: [id: string] }>();
 const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defineProps<Props>();
+const emit = defineEmits<{ lock: [id: string] }>();
 </script>
 
 <template>

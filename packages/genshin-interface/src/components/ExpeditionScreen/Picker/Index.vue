@@ -29,7 +29,7 @@ const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: n
         <!-- The character picked sends the place's expedition for the duration picked, and closes the picker -->
         <GameButton
           class="character"
-          :disabled="statusLabel !== ''"
+          :disabled="!!statusLabel"
           :kind="GameButtonKind.Row"
           tip=""
           @click="

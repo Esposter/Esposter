@@ -27,11 +27,12 @@ interface Props {
   tip: string;
 }
 
-const { kind, tip } = defineProps<Props>();
 defineSlots<{ default?: () => VNode }>();
+const { kind, tip } = defineProps<Props>();
 const button = useTemplateRef("button");
 const pillRestDuration = `${INTERACTION_PILL_REST_MS}ms`;
 const pressDuration = `${INTERACTION_PRESS_MS}ms`;
+
 // A dialog moves the keyboard's focus to its button
 defineExpose({ focus: () => button.value?.focus() });
 </script>

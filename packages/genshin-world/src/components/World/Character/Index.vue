@@ -97,7 +97,6 @@ const {
   origin,
   waterLevel,
 } = defineProps<Props>();
-const { party } = kitContext;
 // The party went down through a drown, which the world screen answers with the respawn
 const emit = defineEmits<{
   clearKitEffects: [];
@@ -107,6 +106,7 @@ const emit = defineEmits<{
   strikeOre: [body: KitBody, hit: OreHit];
   strikePuzzle: [body: KitBody, hit: PuzzleHit];
 }>();
+const { party } = kitContext;
 const { camera, renderer } = useTres();
 const { onBeforeRender } = useLoop();
 // The body moves in the world's own coordinates, read straight off the terrain's height function, so the floating

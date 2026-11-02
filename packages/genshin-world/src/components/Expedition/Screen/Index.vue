@@ -54,6 +54,9 @@ interface Props {
 const expeditions = defineModel<Expedition[]>("expeditions", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
+const hours = defineModel<number>("hours", { default: 0 });
+const isPicking = defineModel<boolean>("isPicking", { default: false });
+const place = defineModel<number | undefined>("place");
 const {
   adventureRank,
   characterExpeditionPassives,
@@ -71,9 +74,6 @@ const {
   unlockedStatuePointIds,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-const hours = defineModel<number>("hours", { default: 0 });
-const isPicking = defineModel<boolean>("isPicking", { default: false });
-const place = defineModel<number | undefined>("place");
 const nation = ref(gameText[GameTextKey.Mondstadt]);
 // The expedition context read off the player's progress now, the character on the send added where one is sent
 const context = computed<ExpeditionContext>(() => ({

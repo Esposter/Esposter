@@ -42,14 +42,14 @@ interface Props {
   reputationLevel: number;
 }
 
-const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel } =
-  defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
-const { count, goodId, resetShopPick } = useShopPick();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 // Every good bought, by its id and the moment it was bought, which each good's limit is counted from
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
+const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel } =
+  defineProps<Props>();
+const emit = defineEmits<{ close: [] }>();
+const { count, goodId, resetShopPick } = useShopPick();
 // The tab the goods are shown on, by its id, where the shop has tabs: the first until the player picks another
 const tabId = ref(0);
 const tabs = computed(() => computeShopTabs(goods, gameText));

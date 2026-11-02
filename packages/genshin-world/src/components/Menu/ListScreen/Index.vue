@@ -18,9 +18,9 @@ interface Props {
   title: string;
 }
 
+defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?: () => VNode }>();
 defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-defineSlots<{ detail: () => VNode; icon?: () => VNode; list: () => VNode; tabs?: () => VNode }>();
 </script>
 
 <template>

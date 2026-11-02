@@ -10,13 +10,13 @@ import type { GameText } from "genshin-text";
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
-import { MASTERLESS_LEVEL_LIFTS, MASTERLESS_STELLA_FORTUNA_ID } from "#src/services/character/constants";
+import { checkIsLiftHeld } from "#src/services/character/checkIsLiftHeld";
+import { MASTERLESS_LEVEL_LIFTS } from "#src/services/character/constants";
 import { getAscensionMaterials } from "#src/services/character/getAscensionMaterials";
 import { getNextAscensionPhase } from "#src/services/character/getNextAscensionPhase";
 import { levelUpCharacter } from "#src/services/character/levelUpCharacter";
 import { liftCharacterLevel } from "#src/services/character/liftCharacterLevel";
 import { replaceCharacterInRoster } from "#src/services/character/replaceCharacterInRoster";
-import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { GameTextKey } from "genshin-text";
 
@@ -58,12 +58,13 @@ const {
   statTables,
   travelerBonusLines,
 } = defineProps<Props>();
+// The chosen character's ascension phases, looked up once for the rows and the two results below
+const ascensionPhases = computed(() => statTables.characterDataMap.get(character.id)?.ascensionPhases);
 // The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
 // Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
 // The table carries no cost for that phase yet
 const ascendRows = computed(() => {
-  const phases = statTables.characterDataMap.get(character.id)?.ascensionPhases;
-  const nextPhase = phases && getNextAscensionPhase(phases, character.ascension);
+  const nextPhase = ascensionPhases.value && getNextAscensionPhase(ascensionPhases.value, character.ascension);
   if (nextPhase?.coinCost === undefined || nextPhase.requiredPlayerLevel === undefined) return [];
   return [
     { label: gameText[GameTextKey.AdventureRank], value: `${adventureRank}/${nextPhase.requiredPlayerLevel}` },
@@ -76,15 +77,19 @@ const ascendRows = computed(() => {
 });
 // The chosen character ascended into its next phase, with the Mora and materials taken, or undefined where that is
 // Refused now
-const ascendResult = computed(() => {
-  const phases = statTables.characterDataMap.get(character.id)?.ascensionPhases;
-  return phases
-    ? ascendCharacter(character, { adventureRank, inventory: inventory.value, phases, wallet: wallet.value })
-    : undefined;
-});
+const ascendResult = computed(() =>
+  ascensionPhases.value
+    ? ascendCharacter(character, {
+        adventureRank,
+        inventory: inventory.value,
+        phases: ascensionPhases.value,
+        wallet: wallet.value,
+      })
+    : undefined,
+);
 // The chosen character raised one level with its Character EXP materials, or undefined where that is refused now
 const levelUpResult = computed(() => {
-  const maxLevel = statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel;
+  const maxLevel = ascensionPhases.value?.[character.ascension]?.maxLevel;
   return maxLevel === undefined
     ? undefined
     : levelUpCharacter(character, { inventory: inventory.value, maxLevel, wallet: wallet.value });
@@ -92,10 +97,7 @@ const levelUpResult = computed(() => {
 // Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
 const isLiftable = computed(() => {
   const liftLevel = MASTERLESS_LEVEL_LIFTS.get(character.level);
-  return (
-    liftLevel !== undefined &&
-    checkIsItemCountsHeld(inventory.value.items, [{ count: liftLevel.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1)
-  );
+  return liftLevel !== undefined && checkIsLiftHeld(inventory.value, liftLevel);
 });
 </script>
 

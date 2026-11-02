@@ -8,8 +8,8 @@ interface Props {
   size: number;
 }
 
-const { label, size } = defineProps<Props>();
 defineSlots<{ default: () => unknown }>();
+const { label, size } = defineProps<Props>();
 </script>
 
 <template>

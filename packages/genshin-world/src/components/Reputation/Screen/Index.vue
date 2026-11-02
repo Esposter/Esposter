@@ -29,9 +29,9 @@ interface Props {
   reputation: ReputationCity;
 }
 
+const level = defineModel<number>("level", { required: true });
 const { bountyOffer, gameText, materialDataMap, nameText, offerTitle, progress, reputation } = defineProps<Props>();
 const emit = defineEmits<{ accept: []; close: [] }>();
-const level = defineModel<number>("level", { required: true });
 // A level is achieved once the nation's Reputation has reached it, and its unlock line is the feature it opens in the
 // Game's words. Each item's slot is read aloud as its name and count, an achieved level's mark as the game's Completed
 const levels = computed<ReputationLevelCell[]>(() =>

@@ -52,6 +52,9 @@ interface Props {
   wallet: Wallet;
 }
 
+// The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
+// Map is dragged to from the player
+const metres = defineModel<number>("metres", { required: true });
 const {
   camera,
   catalogue,
@@ -65,7 +68,6 @@ const {
   wallet,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
-
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
 // Button alone, so a stray click on the map never teleports
 const chosenLandmark = shallowRef<Landmark>();
@@ -73,9 +75,6 @@ const chooseLandmark = (landmark: Landmark) => {
   chosenLandmark.value = landmark;
 };
 const map = useTemplateRef("map");
-// The drawn metres across the map's width, which the wheel and the slider change from the page's zoom, and the offset the
-// Map is dragged to from the player
-const metres = defineModel<number>("metres", { required: true });
 const { pan, onMapClickCapture, onMapPointerDown, onMapPointerMove, onMapPointerUp, onMapWheel } = useMapPan(
   map,
   metres,

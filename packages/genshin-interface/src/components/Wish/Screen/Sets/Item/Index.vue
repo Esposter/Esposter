@@ -11,8 +11,8 @@ interface Props {
   label: string;
 }
 
-const emit = defineEmits<{ press: [] }>();
 const { cost, isAffordable, label } = defineProps<Props>();
+const emit = defineEmits<{ press: [] }>();
 </script>
 
 <template>

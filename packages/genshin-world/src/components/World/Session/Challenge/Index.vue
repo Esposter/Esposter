@@ -24,13 +24,6 @@ interface Props {
   screenKind: ScreenKind;
 }
 
-const emit = defineEmits<{
-  chooseAbyssChamber: [floorId: number, chamberId: number];
-  chooseBenediction: [towerBuffId: number];
-  close: [];
-  enter: [dungeonId: number];
-  leaveDomain: [];
-}>();
 const {
   abyssBlessing,
   abyssChoiceChamberIndex,
@@ -43,6 +36,13 @@ const {
   nameText,
   screenKind,
 } = defineProps<Props>();
+const emit = defineEmits<{
+  chooseAbyssChamber: [floorId: number, chamberId: number];
+  chooseBenediction: [towerBuffId: number];
+  close: [];
+  enter: [dungeonId: number];
+  leaveDomain: [];
+}>();
 </script>
 
 <template>

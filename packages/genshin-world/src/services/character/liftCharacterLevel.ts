@@ -1,8 +1,8 @@
 import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
+import { checkIsLiftHeld } from "#src/services/character/checkIsLiftHeld";
 import { MASTERLESS_LEVEL_LIFTS, MASTERLESS_STELLA_FORTUNA_ID } from "#src/services/character/constants";
-import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -16,7 +16,7 @@ export const liftCharacterLevel = (
   const lift = MASTERLESS_LEVEL_LIFTS.get(character.level);
   if (!lift)
     throw new InvalidOperationError(Operation.Update, liftCharacterLevel.name, `level ${character.level} lift`);
-  if (!checkIsItemCountsHeld(inventory.items, [{ count: lift.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1))
+  if (!checkIsLiftHeld(inventory, lift))
     throw new InvalidOperationError(
       Operation.Update,
       liftCharacterLevel.name,

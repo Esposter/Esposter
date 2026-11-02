@@ -56,17 +56,6 @@ interface Props {
   worldNow: Temporal.Instant;
 }
 
-const emit = defineEmits<{
-  accept: [];
-  begin: [talkId: string];
-  close: [];
-  duel: [];
-  end: [];
-  leaveDuel: [won: boolean];
-  revive: [];
-  updateInventory: [inventory: Inventory];
-  updateWallet: [wallet: Wallet];
-}>();
 const expeditions = defineModel<Expedition[]>("expeditions", { required: true });
 const reputationLevel = defineModel<number>("reputationLevel", { required: true });
 const shopPurchases = defineModel<ShopPurchase[]>("shopPurchases", { required: true });
@@ -100,6 +89,17 @@ const {
   wallet,
   worldNow,
 } = defineProps<Props>();
+const emit = defineEmits<{
+  accept: [];
+  begin: [talkId: string];
+  close: [];
+  duel: [];
+  end: [];
+  leaveDuel: [won: boolean];
+  revive: [];
+  "update:inventory": [inventory: Inventory];
+  "update:wallet": [wallet: Wallet];
+}>();
 </script>
 
 <template>
@@ -157,8 +157,8 @@ const {
     :reputation-level="reputation.level"
     :wallet
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
-    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('update:wallet', nextWallet)"
   />
   <ExpeditionLoader
     v-if="screenKind === ScreenKind.Expedition"
@@ -178,7 +178,7 @@ const {
     :region-statue-progress-map="regionStatueProgressMap"
     :wallet
     @close="emit('close')"
-    @update:inventory="(nextInventory) => emit('updateInventory', nextInventory)"
-    @update:wallet="(nextWallet) => emit('updateWallet', nextWallet)"
+    @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
+    @update:wallet="(nextWallet) => emit('update:wallet', nextWallet)"
   />
 </template>

@@ -38,14 +38,7 @@ const statusText = computed(() => {
 </script>
 
 <template>
-  <button
-    class="entry"
-    role="tab"
-    type="button"
-    :aria-selected="isSelected"
-    :data-read="mail.isRead || undefined"
-    @click="emit('select', mail)"
-  >
+  <button class="entry" role="tab" type="button" :aria-selected="isSelected" @click="emit('select', mail)">
     <span class="thumb" aria-hidden="true" />
     <span class="entry-title">{{ textMap[row.titleTextId] }}</span>
     <span class="entry-sender">{{ textMap[row.senderTextId] }}</span>

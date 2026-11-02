@@ -9,18 +9,17 @@ interface Props {
   results: WishResultCell[];
 }
 
-const emit = defineEmits<{ dismiss: [] }>();
 const { results } = defineProps<Props>();
+const emit = defineEmits<{ dismiss: [] }>();
 </script>
 
 <template>
   <button class="results" type="button" @click="emit('dismiss')">
     <span class="result-list">
       <span
-        v-for="({ isCapturingRadiance, name, rarity, stellaFortuna, wishReturn }, index) of results"
+        v-for="({ name, rarity, stellaFortuna, wishReturn }, index) of results"
         :key="index"
         class="result"
-        :data-capturing-radiance="isCapturingRadiance"
         :data-rarity="rarity"
       >
         <span class="result-name">{{ name }}</span>

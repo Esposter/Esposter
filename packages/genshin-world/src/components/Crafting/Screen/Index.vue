@@ -66,6 +66,10 @@ interface Props {
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }
 
+const inventory = defineModel<Inventory>("inventory", { required: true });
+const wallet = defineModel<Wallet>("wallet", { required: true });
+// How many of each recipe the player has crafted, by the recipe's id, which the Crafting Performed line counts
+const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
 const {
   adventureRank,
   artifactDropTables,
@@ -84,10 +88,6 @@ const {
   weaponDataMap,
 } = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
-const inventory = defineModel<Inventory>("inventory", { required: true });
-const wallet = defineModel<Wallet>("wallet", { required: true });
-// How many of each recipe the player has crafted, by the recipe's id, which the Crafting Performed line counts
-const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
 const amount = ref(1);
 const crafterId = ref(initialCrafterId);
 const recipeId = ref(0);

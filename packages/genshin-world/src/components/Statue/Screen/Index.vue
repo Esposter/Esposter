@@ -30,13 +30,12 @@ interface Props {
   statueCount: number;
 }
 
-const { gameText, getLevel, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
-const emit = defineEmits<{ close: []; worship: [] }>();
 // The Restorative Power as the save's moment left it, refilled to now before the screen shows it or spends it
 const power = defineModel<RestorativePower>("power", { required: true });
 // Auto-recover's switch and threshold, which the screen sets and the Session's stand by a statue reads
 const autoRecover = defineModel<AutoRecoverSetting>("autoRecover", { required: true });
-
+const { gameText, getLevel, getMaxHealth, getName, getNow, party, statueCount } = defineProps<Props>();
+const emit = defineEmits<{ close: []; worship: [] }>();
 const regeneratePower = () => regenerateRestorativePower(power.value, statueCount, getNow());
 const toggleAutoRecover = () => {
   autoRecover.value = { ...autoRecover.value, isOn: !autoRecover.value.isOn };

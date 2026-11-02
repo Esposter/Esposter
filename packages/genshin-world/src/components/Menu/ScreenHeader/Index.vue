@@ -14,9 +14,9 @@ interface Props {
   title: string;
 }
 
+defineSlots<{ tabs?: () => VNode }>();
 const { mark = CloseButtonMark.Cross } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-defineSlots<{ tabs?: () => VNode }>();
 </script>
 
 <template>

@@ -22,7 +22,6 @@ interface Props {
   selectedCell?: InventoryCell;
 }
 
-const emit = defineEmits<{ destroy: []; quickSelect: [rarity: number] }>();
 const {
   destroyButtonLabel,
   destroyCannotLabel,
@@ -32,6 +31,7 @@ const {
   quickSelects,
   selectedCell,
 } = defineProps<Props>();
+const emit = defineEmits<{ destroy: []; quickSelect: [rarity: number] }>();
 </script>
 
 <template>
@@ -42,13 +42,7 @@ const {
     <p v-if="selectedCell && !selectedCell.isDestroyable" class="destroy-cannot">{{ destroyCannotLabel }}</p>
     <ul class="quick-selects">
       <li v-for="{ label, rarity } of quickSelects" :key="rarity">
-        <GameButton
-          class="translucent-button"
-          :data-rarity="rarity"
-          :kind="GameButtonKind.Row"
-          tip=""
-          @click="emit('quickSelect', rarity)"
-        >
+        <GameButton class="translucent-button" :kind="GameButtonKind.Row" tip="" @click="emit('quickSelect', rarity)">
           {{ label }}
         </GameButton>
       </li>

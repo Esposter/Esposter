@@ -486,6 +486,7 @@ const emit = defineEmits<{
   font-size: calc(var(--unit) * 28);
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
+  pointer-events: none;
   text-align: center;
 }
 

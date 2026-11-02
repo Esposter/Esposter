@@ -68,10 +68,12 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
 }
 
 /* The card's art is the plate's and cannot ship, so the card is a measured panel of the reference's light field behind the
-   words its text column sits on, and its words are drawn over that, each at the game's place on the banner */
+   words its text column sits on, and its words are drawn over that, each at the game's place on the banner. It holds no
+   Control and covers the screen, so it takes no pointer from the banners' tabs and the close button under it */
 .card {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .card::before,

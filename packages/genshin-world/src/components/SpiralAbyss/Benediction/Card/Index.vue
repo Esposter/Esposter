@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { AbyssBenedictionIcon } from "#src/models/spiralAbyss/AbyssBenedictionIcon";
 import type { AbyssBenedictionScope } from "#src/models/spiralAbyss/AbyssBenedictionScope";
 import type { GameText } from "genshin-text";
 
+import { AbyssBenedictionIcon } from "#src/models/spiralAbyss/AbyssBenedictionIcon";
 import { SCOPE_TEXT_KEYS } from "#src/services/spiralAbyss/constants";
 import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
@@ -27,12 +27,12 @@ const emit = defineEmits<{ choose: [] }>();
   <button class="card" :class="{ lit: isLit }" type="button" @click="emit('choose')">
     <span class="field" aria-hidden="true" />
     <span class="diamond" aria-hidden="true" />
-    <svg v-if="icon === 'sword'" class="glyph sword" viewBox="0 0 37 108" aria-hidden="true">
+    <svg v-if="icon === AbyssBenedictionIcon.Sword" class="glyph sword" viewBox="0 0 37 108" aria-hidden="true">
       <path
         d="M24 5a5.5 5.5 0 1 0-11 0 5.5 5.5 0 1 0 11 0zM15 10h7v20h-7zM0 33 7 30h23l7 3-5 8H5zM11 41h15v44l-7.5 21-7.5-21z"
       />
     </svg>
-    <svg v-else-if="icon === 'shield'" class="glyph shield" viewBox="0 0 304 296" aria-hidden="true">
+    <svg v-else-if="icon === AbyssBenedictionIcon.Shield" class="glyph shield" viewBox="0 0 304 296" aria-hidden="true">
       <path
         fill-rule="evenodd"
         d="M125.5 48h55l1 1h15l1 1h10l1 1 4.5.5q-2.5 1-2 3.5l4.5 1 1.5-2.5-3-2 21.5-.5q1 2 2 0h9l9 5h4l1-1h10l3 2h2l2-1q1 2.5 3.5 2 .62 4.12-2.5 6-2.25.75-1.5-1.5-.5-2-3.5-1.5-2 .5-1.5 3.5l1 1v6.5l2.5 1h4.5q-1-3 2-2l1 2.5v23l1 1v98l-1 1v11l-1 1v8q2 1 1 5l-4 3-1.5 2.5q-3.75-.75-4.5 1.5v3l-2 6-5.5 5.5-3.5 1v1.5l-4 4v3l-3 5-7 7-1 5.5h-3.5l-4-2h-6l-1.5 2.5 1 1v7l-4.5 2.5-4.5 4.5q.75 2.25-1.5 1.5l-8.5 5.5-1 3.5h-53.5q-.87.13-.5-3.5l-1-3q2-1 1-5-1.75-.75-1-4l1-1 .5-22.5 1.5 4.5v18l1 1v8.5l5 1 1-2.5v-159l1-1v-39q-1.75-.75-1-4 1.75-.75 1-4l-1-3q2-1 1-5-1.19-2.5-5-1.5l-1 3.5 2 4-4 4v7l-1 1-.5 6.5-1.5-15.5q2.25-1.25 1-6l-1-1v-10l-1.5-1.5q-5.3-.8-7 2h-11q-1-2-5-1l-5 2h-20l-1 1h-8l-1-1h-6l-3 1-1-1h-14l-3 4h-14l-3-3-9 8h-4q-1.13 2-4.5 1v4h1.5q1-2 2 0 4.5-1 5.5 1.5v6l1 1v113l1 1v11l1 3 5 5 2.5 4.5 5.5 4.5q.63 3.88 3.5 5.5l4.5 3.5 4.5 8.5 4.5 2.5v2l-2 3q1 2.5 5.5 1.5l4.5 3.5 2 5.5h4.5l7 7q3.87.63 5.5 3.5l1 5-3.5 3.5h-2.5v3h1.5q1-2 2 0l6-1 1 1 8 1 1 1h8l1.5 1.5-1 4.5h-4v-1.5q-.5-2-3.5-1.5l-1.5 3h-17.5q-.75.25-.5-2.5l-2.5-5.5q-1.25 2.25-6 1l-3-2-4.5-1v-1.5l-8.5-10.5-4.5-2.5q-.96-5.04-4.5-7.5l-3.5-2.5-1-3.5q-2.67 1.13-2-1.5l-3.5-3.5q-4.75.75-5.5-2.5l-9-12-6.5-6.5-3.5-2.5-4-8 1-1v-12l-1-2 2-2 1-7-2-2v-10.5q-3 .75-4-1.5v-54l1-1v-15q-1.75-.75-1-4 1.75-.75 1-4l-1-1v-14l3-9-2-6v-11l2-3v-2l2.5-2.5h9q1 2 5 1l3-3 3-1 19-1 1-1q3.25.75 4-1h6l1-1h22l1-1h18l1-1zm-78.5 11-4 3 1 5 3 1 3-4-3-5zm50 216-4 2q-3-1-2 2l2 1 6 2q2-1 1-4l-3-3z M159.5 136l.5 24.5h-1l.5-24.5z"

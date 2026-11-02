@@ -109,32 +109,6 @@ const isEnhanceMaxed = computed(() => {
 const isEnhanceConfirmDisabled = computed(
   () => enhanceMoraCost.value === 0 || enhanceMoraCost.value > wallet.value[Currency.Mora] || isEnhanceMaxed.value,
 );
-const autoAddEnhanceFodders = () => {
-  const artifact = enhanceArtifactWorn.value;
-  if (!artifact) return;
-  enhanceFodderIds.value = getAutoAddFodders({
-    artifact,
-    artifactRarityDataMap: statTables.artifactRarityDataMap,
-    inventory: inventory.value,
-    maxRarity: ENHANCE_AUTO_ADD_MAX_RARITY,
-  });
-};
-const toggleEnhanceFodder = (id: string) => {
-  const entryId = Number(id);
-  enhanceFodderIds.value = enhanceFodderIds.value.includes(entryId)
-    ? enhanceFodderIds.value.filter((chosen) => chosen !== entryId)
-    : [...enhanceFodderIds.value, entryId];
-};
-// A material's chosen count moves by one, kept between none and what the bag holds
-const changeEnhanceMaterial = (id: string, delta: number) => {
-  const itemId = Number(id);
-  const held = inventory.value.items.find(({ definition }) => definition.id === itemId)?.quantity ?? 0;
-  const selected = enhanceMaterialCounts.value[itemId] ?? 0;
-  enhanceMaterialCounts.value = {
-    ...enhanceMaterialCounts.value,
-    [itemId]: Math.min(Math.max(selected + delta, 0), held),
-  };
-};
 </script>
 
 <template>
@@ -150,7 +124,18 @@ const changeEnhanceMaterial = (id: string, delta: number) => {
     :mora-label="gameText[GameTextKey.Mora]"
     :notice="isEnhanceMaxed ? gameText[GameTextKey.ArtifactLevelMax] : ''"
     :title="gameText[GameTextKey.ArtifactActionEnhance]"
-    @auto-add="autoAddEnhanceFodders()"
+    @auto-add="
+      () => {
+        const artifact = enhanceArtifactWorn;
+        if (!artifact) return;
+        enhanceFodderIds = getAutoAddFodders({
+          artifact,
+          artifactRarityDataMap: statTables.artifactRarityDataMap,
+          inventory,
+          maxRarity: ENHANCE_AUTO_ADD_MAX_RARITY,
+        });
+      }
+    "
     @cancel="emit('close')"
     @confirm="
       () => {
@@ -170,7 +155,22 @@ const changeEnhanceMaterial = (id: string, delta: number) => {
         emit('close');
       }
     "
-    @fodder="(id) => toggleEnhanceFodder(id)"
-    @material="(id, delta) => changeEnhanceMaterial(id, delta)"
+    @fodder="
+      (id) => {
+        const entryId = Number(id);
+        enhanceFodderIds = enhanceFodderIds.includes(entryId)
+          ? enhanceFodderIds.filter((chosen) => chosen !== entryId)
+          : [...enhanceFodderIds, entryId];
+      }
+    "
+    @material="
+      (id, delta) => {
+        // A material's chosen count moves by one, kept between none and what the bag holds
+        const itemId = Number(id);
+        const held = inventory.items.find(({ definition }) => definition.id === itemId)?.quantity ?? 0;
+        const selected = enhanceMaterialCounts[itemId] ?? 0;
+        enhanceMaterialCounts = { ...enhanceMaterialCounts, [itemId]: Math.min(Math.max(selected + delta, 0), held) };
+      }
+    "
   />
 </template>
