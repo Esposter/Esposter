@@ -1,6 +1,6 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
-import type { MaybeRefOrGetter } from "vue";
+import type { EmitFn, MaybeRefOrGetter } from "vue";
 
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_EQUIPMENT_CARD_KINDS, GCG_TOSS_UP_CARD_ID, GCG_TOSS_UP_REROLL_COUNT } from "#src/services/gcg/constants";
@@ -11,20 +11,14 @@ import { takeOne } from "@esposter/shared";
 import { computed, ref, toValue } from "vue";
 
 // The events a choice leaves the board with, which its host plays
-interface GcgSelectionEmit {
-  (
-    event: "playCard",
-    handIndex: number,
-    targetIndex: number | undefined,
-    dieIndices: number[],
-    choice?: GcgPlayChoice,
-  ): void;
-  (event: "prepare", switchedHandIndices: number[], activeIndex: number): void;
-  (event: "replaceCharacter", characterIndex: number): void;
-  (event: "reroll", dieIndices: number[]): void;
-  (event: "switchCharacter", characterIndex: number, dieIndices: number[]): void;
-  (event: "tuneDie", handIndex: number, dieIndex: number): void;
-  (event: "useSkill", skillId: number, dieIndices: number[]): void;
+interface GcgSelectionEvents {
+  playCard: [handIndex: number, targetIndex: number | undefined, dieIndices: number[], choice?: GcgPlayChoice];
+  prepare: [switchedHandIndices: number[], activeIndex: number];
+  replaceCharacter: [characterIndex: number];
+  reroll: [dieIndices: number[]];
+  switchCharacter: [characterIndex: number, dieIndices: number[]];
+  tuneDie: [handIndex: number, dieIndex: number];
+  useSkill: [skillId: number, dieIndices: number[]];
 }
 
 // The player's choices on the duel board and the events each one leaves with. The duel and the side the player steers are
@@ -32,7 +26,7 @@ interface GcgSelectionEmit {
 export const useGcgSelection = (
   duel: MaybeRefOrGetter<GcgDuel>,
   playerSideIndex: MaybeRefOrGetter<number>,
-  emit: GcgSelectionEmit,
+  emit: EmitFn<GcgSelectionEvents>,
 ) => {
   // What the player is choosing: the dice it has picked to pay or reroll with, the hand card it is about to play onto a
   // Character, whether its next hand card tunes its picked die, and the cards it has picked to switch away and the

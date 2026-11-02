@@ -54,7 +54,7 @@ export const useMenuNavigation = ({
   const moveFocus = (direction: MenuDirection) => {
     const focusables = getFocusables();
     const focusedElement = window.document.activeElement;
-    const fromIndex = focusables.findIndex((element) => element === focusedElement);
+    const fromIndex = focusedElement instanceof HTMLElement ? focusables.indexOf(focusedElement) : -1;
     if (fromIndex === -1) focusables[0]?.focus({ focusVisible: true });
     else {
       const targetIndex = findMenuFocusTarget(
