@@ -6,7 +6,7 @@ The free-tier budget guard cycle and the recorded cost, security, and retention 
 
 ### Requirement: Budget guard stops metered application work
 
-Each environment's budget guard SHALL stop the Function Apps and the two highest-volume application event subscriptions when metered spend registers, and a second guard SHALL restore them.
+Each environment's budget guard SHALL stop the Function Apps and the two highest-volume application event subscriptions when metered spend registers, and the monthly restore SHALL bring them back.
 
 #### Scenario: Spend registers
 
@@ -18,7 +18,7 @@ Each environment's budget guard SHALL stop the Function Apps and the two highest
 #### Scenario: Restore after the guard
 
 - **GIVEN** the guard has stopped the application work
-- **WHEN** the restore guard runs
+- **WHEN** the next monthly restore runs
 - **THEN** the Function Apps are started
 - **AND** the event subscriptions are recreated as they are declared
 

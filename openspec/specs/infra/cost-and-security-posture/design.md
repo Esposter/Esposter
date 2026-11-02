@@ -4,7 +4,7 @@ Esposter's Azure estate is deliberately minimal: free or near-free SKUs everywhe
 
 ## The budget guard cycle
 
-Each environment's resource group carries `$0.01` budgets. These are guards, not operating limits: the instant any metered spend appears, the budget fires its action group, which invokes a Logic App that turns the metered thing off. A second budget/action-group pair restores service. Per environment, the four workflows are: `001` stops Function Apps, `002` starts them, `003` deletes Event Grid subscriptions, `004` recreates them.
+Each environment's resource group carries `$0.01` budgets. These are guards, not operating limits: the instant any metered spend appears, the budget fires its action group, which invokes a Logic App that turns the metered thing off. Per environment, the four workflows are: `001` stops Function Apps, `002` starts them, `003` deletes Event Grid subscriptions, `004` recreates them. Nothing restores service on a budget: `002` and `004` run on a monthly Recurrence trigger, so a cost stop holds until the next month's trigger.
 
 **The guard tears down the metered subscriptions, not every subscription.** `003`/`004` handle `evgs-…-001` (`ProcessWebhook`) and `-002` (`ProcessNotification`) — the two highest-volume application paths. The remaining application subscriptions — `-006` (blob deletions) and `-007` (`ReconcileStorageLedgerEntry`, on the storage system topic) — are deliberately left alone: each fires once per user action on a path measured in events per day, which at Event Grid's per-operation pricing is indistinguishable from zero. `003` and `004` read one per-stack target list (`DevEventSubscriptionGuardTargets` / `ProdEventSubscriptionGuardTargets`), and `004`'s PUT body is built from the same arguments the Pulumi subscription is declared with, so a subscription cannot be torn down by the one workflow without being recreated by the other, nor recreated differently from how Pulumi declares it. `004` reads each target before writing it and runs the PUT only after a read that failed or timed out — the two are distinct statuses in the workflow language, so naming only the first would skip the recreate after a slow read — and because the body is the declared state, a write after a throttled read re-asserts what is already there rather than diverging from it. The Logic App managed identities hold only the scopes their workflow needs — Website Contributor for start/stop, EventGrid Contributor on the custom topic for delete/recreate, and Storage Account Contributor on the environment's storage account for `004` alone.
 
@@ -18,7 +18,8 @@ flowchart LR
   actionGroup -->|HTTP trigger| stopLogic["Logic App 001 / 003"]
   stopLogic -->|Website Contributor| functionApps["Stop Function Apps"]
   stopLogic -->|EventGrid Contributor| eventSubs["Delete Event Grid subscriptions"]
-  restoreLogic["Logic App 002 / 004"] -->|start / recreate| functionApps
+  monthly["Monthly Recurrence trigger"] -->|each month| restoreLogic["Logic App 002 / 004"]
+  restoreLogic -->|start / recreate| functionApps
   restoreLogic -->|EventGrid plus Storage Account Contributor| eventSubs
 ```
 
