@@ -5,7 +5,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-// Happy-dom keeps a named colour as it was written, where a browser computes red in rgb, so the computed colour is
+// `happy-dom` keeps a named colour as it was written, where a browser computes red in rgb, so the computed colour is
 // Stubbed to the rgb a browser gives
 const stubComputedRed = () => {
   vi.spyOn(window, "getComputedStyle").mockReturnValue({ color: "rgb(255, 0, 0)" } as CSSStyleDeclaration);
