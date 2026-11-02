@@ -5,14 +5,15 @@ export const useReadScheduledMessageJobs = () => {
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { readItems, readMoreItems } = scheduledMessageJobStore;
   const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
+  const queryScheduledMessageJobCount = () => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
   const readScheduledMessageJobCount = async () => {
-    scheduledMessageJobCount.value = await $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
+    scheduledMessageJobCount.value = await queryScheduledMessageJobCount();
   };
   const readScheduledMessageJobs = () =>
     readItems(async () => {
       const [scheduledMessageJobs, count] = await Promise.all([
         $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query(),
-        $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(),
+        queryScheduledMessageJobCount(),
       ]);
       scheduledMessageJobCount.value = count;
       return scheduledMessageJobs;
