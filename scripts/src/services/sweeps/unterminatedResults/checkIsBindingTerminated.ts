@@ -21,6 +21,6 @@ export const checkIsBindingTerminated = (call: SyntaxNode, bindingName: string, 
       ((parent?.type === "CallExpression" || parent?.type === "NewExpression") &&
         parent.arguments.some((argument) => argument === top)) ||
       (parent?.type === "ArrayExpression" && parent.elements.some((element) => element === top)) ||
-      (parent?.type === "Property" && parent.value === top);
+      (parent?.type === "Property" && parent.value === top && parents.get(parent)?.type === "ObjectExpression");
     return isTerminated || isHandedOff;
   });

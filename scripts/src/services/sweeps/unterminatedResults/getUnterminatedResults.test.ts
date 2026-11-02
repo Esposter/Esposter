@@ -270,6 +270,15 @@ describe(getUnterminatedResults, () => {
     ).toStrictEqual([]);
   });
 
+  // A field a destructuring assignment writes into takes nothing into a return, so a plain write and this one agree
+  test("reports a binding whose value is written into a destructuring target", () => {
+    expect.hasAssertions();
+
+    expect(getUnterminatedResults(`const result = getResult(fn);\n({ value: result.value } = src);`)).toStrictEqual([
+      { after: "; ({ value: result.value } = src);", line: 1 },
+    ]);
+  });
+
   // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
   test("does not read a like-named property as the binding", () => {
     expect.hasAssertions();
