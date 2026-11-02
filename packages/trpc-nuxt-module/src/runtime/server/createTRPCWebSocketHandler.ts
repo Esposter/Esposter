@@ -70,7 +70,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         );
         peerConnections.set(peer.id, { client, context });
         webSocketServer.addConnection(client, request);
-        // Crossws never awaits this hook, so a failure is logged here rather than thrown. A context that fails is
+        // `crossws` never awaits this hook, so a failure is logged here rather than thrown. A context that fails is
         // Answered and closed by tRPC on the same client, and takes no onOpen with it
         await context
           .andThen((value) => getResultAsync(() => Promise.resolve(onOpen?.({ context: value, peer }))))
