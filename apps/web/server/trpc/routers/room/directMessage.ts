@@ -3,10 +3,10 @@ import type { CursorPaginationData } from "#shared/models/pagination/cursor/Curs
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { removeUserFromRoomGroup } from "#server/services/azure/webPubSub/removeUserFromRoomGroup";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
+import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "#server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
@@ -198,8 +198,7 @@ export const directMessageRouter = router({
       );
       return { targetUser: removedUser, updatedRoom: updatedRoomRow };
     });
-    roomEventEmitter.emit("leaveRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, userId });
-    await removeUserFromRoomGroup(ctx.db, roomId, userId).match(noop, console.error);
+    await announceRoomMemberDeparture(ctx.db, { roomId, userId }, ctx.getSessionPayload.session.id);
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await createSystemRoomMessage(
       roomId,

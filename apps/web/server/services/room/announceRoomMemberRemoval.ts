@@ -2,9 +2,8 @@ import type { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemo
 import type { Context } from "#server/trpc/context";
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
-import { removeUserFromRoomGroup } from "#server/services/azure/webPubSub/removeUserFromRoomGroup";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
+import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A removal a member did not choose is still a departure, so it owes the room exactly what a leave does: the
@@ -17,9 +16,7 @@ export const announceRoomMemberRemoval = async (
   sessionId: string,
   action: RoomMemberRemovalAction,
 ): Promise<void> => {
-  roomEventEmitter.emit("leaveRoom", { roomId, sessionId, userId });
-  // Out of the room's group before the line below is sent, so the removed member does not receive the line
-  await removeUserFromRoomGroup(db, roomId, userId).match(noop, console.error);
+  await announceRoomMemberDeparture(db, { roomId, userId }, sessionId);
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {

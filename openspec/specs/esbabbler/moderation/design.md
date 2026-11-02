@@ -77,6 +77,7 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 | `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                                     |
 | `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                          |
 | `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line                     |
+| `apps/web/server/services/room/announceRoomMemberDeparture.ts`                     | the group removal, then `leaveRoom`                   |
 | `apps/web/server/services/azure/webPubSub/removeUserFromRoomGroup.ts`              | each departed device out of the room's group          |
 | `apps/web/server/services/room/trackMemberRoomIds.ts`                              | the rooms a multi-room stream delivers for, per event |
 | `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls                   |
