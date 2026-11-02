@@ -175,6 +175,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `postgres`                              | 2026-11-01 · Haiku 5.5  | Keep — framework | the PostgreSQL driver                                                                                  |
 | `publint`                               | 2026-11-01 · Haiku 5.5  | Keep — tooling   | tsdown's publish check                                                                                 |
 | `rate-limiter-flexible`                 | 2026-11-01 · Sonnet 5.5 | Keep — security  | rate limiting on a Drizzle store; review against nuxt-security-module's limiter, which overlaps        |
+| `re2js`                                 | —                       |                  |                                                                                                        |
 | `read-excel-file`                       | 2026-11-01 · Haiku 5.5  | Keep — spec      | the spreadsheet format                                                                                 |
 | `rolldown`                              | 2026-11-01 · Haiku 5.5  | Keep — tooling   | the bundler under tsdown and Vite                                                                      |
 | `rollup-plugin-visualizer`              | 2026-11-01 · Haiku 5.5  | Keep — tooling   | the analyzer `nuxt analyze` reads the client bundle through                                            |
