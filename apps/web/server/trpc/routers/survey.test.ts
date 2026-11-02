@@ -167,6 +167,20 @@ describe("surveyRouter", () => {
     expect(surveyResponse).toStrictEqual(newSurveyResponse);
   });
 
+  test("fails read of a response to a recycle-binned survey", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    await caller.deleteResource({ id: newResource.id });
+
+    await expect(
+      caller.readSurveyResponse({ partitionKey: newSurveyResponse.partitionKey, rowKey: newSurveyResponse.rowKey }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
+  });
+
   // The one anonymous write path is bounded by the one property its answers are stored in, and refused before the
   // Write rather than by the Table after it
   test("fails createSurveyResponse with answers larger than the stored property", async () => {
