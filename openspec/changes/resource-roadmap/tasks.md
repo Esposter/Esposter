@@ -12,4 +12,6 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 ## Later
 
+- [ ] [Flowchart removal's client delta](../archive/2026-11-02-resource-flowchart-retirement/proposal.md#bundle-measurement) — measure the client bytes the removal released against the last release before it. The archived change's task 3.5 is ticked, but its proposal records only the built size of the five Vue Flow packages, a ceiling, so the exact delta is not on record; this item measures it, or the owner accepts the ceiling as the figure
+
 - [ ] [Page builder](../resource-page-builder-program/design.md) — the Webpage and Email editors rebuilt on a typed node tree and MJML on the server, with GrapesJS and its plugin belt removed in one cutover; it replaces the plugin-belt pruning, which stops now — the cutover, email and style-panel changes are archived, while the canvas and performance-and-proof changes are archived with tasks still open, and the program's own tasks 3.1 and 4.1 stay open until they close
