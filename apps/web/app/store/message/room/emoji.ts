@@ -52,7 +52,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
     () => new Map(customEmojis.value.map((customEmoji) => [customEmoji.id, customEmoji])),
   );
   // The room's subscription has started before this read, so what lands while the read is in flight is kept.
-  // The read's answer is replayed over those writes rather than lost in the gap between the two.
+  // Those writes are replayed over the read's answer rather than lost in the gap between the two.
   // Keyed by the room, so re-entering it supersedes the read it interrupted.
   // The room lifecycle issues one read per activation.
   // Without that supersede, A→B→A would let the first A's response land last and overwrite the newer list
