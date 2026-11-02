@@ -1,7 +1,10 @@
 // The Blessing screen of the completionist clip at 173 seconds: four members in combat and three preparing, each at full
 // Health and levelled as the clip shows, the pool full at 10000 of 10000 with auto-recover on at half
 export const props = {
+  autoRecoverLabel: "Auto-recover when nearby",
   closeLabel: "Back",
+  healHint: "Click on the character portrait to restore HP",
+  inCombatLabel: "In combat",
   isAutoRecoverOn: true,
   members: [
     { healthShare: 1, id: 1, levelText: "Lv. 5", name: "Diluc" },
@@ -10,7 +13,9 @@ export const props = {
     { healthShare: 1, id: 4, levelText: "Lv. 2", name: "Noelle" },
   ],
   poolAmount: 10_000,
+  poolLabel: "Restorative Power:",
   poolMaximum: 10_000,
+  preparingLabel: "Preparing for combat",
   thresholdPercent: 50,
   title: "Statue's Blessing",
   waitingMembers: [

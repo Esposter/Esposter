@@ -115,6 +115,8 @@ export const GameTextKey = {
   AttributePyroDamageBonus: "FIGHT_PROP_FIRE_ADD_HURT",
   AttributePyroResistance: "FIGHT_PROP_FIRE_SUB_HURT",
   AttributeShieldStrength: "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
+  // The Statue's Blessing's auto-recover switch, which heals the party's fallen and hurt when it stands near a statue
+  AutoRecoverWhenNearby: "UI_STC_SPRING_NEAR_AUTO_RECOVER",
   // A level above the player's Adventure Rank, the rank the game asks for in its place
   AvailableAtAdventureRank: "QUEST_DIALOG_DETAIL_PLAYER_LEVEL_NEED",
   // A screen's way back to the world
@@ -190,6 +192,8 @@ export const GameTextKey = {
   CityReputation: "81370119",
   ClaimRewards: "UI_ACTIVITY_GET_RWARD",
   ClearwaterJade: "2720928108",
+  // The Statue's Blessing's hint that a click on a character's portrait restores its HP
+  ClickPortraitToRestoreHp: "UI_STC_CLICK_TO_USE_SPRING",
   // A domain closed on the day, named as a closed hall or event names it
   Closed: "UI_BEYOND_HALL_LIST_HALL_LEFTTIME_CLOSE",
   // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
@@ -440,6 +444,8 @@ export const GameTextKey = {
   HydroSigil: "33541556",
   IcyPebble: "2856476780",
   Inazuma: "Inazuma",
+  // The Statue's Blessing's heading over the team deployed for combat
+  InCombat: "UI_STC_AVATAR_IN_TEAM",
   IntertwinedFate: "4203128180",
   Inventory: "UI_STC_BAGPAGE_BAG",
   // The bag's tabs, and a tab's room as its name, its count and its limit fill `{0} {1}/{2}`
@@ -625,6 +631,8 @@ export const GameTextKey = {
   PortableBearing: "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
   PreciousChest: "3576739246",
+  // The Statue's Blessing's heading over the teams not deployed for combat
+  PreparingForCombat: "UI_STC_AVATAR_IN_PREPARING",
   PressToOpen: "1860729186",
   Primogem: "2696654964",
   // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
@@ -697,6 +705,8 @@ export const GameTextKey = {
   ReputationReward: "REPUTATION_CITY_REWARD",
   // The line the loading screen shows when a file fails to download after its attempts, above its retry button
   ResourceDownloadFailed: "3595641979",
+  // The Statue's Blessing's pool, the Restorative Power it holds and the most it can hold
+  RestorativePower: "UI_STC_REMAINING_SPRING",
   // The notice a furnishing shows when the realm's area already holds its count of furnishings
   RetHomeFurnitureArrangeLimit: "RetHomeFurnitureArrangeLimit",
   // The notice a furnishing shows when the realm's area would pass its load

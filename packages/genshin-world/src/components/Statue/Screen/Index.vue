@@ -74,11 +74,16 @@ const heal = (characterId: number) => {
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueBlessing]">
     <BlessingScreen
+      :auto-recover-label="gameText[GameTextKey.AutoRecoverWhenNearby]"
       :close-label="gameText[GameTextKey.Back]"
+      :heal-hint="gameText[GameTextKey.ClickPortraitToRestoreHp]"
+      :in-combat-label="gameText[GameTextKey.InCombat]"
       :is-auto-recover-on="autoRecover.isOn"
       :members
       :pool-amount="regeneratePower().amount"
+      :pool-label="gameText[GameTextKey.RestorativePower]"
       :pool-maximum="statueCount * RESTORATIVE_POWER_PER_STATUE"
+      :preparing-label="gameText[GameTextKey.PreparingForCombat]"
       :threshold-percent="autoRecover.thresholdPercent"
       :title="gameText[GameTextKey.StatueBlessing]"
       :waiting-members

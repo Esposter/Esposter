@@ -19,8 +19,14 @@ interface BlessingMember {
 }
 
 interface Props {
+  // The label under the auto-recover switch, in the reader's language
+  autoRecoverLabel: string;
   // The way out of the screen in the reader's language
   closeLabel: string;
+  // The hint beside the deployed team's heading: a click on a member's portrait restores its HP
+  healHint: string;
+  // The heading over the deployed team, which the game lists as in combat
+  inCombatLabel: string;
   // Whether auto-recover's switch is on
   isAutoRecoverOn: boolean;
   // The members of the deployed team, which the game lists as in combat
@@ -29,7 +35,11 @@ interface Props {
   waitingMembers?: BlessingMember[];
   // The Restorative Power the pool holds now, and the most it holds
   poolAmount: number;
+  // The label before the pool's amount
+  poolLabel: string;
   poolMaximum: number;
+  // The heading over the teams not deployed
+  preparingLabel: string;
   // The percentage of a member's Max HP auto-recover heals it up to
   thresholdPercent: number;
   // The title the game shows at the top of its panel, and the title of the Worship screen the screen switches to
@@ -38,11 +48,16 @@ interface Props {
 }
 
 const {
+  autoRecoverLabel,
   closeLabel,
+  healHint,
+  inCombatLabel,
   isAutoRecoverOn,
   members,
   poolAmount,
+  poolLabel,
   poolMaximum,
+  preparingLabel,
   thresholdPercent,
   title,
   waitingMembers = [],
@@ -60,8 +75,8 @@ const emit = defineEmits<{
 <template>
   <!-- The layout is measured off the completionist clip's Statue's Blessing at 173 seconds, in the frame's own pixels at 1080
        High (`--unit` is one pixel of it): the deployed team's section on the left, the teams not deployed under it, and the
-       pool, the auto-recover switch and its threshold in a panel down the right. Words the dump holds no key for, and the art
-       the game ships, are not drawn -->
+       pool, the auto-recover switch and its threshold in a panel down the right. The art the game ships is not
+       drawn -->
   <div class="blessing-screen">
     <div class="glass" aria-hidden="true" />
     <div class="halo" aria-hidden="true" />
@@ -83,6 +98,8 @@ const emit = defineEmits<{
     </svg>
     <section class="section">
       <span class="diamond" aria-hidden="true" />
+      <p class="heading" role="heading" aria-level="2">{{ inCombatLabel }}</p>
+      <p class="hint">{{ healHint }}</p>
       <ul class="members">
         <li v-for="{ healthShare, id, levelText, name } of members" :key="id">
           <Member :health-share :level-text :name @heal="emit('heal', id)" />
@@ -91,6 +108,7 @@ const emit = defineEmits<{
     </section>
     <section v-if="waitingMembers.length" class="section waiting">
       <span class="diamond" aria-hidden="true" />
+      <p class="heading" role="heading" aria-level="2">{{ preparingLabel }}</p>
       <ul class="members">
         <li v-for="{ healthShare, id, levelText, name } of waitingMembers" :key="id">
           <Member :health-share :level-text :name @heal="emit('heal', id)" />
@@ -103,6 +121,7 @@ const emit = defineEmits<{
     <p class="title" role="heading" aria-level="1">{{ title }}</p>
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <p class="pool">
+      <span class="pool-label">{{ poolLabel }}</span>
       <span class="amount">{{ Math.floor(poolAmount) }}</span> / {{ poolMaximum }}
     </p>
     <div class="band" aria-hidden="true" />
@@ -113,6 +132,7 @@ const emit = defineEmits<{
       tip=""
       @click="emit('toggleAutoRecover')"
     >
+      <span class="switch-label">{{ autoRecoverLabel }}</span>
       <span :class="['toggle', { off: !isAutoRecoverOn }]" aria-hidden="true"><span class="knob" /></span>
     </GameButton>
     <button
@@ -245,7 +265,7 @@ const emit = defineEmits<{
   top: calc(var(--unit) * 261);
 }
 
-/* A heading's diamond stands at the head's left, the words after it being undrawn for want of a key */
+/* A heading's diamond stands at the head's left, the heading's words set after it */
 .diamond {
   position: absolute;
   top: calc(var(--unit) * 42.5);
@@ -254,6 +274,40 @@ const emit = defineEmits<{
   height: calc(var(--unit) * 9);
   background: #c9ccc4;
   rotate: 45deg;
+}
+
+/* The words in the game's white heading face: the sections' headings, the pool's label and the switch's label */
+.heading,
+.pool-label,
+.switch-label {
+  color: #e5e7e1;
+  font-size: calc(var(--unit) * 28);
+  font-weight: 600;
+}
+
+/* A section's heading sits beside its diamond, and the hint beside the first heading is set in the gold the game gives
+   its instructions. Both are tracked to the reference's width, since its face sets wider than the one drawn here */
+.heading {
+  position: absolute;
+  top: calc(var(--unit) * 30);
+  left: calc(var(--unit) * 57);
+  margin: 0;
+  letter-spacing: calc(var(--unit) * 2.8);
+  line-height: calc(var(--unit) * 32);
+  white-space: nowrap;
+}
+
+.hint {
+  position: absolute;
+  top: calc(var(--unit) * 34);
+  left: calc(var(--unit) * 223);
+  margin: 0;
+  color: #cbbd8e;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 600;
+  letter-spacing: calc(var(--unit) * 2.4);
+  line-height: calc(var(--unit) * 28);
+  white-space: nowrap;
 }
 
 /* Cards 120 units wide, 60 apart, from 58 units in */
@@ -285,6 +339,12 @@ const emit = defineEmits<{
   color: #84dc88;
 }
 
+/* The pool's label, set in the heading face, tracked and spaced from the amount to the reference's width and place */
+.pool-label {
+  margin-right: calc(var(--unit) * 7.5);
+  letter-spacing: calc(var(--unit) * 2.4);
+}
+
 /* The band behind the switch and the threshold, a shade darker than the glass around it */
 .band,
 .switch {
@@ -310,6 +370,16 @@ const emit = defineEmits<{
   font-weight: 600;
   line-height: calc(var(--unit) * 33);
   text-align: center;
+}
+
+/* The switch's label, two lines centred on the switch's width with the toggle at its right, tracked and raised to the
+   reference's width and lines */
+.switch-label {
+  display: block;
+  width: calc(var(--unit) * 290);
+  margin: calc(var(--unit) * -1.3) auto 0;
+  letter-spacing: calc(var(--unit) * 1.7);
+  line-height: calc(var(--unit) * 31.5);
 }
 
 .toggle {
