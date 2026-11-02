@@ -3,12 +3,15 @@ import type { Attachment } from "agent-console-server/contracts";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { fitAttachments } from "@/services/agentConsole/fitAttachments";
 import { PermissionModeMenuItems } from "@/services/agentConsole/PermissionModeMenuItems";
 import { readAttachment } from "@/services/agentConsole/readAttachment";
 import { toPromptCommand } from "@/services/agentConsole/toPromptCommand";
+import { getFileSize } from "@/services/file/getFileSize";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
-import { CommandType, PermissionMode, SessionState } from "agent-console-server/contracts";
+import { useAlertStore } from "@/store/alert";
+import { ATTACHMENTS_MAX_BYTE_LENGTH, CommandType, PermissionMode, SessionState } from "agent-console-server/contracts";
 
 interface Props {
   // The side chat's composer asks its own session, and is not the console's
@@ -74,9 +77,21 @@ const permissionMode = computed({
     sendCommand({ permissionMode: newPermissionMode, sessionId: sessionId.value, type: CommandType.SetPermissionMode });
   },
 });
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
+// The attachments of one prompt share one ceiling, so a file that would take the prompt past it is left out and named
 const attach = async (fileList: FileList | undefined) => {
   const newAttachments = await Promise.all(Array.from(fileList ?? [], (file) => readAttachment(file)));
-  attachments.value = [...attachments.value, ...newAttachments.filter((attachment) => attachment !== undefined)];
+  const { fitted, refused } = fitAttachments(
+    attachments.value,
+    newAttachments.filter((attachment) => attachment !== undefined),
+  );
+  attachments.value = [...attachments.value, ...fitted];
+  for (const { name } of refused)
+    createAlert(
+      `"${name}" would take the prompt's attachments over ${getFileSize(ATTACHMENTS_MAX_BYTE_LENGTH)} — it was not attached`,
+      "error",
+    );
 };
 // The text stays in the composer until the question is taken, so one refused — a side chat still opening — is not lost
 const submit = () => {

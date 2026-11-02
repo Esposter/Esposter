@@ -13,7 +13,12 @@ import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { serverMessageSchema } from "#src/models/server/ServerMessage";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { SessionState } from "#src/models/session/SessionState";
-import { DEFAULT_APP_ORIGIN, DEFAULT_HOSTNAME, SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
+import {
+  DEFAULT_APP_ORIGIN,
+  DEFAULT_HOSTNAME,
+  MESSAGE_MAX_BYTE_LENGTH,
+  SCHEME_PAIRING_CODE_DURATION_MS,
+} from "#src/services/constants";
 import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { getPairingProof } from "#src/services/handshake/getPairingProof";
@@ -171,6 +176,23 @@ describe(createAgentConsoleServer, () => {
     const pendingClose = once(rawSocket, "close");
     // A frame with RSV1 set, which no extension of this socket negotiated: ws reports it as an error, not a message
     rawSocket.write(Buffer.from([0xc1, 0x80, 0, 0, 0, 0]));
+    await pendingClose;
+    const { paired } = await pair();
+
+    expect(paired.type).toBe(ServerMessageType.Paired);
+  });
+
+  test("closes a socket whose message is over the largest one the host admits, and keeps serving the others", async () => {
+    expect.hasAssertions();
+
+    const webSocket = connect();
+    await once(webSocket, "open");
+    // A handshake that parses, with a nonce as long as the largest message allows, so the message is over it once its
+    // Own envelope is counted
+    const pendingClose = once(webSocket, "close");
+    webSocket.send(
+      JSON.stringify({ nonce: " ".repeat(MESSAGE_MAX_BYTE_LENGTH), type: HandshakeMessageType.Challenge }),
+    );
     await pendingClose;
     const { paired } = await pair();
 

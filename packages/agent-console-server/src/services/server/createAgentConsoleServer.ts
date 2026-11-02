@@ -15,7 +15,7 @@ import { SignaturePurpose } from "#src/models/handshake/SignaturePurpose";
 import { HostCloseCode } from "#src/models/server/HostCloseCode";
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { SessionState } from "#src/models/session/SessionState";
-import { SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
+import { MESSAGE_MAX_BYTE_LENGTH, SCHEME_PAIRING_CODE_DURATION_MS } from "#src/services/constants";
 import { SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { findDevice } from "#src/services/device/findDevice";
 import { getDeviceName } from "#src/services/device/getDeviceName";
@@ -62,7 +62,9 @@ export const createAgentConsoleServer = async ({
   const pairingCodes = createPairingCodes();
   const publicKey = createPublicKey(hostKey);
   const publicKeyText = getPublicKeyText(hostKey);
-  const webSocketServer = new WebSocketServer({ noServer: true });
+  // A socket that has not been admitted may send nothing larger than a message the host admits, so it cannot make the host
+  // hold more
+  const webSocketServer = new WebSocketServer({ maxPayload: MESSAGE_MAX_BYTE_LENGTH, noServer: true });
   // Each page's socket once its credential is accepted, under its device: only these hear anything of the sessions
   const socketDeviceIdMap = new Map<WebSocket, string>();
   const broadcast = (message: ServerMessage) => {
