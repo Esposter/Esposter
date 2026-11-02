@@ -3,7 +3,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 import { checkIsNotFound } from "#src/services/azure/error/checkIsNotFound";
 import { checkIsPreconditionFailed } from "#src/services/azure/error/checkIsPreconditionFailed";
 import { hashBlobStream } from "#src/services/storage/hashBlobStream";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
 // A resource asset is addressed by the hash of its bytes, and the client computes that hash and uploads directly, so no
 // Name is trusted until the bytes stored under it are read back and hashed. Answers the hash of bytes that do not describe
@@ -31,12 +31,9 @@ export const findMismatchedResourceAssetHash = async (
   if (actualHash === expectedHash) return undefined;
 
   if (!etag) throw new InvalidOperationError(Operation.Read, blobName, "returned no etag to condition the delete on");
-  await getResultAsync(() => blockBlobClient.deleteIfExists({ conditions: { ifMatch: etag } })).match(
-    () => undefined,
-    (error) => {
-      if (checkIsPreconditionFailed(error)) return undefined;
-      throw error;
-    },
-  );
+  await getResultAsync(() => blockBlobClient.deleteIfExists({ conditions: { ifMatch: etag } })).match(noop, (error) => {
+    if (checkIsPreconditionFailed(error)) return undefined;
+    throw error;
+  });
   return actualHash;
 };
