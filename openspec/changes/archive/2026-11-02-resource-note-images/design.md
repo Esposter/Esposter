@@ -1,6 +1,6 @@
 # Note Images
 
-A Note can hold text, lists and links, and nothing else ([note resource](../../specs/resource/note-resource/design.md)). An image is the first block a document reaches for that is not text — a screenshot in a spec, a diagram in meeting notes — and Notion puts it beside the text blocks, added from the block menu or by dropping a file onto the page. Every other resource that publishes pictures already stores them through the [FileAssets capability](../../specs/resource/resource-file-assets/design.md). The Note is the one publishable document type that does not.
+A Note can hold text, lists and links, and nothing else ([note resource](../../../specs/resource/note-resource/design.md)). An image is the first block a document reaches for that is not text — a screenshot in a spec, a diagram in meeting notes — and Notion puts it beside the text blocks, added from the block menu or by dropping a file onto the page. Every other resource that publishes pictures already stores them through the [FileAssets capability](../../../specs/resource/resource-file-assets/design.md). The Note is the one publishable document type that does not.
 
 ## What it adds
 
@@ -17,7 +17,7 @@ Unpublishing already releases the files a publication's versions name, and the s
 
 - **No image from a url.** Notion embeds a link, but an external `src` is the one form the sanitizer drops. Owning the bytes is what lets the published page keep working after the source moves.
 - **No resize handles or captions.** They are Notion's ceiling. An image renders at its natural size, capped at the column width.
-- **No image in the message composer.** The composer's attachments are files, which is a separate path ([file uploads](../../specs/architecture/file-uploads/design.md)).
+- **No image in the message composer.** The composer's attachments are files, which is a separate path ([file uploads](../../../specs/architecture/file-uploads/design.md)).
 
 ## Key files
 

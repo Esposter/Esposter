@@ -1,6 +1,6 @@
 # Page builder critique
 
-A critique of the webpage document: a set of deterministic checks that report what is wrong with a page before it is published, shown in an editor panel and readable by an agent. It is built on the [document model](../../specs/resource/page-builder/document-model/design.md), whose nodes and styles it reads, and on the [style panel](../../specs/resource/page-builder/style-panel/design.md), whose per-breakpoint values it checks. It uses no model: every finding is a computation over the document, so it costs nothing to run and sends nothing anywhere.
+A critique of the webpage document: a set of deterministic checks that report what is wrong with a page before it is published, shown in an editor panel and readable by an agent. It is built on the [document model](../../../specs/resource/page-builder/document-model/design.md), whose nodes and styles it reads, and on the [style panel](../../../specs/resource/page-builder/style-panel/design.md), whose per-breakpoint values it checks. It uses no model: every finding is a computation over the document, so it costs nothing to run and sends nothing anywhere.
 
 ## Scope
 

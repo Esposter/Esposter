@@ -1,6 +1,6 @@
 # Whiteboard
 
-The whiteboard is a freeform canvas resource that succeeds the Flowchart. It is built in four phases on our own headless core and drawn in Vue 3 as SVG, with no third-party dependency. Its arrows bind to shapes and route the way a flowchart's connectors do, so the whiteboard carries each flowchart behaviour the gap analysis below marks as must-have. The Flowchart itself is removed by the [flowchart retirement](../resource-flowchart-retirement/design.md), which the owner decided: its stored flowcharts are deleted, not converted or kept read-only.
+The whiteboard is a freeform canvas resource that succeeds the Flowchart. It is built in four phases on our own headless core and drawn in Vue 3 as SVG, with no third-party dependency. Its arrows bind to shapes and route the way a flowchart's connectors do, so the whiteboard carries each flowchart behaviour the gap analysis below marks as must-have. The Flowchart itself is removed by the [flowchart retirement](../../resource-flowchart-retirement/design.md), which the owner decided: its stored flowcharts are deleted, not converted or kept read-only.
 
 ## Direction
 
@@ -17,9 +17,9 @@ The owner's decisions behind this design, taken as given:
 
 Measured from the repository, non-test lines:
 
-- **The Flowchart's app code**, its editor, view, export, store, models and services: about 930 lines. Most of its behaviour is the canvas engine's, which the Flowchart imports with four plugin packages ([flowchart retirement](../resource-flowchart-retirement/design.md) lists every file it removes).
-- **The headless editor core**, `packages/headless-block-editor/src`: about 840 lines. It models a tree of typed nodes with slots, and its commands return JSON Patch operations ([editor core](../../specs/headless-block-editor/editor-core/design.md)). It has no element that is placed at coordinates, and no reference from one node to another.
-- **The shared history**, `packages/shared/src/services/history/createHistory.ts`, which the page builder's undo already uses ([undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md)). The whiteboard's undo reuses it.
+- **The Flowchart's app code**, its editor, view, export, store, models and services: about 930 lines. Most of its behaviour is the canvas engine's, which the Flowchart imports with four plugin packages ([flowchart retirement](../../resource-flowchart-retirement/design.md) lists every file it removes).
+- **The headless editor core**, `packages/headless-block-editor/src`: about 840 lines. It models a tree of typed nodes with slots, and its commands return JSON Patch operations ([editor core](../../../specs/headless-block-editor/editor-core/design.md)). It has no element that is placed at coordinates, and no reference from one node to another.
+- **The shared history**, `packages/shared/src/services/history/createHistory.ts`, which the page builder's undo already uses ([undo as patches](../../../specs/resource/page-builder/undo-as-patches/design.md)). The whiteboard's undo reuses it.
 - **The page builder's canvas components**, about 1,170 lines, a frame over a typed tree. They are a reference for a canvas drawn in the app's own components, not a model for free placement.
 
 The Flowchart's stored content is the canvas engine's own node and edge JSON. Nothing in the repository reads it except the Flowchart's own code, and the retirement deletes it.
@@ -115,13 +115,13 @@ The read-only published view is not in this change. It is deferred to its own la
 
 ## The cutover
 
-The Flowchart is removed by the [flowchart retirement](../resource-flowchart-retirement/design.md), which has its own order: a one-time purge run by the current release, which deletes each flowchart through the per-resource purge, and then a release that removes the code and the enum values. The owner's decision is recorded there: nothing is converted and nothing is kept read-only.
+The Flowchart is removed by the [flowchart retirement](../../resource-flowchart-retirement/design.md), which has its own order: a one-time purge run by the current release, which deletes each flowchart through the per-resource purge, and then a release that removes the code and the enum values. The owner's decision is recorded there: nothing is converted and nothing is kept read-only.
 
 This change's part is the whiteboard. Its enum value is added by a migration before any whiteboard exists, and the whiteboard ships with its editor, its export and its agent surface. The retirement runs after this ships. No flowchart content is read, converted or migrated by anything in this change.
 
 ## The agent surface
 
-The whiteboard is reached by the generic resource tools, as every type is: describe, read, patch and the lifecycle tools ([AI-native resources](../archive/2026-10-25-architecture-ai-native-resources-program/design.md)).
+The whiteboard is reached by the generic resource tools, as every type is: describe, read, patch and the lifecycle tools ([AI-native resources](../2026-10-25-architecture-ai-native-resources-program/design.md)).
 
 - **Describe** returns the content's JSON Schema, with the element kinds, their bounds and the binding rules stated, and with the fields the core derives marked read-only.
 - **Read** returns the document, or one element by its index.
@@ -133,7 +133,7 @@ The whiteboard is reached by the generic resource tools, as every type is: descr
 The change adds no catalog entry. The build uses only what the repository already has:
 
 - The DOM's Pointer Events and SVG, for the renderer.
-- The platform's canvas and image APIs, for PNG export. This is the platform rule of the [dependency admission](../../specs/architecture/dependency-admission/design.md) gate: a platform capability replaces a package.
+- The platform's canvas and image APIs, for PNG export. This is the platform rule of the [dependency admission](../../../specs/architecture/dependency-admission/design.md) gate: a platform capability replaces a package.
 - `@esposter/shared`'s history, for undo.
 
 The flowchart's canvas packages leave the catalog in the retirement change, which is a removal.
@@ -171,7 +171,7 @@ Say plainly: **this is a large build**, several times the Flowchart's current ap
 - **A third-party whiteboard engine, embedded in the app.** This was the first recommendation of this change, with its editor mounted by a Vue component. It is rejected, because the owner's direction rules out a new third-party dependency. Its cost was also real: a second UI runtime beside the app's, a second element model to convert to, and an engine's own interaction and styling in place of ours. Excalidraw's feel is the reference for the whiteboard, not a package the whiteboard uses.
 - **Other third-party drawing and graph engines**, including whiteboard SDKs and node-graph libraries. Each is rejected by the same direction, and each would replace the Flowchart's canvas engine with another one.
 - **Extending the Flowchart on its current canvas engine.** The flowchart shapes change and the flowchart canvas change proposed this. The retirement has removed both, since the whiteboard supersedes the Flowchart and growing it would add work the removal discards.
-- **Rebuilding the Flowchart on the headless editor core.** Rejected by [the retirement](../resource-flowchart-retirement/proposal.md), which records why.
+- **Rebuilding the Flowchart on the headless editor core.** Rejected by [the retirement](../../resource-flowchart-retirement/proposal.md), which records why.
 - **Building the whiteboard as a page builder document.** The page builder's core is a tree, and a canvas positions elements and refers to them by id. Forcing a canvas into slots would make the arrows children of the shapes they join. The core is extended with the positioned model instead, and its tree stays as it is.
 
 ## The type's name
