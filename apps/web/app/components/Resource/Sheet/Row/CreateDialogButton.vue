@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Row, rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { getRowFormColumns } from "@/services/resource/sheet/column/getRowFormColumns";
+import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
 import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 import { useSheetStore } from "@/store/resource/sheet";
 import { takeOne, toRawDeep } from "@esposter/shared";
@@ -8,7 +8,7 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 const sheetStore = useSheetStore();
 const { dataSource } = storeToRefs(sheetStore);
 const createRow = useCreateRow();
-const rowFormColumns = computed(() => getRowFormColumns(dataSource.value.columns));
+const rowFormColumns = computed(() => getVisibleEditableColumns(dataSource.value.columns));
 // Every stored column, hidden ones included: a new row carries a cell for each of them, and the form is what
 // Narrows to the ones on screen. Derived from the sheet's columns as they are now rather than as they were when the
 // Blade mounted, so a row made after a column was added, renamed or deleted is keyed by the columns the sheet has

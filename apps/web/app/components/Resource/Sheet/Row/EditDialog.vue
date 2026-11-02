@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
-import { getRowFormColumns } from "@/services/resource/sheet/column/getRowFormColumns";
+import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
 import { getEditRowDescription } from "@/services/resource/sheet/commands/getEditRowDescription";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
@@ -17,7 +17,7 @@ const { columns, index, row } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
 const { isOpen } = useSingletonDialog(editingId);
-const rowFormColumns = computed(() => getRowFormColumns(columns));
+const rowFormColumns = computed(() => getVisibleEditableColumns(columns));
 const updateRow = useUpdateRow();
 const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
   clone: (source) => structuredClone(toRawDeep(source)),

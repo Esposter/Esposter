@@ -3,10 +3,12 @@ import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/resource/sheet/commands/KeepDuplicateMode";
+import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
 import { takeOne } from "@esposter/shared";
 
 export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First) => {
-  const sortedKeys = dataSource.columns
+  // A row is matched on what is on screen, so a hidden column does not decide it
+  const sortedKeys = getVisibleEditableColumns(dataSource.columns)
     .map(({ name }) => name)
     .toSorted((firstKey, secondKey) => firstKey.localeCompare(secondKey));
   const getRowKey = (row: Row) => JSON.stringify(sortedKeys.map((key) => row.data[key]));
