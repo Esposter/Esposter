@@ -177,6 +177,11 @@ const nowSlotOffset = computed(() => getSlotOffset(now.value.toPlainTime()));
   height: calc(var(--slot-height) * 2);
 }
 
+/* While an event is dragged, the blocks step aside, so the slot under a block takes the drop rather than the block */
+:global([data-dragging]) .placed {
+  pointer-events: none;
+}
+
 /* The current time, a line in the accent across today with a block at its start */
 .now {
   background-color: var(--ui-accent);

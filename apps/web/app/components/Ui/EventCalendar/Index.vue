@@ -157,7 +157,16 @@ useCommands((): UiCommand[] => [
 <template>
   <!-- A drag cancelled or dropped outside the calendar never reaches move, so its id would otherwise move the event on
     The next drop of a file or text. dragend fires after drop, so a real move has already read it -->
-  <section ref="section" :aria-label="label" flex gap-4 h-full min-h-0 @dragend="draggedId = ''">
+  <section
+    ref="section"
+    :aria-label="label"
+    :data-dragging="draggedId || undefined"
+    flex
+    gap-4
+    h-full
+    min-h-0
+    @dragend="draggedId = ''"
+  >
     <!-- Outlook's navigator: the month around the day shown, each day holding an event marked, a click going there -->
     <aside class="hidden lg:flex" shrink-0 flex-col w-72>
       <UiCalendar v-model="date" label="Go to a day" :marked-dates />
