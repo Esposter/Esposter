@@ -71,7 +71,7 @@ Idempotent post-write steps are the one place a rethrow is admissible — a step
 
 ## Enforcement
 
-The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/src/oxlint/persistThenNotify.ts`, scoped to `apps/web/server` in `oxlint.config.ts`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResult`/`getResultAsync` chain, any chain terminated by a `.match` whose err handler absorbs the error, or a `Promise` combinator over a fan-out of those. `withFinalizer`/`withFinalizerAsync` are deliberately **not** accepted: both unwrap the original result and rethrow on `Err`, so awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast. The rule carries no list of the repo's own helpers: a helper that is best-effort inside looks exactly like a fatal one at its call site, so such a helper (`createSystemRoomMessage`, `publishBlobDeletion`, `publishBlobPrefixDeletion`) returns its `ResultAsync` and the call site terminates it — the terminal is the proof, and a new helper written the same way needs no registration. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
+The tail half is lint-enforced, not left to review. A custom oxlint JS plugin (`scripts/src/oxlint/persistThenNotify.ts`, scoped to `apps/web/server` in `oxlint.config.ts`) errors on any `await` that follows a `*EventEmitter.emit(...)` in the same function unless it never rejects — a `getResult`/`getResultAsync` chain, any chain terminated by a `.match` whose err handler absorbs the error, or a `Promise` combinator over a fan-out of those. `withFinalizer`/`withFinalizerAsync` are deliberately **not** accepted: both unwrap the original result and rethrow on `Err`, so awaiting one after an emit rejects the caller for an entity that already exists and was already broadcast. The rule carries no list of the repo's own helpers: a helper that is best-effort inside looks exactly like a fatal one at its call site, so such a helper (`createSystemRoomMessage`, `publishBlobDeletion`, `publishBlobPrefixDeletion`, `removeUserFromRoomGroup`) returns its `ResultAsync` and the call site terminates it — the terminal is the proof, and a new helper written the same way needs no registration. It runs in oxlint's single root pass because the check is purely syntactic. What it deliberately can't see is the rarer _gap_ — a fatal `await` sitting **before** the emit — since there's no syntactic marker for "the primary write"; that half stays a review concern, kept small by firing the emit the instant the entity exists.
 
 ## Where a failure surfaces
 
@@ -79,15 +79,16 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## Key files
 
-| File                                                               | Role                                                                          |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| `apps/web/server/services/message/createUserMessage.ts`            | Canonical shape — guards, slowmode clock, write, emit, best-effort tail       |
-| `apps/web/server/trpc/routers/message/index.ts`                    | `forwardMessage` — the same shape per room, under `Promise.allSettled`        |
-| `apps/web/server/services/message/createSystemRoomMessage.ts`      | A write and its emit as one unit, handed back as a `ResultAsync` to terminate |
-| `apps/web/server/trpc/plugins/achievementPlugin.ts`                | Post-mutation work that always returns the original mutation's result         |
-| `apps/web/server/services/resource/writeResourceActivity.ts`       | Best-effort activity write behind every resource mutation                     |
-| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`  | The one chunked best-effort blob-cleanup publish every delete funnels through |
-| `apps/functions/src/services/message/createAndBroadcastMessage.ts` | Handler-side write then best-effort broadcast                                 |
+| File                                                                  | Role                                                                                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `apps/web/server/services/message/createUserMessage.ts`               | Canonical shape — guards, slowmode clock, write, emit, best-effort tail                          |
+| `apps/web/server/trpc/routers/message/index.ts`                       | `forwardMessage` — the same shape per room, under `Promise.allSettled`                           |
+| `apps/web/server/services/message/createSystemRoomMessage.ts`         | A write and its emit as one unit, handed back as a `ResultAsync` to terminate                    |
+| `apps/web/server/services/azure/webPubSub/removeUserFromRoomGroup.ts` | A departed member's devices out of the room's group, handed back as a `ResultAsync` to terminate |
+| `apps/web/server/trpc/plugins/achievementPlugin.ts`                   | Post-mutation work that always returns the original mutation's result                            |
+| `apps/web/server/services/resource/writeResourceActivity.ts`          | Best-effort activity write behind every resource mutation                                        |
+| `apps/web/server/services/azure/eventGrid/publishBlobDeletion.ts`     | The one chunked best-effort blob-cleanup publish every delete funnels through                    |
+| `apps/functions/src/services/message/createAndBroadcastMessage.ts`    | Handler-side write then best-effort broadcast                                                    |
 
 ## Notes
 
