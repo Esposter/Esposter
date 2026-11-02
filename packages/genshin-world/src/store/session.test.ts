@@ -11,13 +11,10 @@ describe(useWorldSessionStore, () => {
   test("reads the context it started with", () => {
     expect.hasAssertions();
 
-    const worldSessionStore = startTestWorldSession({
-      gameDataBaseUrl: "https://example.test/data",
-      nameText: { 1: "name" },
-    });
+    const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: " ", nameText: { 0: " " } });
 
-    expect(worldSessionStore.gameDataBaseUrl).toBe("https://example.test/data");
-    expect(worldSessionStore.nameText).toStrictEqual({ 1: "name" });
+    expect(worldSessionStore.gameDataBaseUrl).toBe(" ");
+    expect(worldSessionStore.nameText).toStrictEqual({ 0: " " });
   });
 
   test("refuses a read of the context before the session has started", () => {
@@ -34,8 +31,8 @@ describe(useWorldSessionStore, () => {
   test("starts from the saved bag and wallet", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { ...EMPTY_INVENTORY, nextId: 5 };
-    const wallet = { ...EMPTY_WALLET, [Currency.Primogem]: 160 };
+    const inventory: Inventory = { ...EMPTY_INVENTORY, nextId: 1 };
+    const wallet = { ...EMPTY_WALLET, [Currency.Primogem]: 1 };
     const worldSessionStore = startTestWorldSession({}, { inventory, wallet });
 
     expect(worldSessionStore.inventory).toStrictEqual(inventory);
@@ -48,7 +45,7 @@ describe(useWorldSessionStore, () => {
     const worldSessionStore = startTestWorldSession();
     const onBagChange = vi.fn<(inventory: Inventory) => void>();
     worldSessionStore.events.on("bagChange", onBagChange);
-    const nextInventory: Inventory = { ...EMPTY_INVENTORY, nextId: 2 };
+    const nextInventory: Inventory = { ...EMPTY_INVENTORY, nextId: 1 };
 
     worldSessionStore.setInventory(nextInventory);
 
@@ -61,7 +58,7 @@ describe(useWorldSessionStore, () => {
 
     const worldSessionStore = startTestWorldSession(
       {},
-      { inventory: { ...EMPTY_INVENTORY, nextId: 9 }, wallet: EMPTY_WALLET },
+      { inventory: { ...EMPTY_INVENTORY, nextId: 1 }, wallet: EMPTY_WALLET },
     );
     const onBagChange = vi.fn<(inventory: Inventory) => void>();
     worldSessionStore.events.on("bagChange", onBagChange);
