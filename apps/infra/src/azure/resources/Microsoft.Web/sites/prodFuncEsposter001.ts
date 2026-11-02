@@ -1,6 +1,7 @@
 import ApplicationTags from "#src/azure/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "#src/azure/constants/AzureAustraliaEastDisplayLocation";
 import AzureCustomDomainVerificationId from "#src/azure/constants/AzureCustomDomainVerificationId";
+import ProductionDeploymentOrigin from "#src/azure/constants/ProductionDeploymentOrigin";
 import { prodEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
@@ -79,7 +80,7 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
         { name: "AzureWebJobsStorage__credential", value: "managedidentity" },
         { name: "AzureWebJobsStorage__queueServiceUri", value: "https://prodstesposter001.queue.core.windows.net" },
         { name: "AzureWebJobsStorage__tableServiceUri", value: "https://prodstesposter001.table.core.windows.net" },
-        { name: "BASE_URL", value: "https://esposter.com" },
+        { name: "BASE_URL", value: ProductionDeploymentOrigin },
         { name: "DATABASE_URL", value: configuration.requireSecret("prodFuncEsposter001DatabaseUrl") },
         { name: "FUNCTIONS_EXTENSION_VERSION", value: "~4" },
         { name: "FUNCTIONS_WORKER_RUNTIME", value: "node" },

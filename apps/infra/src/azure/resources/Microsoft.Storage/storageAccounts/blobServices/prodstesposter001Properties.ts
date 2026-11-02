@@ -1,3 +1,4 @@
+import ProductionDeploymentOrigin from "#src/azure/constants/ProductionDeploymentOrigin";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import * as azure_native from "@pulumi/azure-native";
@@ -15,7 +16,7 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
           {
             allowedHeaders: ["*"],
             allowedMethods: ["GET", "PUT"],
-            allowedOrigins: ["https://esposter.com"],
+            allowedOrigins: [ProductionDeploymentOrigin],
             exposedHeaders: [""],
             maxAgeInSeconds: 86_400,
           },
