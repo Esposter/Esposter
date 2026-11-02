@@ -95,10 +95,9 @@ const emit = defineEmits<{ buy: []; close: []; dismiss: []; trial: []; wish: [co
 const isDetailsOpen = ref(false);
 const isHistoryOpen = ref(false);
 const getLabelText = (label: TextSegment[]) => label.map(({ text }) => text).join("");
-const bannerLabelText = computed(() => {
-  const openBanner = banners.find(({ id }) => id === bannerId.value);
-  return openBanner && getLabelText(openBanner.label);
-});
+// Each banner's words as one string, read by its tab's name and, for the open one, by the card's tag
+const bannerLabels = computed(() => banners.map(({ id, label }) => ({ id, labelText: getLabelText(label) })));
+const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id === bannerId.value)?.labelText);
 </script>
 
 <template>
@@ -112,14 +111,14 @@ const bannerLabelText = computed(() => {
     <span class="sparkle star" aria-hidden="true" />
     <ScreenTitle class="heading" role="heading" aria-level="1">{{ title }}</ScreenTitle>
     <ul class="banners">
-      <li v-for="banner of banners" :key="banner.id">
+      <li v-for="{ id, labelText } of bannerLabels" :key="id">
         <GameButton
           class="banner"
-          :aria-label="getLabelText(banner.label)"
-          :aria-pressed="banner.id === bannerId"
+          :aria-label="labelText"
+          :aria-pressed="id === bannerId"
           :kind="GameButtonKind.Row"
           tip=""
-          @click="bannerId = banner.id"
+          @click="bannerId = id"
         />
       </li>
     </ul>

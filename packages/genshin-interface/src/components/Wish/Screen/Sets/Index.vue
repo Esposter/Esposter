@@ -2,8 +2,7 @@
 import type { WishPurchase } from "#src/models/WishPurchase";
 import type { WishSet } from "#src/models/WishSet";
 
-import GameButton from "#src/components/GameButton/Index.vue";
-import { GameButtonKind } from "#src/models/GameButtonKind";
+import Item from "#src/components/Wish/Screen/Sets/Item/Index.vue";
 
 interface Props {
   // The Fate bought with Primogems, offered as one button beside the sets while the wallet holds too few Fates for a
@@ -19,30 +18,22 @@ const { purchases, sets } = defineProps<Props>();
 
 <template>
   <div class="sets">
-    <GameButton
+    <Item
       v-for="{ cost, count, isAffordable, label } of sets"
       :key="count"
-      class="set"
-      :disabled="!isAffordable"
-      :kind="GameButtonKind.Pill"
-      tip=""
-      @click="emit('wish', count)"
-    >
-      <span class="set-label">{{ label }}</span>
-      <span class="cost">{{ cost }}</span>
-    </GameButton>
-    <GameButton
+      :cost
+      :is-affordable="isAffordable"
+      :label
+      @press="emit('wish', count)"
+    />
+    <Item
       v-for="{ cost, isAffordable, label } of purchases"
       :key="label"
-      class="set"
-      :disabled="!isAffordable"
-      :kind="GameButtonKind.Pill"
-      tip=""
-      @click="emit('buy')"
-    >
-      <span class="set-label">{{ label }}</span>
-      <span class="cost">{{ cost }}</span>
-    </GameButton>
+      :cost
+      :is-affordable="isAffordable"
+      :label
+      @press="emit('buy')"
+    />
   </div>
 </template>
 
@@ -67,14 +58,5 @@ const { purchases, sets } = defineProps<Props>();
   background: #fff;
   color: #9d9a9a;
   font-size: calc(var(--unit) * 22);
-}
-
-.set-label {
-  font-weight: 600;
-}
-
-.cost {
-  font-size: calc(var(--unit) * 24);
-  opacity: 0.85;
 }
 </style>
