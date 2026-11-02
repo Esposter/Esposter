@@ -3,7 +3,7 @@ import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const STYLE_BLOCK_REGEX = /<style[^>]*>([\s\S]*?)<\/style>/gu;
+const STYLE_BLOCK_REGEX = /<style[^>]*>(?<css>[\s\S]*?)<\/style>/gu;
 
 // Every stylesheet of the two Genshin packages that draw the game's controls, a `.vue` file's style blocks and each
 // `.css` file, with the line each starts on. Git's pathspec `*` crosses directories, so one per extension and package
@@ -17,7 +17,7 @@ export const readGenshinStyleBlocks = (): { css: string; firstLine: number; path
   ).flatMap((path) => {
     const contents = readFileSync(resolve(REPOSITORY_ROOT, path), "utf8");
     if (path.endsWith(".css")) return [{ css: contents, firstLine: 1, path }];
-    return Array.from(contents.matchAll(STYLE_BLOCK_REGEX), ({ 1: css = "", index }) => ({
+    return Array.from(contents.matchAll(STYLE_BLOCK_REGEX), ({ groups: { css = "" } = {}, index }) => ({
       css,
       firstLine: contents.slice(0, index + contents.slice(index).indexOf(">") + 1).split("\n").length,
       path,

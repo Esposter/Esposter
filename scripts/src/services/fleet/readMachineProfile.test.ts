@@ -6,8 +6,8 @@ const { directory, profilePath } = await vi.hoisted(async () => {
   const { mkdtempSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
-  const directory = mkdtempSync(join(tmpdir(), "machine-profile-"));
-  return { directory, profilePath: join(directory, "machine.json") };
+  const profileDirectory = mkdtempSync(join(tmpdir(), "machine-profile-"));
+  return { directory: profileDirectory, profilePath: join(profileDirectory, "machine.json") };
 });
 
 vi.mock(import("#src/services/fleet/constants"), async (importOriginal) => ({

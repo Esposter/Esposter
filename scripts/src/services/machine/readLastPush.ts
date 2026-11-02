@@ -20,8 +20,7 @@ export const readLastPush = (repositoryRoot: string = REPOSITORY_ROOT): LastPush
         repositoryRoot,
       ),
     ).map((line) => line.split(FIELD_SEPARATOR));
-    const [sha, at] =
-      commits.find(([, , authorName, authorEmail]) => authorName === name && authorEmail === email) ?? [];
+    const [sha, at] = commits.find((fields) => fields[2] === name && fields[3] === email) ?? [];
     return sha === undefined || at === undefined ? undefined : { at, sha };
   }).match(
     (lastPush) => lastPush,
