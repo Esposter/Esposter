@@ -21,6 +21,13 @@ While offline, the app SHALL show the messages cached for the room the reader op
 - **WHEN** the reader switches from one room to the other while offline
 - **THEN** the messages shown are those cached for the room now open
 
+#### Scenario: a cached message's author is not in the cache
+
+- **GIVEN** a room whose cached messages were written by a member the cache does not hold, and by a webhook
+- **WHEN** the reader opens that room while offline
+- **THEN** every cached message is shown
+- **AND** the message from the member the cache does not hold is named by the placeholder, and the webhook's message is named by the app user it carries
+
 ### Requirement: Cached content never replaces what is already loaded
 
 Restoring from the cache SHALL NOT replace messages the session has already loaded for that room.

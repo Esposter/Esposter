@@ -83,7 +83,7 @@ sequenceDiagram
   Read->>History: the filters and query that actually ran
 ```
 
-Each page's hits are read with their authors before the page lands, through `useReadMessageCreators` (the read a room's messages take), so a hit from a current member the reader has not loaded is drawn rather than dropped.
+Each page's hits are read with their authors before the page lands, through `useReadMessageCreators` (the read a room's messages take), so a hit from a member the reader has not loaded, or from a user who has left the room, is drawn rather than dropped. A creator nobody resolves is drawn under the placeholder name.
 
 A history row therefore records what was searched, not what was on screen — clicking one restores exactly that combination, which is why a pending chip must never reach it.
 

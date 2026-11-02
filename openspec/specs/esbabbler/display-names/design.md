@@ -17,7 +17,7 @@ Room display names are stored as `usersToRooms.displayName`, a `text().notNull()
 
 Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/List`), the @-mention suggestion list (`Suggestion/MentionList`), the push notification title (queried server-side before the EventGrid publish), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
 
-**`useCreator` resolves the display name itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getRoomMemberName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no room display name to overlay.
+**`useCreator` resolves the display name itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getRoomMemberName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no room display name to overlay. An author nobody resolves, one the reader has never loaded, is drawn under the placeholder name rather than dropped.
 
 The resolution is a single ordered chain, and every surface enters it at the same point:
 
@@ -25,8 +25,9 @@ The resolution is a single ordered chain, and every surface enters it at the sam
 flowchart TD
   Render["a surface needs an author's name"] --> Creator["useCreator(message)"]
   Creator --> Webhook{"message.type is Webhook?"}
-  Webhook -->|"yes"| AppUser["appUserMap — app user name, no room display name"]
+  Webhook -->|"yes"| AppUser["the app user the message carries, over appUserMap — no room display name"]
   Webhook -->|"no"| User["userMap.get(message.userId)"]
+  User -->|"not loaded"| Placeholder["UNKNOWN_USER_NAME, the message's own userId"]
   User --> Display["getRoomMemberName(message.partitionKey, user.id)"]
   Display --> HasDisplayName{"the room's member row has a displayName?"}
   HasDisplayName -->|"yes"| RoomDisplayName["the room display name"]

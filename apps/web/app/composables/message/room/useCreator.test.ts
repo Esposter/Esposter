@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { useCreator } from "@/composables/message/room/useCreator";
+import { UNKNOWN_USER_NAME } from "@/services/message/constants";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
@@ -64,5 +65,27 @@ describe(useCreator, () => {
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(appUser.name);
+  });
+
+  // An offline webhook's app user is not cached, so the identity its message carries is what names it
+  test("names a webhook the app user cache does not hold from the app user its message carries", () => {
+    expect.hasAssertions();
+
+    const appUser = { id: crypto.randomUUID(), image: "", name: "appUserName" };
+    const message = createMessageEntity({ appUser, roomId, type: MessageType.Webhook });
+    const creator = useCreator(() => message);
+
+    expect(creator.value?.name).toBe(appUser.name);
+  });
+
+  // A member who has left the room is named by their account. An author nobody can resolve is drawn under the
+  // Placeholder rather than dropped, so the message they wrote still shows
+  test("names an author nobody can resolve with the placeholder", () => {
+    expect.hasAssertions();
+
+    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: crypto.randomUUID() });
+    const creator = useCreator(() => message);
+
+    expect(creator.value).toStrictEqual({ id: message.userId, image: "", name: UNKNOWN_USER_NAME });
   });
 });
