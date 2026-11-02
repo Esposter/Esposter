@@ -154,12 +154,12 @@ const shopGoodCells = useShopGoodCells({
   goods: offerNames,
   purchases,
 });
-// The Fates are drawn in the gold tone the reference gives them, the characters and weapons in the plain one, and a character
-// The player holds at its sixth constellation shows the game's sold-out line in place of its limit
+// The Fates are drawn in the gold tone the reference gives them, the characters and weapons in the plain one.
+// A character the player holds at its sixth constellation shows the game's sold-out line in place of its limit.
 const goodCells = computed(() => {
-  const offerById = new Map(shownOffers.value.map((offer): [number, Offer] => [offer.good.goodsId, offer]));
+  const goodsIdOfferMap = new Map(shownOffers.value.map((offer): [number, Offer] => [offer.good.goodsId, offer]));
   return shopGoodCells.value.map((cell): ShopGoodCell => {
-    const offer = offerById.get(cell.id);
+    const offer = goodsIdOfferMap.get(cell.id);
     if (offer?.kind === ShopOfferKind.Fate) return { ...cell, tone: "gold" };
     if (
       offer?.kind === ShopOfferKind.Character &&
