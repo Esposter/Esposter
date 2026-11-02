@@ -48,10 +48,16 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
     const { updateWebhook: storeUpdateWebhook } = getRoomOperationData(roomId);
     await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
       // Snapshot when the write is sent rather than when it was issued: a row's name field and its active
-      // Switch write different fields of the same webhook, so the second must roll back to what the first stored
+      // Switch write different fields of the same webhook, so the second must roll back to what the first stored.
+      // Only the fields this write names: a token rotation is its own write, and restoring the whole row would put a
+      // Revoked token back on screen
       applyOptimistic: () => {
         const previousWebhook = roomItems.value.find(({ id }) => id === input.id);
-        const previousValues = previousWebhook ? { ...previousWebhook } : undefined;
+        const previousValues = previousWebhook && {
+          id: previousWebhook.id,
+          ...(input.isActive !== undefined && { isActive: previousWebhook.isActive }),
+          ...(input.name !== undefined && { name: previousWebhook.name }),
+        };
         storeUpdateWebhook({ ...input, roomId });
         return () => {
           if (previousValues) storeUpdateWebhook(previousValues);

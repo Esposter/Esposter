@@ -113,4 +113,25 @@ describe(useWebhookStore, () => {
 
     expect(items.value).toStrictEqual([first]);
   });
+
+  // A rename and a token rotation are separate writes to one webhook, so a rotation that lands while the rename is in
+  // Flight is not the rename's to undo: the rejected rename puts back only the name it changed, and the new token stays
+  test("keeps the token a rotation replaced while the rejected rename was in flight", async () => {
+    expect.hasAssertions();
+
+    const rejectedName = "rejectedName";
+    const rotatedToken = "token1";
+    const webhookStore = useWebhookStore();
+    const { getSlice, rotateToken, updateWebhook } = webhookStore;
+    const { items } = storeToRefs(webhookStore);
+    trpcMsw.webhook.rotateToken.mutation(() => ({ ...first, token: rotatedToken }));
+    trpcMsw.webhook.updateWebhook.mutation(async () => {
+      await rotateToken(roomId, { id: first.id });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    getSlice(roomId).items.value = [{ ...first }];
+    await updateWebhook(roomId, { id: first.id, name: rejectedName });
+
+    expect(items.value).toStrictEqual([{ ...first, token: rotatedToken }]);
+  });
 });
