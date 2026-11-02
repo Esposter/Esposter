@@ -5,3 +5,5 @@ export const SAME_BATCH_WINDOW_MS: number = Temporal.Duration.from({ minutes: 5 
 export const SCHEDULE_LEAD_TIME_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // The name an author nobody can resolve is drawn under, so the message they wrote is still shown rather than dropped
 export const UNKNOWN_USER_NAME = "Unknown user";
+// The identity an author nobody can resolve is drawn with, before the id the message names is put on it
+export const UNKNOWN_CREATOR = { image: "", name: UNKNOWN_USER_NAME };

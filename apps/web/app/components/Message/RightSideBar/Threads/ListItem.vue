@@ -15,7 +15,6 @@ const openThread = useOpenThread();
 <template>
   <component
     :is="MessageComponentMap[thread.type]"
-    v-if="creator"
     :creator
     :message="thread"
     is-preview
