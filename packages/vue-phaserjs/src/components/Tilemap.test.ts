@@ -66,6 +66,18 @@ describe("tilemap", () => {
     expect(destroySpy).toHaveBeenCalledTimes(1);
   });
 
+  test("builds no tilemap when it unmounts before its scene creates", () => {
+    expect.hasAssertions();
+
+    const onComplete = vi.fn<(scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void>();
+
+    mountGameObject(Tilemap, { props: { configuration: {}, onComplete } });
+    unmountGameObject();
+    startTestScene(sceneKey);
+
+    expect(onComplete).not.toHaveBeenCalled();
+  });
+
   test("builds the tilemap when it mounts after its scene has created", () => {
     expect.hasAssertions();
 
