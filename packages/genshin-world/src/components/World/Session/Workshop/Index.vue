@@ -21,11 +21,11 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { CraftingCell, ForgeTab } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
-import { ScreenKind } from "#src/models/screen/ScreenKind";
-import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
+import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
+import { ScreenKind } from "#src/models/screen/ScreenKind";
 
 interface Props {
   adventureRank: number;
@@ -34,9 +34,9 @@ interface Props {
   avatarId: number;
   completedMainQuestIds: ReadonlySet<string>;
   cookingRecipes: CookingRecipe[];
+  crafters: CraftingCell[];
   craftingProgress: CraftingProgress;
   craftingRecipes: CraftingRecipe[];
-  crafters: CraftingCell[];
   forgeDefinitions: Map<number, ItemDefinition>;
   forgeNow: Temporal.Instant;
   forgeRecipes: ForgeRecipe[];
@@ -76,9 +76,9 @@ const {
   avatarId,
   completedMainQuestIds,
   cookingRecipes,
+  crafters,
   craftingProgress,
   craftingRecipes,
-  crafters,
   forgeDefinitions,
   forgeNow,
   forgeRecipes,
@@ -113,11 +113,11 @@ const emit = defineEmits<{
     v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
     v-model:progress="cookingProgress"
     v-model:recipe="cookingRecipe"
-    :avatar-id="avatarId"
+    :avatar-id
     :game-text
     :inventory
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :random
     :recipes="cookingRecipes"
     :talent
@@ -129,8 +129,8 @@ const emit = defineEmits<{
     v-model:jobs="processingJobs"
     :game-text
     :inventory
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :now="getWorldNow"
     :recipes="processingRecipes"
     @close="emit('close')"
@@ -140,22 +140,22 @@ const emit = defineEmits<{
     v-if="screenKind === ScreenKind.Crafting"
     v-model:crafted-count-map="craftedCountMap"
     :adventure-rank
-    :artifact-drop-tables="artifactDropTables"
+    :artifact-drop-tables
     :crafters
     :game-text
-    :get-world-now="getWorldNow"
-    :initial-crafter-id="initialCrafterId"
+    :get-world-now
+    :initial-crafter-id
     :inventory
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :now="worldNow"
     :progress="craftingProgress"
     :random
     :recipes="craftingRecipes"
-    :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+    :reliquary-piece-entry-map
     :strongboxes
     :wallet
-    :weapon-data-map="weaponDataMap"
+    :weapon-data-map
     @achievement-events="(achievementEvents) => emit('achievementEvents', achievementEvents)"
     @close="emit('close')"
     @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"
@@ -169,14 +169,14 @@ const emit = defineEmits<{
     v-model:recipe-id="forgeRecipeId"
     v-model:tab="forgeTab"
     :adventure-rank
-    :adventure-rank-tables="adventureRankTables"
-    :completed-main-quest-ids="completedMainQuestIds"
+    :adventure-rank-tables
+    :completed-main-quest-ids
     :definitions="forgeDefinitions"
     :game-text
     :inventory
     :is-in-realm="false"
     :now="forgeNow"
-    :party-character-ids="partyCharacterIds"
+    :party-character-ids
     :random
     :recipes="forgeRecipes"
     :wallet

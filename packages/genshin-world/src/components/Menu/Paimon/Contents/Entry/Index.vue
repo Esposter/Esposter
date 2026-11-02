@@ -41,4 +41,5 @@ const emit = defineEmits<{ open: [] }>();
 </template>
 
 <style scoped src="../../../../../styles/paimonAlert.css"></style>
+
 <style scoped src="../../../../../styles/paimonEntry.css"></style>

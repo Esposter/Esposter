@@ -6,7 +6,7 @@ A `.vue.d.ts` written by `vize check --declaration` makes `vue-tsc` report TS234
 
 ## Environment
 
-`vize` 0.638.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Windows 11. Oracle: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`.
+`vize` 0.638.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, the repository's pinned Node, Windows 11. Oracle: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`.
 
 ## Reproduction
 

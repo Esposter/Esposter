@@ -30,4 +30,5 @@ const { alertedIcons, gameText, icon, labelKey } = defineProps<Props>();
 </template>
 
 <style scoped src="../../../../../styles/paimonAlert.css"></style>
+
 <style scoped src="../../../../../styles/paimonEntry.css"></style>

@@ -183,17 +183,17 @@ onBeforeUnmount(() => {
         <div class="panel" />
         <MenuPaimonProfile
           ref="profile"
-          :account-avatar-url="accountAvatarUrl"
-          :account-name="accountName"
-          :adventure-exp-progress="adventureExpProgress"
-          :adventure-rank="adventureRank"
-          :alerted-icons="alertedIcons"
-          :game-text="gameText"
-          :namecard-item-id="namecardItemId"
-          :namecards="namecards"
-          :signature="signature"
-          :traveler-birthday="travelerBirthday"
-          :world-level="worldLevel"
+          :account-avatar-url
+          :account-name
+          :adventure-exp-progress
+          :adventure-rank
+          :alerted-icons
+          :game-text
+          :namecard-item-id
+          :namecards
+          :signature
+          :traveler-birthday
+          :world-level
           @open-birthday="isBirthdayDialogOpen = true"
           @open-namecard="isNamecardDialogOpen = true"
           @open-world-level="isWorldLevelDialogOpen = true"

@@ -46,8 +46,8 @@ describe(getBluntKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
-      ["plunges.low.hits.0.hitmarkFrames", HITMARK_FRAMES],
       ["plunges.low.hits.0.gauge", 1],
+      ["plunges.low.hits.0.hitmarkFrames", HITMARK_FRAMES],
     ]);
     const candidateMap = getBluntKitCandidates(valueMap, {
       characterId: 10_000_027,
@@ -83,9 +83,9 @@ describe(getBluntKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
-      ["skill.hits.0.hitmarkFrames", HITMARK_FRAMES],
       ["skill.hits.0.element", Element.Anemo],
       ["skill.hits.0.gauge", 1],
+      ["skill.hits.0.hitmarkFrames", HITMARK_FRAMES],
     ]);
     const candidateMap = getBluntKitCandidates(valueMap, { characterId: 10_000_007, weaponType: WeaponType.Sword });
 

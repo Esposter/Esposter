@@ -1458,13 +1458,13 @@ useWorldSaveSync({
       :origin
     />
     <WorldSessionHud
-      :bag-full-hint="bagFullHint"
+      :bag-full-hint
       :camera="mapCamera"
       :catalogue
       :character-data-map="statTables.characterDataMap"
       :character-id-skill-glyphs-map
-      :claim-prompt="claimPrompt"
-      :domain-claim-offers="domainClaimOffers"
+      :claim-prompt
+      :domain-claim-offers
       :frame="hudFrame"
       :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
       :game-text
@@ -1473,29 +1473,29 @@ useWorldSaveSync({
       :input
       :interaction-prompts
       :interface-rects="hudInterfaceRects"
-      :is-hud-shown="isHudShown"
-      :is-shortcut-wheel-open="isShortcutWheelOpen"
+      :is-hud-shown
+      :is-shortcut-wheel-open
       :is-touch
       :landmarks="unlockedLandmarks"
       :max-stamina="staminaMaximum"
       :member="hudMember"
       :name-text-map="nameText"
-      :near-oculus-places="nearOculusPlaces"
+      :near-oculus-places
       :origin
       :party
-      :pointed-landmark="pointedLandmark"
-      :quest-mark="questMark"
+      :pointed-landmark
+      :quest-mark
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
-      :quest-text-map="questTextMap"
-      :is-quick-swap-open="isQuickSwapOpen"
-      :shortcut-wheel-direction-count="shortcutWheelDirectionCount"
-      :shortcut-wheel-picked-index="shortcutWheelPickedIndex"
-      :showing-tip="showingTip"
-      :tip-text="tipText"
+      :quest-text-map
+      :is-quick-swap-open
+      :shortcut-wheel-direction-count
+      :shortcut-wheel-picked-index
+      :showing-tip
+      :tip-text
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
-      :trial-seconds-remaining="trialSecondsRemaining"
-      :trounce-claim-prompt="trounceClaimPrompt"
+      :trial-seconds-remaining
+      :trounce-claim-prompt
       @choose-domain="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
       @choose-outcrop="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
       @choose-trounce="() => chooseTrounceBlossomClaim(getWorldNow(), worldLevel, kitContext.random)"
@@ -1776,36 +1776,36 @@ useWorldSaveSync({
     </MenuScreen>
     <WorldSessionScreens
       :adventure-rank="rank"
-      :cast-view="castView"
-      :character-passive-group-id-map="characterPassiveGroupIdMap"
-      :completed-main-quest-ids="completedMainQuestIds"
-      :down-character-ids="downCharacterIds"
-      :expedition-characters="expeditionCharacters"
-      :game-data-base-url="gameDataBaseUrl"
+      :cast-view
+      :character-passive-group-id-map
+      :completed-main-quest-ids
+      :down-character-ids
+      :expedition-characters
+      :game-data-base-url
       :game-text
-      :gcg-game-id="gcgGameId"
-      :get-world-now="getWorldNow"
+      v-model:expeditions="expeditions"
+      :gcg-game-id
+      v-model:reputation-level="reputationLevel"
+      :get-world-now
+      v-model:shop-purchases="shopPurchases"
       :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :language
-      :material-data-map="materialDataMap"
-      :name-text="nameText"
+      :material-data-map
+      :name-text
       :random="kitContext.random"
-      :region-statue-progress-map="regionStatueProgressMap"
+      :region-statue-progress-map
       :reputation
-      :reputation-bounty-offer="reputationBountyOffer"
-      :reputation-city="reputationCity"
-      :reputation-offer-title="reputationOfferTitle"
-      :screen-kind="screenKind"
+      :reputation-bounty-offer
+      :reputation-city
+      :reputation-offer-title
+      :screen-kind
       :talk
-      :talk-duel-game-id="talkDuelGameId"
-      :talk-offers="talkOffers"
-      :talk-text-map="talkTextMap"
+      :talk-duel-game-id
+      :talk-offers
+      :talk-text-map
       :wallet
-      :world-now="worldNow"
-      v-model:expeditions="expeditions"
-      v-model:reputation-level="reputationLevel"
-      v-model:shop-purchases="shopPurchases"
+      :world-now
       @accept="acceptReputationOffer()"
       @begin="(talkId) => beginTalk(talkId)"
       @close="closeScreen()"
@@ -1832,16 +1832,16 @@ useWorldSaveSync({
       v-model:auto-recover="autoRecoverSetting"
       v-model:power="restorativePower"
       :game-text
-      :get-character-name="getCharacterName"
+      :get-character-name
       :get-max-health="(characterId) => getMemberMaxHealth(characterId) ?? 0"
-      :get-region-progress="getRegionProgress"
-      :get-world-now="getWorldNow"
-      :get-worship-item-name="getWorshipItemName"
+      :get-region-progress
+      :get-world-now
+      :get-worship-item-name
       :party
-      :screen-kind="screenKind"
+      :screen-kind
       :statue-count="resonatedRegionIds.length"
-      :worship-levels="worshipLevels"
-      :worship-region-id="worshipRegionId"
+      :worship-levels
+      :worship-region-id
       @blessing="screenKind = ScreenKind.Blessing"
       @claim="claimWorship()"
       @close="closeScreen()"
@@ -1849,16 +1849,16 @@ useWorldSaveSync({
       @worship="screenKind = ScreenKind.Worship"
     />
     <WorldSessionChallenge
-      :abyss-blessing="abyssBlessing"
-      :abyss-choice-chamber-index="abyssChoiceChamberIndex"
-      :abyss-choice-floor-index="abyssChoiceFloorIndex"
-      :abyss-choices="abyssChoices"
-      :abyss-floors-offered="abyssFloorsOffered"
+      :abyss-blessing
+      :abyss-choice-chamber-index
+      :abyss-choice-floor-index
+      :abyss-choices
+      :abyss-floors-offered
       :domain-levels="domainLevelRows"
       :game-text
       :is-in-domain="domainArena !== undefined"
-      :name-text="nameText"
-      :screen-kind="screenKind"
+      :name-text
+      :screen-kind
       @choose-abyss-chamber="
         (floorId, chamberId) => {
           enterAbyssChamber(floorId, chamberId);
@@ -1884,34 +1884,34 @@ useWorldSaveSync({
       v-model:forge-tab="forgeTab"
       v-model:processing-jobs="processingJobs"
       :adventure-rank="rank"
-      :adventure-rank-tables="adventureRankTables"
+      :adventure-rank-tables
       :artifact-drop-tables="craftingArtifactDropTables"
       :avatar-id="activeCharacterId"
-      :completed-main-quest-ids="completedMainQuestIds"
+      :completed-main-quest-ids
       :cooking-recipes="openCookingRecipes"
-      :crafting-progress="craftingProgress"
-      :crafting-recipes="craftingRecipes"
+      :crafting-progress
+      :crafting-recipes
       :crafters="crafting.crafters"
-      :forge-definitions="forgeDefinitions"
-      :forge-now="forgeNow"
-      :forge-recipes="forgeRecipes"
-      :forge-weapons="forgeWeapons"
+      :forge-definitions
+      :forge-now
+      :forge-recipes
+      :forge-weapons
       :game-text
-      :get-world-now="getWorldNow"
+      :get-world-now
       :initial-crafter-id="crafting.crafterId"
       :inventory
-      :material-data-map="materialDataMap"
-      :name-text="nameText"
+      :material-data-map
+      :name-text
       :party-character-ids="getDeployedCharacterIds(party)"
-      :processing-recipes="processingRecipes"
+      :processing-recipes
       :random="kitContext.random"
-      :reliquary-piece-entry-map="reliquaryPieceEntryMap"
-      :screen-kind="screenKind"
+      :reliquary-piece-entry-map
+      :screen-kind
       :strongboxes="craftingStrongboxes"
       :talent="cookingTalents[activeCharacterId]"
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
-      :world-now="worldNow"
+      :world-now
       @achievement-events="(achievementEvents) => events.emit('achievementEvents', achievementEvents)"
       @close="closeScreen()"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

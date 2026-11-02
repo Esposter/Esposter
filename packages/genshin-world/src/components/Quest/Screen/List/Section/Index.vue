@@ -37,7 +37,8 @@ const emit = defineEmits<{ select: [questId: string] }>();
 const questDistanceTexts = computed(
   () =>
     new Map(
-      [...questDistanceMap].map(
+      Array.from(
+        questDistanceMap,
         ([questId, distance]) =>
           [questId, fillGameTextValues(gameText[GameTextKey.QuestDistance], Math.round(distance))] as const,
       ),

@@ -62,13 +62,13 @@ const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
     <ForgeScreenDetailMaterials
       v-if="tab === ForgeTab.Materials"
       v-model:amount="amount"
-      :amount-label="amountLabel"
-      :amount-maximum="amountMaximum"
-      :refusal-label="refusalLabel"
-      :required-coins="requiredCoins"
-      :required-label="requiredLabel"
-      :start-label="startLabel"
-      :total-time-label="totalTimeLabel"
+      :amount-label
+      :amount-maximum
+      :refusal-label
+      :required-coins
+      :required-label
+      :start-label
+      :total-time-label
       @start="emit('start')"
     />
     <ForgeScreenDetailQueue
@@ -76,7 +76,7 @@ const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
       :forged-label="queueDetail.forgedLabel"
       :heading-label="queueDetail.headingLabel"
       :is-obtainable="queueDetail.isObtainable"
-      :obtain-label="obtainLabel"
+      :obtain-label
       :progress="queueDetail.progress"
       :queue-id="queueDetail.id"
       @obtain="(queueId) => emit('obtain', queueId)"
@@ -84,11 +84,7 @@ const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
     <div class="item-icon">
       <span class="item-count">{{ yieldCount }}</span>
     </div>
-    <ForgeScreenMaterialsBox
-      :material-count-label="materialCountLabel"
-      :materials-box-label="materialsBoxLabel"
-      :support-label="supportLabel"
-    />
+    <ForgeScreenMaterialsBox :material-count-label :materials-box-label :support-label />
   </div>
 </template>
 
@@ -114,4 +110,5 @@ const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
   text-align: center;
 }
 </style>
+
 <style scoped src="../../../styles/forgeDetail.css"></style>

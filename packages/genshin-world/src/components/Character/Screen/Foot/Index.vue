@@ -5,10 +5,10 @@ import { CharacterMenuTab, GAME_CREAM, GAME_REPLY_HOVER_INK } from "genshin-inte
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // The tab the screen shows, whose Training Guide and UID the foot draws on the Attributes tab alone
-  tab: CharacterMenuTab;
   // The game's words in the reader's language
   gameText: GameText;
+  // The tab the screen shows, whose Training Guide and UID the foot draws on the Attributes tab alone
+  tab: CharacterMenuTab;
   // The player's UID, which the Attributes tab draws at the foot of the frame, none until the host gives it
   uid?: number;
 }

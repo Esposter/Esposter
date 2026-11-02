@@ -21,7 +21,7 @@ const emit = defineEmits<{ select: [skillId: number] }>();
       v-for="skill in skills"
       :key="skill.id"
       :costs="skill.costs"
-      :is-disabled="isDisabled"
+      :is-disabled
       @select="emit('select', skill.id)"
     />
   </div>

@@ -137,6 +137,7 @@ const detailGroups = computed(() =>
 </template>
 
 <style scoped src="genshin-interface/styles/creamPill.css"></style>
+
 <style scoped src="../../../styles/attributeValue.css"></style>
 
 <style scoped>

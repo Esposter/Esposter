@@ -31,8 +31,6 @@ interface Props {
   isAutoRecoverOn: boolean;
   // The members of the deployed team, which the game lists as in combat
   members: BlessingMember[];
-  // The members of the teams not deployed, which the game lists as preparing for combat
-  waitingMembers?: BlessingMember[];
   // The Restorative Power the pool holds now, and the most it holds
   poolAmount: number;
   // The label before the pool's amount
@@ -44,6 +42,8 @@ interface Props {
   thresholdPercent: number;
   // The title the game shows at the top of its panel, and the title of the Worship screen the screen switches to
   title: string;
+  // The members of the teams not deployed, which the game lists as preparing for combat
+  waitingMembers?: BlessingMember[];
   worshipTitle: string;
 }
 

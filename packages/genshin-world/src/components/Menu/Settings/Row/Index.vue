@@ -38,7 +38,7 @@ const { gameText, options, qualityValue, row, tab } = defineProps<Props>();
         row.kind === SettingsRowKind.Range || row.kind === SettingsRowKind.Slider || row.kind === SettingsRowKind.Volume
       "
       v-model:settings="settings"
-      :game-text="gameText"
+      :game-text
       :row
       :tab
     />
@@ -46,8 +46,8 @@ const { gameText, options, qualityValue, row, tab } = defineProps<Props>();
       v-else
       v-model:opened-list="openedList"
       v-model:settings="settings"
-      :game-text="gameText"
-      :quality-value="qualityValue"
+      :game-text
+      :quality-value
       :row
     />
   </div>

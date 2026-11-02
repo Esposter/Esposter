@@ -27,7 +27,7 @@ export const useTerrainSelection = ({
   tileStreamer,
 }: {
   draws: TerrainSelection;
-  endRefresh: (isSettled: () => boolean) => void;
+  endRefresh: (checkIsSettled: () => boolean) => void;
   isGroundSettled: MaybeRefOrGetter<boolean>;
   onReady: () => void;
   terrainOptions: TerrainOptions;

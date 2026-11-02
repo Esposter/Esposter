@@ -5,9 +5,9 @@ import { usePostPipeline } from "#src/composables/usePostPipeline";
 
 interface PostChainOptions {
   fogUniforms: FogUniforms;
+  getQualityTier: () => QualityTier;
   // The grade the frame is drawn through, which the scene's colours are measured under
   gradeLutTexture: Data3DTexture;
-  getQualityTier: () => QualityTier;
   postUniforms: PostUniforms;
   // The sight's stand-ins, drawn beside the scene and read by the post chain where the sight reaches
   sightScene: Scene;

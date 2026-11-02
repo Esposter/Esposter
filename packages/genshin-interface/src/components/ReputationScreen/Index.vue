@@ -43,18 +43,12 @@ const emit = defineEmits<{ accept: []; close: [] }>();
        their count beneath, its unlock line behind an info mark, and the tick or the not achieved block at its end. The
        head and the left column are still provisional: the reference frames only the level list -->
   <div class="reputation-screen">
-    <ReputationScreenHead :back-label="backLabel" :title @close="emit('close')" />
+    <ReputationScreenHead :back-label :title @close="emit('close')" />
     <ReputationScreenDetail :headline :requirement />
     <ReputationScreenOffer v-if="offer" :offer @accept="emit('accept')" />
     <ul class="levels">
       <li v-for="cell of levels" :key="cell.level">
-        <ReputationScreenLevel
-          v-model:level="level"
-          :achieved-label="achievedLabel"
-          :cell
-          :level-label="levelLabel"
-          :not-achieved-label="notAchievedLabel"
-        />
+        <ReputationScreenLevel v-model:level="level" :achieved-label :cell :level-label :not-achieved-label />
       </li>
     </ul>
   </div>

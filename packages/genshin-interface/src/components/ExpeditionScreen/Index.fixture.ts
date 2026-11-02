@@ -35,13 +35,13 @@ export const props = {
     statusLabel: "",
   },
   hours: 4,
+  isPicking: false,
   limitLabel: "Expedition Limit: 1/2",
   nation: "Mondstadt",
   nations: [
     { hasAlert: false, name: "Mondstadt" },
     { hasAlert: true, name: "Liyue" },
   ],
-  isPicking: false,
   pins: [
     { awayLabel: "", id: 101, label: "Expedition place", x: 815, y: 195 },
     { awayLabel: "", id: 102, label: "Expedition place", x: 565, y: 410 },

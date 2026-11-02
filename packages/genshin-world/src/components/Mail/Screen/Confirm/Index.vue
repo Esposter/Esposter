@@ -45,4 +45,5 @@ const emit = defineEmits<{ cancel: []; confirm: [] }>();
 </style>
 
 <style scoped src="genshin-interface/styles/confirmDialog.css"></style>
+
 <style scoped src="../../../../styles/mailScreen.css"></style>

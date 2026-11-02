@@ -39,11 +39,11 @@ const steps = computed(() => {
   <div class="character-menu" :data-tab="tab">
     <div class="head" />
     <Characters v-model:character-id="characterId" :characters />
-    <Band :character-id="characterId" :characters :element-mark-path="elementMarkPath" :element-name="elementName" />
+    <Band :character-id :characters :element-mark-path :element-name />
     <!-- The keys stepping through the tabs, W up and S down, beside the first; the keys stepping through the characters,
          Q and E, either side of the row; a finger has no keys to press -->
     <Keys v-if="!isTouch" />
-    <TabColumn v-model:tab="tab" :tab-labels="tabLabels" />
+    <TabColumn v-model:tab="tab" :tab-labels />
     <section class="panel" :aria-label="tabLabels[tab]"><slot /></section>
     <Steps v-if="characters.length > 1" :next="steps.next" :previous="steps.previous" @step="characterId = $event" />
   </div>

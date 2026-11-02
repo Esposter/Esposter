@@ -32,8 +32,8 @@ export const useInventoryEntry = (
     party,
     wallet,
   }: {
-    count?: number;
     cookingProgress: CookingProgress;
+    count?: number;
     dishUseMap: ReadonlyMap<number, DishUse>;
     eaterId: number;
     getMaxHealth: (characterId: number) => number;

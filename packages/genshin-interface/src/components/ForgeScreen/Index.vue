@@ -87,30 +87,30 @@ const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
   <TwoColumnScreen class="forge-screen">
     <ForgeScreenHead
       v-model:tab="tab"
-      :close-label="closeLabel"
+      :close-label
       :coins
-      :materials-label="materialsLabel"
-      :queues-label="queuesLabel"
+      :materials-label
+      :queues-label
       :title
       @close="emit('close')"
     />
     <ForgeScreenRecipes v-model:recipe-id="recipeId" :queues :recipes :selected-queue-id="queueDetail?.id" :tab />
     <ForgeScreenDetail
       v-model:amount="amount"
-      :amount-label="amountLabel"
-      :amount-maximum="amountMaximum"
-      :material-count-label="materialCountLabel"
-      :materials-box-label="materialsBoxLabel"
-      :obtain-label="obtainLabel"
-      :queue-detail="queueDetail"
-      :refusal-label="refusalLabel"
-      :required-coins="requiredCoins"
-      :required-label="requiredLabel"
-      :start-label="startLabel"
-      :support-label="supportLabel"
+      :amount-label
+      :amount-maximum
+      :material-count-label
+      :materials-box-label
+      :obtain-label
+      :queue-detail
+      :refusal-label
+      :required-coins
+      :required-label
+      :start-label
+      :support-label
       :tab
-      :total-time-label="totalTimeLabel"
-      :yield-count="yieldCount"
+      :total-time-label
+      :yield-count
       @obtain="(queueId) => emit('obtain', queueId)"
       @start="emit('start')"
     />

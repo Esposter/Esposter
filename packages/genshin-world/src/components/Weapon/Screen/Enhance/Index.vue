@@ -48,7 +48,7 @@ const consumedText = computed(() =>
   <p class="stat-value attack-value">{{ secondaryText }}</p>
   <div class="divider enhance-divider"><OrnamentDivider :opacity="DIVIDER_OPACITY" is-middle-hidden /></div>
   <span class="stats-rule enhance-stats-rule" aria-hidden="true" />
-  <WeaponScreenEnhanceControls :game-text="gameText" />
+  <WeaponScreenEnhanceControls :game-text />
 </template>
 
 <style scoped src="../../../../styles/weaponScreen.css"></style>

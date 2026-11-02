@@ -84,7 +84,7 @@ export const useWorldStatues = ({
   // The party's maximum stamina, raised by the levels each region has reached, from the levels read so far
   const staminaMaximum = computed(() =>
     computeMaximumStamina(
-      [...regionStatueProgressMap.value].map(([regionId, progress]) =>
+      Array.from(regionStatueProgressMap.value, ([regionId, progress]) =>
         toStatueRegionProgress(progress, regionLevelsMap.value.get(regionId) ?? []),
       ),
     ),

@@ -118,4 +118,5 @@ const emit = defineEmits<{ start: [] }>();
   left: calc(var(--unit) * 1928.4);
 }
 </style>
+
 <style scoped src="../../../../styles/forgeDetail.css"></style>

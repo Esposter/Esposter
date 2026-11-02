@@ -125,13 +125,13 @@ const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id ==
     <CloseButton class="close" :label="backLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <Card
       v-if="bannerLabelText && fiveStarNotice"
-      :banner-card="bannerCard"
+      :banner-card
       :banner-label="bannerLabelText"
-      :five-star-notice="fiveStarNotice"
+      :five-star-notice
       :pool
-      :probability-label="probabilityLabel"
-      :time-remaining-label="timeRemainingLabel"
-      :time-remaining-text="timeRemainingText"
+      :probability-label
+      :time-remaining-label
+      :time-remaining-text
     />
     <div class="links">
       <GameButton class="link" :kind="GameButtonKind.Reply" tip="">{{ shopLabel }}</GameButton>

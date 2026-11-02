@@ -64,7 +64,7 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
       <Level
         class="rewards"
         :rewards="level.rewards"
-        :stamina-label="staminaLabel"
+        :stamina-label
         :stamina-share="level.staminaShare"
         :state="level.state"
         @claim="emit('claim')"

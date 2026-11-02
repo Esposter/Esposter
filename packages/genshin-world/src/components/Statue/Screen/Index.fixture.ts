@@ -29,12 +29,12 @@ setPartyTeamCharacters(party, 1, [SUCROSE_CHARACTER_ID, KAEYA_CHARACTER_ID, SHEN
 // Each character's level as the clip shows it: the deployed team's at five and two, the other team's at one
 const characterLevelMap = new Map([
   [DILUC_CHARACTER_ID, 5],
+  [KAEYA_CHARACTER_ID, 1],
+  [NOELLE_CHARACTER_ID, 2],
+  [SHENHE_CHARACTER_ID, 1],
+  [SUCROSE_CHARACTER_ID, 1],
   [VENTI_CHARACTER_ID, 5],
   [XIANGLING_CHARACTER_ID, 2],
-  [NOELLE_CHARACTER_ID, 2],
-  [SUCROSE_CHARACTER_ID, 1],
-  [KAEYA_CHARACTER_ID, 1],
-  [SHENHE_CHARACTER_ID, 1],
 ]);
 
 // The Statue's Blessing of two statues, its pool full at 10000 of 10000 with auto-recover on at half, as the completionist

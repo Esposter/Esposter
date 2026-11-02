@@ -4,19 +4,19 @@ import type { GameText } from "genshin-text";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  isLongTermEncounterPointUsable: boolean;
   // The most daily Encounter Points the storage holds, in whole points, which the panel's count reads against
   encounterPointLimit: number;
   // The daily Encounter Points held, as whole points, which the panel's count shows
   encounterPoints: number;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
+  isLongTermEncounterPointUsable: boolean;
   // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
   longTermEncounterPoints: number;
 }
 
-const { isLongTermEncounterPointUsable, encounterPointLimit, encounterPoints, gameText, longTermEncounterPoints } =
+const { encounterPointLimit, encounterPoints, gameText, isLongTermEncounterPointUsable, longTermEncounterPoints } =
   defineProps<Props>();
 const emit = defineEmits<{ useLongTermEncounterPoints: [] }>();
 </script>

@@ -70,4 +70,5 @@ const emit = defineEmits<{ obtain: [queueId: number] }>();
   background: #f0a53a;
 }
 </style>
+
 <style scoped src="../../../../styles/forgeDetail.css"></style>

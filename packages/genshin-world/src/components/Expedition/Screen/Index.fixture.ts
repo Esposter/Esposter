@@ -36,10 +36,10 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   hours: 4,
   inventory: { items: [], nextId: 1 },
+  isPicking: false,
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   nameText: englishNameText,
   now,
-  isPicking: false,
   pinPositions: new Map(
     pinnedPlaces.map(({ id }, index) => [id, MONDSTADT_EXPEDITION_PIN_LAYOUT[index] ?? { x: 0, y: 0 }] as const),
   ),

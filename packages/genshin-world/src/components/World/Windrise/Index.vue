@@ -489,7 +489,7 @@ onUnmounted(() => {
           :terrain-worker-ground
           :water-uniforms
           :wind-uniforms
-          @ready="settleTerrain"
+          @ready="settleTerrain()"
         />
       </TresGroup>
       <WorldGrass

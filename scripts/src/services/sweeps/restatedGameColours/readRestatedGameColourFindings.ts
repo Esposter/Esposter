@@ -1,5 +1,5 @@
-import { getRestatedGameColours } from "#src/services/sweeps/restatedGameColours/getRestatedGameColours";
 import { readGenshinStyleBlocks } from "#src/services/sweeps/hoverGuard/readGenshinStyleBlocks";
+import { getRestatedGameColours } from "#src/services/sweeps/restatedGameColours/getRestatedGameColours";
 import * as interfaceConstants from "genshin-interface/constants";
 
 // One `path:line: NAME` per public game colour a Genshin `.vue` style block writes as its literal. The public colours are

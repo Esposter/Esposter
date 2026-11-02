@@ -41,7 +41,7 @@ const dragSetting = (event: PointerEvent): void => {
     class="slider"
     role="slider"
     :aria-disabled="isBacked ? undefined : true"
-    :tabindex="isBacked ? 0 : undefined"
+    tabindex="0"
     :aria-label="gameText[row.labelKey]"
     :aria-valuemax="row.range.max"
     :aria-valuemin="row.range.min"

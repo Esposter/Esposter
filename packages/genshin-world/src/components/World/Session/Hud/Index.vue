@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { CharacterData } from "#src/models/character/CharacterData";
-import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
-import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { HudMember } from "#src/models/hud/HudMember";
@@ -9,6 +7,8 @@ import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { InteractionPrompts } from "#src/models/interaction/InteractionPrompts";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
+import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { Party } from "#src/models/party/Party";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestMark } from "#src/models/quest/QuestMark";
@@ -48,6 +48,7 @@ interface Props {
   interactionPrompts?: InteractionPrompts;
   interfaceRects: HudInterfaceRects;
   isHudShown: boolean;
+  isQuickSwapOpen: boolean;
   isShortcutWheelOpen: boolean;
   isTouch: boolean;
   landmarks: Landmark[];
@@ -61,7 +62,6 @@ interface Props {
   questMark?: QuestMark;
   questProgress?: QuestProgress;
   questTextMap: Readonly<Record<string, string>>;
-  isQuickSwapOpen: boolean;
   shortcutWheelDirectionCount: ShortcutWheelDirectionCount;
   shortcutWheelPickedIndex?: number;
   showingTip?: Tip;
@@ -90,6 +90,7 @@ const {
   interactionPrompts,
   interfaceRects,
   isHudShown,
+  isQuickSwapOpen,
   isShortcutWheelOpen,
   isTouch,
   landmarks,
@@ -103,7 +104,6 @@ const {
   questMark,
   questProgress,
   questTextMap,
-  isQuickSwapOpen,
   shortcutWheelDirectionCount,
   shortcutWheelPickedIndex,
   showingTip,
@@ -114,19 +114,19 @@ const {
   trounceClaimPrompt,
 } = defineProps<Props>();
 const emit = defineEmits<{
+  chooseDomain: [offer: BlossomClaimOffer];
+  // An outcrop's claim: a row chosen, the choice left unmade, and the restore row chosen
+  chooseOutcrop: [offer: BlossomClaimOffer];
+  chooseTrounce: [];
+  closeDomain: [];
+  closeOutcrop: [];
+  closeTip: [];
+  closeTrounce: [];
   map: [];
   menu: [];
   // A row of the prompts pressed itself, which acts on it as F acts on the selected row
   press: [id: string];
-  closeTip: [];
-  // An outcrop's claim: a row chosen, the choice left unmade, and the restore row chosen
-  chooseOutcrop: [offer: BlossomClaimOffer];
-  closeOutcrop: [];
   restoreOutcrop: [];
-  chooseTrounce: [];
-  closeTrounce: [];
-  chooseDomain: [offer: BlossomClaimOffer];
-  closeDomain: [];
 }>();
 </script>
 
@@ -151,28 +151,28 @@ const emit = defineEmits<{
     v-if="isHudShown"
     :camera
     :catalogue
-    :character-data-map="characterDataMap"
-    :character-id-skill-glyphs-map="characterIdSkillGlyphsMap"
+    :character-data-map
+    :character-id-skill-glyphs-map
     :frame
     :game-text
-    :gadget-cooldown-seconds="gadgetCooldownSeconds"
+    :gadget-cooldown-seconds
     :input
-    :interaction-prompts="interactionPrompts"
-    :interface-rects="interfaceRects"
-    :is-quick-swap-open="isQuickSwapOpen"
-    :is-touch="isTouch"
+    :interaction-prompts
+    :interface-rects
+    :is-quick-swap-open
+    :is-touch
     :landmarks
-    :max-stamina="maxStamina"
-    :near-oculus-places="nearOculusPlaces"
+    :max-stamina
+    :near-oculus-places
     :member
-    :name-text-map="nameTextMap"
+    :name-text-map
     :party
-    :quest-mark="questMark"
-    :quest-progress="questProgress"
-    :quest-text-map="questTextMap"
-    :tracked-quest="trackedQuest"
-    :traveler-name="travelerName"
-    :trial-seconds-remaining="trialSecondsRemaining"
+    :quest-mark
+    :quest-progress
+    :quest-text-map
+    :tracked-quest
+    :traveler-name
+    :trial-seconds-remaining
     @map="emit('map')"
     @menu="emit('menu')"
     @press="(id) => emit('press', id)"

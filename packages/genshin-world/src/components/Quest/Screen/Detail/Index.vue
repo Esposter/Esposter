@@ -63,7 +63,7 @@ const questStep = computed(() => {
     <QuestScreenDetailNavigate
       :game-text
       :quest-id="quest.id"
-      :tracked-quest-id="trackedQuestId"
+      :tracked-quest-id
       @navigate="(questId) => emit('navigate', questId)"
     />
   </div>

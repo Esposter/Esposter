@@ -11,14 +11,14 @@ interface Props {
   amountLabel: string;
   // The most a recipe crafts at once
   amountMaximum: number;
-  // The button that crafts the picked recipe for the chosen amount
-  craftLabel: string;
   // The Crafted-so-far line under the picked recipe, in the game's words
   craftedLabel: string;
   // The characters who can craft, in the party's order, one picked to cook the recipe
   crafters: CraftingCell[];
   // The Crafting Materials row's heading
   craftingMaterialsLabel: string;
+  // The button that crafts the picked recipe for the chosen amount
+  craftLabel: string;
   // The materials the picked recipe takes, each with the count the player holds and the count one craft takes
   materials: CraftingMaterial[];
   // The recipe list in the game's order, the picked one's name is the title
@@ -35,10 +35,10 @@ const recipeId = defineModel<number>("recipeId", { default: 0 });
 const {
   amountLabel,
   amountMaximum,
-  craftLabel,
   craftedLabel,
   crafters,
   craftingMaterialsLabel,
+  craftLabel,
   materials,
   recipes,
   requiredCoins,

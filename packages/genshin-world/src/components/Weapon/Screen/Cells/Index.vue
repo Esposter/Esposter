@@ -53,18 +53,18 @@ const emptySlotCount = computed(() =>
   <div class="cells" :class="openTab === WeaponMenuTab.Enhance ? 'enhance-cells' : 'refine-cells'">
     <WeaponScreenCellsEnhance
       v-if="openTab === WeaponMenuTab.Enhance"
-      :fodder-cells="fodderCells"
-      :ore-cells="oreCells"
+      :fodder-cells
+      :ore-cells
       @pick-ore="(id) => emit('pickOre', id)"
       @toggle-fodder="(id) => emit('toggleFodder', id)"
       @unpick-ore="(id) => emit('unpickOre', id)"
     />
     <WeaponScreenCellsRefine
       v-else
-      :copy-cells="copyCells"
-      :is-refinement-material-held="isRefinementMaterialHeld"
-      :picked-copy-id="pickedCopyId"
-      :refinement-material="refinementMaterial"
+      :copy-cells
+      :is-refinement-material-held
+      :picked-copy-id
+      :refinement-material
       @pick-copy="(id) => emit('pickCopy', id)"
       @pick-material="emit('pickMaterial')"
     />

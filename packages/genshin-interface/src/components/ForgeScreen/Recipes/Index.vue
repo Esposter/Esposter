@@ -8,10 +8,10 @@ import { GameButtonKind } from "#src/models/GameButtonKind";
 import { GAME_CREAM } from "#src/services/constants";
 
 interface Props {
-  // The recipe the amount and cost are set for, the one its row shows pressed
-  recipeId: number;
   // The forge queues, each open one or locked until its Adventure Rank
   queues: ForgeQueueCell[];
+  // The recipe the amount and cost are set for, the one its row shows pressed
+  recipeId: number;
   // The Materials tab's recipe list, in the game's order
   recipes: ForgeRecipeCell[];
   // The queue the Queues tab's detail shows, the one its row is outlined as, or none

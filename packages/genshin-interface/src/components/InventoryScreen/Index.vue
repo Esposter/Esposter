@@ -13,7 +13,7 @@ import Currencies from "#src/components/InventoryScreen/Currencies/Index.vue";
 import Destroy from "#src/components/InventoryScreen/Destroy/Index.vue";
 import Detail from "#src/components/InventoryScreen/Detail/Index.vue";
 import Grid from "#src/components/InventoryScreen/Grid/Index.vue";
-import Header from "#src/components/InventoryScreen/Header/Index.vue";
+import InventoryScreenHeader from "#src/components/InventoryScreen/Header/Index.vue";
 import Sort from "#src/components/InventoryScreen/Sort/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { GAME_REPLY_HOVER_INK } from "#src/services/constants";
@@ -148,38 +148,32 @@ useDestroyFocus(() => isConfirming);
   <div class="inventory-screen">
     <div class="bag" :inert="isConfirming">
       <p class="title" role="heading" aria-level="1">{{ title }}</p>
-      <Header
-        v-model:category="category"
-        :back-label="backLabel"
-        :capacity="capacity"
-        :tab-labels="tabLabels"
-        @close="emit('close')"
-      />
+      <InventoryScreenHeader v-model:category="category" :back-label :capacity :tab-labels @close="emit('close')" />
       <Grid
         :cells
-        :is-destroying="isDestroying"
-        :selected-cell="selectedCell"
+        :is-destroying
+        :selected-cell
         @choose="(id) => emit('choose', id)"
         @select="(id) => (selectedId = id)"
       />
       <Detail
         v-if="selectedCell"
         :cell="selectedCell"
-        :is-destroying="isDestroying"
-        :is-sortable="isSortable"
-        :lock-label="lockLabel"
-        :unlock-label="unlockLabel"
+        :is-destroying
+        :is-sortable
+        :lock-label
+        :unlock-label
         :weapon="weaponDetails?.[selectedCell.id]"
         @lock="(id) => emit('lock', id)"
       />
       <Actions
         :key="selectedCell?.id"
-        :amount-label="amountLabel"
-        :details-label="detailsLabel"
-        :is-destroying="isDestroying"
-        :is-sortable="isSortable"
-        :selected-cell="selectedCell"
-        :use-label="useLabel"
+        :amount-label
+        :details-label
+        :is-destroying
+        :is-sortable
+        :selected-cell
+        :use-label
         @use="(id, amount) => emit('use', id, amount)"
       />
       <GameButton
@@ -200,23 +194,17 @@ useDestroyFocus(() => isConfirming);
       </GameButton>
       <Destroy
         v-if="isDestroying"
-        :destroy-button-label="destroyButtonLabel"
-        :destroy-cannot-label="destroyCannotLabel"
-        :destroy-names="destroyNames"
-        :destroy-selected-label="destroySelectedLabel"
-        :destroy-tip-label="destroyTipLabel"
-        :quick-selects="quickSelects"
-        :selected-cell="selectedCell"
+        :destroy-button-label
+        :destroy-cannot-label
+        :destroy-names
+        :destroy-selected-label
+        :destroy-tip-label
+        :quick-selects
+        :selected-cell
         @destroy="emit('destroy')"
         @quick-select="(rarity) => emit('quickSelect', rarity)"
       />
-      <Sort
-        v-else-if="isSortable"
-        v-model:sort="sort"
-        v-model:is-descending="isDescending"
-        :order-label="orderLabel"
-        :sort-labels="sortLabels"
-      />
+      <Sort v-else-if="isSortable" v-model:sort="sort" v-model:is-descending="isDescending" :order-label :sort-labels />
       <Currencies v-else :currencies />
       <!-- The gadget's action under the detail panel, which equips the gadget to the quick-use slot. Provisional: its place
            is where the controller recording shows a gadget's action, the bottom bar's X, until the keyboard's is read -->
@@ -233,16 +221,16 @@ useDestroyFocus(() => isConfirming);
     <Confirm
       v-if="isConfirming"
       ref="confirm"
-      :cancel-label="cancelLabel"
-      :destroy-confirm-button-label="destroyConfirmButtonLabel"
-      :destroy-confirm-list-label="destroyConfirmListLabel"
-      :destroy-confirm-title="destroyConfirmTitle"
-      :destroy-confirm-warning-label="destroyConfirmWarningLabel"
-      :destroy-full-label="destroyFullLabel"
-      :destroy-names="destroyNames"
-      :destroy-recovered-label="destroyRecoveredLabel"
-      :destroy-recovered-names="destroyRecoveredNames"
-      :is-destroy-full="isDestroyFull"
+      :cancel-label
+      :destroy-confirm-button-label
+      :destroy-confirm-list-label
+      :destroy-confirm-title
+      :destroy-confirm-warning-label
+      :destroy-full-label
+      :destroy-names
+      :destroy-recovered-label
+      :destroy-recovered-names
+      :is-destroy-full
       @cancel-destroy="emit('cancelDestroy')"
       @confirm-destroy="emit('confirmDestroy')"
     />
@@ -315,4 +303,5 @@ useDestroyFocus(() => isConfirming);
 </style>
 
 <style scoped src="../../styles/translucentButton.css"></style>
+
 <style scoped src="../../styles/footDisc.css"></style>

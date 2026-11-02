@@ -140,7 +140,7 @@ onUnmounted(() => {
       v-for="{ landmark, userData } of regionLandmarkEntries"
       :key="landmark.id"
       :visible="!hiddenKinds.includes(landmark.kind) && !exportedLandmarkIds.has(landmark.id)"
-      :user-data="userData"
+      :user-data
     >
       <WorldLandmarkTree
         v-if="landmark.kind === LandmarkKind.Tree"

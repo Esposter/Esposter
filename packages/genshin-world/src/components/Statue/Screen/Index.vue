@@ -57,13 +57,13 @@ const toMember = (id: number) => {
   };
 };
 // The deployed team's members, which the game lists as in combat
-const members = computed(() => getDeployedCharacterIds(party).map(toMember));
+const members = computed(() => getDeployedCharacterIds(party).map((id) => toMember(id)));
 // The members of the other teams, each once and none of them deployed, which the game lists as preparing for combat
 const waitingMembers = computed(() => {
   const deployedIds = getDeployedCharacterIds(party);
   return [...new Set(party.teams.flatMap(({ characterIds }) => characterIds))]
     .filter((id) => !deployedIds.includes(id))
-    .map(toMember);
+    .map((id) => toMember(id));
 });
 const heal = (characterId: number) => {
   power.value = healPartyMemberWithPower(party, characterId, getMaxHealth(characterId), regeneratePower());

@@ -134,6 +134,7 @@ const itemTiles = computed(() =>
 </template>
 
 <style scoped src="../../../../styles/mailScreen.css"></style>
+
 <style scoped>
 /* The selected mail on the right: its title, a hairline with its diamonds, its sender and date, its text, its items */
 .detail {

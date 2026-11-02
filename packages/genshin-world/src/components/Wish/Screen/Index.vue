@@ -145,7 +145,7 @@ const wish = useWishDraw({
       @close="emit('close')"
       @dismiss="results = []"
       @start-trial="bannerTrial && emit('startTrial', bannerTrial)"
-      @wish="wish"
+      @wish="(count) => wish(count)"
     />
   </GameScreen>
 </template>

@@ -107,12 +107,12 @@ const getAdjacentSection = (step: number): ArchiveSection =>
   <GameScreen class="archive-screen">
     <ArchiveScreenDecoration />
     <ScreenHeader :game-text :mark="CloseButtonMark.Back" :title="sectionTitle" @close="emit('close')" />
-    <ArchiveScreenCounter :game-text :progress-map="progressMap" />
+    <ArchiveScreenCounter :game-text :progress-map />
     <div class="grid">
       <ArchiveScreenTile
         v-for="entry of selectedEntries"
         :key="entry.id"
-        :game-text="gameText"
+        :game-text
         :is-dimmed="dimmedEntryIds.has(entry.id)"
         :is-new="newEntryIds.has(entry.id)"
         :is-selected="entry.id === selectedEntry?.id"

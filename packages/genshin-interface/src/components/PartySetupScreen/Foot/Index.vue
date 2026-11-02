@@ -132,4 +132,5 @@ const emit = defineEmits<{ configureTeam: []; deploy: []; quickSetup: [] }>();
   fill: #eef8ff;
 }
 </style>
+
 <style scoped src="../../../styles/footDisc.css"></style>

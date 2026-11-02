@@ -61,7 +61,7 @@ const {
   <p class="stat-value attack-current">{{ secondaryText }}</p>
   <OrnamentDivider class="divider ascend-divider" :opacity="DIVIDER_OPACITY" is-middle-hidden />
   <span class="stats-rule ascend-stats-rule" aria-hidden="true" />
-  <WeaponScreenAscendMaterials :costs :gameText />
+  <WeaponScreenAscendMaterials :costs :game-text />
 </template>
 
 <style scoped src="../../../../styles/weaponScreen.css"></style>

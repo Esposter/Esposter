@@ -151,7 +151,7 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
         v-model:wallet="wallet"
         :adventure-rank
         :character
-        :character-name="characterName"
+        :character-name
         :friendship-level="friendshipLevelMap.get(character.id)"
         :game-text
         :material-data-map

@@ -23,31 +23,19 @@ interface Props {
   totalCount: number;
 }
 
-const {
-  commissions,
-  completedCount,
-  gameText,
-  investigationRewards,
-  isRewardClaimed,
-  totalCount,
-} = defineProps<Props>();
+const { commissions, completedCount, gameText, investigationRewards, isRewardClaimed, totalCount } =
+  defineProps<Props>();
 </script>
 
 <template>
-  <HandbookScreenExperienceHeader :game-text="gameText" />
-  <HandbookScreenExperiencePanel
-    :completed-count="completedCount"
-    :game-text="gameText"
-    :investigation-rewards="investigationRewards"
-    :is-reward-claimed="isRewardClaimed"
-    :total-count="totalCount"
-  />
+  <HandbookScreenExperienceHeader :game-text />
+  <HandbookScreenExperiencePanel :completed-count :game-text :investigation-rewards :is-reward-claimed :total-count />
   <ol class="commissions handbook-list" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Experience]]">
     <HandbookScreenExperienceRow
       v-for="(commission, index) of commissions"
       :key="index"
       :commission
-      :game-text="gameText"
+      :game-text
       :index
     />
   </ol>

@@ -3,8 +3,8 @@ import type { DialogueChoice } from "#src/models/DialogueChoice";
 
 import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
-import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 import { DIALOGUE_REPLY_REST } from "#src/services/constants";
+import { DialogueChoiceIconPathMap } from "#src/services/DialogueChoiceIconPathMap";
 
 interface Props {
   // The replies on offer, down the right of the screen

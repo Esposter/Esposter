@@ -2,14 +2,14 @@
 import { ORNAMENT_END_PATH, ORNAMENT_MIDDLE_PATH } from "#src/services/constants";
 
 interface Props {
+  // The share of the tapered ends' size they are drawn at, their full size when none is given
+  endScale?: number;
   // The colour the ends and the middle are drawn in, the silver when none is given
   fill?: string;
   // A rule whose hairline the caller draws itself, at its own opacity, with the ends laid over it
   isHairlineHidden?: true;
   // A rule the game draws with its ends but no diamond at its middle, as the weapon screen's header and footer rules are
   isMiddleHidden?: true;
-  // The share of the tapered ends' size they are drawn at, their full size when none is given
-  endScale?: number;
   // The share of the silver the piece is drawn at.
   // The game's hairline is opaque on a light screen and translucent over a dark scene.
   // A screen over a scene therefore passes the share its hairline reads at.

@@ -1,6 +1,6 @@
+import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { InputState } from "genshin-engine";
 import type { Ref } from "vue";
-import type { ScreenKind } from "#src/models/screen/ScreenKind";
 
 import { MenuDirection } from "#src/models/menu/MenuDirection";
 import {

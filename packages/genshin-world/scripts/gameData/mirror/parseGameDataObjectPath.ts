@@ -5,7 +5,7 @@ import { takeOne } from "@esposter/shared";
 // By the `sha256` its url carries, since the content cache keeps every object under the hash of its bytes
 export const parseGameDataObjectPath = (
   path: string,
-): { contentType: string; hash: string; sourcePath: string } | undefined => {
+): undefined | { contentType: string; hash: string; sourcePath: string } => {
   const [pathname = "", query = ""] = path.split("?");
   const sourcePath = pathname.replace(/^\//u, "");
   const sha256 = new URLSearchParams(query).get("sha256");

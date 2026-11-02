@@ -159,54 +159,54 @@ const { act, isActionDisabled, pendingMora } = useWeaponActions({
       @close="emit('close')"
     >
       <WeaponScreenHeader
-        :game-text="gameText"
+        :game-text
         :mora="wallet[Currency.Mora]"
-        :open-tab="openTab"
+        :open-tab
         :rarity="weaponData.rarity"
         :refinement="weapon.refinement"
       />
-      <WeaponScreenFooter :game-text="gameText" :pending-mora="pendingMora" />
+      <WeaponScreenFooter :game-text :pending-mora />
       <!-- The EXP the weapon's level takes to rise past, which the Enhance header sets beside the EXP the weapon holds -->
       <WeaponScreenEnhance
         v-if="openTab === WeaponMenuTab.Enhance"
-        :base-attack-text="baseAttackText"
-        :game-text="gameText"
-        :max-level="maxLevel"
-        :picked-material-count="pickedMaterialCount"
+        :base-attack-text
+        :game-text
+        :max-level
+        :picked-material-count
         :required-exp="getRarityRequiredExps(rarityRequiredExpsMap, weaponData.rarity)[weapon.level - 1] ?? 0"
-        :secondary-label="secondaryLabel"
-        :secondary-text="secondaryText"
-        :weapon="weapon"
+        :secondary-label
+        :secondary-text
+        :weapon
       />
       <WeaponScreenAscend
         v-else-if="openTab === WeaponMenuTab.Ascend"
-        :base-attack-text="baseAttackText"
+        :base-attack-text
         :costs="nextPhaseCosts"
-        :game-text="gameText"
-        :max-level="maxLevel"
-        :next-base-attack-text="nextBaseAttackText"
+        :game-text
+        :max-level
+        :next-base-attack-text
         :next-max-level="nextPhase?.maxLevel ?? maxLevel"
-        :secondary-label="secondaryLabel"
-        :secondary-text="secondaryText"
-        :weapon="weapon"
+        :secondary-label
+        :secondary-text
+        :weapon
       />
       <WeaponScreenRefine
         v-if="openTab === WeaponMenuTab.Refine"
-        :game-text="gameText"
-        :name-text="nameText"
+        :game-text
+        :name-text
         :refinement="weapon.refinement"
-        :weapon-data="weaponData"
+        :weapon-data
       />
       <WeaponScreenCells
         v-if="openTab !== WeaponMenuTab.Ascend"
-        :copy-cells="copyCells"
-        :fodder-cells="fodderCells"
-        :is-refinement-material-held="isRefinementMaterialHeld"
-        :ore-cells="oreCells"
-        :open-tab="openTab"
-        :picked-copy-id="pickedCopyId"
+        :copy-cells
+        :fodder-cells
+        :is-refinement-material-held
+        :ore-cells
+        :open-tab
+        :picked-copy-id
         :refine-slot-count="weaponData.refinementCosts.length"
-        :refinement-material="refinementMaterial"
+        :refinement-material
         @pick-copy="(id) => pickCopy(id)"
         @pick-material="pickRefinementMaterial()"
         @pick-ore="(id) => pickOre(id)"

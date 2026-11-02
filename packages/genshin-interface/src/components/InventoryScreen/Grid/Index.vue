@@ -21,7 +21,7 @@ const emit = defineEmits<{ choose: [id: string]; select: [id: string] }>();
     <li v-for="cell of cells" :key="cell.id">
       <Cell
         :cell
-        :is-destroying="isDestroying"
+        :is-destroying
         :is-shown="cell.id === selectedCell?.id"
         @choose="(id) => emit('choose', id)"
         @select="(id) => emit('select', id)"

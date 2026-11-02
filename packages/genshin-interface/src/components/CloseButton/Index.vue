@@ -52,4 +52,5 @@ defineProps<Props>();
 </style>
 
 <style scoped src="../../styles/creamDiscPress.css"></style>
+
 <style scoped src="../../styles/ringButton.css"></style>

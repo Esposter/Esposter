@@ -271,7 +271,7 @@ const currencies = computed(() =>
       :title="gameText[GameTextKey.Inventory]"
       :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
       :use-label="gameText[GameTextKey.InventoryUse]"
-      :weapon-details="weaponDetails"
+      :weapon-details
       @cancel-destroy="isConfirming = false"
       @choose="(id) => chooseCell(id)"
       @close="emit('close')"

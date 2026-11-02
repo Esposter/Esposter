@@ -96,5 +96,5 @@ export const useWishDraw =
       drawnAt,
     );
     wallet.value = wishes.wallet;
-    results.value = sortWishResults(wishes.results).map(toResultCell);
+    results.value = sortWishResults(wishes.results).map((wishResult) => toResultCell(wishResult));
   };

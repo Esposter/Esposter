@@ -30,7 +30,7 @@ const formatTrackValue = (trackRow: SettingsTrackRow): string =>
     <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
   </svg>
   <span class="volume">{{ formatTrackValue(row) }}</span>
-  <MenuSettingsRowSlider v-model:settings="settings" :game-text="gameText" :row />
+  <MenuSettingsRowSlider v-model:settings="settings" :game-text :row />
 </template>
 
 <style scoped>

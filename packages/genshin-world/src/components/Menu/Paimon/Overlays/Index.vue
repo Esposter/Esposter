@@ -9,15 +9,15 @@ import MenuNamecardDialog from "#src/components/Menu/NamecardDialog/Index.vue";
 import MenuWorldLevelDialog from "#src/components/Menu/WorldLevelDialog/Index.vue";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // Which dialog or prompt is open over the menu, its flags held by the menu, whose inert state waits on them
   isBirthdayDialogOpen: boolean;
   isExitPrompted: boolean;
   isNamecardDialogOpen: boolean;
-  isWorldLevelDialogOpen: boolean;
-  // The game's words in the reader's language
-  gameText: GameText;
   // Whether the World Level can be lowered or restored at all, and whether it is lowered, for its dialog's button
   isWorldLevelAdjustable: boolean;
+  isWorldLevelDialogOpen: boolean;
   isWorldLevelLowered: boolean;
   // The namecard the player equipped by its item id, and the held namecards the picker offers
   namecardItemId: number;

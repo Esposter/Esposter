@@ -6,10 +6,10 @@ import GameButton from "#src/components/GameButton/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 
 interface Props {
-  // The picker's heading in the reader's language, the game's "Character Selection"
-  characterTitle: string;
   // The characters the picker lists in the game's order, a character away from home shown with its status and not sent
   characters: ExpeditionCharacter[];
+  // The picker's heading in the reader's language, the game's "Character Selection"
+  characterTitle: string;
   // The picked place, the one the chosen character is sent to
   detail: ExpeditionPlaceDetail;
   // The duration picked, in hours, which a send to the picked place takes
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const isPicking = defineModel<boolean>("isPicking", { default: false });
-const { characterTitle, characters, detail, hours } = defineProps<Props>();
+const { characters, characterTitle, detail, hours } = defineProps<Props>();
 const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: number] }>();
 </script>
 

@@ -48,11 +48,11 @@ const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: []; worshi
     v-model:auto-recover="autoRecover"
     v-model:power="power"
     :game-text
-    :get-max-health="getMaxHealth"
+    :get-max-health
     :get-name="getCharacterName"
     :get-now="getWorldNow"
     :party
-    :statue-count="statueCount"
+    :statue-count
     @close="emit('close')"
     @worship="emit('worship')"
   />

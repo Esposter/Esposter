@@ -44,24 +44,13 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
        (its element's mark, its name and its level), the arrows at either edge to step to another team, and the foot's team
        name, Configure Team, Quick Setup and Deploy. The members' art is the frame's own, drawn by no piece here -->
   <div class="party-setup-screen">
-    <PartySetupScreenHead
-      :back-label="backLabel"
-      :resonance-label="resonanceLabel"
-      :title="title"
-      @close="emit('close')"
-    />
-    <PartySetupScreenTeam
-      :next-label="nextLabel"
-      :previous-label="previousLabel"
-      :slots="slots"
-      @next="emit('next')"
-      @previous="emit('previous')"
-    />
+    <PartySetupScreenHead :back-label :resonance-label :title @close="emit('close')" />
+    <PartySetupScreenTeam :next-label :previous-label :slots @next="emit('next')" @previous="emit('previous')" />
     <PartySetupScreenFoot
-      :configure-team-label="configureTeamLabel"
-      :deploy-label="deployLabel"
-      :quick-setup-label="quickSetupLabel"
-      :team-name="teamName"
+      :configure-team-label
+      :deploy-label
+      :quick-setup-label
+      :team-name
       @configure-team="emit('configureTeam')"
       @deploy="emit('deploy')"
       @quick-setup="emit('quickSetup')"

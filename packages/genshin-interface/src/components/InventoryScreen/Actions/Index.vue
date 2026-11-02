@@ -31,7 +31,7 @@ const amount = ref(1);
     v-if="selectedCell?.amountMaximum && !isDestroying"
     v-model:amount="amount"
     class="amount-picker"
-    :amount-label="amountLabel"
+    :amount-label
     :amount-maximum="selectedCell.amountMaximum"
   />
   <button

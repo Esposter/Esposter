@@ -11,7 +11,7 @@ export const findMenuFocusTarget = (
   const from = rectangles[fromIndex];
   if (!from) return undefined;
   const isHorizontal = [MenuDirection.Left, MenuDirection.Right].includes(direction);
-  const sign = [MenuDirection.Right, MenuDirection.Down].includes(direction) ? 1 : -1;
+  const sign = [MenuDirection.Down, MenuDirection.Right].includes(direction) ? 1 : -1;
   let targetIndex: number | undefined;
   let targetScore = Infinity;
   for (const [index, rectangle] of rectangles.entries()) {

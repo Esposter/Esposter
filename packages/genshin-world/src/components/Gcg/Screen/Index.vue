@@ -107,61 +107,56 @@ const battleLabel = computed(() =>
        what the player is choosing; each choice leaves as an event for its host to play -->
   <GameScreen class="gcg-screen">
     <GcgScreenTable />
-    <GcgScreenHud :battle-label="battleLabel" :game-text="gameText" @concede="emit('leave', false)" />
+    <GcgScreenHud :battle-label :game-text @concede="emit('leave', false)" />
     <GcgScreenPlates />
     <GcgScreenCharacterRow
       class="opponent-row"
       :active-index="opponentSide.activeIndex"
       :characters="opponentCharacters"
-      :text-map="textMap"
+      :text-map
     />
     <GcgScreenBand :label="gameText[bandTextKey]" />
     <GcgScreenCharacterRow
       class="player-row"
       :active-index="playerSide.activeIndex"
       :characters="playerCharacters"
-      :text-map="textMap"
-      @select="selectCharacter"
+      :text-map
+      @select="(characterIndex) => selectCharacter(characterIndex)"
     />
     <GcgScreenDiceColumn
       :dice="playerSide.dice"
-      :paid-dice-indices="paidDiceIndices"
-      :selected-die-indices="selectedDieIndices"
-      @select="selectDie"
+      :paid-dice-indices
+      :selected-die-indices
+      @select="(dieIndex) => selectDie(dieIndex)"
     />
     <GcgScreenHand
-      :armed-hand-index="armedHandIndex"
+      :armed-hand-index
       :cards="playerHandCards"
-      :reroll-hand-index="rerollHandIndex"
-      :switched-hand-indices="switchedHandIndices"
-      :text-map="textMap"
-      @select="selectCard"
+      :reroll-hand-index
+      :switched-hand-indices
+      :text-map
+      @select="(handIndex) => selectCard(handIndex)"
     />
     <GcgScreenRoundControls
-      :game-text="gameText"
-      :is-action-locked="isActionLocked"
-      :is-player-turn="isPlayerTurn"
-      :round-label="roundLabel"
+      :game-text
+      :is-action-locked
+      :is-player-turn
+      :round-label
       @declare-round-end="emit('declareRoundEnd')"
     />
-    <GcgScreenRoundControlsSynchro
-      :game-text="gameText"
-      :is-action-locked="isActionLocked"
-      :is-tuning="isTuning"
-      @toggle-tuning="toggleTuning"
-    />
-    <GcgScreenSkillRow :is-disabled="isActionLocked" :skills="activeSkills" @select="useSkill" />
+    <GcgScreenRoundControlsSynchro :game-text :is-action-locked :is-tuning @toggle-tuning="toggleTuning()" />
+    <GcgScreenSkillRow :is-disabled="isActionLocked" :skills="activeSkills" @select="(skillId) => useSkill(skillId)" />
     <GcgScreenConfirm
-      :game-text="gameText"
-      :is-choosing-reroll="isChoosingReroll"
-      :is-player-winner="isPlayerWinner"
+      :game-text
+      :is-choosing-reroll
+      :is-player-winner
       :phase="duel.phase"
-      @add-reroll-group="addRerollGroup"
-      @clear-selection="clearSelection"
+      @add-reroll-group="addRerollGroup()"
+      @clear-selection="clearSelection()"
       @leave="emit('leave', $event)"
-      @play-reroll-choice="playRerollChoice"
-      @prepare="confirmPreparation"
-      @reroll="confirmReroll"
+      @play-reroll-choice="playRerollChoice()"
+      @prepare="confirmPreparation()"
+      @reroll="confirmReroll()"
     />
   </GameScreen>
 </template>

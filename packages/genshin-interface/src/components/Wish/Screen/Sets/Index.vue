@@ -22,7 +22,7 @@ const emit = defineEmits<{ buy: []; wish: [count: number] }>();
       v-for="{ cost, count, isAffordable, label } of sets"
       :key="count"
       :cost
-      :is-affordable="isAffordable"
+      :is-affordable
       :label
       @press="emit('wish', count)"
     />
@@ -30,7 +30,7 @@ const emit = defineEmits<{ buy: []; wish: [count: number] }>();
       v-for="{ cost, isAffordable, label } of purchases"
       :key="label"
       :cost
-      :is-affordable="isAffordable"
+      :is-affordable
       :label
       @press="emit('buy')"
     />

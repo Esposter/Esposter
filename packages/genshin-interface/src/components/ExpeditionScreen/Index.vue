@@ -69,13 +69,13 @@ const emit = defineEmits<{
       v-if="detail"
       :detail
       :hours
-      :rewards-label="rewardsLabel"
+      :rewards-label
       @update:hours="(durationHours) => emit('update:hours', durationHours)"
     />
     <Picker
       v-if="isPicking && detail"
       v-model:is-picking="isPicking"
-      :character-title="characterTitle"
+      :character-title
       :characters
       :detail
       :hours

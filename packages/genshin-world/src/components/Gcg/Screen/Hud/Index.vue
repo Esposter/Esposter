@@ -29,6 +29,7 @@ const emit = defineEmits<{ concede: [] }>();
 </template>
 
 <style scoped src="genshin-interface/styles/ringButton.css"></style>
+
 <style scoped src="../../../../styles/gcgBoardButton.css"></style>
 
 <style scoped>

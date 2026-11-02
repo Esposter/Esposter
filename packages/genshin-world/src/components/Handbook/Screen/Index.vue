@@ -15,8 +15,6 @@ import { HandbookTab } from "#src/models/handbook/HandbookTab";
 import { GameScreen } from "genshin-interface";
 
 interface Props {
-  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  isLongTermEncounterPointUsable: boolean;
   // The investigation's commissions, top to bottom
   commissions: HandbookCommission[];
   // The panel's ring and bar: how many of its investigations are done out of how many
@@ -35,6 +33,8 @@ interface Props {
   investigationRewards: HandbookReward[];
   // Whether the Adventure Encounters panel is open at the player's Adventure Rank, so its stage rewards show
   isAdventureEncountersUnlocked: boolean;
+  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
+  isLongTermEncounterPointUsable: boolean;
   // The panel's reward footer, shown once every reward is taken
   isRewardClaimed: boolean;
   // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
@@ -45,7 +45,6 @@ interface Props {
 }
 
 const {
-  isLongTermEncounterPointUsable,
   commissions,
   completedCount,
   dayCommissions,
@@ -55,6 +54,7 @@ const {
   gameText,
   investigationRewards,
   isAdventureEncountersUnlocked,
+  isLongTermEncounterPointUsable,
   longTermEncounterPoints,
   nameText,
   totalCount,
@@ -81,38 +81,38 @@ const tab = ref(HandbookTab.Experience);
       <div class="stack stack-left" />
       <div class="stack stack-right" />
       <div class="pages" />
-      <HandbookScreenTabs v-model:tab="tab" :game-text="gameText" />
+      <HandbookScreenTabs v-model:tab="tab" :game-text />
       <HandbookScreenExperience
         v-if="tab === HandbookTab.Experience"
         :commissions
-        :completed-count="completedCount"
-        :game-text="gameText"
-        :investigation-rewards="investigationRewards"
-        :is-reward-claimed="isRewardClaimed"
-        :total-count="totalCount"
+        :completed-count
+        :game-text
+        :investigation-rewards
+        :is-reward-claimed
+        :total-count
       />
       <HandbookScreenCommissions
         v-else-if="tab === HandbookTab.Commissions"
-        :is-long-term-encounter-point-usable="isLongTermEncounterPointUsable"
-        :day-commissions="dayCommissions"
-        :encounter-point-limit="encounterPointLimit"
-        :encounter-points="encounterPoints"
-        :game-text="gameText"
-        :is-adventure-encounters-unlocked="isAdventureEncountersUnlocked"
-        :long-term-encounter-points="longTermEncounterPoints"
-        :name-text="nameText"
+        :is-long-term-encounter-point-usable
+        :day-commissions
+        :encounter-point-limit
+        :encounter-points
+        :game-text
+        :is-adventure-encounters-unlocked
+        :long-term-encounter-points
+        :name-text
         @claim-commission="(commissionId) => emit('claimCommission', commissionId)"
         @use-long-term-encounter-points="emit('useLongTermEncounterPoints')"
       />
       <HandbookScreenDomains
         v-else-if="tab === HandbookTab.Domains"
         :domains
-        :game-text="gameText"
+        :game-text
         @challenge="(landmark) => emit('challenge', landmark)"
         @claim-first-clear="(entryId) => emit('claimFirstClear', entryId)"
       />
       <div class="feather" />
-      <HandbookScreenClose :game-text="gameText" @close="emit('close')" />
+      <HandbookScreenClose :game-text @close="emit('close')" />
     </div>
   </GameScreen>
 </template>

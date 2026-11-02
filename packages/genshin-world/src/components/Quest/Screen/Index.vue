@@ -101,11 +101,11 @@ useEventListener("keydown", (event) => {
         :category
         :game-text
         :list-scroll
-        :quest-chapters="questChapters"
-        :quest-distance-map="questDistanceMap"
+        :quest-chapters
+        :quest-distance-map
         :quests
-        :selected-quest-id="selectedQuestId"
-        :text-map="textMap"
+        :selected-quest-id
+        :text-map
         :title="listTitle"
         @select="(questId) => (selectedQuestId = questId)"
       />
@@ -119,11 +119,11 @@ useEventListener("keydown", (event) => {
         v-if="selectedQuest"
         :game-text
         :quest="selectedQuest"
-        :quest-chapters="questChapters"
-        :quest-progress-map="questProgressMap"
-        :text-map="textMap"
-        :tracked-quest-id="trackedQuestId"
-        @navigate="navigate"
+        :quest-chapters
+        :quest-progress-map
+        :text-map
+        :tracked-quest-id
+        @navigate="(questId) => navigate(questId)"
       />
       <QuestScreenFooter :game-text />
     </template>

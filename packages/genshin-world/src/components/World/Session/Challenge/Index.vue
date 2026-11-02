@@ -49,7 +49,7 @@ const emit = defineEmits<{
   <DomainScreen
     v-if="screenKind === ScreenKind.Domain"
     :game-text
-    :is-in-domain="isInDomain"
+    :is-in-domain
     :levels="domainLevels"
     @close="emit('close')"
     @enter="(dungeonId) => emit('enter', dungeonId)"
@@ -60,7 +60,7 @@ const emit = defineEmits<{
     :blessing="abyssBlessing"
     :floors="abyssFloorsOffered"
     :game-text
-    :name-text="nameText"
+    :name-text
     @choose="(floorId, chamberId) => emit('chooseAbyssChamber', floorId, chamberId)"
     @close="emit('close')"
   />
@@ -70,7 +70,7 @@ const emit = defineEmits<{
     :choices="abyssChoices"
     :floor="abyssChoiceFloorIndex"
     :game-text
-    :name-text="nameText"
+    :name-text
     @choose="(towerBuffId) => emit('chooseBenediction', towerBuffId)"
   />
 </template>

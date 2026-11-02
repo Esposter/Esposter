@@ -37,6 +37,7 @@ const emit = defineEmits<{ navigate: [questId: string] }>();
 </template>
 
 <style scoped src="genshin-interface/styles/creamPillButton.css"></style>
+
 <style scoped src="../../../../../styles/questPill.css"></style>
 
 <style scoped>

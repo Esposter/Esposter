@@ -110,7 +110,7 @@ onMounted(() => {
             v-model:settings="settings"
             :game-text="shownGameText"
             :options="openedOptions"
-            :quality-value="qualityValue"
+            :quality-value
             :row
             :tab
           />

@@ -86,4 +86,5 @@ const { orderLabel, sortLabels } = defineProps<Props>();
 </style>
 
 <style scoped src="../../../styles/creamPillLit.css"></style>
+
 <style scoped src="../../../styles/footDisc.css"></style>

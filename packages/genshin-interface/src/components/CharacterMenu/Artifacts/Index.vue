@@ -86,31 +86,21 @@ const selectedStats = computed(() => slotStats[selectedIndex.value]);
     >
       {{ artifactDetailsLabel }}
     </GameButton>
-    <CharacterMenuArtifactsDetails
-      v-if="isDetailsOpen"
-      :selected-stats="selectedStats"
-      :slot-name="slotNames[selectedIndex]"
-    />
-    <CharacterMenuArtifactsTotals
-      v-else
-      :no-set-bonus-label="noSetBonusLabel"
-      :set-bonus-heading="setBonusHeading"
-      :sets="sets"
-      :totals="totals"
-    />
+    <CharacterMenuArtifactsDetails v-if="isDetailsOpen" :selected-stats :slot-name="slotNames[selectedIndex]" />
+    <CharacterMenuArtifactsTotals v-else :no-set-bonus-label :set-bonus-heading :sets :totals />
     <CharacterMenuArtifactsFoot
       v-model:selected-index="selectedIndex"
-      :enhance-label="enhanceLabel"
-      :equip-disabled-slots="equipDisabledSlots"
-      :equip-label="equipLabel"
-      :fast-equip-label="fastEquipLabel"
-      :is-details-open="isDetailsOpen"
-      :lock-label="lockLabel"
-      :selected-stats="selectedStats"
-      :slot-names="slotNames"
-      :switch-label="switchLabel"
-      :unequip-label="unequipLabel"
-      :unlock-label="unlockLabel"
+      :enhance-label
+      :equip-disabled-slots
+      :equip-label
+      :fast-equip-label
+      :is-details-open
+      :lock-label
+      :selected-stats
+      :slot-names
+      :switch-label
+      :unequip-label
+      :unlock-label
       @enhance="(index) => emit('enhance', index)"
       @equip="(index) => emit('equip', index)"
       @lock="(index) => emit('lock', index)"

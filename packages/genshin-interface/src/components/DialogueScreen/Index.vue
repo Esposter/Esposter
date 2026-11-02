@@ -58,7 +58,7 @@ const lineParts = computed(() => ({
     <DialogueScreenChoices
       v-if="choices.length > 0"
       :choices
-      :selected-choice-id="selectedChoiceId"
+      :selected-choice-id
       @choose="(id) => emit('choose', id)"
     />
     <svg v-if="isWhole" class="advance" aria-hidden="true" viewBox="0 0 24 24">

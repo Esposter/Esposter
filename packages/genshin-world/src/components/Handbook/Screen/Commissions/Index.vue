@@ -8,8 +8,6 @@ import { HandbookTab } from "#src/models/handbook/HandbookTab";
 import { HandbookTabGameTextKeyMap } from "#src/services/handbook/HandbookTabGameTextKeyMap";
 
 interface Props {
-  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  isLongTermEncounterPointUsable: boolean;
   // The day's four commissions, top to bottom, as the Commissions tab lists them
   dayCommissions: HandbookDayCommission[];
   // The most daily Encounter Points the storage holds, in whole points, which the panel's count reads against
@@ -20,6 +18,8 @@ interface Props {
   gameText: GameText;
   // Whether the Adventure Encounters panel is open at the player's Adventure Rank, so its stage rewards show
   isAdventureEncountersUnlocked: boolean;
+  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
+  isLongTermEncounterPointUsable: boolean;
   // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
   longTermEncounterPoints: number;
   // The names the commissions' titles cite, by their name text id, in the reader's language
@@ -27,12 +27,12 @@ interface Props {
 }
 
 const {
-  isLongTermEncounterPointUsable,
   dayCommissions,
   encounterPointLimit,
   encounterPoints,
   gameText,
   isAdventureEncountersUnlocked,
+  isLongTermEncounterPointUsable,
   longTermEncounterPoints,
   nameText,
 } = defineProps<Props>();
@@ -45,19 +45,19 @@ const emit = defineEmits<{ claimCommission: [commissionId: number]; useLongTermE
       v-for="(commission, index) of dayCommissions"
       :key="index"
       :commission
-      :game-text="gameText"
+      :game-text
       :index
-      :name-text="nameText"
+      :name-text
       @claim-commission="(commissionId) => emit('claimCommission', commissionId)"
     />
     <!-- The Encounter Points stage rewards at the foot of the tab, where the game keeps the Long-Term Encounter Points -->
     <HandbookScreenCommissionsEncounterPoints
       v-if="isAdventureEncountersUnlocked"
-      :is-long-term-encounter-point-usable="isLongTermEncounterPointUsable"
-      :encounter-point-limit="encounterPointLimit"
-      :encounter-points="encounterPoints"
-      :game-text="gameText"
-      :long-term-encounter-points="longTermEncounterPoints"
+      :is-long-term-encounter-point-usable
+      :encounter-point-limit
+      :encounter-points
+      :game-text
+      :long-term-encounter-points
       @use-long-term-encounter-points="emit('useLongTermEncounterPoints')"
     />
   </ol>

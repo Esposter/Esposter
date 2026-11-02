@@ -1,13 +1,13 @@
 import type { Ref } from "vue";
 
-import { MAP_DRAG_THRESHOLD_PIXELS } from "#src/services/map/constants";
 import { computeWheelZoomMetres } from "#src/services/map/computeWheelZoomMetres";
+import { MAP_DRAG_THRESHOLD_PIXELS } from "#src/services/map/constants";
 import { unprojectMapPoint } from "#src/services/map/unprojectMapPoint";
 import { ref } from "vue";
 
 // The map's pan and its wheel zoom: a press that travels past the drag threshold pans the view by the drag, and the
 // Pointer is captured only then, since a captured press's click lands on the map rather than on the landmark it was made on
-export const useMapPan = (map: Readonly<Ref<SVGSVGElement | null>>, metres: Ref<number>) => {
+export const useMapPan = (map: Readonly<Ref<null | SVGSVGElement>>, metres: Ref<number>) => {
   // The offset the map is dragged to from the player, in catalogue metres
   const pan = ref({ x: 0, z: 0 });
   // A press's start and last place, and whether it has travelled far enough to pan. These are not drawn, so they are

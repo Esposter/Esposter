@@ -30,17 +30,8 @@ interface Props {
   title: string;
 }
 
-const {
-  category,
-  gameText,
-  listScroll,
-  questChapters,
-  questDistanceMap,
-  quests,
-  selectedQuestId,
-  textMap,
-  title,
-} = defineProps<Props>();
+const { category, gameText, listScroll, questChapters, questDistanceMap, quests, selectedQuestId, textMap, title } =
+  defineProps<Props>();
 const emit = defineEmits<{ select: [questId: string] }>();
 const listElement = useTemplateRef("listElement");
 const questGroups = computed(() => getQuestGroups(quests, questChapters, category));
@@ -48,8 +39,7 @@ const questGroups = computed(() => getQuestGroups(quests, questChapters, categor
 // The screen's root calls this once it has mounted, since the unit its width is in is set by the screen's own mount,
 // which runs after the list's
 const scrollToListScroll = () => {
-  if (listElement.value)
-    listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / LIST_SCREEN_WIDTH);
+  if (listElement.value) listElement.value.scrollTop = listScroll * (listElement.value.clientWidth / LIST_SCREEN_WIDTH);
 };
 defineExpose({ scrollToListScroll });
 </script>
@@ -61,9 +51,9 @@ defineExpose({ scrollToListScroll });
       :key="questCategory"
       :chapters
       :game-text
-      :quest-category="questCategory"
+      :quest-category
       :quest-distance-map
-      :row-quests="rowQuests"
+      :row-quests
       :selected-quest-id
       :text-map
       @select="(questId) => emit('select', questId)"

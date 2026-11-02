@@ -16,10 +16,10 @@ interface Props {
   isSortable: boolean;
   // The Lock button's words, shown on an unlocked bag artifact
   lockLabel: string;
-  // The weapon's details the panel draws under its caption, undefined for any entry that is not a weapon with details
-  weapon?: InventoryWeaponDetails;
   // The Unlock button's words, shown on a locked bag artifact
   unlockLabel: string;
+  // The weapon's details the panel draws under its caption, undefined for any entry that is not a weapon with details
+  weapon?: InventoryWeaponDetails;
 }
 
 const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defineProps<Props>();

@@ -15,10 +15,7 @@ interface Props {
 }
 
 const { domains, gameText } = defineProps<Props>();
-const emit = defineEmits<{
-  challenge: [landmark: DomainEntranceLandmark];
-  claimFirstClear: [entryId: number];
-}>();
+const emit = defineEmits<{ challenge: [landmark: DomainEntranceLandmark]; claimFirstClear: [entryId: number] }>();
 </script>
 
 <template>
@@ -27,7 +24,7 @@ const emit = defineEmits<{
       v-for="domain of domains"
       :key="domain.entryId"
       :domain
-      :game-text="gameText"
+      :game-text
       @challenge="(landmark) => emit('challenge', landmark)"
       @claim-first-clear="(entryId) => emit('claimFirstClear', entryId)"
     />

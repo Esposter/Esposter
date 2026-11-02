@@ -66,23 +66,23 @@ const emit = defineEmits<{ close: []; craft: [] }>();
        and the coins across the head, the way out at the head's right, and the recipe tabs under the title. The screen takes its
        place from the game's layout, not a two-column grid, since its recipe list is narrower than its detail -->
   <div class="crafting-screen">
-    <CraftingScreenHead :close-label="closeLabel" :coins :title @close="emit('close')" />
+    <CraftingScreenHead :close-label :coins :title @close="emit('close')" />
     <CraftingScreenTabs v-model:tab-id="tabId" :tabs />
     <CraftingScreenRecipes v-model:recipe-id="recipeId" :recipes />
     <CraftingScreenDetail
       v-model:amount="amount"
       v-model:crafter-id="crafterId"
       v-model:recipe-id="recipeId"
-      :amount-label="amountLabel"
-      :amount-maximum="amountMaximum"
-      :craft-label="craftLabel"
-      :crafted-label="craftedLabel"
+      :amount-label
+      :amount-maximum
+      :craft-label
+      :crafted-label
       :crafters
-      :crafting-materials-label="craftingMaterialsLabel"
+      :crafting-materials-label
       :materials
       :recipes
-      :required-coins="requiredCoins"
-      :required-label="requiredLabel"
+      :required-coins
+      :required-label
       @craft="emit('craft')"
     />
   </div>

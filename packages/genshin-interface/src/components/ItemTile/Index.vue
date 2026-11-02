@@ -7,11 +7,11 @@ interface Props {
   count: number | string;
   // The count's font size, in the tile's own units (cqh): a screen unit set outside the tile would resolve against the tile
   countSize?: string;
+  // The item's rarity in stars, which colours the tile
+  rarity: number;
   // The look the quest screen's reward tiles draw: a face lit by its own gradients, and a translucent count strip.
   // The game's reward lists' look when none is given
   variant?: "quest";
-  // The item's rarity in stars, which colours the tile
-  rarity: number;
 }
 
 const { count, countSize = "30cqh", rarity, variant } = defineProps<Props>();

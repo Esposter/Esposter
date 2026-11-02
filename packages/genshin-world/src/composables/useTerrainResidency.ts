@@ -111,9 +111,9 @@ export const useTerrainResidency = ({
     if (tileStreamer.fail(key))
       console.error(`Terrain tile ${key} failed ${MAX_TILE_ATTEMPTS} times, so it is given up and drawn without`);
   };
-  // Ends the refresh once `isSettled` says every tile round the eye is settled, so it is only asked while one is under way
-  const endRefresh = (isSettled: () => boolean) => {
-    if (refreshStart === undefined || !isSettled()) return;
+  // Ends the refresh once `checkIsSettled` says every tile round the eye is settled, so it is only asked while one is under way
+  const endRefresh = (checkIsSettled: () => boolean) => {
+    if (refreshStart === undefined || !checkIsSettled()) return;
     performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain-refresh`, {
       detail: { tileCount: rebuiltTileCount },
       start: refreshStart,

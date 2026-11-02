@@ -97,12 +97,12 @@ const { pickedCount, pickedGood } = useShopGoodPick({
     <ShopScreenDetail
       v-if="pickedGood"
       v-model:count="count"
-      :buy-label="buyLabel"
-      :close-label="closeLabel"
-      :count-label="countLabel"
-      :count-maximum="countMaximum"
+      :buy-label
+      :close-label
+      :count-label
+      :count-maximum
       :good="pickedGood"
-      :picked-count="pickedCount"
+      :picked-count
       @buy="(good, buyCount) => emit('buy', good, buyCount)"
       @close="goodId = 0"
     />

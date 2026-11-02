@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import type { Talk } from "#src/models/dialogue/Talk";
+import type { TalkOffer } from "#src/models/dialogue/TalkOffer";
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { FishingZone } from "#src/models/fishing/FishingZone";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { Talk } from "#src/models/dialogue/Talk";
-import type { TalkOffer } from "#src/models/dialogue/TalkOffer";
 import type { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -136,7 +136,7 @@ const emit = defineEmits<{
   />
   <GcgSession
     v-if="screenKind === ScreenKind.GcgDuel && gcgGameId !== undefined"
-    :game-data-base-url="gameDataBaseUrl"
+    :game-data-base-url
     :game-id="gcgGameId"
     :game-text
     :language
@@ -146,13 +146,13 @@ const emit = defineEmits<{
   <ShopScreen
     v-if="screenKind === ScreenKind.Shop"
     v-model:purchases="shopPurchases"
-    :adventure-rank="adventureRank"
+    :adventure-rank
     :game-text
-    :get-world-now="getWorldNow"
+    :get-world-now
     :goods
     :inventory
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :now="worldNow"
     :reputation-level="reputation.level"
     :wallet
@@ -163,19 +163,19 @@ const emit = defineEmits<{
   <ExpeditionLoader
     v-if="screenKind === ScreenKind.Expedition"
     v-model:expeditions="expeditions"
-    :adventure-rank="adventureRank"
+    :adventure-rank
     :characters="expeditionCharacters"
-    :character-passive-group-id-map="characterPassiveGroupIdMap"
+    :character-passive-group-id-map
     :completed-quest-ids="completedMainQuestIds"
-    :down-character-ids="downCharacterIds"
-    :game-data-base-url="gameDataBaseUrl"
+    :down-character-ids
+    :game-data-base-url
     :game-text
     :inventory
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :now="worldNow"
     :random
-    :region-statue-progress-map="regionStatueProgressMap"
+    :region-statue-progress-map
     :wallet
     @close="emit('close')"
     @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"

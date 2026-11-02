@@ -104,7 +104,7 @@ const isLiftable = computed(() => {
 <template>
   <CharacterAttributeList
     :character
-    :friendship-level="friendshipLevel"
+    :friendship-level
     :game-text
     :ascend-rows
     :is-ascendable="ascendResult !== undefined"

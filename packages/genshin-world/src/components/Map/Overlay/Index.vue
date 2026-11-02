@@ -8,7 +8,6 @@ import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameText } from "genshin-text";
 
-import { useMapPan } from "#src/composables/useMapPan";
 import MapDrawing from "#src/components/Map/Drawing/Index.vue";
 import MapJumpList from "#src/components/Map/JumpList/Index.vue";
 import MapOverlayClose from "#src/components/Map/Overlay/Close/Index.vue";
@@ -19,6 +18,7 @@ import MapOverlayResin from "#src/components/Map/Overlay/Resin/Index.vue";
 import MapOverlayTeleport from "#src/components/Map/Overlay/Teleport/Index.vue";
 import MapOverlayZoom from "#src/components/Map/Overlay/Zoom/Index.vue";
 import MapPointer from "#src/components/Map/Pointer/Index.vue";
+import { useMapPan } from "#src/composables/useMapPan";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
 import { computeExploredDoingIds } from "#src/services/exploration/computeExploredDoingIds";
 import { computeAreaLabels } from "#src/services/map/computeAreaLabels";
@@ -75,7 +75,7 @@ const chooseLandmark = (landmark: Landmark) => {
   chosenLandmark.value = landmark;
 };
 const map = useTemplateRef("map");
-const { pan, onMapClickCapture, onMapPointerDown, onMapPointerMove, onMapPointerUp, onMapWheel } = useMapPan(
+const { onMapClickCapture, onMapPointerDown, onMapPointerMove, onMapPointerUp, onMapWheel, pan } = useMapPan(
   map,
   metres,
 );
@@ -159,7 +159,7 @@ const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegment
         :transform="frameTransform"
         @select="(landmark) => chooseLandmark(landmark)"
       />
-      <MapOverlayLabels :area-labels="areaLabels" :metres :subarea-names="subareaNames" />
+      <MapOverlayLabels :area-labels :metres :subarea-names />
       <MapPointer :size="markRadius" :x="playerPlace.x" :y="playerPlace.y" :yaw="camera.yaw" />
     </svg>
     <MapOverlayZoom v-model:metres="metres" :game-text />
