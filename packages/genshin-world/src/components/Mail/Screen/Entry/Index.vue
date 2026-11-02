@@ -57,7 +57,7 @@ const statusText = computed(() => {
   margin: 0;
   padding: 0;
   border: none;
-  background: rgb(54 67 82 / 0.85);
+  background: rgb(43 56 73 / 0.85);
   color: #fff;
   cursor: inherit;
   font: inherit;
@@ -107,6 +107,18 @@ const statusText = computed(() => {
   position: absolute;
   margin: 0;
   white-space: nowrap;
+}
+
+/* A row that is not selected sets its sender and time left in a dimmer grey than its title, as the game does */
+.entry:not([aria-selected="true"]) .entry-sender,
+.entry:not([aria-selected="true"]) .entry-status {
+  color: rgb(190 197 208);
+}
+
+/* The selected row's sender and time left sit lighter than its title on the cream, as the game does */
+.entry[aria-selected="true"] .entry-sender,
+.entry[aria-selected="true"] .entry-status {
+  color: rgb(118 124 138);
 }
 
 .entry-title {
