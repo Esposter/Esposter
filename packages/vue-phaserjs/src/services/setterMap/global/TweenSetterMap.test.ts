@@ -21,4 +21,19 @@ describe("tweenSetterMap", () => {
 
     expect(scene.tweens.getTweensOf(sprite)).toHaveLength(1);
   });
+
+  test("a tween whose game object is destroyed still completes, so its owner's ref clears and its onComplete runs", () => {
+    expect.hasAssertions();
+
+    const scene = startTestScene(sceneKey);
+    const sprite = scene.add.sprite(0, 0, "");
+    const emit = vi.fn<(...args: unknown[]) => void>();
+    const onComplete = vi.fn<(...args: unknown[]) => void>();
+    TweenSetterMap[TweenSetter.Tween](sprite, emit)({ duration: 1, onComplete, x: 0 });
+    sprite.destroy();
+    for (const tween of scene.tweens.getTweensOf(sprite)) tween.update(0);
+
+    expect(onComplete).toHaveBeenCalledOnce();
+    expect(emit).toHaveBeenCalledExactlyOnceWith("update:tween", undefined);
+  });
 });

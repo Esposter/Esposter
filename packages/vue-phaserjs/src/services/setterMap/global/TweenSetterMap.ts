@@ -6,7 +6,11 @@ import type { GameObjects } from "phaser";
 import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
 import { Tweens } from "phaser";
 
-// A game object runs one tween at a time, so a new one replaces the running one rather than running beside it
+// A game object runs one tween at a time, so a new one replaces the running one rather than running beside it. A
+// replaced tween never completes: a promise over it never settles, and its completion cannot clear the owner's ref
+// over the tween that replaced it, so callers await a tween before starting the next. A tween whose game object is
+// destroyed still completes at its next update, as Phaser completes a tween on a destroyed target: its completion
+// clears the owner's ref and settles whatever awaits it.
 const activeTweens = new WeakMap<GameObjects.GameObject, Tweens.Tween | Tweens.TweenChain>();
 const replaceActiveTween = (
   gameObject: GameObjects.GameObject,
