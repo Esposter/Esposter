@@ -1,42 +1,46 @@
 import { pushSubscriptionInputSchema } from "#shared/models/db/pushSubscription/PushSubscriptionInput";
-import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 export const usePushSubscription = () => {
   const { $trpc } = useNuxtApp();
   const runtimeConfig = useRuntimeConfig();
   const pushSubscription = ref<PushSubscription>();
   const { permissionGranted } = useWebNotification();
-  // Serialised, so a revoke that lands while a grant's subscribe is still awaiting finds that subscription and removes it
+  const { executeMutation } = useMutation();
+  // Queued per key, so a revoke that lands while a grant's subscribe is still awaiting runs after it and finds that subscription and removes it
   const { trigger } = watchTriggerable(
     permissionGranted,
     getSynchronizedFunction((newPermissionGranted: boolean) =>
-      getResultAsync(async () => {
-        const registration = await window.navigator.serviceWorker.ready;
-        if (!newPermissionGranted) {
-          // Fall back to getSubscription() in case permission was revoked before onMounted completed
-          const subscription = pushSubscription.value ?? (await registration.pushManager.getSubscription());
-          if (subscription) {
-            await $trpc.pushSubscription.unsubscribe.mutate(subscription.endpoint);
-            await subscription.unsubscribe();
+      executeMutation(
+        async () => {
+          const registration = await window.navigator.serviceWorker.ready;
+          if (!newPermissionGranted) {
+            // Fall back to getSubscription() in case permission was revoked before onMounted completed
+            const subscription = pushSubscription.value ?? (await registration.pushManager.getSubscription());
+            if (subscription) {
+              await $trpc.pushSubscription.unsubscribe.mutate(subscription.endpoint);
+              await subscription.unsubscribe();
+            }
+            pushSubscription.value = undefined;
+            return;
           }
-          pushSubscription.value = undefined;
-          return;
-        }
-        // `getSubscription()` returns the existing subscription if one exists, avoiding a new
-        // Endpoint being created (and a redundant network call to the push service)
-        pushSubscription.value =
-          (await registration.pushManager.getSubscription()) ??
-          (await registration.pushManager.subscribe({
-            applicationServerKey: runtimeConfig.public.vapid.publicKey,
-            userVisibleOnly: true,
-          }));
-        // The browser's `toJSON` is what the wire carries — endpoint plus the p256dh/auth keys — but the DOM declares
-        // Every field of it optional, so the payload is parsed through the procedure's own input schema rather than
-        // Asserted into it
-        await $trpc.pushSubscription.subscribe.mutate(
-          pushSubscriptionInputSchema.parse(pushSubscription.value.toJSON()),
-        );
-      }).match(noop, console.error),
+          // `getSubscription()` returns the existing subscription if one exists, avoiding a new
+          // Endpoint being created (and a redundant network call to the push service)
+          pushSubscription.value =
+            (await registration.pushManager.getSubscription()) ??
+            (await registration.pushManager.subscribe({
+              applicationServerKey: runtimeConfig.public.vapid.publicKey,
+              userVisibleOnly: true,
+            }));
+          // The browser's `toJSON` is what the wire carries — endpoint plus the p256dh/auth keys — but the DOM declares
+          // Every field of it optional, so the payload is parsed through the procedure's own input schema rather than
+          // Asserted into it
+          await $trpc.pushSubscription.subscribe.mutate(
+            pushSubscriptionInputSchema.parse(pushSubscription.value.toJSON()),
+          );
+        },
+        { key: "pushSubscription", onError: console.error },
+      ),
     ),
   );
 
