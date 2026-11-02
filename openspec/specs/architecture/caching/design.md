@@ -96,9 +96,9 @@ flowchart TD
   Reissue --> Store
 ```
 
-## The one write that invalidates on failure
+## The writes that invalidate on failure
 
-`deleteResources` sends its ids chunk-by-chunk, and each chunk commits independently — so a later chunk's failure still leaves earlier chunks deleted server-side. It therefore calls `invalidateTags` by hand from `onError`, on top of its `invalidates`. This is the only place that reaches for the registry directly, and it is not a hole in the "a failed write invalidates nothing" rule: the write genuinely did persist part of itself.
+`deleteResources` and `restoreResources` send their ids chunk-by-chunk, and each chunk commits independently — so a later chunk's failure still leaves earlier chunks deleted or restored server-side. They therefore call `invalidateTags` by hand from `onError`, on top of their `invalidates`. These are the only writes that reach for the registry directly, and they are not a hole in the "a failed write invalidates nothing" rule: the write genuinely did persist part of itself.
 
 ## Key files
 

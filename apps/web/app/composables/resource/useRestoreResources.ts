@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CacheTag } from "@/models/cache/CacheTag";
+import { useCacheStore } from "@/store/cache";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
@@ -11,6 +12,8 @@ import { MAX_READ_LIMIT, RoutePath, takeOne } from "@esposter/shared";
 // No list of its own to re-read, such as the blade, passes no refresh and leaves the caches to the invalidation
 export const useRestoreResources = (refresh?: () => Promise<void>) => {
   const { $trpc } = useNuxtApp();
+  const cacheStore = useCacheStore();
+  const { invalidateTags } = cacheStore;
   const notificationStore = useNotificationStore();
   const { createErrorNotification, createNotification } = notificationStore;
   const { checkIsPending: checkIsRestorePending, executeMutation: executeRestoreResourcesMutation } = useMutation();
@@ -30,7 +33,14 @@ export const useRestoreResources = (refresh?: () => Promise<void>) => {
         invalidates: [CacheTag.Resources],
         // One resource keys by its id, so a bin row shows its own restore pending; a batch has no single id
         key: resources.length === 1 ? firstResource.id : Symbol("restoreResources"),
-        onError: createErrorNotification,
+        onError: async (error) => {
+          createErrorNotification(error);
+          // The ids are restored chunk-by-chunk, each committing independently, so a failure still leaves earlier
+          // Chunks restored server-side — a write that has to invalidate even though it reports as failed, as the
+          // Delete it undoes does
+          await invalidateTags([CacheTag.Resources]);
+          await refresh?.();
+        },
         onSuccess: async () => {
           createNotification({
             // A batch is back in the list it was deleted from, so only a single resource names where it went
