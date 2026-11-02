@@ -15,13 +15,13 @@ import { childMessageSchema } from "#src/models/window/ChildMessage";
 import { ChildMessageType } from "#src/models/window/ChildMessageType";
 import { SessionWindowCloseCode } from "#src/models/window/SessionWindowCloseCode";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
+import { SECRET_BYTE_LENGTH } from "#src/services/device/constants";
 import { hashCredential } from "#src/services/device/hashCredential";
 import { writeStateFile } from "#src/services/device/writeStateFile";
 import { listSessionSummaries } from "#src/services/drivers/claudeAgentSdk/listSessionSummaries";
 import { readSessionCwd } from "#src/services/drivers/claudeAgentSdk/readSessionCwd";
 import { toSessionClosedEvents } from "#src/services/drivers/claudeAgentSdk/toSessionClosedEvents";
 import {
-  SESSION_SECRET_BYTE_LENGTH,
   SESSION_WINDOW_CONNECT_TIMEOUT_MS,
   SESSION_WINDOW_REJOIN_DURATION_MS,
   SESSION_WINDOWS_FILENAME,
@@ -224,7 +224,7 @@ export const createWindowDriver = (
 
   const openWindow = async (cwd: string): Promise<SessionChild> => {
     await listening;
-    const secret = randomBytes(SESSION_SECRET_BYTE_LENGTH).toString("base64url");
+    const secret = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
     const connection = Promise.withResolvers<WebSocket>();
     const timeout = setTimeout(() => {
       pendingLaunchMap.delete(secret);
