@@ -91,6 +91,21 @@ describe(useOnlineSubscribable, () => {
     expect(callback).toHaveBeenCalledTimes(2);
   });
 
+  // The call page establishes its subscriptions after an await, where no scope is active: the online listeners belong
+  // To the scope it hands over, so stopping that scope removes them
+  test("removes its online listener with the supplied scope when established outside it", async () => {
+    expect.hasAssertions();
+
+    await mountSubscribable();
+    const instance = getCurrentInstance() ?? wrapper.vm.$;
+    const removeEventListener = vi.spyOn(window, "removeEventListener");
+    const scope = effectScope();
+    useOnlineSubscribable(source, callback, { instance, scope });
+    scope.stop();
+
+    expect(removeEventListener.mock.calls.map(([type]) => type)).toContain("online");
+  });
+
   test("calls cleanup on unmount", async () => {
     expect.hasAssertions();
 

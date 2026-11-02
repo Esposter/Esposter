@@ -407,6 +407,16 @@ describe("roomRouter", () => {
     expect(deletedRoom.id).toBe(newRoom.id);
   });
 
+  test("fails delete with direct message room", async () => {
+    expect.hasAssertions();
+
+    const { directMessage } = await createDirectMessageWithFriend(mockContext);
+
+    await expect(roomCaller.deleteRoom(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
+    );
+  });
+
   // However many attachments a room holds, its delete publishes one prefix event and never enumerates them.
   // Walking the directory here would put an unbounded listing — and the events it chunks into — on the
   // Owner's request; the handler does it instead, where a retry is free and the time budget is not a user's.

@@ -24,61 +24,63 @@ export function useOnlineSubscribable(
 ) {
   const instance = context?.instance ?? getCurrentInstance();
   const scope = context?.scope ?? getCurrentScope();
-  const online = useOnline();
-  const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
-  // One subscription is one target, so tearing the previous one down and establishing the next run as a single
-  // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
-  const { executeMutation } = useMutation();
-  const key = "subscription";
+  // A subscription established after an await has no active scope of its own, so everything it creates, the online
+  // Listeners and the watch among it, is made inside the captured one and stopped with it
+  const setup = () => {
+    const online = useOnline();
+    const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+    // One subscription is one target, so tearing the previous one down and establishing the next run as a single
+    // Queued unit — and a subscribe that rejects unwinds on its own instead of wedging every later one behind it
+    const { executeMutation } = useMutation();
+    const key = "subscription";
 
-  let currentCleanup: (() => Promisable<void>) | undefined;
-  let isActive = true;
+    let currentCleanup: (() => Promisable<void>) | undefined;
+    let isActive = true;
 
-  const resubscribe = getSynchronizedFunction(async (value: unknown, isOnline: boolean) => {
-    await executeMutation(
-      async () => {
-        const previousCleanup = currentCleanup;
-        currentCleanup = undefined;
-        await previousCleanup?.();
+    const resubscribe = getSynchronizedFunction(async (value: unknown, isOnline: boolean) => {
+      await executeMutation(
+        async () => {
+          const previousCleanup = currentCleanup;
+          currentCleanup = undefined;
+          await previousCleanup?.();
 
-        if (!isOnline || !isActive) return;
+          if (!isOnline || !isActive) return;
 
-        const newCleanup = await callback(value);
+          const newCleanup = await callback(value);
 
-        if (isActive) currentCleanup = newCleanup;
-        else await newCleanup?.();
-      },
-      // A subscription that cannot be established is a background failure of a connection that retries on the
-      // Next online or source change, not something to put in front of the user
-      { key, onError: console.error },
-    );
-  });
-  const { trigger } = watchTriggerable(sources, (values) => {
-    const isOnline = online.value;
-    // `online` is watched alongside the caller's own sources, so it is dropped again before the value reaches
-    // Them — and an offline tick has nothing to hand over, since the resubscribe returns before reading it
-    const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : undefined;
-
-    resubscribe(value, isOnline);
-  });
-
-  onMounted(() => {
-    trigger();
-  }, instance);
-  // The teardown is whatever the subscribe handed back — an unsubscribe, a socket stop — and a scope disposing
-  // Holds nothing to catch it, so a cleanup that rejects reports here rather than escaping the dispose
-  const disposeHandler = getSynchronizedFunction(() =>
-    getResultAsync(async () => {
-      isActive = false;
-      const cleanup = currentCleanup;
-      currentCleanup = undefined;
-      await cleanup?.();
-    }).match(noop, console.error),
-  );
-
-  if (scope)
-    scope.run(() => {
-      onScopeDispose(disposeHandler);
+          if (isActive) currentCleanup = newCleanup;
+          else await newCleanup?.();
+        },
+        // A subscription that cannot be established is a background failure of a connection that retries on the
+        // Next online or source change, not something to put in front of the user
+        { key, onError: console.error },
+      );
     });
-  else onScopeDispose(disposeHandler);
+    const { trigger } = watchTriggerable(sources, (values) => {
+      const isOnline = online.value;
+      // `online` is watched alongside the caller's own sources, so it is dropped again before the value reaches
+      // Them — and an offline tick has nothing to hand over, since the resubscribe returns before reading it
+      const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : undefined;
+
+      resubscribe(value, isOnline);
+    });
+
+    onMounted(() => {
+      trigger();
+    }, instance);
+    // The teardown is whatever the subscribe handed back — an unsubscribe, a socket stop — and a scope disposing
+    // Holds nothing to catch it, so a cleanup that rejects reports here rather than escaping the dispose
+    const disposeHandler = getSynchronizedFunction(() =>
+      getResultAsync(async () => {
+        isActive = false;
+        const cleanup = currentCleanup;
+        currentCleanup = undefined;
+        await cleanup?.();
+      }).match(noop, console.error),
+    );
+    onScopeDispose(disposeHandler);
+  };
+
+  if (scope) scope.run(setup);
+  else setup();
 }

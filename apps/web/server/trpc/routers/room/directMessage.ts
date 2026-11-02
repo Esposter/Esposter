@@ -157,17 +157,16 @@ export const directMessageRouter = router({
     const actorUser = ctx.getSessionPayload.user;
     const { targetUser, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
+      const room = await tx.query.roomsInMessage.findFirst({
+        columns: { userId: true },
+        where: { id: { eq: roomId } },
+      });
       // Discord's group direct message: anyone may leave it, and only its owner removes somebody else
-      if (userId !== actorUser.id) {
-        const room = await tx.query.roomsInMessage.findFirst({
-          columns: { userId: true },
-          where: { id: { eq: roomId } },
-        });
-        if (room?.userId !== actorUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
+      if (userId !== actorUser.id && room?.userId !== actorUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
       const participantIds = await readDirectMessageParticipantIds(tx, roomId);
       if (!participantIds.includes(userId))
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
+      const remainingParticipantIds = participantIds.filter((id) => id !== userId);
 
       const removedUser = await requireEntity(
         tx.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
@@ -180,14 +179,13 @@ export const directMessageRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify({ roomId, userId }),
       );
+      // The owner leaving hands the group to the next participant, since the owner's permissions are checked without
+      // Looking for a membership and a departed owner would otherwise keep every gate on a conversation they are not in
+      const [nextOwnerId] = remainingParticipantIds;
+      if (room?.userId === userId && nextOwnerId)
+        await tx.update(roomsInMessage).set({ userId: nextOwnerId }).where(eq(roomsInMessage.id, roomId));
       const updatedRoomRow = requireMutation(
-        (
-          await updateDirectMessageParticipantKey(
-            tx,
-            roomId,
-            participantIds.filter((id) => id !== userId),
-          )
-        )[0],
+        (await updateDirectMessageParticipantKey(tx, roomId, remainingParticipantIds))[0],
         Operation.Update,
         DerivedDatabaseEntityType.DirectMessage,
         roomId,

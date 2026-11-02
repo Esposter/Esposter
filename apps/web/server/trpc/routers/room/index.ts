@@ -105,6 +105,7 @@ export const baseRoomRouter = router({
   ),
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
+    .use(assertIsRoomMiddleware)
     .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation<{
     publicUrl: string;
