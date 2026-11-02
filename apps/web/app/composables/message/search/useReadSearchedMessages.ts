@@ -25,7 +25,7 @@ export const useReadSearchedMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, useReadSearchedMessages.name);
     // A newer search for the room cancels this one, and this search's own signal is what its failure is judged by
     const signal = beginSearch(roomId);
-    const readSearchedPage = getReadMoreItems(async () => {
+    const readSearchedPage = getReadMoreItems(() => {
       // Everything this read writes back is resolved before its first await, exactly as the result slice it is
       // Issued against is: the room can move while it is in flight, and its totals, its page and its history
       // Entry all belong to the search that was actually run, not to whatever is on screen when the response lands
@@ -36,7 +36,7 @@ export const useReadSearchedMessages = () => {
       // The input schema refuses a search with nothing in it, so the read that builds the request is where that
       // Stops rather than at each of the surfaces that can issue one — an Enter, a history row, a page change.
       // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
-      if (checkIsSearchQueryEmpty(query, filters)) return { hasMore: false, items: [] };
+      if (checkIsSearchQueryEmpty(query, filters)) return Promise.resolve({ hasMore: false, items: [] });
 
       isMenuOpen.value = false;
       // The pending flag is raised and cleared inside the read that owns it rather than by the paginator's own

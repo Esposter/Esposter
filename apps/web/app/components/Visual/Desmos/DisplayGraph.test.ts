@@ -58,11 +58,11 @@ describe("visualDesmosDisplayGraph", () => {
       updateSettings: vi.fn<(settings: object) => void>(),
     };
     // The animate button is drawn into the expression panel a calculator builds, so the mock builds one too
-    GraphingCalculator.mockImplementationOnce(async (element: HTMLElement) => {
+    GraphingCalculator.mockImplementationOnce((element: HTMLElement) => {
       const panel = document.createElement("div");
       panel.className = "dcg-exppanel-outer";
       element.append(panel);
-      return calculator;
+      return Promise.resolve(calculator);
     });
     const component = await mountGraph([{ latex: "y=x" }, { latex: "y=2x" }]);
     await flushPromises();

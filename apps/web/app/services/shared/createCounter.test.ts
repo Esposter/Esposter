@@ -5,15 +5,19 @@ import { describe } from "vitest";
 export const createCounter = () => {
   let value = 0;
   let changed = Promise.withResolvers<void>();
+  const reach = async (target: number): Promise<void> => {
+    if (value < target) {
+      await changed.promise;
+      await reach(target);
+    }
+  };
   return {
     increment: () => {
       value++;
       changed.resolve();
       changed = Promise.withResolvers<void>();
     },
-    reach: async (target: number) => {
-      while (value < target) await changed.promise;
-    },
+    reach,
     get value() {
       return value;
     },
