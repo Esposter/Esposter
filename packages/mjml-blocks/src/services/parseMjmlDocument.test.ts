@@ -358,7 +358,7 @@ describe(parseMjmlDocument, () => {
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['"all" is not in the registry']);
   });
 
-  test("a default for all components that no type taking its name accepts is refused at its path", () => {
+  test("a default for all components that a type taking its name refuses is refused at its path", () => {
     expect.hasAssertions();
 
     const result = parseMjmlDocument(
@@ -369,21 +369,23 @@ describe(parseMjmlDocument, () => {
       TEST_MAX_NODES,
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([
-      '"banana" is not a value any type that takes "padding" accepts',
+      '"banana" is not a value every type that takes "padding" accepts',
     ]);
   });
 
-  test("a default for all components that one type takes and another refuses is kept", () => {
+  test("a default for all components that the text takes and the social refuses is refused, with both in the email", () => {
     expect.hasAssertions();
 
     const result = parseMjmlDocument(
-      '<mjml><mj-head><mj-attributes><mj-all align="justify"></mj-all></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      '<mjml><mj-head><mj-attributes><mj-all align="justify"></mj-all></mj-attributes></mj-head><mj-body><mj-section><mj-column><mj-text>Hi</mj-text><mj-social><mj-social-element name="facebook">Share</mj-social-element></mj-social></mj-column></mj-section></mj-body></mjml>',
       TEST_REGISTRY,
       TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(result.success).toBe(true);
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([
+      '"justify" is not a value every type that takes "align" accepts',
+    ]);
   });
 
   test("an attribute on the title is refused by name", () => {

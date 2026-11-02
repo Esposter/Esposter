@@ -25,7 +25,7 @@ The MJML blocks SHALL accept a child in a slot only when MJML allows that tag in
 
 ### Requirement: Attributes take only what MJML accepts
 
-Every block type SHALL take exactly the attributes its MJML component allows, and SHALL refuse a value MJML's type for that attribute refuses.
+Every block type SHALL take exactly the attributes its MJML component allows, and SHALL refuse a value MJML's type for that attribute refuses. A default for all components SHALL be refused unless every block type that takes its name accepts its value, since MJML writes it into each of them.
 
 #### Scenario: An attribute value MJML's type refuses
 
@@ -167,18 +167,19 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names `all` as a type the registry does not hold
 
-#### Scenario: A default for all components that no type taking its name accepts is refused
+#### Scenario: A default for all components that a type taking its name refuses is refused
 
-- **GIVEN** MJML source whose `mj-all` sets a `padding` that no type's grammar for `padding` accepts, such as `banana`
+- **GIVEN** MJML source whose `mj-all` sets a `padding` that a type's grammar for `padding` refuses, such as `banana`
 - **WHEN** it is read into a document
 - **THEN** the read is refused
 - **AND** the refusal names the `padding` under `mj-all`
 
-#### Scenario: A default for all components that one type takes and another refuses is kept
+#### Scenario: A default for all components that one type takes and another refuses is refused
 
-- **GIVEN** MJML source whose `mj-all` sets an `align` of `justify`, which the text's grammar takes and the social's refuses
+- **GIVEN** MJML source whose `mj-all` sets an `align` of `justify`, which the text's grammar takes and the social's refuses, and whose email holds both a text and a social
 - **WHEN** it is read into a document
-- **THEN** the read succeeds
+- **THEN** the read is refused
+- **AND** the refusal names the `align` under `mj-all`
 
 ### Requirement: The head and its defaults take no attribute of their own
 

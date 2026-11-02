@@ -13,6 +13,7 @@ The package's block types as built. The requirements are in [the spec](spec.md),
 - **An image's alternative text is required, or the image is decorative.** `checkMjmlAlternativeText` refuses an image-like node that has neither at its `alt`, the clause "Content is safe before it reaches MJML" states in the spec.
 - **A navbar's default icons are the characters they name.** `ico-open` defaults to `☰` and `ico-close` to `⊗`, the characters MJML's entities `&#9776;` and `&#8855;` decode to. The render escapes each attribute value once, so an entity default would reach MJML escaped twice.
 - **A unit's numeric grammar is MJML's, except that a comma is refused.** MJML's validator takes a comma as a digit, so `1,5px` passes it, but CSS reads that as no length. The attribute schema drops the comma from the numeric pattern, and every other form of MJML's grammar is kept as its validator matches it.
+- **A default for all components is kept only where every type taking its name accepts it.** MJML writes the root's `mj-all` value into each component that takes the attribute's name, and its validator never checks that value there, so `mj-all align="justify"` reaches a social beside a text. The archived attribute design held that a default applies to a type only where the type's grammar passes it, which MJML does not do. The root refuses the value unless each registry type that takes the name accepts it. What this costs is the document-wide form of a value one type refuses: a type's own default under `mj-attributes` (`mj-text` with `align="justify"`) still sets it. MJML writes the default into the body too, but the body adds no refusal of its own: its `width` and colour take the grammars the image and the colour types already check, and no registry type takes its `id`, which the root refuses.
 
 The attribute table's path to the read back:
 
@@ -27,30 +28,30 @@ flowchart LR
 
 ## Key files
 
-| File                                                             | Role                                                                                                                 |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `packages/mjml-blocks/src/services/components/`                  | one module per MJML component: its attribute table, its props schema, its defaults, its children and its content     |
-| `packages/mjml-blocks/src/services/components/mjNavbar.ts`       | the navbar, its attribute table and its default icons                                                                |
-| `packages/mjml-blocks/src/services/constants.ts`                 | MJML's component set, the body's children, the head's attribute maps and the colour names it accepts                 |
-| `packages/mjml-blocks/src/services/createMjmlRegistry.ts`        | the registry: each component as a block type, with the consumer's leaf types and rich text beside them               |
-| `packages/mjml-blocks/src/services/createMjmlAttributeSchema.ts` | one attribute's schema, built from its grammar string                                                                |
-| `packages/mjml-blocks/src/services/createMjmlAttributeShape.ts`  | the attribute part of a props schema: each key of a table as an optional attribute schema, typed by the table's keys |
-| `packages/mjml-blocks/src/services/getMjmlAttributeFields.ts`    | the editor's field descriptors for a type, read from its attribute table                                             |
-| `packages/mjml-blocks/src/services/createMjmlNodeBranch.ts`      | a node's branch of the node union: its type tag, its props and its slots                                             |
-| `packages/mjml-blocks/src/services/createMjmlSlotSchema.ts`      | a slot's accepted types as one discriminated union, refusing a child of another type by naming the types it accepts  |
-| `packages/mjml-blocks/src/services/mjmlNodeSchema.ts`            | the static node schema: one branch per built-in type, with the consumer's leaf schema beside them                    |
-| `packages/mjml-blocks/src/services/mjmlNodeChildren.ts`          | MJML's built-in children port, one exhaustive switch over its node types                                             |
-| `packages/mjml-blocks/src/models/MjmlNodeDefinition.ts`          | the per-type definition union, each type paired with its own props schema                                            |
-| `packages/mjml-blocks/src/models/MjmlRichText.ts`                | the package's structural rich text type                                                                              |
-| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts` | the root's props, with each per-type attribute map checked against the type it names                                 |
-| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`        | the render to MJML's JSON form, with the head written from the root's props                                          |
-| `packages/mjml-blocks/src/services/serializeMjml.ts`             | the MJML source for the export                                                                                       |
-| `packages/mjml-blocks/src/services/parseMjmlDocument.ts`         | the read back, ending in the document schema that gives every refusal                                                |
-| `packages/mjml-blocks/src/services/readMjmlNode.ts`              | a tag as a node, with a source attribute that names a prop the node writes kept under its refusal key                |
-| `packages/mjml-blocks/src/services/readMjmlNodes.ts`             | each element a node, and each stray text a node that no registry holds                                               |
-| `packages/mjml-blocks/src/services/readMjmlHead.ts`              | the head's components as the root's props, refusing the attributes the head and its defaults take                    |
-| `packages/mjml-blocks/src/services/readMjmlContent.ts`           | a content-kind tag's raw content, read by its kind                                                                   |
-| `packages/mjml-blocks/src/services/MjmlContentKindSchemaMap.ts`  | the one kind-to-schema map: the label's and the raw's content schema, which a component takes rather than declares   |
-| `packages/mjml-blocks/src/services/getMjmlRefusalKey.ts`         | the key a refused tag or attribute is kept under: its name in angle brackets                                         |
-| `packages/mjml-blocks/src/services/checkMjmlAlternativeText.ts`  | the alternative text rule an image-like node runs over its alt and decorative flag                                   |
-| `packages/mjml-blocks/src/services/escapeMjmlAttributes.ts`      | each attribute value escaped once, as the render writes it                                                           |
+| File                                                             | Role                                                                                                                                           |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/mjml-blocks/src/services/components/`                  | one module per MJML component: its attribute table, its props schema, its defaults, its children and its content                               |
+| `packages/mjml-blocks/src/services/components/mjNavbar.ts`       | the navbar, its attribute table and its default icons                                                                                          |
+| `packages/mjml-blocks/src/services/constants.ts`                 | MJML's component set, the body's children, the head's attribute maps and the colour names it accepts                                           |
+| `packages/mjml-blocks/src/services/createMjmlRegistry.ts`        | the registry: each component as a block type, with the consumer's leaf types and rich text beside them                                         |
+| `packages/mjml-blocks/src/services/createMjmlAttributeSchema.ts` | one attribute's schema, built from its grammar string                                                                                          |
+| `packages/mjml-blocks/src/services/createMjmlAttributeShape.ts`  | the attribute part of a props schema: each key of a table as an optional attribute schema, typed by the table's keys                           |
+| `packages/mjml-blocks/src/services/getMjmlAttributeFields.ts`    | the editor's field descriptors for a type, read from its attribute table                                                                       |
+| `packages/mjml-blocks/src/services/createMjmlNodeBranch.ts`      | a node's branch of the node union: its type tag, its props and its slots                                                                       |
+| `packages/mjml-blocks/src/services/createMjmlSlotSchema.ts`      | a slot's accepted types as one discriminated union, refusing a child of another type by naming the types it accepts                            |
+| `packages/mjml-blocks/src/services/mjmlNodeSchema.ts`            | the static node schema: one branch per built-in type, with the consumer's leaf schema beside them                                              |
+| `packages/mjml-blocks/src/services/mjmlNodeChildren.ts`          | MJML's built-in children port, one exhaustive switch over its node types                                                                       |
+| `packages/mjml-blocks/src/models/MjmlNodeDefinition.ts`          | the per-type definition union, each type paired with its own props schema                                                                      |
+| `packages/mjml-blocks/src/models/MjmlRichText.ts`                | the package's structural rich text type                                                                                                        |
+| `packages/mjml-blocks/src/services/createMjmlRootPropsSchema.ts` | the root's props, with each per-type attribute map checked against the type it names, and a default for all against every type taking its name |
+| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`        | the render to MJML's JSON form, with the head written from the root's props                                                                    |
+| `packages/mjml-blocks/src/services/serializeMjml.ts`             | the MJML source for the export                                                                                                                 |
+| `packages/mjml-blocks/src/services/parseMjmlDocument.ts`         | the read back, ending in the document schema that gives every refusal                                                                          |
+| `packages/mjml-blocks/src/services/readMjmlNode.ts`              | a tag as a node, with a source attribute that names a prop the node writes kept under its refusal key                                          |
+| `packages/mjml-blocks/src/services/readMjmlNodes.ts`             | each element a node, and each stray text a node that no registry holds                                                                         |
+| `packages/mjml-blocks/src/services/readMjmlHead.ts`              | the head's components as the root's props, refusing the attributes the head and its defaults take                                              |
+| `packages/mjml-blocks/src/services/readMjmlContent.ts`           | a content-kind tag's raw content, read by its kind                                                                                             |
+| `packages/mjml-blocks/src/services/MjmlContentKindSchemaMap.ts`  | the one kind-to-schema map: the label's and the raw's content schema, which a component takes rather than declares                             |
+| `packages/mjml-blocks/src/services/getMjmlRefusalKey.ts`         | the key a refused tag or attribute is kept under: its name in angle brackets                                                                   |
+| `packages/mjml-blocks/src/services/checkMjmlAlternativeText.ts`  | the alternative text rule an image-like node runs over its alt and decorative flag                                                             |
+| `packages/mjml-blocks/src/services/escapeMjmlAttributes.ts`      | each attribute value escaped once, as the render writes it                                                                                     |

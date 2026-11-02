@@ -25,8 +25,8 @@ export const createMjmlRootPropsSchema = (
     for (const [type, values] of Object.entries(props.attributes ?? {})) {
       const segments = ["attributes", type];
       if (type === ALL_ATTRIBUTES_KEY) {
-        // A default for all components lands on every type that takes its name, so it is refused only when none of
-        // those types accepts it
+        // MJML writes a default for all components into every type that takes its name, and no type checks it there,
+        // so a value is kept only when each of those types accepts it
         for (const [name, value] of Object.entries(values)) {
           const schemas = definitions
             .map((definition) => getMjmlAttributeSchema(definition.allowedAttributes, name))
@@ -37,10 +37,10 @@ export const createMjmlRootPropsSchema = (
               message: `"${name}" is not an attribute any type takes`,
               path: [...segments, name],
             });
-          else if (!schemas.some((schema) => schema.safeParse(value).success))
+          else if (!schemas.every((schema) => schema.safeParse(value).success))
             context.addIssue({
               code: "custom",
-              message: `"${value}" is not a value any type that takes "${name}" accepts`,
+              message: `"${value}" is not a value every type that takes "${name}" accepts`,
               path: [...segments, name],
             });
         }
