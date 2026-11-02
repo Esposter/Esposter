@@ -118,7 +118,7 @@ committed.
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `windrise-statue-day`                  | `WorldScreen`               |                                                                         25.99% | 0.317 | 26.36% | 0.7570 |
 | `wish-screen`                          | `WishScreen`                |                                                                          9.02% | 0.627 |  6.18% | 0.2759 |
-| `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.79% | 0.864 |  1.71% | 0.1921 |
+| `world-level-dialog`                   | `MenuWorldLevelDialog`      |                                                                          5.74% | 0.864 |  1.72% | 0.1914 |
 | `world-level-dialog-lowered`           | `MenuWorldLevelDialog`      |                                     pending: no screenshot of this variant yet |       |        |        |
 | `world-realm-placement-editor`         | `WorldRealmPlacementEditor` |                                       pending: no screenshot of the screen yet |       |        |        |
 | `world-realm-placement-editor-at-load` | `WorldRealmPlacementEditor` |                                     pending: no screenshot of this variant yet |       |        |        |

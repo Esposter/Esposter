@@ -223,18 +223,18 @@ onMounted(() => {
 
 .title {
   position: absolute;
-  top: calc(var(--unit) * 28.4);
+  top: calc(var(--unit) * 25.9);
   right: 0;
   left: 0;
   margin: 0;
   color: v-bind(GAME_GOLD);
-  font-size: calc(var(--unit) * 39.5);
+  font-size: calc(var(--unit) * 44);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.035em;
   line-height: 1;
   text-align: center;
   /* The trailing letter-space sits after the last letter, which pulls the centred ink left by half of it */
-  text-indent: 0.1em;
+  text-indent: 0.035em;
 }
 
 .close {
