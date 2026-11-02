@@ -15,6 +15,7 @@
   background: #343340;
 }
 
+/* The table's texture is not drawn, so its inner half is the frame's mean table colour at each radius from the centre */
 .table {
   position: absolute;
   top: calc(var(--unit) * 72);
@@ -25,8 +26,12 @@
   border-radius: calc(var(--unit) * 40);
   background: radial-gradient(
     calc(var(--unit) * 1000) calc(var(--unit) * 700) at 50% 50%,
-    #7c9c9d 0%,
-    #759392 45%,
+    #9db8b2 0%,
+    #97b2ac 10%,
+    #95aba4 20%,
+    #87a19f 30%,
+    #7f9a99 40%,
+    #7a9390 50%,
     #6d8b8a 56%,
     #597474 73%,
     #557070 80%,
