@@ -1,6 +1,6 @@
+import { checkIsMemoryGateOpen } from "#src/services/machine/checkIsMemoryGateOpen";
 import { GATE_MEMORY_SHARE, GIBIBYTE } from "#src/services/machine/constants";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
-import { checkIsMemoryGateOpen } from "#src/services/worktree/create/checkIsMemoryGateOpen";
 import { MEMORY_GATE_POLL_MILLISECONDS, MEMORY_GATE_WAIT_MILLISECONDS } from "#src/services/worktree/create/constants";
 import { totalmem } from "node:os";
 import { setTimeout as sleep } from "node:timers/promises";

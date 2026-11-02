@@ -1,4 +1,4 @@
-import { checkIsMemoryGateOpen } from "#src/services/worktree/create/checkIsMemoryGateOpen";
+import { checkIsMemoryGateOpen } from "#src/services/machine/checkIsMemoryGateOpen";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsMemoryGateOpen, () => {
