@@ -16,14 +16,6 @@ Let a user buy a larger storage allowance through a merchant-of-record subscript
 - A user above the Free allowance after a downgrade keeps reading their files and cannot upload until usage fits.
 - A paid tier raises numeric allowances and unlocks cosmetics only; it never gates a permission, a moderation outcome or a safety control.
 
-## Capabilities
-
-- **resource/paid-storage-tiers** (new)
-
-## Waiting on
-
-- Nothing. Account deletion and data export, which the design says paid tiers ship alongside, are both built ([account deletion](../../specs/user/account-deletion/design.md), [data export](../archive/2026-10-26-user-data-export/proposal.md)).
-
 ## Impact
 
 - The storage tier values and the allowance map in the shared model and services.

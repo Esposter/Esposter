@@ -1,8 +1,18 @@
 # Paid Storage Tiers
 
-Sell a bigger allowance. Every user is on a Free tier with a fixed allowance today, and the quota mechanism was deliberately built so that a paid tier is a **value added to a map** rather than a schema change ([storage quotas](../../specs/resource/storage-quotas/design.md)): the limit is derived from the tier on every read, so moving a user between tiers changes what the gate enforces and what the meter shows in the same instant, with nothing to backfill.
+Sell a bigger allowance. Every user is on a Free tier with a fixed allowance today, and the quota mechanism was deliberately built so that a paid tier is a **value added to a map** rather than a schema change ([storage quotas](../../../specs/resource/storage-quotas/design.md)): the limit is derived from the tier on every read, so moving a user between tiers changes what the gate enforces and what the meter shows in the same instant, with nothing to backfill.
 
 That is the whole of the storage half. Everything hard about this proposal is the money.
+
+## Why deferred
+
+Taking money needs a payment layer that does not exist: a merchant-of-record account, a hosted checkout, a signed event route and a key-vault secret, none of it in the repo. It also ends the project's standing as an open-source, non-profit project, and that is the owner's decision to make, not a default a feature takes. The owner has chosen not to take money.
+
+## Revisit when
+
+The owner decides to take money, as one decision that names the provider, who sells, and the project's licence position. Until then the tier column and the quota map hold one value each, which is all the upload gate reads.
+
+**Cheaper interim:** raise the Free allowance, which is one entry in the quota map and no billing.
 
 ## Scope
 
@@ -46,7 +56,7 @@ flowchart TD
 
 The provider's event stream is authoritative and our own UI is not: a checkout redirect can be abandoned after payment, a card can fail three weeks later, and a cancellation can happen in the portal. So **nothing sets a tier except the webhook handler** — the redirect back from checkout only navigates.
 
-The handler verifies the signature, is idempotent on the provider's event id (redelivery is normal, not exceptional), and writes the subscription row and the tier in one transaction. Failure handling is the provider's retry schedule plus our own standard: a failed handling retries on the event with an attempt cap and a quarantine, never a manual fix-up ([no manual recovery](../../specs/architecture/no-manual-recovery/design.md)).
+The handler verifies the signature, is idempotent on the provider's event id (redelivery is normal, not exceptional), and writes the subscription row and the tier in one transaction. Failure handling is the provider's retry schedule plus our own standard: a failed handling retries on the event with an attempt cap and a quarantine, never a manual fix-up ([no manual recovery](../../../specs/architecture/no-manual-recovery/design.md)).
 
 Three properties the handler has to hold, each of which is a way of getting the wrong user on the wrong tier:
 
@@ -67,13 +77,13 @@ This is the one place where a paid feature must not become a hostage mechanism, 
 
 ### What a tier may and may not buy
 
-**Capacity and cosmetics only.** A tier may raise a numeric allowance — storage bytes, the per-room custom emoji count ([custom emoji](../../specs/esbabbler/custom-emoji/design.md)), the number of call-background slots ([virtual backgrounds](../../specs/esbabbler/calls/virtual-backgrounds/design.md)) — or unlock a cosmetic, which is the shape Discord's Nitro takes and the reason it is uncontroversial.
+**Capacity and cosmetics only.** A tier may raise a numeric allowance — storage bytes, the per-room custom emoji count ([custom emoji](../../../specs/esbabbler/custom-emoji/design.md)), the number of call-background slots ([virtual backgrounds](../../../specs/esbabbler/calls/virtual-backgrounds/design.md)) — or unlock a cosmetic, which is the shape Discord's Nitro takes and the reason it is uncontroversial.
 
 **A tier may never gate behaviour, moderation, or safety.** The moment a room's rules, a permission, or an abuse control depends on who paid, the platform's trust model becomes tier-dependent and every moderation guarantee acquires an asterisk. Allowances are per-user and derived from one map; that is the mechanism, and it is deliberately incapable of expressing anything else.
 
 ## Consequences beyond the feature
 
-Taking money changes obligations that were deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion**, which is built, and **data export**, which is built, become the price of admission ([account deletion](../../specs/user/account-deletion/design.md), [data export](../archive/2026-10-26-user-data-export/proposal.md)). Refunds, published terms and privacy information, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape. Commercialising Esposter would also have ended the open-source exception the Survey Editor's SurveyJS Creator ran under, so a developer licence for it, or an authoring surface of our own, would have been part of the same bill. The [survey form engine](../resource-survey-form-engine/design.md) replaces SurveyJS when it ships, so that bill goes with it.
+Taking money changes obligations that were deferred on the grounds that nobody external is here yet. A paying user is unambiguously an external user, so **account deletion**, which is built, and **data export**, which is built, become the price of admission ([account deletion](../../../specs/user/account-deletion/design.md), [data export](../../../changes/archive/2026-10-26-user-data-export/proposal.md)). Refunds, published terms and privacy information, and receipts are the merchant of record's to serve, which is most of why it is the recommended shape. Commercialising Esposter would also have ended the open-source exception the Survey Editor's SurveyJS Creator ran under, so a developer licence for it, or an authoring surface of our own, would have been part of the same bill. The [survey form engine](../../../changes/resource-survey-form-engine/design.md) replaces SurveyJS when it ships, so that bill goes with it.
 
 Ship this only alongside those, or not at all — a paid tier without a way out is the worst version of this feature.
 
@@ -92,7 +102,7 @@ Ship this only alongside those, or not at all — a paid tier without a way out 
 
 Price and packaging are not settled here and should not be: the mechanism is one map from tier to allowance, so the number of tiers and what each holds is a product decision that costs one line each to change.
 
-The provider secret is the first credential in the repo whose leak has a direct financial consequence, so it is held in Key Vault with the other keys rather than in an ordinary env var, the stance [keyless auth hardening](../../rejected/infra/keyless-auth-hardening/design.md) was rejected to keep.
+The provider secret is the first credential in the repo whose leak has a direct financial consequence, so it is held in Key Vault with the other keys rather than in an ordinary env var, the stance [keyless auth hardening](../../../rejected/infra/keyless-auth-hardening/design.md) was rejected to keep.
 
 ## Sources
 
