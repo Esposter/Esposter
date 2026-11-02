@@ -91,15 +91,20 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 
 ## Key files
 
-| File                                                            | Role                                                                                                             |
-| :-------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/package.json`                          | The package's entry: its export map names the barrel the build writes, which the world imports every module from |
-| `packages/genshin-engine/src/terrainWorker.ts`                  | The terrain worker's entry: the generators it runs alone                                                         |
-| `packages/genshin-engine/src/renderer/createGenshinRenderer.ts` | The renderer every scene draws through                                                                           |
-| `packages/genshin-engine/src/streaming/createTileStreamer.ts`   | The tile streamer, run the same over a worker pool or a test                                                     |
-| `packages/genshin-world/src/workers/terrainTile.worker.ts`      | The worker the ground's tiles are generated in                                                                   |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`  | The world's screen the app mounts, loading the tables it reads                                                   |
-| `packages/genshin-world/src/components/World/Session/Index.vue` | The world's session, owning its own canvas                                                                       |
+| File                                                                      | Role                                                                                                             |
+| :------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/package.json`                                    | The package's entry: its export map names the barrel the build writes, which the world imports every module from |
+| `packages/genshin-engine/src/terrainWorker.ts`                            | The terrain worker's entry: the generators it runs alone                                                         |
+| `packages/genshin-engine/src/renderer/createGenshinRenderer.ts`           | The renderer every scene draws through                                                                           |
+| `packages/genshin-engine/src/streaming/createTileStreamer.ts`             | The tile streamer, run the same over a worker pool or a test                                                     |
+| `packages/genshin-world/src/workers/terrainTile.worker.ts`                | The worker the ground's tiles are generated in                                                                   |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`            | The world's screen the app mounts, loading the tables it reads                                                   |
+| `packages/genshin-world/src/components/World/Session/Index.vue`           | The world's session, owning its own canvas                                                                       |
+| `packages/genshin-world/src/components/World/Session/Hud/Index.vue`       | The HUD over the world: the shortcut wheel, the navigation, the HUD screen with its prompts, and the tip         |
+| `packages/genshin-world/src/components/World/Session/Workshop/Index.vue`  | The cooking, processing, crafting and forge screens the bench and the forge open                                 |
+| `packages/genshin-world/src/components/World/Session/Screens/Index.vue`   | The talk, and the game over, reputation, card game, fishing, shop and expedition screens                         |
+| `packages/genshin-world/src/components/World/Session/Statue/Index.vue`    | The Statue of The Seven's screen and its worship screen                                                          |
+| `packages/genshin-world/src/components/World/Session/Challenge/Index.vue` | The domain's screen and the Spiral Abyss's entry and benediction screens                                         |
 
 ## Open
 

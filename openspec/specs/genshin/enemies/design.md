@@ -60,7 +60,7 @@ The daily reset is the server's 04:00, UTC+8, as the [reset clock](../reset-cloc
 
 A common or elite member's return is saved as the [save data](../save-data/design.md) page keeps it (`packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`). A boss camp's defeat is saved as its moment of defeat (`packages/genshin-world/src/models/enemy/BossDefeatSave.ts`), beside the blossom it left and the teleports into each area (`packages/genshin-world/src/models/map/LastTeleportsSave.ts`), so a reload reads the same return.
 
-The world keeps every spawned enemy in one map by its spawn key, the camp's id and the member's id (`packages/genshin-world/src/components/World/Enemies/Index.vue`). A camp's leaving removes its enemies from the map and a spawn's return adds it back, and the character's kit and the enemies' steps read the same map.
+The world keeps every spawned enemy in one map by its spawn key, the camp's id and the member's id, which the component takes as a prop (`packages/genshin-world/src/components/World/Enemies/Index.vue`) and `useEnemySpawns` (`packages/genshin-world/src/composables/useEnemySpawns.ts`) fills. A camp's leaving removes its enemies from the map and a spawn's return adds it back, and the character's kit and the enemies' steps read the same map.
 
 ## Drops
 
@@ -68,7 +68,7 @@ A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band
 
 ## The stand-in
 
-The World Enemies component (`packages/genshin-world/src/components/World/Enemies/Index.vue`) steps every enemy in reach on the engine's fixed-step loop, and draws them all as one instanced capsule, stood on the ground, turned to its heading and tinted by its state. Its target is the character's feet, which the world screen hands down, so every enemy turns on the body wherever it goes. Where no character stands, as on a reference's held camera or a witness render, the enemies have no target. A screen holding the world holds its enemies too, and a witness render draws none, since the references it is judged against show none.
+The World Enemies component (`packages/genshin-world/src/components/World/Enemies/Index.vue`) steps every enemy in reach on the engine's fixed-step loop (`useEnemySimulation`, `packages/genshin-world/src/composables/useEnemySimulation.ts`), and draws them all as one instanced capsule, stood on the ground, turned to its heading and tinted by its state. Its target is the character's feet, which the world screen hands down, so every enemy turns on the body wherever it goes. Where no character stands, as on a reference's held camera or a witness render, the enemies have no target. A screen holding the world holds its enemies too, and a witness render draws none, since the references it is judged against show none.
 
 A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT_SECONDS`) after the hit, and a flash of radius 0.3 metres (`ENEMY_HIT_FLASH_RADIUS`) stands at its middle for 0.1 seconds (`ENEMY_HIT_FLASH_SECONDS`), drawn as a second instanced mesh. Both timings, the flash's size and the tint's colour are provisional, as `packages/genshin-world/src/services/enemy/constants.ts` marks them.
 
@@ -103,7 +103,10 @@ A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT
 | `packages/genshin-world/src/services/enemy/readEnemyTables.ts`         | The kinds, their level curves and each reaction's poise, read as the world opens                                               |
 | `packages/genshin-world/src/models/enemy/EnemyTables.ts`               | Each kind by its id, and the level curves its stats grow along                                                                 |
 | `packages/genshin-world/src/data/regions/mondstadt.json`               | Windrise's hilichurl camp                                                                                                      |
-| `packages/genshin-world/src/components/World/Enemies/Index.vue`        | Spawns, steps and draws the enemies in reach, at the body or a taunt, and emits the party's combat                             |
+| `packages/genshin-world/src/components/World/Enemies/Index.vue`        | Draws the enemies in reach, at the body or a taunt, and emits the party's combat                                               |
+| `packages/genshin-world/src/composables/useEnemySpawns.ts`             | Spawns a camp's members as its region comes into reach and removes them as it leaves                                           |
+| `packages/genshin-world/src/composables/useEnemySimulation.ts`         | The fixed-step loop that steps every enemy in reach                                                                            |
+| `packages/genshin-world/src/composables/useEnemyCampLocks.ts`          | The camp-lock emitter the spawn load resets and the simulation feeds                                                           |
 | `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`        | Builds the kinds and their level curves from the game's tables                                                                 |
 
 ## Notes

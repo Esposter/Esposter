@@ -39,7 +39,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The mailbox loads as the world starts, so the birthday mail is due on login that day.** Expired mail is removed and the birthday mail delivered at load, before the Mail screen can open; the screen shows once the mailbox has loaded.
 - **A held mail whose row is gone is left off the list and kept in the save.** The mailbox reads the rows of the held mails the table names, through `readGameDataIndex`, so a mail with no entry in the index has no row: the load does not fail on it, the Mail screen lists only the mails with a row, and the save keeps the mail, since its expiry cannot be read and `removeExpiredMails` keeps a mail with no row.
 - **A mail in the Gift Mail Box is labelled as kept there, in place of its expiry.** The box keeps it past its expiry and out of Delete Read, so that label is the only difference the status draws. The Mailbox tab lists the mails outside the box and the Gift Mail Box tab those inside it.
-- **Delete on a Gift Mail Box mail asks first, with the game's own warning, and removes that one mail.** The wiki's Mail page (https://genshin-impact.fandom.com/wiki/Mail) says box mail is not quick-deleted, and the dump holds the warning: `UI_MAIL_FAVORITES_WARNING_TITLE` ("Delete Gift Mail"), `UI_MAIL_FAVORITES_WARNING_DESC` (unrecoverable, then "Delete this mail?"), and `UI_MAIL_DELETE_BUTTON` for the trigger and the warning's confirm. The trigger hides while the warning is open, so the two Delete buttons never show together, and choosing another mail or tab closes the warning. `deleteGiftMail` removes only a mail `checkIsGiftBoxed` places in the box; a mail with no row is kept, as Delete Read keeps it.
+- **Delete on a Gift Mail Box mail asks first, with the game's own warning, and removes that one mail.** The wiki's Mail page (https://genshin-impact.fandom.com/wiki/Mail) says box mail is not quick-deleted, and the dump holds the warning: `UI_MAIL_FAVORITES_WARNING_TITLE` ("Delete Gift Mail"), `UI_MAIL_FAVORITES_WARNING_DESC` (unrecoverable, then "Delete this mail?"), and `UI_MAIL_DELETE_BUTTON` for the trigger and the warning's confirm. The trigger hides while the warning is open, so the two Delete buttons never show together, and choosing another mail or tab closes the warning. The warning and the list's Delete Read ask share one dialog component, `packages/genshin-world/src/components/Mail/Screen/Confirm/Index.vue`, which takes `isGift` for the warning's variant and draws it in the detail. `deleteGiftMail` removes only a mail `checkIsGiftBoxed` places in the box; a mail with no row is kept, as Delete Read keeps it.
 - **A pin is the player's, saved as a required `isPinned` on every held mail, and it lists the mail first.** The wiki's Mail page (https://genshin-impact.fandom.com/wiki/Mail) has a Pinned Mail section: pinned mail "will be placed at the top of the mail list", "cannot be deleted quickly", and "can still expire". So the player pins it, Delete Read keeps it, and expiry deletes it. The save key is required, so a save written before the pin is refused until the backfill sets `isPinned` to `false` on every held mail; the main session runs that backfill on dev, and prod waits on the user. The button's labels are the dump's `UI_MAIL_STAR` ("Pin") and `UI_MAIL_CANCEL_STAR` ("Delete Pin"). A merge keeps a pin or a read from either copy, and a claim is the account's alone.
 - **The save writes the Traveler's birthday only once it is set.** A save with no birthday has no `travelerBirthday` key, so a reload of an unset birthday is the same save it was.
 - **The profile sets the birthday once.** The Paimon card's Set Birthday button opens the dialog that sets it, as the [Paimon menu change](../genshin-menu-paimon/design.md) describes. The save holds the date from then on, and the delivery reads it.
@@ -52,18 +52,19 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 
 ## Key files
 
-| File                                                               | Role                                                                               |
-| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts` | Gives the Mail screen its behaviour; the screen's contents replace its placeholder |
-| `packages/genshin-world/src/services/save/constants.ts`            | Bounds the mail list at its longest, so the save's ceiling counts it               |
-| `packages/genshin-world/src/models/save/GenshinSave.ts`            | Holds the mail list beside the other collections the save keeps                    |
-| `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`      | Joins a mail's `rewardId` to its reward's items                                    |
-| `packages/genshin-world/src/components/World/Session/Index.vue`    | Loads the mailbox as the world starts, and gives the Mail screen its slot          |
-| `packages/genshin-world/src/models/data/GameDataset.ts`            | Names the `mail` and `mailText` datasets the builder publishes                     |
-| `packages/genshin-text/src/models/GameTextKey.ts`                  | The mail screen's words, by the game's own keys                                    |
-| `packages/genshin-world/src/models/save/GenshinSaveState.ts`       | Carries the mails and the Traveler's birthday beside the other saved state         |
-| `packages/genshin-world/src/services/save/toGenshinSave.ts`        | Writes the mails, and the Traveler's birthday once it is set                       |
-| `packages/genshin-world/src/services/save/readGenshinSave.ts`      | Reads the mails and the Traveler's birthday back                                   |
+| File                                                                  | Role                                                                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`    | Gives the Mail screen its behaviour; the screen's contents replace its placeholder                |
+| `packages/genshin-world/src/services/save/constants.ts`               | Bounds the mail list at its longest, so the save's ceiling counts it                              |
+| `packages/genshin-world/src/models/save/GenshinSave.ts`               | Holds the mail list beside the other collections the save keeps                                   |
+| `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`         | Joins a mail's `rewardId` to its reward's items                                                   |
+| `packages/genshin-world/src/components/World/Session/Index.vue`       | Loads the mailbox as the world starts, and gives the Mail screen its slot                         |
+| `packages/genshin-world/src/components/Mail/Screen/Confirm/Index.vue` | The dialog a delete asks first: Delete Read's over the screen, and the gift warning in the detail |
+| `packages/genshin-world/src/models/data/GameDataset.ts`               | Names the `mail` and `mailText` datasets the builder publishes                                    |
+| `packages/genshin-text/src/models/GameTextKey.ts`                     | The mail screen's words, by the game's own keys                                                   |
+| `packages/genshin-world/src/models/save/GenshinSaveState.ts`          | Carries the mails and the Traveler's birthday beside the other saved state                        |
+| `packages/genshin-world/src/services/save/toGenshinSave.ts`           | Writes the mails, and the Traveler's birthday once it is set                                      |
+| `packages/genshin-world/src/services/save/readGenshinSave.ts`         | Reads the mails and the Traveler's birthday back                                                  |
 
 The new files sit in a tree:
 
@@ -97,6 +98,7 @@ packages/genshin-world/src/services/mail/sortMails.ts  ← the held mails, pinne
 packages/genshin-world/src/models/mail/MailExpiry.ts   ← a mail's time left, as a count of its unit
 packages/genshin-world/src/models/mail/MailExpiryUnit.ts ← the unit a time left is shown in
 packages/genshin-world/src/components/Mail/Screen/Index.vue ← the Mail screen: the list, the detail and the claims
+packages/genshin-world/src/components/Mail/Screen/Confirm/Index.vue ← the confirm a delete asks first, shared by the list and the detail
 ```
 
 - The dump's two unnamed mail keys are not guessed at; the builder skips them, and a mail with a key it cannot name is not delivered.

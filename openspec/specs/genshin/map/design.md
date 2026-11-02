@@ -83,7 +83,7 @@ The overlay is scored against two references, each over its interface alone, the
 - Whether the jump list should be shown beside the map is a call for the user.
 - **The minimap still draws the catalogue unturned.** The overlay's frame turns the drawing a quarter turn, but `Hud/Minimap` draws the same `Drawing` as the catalogue holds it, with x to the right and z down. Until the minimap's own orientation is read off a recording, the two views disagree on which way x points.
 - **The pointer is the overlay's alone.** The minimap marks the character with the game's own arrow at its centre and the view with its fan, each placed by the HUD's tree ([minimap](../minimap/design.md)) `packages/genshin-world/src/components/Hud/Minimap/Index.vue`, so `Map/Pointer` `packages/genshin-world/src/components/Map/Pointer/Index.vue` is measured off the map's reference only.
-- **The fade does not wait on the ground.** A jump far from where the camera stood fades back in as soon as it is placed (`packages/genshin-world/src/components/World/Session/Index.vue` lines 2042 to 2052, whose class binds `jumpPose` alone, so no distance holds it), and the terrain streams in round it as it does after any flight.
+- **The fade does not wait on the ground.** A jump far from where the camera stood fades back in as soon as it is placed (the `teleport-fade` element in `packages/genshin-world/src/components/World/Session/Index.vue`, whose class binds `jumpPose` alone, so no distance holds it), and the terrain streams in round it as it does after any flight.
 
 ## Sources
 

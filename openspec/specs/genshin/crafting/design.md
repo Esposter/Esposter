@@ -84,7 +84,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 | `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`         | The bench's tab list: the recipe tabs, then the Mystic Offering from its Adventure Rank                                            |
 | `packages/genshin-world/src/services/crafting/computeLearnedRecipeCells.ts`       | The learned recipes of one bench tab, in the game's order, with their crafted counts                                               |
 | `packages/genshin-world/src/services/crafting/getCraftingTabId.ts`                | The bench tab a recipe is listed under: its combine type's, or a conversion's apart from the crafts                                |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                   | Offers the bench's prompt and mounts the crafting screen                                                                           |
+| `packages/genshin-world/src/components/World/Session/Workshop/Index.vue`          | Mounts the crafting screen, beside the cooking, processing and forge screens                                                       |
 | `packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`    | The prompt list's rows: everything within reach, nearest first, the selection held while it stays in reach                         |
 
 ## Notes

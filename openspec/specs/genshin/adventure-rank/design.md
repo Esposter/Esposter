@@ -98,7 +98,8 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`             | a camp's enemy level at a World Level                                                              |
 | `packages/genshin-world/src/services/adventureRank/computeWorldLevelCooldown.ts`     | the time left before the World Level can be changed again                                          |
 | `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`              | the World Level dialog: the game's help text and the button that opens the prompt                  |
-| `packages/genshin-world/src/components/Menu/Paimon/Profile/Index.vue`                | the profile card's rank, EXP bar, World Level and its info icon                                    |
+| `packages/genshin-world/src/components/Menu/Paimon/Profile/Index.vue`                | the profile card's rank, EXP bar and World Level                                                   |
+| `packages/genshin-world/src/components/Menu/Paimon/Profile/Info/Index.vue`           | the World Level's info icon on the profile card, which opens the World Level dialog                |
 | `packages/genshin-world/src/services/enemy/createEnemy.ts`                           | spawns an enemy at its World Level's level                                                         |
 | `packages/genshin-world/src/components/World/Enemies/Index.vue`                      | spawns the camps, and respawns them when the World Level changes                                   |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                      | the World Level the world plays at, handed down to its enemies                                     |

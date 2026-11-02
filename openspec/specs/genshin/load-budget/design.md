@@ -85,7 +85,7 @@ flowchart LR
 | `packages/genshin-world/src/components/World/Screen/Index.vue`           | The world's gate of reads before it shows                          |
 | `packages/genshin-world/src/services/world/readLoadedRegion.ts`          | A region's data, ground and palettes, read as it comes in reach    |
 | `packages/genshin-engine/src/collision/createLandmarkCollider.ts`        | The landmarks' hierarchies, built on the main thread               |
-| `packages/genshin-world/src/components/World/Terrain/Index.vue`          | Measures each ground's refresh as `terrain-refresh`                |
+| `packages/genshin-world/src/composables/useTerrainResidency.ts`          | Measures each ground's refresh as `terrain-refresh`                |
 | `scripts/src/services/genshinParity/load/ScreenCrossingMap.ts`           | Each screen's crossing: the props it loads with and moves to       |
 | `scripts/src/services/genshinParity/page/crossScreen.ts`                 | Moves a ready screen and reads its crossing once it settles        |
 | `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`         | Each screen's budget, by screen name                               |

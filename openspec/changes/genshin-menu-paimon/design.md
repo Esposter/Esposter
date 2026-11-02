@@ -35,11 +35,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role after the change                                       |
-| :---------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`           | Laid out by the fitted rects, its icons drawn, Paimon by it |
-| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` | Gains each screen's block and roots                         |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`       | Gains each screen's screenshot references                   |
+| File                                                                           | Role after the change                                                                    |
+| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                  | Laid out by the fitted rects: its side bar, panel and the dialogs it opens, Paimon by it |
+| `packages/genshin-world/src/components/Menu/Paimon/Profile/Birthday/Index.vue` | The Birthday's dash, the plain button that sets the birthday                             |
+| `packages/genshin-world/src/components/Menu/Paimon/Profile/Namecard/Index.vue` | The namecard button in the signature's place, disabled while no namecard is held         |
+| `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`        | Gains each screen's block and roots                                                      |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`              | Gains each screen's screenshot references                                                |
 
 New files:
 
