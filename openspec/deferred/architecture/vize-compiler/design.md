@@ -1,6 +1,6 @@
 # Vize compiler
 
-Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one is reduced to a draft report in the Vue type check change, so the library builds and Vitest keep `unplugin-vue`.
+Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one is reduced to an issue on the Vize repository (#11455, #11456 and #11457), so the library builds and Vitest keep `unplugin-vue`.
 
 ## Blockers
 
@@ -8,7 +8,7 @@ Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in t
 
 With the Nuxt module installed, a page that calls `onPrehydrate` or renders Nuxt's own `NuxtTime` answers HTTP 500 with `NUXT_E1006`: "To transform a callback into a string, `onPrehydrate` must be processed by the Nuxt build pipeline." The first try blamed Vize for compiling Nuxt's `nuxt-time.vue` from `node_modules`, and excluding every `node_modules` component changed nothing. The newest release shows why. One `onPrehydrate` call in a component's own script fails the same way, on Nuxt 4 and on the Nuxt 5 nightly, in development and in a production build. Nuxt 3 is not affected.
 
-Nuxt's prehydrate transform is an object hook with an id filter that the bundler checks before the handler runs. Vize's bridge changes the id that the handler receives and leaves the filter alone, so the transform never runs on a module that Vize compiled. A copy of the module with that one filter removed renders both the call and `NuxtTime`.
+Nuxt's prehydrate transform is an object hook with an id filter that the bundler checks before the handler runs. Vize's bridge changes the id that the handler receives and leaves the filter alone, so the transform never runs on a module that Vize compiled. A copy of the module with that one filter removed renders both the call and `NuxtTime`. The report is #11455.
 
 ### The Nuxt module's peer range stops short of Nuxt 5
 
@@ -22,9 +22,9 @@ The module's peer range is Nuxt 2 through 4, and the newest release keeps it. Th
 
 The library builds compile components through `unplugin-vue` in `getTsdownConfigurationVue`, which runs tsdown on rolldown. Vitest compiles through the same plugin in `getVuePlugins`. Vize's Vite plugin uses the `config`, `configResolved`, `configureServer`, `handleHotUpdate` and `apply: "build"` hooks, and rolldown does not call Vite's config hooks. The rolldown build can use only the rolldown entry of "@vizejs/unplugin". Its project lists it as a compatibility preview, and its README calls the Vite integration the most complete one. It builds components, and two behaviours that the build gets from `unplugin-vue` do not carry over.
 
-The first is `<style src>`. The rolldown entry drops the CSS of every `<style src>` block and prints no warning. The Vite plugin keeps it, and `unplugin-vue` needs the workaround in `vueStyleSrcPlugin`, which tracks unplugin-vue issue 201. CSS is a limited area of the rolldown entry. It writes no CSS file for plain CSS and hands only preprocessor blocks and CSS modules to the bundler.
+The first is `<style src>`. The rolldown entry drops the CSS of every `<style src>` block and prints no warning. The Vite plugin keeps it, and `unplugin-vue` needs the workaround in `vueStyleSrcPlugin`, which tracks unplugin-vue issue 201. The report is #11456. CSS is a limited area of the rolldown entry. It writes no CSS file for plain CSS and hands only preprocessor blocks and CSS modules to the bundler.
 
-The second is the TresJS elements. The TresJS packages pass the template compiler options that "@tresjs/core" ships, which hold an `isCustomElement` function. The rolldown entry has no "template" option. The Vite plugin accepts one and ignores the function, so `TresMesh` compiles as a component. The `customElements` option takes names and `*` patterns instead. With `customRenderer` set, a pattern such as `Tres*` compiles `TresMesh` as the renderer expects and keeps an imported `TresCanvas` a component. It cannot keep a `TresCanvas` that the app registers globally, because a pattern cannot exclude a name. That limit matters for the app's Nuxt build and not for the library builds, which import it.
+The second is the TresJS elements. The TresJS packages pass the template compiler options that "@tresjs/core" ships, which hold an `isCustomElement` function. The rolldown entry has no "template" option. The Vite plugin accepts one and ignores the function, so `TresMesh` compiles as a component. The `customElements` option takes names and `*` patterns instead. The report for the ignored function is #11457. With `customRenderer` set, a pattern such as `Tres*` compiles `TresMesh` as the renderer expects and keeps an imported `TresCanvas` a component. It cannot keep a `TresCanvas` that the app registers globally, because a pattern cannot exclude a name. That limit matters for the app's Nuxt build and not for the library builds, which import it.
 
 ## Revisit when
 
@@ -43,3 +43,4 @@ Each blocker has a fix that the repo's own setup passes: the Nuxt module renders
 ## Sources
 
 - [Vize repository](https://github.com/ubugeeei-prod/vize) — the repository of `@vizejs/nuxt`, from its npm metadata, which gives the peer range the blockers cite.
+- [Vize issue 11455](https://github.com/ubugeeei-prod/vize/issues/11455), [11456](https://github.com/ubugeeei-prod/vize/issues/11456) and [11457](https://github.com/ubugeeei-prod/vize/issues/11457) — the three compile-side reports, one per blocker the issues can close.
