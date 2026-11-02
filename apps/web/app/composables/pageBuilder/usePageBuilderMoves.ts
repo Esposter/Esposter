@@ -76,7 +76,7 @@ export const usePageBuilderMoves = <
   // `jscpd:ignore-end`
   const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
+  const { getEditingNodeId, getSelectedNodeId, setEditingNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
@@ -216,6 +216,10 @@ export const usePageBuilderMoves = <
       () => {
         const focus = getOpenDocument();
         setSelectedNodeId(resourceIdValue, focus ? getNodeIdAt(focus.kind, focus.document, focusPointer) : "");
+        // A text edit ends with the node it edits, or with a node above it that was removed, since its editor has nothing left to write into
+        const editingNodeId = getEditingNodeId(resourceIdValue);
+        if (editingNodeId && (!focus || getNodePointer(focus.kind, focus.document, editingNodeId) === undefined))
+          setEditingNodeId(resourceIdValue, "");
         if (title) announce(`Deleted ${title}`);
         return true;
       },

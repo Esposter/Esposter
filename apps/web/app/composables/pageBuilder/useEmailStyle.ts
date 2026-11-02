@@ -21,17 +21,18 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const { getSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  const target = computed(() => {
+  const getTarget = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);
     const document = getEmailDocument(resourceIdValue);
     if (!document) return undefined;
 
-    const pointer = getNodePointer(emailKind, document, getSelectedNodeId(resourceIdValue));
+    const pointer = getNodePointer(emailKind, document, nodeId);
     if (pointer === undefined) return undefined;
 
     const node = getBlockNode(document, pointer, emailKind.children);
     return node && { node, pointer, rootAttributes: document.root.props.attributes };
-  });
+  };
+  const target = computed(() => getTarget(getSelectedNodeId(toValue(resourceId))));
   const fields = computed(() => {
     const selectedTarget = target.value;
     const definition = selectedTarget && getBlockTypeDefinition(emailRegistry, selectedTarget.node.type);
@@ -49,17 +50,17 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
       };
     });
   });
-  const setField = (attribute: string, value: string) => {
-    const selectedTarget = target.value;
+  // A write lands on the node it names, which is the selected one unless the caller names the node its value was picked for
+  const setField = (attribute: string, value: string, nodeId = getSelectedNodeId(toValue(resourceId))) => {
+    const writeTarget = getTarget(nodeId);
     // Clearing a field the node never set has nothing to remove, so it records no edit
-    if (!selectedTarget || (value === "" && getBlockPropValue(selectedTarget.node.props, attribute) === undefined))
-      return;
+    if (!writeTarget || (value === "" && getBlockPropValue(writeTarget.node.props, attribute) === undefined)) return;
 
     applyEdit(
       toValue(resourceId),
-      [getEmailAttributeOperation(selectedTarget.pointer, attribute, value)],
+      [getEmailAttributeOperation(writeTarget.pointer, attribute, value)],
       value === "" ? "Reset style" : "Edit style",
-      value === "" ? undefined : `email-style:${selectedTarget.node.props.id}:${attribute}`,
+      value === "" ? undefined : `email-style:${writeTarget.node.props.id}:${attribute}`,
     ).match(noop, console.error);
   };
 

@@ -17,6 +17,19 @@ describe("pageBuilderBackgroundLayers", () => {
     expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([TEST_GRADIENT]);
   });
 
+  // A refused draft stays in its field, unsaved, and must stay there when an earlier layer is removed above it
+  test("removing an earlier layer keeps a later layer's unsaved draft", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(PageBuilderBackgroundLayers, { props: { modelValue: TEST_LAYERS } });
+    const [, secondLayerInput] = component.findAll("input");
+    secondLayerInput?.setValue("{");
+    const removeButton = component.findAll("button").find((button) => button.text() === "Remove");
+    await removeButton?.trigger("click");
+
+    expect(component.get("input").element.value).toBe("{");
+  });
+
   test("an added layer is not written until it holds a value", async () => {
     expect.hasAssertions();
 

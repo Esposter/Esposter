@@ -1,7 +1,14 @@
 // @vitest-environment nuxt
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import {
+  TEST_ID,
+  TEST_LABEL,
+  TEST_OTHER_ID,
+  TEST_ROOT,
+  TEST_THIRD_ID,
+  TEST_URL,
+} from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
@@ -17,6 +24,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderEditor", () => {
@@ -147,6 +155,40 @@ describe("pageBuilderEditor", () => {
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+
+    await component.trigger("keydown", { key: "Enter" });
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+  });
+
+  test("enter edits a selected email text block in place", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text }],
+                  id: TEST_THIRD_ID,
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: TEST_SECTION_ID,
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: emailKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 

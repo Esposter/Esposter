@@ -2,7 +2,6 @@
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { KeyAction } from "@/models/pageBuilder/KeyAction";
 import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
@@ -77,7 +76,7 @@ const startTextEdit = () => {
   const nodeId = getSelectedNodeId(resourceId);
   const nodePointer = currentDocument && getNodePointer(kind, currentDocument, nodeId);
   if (!currentDocument || nodePointer === undefined) return;
-  if (getBlockNode(currentDocument, nodePointer, kind.children)?.type !== WebpageNodeType.Text) return;
+  if (getBlockNode(currentDocument, nodePointer, kind.children)?.type !== kind.textType) return;
 
   setEditingNodeId(resourceId, nodeId);
 };

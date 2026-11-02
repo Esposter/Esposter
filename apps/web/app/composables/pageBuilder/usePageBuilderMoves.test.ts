@@ -134,6 +134,16 @@ describe(usePageBuilderMoves, () => {
     expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe("b");
   });
 
+  test("deleting a node ends a text edit on a node inside it", () => {
+    expect.hasAssertions();
+
+    const { deleteSelected, pageBuilderCanvasStore, resourceId } = setup("b");
+    pageBuilderCanvasStore.setEditingNodeId(resourceId, "f");
+    deleteSelected();
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+  });
+
   test("a move announces the node's new position among its siblings", () => {
     expect.hasAssertions();
 

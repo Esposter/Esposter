@@ -18,20 +18,18 @@ const { announce, kind, position, resourceId } = defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument } = pageBuilderDocumentStore;
+const { getHeldDocument } = pageBuilderDocumentStore;
+// The document the resource holds under either kind, as the shell's keyboard commands read it, so a webpage's and an email's toolbar act alike
+const getPageDocument = () => getHeldDocument(resourceId)?.document;
 const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
   kind,
-  () => getDocument(resourceId),
+  getPageDocument,
   () => resourceId,
   announce,
 );
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
-const { selectParent } = usePageBuilderSelection(
-  kind,
-  () => getDocument(resourceId),
-  () => resourceId,
-);
+const { selectParent } = usePageBuilderSelection(kind, getPageDocument, () => resourceId);
 const isDeleteOpen = ref(false);
 </script>
 

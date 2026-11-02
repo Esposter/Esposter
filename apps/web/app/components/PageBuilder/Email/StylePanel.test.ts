@@ -108,7 +108,7 @@ describe("pageBuilderEmailStylePanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
-    component.getComponent(PageBuilderEmailImageUploadField).vm.$emit("update", TEST_URL);
+    component.getComponent(PageBuilderEmailImageUploadField).vm.$emit("update", TEST_URL, TEST_OTHER_ID);
     await nextTick();
     const forId = component
       .findAll("label")
