@@ -1461,7 +1461,6 @@ useWorldSaveSync({
       @press="(id) => pressInteractable(id)"
       @restore-outcrop="restoreOutcropClaim(getWorldNow())"
     />
-    <!-- @TODO: no upstream issue — vize drops the events past the sixteenth from the event map of a component that declares models, so this layer waits to become a child (openspec/deferred/genshin/session-menu-layer/design.md) -->
     <MenuScreen
       v-model:screen-kind="screenKind"
       :account-avatar-url

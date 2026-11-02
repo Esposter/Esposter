@@ -2,7 +2,7 @@
 
 The exact code of the earlier build of the cut, as it stood when the package typecheck stopped at the event-map failure, kept here so the idea survives whatever becomes of the history it was read from. Any other type error under that failure was never seen. It was recorded from the commits `9fc42e9c70`, which moved the overlay layers into children, and `a92c786385`, which typed the children's props by their models; two later commits revert them.
 
-To build the cut once the [proposal](./proposal.md)'s trigger is met, create the menu child from the first block, replace the root's `MenuScreen` block with the mount in the second, and apply the import changes in the third. The third block is the root's whole diff in that build, and its hunks for the HUD, screens and workshop layers were redone and have landed differently, so only the menu hunks and the imports they free belong here. Read the recorded code as the build the [design](./design.md) judges, not as the answer: the design says what to keep and what to change.
+To build the cut anyway, should the [proposal](./proposal.md)'s measurement ever favour it, create the menu child from the first block, replace the root's `MenuScreen` block with the mount in the second, and apply the import changes in the third. The third block is the root's whole diff in that build, and its hunks for the HUD, screens and workshop layers were redone and have landed differently, so only the menu hunks and the imports they free belong here. Read the recorded code as the build the [design](./design.md) judges, not as the answer: the design says what to keep and what to change.
 
 ## The menu child
 
