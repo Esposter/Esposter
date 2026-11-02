@@ -86,8 +86,8 @@ describe(createTRPCWebSocketHandler, () => {
     expect.hasAssertions();
 
     const onOpen = vi.fn<(connection: TRPCWebSocketConnection<{ url?: string }>) => void>();
-    const { hooks } = createTRPCWebSocketHandler({ createContext, onOpen, router });
-    const webSocketAdapter = crossws({ hooks });
+    const { hooks: failingHooks } = createTRPCWebSocketHandler({ createContext, onOpen, router });
+    const failingWebSocketAdapter = crossws({ hooks: failingHooks });
     const closed = Promise.withResolvers<void>();
     const socket = new WebSocket(url);
     socket.addEventListener("close", () => {
@@ -96,7 +96,7 @@ describe(createTRPCWebSocketHandler, () => {
     const upgrade = once(server, "upgrade");
     const [request, upgradeSocket, head] = await upgrade;
 
-    await webSocketAdapter.handleUpgrade(request, upgradeSocket, head);
+    await failingWebSocketAdapter.handleUpgrade(request, upgradeSocket, head);
     await closed.promise;
 
     expect(onOpen).not.toHaveBeenCalled();

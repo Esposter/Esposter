@@ -35,7 +35,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         // A context that never built was never opened, so this close has no onOpen to answer. Its failure is logged
         // When the peer opened
         await peerConnection.context.match(
-          (context) => getResultAsync(async () => onClose?.({ context, peer })).match(noop, console.error),
+          (context) => getResultAsync(() => Promise.resolve(onClose?.({ context, peer }))).match(noop, console.error),
           noop,
         );
       },
@@ -51,27 +51,29 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         // The context tRPC builds for the connection's calls stays inside tRPC, so the callbacks get one of their
         // Own from the same factory. The client is registered before it is awaited, so no message a peer sends
         // While it builds is lost
-        const context = getResultAsync(async () =>
-          createContext({
-            info: {
-              accept: null,
-              calls: [],
-              connectionParams: null,
-              isBatchCall: false,
-              signal: new AbortController().signal,
-              type: "unknown",
-              url: new URL(peer.request.url),
-            },
-            req: request,
-            res: client,
-          }),
+        const context = getResultAsync(() =>
+          Promise.resolve(
+            createContext({
+              info: {
+                accept: null,
+                calls: [],
+                connectionParams: null,
+                isBatchCall: false,
+                signal: new AbortController().signal,
+                type: "unknown",
+                url: new URL(peer.request.url),
+              },
+              req: request,
+              res: client,
+            }),
+          ),
         );
         peerConnections.set(peer.id, { client, context });
         webSocketServer.addConnection(client, request);
         // Crossws never awaits this hook, so a failure is logged here rather than thrown. A context that fails is
         // Answered and closed by tRPC on the same client, and takes no onOpen with it
         await context
-          .andThen((value) => getResultAsync(async () => onOpen?.({ context: value, peer })))
+          .andThen((value) => getResultAsync(() => Promise.resolve(onOpen?.({ context: value, peer }))))
           .match(noop, console.error);
       },
     },
