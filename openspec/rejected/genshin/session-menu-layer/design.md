@@ -28,6 +28,18 @@ Neither shape was built. The counts come from the real block and the real compos
 
 A shape that gathers many events into one component forwards them, and that is the shape the checker's defect fails on. The defect did not decide the outcome. The shapes that pay would have far fewer events, so the defect would not have stopped them either.
 
+## The checker's limit is gone, and the answer is the same
+
+The first version of this decision leaned on the checker's cap of about fourteen distinct events per component, which the menu's 33 page events exceeded. The cap was a defect and is fixed upstream, so a child can now hold any number of events, and the decision is re-read without it: the measurements above never used it. The recorded child forwards more than seventy props and more than twenty events unchanged, holds no state and no logic, and costs more than twice the lines the root sheds. The shapes that would pay (a bundle of the seven shared props, pages that own their composables) were counted on the real block and move wiring without removing it.
+
+**Reopen it when one of these changes, and not for the limit:**
+
+- A page stops reading the root's saved state, so a composable can move into the page without taking a dozen inputs from the root.
+- The pages' shared props shrink to a set small enough that one bundle takes a third of the block's bindings and not a tenth.
+- `MenuScreen` stops reading its pages as the slots of a single usage, so a page can be a sibling component without a forwarding hop.
+
+A fresh measurement of the block's bindings and each composable's inputs is the test, as above; a build is not.
+
 ## Key files
 
 | Path                                                                        | Role                                                                      |

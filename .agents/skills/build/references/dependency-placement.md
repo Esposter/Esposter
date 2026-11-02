@@ -16,6 +16,14 @@ tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDepend
 
 **A `peerDependencies` entry covers everything — keep the dep there and nowhere else.** pnpm's `auto-install-peers` installs peers into the workspace, so they resolve for the package's own build and tests as well as for consumers; a second listing is dead weight that drifts. The exception is an optional peer, one `peerDependenciesMeta` marks `optional`: pnpm leaves those out, so a package whose own tests import one lists it under `devDependencies` too. `scripts/src/workspace/peerDependencies.test.ts` fails on a required peer listed twice. Which imports have to be peers in the first place is the list above.
 
+## Where a tool lives: the root or the package
+
+**A tool that checks or runs the whole workspace is listed once, in the root manifest; a tool a package's own build names is listed in that package.** `typescript`, `tsrs`, `vitest`, `oxlint`, `eslint`, `knip` and `vize` are the first kind: a package's `typecheck` script is `tsrs --fast --runExternalCode` and the package lists none of them, since pnpm puts the root's binaries on the path of every workspace script and one version serves every package. `tsdown` and `vue-tsc` are the second kind: `tsdown` builds the package, and the declaration build hands `.vue` declarations to `vue-tsc` by name, so each package that builds lists them.
+
+**A tool that loads a plugin by name resolves it from where the tool is installed, so the plugin and anything it must share with the project are root dependencies too.** `tsrs` loads `vize` from each package's `contentMappers`. The mapper compares the `vue` it resolves from the project with the `vue` it resolves from where `vize` is installed, and when they differ it falls back, silently, to helpers that lack what a library component's attributes need. The root therefore lists `vue` from the catalog beside `vize`, and the root's knip entry ignores both, since no root code imports either. Listing `vue` in a library package would not help: the comparison is between the project and `vize`'s install, and a library is neither.
+
+**Not settled by preference, so not reopened by it.** Per-package `vize` (each Vue package and the app listing `vize` and `vue` together) was weighed and not taken: it states a version of the tool in several manifests for a check that is already run from the root, and removes only two knip ignores. It becomes the right answer when a package must check with a different `vize` than the rest, which no package does.
+
 ## Patterns, not bare names
 
 Anything handed to `deps` goes through `getPackagePatterns`. A bare name never matches a subpath import, and `drizzle-orm/pg-core`, `@electric-sql/pglite/contrib/pg_trgm` and `vitest/node` are all reached only that way. A list passed verbatim misses exactly those and the failure looks like an unrelated missing export.
