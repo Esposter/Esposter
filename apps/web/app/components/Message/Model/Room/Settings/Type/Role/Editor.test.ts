@@ -41,7 +41,7 @@ describe("messageModelRoomSettingsTypeRoleEditor", () => {
     expect(component.find('[role="status"]').exists()).toBe(false);
   });
 
-  // UpdateRole refuses a role at or above the reader's top role, so the switches are held for a reader who does not
+  // `UpdateRole` refuses a role at or above the reader's top role, so the switches are held for a reader who does not
   // Outrank the role, and left to their own holds for one who does
   test.each([
     ["holds every switch of a role the reader's top role does not outrank", role.position, true],
@@ -52,7 +52,9 @@ describe("messageModelRoomSettingsTypeRoleEditor", () => {
     trpcMsw.role.readMyPermissions.query(() => [
       { isRoomOwner: false, permissions: 0n, roomId: role.roomId, topRolePosition },
     ]);
-    await useRoleStore().readMyPermissions({ roomIds: [role.roomId] });
+    const roleStore = useRoleStore();
+    const { readMyPermissions } = roleStore;
+    await readMyPermissions({ roomIds: [role.roomId] });
     const component = await mountSuspended(MessageModelRoomSettingsTypeRoleEditor, {
       props: { role, roomId: role.roomId },
     });

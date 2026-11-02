@@ -25,14 +25,16 @@ describe("messageModelRoomSettingsTypeRoleListIndex", () => {
     updatedAt: new Date(0),
   });
 
-  // DeleteRole refuses a role at or above the reader's top role, so a row above it is listed without its Delete
+  // `DeleteRole` refuses a role at or above the reader's top role, so a row above it is listed without its Delete
   test("offers Delete only for a role the reader's top role outranks", async () => {
     expect.hasAssertions();
 
     trpcMsw.role.readMyPermissions.query(() => [
       { isRoomOwner: false, permissions: RoomPermission.ManageRoles, roomId, topRolePosition: 2 },
     ]);
-    await useRoleStore().readMyPermissions({ roomIds: [roomId] });
+    const roleStore = useRoleStore();
+    const { readMyPermissions } = roleStore;
+    await readMyPermissions({ roomIds: [roomId] });
     const component = await mountSuspended(MessageModelRoomSettingsTypeRoleListIndex, {
       props: { roles: [createRole(1), createRole(5)], roomId },
     });
