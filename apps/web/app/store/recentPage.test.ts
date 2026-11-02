@@ -13,8 +13,7 @@ describe(useRecentPageStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    vi.useFakeTimers();
-    vi.setSystemTime(0);
+    vi.useFakeTimers({ now: 0 });
   });
 
   afterEach(() => {
@@ -46,7 +45,7 @@ describe(useRecentPageStore, () => {
     const { visitPage } = recentPageStore;
     visitPage(path);
     visitPage(path);
-    vi.setSystemTime(Temporal.Duration.from({ days: 91 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 91 }));
     visitPage(`${path}1`);
 
     expect(rankedRecentPages.value.map((recentPage) => recentPage.path)).toStrictEqual([`${path}1`, path]);

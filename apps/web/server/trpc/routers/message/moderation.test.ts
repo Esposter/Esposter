@@ -285,7 +285,7 @@ describe("moderationRouter", () => {
 
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
-    vi.setSystemTime(durationMs);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(durationMs));
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceUnmute });
 
     const result = await moderationCaller.readModerationLog({
@@ -310,7 +310,7 @@ describe("moderationRouter", () => {
       targetUserId: firstMember.id,
       type: AdminActionType.ForceMute,
     });
-    vi.setSystemTime(durationMs);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(durationMs));
     await moderationCaller.executeAdminAction({
       roomId,
       targetUserId: secondMember.id,
@@ -404,7 +404,7 @@ describe("moderationRouter", () => {
     const firstMember = await createMember();
     const secondMember = await createMember();
     await moderationCaller.createModerationNote({ note, roomId, targetUserId: firstMember.id });
-    vi.setSystemTime(durationMs);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(durationMs));
     await moderationCaller.createModerationNote({ note, roomId, targetUserId: secondMember.id });
 
     const result = await moderationCaller.readModerationNotes({ roomId, targetUserId: secondMember.id });
@@ -419,7 +419,7 @@ describe("moderationRouter", () => {
     const member = await createMember();
     const noteCount = 2;
     for (let i = 0; i < noteCount; i++) {
-      vi.setSystemTime(i);
+      vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(i));
       // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each note takes the clock set just before it
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
     }

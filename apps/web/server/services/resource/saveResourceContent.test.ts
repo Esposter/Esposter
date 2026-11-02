@@ -513,7 +513,7 @@ describe(saveResourceContent, () => {
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
 
     // Past the grace window the upload restarted, so the dropped asset is counted rather than kept
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ASSET_GRACE_MS));
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);

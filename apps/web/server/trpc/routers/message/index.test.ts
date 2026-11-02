@@ -1018,7 +1018,7 @@ describe("messageRouter", () => {
       roomId,
     });
     assert(sasEntity);
-    vi.setSystemTime(WRITE_SAS_DURATION_MS + 1);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS + 1));
 
     await expect(
       messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId }),

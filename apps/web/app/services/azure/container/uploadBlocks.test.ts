@@ -107,7 +107,7 @@ describe(uploadBlocks, () => {
 
     vi.useFakeTimers({ now: 0 });
     const liveSasUrl = getExpectedWriteSasUrl(blobUrl);
-    vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS / 2));
     const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>((url) => {
       const expiresOn = new Date(String(new URL(url).searchParams.get("se")));
       return Promise.resolve(new Response(null, { status: expiresOn < new Date() ? 403 : 200 }));

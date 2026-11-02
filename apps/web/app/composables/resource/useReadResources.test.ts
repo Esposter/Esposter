@@ -52,7 +52,7 @@ describe(useReadResources, () => {
     const updatedFilter = ref<"" | ResourceUpdatedFilter>(ResourceUpdatedFilter.Last7Days);
     const { readResources } = useReadResources({ updatedFilter });
     await readResources(firstOptions);
-    vi.setSystemTime(new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 1 }));
     await readResources(secondOptions);
 
     expect(countHandler).toHaveBeenCalledTimes(1);

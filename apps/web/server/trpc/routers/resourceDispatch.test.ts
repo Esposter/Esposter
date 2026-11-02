@@ -116,7 +116,7 @@ describe("resourceDispatchRouter", () => {
       { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) },
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
-    vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS / 2));
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, heldBytes]]));
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);

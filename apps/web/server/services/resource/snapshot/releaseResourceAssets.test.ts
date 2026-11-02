@@ -43,6 +43,7 @@ describe(releaseResourceAssets, () => {
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
   const assetBytes = new Uint8Array(1);
+  const graceElapsedAt = Temporal.Instant.fromEpochMilliseconds(ASSET_GRACE_MS);
   const getAssetUrl = (hash: string) => getResourceAssetUrl(getResourceFileBlobName(resource.id, hash));
   const getAssetContent = (...hashes: string[]) =>
     JSON.stringify({ sections: hashes.map((hash) => ({ image: getAssetUrl(hash), type: "image" })) });
@@ -110,7 +111,7 @@ describe(releaseResourceAssets, () => {
     collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -126,7 +127,7 @@ describe(releaseResourceAssets, () => {
     await writeVersion(1, getAssetContent(assetHash));
     await writeVersion(2, getAssetContent(assetHash));
     const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
@@ -139,7 +140,7 @@ describe(releaseResourceAssets, () => {
     collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await mockContext.db.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -155,7 +156,7 @@ describe(releaseResourceAssets, () => {
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
     const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
@@ -170,7 +171,7 @@ describe(releaseResourceAssets, () => {
     expect.hasAssertions();
 
     await uploadAsset(assetHash);
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -200,7 +201,7 @@ describe(releaseResourceAssets, () => {
     await uploadAsset(otherAssetHash);
     await writeVersion(1, getAssetContent(assetHash, otherAssetHash));
     const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(ASSET_GRACE_MS);
+    vi.setSystemTime(graceElapsedAt);
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 

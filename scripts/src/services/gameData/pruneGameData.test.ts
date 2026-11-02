@@ -32,9 +32,9 @@ describe(pruneGameData, () => {
 
     await writeObject(liveHash);
     await writeObject(oldHash);
-    vi.setSystemTime(99 * DAY_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(99 * DAY_MS));
     await writeObject(youngHash);
-    vi.setSystemTime(100 * DAY_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await pruneGameData({
       containerClient,
       isDryRun: false,
@@ -53,7 +53,7 @@ describe(pruneGameData, () => {
 
     const packBlobName = `${CHARACTER_PACKS_BLOB_PREFIX}/10000006/model.pmx`;
     await containerClient.getBlockBlobClient(packBlobName).upload(Buffer.from("{}"), 2);
-    vi.setSystemTime(100 * DAY_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await pruneGameData({ containerClient, isDryRun: false, liveObjects: [], now: 100 * DAY_MS });
 
     expect(result).toStrictEqual({ candidateCount: 0, deletedCount: 0, keptCount: 0 });

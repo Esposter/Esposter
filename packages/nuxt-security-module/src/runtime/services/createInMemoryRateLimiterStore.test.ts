@@ -28,7 +28,7 @@ describe(createInMemoryRateLimiterStore, () => {
       resetAt: INTERVAL_IN_MILLISECONDS,
     });
 
-    vi.setSystemTime(INTERVAL_IN_MILLISECONDS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(INTERVAL_IN_MILLISECONDS));
 
     await expect(store.increment(KEY, INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 1,
@@ -42,7 +42,7 @@ describe(createInMemoryRateLimiterStore, () => {
     const store = createInMemoryRateLimiterStore(MAX_ENTRIES);
     await store.increment(KEY, INTERVAL_IN_MILLISECONDS);
 
-    vi.setSystemTime(INTERVAL_IN_MILLISECONDS + 1);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(INTERVAL_IN_MILLISECONDS + 1));
 
     await expect(store.increment(KEY, INTERVAL_IN_MILLISECONDS)).resolves.toStrictEqual({
       count: 1,

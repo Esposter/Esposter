@@ -141,7 +141,7 @@ describe(publishGameData, () => {
       publication,
       scopes,
     });
-    vi.setSystemTime(100 * DAY_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await publishGameData({
       containerClientMap: createContainerClientMap(),
       currentLock: emptyLock,

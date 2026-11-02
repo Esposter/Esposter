@@ -30,7 +30,7 @@ describe(getResourceFilterKey, () => {
     expect.hasAssertions();
 
     const key = getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last7Days });
-    vi.setSystemTime(new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").add({ days: 1 }));
 
     expect(getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last7Days })).toBe(key);
     expect(getResourceFilterKey({ ...values, updatedFilter: ResourceUpdatedFilter.Last30Days })).not.toBe(key);

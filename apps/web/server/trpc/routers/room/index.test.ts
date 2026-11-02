@@ -158,7 +158,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     await roomCaller.createRoom({ name });
-    vi.setSystemTime(1);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(1));
     const newRoom = await roomCaller.createRoom({ name });
     const room = await roomCaller.readRoom();
 
@@ -536,7 +536,7 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(

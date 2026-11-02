@@ -131,7 +131,7 @@ describe("inviteRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
-    vi.setSystemTime(Temporal.Duration.from({ minutes: expireAfterMinutes + 1 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
     const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toBeUndefined();
@@ -155,7 +155,7 @@ describe("inviteRouter", () => {
       { createdAt: oneSecondIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
       { createdAt: epoch, id: usableInviteId, roomId: newRoom.id, userId },
     ]);
-    vi.setSystemTime(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 1 }));
     const lapsedPage = await inviteCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
 
     assert(lapsedPage.nextCursor);
