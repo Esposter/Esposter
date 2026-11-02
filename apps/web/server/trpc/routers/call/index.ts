@@ -90,6 +90,7 @@ export const baseCallRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "joinCall", {
       callSessionId: input,
       gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });
@@ -107,6 +108,7 @@ export const baseCallRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "leaveCall", {
       callSessionId: input,
       gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });
@@ -124,6 +126,7 @@ export const baseCallRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "videoChanged", {
       callSessionId: input,
       gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });
@@ -141,6 +144,7 @@ export const baseCallRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "handRaisedChanged", {
       callSessionId: input,
       gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });
@@ -158,6 +162,7 @@ export const baseCallRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "muteChanged", {
       callSessionId: input,
       gate: () => requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });

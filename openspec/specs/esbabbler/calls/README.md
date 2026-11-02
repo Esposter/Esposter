@@ -119,7 +119,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | `onJoinCall` / `onLeaveCall` / `onSetMuted` / `onSetCameraEnabled` / `onSetHandRaised` | authed             | subscriptions keyed by `callSessionId`                                                |
 | `knocker.onKnockCall` / `knocker.onKnockerAdmitted` / `knocker.onKnockerDismissed`     | creator / authed   | waiting-room subscriptions keyed by `callSessionId` — the knock feed is the creator's |
 
-The subscriptions above are gated when they open, and a call in a room also ends them when the subscriber leaves that room, by a leave, a kick or a ban, as the room's own streams end (`onWhileCallRoomMember`). A standalone call has no room to leave, so its subscriptions are gated at open alone, and a participant who leaves the call keeps them until the socket closes.
+The subscriptions above are gated when they open, and then end when the subscriber's access lapses. In a room, a call's subscriptions end when the subscriber leaves that room, by a leave, a kick or a ban, as the room's own streams end (`onWhileCallRoomMember`). A standalone call has no room to leave, so its subscriptions end when the subscriber's own session leaves the call: its `leaveCall`, or the LiveKit disconnect that calls it. Both leave with the same event every participant removal emits.
 
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
@@ -139,17 +139,17 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 ## Key files
 
-| File                                                             | Role                                                     |
-| :--------------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/callSessionsInMessage.ts` | session anchor table                                     |
-| `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)        |
-| `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)         |
-| `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                 |
-| `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership    |
-| `apps/web/server/api/webhooks/livekit.post.ts`                   | webhook backup for join/leave                            |
-| `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores              |
-| `apps/web/app/store/message/room/liveKit.ts`                     | LiveKit `Room` bridge                                    |
-| `apps/web/app/pages/calls/`                                      | standalone lobby (`index.vue`) + call route (`[id].vue`) |
+| File                                                             | Role                                                                        |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/callSessionsInMessage.ts` | session anchor table                                                        |
+| `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)                           |
+| `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)                            |
+| `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                                    |
+| `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership or a standalone leave |
+| `apps/web/server/api/webhooks/livekit.post.ts`                   | webhook backup for join/leave                                               |
+| `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                                 |
+| `apps/web/app/store/message/room/liveKit.ts`                     | LiveKit `Room` bridge                                                       |
+| `apps/web/app/pages/calls/`                                      | standalone lobby (`index.vue`) + call route (`[id].vue`)                    |
 
 ## Notes
 

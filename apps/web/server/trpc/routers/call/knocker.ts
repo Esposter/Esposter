@@ -57,6 +57,7 @@ export const knockerRouter = router({
     const events = await onWhileCallRoomMember(ctx.db, "knockCall", {
       callSessionId: input,
       gate: () => requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, input, "watch"),
+      sessionId: ctx.getSessionPayload.session.id,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });

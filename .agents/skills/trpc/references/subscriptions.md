@@ -10,6 +10,8 @@ The shared single-room subscription shape (member check + `roomIdSchema` input +
 onCreateFoo: getRoomEventSubscription(fooEventEmitter, "createFoo", ({ partitionKey }) => partitionKey),
 ```
 
+A stream that ends on a departure announced by another emitter composes `onUntilDeparture` (`server/services/events/`), which takes the `onDeparture` subscription that ends it. `onWhileMember` is that composition for a room's leave.
+
 - Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
 - **Deliberately not abstracted**: multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
 
