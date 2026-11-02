@@ -25,6 +25,7 @@ describe(createTRPCNuxtClient, () => {
     fail: t.procedure.mutation(() => {
       throw new TRPCError({ code: "BAD_REQUEST", message: " " });
     }),
+    pair: t.procedure.input(z.number()).mutation(({ input }) => ({ doubled: input * 2, input })),
     read: t.procedure.input(z.number()).query(({ input }) => read(input)),
   });
   const client = createTRPCNuxtClient<typeof router>({
@@ -82,6 +83,16 @@ describe(createTRPCNuxtClient, () => {
 
     await expect(first).resolves.toBe(0);
     await expect(second).resolves.toBe(-1);
+  });
+
+  test("a mutate shapes its own call's result by the entry's transform and pick", async () => {
+    expect.hasAssertions();
+
+    const { mutate: transformed } = client.pair.useMutation({ transform: (pair) => pair.doubled });
+    const { mutate: picked } = client.pair.useMutation({ pick: ["input"] });
+
+    await expect(transformed(2)).resolves.toBe(4);
+    await expect(picked(2)).resolves.toStrictEqual({ input: 2 });
   });
 
   test("#106 caches under a given query key", async () => {

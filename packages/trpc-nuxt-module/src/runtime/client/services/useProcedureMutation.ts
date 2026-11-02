@@ -19,8 +19,8 @@ export const useProcedureMutation = (
   return Object.assign(asyncData, {
     mutate: async (input: unknown) => {
       // The call's own request, which it resolves with. The entry cancels an earlier call's fetch when a later call runs,
-      // and holds the later call's data, so reading the entry would hand the earlier call the later result. The request
-      // takes the caller's signal and the timeout, never the entry's signal, which is the one a cancellation aborts
+      // And holds the later call's data, so reading the entry would hand the earlier call the later result. The request
+      // Takes the caller's signal and the timeout, never the entry's signal, which is the one a cancellation aborts
       const signals = [trpc?.signal, options.timeout === undefined ? undefined : AbortSignal.timeout(options.timeout)];
       const ownRequest = client.mutation(path, input, {
         ...trpc,
@@ -31,7 +31,13 @@ export const useProcedureMutation = (
       // A failure rejects with the error the entry wraps it in, as a caller has always been rejected with
       const [outcome] = await Promise.allSettled([ownRequest]);
       if (outcome.status === "rejected") throw createError(outcome.reason);
-      return outcome.value;
+      // The entry applies `transform` and `pick` to the data it holds, which this call's result never reaches, so they
+      // Shape the result here as the entry would have shaped it
+      const transformed = options.transform ? await options.transform(outcome.value) : outcome.value;
+      if (!options.pick) return transformed;
+      const picked: Record<string, unknown> = {};
+      for (const key of options.pick) picked[key] = (transformed as Record<string, unknown>)[key];
+      return picked;
     },
   });
 };
