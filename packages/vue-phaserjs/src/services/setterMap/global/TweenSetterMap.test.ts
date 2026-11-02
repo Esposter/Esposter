@@ -33,7 +33,7 @@ describe("tweenSetterMap", () => {
     sprite.destroy();
     for (const tween of scene.tweens.getTweensOf(sprite)) tween.update(0);
 
-    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith(expect.anything(), [sprite]);
     expect(emit).toHaveBeenCalledExactlyOnceWith("update:tween", undefined);
   });
 });
