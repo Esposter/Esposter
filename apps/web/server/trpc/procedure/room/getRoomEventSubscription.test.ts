@@ -4,6 +4,7 @@ import type { Device } from "#shared/models/auth/Device";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
+import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { roleEventEmitter } from "#server/services/role/events/roleEventEmitter";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
@@ -11,6 +12,7 @@ import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEve
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "#server/trpc/routers/message";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -109,6 +111,45 @@ describe(getRoomEventSubscription, () => {
     );
 
     expect(data).toStrictEqual(deleteMessageInput);
+  });
+
+  test("keeps yielding through another member's departure", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
+    const data = await getFirstEmit(
+      () => subscription,
+      () => {
+        roomEventEmitter.emit("leaveRoom", { roomId, sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });
+        roleEventEmitter.emit("createRole", [role, createDevice()]);
+        return Promise.resolve();
+      },
+    );
+
+    expect(data).toStrictEqual(role);
+  });
+
+  test("ends the stream when the subscriber leaves the room", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, roomId });
+    const subscription = await roleCaller.onCreateRole({ roomId });
+    const trigger = () => {
+      roomEventEmitter.emit("leaveRoom", { roomId, sessionId: crypto.randomUUID(), userId: getMockSession().user.id });
+      // The room still raises an event after the departure, which a stream still open would yield
+      roleEventEmitter.emit("createRole", [role, createDevice()]);
+      return Promise.resolve();
+    };
+    const result = await withAsyncIterator(
+      () => subscription,
+      async (iterator) => {
+        const [next] = await Promise.all([iterator.next(), trigger()]);
+        return next;
+      },
+    );
+
+    expect(result.done).toBe(true);
   });
 
   test("throws UNAUTHORIZED if not a member", async () => {

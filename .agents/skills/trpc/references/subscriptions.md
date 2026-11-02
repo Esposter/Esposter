@@ -4,7 +4,7 @@ Read when adding a subscription procedure, or deciding whether the caller of a m
 
 ## Room-scoped subscriptions — `getRoomEventSubscription`
 
-The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. A subscription whose body would only filter by room id and same-device must use it:
+The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. The member check runs once, when the stream opens, so the stream itself also ends when the subscriber leaves the room — through `onWhileMember` (`server/services/room/`), which every room-scoped stream reads through, including `onCreateMessage`. A subscription whose body would only filter by room id and same-device must use it:
 
 ```ts
 onCreateFoo: getRoomEventSubscription(fooEventEmitter, "createFoo", ({ partitionKey }) => partitionKey),

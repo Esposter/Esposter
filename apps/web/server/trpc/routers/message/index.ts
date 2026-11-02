@@ -13,7 +13,6 @@ import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
 import { generateWebPubSubClientAccessUrl } from "#server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
-import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
@@ -32,6 +31,7 @@ import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThre
 import { updateMessage } from "#server/services/message/updateMessage";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
+import { onWhileMember } from "#server/services/room/onWhileMember";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -357,7 +357,11 @@ export const baseMessageRouter = router({
     // Ahead of the entity every read serves (see createMessage), so a page can step past a message whose entity
     // Has not landed yet and never come back for it. Overlapping instead delivers such a message twice, which
     // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
-    const createdMessages = on(messageEventEmitter, "createMessage", { signal });
+    const createdMessages = onWhileMember(messageEventEmitter, "createMessage", {
+      roomId,
+      signal,
+      userId: ctx.getSessionPayload.user.id,
+    });
     if (lastEventId) {
       let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
       let hasMore = true;
