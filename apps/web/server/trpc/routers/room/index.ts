@@ -15,7 +15,6 @@ import { roomEventEmitter } from "#server/services/message/events/roomEventEmitt
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
-import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
@@ -23,7 +22,6 @@ import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipW
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { lockRoomRow } from "#server/services/room/lockRoomRow";
-import { trackMemberRoomIds } from "#server/services/room/trackMemberRoomIds";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -34,6 +32,7 @@ import { addProfanityFilterMiddleware } from "#server/trpc/middleware/addProfani
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "#server/trpc/procedure/getProfanityFilterProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
+import { getMemberRoomsProcedure } from "#server/trpc/procedure/room/getMemberRoomsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { categoryRouter } from "#server/trpc/routers/room/category";
@@ -48,7 +47,6 @@ import { readMembersByIdsInputSchema } from "#shared/models/db/room/ReadMembersB
 import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput";
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
-import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
@@ -256,25 +254,15 @@ export const baseRoomRouter = router({
 
       return userToRoom.roomId;
     }),
-  onDeleteRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
-    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
-
+  onDeleteRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
+      if (!ctx.memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       yield roomId;
     }
   }),
-  onJoinRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
-    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
-
+  onJoinRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload))
+      if (!ctx.memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload))
         continue;
       // One subscription spans every room the client is in, so the room the event happened in travels with it.
       // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
@@ -284,31 +272,22 @@ export const baseRoomRouter = router({
       yield { roomId, user: { ...user, displayName: user.name } };
     }
   }),
-  onLeaveRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+  onLeaveRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, input, signal }) {
     const { user } = ctx.getSessionPayload;
-    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: user.id });
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
       // The member's own departure still reaches its other devices as long as they listed the room: the device it
       // Did not leave from still shows the room, and the removal of the membership is what this event tells it
-      const isReachable = userId === user.id ? input.includes(roomId) : memberRoomIds.has(roomId);
+      const isReachable = userId === user.id ? input.includes(roomId) : ctx.memberRoomIds.has(roomId);
       if (!isReachable || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
       // To be looking at removes a member who never left it
       yield { roomId, userId };
     }
   }),
-  onUpdateRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
-    const memberRoomIds = trackMemberRoomIds(input, { signal, userId: ctx.getSessionPayload.user.id });
-
+  onUpdateRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
-      if (!memberRoomIds.has(data.id)) continue;
+      if (!ctx.memberRoomIds.has(data.id)) continue;
       yield data;
     }
   }),

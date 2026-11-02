@@ -6,6 +6,7 @@ The builders in `server/trpc/procedure/room/`:
 
 - `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
 - `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
+- `getMemberRoomsProcedure()` — a subscription over several rooms: verifies the caller is a member of every room listed, and hands the body `ctx.memberRoomIds`, the set tracked per event for the stream's lifetime.
 
 `rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
 

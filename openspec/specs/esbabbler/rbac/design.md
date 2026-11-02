@@ -68,10 +68,11 @@ The functions are split across three homes by who needs them. The two permission
 
 tRPC procedure builders in `server/trpc/procedure/room/`:
 
-| Guard                     | Use                                                             |
-| ------------------------- | --------------------------------------------------------------- |
-| `getMemberProcedure`      | Caller must be a room member — standard message/room operations |
-| `getPermissionsProcedure` | Caller must hold a specific `RoomPermission` — moderation/admin |
+| Guard                     | Use                                                               |
+| ------------------------- | ----------------------------------------------------------------- |
+| `getMemberProcedure`      | Caller must be a room member — standard message/room operations   |
+| `getPermissionsProcedure` | Caller must hold a specific `RoomPermission` — moderation/admin   |
+| `getMemberRoomsProcedure` | Caller must be a member of every listed room — multi-room streams |
 
 **A read is guarded by what it discloses, never by where it is rendered.** [Room settings](../room-settings/design.md) hides a panel the caller lacks the permission for, and that is presentation alone — the procedures behind it stay callable by any member who opens a console. So a read behind a permission-gated panel takes `getPermissionsProcedure` with the permission the panel names: the word filter's list is `ManageRoom` on both the read and the write, because a member who can read the banned words can spell around every one of them. The exception is a read whose data members already see elsewhere — the emoji list feeds the picker, the member list feeds the sidebar — where the panel is a management surface over public-to-the-room data and `getMemberProcedure` is the honest gate.
 
