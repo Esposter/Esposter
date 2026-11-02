@@ -216,7 +216,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .sort,
 .sort-toggle {
   position: absolute;
-  background: #ece5d8;
+  background: v-bind(GAME_CREAM);
 }
 .sort {
   top: calc(var(--unit) * 972);
