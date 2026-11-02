@@ -12,7 +12,7 @@ Shared models in `apps/web/shared/models/dataset/` (one type + schema per file, 
 interface DatasetColumn {
   name: string;
   title?: string; // the header a file prints in place of the name
-  type: DatasetColumnType; // ColumnType minus Computed — a computed column is served as the type it yields
+  type: DatasetColumnType; // one of the four types a dataset holds, never Computed — a computed column is served as the type it yields
 }
 
 interface Dataset {
