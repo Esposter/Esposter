@@ -28,7 +28,7 @@ import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
 import { getPaimonsBargainsGoods } from "#src/services/shop/getPaimonsBargainsGoods";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { GameScreen, ShopScreen } from "genshin-interface";
+import { GAME_CREAM, GameScreen, ShopScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 // What buying one offer leaves in the player's hands and in the shop's record
@@ -214,7 +214,13 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 <template>
   <!-- Paimon's Bargains, opened from the Paimon menu's Shop entry: the Fates the shop sells, and the characters and weapons of
        the month's rotation, each with its costs, limit and refresh, the count the player buys and the Buy button -->
-  <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.PaimonsBargains]">
+  <GameScreen
+    class="paimons-bargains"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="gameText[GameTextKey.PaimonsBargains]"
+    is-world-blurred
+  >
     <ShopScreen
       v-model:count="count"
       v-model:good-id="goodId"
@@ -258,8 +264,14 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 .paimons-bargains-shop :deep(.good-name) {
   top: auto;
   bottom: calc(var(--unit) * 105);
+  color: v-bind(GAME_CREAM);
   font-size: calc(var(--unit) * 30);
   line-height: calc(var(--unit) * 37);
+}
+
+/* A card with no limit line names itself where the reference's limit line stands, just above its price band */
+.paimons-bargains-shop :deep(.good:not(:has(.good-limit)) .good-name) {
+  bottom: calc(var(--unit) * 64);
 }
 
 .paimons-bargains-shop :deep(.good-limit) {
@@ -270,12 +282,23 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 
 .paimons-bargains-shop :deep(.good-price) {
   height: calc(var(--unit) * 57);
-  background: #465168;
+  background: #4f586d;
   font-size: calc(var(--unit) * 28);
 }
 
 .paimons-bargains-shop :deep(.good-price .price-icon) {
   width: calc(var(--unit) * 22);
   height: calc(var(--unit) * 22);
+}
+
+/* The world behind the shop is the reference's own: its margins measure dark at the top and light at the bottom, so the
+   game's blur wash is replaced with the colour each height of the clear margins reads */
+.paimons-bargains :deep(.world-wash) {
+  background: linear-gradient(
+    #464a4f calc(var(--unit) * 120),
+    #44464a calc(var(--unit) * 460),
+    #8f8d86 calc(var(--unit) * 640),
+    #8f8d86
+  );
 }
 </style>
