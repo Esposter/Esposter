@@ -180,7 +180,7 @@ https://github.com/Esposter/Esposter/blob/a92c7863855db4ea45ff1cefce698b6c7f9039
 
 ## Isolation
 
-One change at a time from the reproduction. Errors on `vize` 0.644.0 with `tsrs`:
+One change at a time from the reproduction. Errors on `vize` 0.644.0 with `tsrs`. The reproduction pins `vize` 0.645.0, and its helper text is the same as 0.644.0's (see "Checks of the fix"), but these counts were not re-run on 0.645.0:
 
 | Declared events            | Errors |
 | :------------------------- | -----: |
