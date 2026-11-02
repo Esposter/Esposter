@@ -6,11 +6,12 @@ import { installDownloadedHost } from "#src/services/cli/installDownloadedHost";
 import { writeLine } from "#src/services/cli/writeLine";
 import {
   DEFAULT_HOSTNAME,
+  PAIRING_CODE_BYTE_LENGTH,
   PAIRING_CODE_PARAMETER,
   PAIRING_HASH_PARAMETER,
   SCHEME_PAIRING_CODE_DURATION_MS,
 } from "#src/services/constants";
-import { PRINTED_PAIRING_CODE_DURATION_MS, SECRET_BYTE_LENGTH } from "#src/services/device/constants";
+import { PRINTED_PAIRING_CODE_DURATION_MS } from "#src/services/device/constants";
 import { getStateDirectory } from "#src/services/device/getStateDirectory";
 import { readHostKey } from "#src/services/device/readHostKey";
 import { createClaudeAgentSdkDriver } from "#src/services/drivers/claudeAgentSdk/createClaudeAgentSdkDriver";
@@ -77,7 +78,7 @@ export const serveHost = async ({ hostname, origin, port, schemeLaunch }: ServeH
     if (schemeLaunch.code) server.addPairingCode(schemeLaunch.code, SCHEME_PAIRING_CODE_DURATION_MS);
     process.stdout.write("The host is running. Keep this window open.\n\nTo stop, close this window.\n");
   } else {
-    const code = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
+    const code = randomBytes(PAIRING_CODE_BYTE_LENGTH).toString("base64url");
     server.addPairingCode(code, PRINTED_PAIRING_CODE_DURATION_MS);
     const hostAddress = `ws://${reachableHostname}:${server.port}`;
     const pairingUrl = `${origin}${RoutePath.Genshin}#${new URLSearchParams({

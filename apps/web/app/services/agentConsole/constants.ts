@@ -64,8 +64,6 @@ export const HOST_INSTALLER_URL = `${RoutePath.Github}/releases/latest/download/
 export const LOCAL_HOST_ADDRESS = `ws://${DEFAULT_HOSTNAME}:${DEFAULT_PORT}`;
 // The size a shell starts at, before its terminal has measured the space it is drawn in
 export const INITIAL_SHELL_SIZE = { cols: 80, rows: 24 } as const;
-// The one-time code a page's Connect opens the host with
-export const PAIRING_CODE_BYTE_LENGTH = 32;
 // The side pane's width until the reader drags its edge, and the range that drag is held to
 export const AGENT_CONSOLE_PANE_DEFAULT_WIDTH = 420;
 export const AGENT_CONSOLE_PANE_MIN_WIDTH = 240;

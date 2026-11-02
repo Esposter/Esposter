@@ -11,6 +11,8 @@ export const DEFAULT_PORT = 7437;
 export const HOST_SCHEME: string = `${SITE_NAME.toLowerCase()}-host`;
 // The one-time pairing code, in the scheme link's query and in the fragment of the link the host prints
 export const PAIRING_CODE_PARAMETER = "code";
+// The random bytes in a one-time pairing code, which a page's Connect makes and the host prints
+export const PAIRING_CODE_BYTE_LENGTH = 32;
 // The page's URL fragment that carries a host's address on the link the host prints, read and cleared on load
 export const PAIRING_HASH_PARAMETER = "host";
 // How much of a shell's latest output the host keeps to replay to a page that connects while it runs, and the page

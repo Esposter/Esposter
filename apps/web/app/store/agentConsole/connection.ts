@@ -16,7 +16,6 @@ import {
   LOCAL_HOST_ADDRESS,
   MAX_RECONNECT_DELAY_MS,
   MIN_RECONNECT_DELAY_MS,
-  PAIRING_CODE_BYTE_LENGTH,
 } from "@/services/agentConsole/constants";
 import { reactToEvents } from "@/services/agentConsole/reactToEvents";
 import { AgentConsoleThemeMap } from "@/services/agentConsole/themes/AgentConsoleThemeMap";
@@ -41,6 +40,7 @@ import {
   HandshakeMessageType,
   HOST_SCHEME,
   HostCloseCode,
+  PAIRING_CODE_BYTE_LENGTH,
   PAIRING_CODE_PARAMETER,
   SCHEME_PAIRING_CODE_DURATION_MS,
   serverMessageSchema,
@@ -222,6 +222,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     if (!agentConsoleSessionStore.sessions.some(({ id }) => id === agentConsoleSessionStore.currentSessionId))
       agentConsoleSessionStore.currentSessionId = "";
     if (connections.value.length > 0) return;
+    // A pairing still under way leaves with the last host, its socket closed too, or it would admit the host it reaches
+    if (pairing.value) disconnectOne(pairing.value.connectionId);
     pairing.value = undefined;
     agentConsolePanelStore.isConsoleOpen = false;
     agentConsolePanelStore.isPauseMenuOpen = false;
