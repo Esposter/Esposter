@@ -19,6 +19,12 @@ export const IsoSetterMap = {
     if (value === undefined) return;
     gameObject.setFillStyle(value, gameObject.fillLeft, gameObject.fillRight);
   },
+  // The size and height are the shape's width and height, and its display origin is computed from them at creation
+  [IsoSetter.Height]: (gameObject) => (value) => {
+    if (value === undefined) return;
+    gameObject.height = value;
+    gameObject.updateDisplayOrigin();
+  },
   [IsoSetter.Projection]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setProjection(value);
@@ -35,18 +41,29 @@ export const IsoSetterMap = {
     if (value === undefined) return;
     gameObject.setFaces(value, gameObject.showLeft, gameObject.showRight);
   },
+  [IsoSetter.Size]: (gameObject) => (value) => {
+    if (value === undefined) return;
+    gameObject.width = value;
+    gameObject.updateDisplayOrigin();
+  },
 } as const satisfies SetterMap<
-  Pick<IsoBoxConfiguration, "fillLeft" | "fillRight" | "fillTop" | "projection" | "showLeft" | "showRight" | "showTop">,
+  Pick<
+    IsoBoxConfiguration,
+    "fillLeft" | "fillRight" | "fillTop" | "height" | "projection" | "showLeft" | "showRight" | "showTop" | "size"
+  >,
   {
     fillLeft: number;
     fillRight: number;
     fillTop: number;
+    height: number;
     setFaces: (showTop?: boolean, showLeft?: boolean, showRight?: boolean) => unknown;
     setFillStyle: (fillTop?: number, fillLeft?: number, fillRight?: number) => unknown;
     setProjection: (value: number) => unknown;
     showLeft: boolean;
     showRight: boolean;
     showTop: boolean;
+    updateDisplayOrigin: () => unknown;
+    width: number;
   },
   IsoBoxEventEmitsOptions
 >;
