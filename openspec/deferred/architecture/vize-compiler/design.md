@@ -1,6 +1,6 @@
 # Vize compiler
 
-Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one is reduced to an issue on the Vize repository (#11455, #11456 and #11457), so the library builds and Vitest keep `unplugin-vue`.
+Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one was reduced to an issue on the Vize repository. The Nuxt blocker is open as #11455. The other two were closed as outside the documented scope and options (#11456 and #11457). So the library builds and Vitest keep `unplugin-vue`.
 
 ## Blockers
 
@@ -22,13 +22,13 @@ The module's peer range is Nuxt 2 through 4, and the newest release keeps it. Th
 
 The library builds compile components through `unplugin-vue` in `getTsdownConfigurationVue`, which runs tsdown on rolldown. Vitest compiles through the same plugin in `getVuePlugins`. Vize's Vite plugin uses the `config`, `configResolved`, `configureServer`, `handleHotUpdate` and `apply: "build"` hooks, and rolldown does not call Vite's config hooks. The rolldown build can use only the rolldown entry of "@vizejs/unplugin". Its project lists it as a compatibility preview, and its README calls the Vite integration the most complete one. It builds components, and two behaviours that the build gets from `unplugin-vue` do not carry over.
 
-The first is `<style src>`. The rolldown entry drops the CSS of every `<style src>` block and prints no warning. The Vite plugin keeps it, and `unplugin-vue` needs the workaround in `vueStyleSrcPlugin`, which tracks unplugin-vue issue 201. The report is #11456. CSS is a limited area of the rolldown entry. It writes no CSS file for plain CSS and hands only preprocessor blocks and CSS modules to the bundler.
+The first is `<style src>`. The rolldown entry drops the CSS of every `<style src>` block and prints no warning. The Vite plugin keeps it, and `unplugin-vue` needs the workaround in `vueStyleSrcPlugin`, which tracks unplugin-vue issue 201. It was reported as #11456 and closed: the guides call the rolldown entry experimental and out of scope. CSS is a limited area of the rolldown entry. It writes no CSS file for plain CSS and hands only preprocessor blocks and CSS modules to the bundler.
 
-The second is the TresJS elements. The TresJS packages pass the template compiler options that "@tresjs/core" ships, which hold an `isCustomElement` function. The rolldown entry has no "template" option. The Vite plugin accepts one and ignores the function, so `TresMesh` compiles as a component. The `customElements` option takes names and `*` patterns instead. The report for the ignored function is #11457. With `customRenderer` set, a pattern such as `Tres*` compiles `TresMesh` as the renderer expects and keeps an imported `TresCanvas` a component. It cannot keep a `TresCanvas` that the app registers globally, because a pattern cannot exclude a name. That limit matters for the app's Nuxt build and not for the library builds, which import it.
+The second is the TresJS elements. The TresJS packages pass the template compiler options that "@tresjs/core" ships, which hold an `isCustomElement` function. The rolldown entry has no "template" option. The Vite plugin accepts one and ignores the function, so `TresMesh` compiles as a component. The `customElements` option takes names and `*` patterns instead. The ignored function was reported as #11457 and closed: the Vite plugin guide documents `customElements` for this and lists plugin-option parity as not complete yet. With `customRenderer` set, a pattern such as `Tres*` compiles `TresMesh` as the renderer expects and keeps an imported `TresCanvas` a component. It cannot keep a `TresCanvas` that the app registers globally, because a pattern cannot exclude a name. That limit matters for the app's Nuxt build and not for the library builds, which import it.
 
 ## Revisit when
 
-Each blocker has a fix that the repo's own setup passes: the Nuxt module renders the home page from a clean start while Nuxt's runtime components keep Nuxt's build transforms, the module's peer range covers the Nuxt in use, Nuxt drops `@vitejs/plugin-vue` from its builder, and the rolldown entry of the Vize plugin keeps or reports the CSS of a `<style src>` block while the library builds pass with the TresJS elements settled.
+Each blocker has a fix that the repo's own setup passes: the Nuxt module renders the home page from a clean start while Nuxt's runtime components keep Nuxt's build transforms, the module's peer range covers the Nuxt in use, Nuxt drops `@vitejs/plugin-vue` from its builder, and the rolldown entry of the Vize plugin leaves its experimental, out-of-scope status and keeps the CSS of a `<style src>` block while the library builds pass with the TresJS elements settled.
 
 ## Key files
 
@@ -43,4 +43,4 @@ Each blocker has a fix that the repo's own setup passes: the Nuxt module renders
 ## Sources
 
 - [Vize repository](https://github.com/ubugeeei-prod/vize) — the repository of `@vizejs/nuxt`, from its npm metadata, which gives the peer range the blockers cite.
-- [Vize issue 11455](https://github.com/ubugeeei-prod/vize/issues/11455), [11456](https://github.com/ubugeeei-prod/vize/issues/11456) and [11457](https://github.com/ubugeeei-prod/vize/issues/11457) — the three compile-side reports, one per blocker the issues can close.
+- [Vize issue 11455](https://github.com/ubugeeei-prod/vize/issues/11455), [11456](https://github.com/ubugeeei-prod/vize/issues/11456) and [11457](https://github.com/ubugeeei-prod/vize/issues/11457) — the three compile-side reports, of which 11455 is open and the other two were closed as documented scope.

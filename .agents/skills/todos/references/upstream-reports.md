@@ -15,7 +15,7 @@ A report is a small, checked experiment that someone else can run in a minute. I
 ## Section order
 
 1. **Summary.** One or two sentences: what fails, and which tool accepts the same input.
-2. **Context.** The opening sentence, and for a set the batch list ("A set found in one pass"). Nothing about this repository except the link in "Real occurrence".
+2. **Context.** Under a `## Context` heading, for a set: the numbered steps of the migration, the step this issue is from, and the batch list ("A set found in one pass"). Nothing about this repository except the link in "Real occurrence".
 3. **Environment.** Exact versions, the operating system, and the source of truth (the tool that accepts the input today).
 4. **Reproduction.** The manifest, the configuration and each file in full, then the command.
 5. **Actual.** The error lines, verbatim. A position in generated code is said to be in generated code.
@@ -32,23 +32,42 @@ A report that names the wrong trigger costs the maintainer a day. These steps ke
 
 1. **Build the reproduction as a standalone project** outside the repository: its own manifest with exact versions, no workspace and no name from this repository.
 2. **Run the target and the source of truth.** The report is the difference between them.
-3. **Prove the source of truth reads the file.** Add one deliberate real error and check that both tools report it.
-4. **Reduce** until removing any line makes the difference vanish, then rename to `Foo`, `Bar` and `Baz` and run it again. The rename is part of the reduction: a name that carried meaning, a literal type or a one-line shape that carried the trigger shows up as a reproduction that now passes. Keep every line that the passing run proves necessary, even when it looks like style (a block body in place of an expression body, a multi-line attribute).
-5. **Change one thing at a time and record each result.** The first guess about the trigger is often wrong, and only the table shows which condition counts.
-6. **Run the oldest version the project still installs, and some between.** Write "regression" only when an older version passes. Run the newest release last: a fix may already be out, and releases can come within hours of each other.
-7. **Find the cause in the source.** The source is public, so clone it at the tag of the version tested into a scratch directory and read it before writing. Follow the generated output back to the code that wrote it, and quote that line. A reduction is the cheaper half of the maintainer's work; the line is the other half. Change the code mentally or in the scratch clone to confirm the cause: a fix that does not remove the symptom names the wrong line. Do not open a pull request unless the owner asks.
-8. **Check the claim against the real code.** Count the real files that match the stated trigger and the ones that report it. List the ones that do not agree in "Not known".
-9. **Search the tracker** (open and closed, issues and pull requests) by the symptom words, the diagnostic code and the generated names, and read each near match through to its fix and the release that holds it. A search that returns nothing is not proof. Name the nearest results and say why each differs.
-10. **Understand every gap found in the same pass before filing any.** A report filed early names a trigger the next gap may overturn.
-11. **State what was not checked.**
+3. **Rule out configuration.** Read the target's documentation for the option and for the scope first. Then change the project's own setup the way the documentation or the error suggests: declare the dependency the tool resolves, or set the documented option. File only a symptom that stays. A symptom that an ordinary setting removes is configuration, and a feature the documentation calls experimental or out of scope is not a defect. Neither is filed.
+4. **Prove the source of truth reads the file.** Add one deliberate real error and check that both tools report it.
+5. **Reduce** until removing any line makes the difference vanish, then rename to `Foo`, `Bar` and `Baz` and run it again. The rename is part of the reduction: a name that carried meaning, a literal type or a one-line shape that carried the trigger shows up as a reproduction that now passes. Keep every line that the passing run proves necessary, even when it looks like style (a block body in place of an expression body, a multi-line attribute).
+6. **Change one thing at a time and record each result.** The first guess about the trigger is often wrong, and only the table shows which condition counts.
+7. **Run the oldest version the project still installs, and some between.** Write "regression" only when an older version passes. Run the newest release last: a fix may already be out, and releases can come within hours of each other.
+8. **Find the cause in the source.** The source is public, so clone it at the tag of the version tested into a scratch directory and read it before writing. Follow the generated output back to the code that wrote it, and quote that line. A reduction is the cheaper half of the maintainer's work; the line is the other half. Change the code mentally or in the scratch clone to confirm the cause: a fix that does not remove the symptom names the wrong line. Do not open a pull request unless the owner asks.
+9. **Check the claim against the real code.** Count the real files that match the stated trigger and the ones that report it. List the ones that do not agree in "Not known".
+10. **Search the tracker** (open and closed, issues and pull requests) by the symptom words, the diagnostic code and the generated names, and read each near match through to its fix and the release that holds it. A search that returns nothing is not proof. Name the nearest results and say why each differs.
+11. **Understand every gap found in the same pass before filing any.** A report filed early names a trigger the next gap may overturn.
+12. **State what was not checked.**
 
 ## A set found in one pass
 
 Several gaps found by one migration are filed as one issue per bug, in one sitting, and nothing else. A maintainer fixes and closes one bug per issue, and a tracking or umbrella issue is one more item for them to triage, so there is none.
 
 - **Each issue is complete alone**: the reproduction, the output, the cause and the nearest issues are in the issue itself.
-- **The Context opens with one shared sentence**: what is being adopted and for what, and that this issue is one of a batch found doing so, in the first person singular ("I was trying to adopt `<tool>` for `<framework>` type checking and ran into this, among a few others."). When the adoption replaces several tools, the sentences that follow name each replacement ("`A` becomes `B`") and say which step this issue came from, so a maintainer sees the whole migration and not one tool of it. The versions and the result of the source of truth stay in Environment, and the rest of the Context is only what is specific to this bug. The sentence is the same in each issue and carries no number from this repository.
-- **The Context lists the whole batch** and says it is one batch, so the set is tracked from any one issue: a line after the shared sentence ("This is one of a batch of N issues filed together, all from that attempt, so they can be tracked as one set:") and a bullet list of every issue by number, with `<-- you are here` after the issue's own entry. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
+- **The Context lists the migration as numbered steps**: one line per replaced tool ("`A` becomes `B`"), each with a short name, so a maintainer sees the whole migration in a few lines and not one tool of it. One line then says which step this issue is from, with at most two sentences specific to this bug, such as the count the "Keep out" rule allows. The versions and the result of the source of truth stay in Environment. The steps are the same in each issue and carry no number from this repository.
+- **The Context lists the whole batch** so the set is tracked from any one issue: a line ("This issue is one of N filed together from this attempt:") and a bullet list of every open issue by number, with `<-- you are here` after the issue's own entry. N counts the issues in the list. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
+
+```md
+## Context
+
+I am moving the Vue tooling of a Nuxt monorepo to vize, in three steps:
+
+1. Type check: `vue-tsc` becomes `tsrs` running the vize content mapper.
+2. Library builds: `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins.
+3. App build: Nuxt's Vue integration becomes `@vizejs/nuxt`.
+
+This issue is from step 1. A run of `vize` 0.652.0 on the app reports 15 diagnostics that `vue-tsc` does not report. This issue explains some of them.
+
+This issue is one of 13 filed together from this attempt:
+
+- #11445 a cast to a `.vue` component type (TS2352 and TS2590) <-- you are here
+- #11446 a generic component with `inheritAttrs: false` (TS2353)
+```
+
 - **Every issue is actionable**: it has a reproduction that fails, a source of truth that passes, a cause or the statement that it is not known, and a nearest-issues check. An issue missing any of these is not filed until it has them, or is not filed.
 - **Order by value to the maintainer**: a bug that hides other diagnostics, then one that reports false errors, then one that misses real errors, then the rest.
 
@@ -77,7 +96,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 
 ## Keep out
 
-- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a first run reported 103 diagnostics, and a run on `<tool>` 0.652.0 reports 15"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
+- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a run on `<tool>` 0.652.0 reports 15 diagnostics that `<source of truth>` does not"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
 - **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
 - **A date, a session or a link to a chat.**
 - **A request for more than the source of truth already does.** The ask is "no diagnostic, as with the source of truth".
