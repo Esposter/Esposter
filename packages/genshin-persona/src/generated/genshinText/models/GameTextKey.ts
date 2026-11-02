@@ -803,6 +803,8 @@ export const GameTextKey = {
   // The Sheer Cold gauge's name, which the bar across the screen's top is labelled with, and the subzero climate's name
   SheerCold: "694190546",
   Shop: "UI_STC_GAMEENTRYPAGE_SHOP",
+  // The name of the General Goods shop a Mondstadt grocer runs, as its screen titles it
+  ShopGeneralGoods: "SHOP_TYPE_GROCERY",
   // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
   ShopLimitDaily: "UI_MALL_LIMIT_BUY_INFO_DAILY",
   ShopLimitMonthly: "UI_MALL_LIMIT_BUY_INFO",
@@ -811,8 +813,12 @@ export const GameTextKey = {
   ShopMaximumStellaFortuna: "UI_MALL_NOTAVAILABLE_AVARTARTALENTFULL",
   // The shop's Buy button, which purchases the picked good
   ShopPurchase: "UI_MALL_PAGE_BTN_BUY",
+  // The line over a good's limit that says how many of it the player can still buy, the count filled in
+  ShopPurchaseUpTo: "SHOP_CAN_BE_PURCHASED",
   // The Refreshes in line a shop's good shows, its countdown filled in
   ShopRefresh: "UI_MALL_REFRESH_COUNTDOWN",
+  // The heading over where a good's item comes from, on a shop's detail
+  ShopSource: "UI_ITEM_GET_SOURCE",
   // The name of a Shrine of Depths, as the game names it, on the prompt of a shrine a key opens
   ShrineOfDepths: "2995753270",
   SilkFlower: "1404683740",
