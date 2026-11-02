@@ -23,8 +23,9 @@ const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
     onClick: async () => {
-      await cancelScheduledMessageJobToDraft(scheduledMessageJob);
-      await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+      // A cancel the server rejected leaves the job scheduled, so the page stays where it is
+      if (await cancelScheduledMessageJobToDraft(scheduledMessageJob))
+        await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
     },
     title: "Edit scheduled message",
   },
