@@ -15,27 +15,25 @@ export const sendWebPushNotifications = async (
   payload: string,
 ): Promise<void> => {
   await settleAll(
-    subscriptions.map(
-      ({ auth, endpoint, expirationTime, id, p256dh }) =>
-        () =>
-          getResultAsync(() =>
-            webpush.sendNotification(
-              { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
-              payload,
-            ),
-          ).match(noop, async (error) => {
-            if (error instanceof WebPushError)
-              if (error.statusCode === 410) {
-                context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-                await getResultAsync(() =>
-                  db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
-                ).match(noop, (deleteError) => {
-                  context.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
-                });
-              } else context.error(`Failed to send push notification to ${endpoint}: `, error);
-            else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
-          }),
-    ),
+    subscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) => async () => {
+      await getResultAsync(() =>
+        webpush.sendNotification(
+          { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
+          payload,
+        ),
+      ).match(noop, async (error) => {
+        if (error instanceof WebPushError)
+          if (error.statusCode === 410) {
+            context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
+            await getResultAsync(() =>
+              db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
+            ).match(noop, (deleteError) => {
+              context.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
+            });
+          } else context.error(`Failed to send push notification to ${endpoint}: `, error);
+        else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
+      });
+    }),
     MAX_CONCURRENT_PUSH_SENDS,
   );
 };
