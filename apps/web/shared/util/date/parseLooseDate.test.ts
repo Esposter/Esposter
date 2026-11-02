@@ -10,6 +10,7 @@ describe(parseLooseDate, () => {
     ["a named month's day it lacks", "Feb 30 1970"],
     ["a leap day in a year without one", "Feb 29 1970"],
     ["a leap day with no year, which the engine reads in a common one", "Feb 29"],
+    ["a leap day with no year, whose time zone offset is not a year", "Feb 29 GMT-0400"],
     ["a day-first named month's day it lacks", "31 Apr 1970"],
   ])("refuses %s rather than reading it forward", (_name, value) => {
     expect.hasAssertions();

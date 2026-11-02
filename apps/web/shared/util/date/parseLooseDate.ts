@@ -7,6 +7,8 @@ const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "se
 // The engine reads a word by its first three letters, so the check does too
 const MONTH_NAME_REGEX = /\b(?<month>jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/iu;
 const YEAR_REGEX = /\b\d{4}\b/u;
+// A zone's offset, which a four-digit run would read as a year: `GMT-0400`, `UTC+0530` or a space before a `+0400`
+const TIME_ZONE_OFFSET_REGEX = /(?:\b(?:gmt|utc)|\s)[+-]\d{2}:?\d{2}\b/giu;
 // A number of one or two digits that no colon joins to a time
 const DAY_CANDIDATE_REGEX = /(?<![\d:])\d{1,2}(?![\d:])/gu;
 // The year the engine gives a text with none, a common one, so a yearless 29 February reads as 1 March
@@ -21,7 +23,7 @@ const checkIsDayRolled = (value: string) => {
 
   const { daysInMonth } = Temporal.PlainYearMonth.from({
     month: MONTH_NAMES.indexOf(month.toLowerCase()) + 1,
-    year: Number(YEAR_REGEX.exec(value)?.[0] ?? ENGINE_DEFAULT_YEAR),
+    year: Number(YEAR_REGEX.exec(value.replaceAll(TIME_ZONE_OFFSET_REGEX, " "))?.[0] ?? ENGINE_DEFAULT_YEAR),
   });
   const days = Array.from(value.matchAll(DAY_CANDIDATE_REGEX), ([day]) => Number(day));
   return days.length > 0 && days.every((day) => day > daysInMonth);
