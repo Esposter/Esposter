@@ -4,7 +4,7 @@ All vue-phaserjs tests run against a real headless Phaser game (`type: Phaser.HE
 
 ## How it works
 
-happy-dom does not provide enough DOM API for Phaser out of the box, so a global setup file stubs the missing canvas 2D context methods. Phaser's `Text` game object needs a fuller stub than the rest (`scale`, `rotate`, `translate`, `measureText`, and friends) — all are covered in `setupCanvas.ts`. `game.step()` is unusable in headless mode because the renderer is null, so a `stepScene(scene, n)` helper calls the registered lifecycle listeners directly, letting `onUpdate` / `onNextTick` handlers fire a deterministic number of times.
+happy-dom does not provide enough DOM API for Phaser out of the box, so a global setup file stubs the missing canvas 2D context methods. Phaser's `Text` game object needs a fuller stub than the rest (`scale`, `rotate`, `translate`, `measureText`, and friends) — all are covered in `setupCanvas.ts`. The same file sets a data-URL image's `src` on a task, as a browser's load is: happy-dom fires that load synchronously, so a game's READY came before its texture stamp existed and the next frame after a `destroy` threw. A game therefore becomes ready after its constructor, and the fixture waits for READY before it parks the loop. `game.step()` is unusable in headless mode because the renderer is null, so a `stepScene(scene, n)` helper calls the registered lifecycle listeners directly, letting `onUpdate` / `onNextTick` handlers fire a deterministic number of times.
 
 ```mermaid
 flowchart LR
@@ -21,7 +21,7 @@ The fixture boots one game per suite (`beforeAll`) and destroys it in `afterAll`
 
 - **Lifecycle hooks** — each of `onInit`, `onPreload`, `onCreate`, `onUpdate`, `onNextTick`, `onShutdown` fires at the right phase and the right number of times; handlers registered for one scene do not fire when another scene advances.
 - **`useInitializeGameObject`** — object creation, initial SetterMap application, reactive setter updates, parent container insertion, destroy-on-unmount, and the `immediate` flag (creator runs before `onCreate`, used for mid-game spawns).
-- **Components** — `Scene` (event order `@init` → `@preload` → `@create`, external `@shutdown`), `Container` (slot child gets a `parentContainer`), `Text` (merges `useTextStore` default style), `Tilemap` (key change destroys and recreates). `Sprite` has no suite of its own — it is the vehicle the `Container` and `useInitializeGameObject` tests mount, so it is covered indirectly.
+- **Components** — `Game` (unmounting before the textures are ready destroys the game once Phaser is ready, and clears the store's game), `Scene` (event order `@init` → `@preload` → `@create`, external `@shutdown`), `Container` (slot child gets a `parentContainer`), `Text` (merges `useTextStore` default style), `Tilemap` (key change destroys and recreates). `Sprite` has no suite of its own — it is the vehicle the `Container` and `useInitializeGameObject` tests mount, so it is covered indirectly.
 - **Store integration** — `useCameraStore` fades gate `useInputStore.isInputActive`; `usePhaserStore` scene switching and parallel scene launch/removal — all against the real headless scene.
 - **Utilities** — `pushGameObject` depth-sorted insertion.
 

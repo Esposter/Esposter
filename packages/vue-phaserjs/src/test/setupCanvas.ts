@@ -106,6 +106,23 @@ vi.spyOn(window.document, "createElement").mockImplementation((tagName, options)
     );
   return element;
 });
+// happy-dom dispatches a data-URL image's `load` synchronously when its `src` is set, where a browser queues it as a task.
+// Phaser's TextureManager registers its SYSTEM_READY listener only after it starts those loads, so a synchronous load let
+// READY reach the scene manager first: the texture stamp was never made, and the frame after any `game.destroy` threw on
+// it. The `src` is set on a task instead, so a game boots and becomes ready in the browser's order
+vi.stubGlobal(
+  "Image",
+  class extends window.Image {
+    override get src() {
+      return super.src;
+    }
+    override set src(value: string) {
+      setTimeout(() => {
+        super.src = value;
+      });
+    }
+  },
+);
 
 afterAll(() => {
   vi.restoreAllMocks();

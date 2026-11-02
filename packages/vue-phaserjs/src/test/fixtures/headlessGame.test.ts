@@ -7,7 +7,7 @@ import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { usePhaserStore } from "#src/store/index";
 import { NotInitializedError } from "@esposter/shared";
-import { Game, HEADLESS, Scenes } from "phaser";
+import { Core, Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";
 import { afterAll, beforeAll, describe } from "vitest";
 
@@ -47,15 +47,18 @@ export const removeTestScene = (key: string): void => {
   ExternalSceneStore.sceneReadyMap.delete(key);
 };
 
-beforeAll(() => {
+beforeAll(async () => {
   const app = createApp({});
   testPinia = createPinia();
   app.use(testPinia);
   setActivePinia(testPinia);
   testGame = new Game({ audio: { noAudio: true }, scene: [], type: HEADLESS });
-  // Document.readyState is stubbed to 'complete' in setupCanvas.ts so Phaser boots
-  // Synchronously inside the constructor — check isBooted instead of waiting for 'ready'
   if (!testGame.isBooted) throw new NotInitializedError(Game.name);
+  // Boot is synchronous, but the base textures load after the constructor, as in a browser, so the scene manager's
+  // first boot and the loop's start follow READY: wait for it before the loop is stopped below
+  await new Promise((resolve) => {
+    testGame.events.once(Core.Events.READY, resolve);
+  });
   // Stop the automatic Request Animation Frame (RAF) loop — the browser API that drives
   // Phaser's game loop — so it never fires testGame.step() unexpectedly during tests.
   testGame.loop.sleep();
