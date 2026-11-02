@@ -99,6 +99,10 @@ The fix is likely to write the declarations of a usage that has a `vif_guard` in
 
 The shape in a real Nuxt app: [`RichTextEditor/Suggestions.vue` line 25](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/RichTextEditor/Suggestions.vue#L25) has `:is` reading `.component` of the value that its own `v-if` guards. `vue-tsc` accepts it.
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for `v-if`, narrowing and dynamic components. The search matches words, not meaning. The nearest are #9360 (closed; `v-else` narrowing lost in a parent `v-if`), #1520 (closed; narrowing of a `v-for` source) and #10198 (closed; TS2304 on a `<component :is>` ref). The inputs differ.

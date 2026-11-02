@@ -113,6 +113,10 @@ One change at a time from `src/Probe.vue`. Errors on `vize` 0.638.0, `tsrs` and 
 | `const modelValue = defineModel<boolean>()`   |      0 |         0 |
 | Inline type: `defineProps<{ foo: string }>()` |      0 |         0 |
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for `defineModel`, `modelValue`, TS7053 and `__DefineProps`. The search matches words, not meaning. The nearest are #7949 (closed; every `defineModel()` is `never` for a file outside the tsconfig directory) and #10196 (closed; a binding named `props` collides with the mapper's own name). The inputs differ.

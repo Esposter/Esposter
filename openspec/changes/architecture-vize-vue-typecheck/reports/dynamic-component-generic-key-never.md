@@ -91,7 +91,9 @@ No diagnostic, as with `vue-tsc`. `vue-tsc` reads the file: `defineModel<number>
 
 ## Cause
 
-The cause is not known. The generated code shows which assignments fail. The component expression is `map[foo]`, an indexed access on a generic key, and the mapper builds its check types from it:
+The mapper checks the props of `<component :is>` with a mapped type over the component's props. When the component type is an indexed access on a generic key, `keyof` of that props type is deferred and no object is assignable to it.
+
+The generated code builds the check from the type of `map[foo]`:
 
 ```ts
   const __vize_dynamic_is_3 = (map[foo]);
@@ -100,16 +102,40 @@ The cause is not known. The generated code shows which assignments fail. The com
     ...{} as { "onUpdate:modelValue": never },
     "modelValue": model,
   });
-  const __vize_required_slots_0: import("vize:virtual-ts").$RequiredSlots<$SlotContract_0, {}> = {};
 ```
 
-The `never` entry is not the defect. It is a witness that the mapper writes for each static listener, so that a required `onFoo` key is satisfied (`crates/vize_canon/src/virtual_ts/expressions/props_literal.rs:81-88`):
+The `never` entry is not the defect. It is a witness that the mapper writes for each static listener, so that a required `onFoo` key is satisfied (`crates/vize_canon/src/virtual_ts/expressions/props_literal.rs:81-88`). It only appears in the message. The elaboration of the first error names the failing target:
 
-```rust
-append!(*ts, "{expr_indent}  ...{{}} as {{ ");
+```
+Type '{ "onUpdate:modelValue": never; modelValue: string; }' is not assignable to type '{ readonly [K in keyof ____vize_dynamic_is_3_CheckProps_0]: ____vize_dynamic_is_3_CheckProps_0[K]; }'.
 ```
 
-It only appears in the message. The failing assignments are the argument to `____vize_dynamic_is_3_Check_0` (`$PropChecker`, with `$ComponentCheckTail<C>` from `scope/component_prop_checker/check_helpers.rs:152`) and `{}` to `$RequiredSlots<$StructuralSlots<…>>`. Both helpers are conditional types over the type of `map[foo]`. A model of these helpers in plain TypeScript, with a generic indexed access as the component type, did not reproduce the error, so the helper that stays unresolved is not identified.
+That type is `$ComponentCheckProps` (`crates/vize_canon/src/virtual_ts/scope/component_prop_checker/check_helpers.rs:181`):
+
+```ts
+type $ComponentCheckProps<P, T> = { readonly [K in keyof P]: P[K] } & T;
+```
+
+Plain TypeScript shows the same failure with only this shape:
+
+```ts
+type Raw<C> = C extends { raw: infer R } ? R : Record<string, unknown>;
+type CheckProps<P, T> = { readonly [K in keyof P]: P[K] } & T;
+declare function check<C>(component: C): (props: CheckProps<Raw<C>, {}>) => void;
+type Entry = { raw: { modelValue: string } };
+declare const map: { a: Entry; b: Entry };
+
+declare const concrete: "a" | "b";
+check(map[concrete])({ modelValue: "x" }); // no error
+
+function generic<TKey extends "a" | "b">(key: TKey) {
+  check(map[key])({ modelValue: "x" }); // TS2345: not assignable to '{ readonly [K in keyof Raw<…[TKey]>]: … }'
+}
+```
+
+The second error, `{}` not assignable to `$RequiredSlots<$StructuralSlots<…>>` (`scope/component_slots.rs:62`), is a conditional type over the same deferred component type. It is likely the same kind of failure. I could not reproduce it outside vize with a faithful model.
+
+The fix is likely to skip the mapped type and the slot check when the component type is not concrete, for example by checking against `P & T`, or by taking the loose path that already exists for `any`.
 
 ## Real occurrence
 
@@ -123,6 +149,10 @@ One change at a time from `src/Probe.vue`. Errors on `vize` 0.638.0, `tsrs` and 
 | :------------------------------------------------------------ | -----: | --------: |
 | None                                                          |      2 |         0 |
 | No `generic` attribute and `foo: "a" \| "b"` in `defineProps` |      0 |         0 |
+
+## Not known
+
+The second error is not reproduced outside vize. The fix is read from the source and not applied. Versions before 0.638.0 are not tested for this input.
 
 ## Not a duplicate of
 

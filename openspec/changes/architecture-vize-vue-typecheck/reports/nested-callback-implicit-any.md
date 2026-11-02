@@ -123,6 +123,10 @@ One change at a time. Errors on `vize` 0.638.0, `tsrs` and `vue-tsc`:
 | None                                                          |      1 |         0 |
 | Expression body on one line: `(foo) => foo.bar((baz) => baz)` |      0 |         0 |
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for TS7006, callbacks and inference. The search matches words, not meaning. The nearest are #10191 (closed; a callback whose own parameters are on a later line, fixed by #10220) and #10879 (merged; event-inference callbacks stay out of unowned copies). The input of #10191 gives no diagnostic on 0.638.0. This report is the same mechanism for the parameters of a nested callback.

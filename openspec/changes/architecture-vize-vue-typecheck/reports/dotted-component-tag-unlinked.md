@@ -136,6 +136,10 @@ The fix is likely to resolve the root segment of a dotted tag against the script
 
 The shape in a real Nuxt app: [`Ui/Alert.vue` line 17](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Ui/Alert.vue#L17) uses `<Alert.Root>`. `Alert` is a named import of a namespace object on line 5 (`import { Alert } from "@vuetify/v0"`), and the mapper reports it unused. `vue-tsc` accepts the file.
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied. A dotted tag whose root is a named import of an object, as in the real occurrence, was not reduced separately.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for dotted and member tags and TS6133. The search matches words, not meaning. The nearest are #4050, #4051 and #3931 (closed or merged; fixes for TS6133 on names read only in the template). None of them names a dotted tag.

@@ -117,6 +117,10 @@ The fix is likely to give `define_slots_type_requires_setup_scope` the generic c
 
 The shape in a real Nuxt app: [`Ui/List/Index.vue` lines 8 to 30](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Ui/List/Index.vue#L8-L30) declares `type ExtendedListItem = TExtra & UiListItem<T>` in a generic component and uses it in `defineSlots`. `vue-tsc` accepts every parent of it.
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for generic slots, type aliases and module scope. The search matches words, not meaning. The nearest are #10221 and #10886 (both merged; they capture setup-scoped slot types and child-side outlets) and #3354 (closed; generic constructors do not instantiate slot parameters). In this report the slots type is not setup-scoped because the alias is hoisted.

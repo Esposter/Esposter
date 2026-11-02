@@ -143,6 +143,10 @@ One change at a time from `src/Probe.vue`. Results on `vize` 0.638.0 with `tsrs`
 | `:is="map.foo"` (a static chain) | no error      |
 | `@pick` in place of `@select`    | no error      |
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied. An inline handler and a default slot were not varied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for dynamic components, listeners and `Event`. The search matches words, not meaning. The nearest are #2915 (merged; DOM-event fallback for a static member chain) and #2630 (merged; kebab-case dynamic events). Neither names a computed expression inside a slot.

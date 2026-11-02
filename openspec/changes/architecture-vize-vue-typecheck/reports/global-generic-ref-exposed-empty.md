@@ -125,6 +125,10 @@ The fix is likely to leave the fallback out of the intersection for a generic co
 
 The shape in a real Nuxt app: [`Message/Content/Header/CreateDirectMessageParticipantDialog.vue` line 51](https://github.com/Esposter/Esposter/blob/49df4394844218f957290581ab2090a56f7a4f3d/apps/web/app/components/Message/Content/Header/CreateDirectMessageParticipantDialog.vue#L51) calls `friendPicker.value?.reset()` on a ref to a generic component that exposes `reset`. `vue-tsc` accepts it.
 
+## Not known
+
+Versions before 0.638.0 are not tested for this input. The fix is read from the source and not applied.
+
 ## Not a duplicate of
 
 Searched open and closed issues and pull requests for global components, template refs and exposed members. The search matches words, not meaning. The nearest are #10210 (merged; accept unresolved global components) and #9797 (merged; generic event payloads of global components). The inputs differ: neither reports the type of a ref.
