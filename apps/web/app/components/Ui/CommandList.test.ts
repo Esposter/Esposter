@@ -59,6 +59,22 @@ describe("uiCommandList", () => {
       expect(component.emitted("select")).toStrictEqual([[takeOne(commands, 1)]]);
     });
 
+    test("leaves the arrows and Enter in an IME composition to the field, which neither moves nor picks", async () => {
+      expect.hasAssertions();
+
+      const { component, field, getHighlightedTitle } = await mountCommandList();
+      field.element.focus();
+      const press = (key: string) => {
+        const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, isComposing: true, key });
+        field.element.dispatchEvent(event);
+        return event.defaultPrevented;
+      };
+
+      expect([press("ArrowDown"), press("Enter")]).toStrictEqual([false, false]);
+      expect(getHighlightedTitle()).toBe("first");
+      expect(component.emitted("select")).toBeUndefined();
+    });
+
     test("marks the chosen member of a group of choices", () => {
       expect.hasAssertions();
 

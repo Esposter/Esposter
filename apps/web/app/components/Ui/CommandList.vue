@@ -73,9 +73,27 @@ watch(
         min-w-0
         ui-field
         ui-pill
-        @keydown.down.prevent="next()"
-        @keydown.up.prevent="prev()"
-        @keydown.enter.prevent="!$event.isComposing && clickHighlighted()"
+        @keydown.down="
+          (event: KeyboardEvent) => {
+            if (event.isComposing) return;
+            event.preventDefault();
+            next();
+          }
+        "
+        @keydown.up="
+          (event: KeyboardEvent) => {
+            if (event.isComposing) return;
+            event.preventDefault();
+            prev();
+          }
+        "
+        @keydown.enter="
+          (event: KeyboardEvent) => {
+            if (event.isComposing) return;
+            event.preventDefault();
+            clickHighlighted();
+          }
+        "
       />
     </div>
     <div :id="listboxId" :aria-label="label" role="listbox" pb-2 flex flex-col of-y-auto>

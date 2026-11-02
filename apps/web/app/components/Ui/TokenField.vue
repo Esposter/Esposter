@@ -105,7 +105,8 @@ watch(isFocusWithin, (newIsFocusWithin) => {
           }
         "
         @keydown.esc="
-          () => {
+          (event: KeyboardEvent) => {
+            if (event.isComposing) return;
             if (isOpen) isOpen = false;
             else input?.blur();
           }
