@@ -36,4 +36,12 @@ describe(getRecordDifferenceDescription, () => {
 
     expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${RECORD_DIFFERENCE_HEADER}\n |  | undefined`);
   });
+
+  test("a pipe and a line break in a value stay inside its cell", () => {
+    expect.hasAssertions();
+
+    expect(getRecordDifferenceDescription({ "": "" }, { "": "a|b\nc" })).toBe(
+      `${RECORD_DIFFERENCE_HEADER}\n |  | a\\|b c`,
+    );
+  });
 });
