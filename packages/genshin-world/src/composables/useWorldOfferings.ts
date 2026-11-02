@@ -7,6 +7,7 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -19,9 +20,10 @@ import { storeToRefs } from "pinia";
 // That one left
 export const useWorldOfferings = ({
   frostbearingTreeProgress,
-  gainWorldAdventureExp,
   placeWorldDrops,
 }: WorldOfferingDependencies & { frostbearingTreeProgress: ShallowRef<OfferingProgressSave> }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;

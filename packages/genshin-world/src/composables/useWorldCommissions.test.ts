@@ -13,6 +13,7 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
+import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { computed } from "vue";
@@ -48,9 +49,7 @@ describe(useWorldCommissions, () => {
   const afterReset = todayReset.add({ hours: 1 });
   const nextReset = todayReset.add({ hours: 24 });
   const baseCommissions = {
-    finishedMainQuestIds: computed(() => new Set<number>()),
     questTargetIds: computed<string[]>(() => []),
-    rank: computed(() => RANK),
     savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
   };
 
@@ -60,6 +59,7 @@ describe(useWorldCommissions, () => {
     { getWorldNow, worldNow } = createWorldClock(afterReset),
   ) => {
     const { events } = startTestWorldSession({ gameDataBaseUrl: "", getWorldNow, worldNow });
+    startTestAdventureRank(RANK);
     return {
       ...useWorldCommissions({
         ...baseCommissions,
@@ -79,10 +79,10 @@ describe(useWorldCommissions, () => {
   const useUnfinishedDay = (rank: number) => {
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
     startTestWorldSession({ getWorldNow, worldNow });
+    startTestAdventureRank(rank);
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     return useWorldCommissions({
       ...baseCommissions,
-      rank: computed(() => rank),
       savedCommissionDay: {
         claimedCommissionIds: [],
         dealtAt: todayReset,
@@ -97,6 +97,7 @@ describe(useWorldCommissions, () => {
     expect.hasAssertions();
     const { getWorldNow, worldNow } = createWorldClock(afterReset);
     startTestWorldSession({ getWorldNow, worldNow });
+    startTestAdventureRank(RANK);
     vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
     const { commissionDay } = useWorldCommissions({
       ...baseCommissions,

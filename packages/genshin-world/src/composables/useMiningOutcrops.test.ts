@@ -4,6 +4,7 @@ import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
+import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { ref } from "vue";
@@ -32,7 +33,8 @@ describe(useMiningOutcrops, () => {
     const now = { value: drawDay1.add({ hours: 6 }) };
     const breakOre = vi.fn<(place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void>();
     startTestWorldSession({ gameDataBaseUrl: "https://example.test", getWorldNow: () => now.value });
-    const mining = useMiningOutcrops({ breakOre, rank: ref(30), regionIds: ref<string[]>([]), savedMinedOutcrops });
+    startTestAdventureRank(30);
+    const mining = useMiningOutcrops({ breakOre, regionIds: ref<string[]>([]), savedMinedOutcrops });
     mining.placesMap.value = new Map([["mondstadt", places]]);
     return { breakOre, mining, now };
   };

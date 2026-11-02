@@ -27,6 +27,7 @@ import { readMondstadtReputation } from "#src/services/reputation/readMondstadtR
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { readRegionData } from "#src/services/world/readRegionData";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { createInteractQuest } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -202,7 +203,6 @@ describe(useWorldMap, () => {
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
     savedRequestClaimedAts: readonly Temporal.Instant[] = [],
   ) => {
-    const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
     const placedDoings = shallowRef<PlacedDoing[]>([]);
     const recordedDoingIds = shallowRef<ReadonlySet<string>>(new Set<string>());
@@ -212,6 +212,10 @@ describe(useWorldMap, () => {
     );
     const { events } = worldSessionStore;
     const { wallet } = storeToRefs(worldSessionStore);
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    const gainWorldAdventureExp = vi
+      .spyOn(worldAdventureRankStore, "gainWorldAdventureExp")
+      .mockImplementation(() => {});
     return {
       events,
       gainWorldAdventureExp,
@@ -219,8 +223,6 @@ describe(useWorldMap, () => {
       wallet,
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
-        completedMainQuestIds: shallowRef(new Set<string>()),
-        gainWorldAdventureExp,
         placedDoings,
         recordedDoingIds,
         regionDataBaseUrl: "region-data",

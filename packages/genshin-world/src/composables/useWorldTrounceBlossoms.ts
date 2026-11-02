@@ -33,6 +33,7 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { takeOne } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -48,7 +49,6 @@ export const useWorldTrounceBlossoms = ({
   emitGrant,
   enemyKindMap,
   friendshipLevels,
-  gainWorldAdventureExp,
   getGroundHeight,
   party,
   savedState,
@@ -58,11 +58,12 @@ export const useWorldTrounceBlossoms = ({
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  gainWorldAdventureExp: (amount: number) => void;
   getGroundHeight: (x: number, z: number) => number;
   party: Party;
   savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;

@@ -23,6 +23,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
+import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -100,23 +101,21 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     },
   };
   const { events } = startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
+  startTestAdventureRank(40);
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const closeScreen = vi.fn<() => void>();
   const domains = useWorldDomains({
-    adventureExp: ref(0),
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
     artifactMainAffixPools: [],
     artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
     closeScreen,
-    completedMainQuestIds: shallowRef(new Set<string>()),
     domainChallengeLevels,
     jumpLandmarks: ref<Landmark[]>([createDomainEntrance()]),
     jumpTo,
     kitEffectState: { effects: [] },
     party: createParty([TRAVELER_CHARACTER_ID]),
     random: () => 0.5,
-    rank: ref(40),
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],
     unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),

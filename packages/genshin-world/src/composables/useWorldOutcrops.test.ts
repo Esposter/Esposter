@@ -17,6 +17,7 @@ import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimRe
 import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomCompanionshipExpMap";
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
+import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
@@ -67,21 +68,19 @@ describe(useWorldOutcrops, () => {
     );
     const { events } = worldSessionStore;
     const { inventory, wallet } = storeToRefs(worldSessionStore);
-    const adventureExp = ref(0);
+    const { adventureExp } = storeToRefs(startTestAdventureRank(30));
+    const startingAdventureExp = adventureExp.value;
     const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
     const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
     const outcrops = useWorldOutcrops({
-      adventureExp,
       adventureRankTables,
       areaId: ref("mondstadt"),
       characters,
-      completedMainQuestIds: ref(new Set<string>()),
       enemyMap: new Map(),
       friendshipLevels,
       getGroundHeight: () => 0,
       party: createParty([CHARACTER_ID]),
       placements: ref(PLACEMENTS),
-      rank: ref(30),
       regionStatueProgressMap: ref(new Map()),
     });
     outcrops.kindRules.value = KIND_RULES;
@@ -89,7 +88,7 @@ describe(useWorldOutcrops, () => {
     outcrops.touchOutcropsNear(0, 0, () => 0);
     // The defeat of the camp's only enemy, which reveals the blossom
     events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-    return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, wallet };
+    return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, startingAdventureExp, wallet };
   };
 
   test("a touch spawns the outcrop's camp, and the last enemy's defeat leaves it claimable", () => {
@@ -111,14 +110,16 @@ describe(useWorldOutcrops, () => {
   test("choosing an offer spends its resin and grants its rewards", () => {
     expect.hasAssertions();
 
-    const { adventureExp, outcrops, wallet } = createOutcrops();
+    const { adventureExp, outcrops, startingAdventureExp, wallet } = createOutcrops();
     outcrops.openOutcropClaim(1, epoch);
     assert.exists(outcrops.claimPrompt.value);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);
 
     expect(wallet.value[Currency.OriginalResin]).toBe(BlossomClaimResinMap[BlossomKind.LeyLine]);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 100);
-    expect(adventureExp.value).toBe(ADVENTURE_EXP_PER_RESIN * BlossomClaimResinMap[BlossomKind.LeyLine]);
+    expect(adventureExp.value - startingAdventureExp).toBe(
+      ADVENTURE_EXP_PER_RESIN * BlossomClaimResinMap[BlossomKind.LeyLine],
+    );
     expect(outcrops.outcrops.value).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: 2, stage: OutcropStage.Waiting },
     ]);

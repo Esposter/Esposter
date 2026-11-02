@@ -23,7 +23,6 @@ export interface WorldInteractionDispatchOptions {
   characterBody: Object3D;
   checkIsFishingPoint: (id: string) => boolean;
   claimKatheryneBonus: () => void;
-  claimKatheryneRewards: () => QuestRewardItem[];
   cookingProgress: Readonly<Ref<CookingProgress>>;
   cookingRecipe: Ref<CookingRecipe | undefined>;
   cookingRecipes: Readonly<Ref<readonly CookingRecipe[]>>;

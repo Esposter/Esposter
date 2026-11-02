@@ -55,7 +55,6 @@ import { useMenuNavigation } from "#src/composables/useMenuNavigation";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
-import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldBagUse } from "#src/composables/useWorldBagUse";
 import { useWorldCamera } from "#src/composables/useWorldCamera";
@@ -126,6 +125,7 @@ import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
@@ -307,24 +307,24 @@ const {
   savedFishingCatchAts: savedState.fishingCatchAts,
 });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
+const worldAdventureRankStore = useWorldAdventureRankStore();
 const {
   adventureExp,
   adventureExpProgress,
   adventureRankRewardsClaimed,
-  claimKatheryneRewards,
   completedMainQuestIds,
-  gainWorldAdventureExp,
   isWorldLevelAdjustable,
   rank,
-  toggleWorldLevel,
   worldLevel,
   worldLevelAdjustment,
-} = useWorldAdventureRank({
-  adventureRankTables,
-  savedAdventureExp: savedState.adventureExp,
-  savedAdventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
-  savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+} = storeToRefs(worldAdventureRankStore);
+const { start: startAdventureRank, stop: stopAdventureRank, toggleWorldLevel } = worldAdventureRankStore;
+startAdventureRank(adventureRankTables, {
+  adventureExp: savedState.adventureExp,
+  adventureRankRewardsClaimed: savedState.adventureRankRewardsClaimed,
+  worldLevelAdjustment: savedState.worldLevelAdjustment,
 });
+onUnmounted(stopAdventureRank);
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
 const {
@@ -338,7 +338,6 @@ const {
   wholeEncounterPoints,
   wholeLongTermEncounterPoints,
 } = useWorldCommissions({
-  rank,
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
@@ -431,7 +430,6 @@ const { openShrineById, shrineInteractables } = useWorldShrines({ getGroundHeigh
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   artifactMainAffixPools,
   artifactRarityDataMap,
-  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -457,21 +455,10 @@ const {
   staminaMaximum,
   worshipLevels,
   worshipRegionId,
-} = useWorldStatues({
-  characterBody,
-  foundOculusIds,
-  gainWorldAdventureExp,
-  placeWorldDrops,
-  regionStatueProgressMap,
-  screenKind,
-});
+} = useWorldStatues({ characterBody, foundOculusIds, placeWorldDrops, regionStatueProgressMap, screenKind });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
-const { offerFrostbearingTree } = useWorldOfferings({
-  frostbearingTreeProgress,
-  gainWorldAdventureExp,
-  placeWorldDrops,
-});
+const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress, placeWorldDrops });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
 const {
   autoRecoverSetting,
@@ -555,7 +542,6 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
   characters,
-  gainAdventureExp: gainWorldAdventureExp,
   getDeployedCharacterIds: () => getDeployedCharacterIds(party),
   getMaxLevel: (character) =>
     statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
@@ -591,17 +577,14 @@ const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
   useWorldCommissionClaims({
-    adventureExp,
     adventureRankTables,
     characters,
     commissionDay,
     commissionSlice,
-    completedMainQuestIds,
     encounterPoints,
     friendshipLevels,
     longTermEncounterPoints,
     party,
-    rank,
     setCharacters: (nextCharacters) => {
       characters.value = nextCharacters;
     },
@@ -646,9 +629,7 @@ const {
   talkTextMap,
 } = useWorldTalks({
   closeScreen,
-  getAdventureRank: () => rank.value,
   getCardGameExp: () => cardGameExp.value,
-  getCompletedMainQuestIds: () => completedMainQuestIds.value,
   getGroundHeight,
   getResidents,
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
@@ -712,8 +693,6 @@ const {
   unlockedLandmarks,
 } = useWorldMap({
   catalogue,
-  completedMainQuestIds,
-  gainWorldAdventureExp,
   placedDoings,
   recordedDoingIds,
   regionDataBaseUrl,
@@ -734,7 +713,6 @@ const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty,
     reputationCity,
     savedBountyClaimedAts: savedState.reputationBountyClaimedAts,
     savedBountyHunt: savedState.reputationBountyHunt,
-    worldLevel,
   });
 const { acceptReputationOffer, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
   bountyHunt,
@@ -784,7 +762,6 @@ const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_R
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
   breakOre,
-  rank,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
   savedMinedOutcrops: savedState.minedOutcrops,
 });
@@ -799,17 +776,14 @@ const {
   restoreOutcropClaim,
   touchOutcropsNear,
 } = useWorldOutcrops({
-  adventureExp,
   adventureRankTables,
   areaId: ref(OUTCROP_REGION_ID),
   characters,
-  completedMainQuestIds,
   enemyMap: kitContext.enemyMap,
   friendshipLevels,
   getGroundHeight,
   party,
   placements: outcropPlaces,
-  rank,
   regionStatueProgressMap,
 });
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
@@ -828,7 +802,6 @@ const {
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
   friendshipLevels,
-  gainWorldAdventureExp,
   getGroundHeight,
   party,
   savedState,
@@ -854,20 +827,17 @@ const {
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
-  adventureExp,
   adventureRankTables,
   artifactMainAffixPools,
   artifactRarityDataMap,
   clearedDomainIds,
   closeScreen,
-  completedMainQuestIds,
   domainChallengeLevels,
   jumpLandmarks,
   jumpTo,
   kitEffectState: kitContext.kitEffectState,
   party,
   random: () => kitContext.random(),
-  rank,
   reliquaryPieceEntryMap,
   reliquarySets,
   unlockedLandmarks,
@@ -886,7 +856,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
-  claimKatheryneRewards,
   cookingProgress,
   cookingRecipe,
   cookingRecipes,

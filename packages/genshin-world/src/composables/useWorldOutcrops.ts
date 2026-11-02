@@ -36,6 +36,7 @@ import { refillOriginalResinWithFragileResin } from "#src/services/originalResin
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -48,32 +49,28 @@ import { computed, shallowRef } from "vue";
 // Wallet, gives the deployed team the claim's Companionship EXP, and moves the outcrop on. A claim the holdings or the bag
 // Cannot pay whole is refused, and the blossom stays
 export const useWorldOutcrops = ({
-  adventureExp,
   adventureRankTables,
   areaId,
   characters,
-  completedMainQuestIds,
   enemyMap,
   friendshipLevels,
   getGroundHeight,
   party,
   placements,
-  rank,
   regionStatueProgressMap,
 }: {
-  adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   characters: Ref<Character[]>;
-  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   getGroundHeight: (x: number, z: number) => number;
   party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
-  rank: Readonly<Ref<number>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;

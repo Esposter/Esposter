@@ -15,6 +15,7 @@ import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { convertLongTermEncounterPoint } from "#src/services/commission/convertLongTermEncounterPoint";
 import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
 import { takeKatheryneBonus } from "#src/services/commission/takeKatheryneBonus";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
@@ -23,32 +24,28 @@ import { computed } from "vue";
 // Finished and for a whole Encounter Point when it is not, and a Long-Term Encounter Point converted for Original Resin. What
 // A claim leaves is written back to the session's state, the day and the points held here and the rest where it is kept
 export const useWorldCommissionClaims = ({
-  adventureExp,
   adventureRankTables,
   characters,
   commissionDay,
   commissionSlice,
-  completedMainQuestIds,
   encounterPoints,
   friendshipLevels,
   longTermEncounterPoints,
   party,
-  rank,
   setCharacters,
 }: {
-  adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   characters: Ref<Character[]>;
   commissionDay: Ref<CommissionDay>;
   commissionSlice: ComputedRef<CommissionSlice | undefined>;
-  completedMainQuestIds: ComputedRef<ReadonlySet<string>>;
   encounterPoints: Ref<EncounterPoints>;
   friendshipLevels: Ref<FriendshipLevels | undefined>;
   longTermEncounterPoints: Ref<LongTermEncounterPoints>;
   party: Party;
-  rank: ComputedRef<number>;
   setCharacters: (nextCharacters: Character[]) => void;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory, setWallet } = worldSessionStore;

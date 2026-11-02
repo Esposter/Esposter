@@ -90,7 +90,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 | `packages/genshin-world/src/services/adventureRank/readAdventureRankTables.ts`       | the rank, lock and World Level tables, read as the world opens                                     |
 | `packages/genshin-world/src/models/adventureRank/AdventureRankTables.ts`             | each rank's EXP, each World Level's lock and its monster level                                     |
 | `packages/genshin-world/src/services/adventureRank/constants.ts`                     | the constants the rules read                                                                       |
-| `packages/genshin-world/src/composables/useWorldAdventureRank.ts`                    | the live EXP, its standing and the gain a source adds                                              |
+| `packages/genshin-world/src/store/adventureRank.ts`                                  | the live EXP, its standing and the gain a source adds                                              |
 | `packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts`  | the rank, its cap and the World Level from EXP and quests                                          |
 | `packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`              | the EXP gain, its cap and the Mora past rank 60                                                    |
 | `packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`      | the lowering and its 24 hour cooldown                                                              |

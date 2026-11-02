@@ -12,8 +12,10 @@ import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
 import { takeReputationBounty } from "#src/services/reputation/takeReputationBounty";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { takeRandom } from "@esposter/shared";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 interface Props {
@@ -25,7 +27,6 @@ interface Props {
   savedBountyClaimedAts: readonly Temporal.Instant[];
   // The bounty taken and not yet claimed, as the save holds it
   savedBountyHunt?: ReputationBountyHunt;
-  worldLevel: Readonly<Ref<number>>;
 }
 
 // The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims made.
@@ -37,8 +38,9 @@ export const useWorldReputationBounty = ({
   reputationCity,
   savedBountyClaimedAts,
   savedBountyHunt,
-  worldLevel,
 }: Props) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { worldLevel } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
   const { events, getWorldNow } = worldSessionStore;
   const bountyHunt = shallowRef<ReputationBountyHunt | undefined>(savedBountyHunt);

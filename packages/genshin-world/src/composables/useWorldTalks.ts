@@ -14,6 +14,7 @@ import { listGcgOpenGameIds } from "#src/services/gcg/listGcgOpenGameIds";
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
@@ -26,25 +27,23 @@ import { computed, shallowRef } from "vue";
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   closeScreen,
-  getAdventureRank,
   getCardGameExp,
-  getCompletedMainQuestIds,
   getGroundHeight,
   getResidents,
   getResidentSpot,
 }: {
   closeScreen: () => void;
   // The Adventure Rank the player stands at, which opens the card game's duels from its rank
-  getAdventureRank: () => number;
   // The card game's EXP the player holds, which with the main quests they have finished sets their Player Level
   getCardGameExp: () => number;
   // The main quests the player has finished, by id, which hold the card game's tutorial and the Player Level's locks
-  getCompletedMainQuestIds: () => ReadonlySet<string>;
   getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   // The world's names by text id, which name a resident's row
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldQuestsStore = useWorldQuestsStore();
   const { questProgressMap, questsInProgress, questsOffered, questTextMap } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();
@@ -111,16 +110,15 @@ export const useWorldTalks = ({
   // Is open and the Player Level has opened that duel's game
   const getTalkDuelGameId = (talkId: string) => {
     const duelGameId = getResidents().find((resident) => resident.talkId === talkId)?.duelGameId;
-    if (duelGameId === undefined || !checkIsGcgCardGameOpen(getAdventureRank()) || !gcgLevels.value) return undefined;
+    if (duelGameId === undefined || !checkIsGcgCardGameOpen(rank.value) || !gcgLevels.value) return undefined;
     const { challengerGames, playerLevelLocks, playerLevels } = gcgLevels.value;
-    const completedMainQuestIds = getCompletedMainQuestIds();
     const cardGameExp = getCardGameExp();
     const playerLevel = computeGcgPlayerLevel(
       cardGameExp,
       playerLevels,
-      completedMainQuestIds.has(GCG_TUTORIAL_QUEST_ID),
+      completedMainQuestIds.value.has(GCG_TUTORIAL_QUEST_ID),
       playerLevelLocks,
-      completedMainQuestIds,
+      completedMainQuestIds.value,
     );
     // A challenger's games are listed under the NPC whose week row names them, which is not always the NPC seated at
     // The duel (Marjorie's row is 9701, her seat 1435), so the seat's game is looked for by its id across every row

@@ -20,6 +20,7 @@ import { readMondstadtChestPlaces } from "#src/services/chest/readMondstadtChest
 import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFallingAway";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -35,7 +36,6 @@ import { computed, shallowRef } from "vue";
 export const useWorldChests = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
-  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -49,7 +49,6 @@ export const useWorldChests = ({
 }: {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
-  gainWorldAdventureExp: (amount: number) => void;
   getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
@@ -96,6 +95,8 @@ export const useWorldChests = ({
   const digChestById = (chestId: string) => {
     dugChestIds.value = new Set([...dugChestIds.value, chestId]);
   };
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   // The chest a row names is opened once: its wallet is paid, its drops are poured out or bagged, and it is kept as opened.
   // Drops that fall away go straight into the bag, and what the bag has no room for is poured out where the chest stands
   const openChestById = (chestId: string, random: () => number) => {

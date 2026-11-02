@@ -13,9 +13,11 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMiningOutcropStanding";
 import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastMiningOutcropDraw";
 import { computeNextMiningOutcropRespawn } from "#src/services/leyLine/computeNextMiningOutcropRespawn";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The mining outcrops of each region the world has loaded: a region's places are read once, and its draw at each 06:00
@@ -23,15 +25,15 @@ import { computed, shallowRef } from "vue";
 // Chunks and leaving it gone until its respawn. The mined ones are the save's, held until then
 export const useMiningOutcrops = ({
   breakOre,
-  rank,
   regionIds,
   savedMinedOutcrops,
 }: {
   breakOre: (place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void;
-  rank: Readonly<Ref<number>>;
   regionIds: Readonly<Ref<string[]>>;
   savedMinedOutcrops: readonly MinedOutcrop[];
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // Each region's places, read as the world loads it. A region no publish wrote holds none, so it draws none

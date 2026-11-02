@@ -16,6 +16,7 @@ import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen"
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { InteractionKind } from "genshin-interface";
 
@@ -27,7 +28,6 @@ export const useWorldInteractionDispatch = ({
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
-  claimKatheryneRewards,
   cookingProgress,
   cookingRecipe,
   cookingRecipes,
@@ -76,6 +76,8 @@ export const useWorldInteractionDispatch = ({
   viewViewpoint,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { claimKatheryneRewards } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   // A talk opens the screen its resident's talk is, and Katheryne's opens the expedition screen in place of the talk once

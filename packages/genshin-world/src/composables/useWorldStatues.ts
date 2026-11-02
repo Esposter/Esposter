@@ -17,6 +17,7 @@ import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -29,7 +30,6 @@ import { computed, ref, shallowRef } from "vue";
 export const useWorldStatues = ({
   characterBody,
   foundOculusIds,
-  gainWorldAdventureExp,
   placeWorldDrops,
   regionStatueProgressMap,
   screenKind,
@@ -98,6 +98,8 @@ export const useWorldStatues = ({
   // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   const collectOculus = getSynchronizedFunction(
     async (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
       if (collectingOculusIds.has(source.id)) return;

@@ -2,7 +2,6 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { ComputedRef } from "vue";
 
 import { advanceCommissionForQuest } from "#src/services/commission/advanceCommissionForQuest";
 import { checkIsAdventureEncountersUnlocked } from "#src/services/commission/checkIsAdventureEncountersUnlocked";
@@ -23,6 +22,7 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
 import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
@@ -33,16 +33,16 @@ import { computed, shallowRef } from "vue";
 // Them once the save is loaded when it was dealt before the latest daily reset. A quest in progress that finishes finishes
 // Its quest task, and a load that fails is logged and left with no day dealt, so no commission is offered rather than a wrong one
 export const useWorldCommissions = ({
-  rank,
   savedCommissionDay,
   savedEncounterPoints,
   savedLongTermEncounterPoints,
 }: {
-  rank: ComputedRef<number>;
   savedCommissionDay: CommissionDay;
   savedEncounterPoints: EncounterPoints;
   savedLongTermEncounterPoints: LongTermEncounterPoints;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { rank } = storeToRefs(worldAdventureRankStore);
   const worldQuestsStore = useWorldQuestsStore();
   const { finishedMainQuestIds, questTargetIds } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();

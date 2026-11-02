@@ -57,6 +57,7 @@ import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItem
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -98,44 +99,40 @@ interface DomainChallengeRun {
 // Waves spawn one after another at the arena, the defeats of the wave in play count toward the level's target, and the
 // Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the domain
 export const useWorldDomains = ({
-  adventureExp,
   adventureRankTables,
   artifactMainAffixPools,
   artifactRarityDataMap,
   clearedDomainIds,
   closeScreen,
-  completedMainQuestIds,
   domainChallengeLevels,
   jumpLandmarks,
   jumpTo,
   kitEffectState,
   party,
   random,
-  rank,
   reliquaryPieceEntryMap,
   reliquarySets,
   unlockedLandmarks,
   weaponDataMap,
 }: {
-  adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   artifactMainAffixPools: ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   clearedDomainIds: Ref<ReadonlySet<string>>;
   closeScreen: () => void;
-  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   domainChallengeLevels: DomainChallengeLevelMap;
   jumpLandmarks: Readonly<Ref<Landmark[]>>;
   jumpTo: (pose: WorldJumpPose) => void;
   kitEffectState: KitEffectState;
   party: Party;
   random: () => number;
-  rank: Ref<number>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
   unlockedLandmarks: Ref<Landmark[]>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;

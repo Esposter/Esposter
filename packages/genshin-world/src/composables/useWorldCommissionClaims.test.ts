@@ -20,6 +20,7 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
+import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
@@ -122,7 +123,7 @@ describe(useWorldCommissionClaims, () => {
       },
     );
     const { wallet } = storeToRefs(worldSessionStore);
-    const adventureExp = shallowRef(0);
+    startTestAdventureRank(DEALT_RANK);
     const characters = shallowRef<Character[]>([{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER]);
     const friendshipLevels = shallowRef<FriendshipLevels | undefined>([
       { exp: 0, level: 1 },
@@ -130,17 +131,14 @@ describe(useWorldCommissionClaims, () => {
     ]);
     const setCharacters = vi.fn<(nextCharacters: Character[]) => void>();
     const claims = useWorldCommissionClaims({
-      adventureExp,
       adventureRankTables,
       characters,
       commissionDay,
       commissionSlice: computed(() => slice),
-      completedMainQuestIds: computed(() => new Set<string>()),
       encounterPoints,
       friendshipLevels,
       longTermEncounterPoints,
       party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
-      rank: computed(() => DEALT_RANK),
       setCharacters,
     });
     return { claims, commissionDay, encounterPoints, friendshipLevels, longTermEncounterPoints, setCharacters, wallet };

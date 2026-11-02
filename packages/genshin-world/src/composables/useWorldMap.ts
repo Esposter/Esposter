@@ -31,6 +31,7 @@ import { computeHiddenTransPointIds } from "#src/services/transPoint/computeHidd
 import { computeLandmarkPointId } from "#src/services/transPoint/computeLandmarkPointId";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
@@ -42,8 +43,6 @@ import { computed, shallowRef, watch } from "vue";
 // The exploration the map shows and the thresholds pay on, against the placed doings each area holds
 export const useWorldMap = ({
   catalogue,
-  completedMainQuestIds,
-  gainWorldAdventureExp,
   placedDoings,
   recordedDoingIds,
   regionDataBaseUrl,
@@ -54,8 +53,6 @@ export const useWorldMap = ({
 }: {
   catalogue: Catalogue;
   // The main quests the player has done, which open a weekly boss's Trounce Domain entrance
-  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
-  gainWorldAdventureExp: (amount: number) => void;
   // The placed doings the world holds, each a chest, an Oculus, a puzzle or a camp, by the point it stands at
   placedDoings: Readonly<Ref<PlacedDoing[]>>;
   // The doings the save records as done, by id, which count toward their areas whatever the statues have unlocked
@@ -68,6 +65,9 @@ export const useWorldMap = ({
   setReputation: (nextReputation: ReputationProgress) => void;
   unlockedLandmarkIds: ReadonlySet<string>;
 }) => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { completedMainQuestIds } = storeToRefs(worldAdventureRankStore);
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldQuestsStore = useWorldQuestsStore();
   const { questStepTargets } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();

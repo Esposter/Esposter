@@ -7,7 +7,6 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WorldSessionContext } from "#src/models/world/WorldSessionContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
@@ -40,6 +39,7 @@ import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { readCatalogue } from "#src/services/world/readCatalogue";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
@@ -85,11 +85,16 @@ describe(useWorldTrounceBlossoms, () => {
   });
 
   // The session as it stands at the epoch, with the given context and a wallet to pay and spend from
-  const startEpochSession = (overrides: Partial<WorldSessionContext> = {}, wallet: Wallet = { ...EMPTY_WALLET }) =>
-    startTestWorldSession(
+  const startEpochSession = (overrides: Partial<WorldSessionContext> = {}, wallet: Wallet = { ...EMPTY_WALLET }) => {
+    const worldSessionStore = startTestWorldSession(
       { getWorldNow: () => epoch, worldNow: shallowRef(epoch), ...overrides },
       { inventory: { ...EMPTY_INVENTORY }, wallet },
     );
+    // The Adventure EXP a claim gains is the rank store's to take, and a claim over a store that has not started has none to gain
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
+    return worldSessionStore;
+  };
 
   // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an
   // Entry of the traits map, and its defeat must still reach the listeners after the blossom's
@@ -104,7 +109,6 @@ describe(useWorldTrounceBlossoms, () => {
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
       friendshipLevels: shallowRef<FriendshipLevels>(),
-      gainWorldAdventureExp: () => {},
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
@@ -132,7 +136,6 @@ describe(useWorldTrounceBlossoms, () => {
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
@@ -154,7 +157,6 @@ describe(useWorldTrounceBlossoms, () => {
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
@@ -178,15 +180,16 @@ describe(useWorldTrounceBlossoms, () => {
       { materialDataMap, nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" } },
       { ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] },
     );
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation((amount) => {
+      adventureExp.value += amount;
+    });
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      gainWorldAdventureExp: (amount) => {
-        adventureExp.value += amount;
-      },
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
@@ -209,11 +212,12 @@ describe(useWorldTrounceBlossoms, () => {
     );
     const { wallet } = storeToRefs(worldSessionStore);
     finishTestMainQuests(...ascensionQuestIds);
-    const adventureRank = useWorldAdventureRank({
-      adventureRankTables,
-      savedAdventureExp: maxAdventureExp,
-      savedAdventureRankRewardsClaimed: [],
-      savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    vi.mocked(worldAdventureRankStore.gainWorldAdventureExp).mockRestore();
+    worldAdventureRankStore.start(adventureRankTables, {
+      adventureExp: maxAdventureExp,
+      adventureRankRewardsClaimed: [],
+      worldLevelAdjustment: savedState.worldLevelAdjustment,
     });
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
@@ -221,7 +225,6 @@ describe(useWorldTrounceBlossoms, () => {
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      gainWorldAdventureExp: adventureRank.gainWorldAdventureExp,
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
@@ -264,6 +267,10 @@ describe(useWorldTrounceBlossoms, () => {
       { materialDataMap: weeklyMaterialDataMap, nameText: names },
       { ...EMPTY_WALLET, [Currency.OriginalResin]: offer.resin + 1 },
     );
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation((amount) => {
+      adventureExp.value += amount;
+    });
     const { inventory, wallet } = storeToRefs(worldSessionStore);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
@@ -271,9 +278,6 @@ describe(useWorldTrounceBlossoms, () => {
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      gainWorldAdventureExp: (amount) => {
-        adventureExp.value += amount;
-      },
       getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),

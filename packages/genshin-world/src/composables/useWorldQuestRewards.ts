@@ -4,6 +4,7 @@ import type { Ref } from "vue";
 
 import { gainCharacterExp } from "#src/services/character/gainCharacterExp";
 import { grantQuestRewards } from "#src/services/quest/grantQuestRewards";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 
@@ -12,13 +13,11 @@ import { storeToRefs } from "pinia";
 // Character EXP. A finish is recorded once, so a reload pays nothing
 export const useWorldQuestRewards = ({
   characters,
-  gainAdventureExp,
   getDeployedCharacterIds,
   getMaxLevel,
   setCharacters,
 }: {
   characters: Ref<Character[]>;
-  gainAdventureExp: (amount: number) => void;
   getDeployedCharacterIds: () => number[];
   getMaxLevel: (character: Character) => number;
   setCharacters: (nextCharacters: Character[]) => void;
@@ -26,6 +25,8 @@ export const useWorldQuestRewards = ({
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;
+  const worldAdventureRankStore = useWorldAdventureRankStore();
+  const { gainWorldAdventureExp } = worldAdventureRankStore;
   // A reward is paid through one path, whether a quest finishes or a talk gives it
   const grantRewards = (rewards: QuestRewardItem[]) => {
     const granted = grantQuestRewards(
@@ -39,7 +40,7 @@ export const useWorldQuestRewards = ({
     setWallet(granted.wallet);
     if (granted.characterExp > 0)
       setCharacters(gainCharacterExp(characters.value, getDeployedCharacterIds(), granted.characterExp, getMaxLevel));
-    if (granted.adventureExp > 0) gainAdventureExp(granted.adventureExp);
+    if (granted.adventureExp > 0) gainWorldAdventureExp(granted.adventureExp);
   };
   events.on("finishQuest", ({ rewards }) => {
     grantRewards(rewards);

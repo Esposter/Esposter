@@ -13,9 +13,10 @@ import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap
 import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
-import { assert, describe, expect, test } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
 const materialDataMap = await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL);
@@ -44,11 +45,12 @@ describe(useWorldOfferings, () => {
     events.on("achievementEvents", (emitted) => {
       achievementEvents.push(emitted);
     });
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation((amount) => {
+      gainedAdventureExps.push(amount);
+    });
     const { offerFrostbearingTree } = useWorldOfferings({
       frostbearingTreeProgress,
-      gainWorldAdventureExp: (amount) => {
-        gainedAdventureExps.push(amount);
-      },
       placeWorldDrops: (source, droppedItems) => {
         placedDrops.push([source, droppedItems]);
       },

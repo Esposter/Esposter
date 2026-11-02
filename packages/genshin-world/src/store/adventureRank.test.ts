@@ -1,5 +1,4 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { Currency } from "#src/models/inventory/Currency";
 import { computeAdventureExpAtRank } from "#src/services/adventureRank/computeAdventureExpAtRank";
 import { MAX_ADVENTURE_RANK, MORA_PER_EXCESS_ADVENTURE_EXP } from "#src/services/adventureRank/constants";
@@ -7,6 +6,7 @@ import { readAdventureRankTables } from "#src/services/adventureRank/readAdventu
 import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
+import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
@@ -14,7 +14,7 @@ import { nextTick } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 
-describe(useWorldAdventureRank, () => {
+describe(useWorldAdventureRankStore, () => {
   const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
   const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
   const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
@@ -27,14 +27,14 @@ describe(useWorldAdventureRank, () => {
       { inventory: { ...EMPTY_INVENTORY }, wallet: savedState.wallet },
     );
     finishTestMainQuests(...finishedMainQuestIds);
-    const adventureRank = useWorldAdventureRank({
-      adventureRankTables,
-      savedAdventureExp,
-      savedAdventureRankRewardsClaimed: [],
-      savedWorldLevelAdjustment: savedState.worldLevelAdjustment,
+    const worldAdventureRankStore = useWorldAdventureRankStore();
+    worldAdventureRankStore.start(adventureRankTables, {
+      adventureExp: savedAdventureExp,
+      adventureRankRewardsClaimed: [],
+      worldLevelAdjustment: savedState.worldLevelAdjustment,
     });
     return {
-      adventureRank,
+      adventureRank: worldAdventureRankStore,
       setFinishedMainQuestIds: (nextFinishedMainQuestIds: ReadonlySet<number>) => {
         finishTestMainQuests(...nextFinishedMainQuestIds);
       },
@@ -48,8 +48,8 @@ describe(useWorldAdventureRank, () => {
     const { adventureRank } = createAdventureRank(0, noFinishedMainQuestIds);
     adventureRank.gainWorldAdventureExp(375);
 
-    expect(adventureRank.adventureExp.value).toBe(375);
-    expect(adventureRank.rank.value).toBe(2);
+    expect(adventureRank.adventureExp).toBe(375);
+    expect(adventureRank.rank).toBe(2);
   });
 
   test("a gain past the World Level 1 hold leaves the rank at 25 while its ascension quest is not done", () => {
@@ -58,8 +58,8 @@ describe(useWorldAdventureRank, () => {
     const { adventureRank } = createAdventureRank(maxAdventureExp, noFinishedMainQuestIds);
     adventureRank.gainWorldAdventureExp(GAIN);
 
-    expect(adventureRank.rank.value).toBe(25);
-    expect(adventureRank.adventureExp.value).toBe(maxAdventureExp);
+    expect(adventureRank.rank).toBe(25);
+    expect(adventureRank.adventureExp).toBe(maxAdventureExp);
   });
 
   test("a gain past rank 60's total with every ascension quest done pays Mora into the wallet", () => {
@@ -82,11 +82,11 @@ describe(useWorldAdventureRank, () => {
       noFinishedMainQuestIds,
     );
     worldSessionStore.events.on("worldLevelUp", worldLevelUps);
-    const startingWorldLevel = adventureRank.worldLevel.value;
+    const startingWorldLevel = adventureRank.worldLevel;
     setFinishedMainQuestIds(ascensionQuestIds);
     await nextTick();
 
-    const finalWorldLevel = adventureRank.worldLevel.value;
+    const finalWorldLevel = adventureRank.worldLevel;
     expect(finalWorldLevel).toBeGreaterThan(startingWorldLevel);
     expect(worldLevelUps.mock.calls).toStrictEqual(
       Array.from({ length: finalWorldLevel - startingWorldLevel }, (_value, index) => [startingWorldLevel + index + 1]),
