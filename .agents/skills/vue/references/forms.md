@@ -25,7 +25,7 @@ const { initialValues = { bar: "", baz: "" }, isCreate } = defineProps<Props>();
 const { cloned: values } = useCloned(() => initialValues);
 ```
 
-- **`useCloned`, never `ref(initialValues)`** — a bare `ref` makes the prop's own object the editable state, so the first keystroke mutates the parent's row before anything is saved, and it never resyncs when the source changes. The `sync`/`clone` options are in `references/watch-decision-tree.md`.
+- **`useCloned`, never `ref(initialValues)`** — a bare `ref` makes the prop's own object the editable state, so the first keystroke mutates the parent's row before anything is saved, and it never resyncs when the source changes. The exception is a copy-once `ref({ ...initialValues })`, which is right when the parent passes a fresh literal on every render, since `useCloned` would re-clone and reset the draft each time. The `sync`/`clone` options are in `references/watch-decision-tree.md`.
 - Template binds to `values.bar` etc. (auto-unwrapped); emit passes `values` directly.
 - `isCreate` drives button text: `isCreate ? 'Create Foo' : 'Edit Foo'`.
 - Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
@@ -34,8 +34,8 @@ The same `isCreate?: true` pattern applies to dialog buttons (e.g. `Foo/EditDial
 
 ## A settings draft is the form's, not the row's
 
-A settings panel that saves on blur binds **local refs seeded from the row**, never a clone of the row and never
-the row itself, so a rolled-back write leaves the draft where the user typed it (`references/watch-decision-tree.md`, section 3).
+A settings panel that saves on blur binds a **`useStoredDraft` over the row's value**, never a clone of the row and never
+the row itself: the draft follows the row until the user edits it, and a rolled-back write leaves it where the user typed it (`references/watch-decision-tree.md`, section 3).
 
 ## Never normalize in Vue — trust the server schema
 
