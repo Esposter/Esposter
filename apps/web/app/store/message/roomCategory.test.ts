@@ -99,4 +99,30 @@ describe(useRoomCategoryStore, () => {
     expect(roomCategories.value.map(({ id: roomCategoryId }) => roomCategoryId)).toStrictEqual([id, otherId, thirdId]);
     expect(roomCategories.value.map(({ position }) => position)).toStrictEqual([0, 1, 2]);
   });
+
+  // A rename and a reorder are separate writes, so a reorder that lands while the rename is in flight moves a position
+  // The rename never wrote. The rejected rename puts back only the name it changed, and the reordered positions stay
+  test("keeps the positions a reorder moved while the rejected rename was in flight", async () => {
+    expect.hasAssertions();
+
+    const first = { ...createRoomCategory({ id }), position: 0 };
+    const second = { ...createRoomCategory({ id: otherId }), position: 1 };
+    const roomCategoryStore = useRoomCategoryStore();
+    const { roomCategories } = storeToRefs(roomCategoryStore);
+    const { reorderRoomCategories, updateRoomCategory } = roomCategoryStore;
+    trpcMsw.room.category.reorderRoomCategories.mutation(() => []);
+    trpcMsw.room.category.updateRoomCategory.mutation(async () => {
+      await reorderRoomCategories([second, first]);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: name });
+    });
+    roomCategories.value = [first, second];
+    await updateRoomCategory({ id, name: rejectedName });
+
+    expect(
+      roomCategories.value.map(({ id: roomCategoryId, position }) => ({ id: roomCategoryId, position })),
+    ).toStrictEqual([
+      { id, position: 1 },
+      { id: otherId, position: 0 },
+    ]);
+  });
 });

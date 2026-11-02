@@ -70,10 +70,15 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
     await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
       applyOptimistic: () => {
-        // Only the fields this write overwrites, on the one row it touches, and read as the write is sent —
-        // Swapping a row for a copy would strand the create placeholder its own onSuccess writes onto
+        // Only the fields this write names, on the one row it touches, and read as the write is sent —
+        // Swapping a row for a copy would strand the create placeholder its own onSuccess writes onto. A field the
+        // Write does not name belongs to another write (a reorder moves position), so a rollback must not restore it
         const previousRoomCategory = roomCategories.value.find(({ id }) => id === input.id);
-        const rollbackRoomCategory = previousRoomCategory && { ...previousRoomCategory };
+        const rollbackRoomCategory = previousRoomCategory && {
+          id: previousRoomCategory.id,
+          ...(input.name !== undefined && { name: previousRoomCategory.name }),
+          ...(input.position !== undefined && { position: previousRoomCategory.position }),
+        };
         storeUpdateRoomCategory(input);
         return () => {
           if (rollbackRoomCategory) storeUpdateRoomCategory(rollbackRoomCategory);
