@@ -257,6 +257,19 @@ describe(getUnterminatedResults, () => {
     ).toStrictEqual([]);
   });
 
+  // A `new`, an array or an object takes the value into what the function returns, so the caller owns the terminator
+  test.each([
+    { shape: "a new expression's argument", statement: "return new Box(result.value);" },
+    { shape: "an array element", statement: "return [result.value];" },
+    { shape: "an object property", statement: "return { value: result.value };" },
+  ])("reports nothing for a binding's value a function returns as $shape", ({ statement }) => {
+    expect.hasAssertions();
+
+    expect(
+      getUnterminatedResults(`const read = () => {\n  const result = getResult(fn);\n  ${statement}\n};`),
+    ).toStrictEqual([]);
+  });
+
   // Another object's field spelled the same is not this binding, and reading it as one clears a real finding
   test("does not read a like-named property as the binding", () => {
     expect.hasAssertions();
