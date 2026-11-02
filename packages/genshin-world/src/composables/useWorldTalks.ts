@@ -33,10 +33,8 @@ export const useWorldTalks = ({
   getResidentSpot,
 }: {
   closeScreen: () => void;
-  // The Adventure Rank the player stands at, which opens the card game's duels from its rank
   // The card game's EXP the player holds, which with the main quests they have finished sets their Player Level
   getCardGameExp: () => number;
-  // The main quests the player has finished, by id, which hold the card game's tutorial and the Player Level's locks
   getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
