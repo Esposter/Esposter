@@ -843,8 +843,16 @@ export enum GameTextKey {
   Starsilver = "1269908988",
   // The title of a Statue of The Seven's Blessing screen, which F on a resonated statue opens
   StatueBlessing = "3126052466",
+  // The Statue's Worship pill that offers the Oculi held one at a time
+  StatueOffer = "UI_STC_GODDESS_CONTRIBUTE",
+  // The Statue's Worship pill that offers every Oculus held at once
+  StatueOfferAll = "UI_STC_GODDESS_CONTRUBUTE_ALL",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
+  // The Statue's Worship line over the count of the Oculus held, before its "×"
+  StatueOwned = "UI_STC_GODDESS_MATERIAL_CURR_COUNT",
+  // The Statue's Worship heading over the rewards the next level unlocks
+  StatueRewards = "UI_STC_GODDESS_NEXT_LEVEL_UNLOCK",
   // The title of a Statue of The Seven's Worship screen, which F on a resonated statue opens
   StatueWorship = "1652053571",
   StormbearerMountains = "490005341",
