@@ -8,7 +8,7 @@ committed.
 | Reference                              | Screen                      |                                                                Mean difference | Shape |   Tone |   FLIP |
 | :------------------------------------- | :-------------------------- | -----------------------------------------------------------------------------: | ----: | -----: | -----: |
 | `achievement-screen`                   | `AchievementScreen`         |                                                                          3.73% | 0.915 |  1.25% | 0.1674 |
-| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.80% | 0.897 |  2.00% | 0.3418 |
+| `archive-screen`                       | `ArchiveScreen`             |                                                                          9.00% | 0.897 |  2.01% | 0.3243 |
 | `character-artifacts`                  | `CharacterScreen`           |                                                                          2.88% | 0.924 |  0.90% | 0.1225 |
 | `character-artifacts-tabs`             | `CharacterScreen`           |                                                                          0.88% | 0.976 |  0.32% | 0.0474 |
 | `character-attributes`                 | `CharacterScreen`           |                                                                          1.70% | 0.974 |  0.60% | 0.0699 |

@@ -93,6 +93,7 @@ const faceStyle = computed(() => ({
   width: 100%;
   height: calc(var(--unit) * 29);
   padding: 0 calc(var(--unit) * 4);
+  border-radius: 0 0 calc(var(--unit) * 4) calc(var(--unit) * 4);
   background: #e5e4dd;
   color: #2b2f3a;
   font-size: calc(var(--unit) * 17.5);
@@ -118,8 +119,7 @@ const faceStyle = computed(() => ({
 }
 
 .name[data-two-lines] .label {
-  max-width: calc(var(--unit) * 100);
-  text-wrap: balance;
+  max-width: calc(var(--unit) * 107);
 }
 
 .kills {
