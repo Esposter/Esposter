@@ -32,6 +32,7 @@ import { takeChildReply } from "#src/services/drivers/window/takeChildReply";
 import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { terminateSocketOnError } from "#src/services/shared/terminateSocketOnError";
 import { waitForSocketClose } from "#src/services/shared/waitForSocketClose";
 import { exhaustiveGuard, getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { randomBytes } from "node:crypto";
@@ -183,10 +184,7 @@ export const createWindowDriver = (
       receive(child, data);
     });
     // A frame the socket cannot read, or one over its limit, ends that window's socket and nothing beside it
-    webSocket.on("error", (error) => {
-      console.error(error);
-      webSocket.terminate();
-    });
+    terminateSocketOnError(webSocket);
     webSocket.on("close", () => {
       removeChild(child);
     });

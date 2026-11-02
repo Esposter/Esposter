@@ -36,6 +36,7 @@ import { handleShellCommand } from "#src/services/server/handleShellCommand";
 import { sendServerMessage } from "#src/services/server/sendServerMessage";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { terminateSocketOnError } from "#src/services/shared/terminateSocketOnError";
 import { createShellRegistry } from "#src/services/shell/createShellRegistry";
 import { exhaustiveGuard, getResult, getResultAsync, noop } from "@esposter/shared";
 import { createPublicKey, randomBytes } from "node:crypto";
@@ -64,7 +65,7 @@ export const createAgentConsoleServer = async ({
   const publicKey = createPublicKey(hostKey);
   const publicKeyText = getPublicKeyText(hostKey);
   // A socket that has not been admitted may send nothing larger than a message the host admits, so it cannot make the host
-  // hold more
+  // Hold more
   const webSocketServer = new WebSocketServer({ maxPayload: MESSAGE_MAX_BYTE_LENGTH, noServer: true });
   // Each page's socket once its credential is accepted, under its device: only these hear anything of the sessions
   const socketDeviceIdMap = new Map<WebSocket, string>();
@@ -286,10 +287,7 @@ export const createAgentConsoleServer = async ({
       }, HANDSHAKE_TIMEOUT_MS),
     );
     // A frame the socket cannot read, or one over its limit, ends that socket and nothing beside it
-    webSocket.on("error", (error) => {
-      console.error(error);
-      webSocket.terminate();
-    });
+    terminateSocketOnError(webSocket);
     webSocket.on("message", (data) => {
       if (socketDeviceIdMap.has(webSocket)) {
         taskRegistry.run(() => receive(webSocket, data));
