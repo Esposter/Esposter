@@ -17,7 +17,8 @@ export const notificationTypeEnum = messageSchema.enum("notificationType", Notif
 export const usersToRoomsInMessage = pgTable(
   "usersToRooms",
   {
-    // A category is its member's own, so the assignment is the member's too: each member files a room under their own category.
+    // A category is its member's own, so the assignment is the member's too.
+    // Each member files a room under their own category.
     // A category deleted by its owner leaves the membership uncategorized.
     categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     displayName: text().notNull().default(""),
