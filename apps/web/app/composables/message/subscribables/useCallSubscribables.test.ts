@@ -24,6 +24,16 @@ vi.mock(import("@/composables/message/room/call/useSubscribeCallParticipants"), 
   useSubscribeCallParticipants: () => subscribeCallParticipants,
 }));
 
+const mountCallSubscribables = () =>
+  mountSuspended(
+    defineComponent({
+      render: () => h("div"),
+      setup: () => {
+        useCallSubscribables();
+      },
+    }),
+  );
+
 describe(useCallSubscribables, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
@@ -34,28 +44,19 @@ describe(useCallSubscribables, () => {
   let closed: ReturnType<typeof createCounter>;
   let roomReads: ReturnType<typeof createCounter>;
   let wrapper: undefined | VueWrapper;
-  const mountCallSubscribables = () =>
-    mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          useCallSubscribables();
-        },
-      }),
-    );
 
   beforeEach(() => {
     goOnline();
     opened = createCounter();
     closed = createCounter();
     roomReads = createCounter();
-    subscribeCallParticipants.mockImplementation(async () => {
+    subscribeCallParticipants.mockImplementation(() => {
       opened.increment();
-      return {
+      return Promise.resolve({
         unsubscribe: () => {
           closed.increment();
         },
-      };
+      });
     });
     trpcMsw.callSession.readCallSessionId.query(({ input }) => {
       roomReads.increment();
@@ -74,7 +75,8 @@ describe(useCallSubscribables, () => {
     expect.hasAssertions();
 
     wrapper = await mountCallSubscribables();
-    useCallStore().activeCallSessionId = callSessionId;
+    const callStore = useCallStore();
+    callStore.activeCallSessionId = callSessionId;
     setCurrentRoomId(roomId);
     await opened.reach(1);
     await flushPromises();
