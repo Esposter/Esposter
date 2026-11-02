@@ -27,8 +27,9 @@ export const createTRPCEventHandler = <TRouter extends AnyTRPCRouter>({
       // Whether tRPC demands a context callback is a conditional type over the router's context, which never resolves
       // While `TRouter` is open; the caller's options were checked against its own router at the call site
     } as FetchHandlerRequestOptions<TRouter>);
-    // H3 merges the headers a procedure set through the event into the response, but not a status, so one a procedure
-    // Answered with itself — a redirect — replaces tRPC's
+    // H3 merges the headers a procedure set through the event into the response only below status 400, since an error
+    // Status takes its error headers instead. It merges no status either, so a status a procedure set itself, such as a
+    // Redirect, replaces tRPC's
     const { status } = event.res;
     if (!status) return response;
     else if (!NULL_BODY_STATUSES.has(status)) return new Response(response.body, { headers: response.headers, status });
