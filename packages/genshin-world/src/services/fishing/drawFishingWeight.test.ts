@@ -17,6 +17,6 @@ describe(drawFishingWeight, () => {
     expect(drawFishingWeight(weights, 0)?.fishId).toBe(FIRST_FISH_ID);
     expect(drawFishingWeight(weights, 0.74)?.fishId).toBe(FIRST_FISH_ID);
     expect(drawFishingWeight(weights, 0.75)?.fishId).toBe(SECOND_FISH_ID);
-    expect(drawFishingWeight([], 0)).toBeUndefined();
+    expect(drawFishingWeight<FishingWeight>([], 0)).toBeUndefined();
   });
 });

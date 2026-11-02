@@ -66,17 +66,18 @@ const endFieldOf = (combatant: Combatant): KitEffect[] => {
   return kitEffectState.effects;
 };
 
+// A still character's input pressing the burst or the skill
+const pressInput = (press: Pick<KitInput, "isBurstPressed" | "isSkillPressed">): KitInput => ({
+  height: 0,
+  isAttackHeld: false,
+  isAttackPressed: false,
+  isSkillHeld: false,
+  locomotionState: LocomotionState.Idle,
+  ...press,
+});
+
 describe(createChongyunKitBehaviour, () => {
   const kitBody = createKitBody({ x: 0, z: 0 });
-  // A still character's input pressing the burst or the skill
-  const pressInput = (press: Pick<KitInput, "isBurstPressed" | "isSkillPressed">): KitInput => ({
-    height: 0,
-    isAttackHeld: false,
-    isAttackPressed: false,
-    isSkillHeld: false,
-    locomotionState: LocomotionState.Idle,
-    ...press,
-  });
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
     const context = createKitTestContext(combatant);

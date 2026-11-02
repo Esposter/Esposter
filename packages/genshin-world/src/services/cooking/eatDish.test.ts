@@ -39,6 +39,8 @@ describe(eatDish, () => {
 
   const eat = (inventory: Inventory, dishUse: DishUse, count = 1) =>
     eatDish(inventory, DISH_ID, dishUse, { count, eaterId: EATER_ID, getMaxHealth, kitEffectState, party });
+  const eatAntiCold = (antiCold: { ratio: number; seconds: number }) =>
+    eat(createInventory(2), { antiCold, target: DishTarget.Party });
 
   test("using a recovery dish heals the selected character", () => {
     expect.hasAssertions();
@@ -116,9 +118,6 @@ describe(eatDish, () => {
 
   test("an anti-cold dish holds the team's anti-cold for its seconds, restarting the one it holds", () => {
     expect.hasAssertions();
-
-    const eatAntiCold = (antiCold: { ratio: number; seconds: number }) =>
-      eat(createInventory(2), { antiCold, target: DishTarget.Party });
 
     eatAntiCold({ ratio: -0.3, seconds: 900 });
     eatAntiCold({ ratio: -0.5, seconds: 1500 });
