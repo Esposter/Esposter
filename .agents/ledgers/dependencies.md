@@ -97,11 +97,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vitest/snapshot`                      | 2026-11-01 · Haiku 5.5  | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/spy`                           | 2026-11-01 · Haiku 5.5  | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/utils`                         | 2026-11-01 · Haiku 5.5  | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
-| `@vue-flow/background`                  | 2026-11-01 · Sonnet 5.5 | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
-| `@vue-flow/controls`                    | 2026-11-01 · Sonnet 5.5 | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
-| `@vue-flow/core`                        | 2026-11-01 · Sonnet 5.5 | Keep — engine    | the flow-diagram engine                                                                                |
-| `@vue-flow/minimap`                     | 2026-11-01 · Sonnet 5.5 | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
-| `@vue-flow/node-resizer`                | 2026-11-01 · Sonnet 5.5 | Keep — hold      | held until the flowchart retirement removes it; its future is decided as removal                       |
 | `@vue/compiler-core`                    | 2026-11-01 · Haiku 5.5  | Keep — framework | Vue's compiler, read by the app's tooling                                                              |
 | `@vue/test-utils`                       | 2026-11-01 · Haiku 5.5  | Keep — tooling   | component tests                                                                                        |
 | `@vuetify/v0`                           | 2026-11-01 · Haiku 5.5  | Keep — framework | the UI library's headless base, on the stop list for accessibility                                     |
