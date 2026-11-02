@@ -5,7 +5,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 
 // A plain decimal literal, so the hexadecimal, binary and octal forms Number also reads are refused
-const DECIMAL_REGEX = /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/iu;
+const DECIMAL_REGEX = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/iu;
 
 export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
   const sanitizedValue = normalizeString(value);
