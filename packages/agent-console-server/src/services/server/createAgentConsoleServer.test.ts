@@ -23,6 +23,7 @@ import { readDevices } from "#src/services/device/readDevices";
 import { checkIsSignatureValid } from "#src/services/handshake/checkIsSignatureValid";
 import { getPairingProof } from "#src/services/handshake/getPairingProof";
 import { getSignedText } from "#src/services/handshake/getSignedText";
+import { HANDSHAKE_TIMEOUT_MS } from "#src/services/server/constants";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
 import { noop, takeOne } from "@esposter/shared";
@@ -165,6 +166,7 @@ describe(createAgentConsoleServer, () => {
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await server.close();
     rmSync(stateDirectory, { force: true, recursive: true });
   });
@@ -197,6 +199,29 @@ describe(createAgentConsoleServer, () => {
     const { paired } = await pair();
 
     expect(paired.type).toBe(ServerMessageType.Paired);
+  });
+
+  test("closes a socket that has not finished its handshake in time", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const webSocket = connect();
+    const pendingClose = once(webSocket, "close");
+    await once(webSocket, "open");
+    vi.advanceTimersByTime(HANDSHAKE_TIMEOUT_MS);
+    const [closeCode] = await pendingClose;
+
+    expect(closeCode).toBe(HostCloseCode.HandshakeRefused);
+  });
+
+  test("keeps an admitted socket open past the time its handshake had", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const { webSocket } = await pair();
+    vi.advanceTimersByTime(HANDSHAKE_TIMEOUT_MS);
+
+    expect(webSocket.readyState).toBe(WebSocket.OPEN);
   });
 
   test("refuses a socket from a page on another site", async () => {

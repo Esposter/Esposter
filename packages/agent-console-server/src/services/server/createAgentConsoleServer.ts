@@ -27,6 +27,7 @@ import { getPublicKeyText } from "#src/services/handshake/getPublicKeyText";
 import { getSignedText } from "#src/services/handshake/getSignedText";
 import { signNonce } from "#src/services/handshake/signNonce";
 import { answerHttpRequest } from "#src/services/server/answerHttpRequest";
+import { HANDSHAKE_TIMEOUT_MS } from "#src/services/server/constants";
 import { createEventLog } from "#src/services/server/createEventLog";
 import { createPairingCodes } from "#src/services/server/createPairingCodes";
 import { handleCommand } from "#src/services/server/handleCommand";
@@ -67,6 +68,8 @@ export const createAgentConsoleServer = async ({
   const webSocketServer = new WebSocketServer({ maxPayload: MESSAGE_MAX_BYTE_LENGTH, noServer: true });
   // Each page's socket once its credential is accepted, under its device: only these hear anything of the sessions
   const socketDeviceIdMap = new Map<WebSocket, string>();
+  // Each socket's timer for the handshake it has yet to finish, which admission and closing both clear
+  const handshakeTimeoutMap = new Map<WebSocket, NodeJS.Timeout>();
   const broadcast = (message: ServerMessage) => {
     for (const webSocket of socketDeviceIdMap.keys()) sendServerMessage(webSocket, message);
   };
@@ -170,6 +173,8 @@ export const createAgentConsoleServer = async ({
   };
 
   const admit = (webSocket: WebSocket, deviceId: string) => {
+    clearTimeout(handshakeTimeoutMap.get(webSocket));
+    handshakeTimeoutMap.delete(webSocket);
     socketDeviceIdMap.set(webSocket, deviceId);
     for (const [sessionId, events] of eventLog.entries())
       sendServerMessage(webSocket, { events, sessionId, type: ServerMessageType.Events });
@@ -273,6 +278,13 @@ export const createAgentConsoleServer = async ({
 
   webSocketServer.on("connection", (webSocket: WebSocket, request: IncomingMessage) => {
     const hostNonce = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
+    // A socket that is not admitted within the handshake's time is closed, so one that sends nothing holds nothing long
+    handshakeTimeoutMap.set(
+      webSocket,
+      setTimeout(() => {
+        webSocket.close(HostCloseCode.HandshakeRefused);
+      }, HANDSHAKE_TIMEOUT_MS),
+    );
     // A frame the socket cannot read, or one over its limit, ends that socket and nothing beside it
     webSocket.on("error", (error) => {
       console.error(error);
@@ -298,6 +310,8 @@ export const createAgentConsoleServer = async ({
       });
     });
     webSocket.on("close", () => {
+      clearTimeout(handshakeTimeoutMap.get(webSocket));
+      handshakeTimeoutMap.delete(webSocket);
       socketDeviceIdMap.delete(webSocket);
     });
   });

@@ -1,6 +1,7 @@
 // Why the host closed a connection before it could send commands, in the range WebSocket leaves to applications
 export enum HostCloseCode {
-  // A first message that is no handshake, or a file of the host's that could not be read to answer it
+  // A first message that is no handshake, a handshake not finished in time, or a file of the host's that could not be read
+  // To answer it
   HandshakeRefused = 4400,
   // The credential is unknown — never paired here, or revoked — so the page forgets it rather than retrying
   CredentialRefused = 4401,
