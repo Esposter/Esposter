@@ -97,7 +97,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
   display: block;
   width: 100%;
   border: none;
-  background: rgb(20 28 38 / 0.68);
+  background: rgb(29 38 50 / 0.68);
   text-align: left;
 }
 .recipes li:first-child .recipe,
@@ -113,13 +113,19 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
   background: #ece3d5;
   color: #3b3b3b;
 }
+/* The rows the pick is not on sit 17 units in from the pressed row's edges, which take the full list width */
+.recipe:not([aria-pressed="true"]),
+.queue:not(.selected) {
+  width: calc(100% - var(--unit) * 33);
+  margin-left: calc(var(--unit) * 17);
+}
 .recipe:disabled {
   opacity: 0.4;
 }
 .recipe-name {
   position: absolute;
   top: calc(var(--unit) * 18);
-  left: calc(var(--unit) * 152);
+  left: calc(var(--unit) * 141);
   font-size: calc(var(--unit) * 39);
   line-height: 1;
   letter-spacing: calc(var(--unit) * 1.8);
@@ -127,10 +133,18 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .recipe-time {
   position: absolute;
   top: calc(var(--unit) * 64);
-  left: calc(var(--unit) * 151);
+  left: calc(var(--unit) * 141);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
   letter-spacing: calc(var(--unit) * 2.5);
+}
+.recipe:not([aria-pressed="true"]) .recipe-name,
+.recipe:not([aria-pressed="true"]) .recipe-time {
+  left: calc(var(--unit) * 133);
+}
+/* The first row is taller than the rest, and its time line sits lower in it */
+.recipes li:first-child .recipe-time {
+  top: calc(var(--unit) * 74);
 }
 .queue.selected {
   background: v-bind(GAME_CREAM);
@@ -140,13 +154,17 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .queue-tile {
   position: absolute;
   top: calc(var(--unit) * 9.8);
-  left: calc(var(--unit) * 14.6);
+  left: calc(var(--unit) * 5);
   width: calc(var(--unit) * 107.3);
   height: calc(var(--unit) * 107.3);
   background: #3a4556;
 }
 .recipe-tile {
   background: #373045;
+}
+/* An idle or locked queue's tile sits flush with its inset row's edge */
+.queue:not(.selected) .queue-tile {
+  left: 0;
 }
 .queue[data-state="Idle"] .queue-tile {
   background: none;
@@ -166,7 +184,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .queue-time {
   position: absolute;
   top: calc(var(--unit) * 64);
-  left: calc(var(--unit) * 152);
+  left: calc(var(--unit) * 141);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
   letter-spacing: calc(var(--unit) * 2.5);
@@ -195,6 +213,11 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .queue[data-state="Idle"] .queue-progress {
   top: calc(var(--unit) * 42);
 }
+.queue:not(.selected) .queue-name,
+.queue:not(.selected) .queue-progress,
+.queue:not(.selected) .queue-time {
+  left: calc(var(--unit) * 133);
+}
 .queue[data-state="Locked"] .queue-time {
   top: calc(var(--unit) * 46);
 }
@@ -202,7 +225,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .sort,
 .sort-toggle {
   position: absolute;
-  background: #e0dace;
+  background: #ece5d8;
 }
 .sort {
   top: calc(var(--unit) * 972);
@@ -212,10 +235,10 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
   border-radius: calc(var(--unit) * 26);
 }
 .sort-toggle {
-  top: calc(var(--unit) * 976);
-  left: calc(var(--unit) * 805);
-  width: calc(var(--unit) * 42);
-  height: calc(var(--unit) * 42);
+  top: calc(var(--unit) * 972);
+  left: calc(var(--unit) * 801);
+  width: calc(var(--unit) * 61);
+  height: calc(var(--unit) * 61);
   border-radius: 50%;
 }
 </style>

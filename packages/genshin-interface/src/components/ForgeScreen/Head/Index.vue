@@ -96,10 +96,18 @@ const emit = defineEmits<{ close: []; "update:tab": [tab: ForgeTab] }>();
   border: none;
   background: rgb(20 28 38 / 0.55);
   color: v-bind(GAME_CREAM);
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 35);
+  letter-spacing: calc(var(--unit) * 1.7);
 }
 .tab[aria-pressed="true"] {
   background: v-bind(GAME_CREAM);
   color: #3b3b3b;
+}
+/* The tabs' outer ends are rounded, and the join between them is square */
+.tab:first-child {
+  border-radius: calc(var(--unit) * 30) 0 0 calc(var(--unit) * 30);
+}
+.tab:last-child {
+  border-radius: 0 calc(var(--unit) * 30) calc(var(--unit) * 30) 0;
 }
 </style>

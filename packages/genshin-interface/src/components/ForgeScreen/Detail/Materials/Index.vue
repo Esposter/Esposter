@@ -42,16 +42,18 @@ const emit = defineEmits<{ start: [] }>();
 </template>
 
 <style scoped>
+/* The total time is centred over the item the recipe forges, at the middle of its tile */
 .total-time {
   top: calc(var(--unit) * 146);
-  left: 50%;
+  left: calc(var(--unit) * 1590.8);
   translate: -50% 0;
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 32);
   line-height: 1;
+  letter-spacing: calc(var(--unit) * 1.5);
   white-space: nowrap;
 }
 .amount {
-  top: calc(var(--unit) * 590);
+  top: calc(var(--unit) * 603);
   left: calc(var(--unit) * 1368);
   width: calc(var(--unit) * 446);
   height: calc(var(--unit) * 20);

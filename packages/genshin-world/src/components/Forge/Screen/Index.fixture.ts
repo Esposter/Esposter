@@ -73,6 +73,7 @@ export const weaponRecipe: ForgeRecipe = {
 const oreDefinition = getItemDefinition(takeOne(takeOne(recipes, 0).materials, 0).id, englishNameText, materialDataMap);
 const createOreEntry = (id: number, quantity: number): InventoryItem => ({ definition: oreDefinition, id, quantity });
 const createBag = (...items: InventoryItem[]) => ({ items, nextId: items.length, quickSwapItemIds: [] });
+const createWallet = (mora: number) => ({ ...EMPTY_WALLET, [Currency.Mora]: mora });
 const heldWeaponEntry: InventoryItem = {
   ascension: 0,
   definition: toWeaponDefinition(heldWeaponData, ""),
@@ -118,14 +119,14 @@ export const props = {
   recipeId: 11_001,
   recipes,
   tab: ForgeTab.Materials,
-  wallet: { ...EMPTY_WALLET, [Currency.Mora]: 375_527 },
+  wallet: createWallet(375_527),
   weapons,
 };
 // The Forge Queues tab, and the day's forge points spent to the cap, which refuses the Enhancement Ore in place of Start,
 // And the Queues tab holding a finished order of the first ore's recipe or of the four-star weapon's
 export const variants = {
   oresDone: createDoneOrderVariant(takeOne(recipes, 0).id, 5),
-  queues: { inventory: createBag(createOreEntry(0, 28)), tab: ForgeTab.Queues },
+  queues: { inventory: createBag(createOreEntry(0, 28)), tab: ForgeTab.Queues, wallet: createWallet(375_502) },
   refused: { progress: { ...progress, forgedPoints: FORGE_DAILY_POINT_CAP } },
   weaponsDone: {
     ...createDoneOrderVariant(weaponRecipe.id, 2),
