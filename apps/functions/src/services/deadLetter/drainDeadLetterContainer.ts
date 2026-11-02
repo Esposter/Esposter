@@ -1,5 +1,5 @@
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { checkIsPreconditionFailed } from "@esposter/db";
+import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import {
   AzureContainer,
   DEAD_LETTER_ARCHIVED_PREFIX,
@@ -35,7 +35,16 @@ export const drainDeadLetterContainer = async (): Promise<number> => {
     // Move the value being compared.
     if (Date.now() - (properties.lastModified?.getTime() ?? 0) < EVENT_GRID_DELIVERY_TTL_MS) continue;
     const blockBlobClient = containerClient.getBlockBlobClient(name);
-    const content = await blockBlobClient.downloadToBuffer();
+    // Listed, then gone before this read: another worker claimed it, and its replay has already republished and deleted
+    // It. Nothing is left to claim, so the walk moves on rather than letting one vanished blob abort the rest of the drain
+    const content = await getResultAsync(() => blockBlobClient.downloadToBuffer()).match(
+      (downloadedContent) => downloadedContent,
+      (error) => {
+        if (checkIsNotFound(error)) return undefined;
+        throw error;
+      },
+    );
+    if (!content) continue;
     // Overwritten in place under the same name: the subscription filters on the container path, so a copy under any
     // Other prefix would not match it, and the attempt counter rides on each event's id rather than on the blob —
     // Nothing about the cap is reset by rewriting the bytes.

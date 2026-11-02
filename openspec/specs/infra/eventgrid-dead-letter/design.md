@@ -30,6 +30,7 @@ Three rules keep it from doing anything else:
 
 - The `archived/` and `quarantine/` prefixes are skipped, exactly as the subscription's advanced filter skips them. Re-uploading one would retrigger nothing and would only rewrite a record an operator reads.
 - A blob younger than `EVENT_GRID_DELIVERY_TTL_MS` is skipped, because its own trigger still has attempts left. Without that bound, every cold start of a busy app would race the deliveries already coming and publish those batches twice. Past the window, no delivery of that trigger can still arrive, which is what makes the blob provably stranded rather than merely recent. A re-upload dates the blob, so it falls back inside the window it was just given and a second start does not repeat the work.
+- A blob that is gone before the drain reads it was claimed and replayed by another worker's drain after this one listed it, so the read's not-found means that work is finished. The walk moves on to the blobs behind it rather than ending there.
 - It can never reject. A start hook that throws is one that can stop the app registering its functions — the exact failure the drain exists to recover from — so a container that cannot be read leaves the app starting normally and the blobs for the next start.
 
 Nothing about the cap is reset by this: the attempt counter rides on each event's `id` rather than on the blob, so a drained payload resumes where it left off and a poison one still quarantines on schedule.

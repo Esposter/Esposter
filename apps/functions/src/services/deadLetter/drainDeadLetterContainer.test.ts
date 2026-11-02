@@ -5,8 +5,10 @@ import {
   getMockBlobKey,
   getMockContainer,
   MOCK_BLOB_SEEDED_DATE,
+  MockBlockBlobClient,
   MockContainerBlobDatesDatabase,
   MockContainerDatabase,
+  MockRestError,
 } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -22,6 +24,7 @@ describe(drainDeadLetterContainer, () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   // The three exclusions are given distinct evidence on purpose: the replay's own copies are seeded as old as the
@@ -70,6 +73,17 @@ describe(drainDeadLetterContainer, () => {
     getMockContainer(AzureContainer.DeadLetter).set(strandedBlobName, content);
 
     await expect(drainDeadLetterContainer()).resolves.toBe(1);
+    await expect(drainDeadLetterContainer()).resolves.toBe(0);
+  });
+
+  // Listed, then claimed and replayed by another worker's drain before this one reads it: the read finds nothing, which
+  // Is that replay finished rather than a failed drain, so this one resolves instead of rejecting
+  test("skips a stranded payload that is gone before this drain reads it", async () => {
+    expect.hasAssertions();
+
+    getMockContainer(AzureContainer.DeadLetter).set(strandedBlobName, content);
+    vi.spyOn(MockBlockBlobClient.prototype, "downloadToBuffer").mockRejectedValueOnce(new MockRestError(" ", 404));
+
     await expect(drainDeadLetterContainer()).resolves.toBe(0);
   });
 });
