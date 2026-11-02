@@ -1,6 +1,6 @@
 import rateLimiter from "#src/runtime/server/middleware/rateLimiter";
 import { getSecurityRules } from "#src/runtime/services/getSecurityRules";
-import { H3Event } from "nitro/h3";
+import { H3 } from "nitro/h3";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/runtime/services/getSecurityRules"), () => ({
@@ -14,10 +14,8 @@ describe(rateLimiter, () => {
   const SOCKET_ADDRESS = "203.0.113.5";
 
   // The socket address is the connection's, which a client cannot write, unlike its own forwarded header
-  const createEvent = (forwardedFor: string): H3Event =>
-    new H3Event(
-      Object.assign(new Request(URL, { headers: { "x-forwarded-for": forwardedFor } }), { ip: SOCKET_ADDRESS }),
-    );
+  const createRequest = (forwardedFor: string): Request =>
+    Object.assign(new Request(URL, { headers: { "x-forwarded-for": forwardedFor } }), { ip: SOCKET_ADDRESS });
 
   beforeEach(() => {
     vi.mocked(getSecurityRules).mockReturnValue({
@@ -29,11 +27,14 @@ describe(rateLimiter, () => {
   test("#83 #196 a forwarded address the client writes does not change its key, so it cannot spend a fresh count", async () => {
     expect.hasAssertions();
 
-    const first = createEvent("198.51.100.1");
-    const second = createEvent("198.51.100.2");
+    const app = new H3().use(rateLimiter);
 
-    await rateLimiter(first, () => undefined);
+    await app.fetch(createRequest("198.51.100.1"));
 
-    await expect(rateLimiter(second, () => undefined)).rejects.toMatchObject({ status: 429 });
+    const response = await app.fetch(createRequest("198.51.100.2"));
+
+    expect(response.status).toBe(429);
+    // The window is one minute and the refused request is the one within it, so it is told to wait the whole of it
+    expect(response.headers.get("Retry-After")).toBe(String(INTERVAL_IN_MILLISECONDS / 1000));
   });
 });

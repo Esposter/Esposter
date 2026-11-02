@@ -10,7 +10,17 @@ const corsHandler: Middleware = defineMiddleware((event) => {
   if (!rules?.enabled || !rules.corsHandler) return;
 
   const { allowHeaders, credentials, exposeHeaders, maxAge, methods, origin, preflight } = rules.corsHandler;
-  handleCors(event, { allowHeaders, credentials, exposeHeaders, maxAge, methods, origin: [origin].flat(), preflight });
+  const response = handleCors(event, {
+    allowHeaders,
+    credentials,
+    exposeHeaders,
+    maxAge,
+    methods,
+    origin: [origin].flat(),
+    preflight,
+  });
+  // A preflight is answered here, so its response is returned for h3 to send. Any other request falls through to its handler
+  if (response !== false) return response;
 });
 
 export default corsHandler;

@@ -19,8 +19,12 @@ const basicAuthMiddleware: Middleware = defineMiddleware((event) => {
   if (!checkIsChallenged(pathname, basicAuth)) return;
   if (checkIsBasicAuthorized(event.req.headers.get("authorization"), basicAuth)) return;
 
-  event.res.headers.set("WWW-Authenticate", serializeBasicAuthChallenge(basicAuth.message || DEFAULT_BASIC_AUTH_REALM));
-  throw new HTTPError({ status: 401, statusText: "Access denied" });
+  // The challenge rides on the error, as h3 builds an error's response from its own headers and not the event's
+  throw new HTTPError({
+    headers: { "WWW-Authenticate": serializeBasicAuthChallenge(basicAuth.message || DEFAULT_BASIC_AUTH_REALM) },
+    status: 401,
+    statusText: "Access denied",
+  });
 });
 
 export default basicAuthMiddleware;

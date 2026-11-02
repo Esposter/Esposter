@@ -19,8 +19,12 @@ const rateLimiter: Middleware = defineMiddleware(async (event) => {
   const retryAfterSeconds = await getRetryAfterSeconds(rateLimiterStore, key, rules.rateLimiter);
   if (retryAfterSeconds === undefined) return;
 
-  event.res.headers.set("Retry-After", String(retryAfterSeconds));
-  throw new HTTPError({ status: 429, statusText: "Too Many Requests" });
+  // The header rides on the error, as h3 builds an error's response from its own headers and not the event's
+  throw new HTTPError({
+    headers: { "Retry-After": String(retryAfterSeconds) },
+    status: 429,
+    statusText: "Too Many Requests",
+  });
 });
 
 export default rateLimiter;
