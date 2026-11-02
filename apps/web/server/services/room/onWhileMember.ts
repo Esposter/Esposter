@@ -18,7 +18,9 @@ export const onWhileMember = <TKey extends keyof TEventMap, TEventMap extends Re
         if (leave.roomId === roomId && leave.userId === userId) depart();
       };
       roomEventEmitter.on("leaveRoom", onLeaveRoom);
-      return () => roomEventEmitter.off("leaveRoom", onLeaveRoom);
+      return () => {
+        roomEventEmitter.off("leaveRoom", onLeaveRoom);
+      };
     },
     signal,
   });

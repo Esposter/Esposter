@@ -30,7 +30,9 @@ export const onWhileCallRoomMember = async <TKey extends keyof CallEvents & stri
             if (leave.callSessionId === callSessionId && leave.id === sessionId) depart();
           };
           callEventEmitter.on("leaveCall", onLeaveCall);
-          return () => callEventEmitter.off("leaveCall", onLeaveCall);
+          return () => {
+            callEventEmitter.off("leaveCall", onLeaveCall);
+          };
         },
         signal,
       });
