@@ -144,4 +144,31 @@ describe(useWorldMailStore, () => {
       mails: [],
     });
   });
+
+  test("a read that fails after the session stops is dropped without a log", async () => {
+    expect.hasAssertions();
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
+    let failBirthdayMailRows: (error: Error) => void = noop;
+    readBirthdayMailRowsMock.mockReturnValueOnce(
+      new Promise<BirthdayMailRows>((_resolve, reject) => {
+        failBirthdayMailRows = reject;
+      }),
+    );
+    readMailRowsMock.mockResolvedValueOnce(new Map());
+    readMailTextMock.mockResolvedValueOnce({});
+    const worldSessionStore = startTestWorldSession();
+    const worldMailStore = useWorldMailStore();
+    worldMailStore.start([], undefined);
+    worldSessionStore.stop();
+    worldMailStore.stop();
+    failBirthdayMailRows(new Error("birthday mail read failed"));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    const { calls } = consoleError.mock;
+    consoleError.mockRestore();
+    expect(calls).toStrictEqual([]);
+  });
 });

@@ -56,7 +56,7 @@ export const useWorldMailStore = defineStore("world/mail", () => {
       mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
       mailData.value = { birthdayMailIds, mailRows, textMap };
     }).match(noop, (error) => {
-      console.error(error);
+      if (loading === load) console.error(error);
     });
   };
   const stop = () => {
