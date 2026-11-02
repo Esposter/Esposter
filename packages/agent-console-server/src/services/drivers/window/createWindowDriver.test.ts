@@ -16,6 +16,7 @@ import {
 import { createWindowDriver } from "#src/services/drivers/window/createWindowDriver";
 import { readSessionWindows } from "#src/services/drivers/window/readSessionWindows";
 import { serveSessionChild } from "#src/services/drivers/window/serveSessionChild";
+import { listenOnFreePort } from "#src/services/shared/listenOnFreePort";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { once } from "node:events";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -32,10 +33,7 @@ const connect = ({ port, secret }: SessionWindowLaunch): WebSocket =>
 // A port nothing listens on, so a connect to it is refused
 const getRefusedPort = async () => {
   const httpServer = createServer();
-  httpServer.listen(0, DEFAULT_HOSTNAME);
-  await once(httpServer, "listening");
-  const address = httpServer.address();
-  const port = typeof address === "object" && address ? address.port : 0;
+  const port = await listenOnFreePort(httpServer);
   httpServer.close();
   await once(httpServer, "close");
   return port;

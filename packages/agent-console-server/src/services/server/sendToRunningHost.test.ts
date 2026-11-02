@@ -1,6 +1,7 @@
 import { ServerMessageType } from "#src/models/server/ServerMessageType";
 import { DEFAULT_HOSTNAME } from "#src/services/constants";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
+import { listenOnFreePort } from "#src/services/shared/listenOnFreePort";
 import { generateKeyPairSync } from "node:crypto";
 import { once } from "node:events";
 import { createServer } from "node:http";
@@ -16,10 +17,7 @@ describe(sendToRunningHost, () => {
     const httpServer = createServer((_request, response) => {
       response.writeHead(200).end();
     });
-    httpServer.listen(0, DEFAULT_HOSTNAME);
-    await once(httpServer, "listening");
-    const address = httpServer.address();
-    const port = typeof address === "object" && address ? address.port : 0;
+    const port = await listenOnFreePort(httpServer);
     onTestFinished(() => {
       httpServer.close();
     });
