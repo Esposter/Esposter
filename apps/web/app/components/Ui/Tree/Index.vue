@@ -9,16 +9,17 @@ interface Props {
   label: string;
 }
 // A tree of items, one stop in the tab order: the arrows, Home, End and Enter walk and open it as Treeview has them,
-// And typing the start of a title moves to the next visible item that starts with it. Focus is the selection, so the
-// Item that takes focus by any of these, or by a click, is the one the model holds
+// And typing the start of a title moves to the next visible item that starts with it. Focus and a click are the
+// Selection, so the item that takes either is the one the model holds
 const selectedId = defineModel<string>({ required: true });
 const { items, label } = defineProps<Props>();
 const typeahead = useTypeahead();
 // The item row an event starts at, or null when it starts outside every row
 const getItemRow = (event: Event) =>
   event.target instanceof Element ? event.target.closest("[role='treeitem']") : null;
-// Each item's row says its id and title on its element, so focus and typeahead read them from what is drawn
-const onFocusin = (event: FocusEvent) => {
+// Each item's row says its id and title on its element, so focus, a click and typeahead read them from what is drawn.
+// A click selects too, since a button Safari does not focus on a click would otherwise never select its item
+const selectRow = (event: Event) => {
   const row = getItemRow(event);
   if (row instanceof HTMLElement && row.dataset.itemId) selectedId.value = row.dataset.itemId;
 };
@@ -41,7 +42,8 @@ const onKeydown = (event: KeyboardEvent) => {
   <Treeview.Root :model-value="selectedId" :multiple="false">
     <Treeview.List
       :label
-      @focusin="(event: FocusEvent) => onFocusin(event)"
+      @click="(event: MouseEvent) => selectRow(event)"
+      @focusin="(event: FocusEvent) => selectRow(event)"
       @keydown="(event: KeyboardEvent) => onKeydown(event)"
     >
       <UiTreeItem v-for="item of items" :key="item.id" :item />

@@ -45,6 +45,25 @@ describe("uiTree", () => {
       component.unmount();
     });
 
+    test("a click selects the item it lands on, though the click does not take focus", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiTree, {
+        attachTo: document.body,
+        props: {
+          items,
+          label,
+          modelValue: "",
+          "onUpdate:modelValue": (modelValue: string) => component.setProps({ modelValue }),
+        },
+      });
+      await component.get('[data-item-id="ba"] button').trigger("click");
+
+      expect(component.props("modelValue")).toBe("ba");
+
+      component.unmount();
+    });
+
     test("typing the start of a title moves focus to that item", async () => {
       expect.hasAssertions();
 
