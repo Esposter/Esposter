@@ -21,9 +21,10 @@ import { getSignedText } from "#src/services/handshake/getSignedText";
 import { createAgentConsoleServer } from "#src/services/server/createAgentConsoleServer";
 import { sendToRunningHost } from "#src/services/server/sendToRunningHost";
 import { noop, takeOne } from "@esposter/shared";
-import { createPublicKey, generateKeyPairSync } from "node:crypto";
+import { createPublicKey, generateKeyPairSync, randomBytes } from "node:crypto";
 import { once } from "node:events";
 import { mkdtempSync, rmSync } from "node:fs";
+import { createConnection } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
@@ -40,6 +41,18 @@ const waitForMessage = <T extends ServerMessageType>(webSocket: WebSocket, type:
     };
     webSocket.on("message", listener);
   });
+
+// A program that is not a WebSocket client: it speaks the upgrade, then writes whatever bytes it is given
+const connectRaw = async (port: number) => {
+  const rawSocket = createConnection({ host: DEFAULT_HOSTNAME, port });
+  rawSocket.on("error", noop);
+  await once(rawSocket, "connect");
+  rawSocket.write(
+    `GET / HTTP/1.1\r\nHost: ${DEFAULT_HOSTNAME}\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: ${randomBytes(16).toString("base64")}\r\nSec-WebSocket-Version: 13\r\n\r\n`,
+  );
+  await once(rawSocket, "data");
+  return rawSocket;
+};
 
 // A shell that prints what the test hands it and ends when killed, as a pseudo-terminal's shell does
 const createFakeTerminal = () => {
@@ -149,6 +162,19 @@ describe(createAgentConsoleServer, () => {
   afterEach(async () => {
     await server.close();
     rmSync(stateDirectory, { force: true, recursive: true });
+  });
+
+  test("closes a socket whose frame is malformed, and keeps serving the others", async () => {
+    expect.hasAssertions();
+
+    const rawSocket = await connectRaw(server.port);
+    const pendingClose = once(rawSocket, "close");
+    // A frame with RSV1 set, which no extension of this socket negotiated: ws reports it as an error, not a message
+    rawSocket.write(Buffer.from([0xc1, 0x80, 0, 0, 0, 0]));
+    await pendingClose;
+    const { paired } = await pair();
+
+    expect(paired.type).toBe(ServerMessageType.Paired);
   });
 
   test("refuses a socket from a page on another site", async () => {

@@ -14,6 +14,7 @@ import { formatSessionLogLine } from "#src/services/drivers/window/formatSession
 import { handleCommand } from "#src/services/server/handleCommand";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { waitForSocketClose } from "#src/services/shared/waitForSocketClose";
 import { getOrCreate, getResult, getResultAsync, noop } from "@esposter/shared";
 import { setTimeout as delay } from "node:timers/promises";
 import { WebSocket } from "ws";
@@ -117,12 +118,8 @@ export const serveSessionChild = async (
           type: ChildMessageType.Rejoin,
         });
       });
-    // The attempt ends at its close, since an error before it, such as a refused connect, is only a failed attempt and
-    // Must not end the loop
-    const closed = Promise.withResolvers<number>();
-    currentWebSocket.once("close", closed.resolve);
     // oxlint-disable-next-line no-await-in-loop -- Reconnecting: an attempt is made only once the one before it has closed
-    const code = await closed.promise;
+    const code = await waitForSocketClose(currentWebSocket);
     if (isRefused && isRejoining) writeLine("The host did not take this session back, so it ends here.");
     // A window that has opened no session yet has nothing to keep
     if (signal.aborted || isRefused || code === SessionWindowCloseCode.SessionEnded || sessionEventMap.size === 0)

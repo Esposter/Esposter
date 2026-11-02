@@ -271,6 +271,11 @@ export const createAgentConsoleServer = async ({
 
   webSocketServer.on("connection", (webSocket: WebSocket, request: IncomingMessage) => {
     const hostNonce = randomBytes(SECRET_BYTE_LENGTH).toString("base64url");
+    // A frame the socket cannot read, or one over its limit, ends that socket and nothing beside it
+    webSocket.on("error", (error) => {
+      console.error(error);
+      webSocket.terminate();
+    });
     webSocket.on("message", (data) => {
       if (socketDeviceIdMap.has(webSocket)) {
         taskRegistry.run(() => receive(webSocket, data));

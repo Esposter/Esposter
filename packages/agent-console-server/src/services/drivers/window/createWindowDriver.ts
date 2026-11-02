@@ -32,6 +32,7 @@ import { takeChildReply } from "#src/services/drivers/window/takeChildReply";
 import { checkIsTokenValid } from "#src/services/server/checkIsTokenValid";
 import { createTaskRegistry } from "#src/services/shared/createTaskRegistry";
 import { readMessageText } from "#src/services/shared/readMessageText";
+import { waitForSocketClose } from "#src/services/shared/waitForSocketClose";
 import { exhaustiveGuard, getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { randomBytes } from "node:crypto";
 import { once } from "node:events";
@@ -181,6 +182,11 @@ export const createWindowDriver = (
     webSocket.on("message", (data) => {
       receive(child, data);
     });
+    // A frame the socket cannot read, or one over its limit, ends that window's socket and nothing beside it
+    webSocket.on("error", (error) => {
+      console.error(error);
+      webSocket.terminate();
+    });
     webSocket.on("close", () => {
       removeChild(child);
     });
@@ -280,7 +286,7 @@ export const createWindowDriver = (
       // Stopped on purpose, so every window's session ends with the host rather than waiting for the next one
       const children = [...childSet];
       for (const { webSocket } of children) webSocket.close(SessionWindowCloseCode.SessionEnded);
-      await Promise.all(children.map(({ webSocket }) => once(webSocket, "close")));
+      await Promise.all(children.map(({ webSocket }) => waitForSocketClose(webSocket)));
       await taskRegistry.drain();
       await listening;
       saveSessionWindows();
