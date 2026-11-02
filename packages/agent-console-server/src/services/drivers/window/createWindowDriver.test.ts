@@ -19,6 +19,7 @@ import { serveSessionChild } from "#src/services/drivers/window/serveSessionChil
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { once } from "node:events";
 import { mkdtempSync, rmSync } from "node:fs";
+import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -27,6 +28,18 @@ import { WebSocket } from "ws";
 // A window's side of the loopback, presenting the secret its launch was given
 const connect = ({ port, secret }: SessionWindowLaunch): WebSocket =>
   new WebSocket(`ws://${DEFAULT_HOSTNAME}:${port}`, { headers: { authorization: `Bearer ${secret}` } });
+
+// A port nothing listens on, so a connect to it is refused
+const getRefusedPort = async () => {
+  const httpServer = createServer();
+  httpServer.listen(0, DEFAULT_HOSTNAME);
+  await once(httpServer, "listening");
+  const address = httpServer.address();
+  const port = typeof address === "object" && address ? address.port : 0;
+  httpServer.close();
+  await once(httpServer, "close");
+  return port;
+};
 
 describe(createWindowDriver, () => {
   const sessionId = crypto.randomUUID();
@@ -51,10 +64,13 @@ describe(createWindowDriver, () => {
   let childCallbacks: DriverCallbacks;
   // Where a window that lost its host reads the next host's port from
   let rejoinStateDirectory: string;
+  // The ports a window's reconnects go to ahead of the state directory's, for a test to make one of them refused
+  let refusedPorts: number[];
 
   beforeEach(() => {
     stateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
     rejoinStateDirectory = stateDirectory;
+    refusedPorts = [];
     childClose.mockResolvedValue();
     childInterrupt.mockResolvedValue();
     // A window started in the test's own process: the child's half runs for real over the loopback, against a driver
@@ -64,9 +80,12 @@ describe(createWindowDriver, () => {
       childAbortController = new AbortController();
       let isFirstConnection = true;
       serving = serveSessionChild(
-        // First to the port it was launched with, as a window does, then to whichever host the state directory names
+        // First to the port it was launched with, as a window does, then to the refused ports a test lists and to
+        // Whichever host the state directory names
         () => {
-          const port = isFirstConnection ? newSessionWindowLaunch.port : readSessionWindows(rejoinStateDirectory).port;
+          const port = isFirstConnection
+            ? newSessionWindowLaunch.port
+            : (refusedPorts.shift() ?? readSessionWindows(rejoinStateDirectory).port);
           isFirstConnection = false;
           childWebSocket = connect({ port, secret: newSessionWindowLaunch.secret });
           return childWebSocket;
@@ -232,6 +251,43 @@ describe(createWindowDriver, () => {
 
     expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId, false);
     expect(nextOnEvents).toHaveBeenCalledExactlyOnceWith(sessionId, [runningEvent]);
+    expect(childClose).not.toHaveBeenCalled();
+
+    nextDriver.closeSession(sessionId);
+    await serving;
+
+    expect(childClose).toHaveBeenCalledTimes(1);
+
+    await nextDriver.close();
+    rmSync(rejoinStateDirectory, { force: true, recursive: true });
+  });
+
+  test("keeps its session when a reconnect is refused, and tries again", async () => {
+    expect.hasAssertions();
+
+    await driver.createSession(" ");
+    rejoinStateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
+    writeStateFile(rejoinStateDirectory, SESSION_WINDOWS_FILENAME, JSON.stringify(readSessionWindows(stateDirectory)));
+    const nextOnSessionOpen = vi.fn<DriverCallbacks["onSessionOpen"]>();
+    const sessionOpen = new Promise<void>((resolve) => {
+      nextOnSessionOpen.mockImplementation(() => {
+        resolve();
+      });
+    });
+    const nextDriver = createWindowDriver(
+      {
+        onEvents: vi.fn<DriverCallbacks["onEvents"]>(),
+        onSessionOpen: nextOnSessionOpen,
+        onSessionsChange: vi.fn<DriverCallbacks["onSessionsChange"]>(),
+      },
+      { launchSessionWindow, stateDirectory: rejoinStateDirectory, writeLine: vi.fn<(line: string) => void>() },
+    );
+    // The host killed, and the window's first try at the next host finds nothing listening on its port
+    refusedPorts.push(await getRefusedPort());
+    childWebSocket.terminate();
+    await sessionOpen;
+
+    expect(nextOnSessionOpen).toHaveBeenCalledExactlyOnceWith(sessionId, false);
     expect(childClose).not.toHaveBeenCalled();
 
     nextDriver.closeSession(sessionId);
