@@ -1,5 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
+import { MAX_CONCURRENT_PUSH_SENDS } from "#src/services/notification/constants";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
@@ -60,6 +61,31 @@ describe(sendWebPushNotifications, () => {
       .where(eq(pushSubscriptionsInNotification.id, id));
 
     expect(remainingPushSubscriptions).toHaveLength(0);
+  });
+
+  test("keeps at most MAX_CONCURRENT_PUSH_SENDS sends in flight", async () => {
+    expect.hasAssertions();
+
+    const sendNotification = vi.mocked(webpush.sendNotification);
+    let inFlight = 0;
+    let peakInFlight = 0;
+    sendNotification.mockImplementation(async () => {
+      inFlight += 1;
+      peakInFlight = Math.max(peakInFlight, inFlight);
+      // Settles on a later tick, so every send a wave starts is in flight before any of them returns
+      await Promise.resolve();
+      inFlight -= 1;
+      return { body: "", headers: {}, statusCode: 0 };
+    });
+    const subscriptions = Array.from({ length: MAX_CONCURRENT_PUSH_SENDS + 1 }, () => ({
+      ...pushSubscription,
+      expirationTime: null,
+      id: crypto.randomUUID(),
+    }));
+    await sendWebPushNotifications(context, subscriptions, payload);
+    sendNotification.mockReset();
+
+    expect(peakInFlight).toBe(MAX_CONCURRENT_PUSH_SENDS);
   });
 
   test("keeps subscription when send fails with a non-410 error", async () => {
