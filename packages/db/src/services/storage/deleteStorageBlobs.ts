@@ -3,7 +3,7 @@ import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { MAX_CONCURRENT_BLOB_DELETIONS } from "@esposter/db-schema";
-import { chunk, getResultAsync, takeOne } from "@esposter/shared";
+import { chunk, getResultAsync, rethrowRejections } from "@esposter/shared";
 
 // Removing a blob and giving its bytes back are one operation, so they live in one function: the ledger row is
 // The only record of who was charged for a blob, and a blob deleted with its row left standing is bytes held
@@ -53,7 +53,8 @@ export const deleteStorageBlobs = async (
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     if (newlyReleasedUserIds.length > 0) await onReleased(newlyReleasedUserIds);
     // Rethrown once the release has landed, never before it: the failure is what makes Event Grid redeliver,
-    // And the blobs this wave did remove must not wait for that redelivery to be given back
-    if (errors.length > 0) throw takeOne(errors);
+    // And the blobs this wave did remove must not wait for that redelivery to be given back. Every failure of the
+    // Wave goes out with it, not only the first one to settle
+    rethrowRejections(errors);
   }
 };

@@ -1,8 +1,7 @@
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { Operation } from "#src/models/shared/Operation";
-import { toAppError } from "#src/services/error/toAppError";
 import { chunk } from "#src/util/array/chunk";
-import { takeOne } from "#src/util/array/takeOne";
+import { rethrowRejections } from "#src/util/promise/rethrowRejections";
 
 // Runs a fan-out to completion before raising anything, which is what every caller that rolls back on failure
 // Needs: `Promise.all` hands the first rejection over while its siblings are still writing, so the rollback names
@@ -36,8 +35,7 @@ export const settleAll = async <T>(
     for (const result of results)
       if (result.status === "rejected") reasons.push(result.reason);
       else values.push(result.value);
-    if (reasons.length === 1) throw takeOne(reasons);
-    else if (reasons.length > 1) throw new AggregateError(reasons, toAppError(takeOne(reasons)).message);
+    rethrowRejections(reasons);
   }
   return values;
 };
