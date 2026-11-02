@@ -1,5 +1,6 @@
 import type { ReviewIssueBodyInput } from "#src/models/review/ReviewIssueBodyInput";
 
+import { REVIEW_FINDING_BULLET } from "#src/services/review/constants";
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
 import { toSingleLine } from "#src/services/review/issues/toSingleLine";
 
@@ -7,7 +8,7 @@ import { toSingleLine } from "#src/services/review/issues/toSingleLine";
 // Function, so the run line and the findings keep one shape the settle job can read.
 export const renderReviewIssueBody = ({ base, end, items, runId }: ReviewIssueBodyInput): string => {
   const itemLines = items.flatMap(({ finding, reason }) => [
-    `- ${formatReviewFinding(finding)}`,
+    `${REVIEW_FINDING_BULLET}${formatReviewFinding(finding)}`,
     `  - Trigger: ${toSingleLine(finding.trigger)}`,
     ...(reason === undefined ? [] : [`  - Why deferred: ${toSingleLine(reason)}`]),
   ]);

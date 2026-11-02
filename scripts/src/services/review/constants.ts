@@ -6,6 +6,9 @@ export const REVIEW_ISSUE_LABEL = "review";
 // The most findings one issue holds, so its body stays far under GitHub's 65,536-character body limit. A window with more
 // Is split over several issues, each its own part.
 export const REVIEW_ISSUE_FINDING_CAP = 25;
+// The bullet a finding's line opens with in an issue body. The settle job reads a bullet over a code span back as a finding,
+// so the body's writer and that reader both take the bullet from here.
+export const REVIEW_FINDING_BULLET = "- ";
 // GitHub's limit on the jobs one matrix runs. The issues past it are not lost: they stay open, and the settle job takes them.
 export const REVIEW_FIX_MATRIX_CAP = 256;
 // How many times a push of the fixer's commits is attempted before the run gives up on them, since another session
