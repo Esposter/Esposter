@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
 import { authSchema } from "#src/schema/auth/authSchema";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
-import { text, timestamp } from "drizzle-orm/pg-core";
+import { index, text, timestamp } from "drizzle-orm/pg-core";
 
 export const sessionsInAuth = pgTable(
   "sessions",
@@ -15,5 +15,11 @@ export const sessionsInAuth = pgTable(
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
-  { schema: authSchema },
+  {
+    extraConfig: ({ userId }) => [
+      // A user's active sessions are read by owner, and a user's deletion cascades through it
+      index("sessions_userId_index").on(userId),
+    ],
+    schema: authSchema,
+  },
 );

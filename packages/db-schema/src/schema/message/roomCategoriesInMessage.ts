@@ -5,7 +5,7 @@ import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { check, integer, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const roomCategoriesInMessage = pgTable(
@@ -19,9 +19,11 @@ export const roomCategoriesInMessage = pgTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, position }) => [
+    extraConfig: ({ name, position, userId }) => [
       check("roomCategories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
       check("roomCategories_position_check", createMinimumCheckSql(position, 0)),
+      // A reader's categories are read by owner, and a user's deletion cascades through it
+      index("roomCategories_userId_index").on(userId),
     ],
     schema: messageSchema,
   },

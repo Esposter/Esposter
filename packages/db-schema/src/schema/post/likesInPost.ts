@@ -3,7 +3,7 @@ import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { postSchema } from "#src/schema/post/postSchema";
 import { postsInPost } from "#src/schema/post/postsInPost";
 import { sql } from "drizzle-orm";
-import { check, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
@@ -22,6 +22,8 @@ export const likesInPost = pgTable(
     extraConfig: ({ postId, userId, value }) => [
       primaryKey({ columns: [userId, postId] }),
       check("likes_value_check", sql`${value} = 1 OR ${value} = -1`),
+      // The primary key leads with userId, so a post's deletion cascading into its likes has no index without this one
+      index("likes_postId_index").on(postId),
     ],
     schema: postSchema,
   },

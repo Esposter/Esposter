@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
 import { authSchema } from "#src/schema/auth/authSchema";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
-import { text, timestamp, unique } from "drizzle-orm/pg-core";
+import { index, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export const accountsInAuth = pgTable(
   "accounts",
@@ -21,10 +21,12 @@ export const accountsInAuth = pgTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ accountId, providerId }) => [
+    extraConfig: ({ accountId, providerId, userId }) => [
       // A provider's account is one identity: better-auth resolves the owner by this pair and throws once two rows
       // Match it, which stops sign-in for that user until the duplicate is removed by hand
       unique("accounts_providerId_accountId_unique").on(providerId, accountId),
+      // A user's accounts are read by owner, and a user's deletion cascades through it
+      index("accounts_userId_index").on(userId),
     ],
     schema: authSchema,
   },

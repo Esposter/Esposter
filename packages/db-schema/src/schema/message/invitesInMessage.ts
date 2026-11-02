@@ -5,7 +5,7 @@ import { INVITE_ID_LENGTH, INVITE_ID_REGEX } from "#src/services/message/invite/
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { sql } from "drizzle-orm";
-import { check, integer, text, timestamp } from "drizzle-orm/pg-core";
+import { check, index, integer, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const invitesInMessage = pgTable(
@@ -20,11 +20,13 @@ export const invitesInMessage = pgTable(
     uses: integer().notNull().default(0),
   },
   {
-    extraConfig: ({ id, maxUses, uses }) => [
+    extraConfig: ({ id, maxUses, roomId, uses }) => [
       check("invites_id_length_check", createExactLengthCheckSql(id, INVITE_ID_LENGTH)),
       check("invites_maxUses_check", createMinimumCheckSql(maxUses, 0)),
       check("invites_uses_check", createMinimumCheckSql(uses, 0)),
       check("invites_uses_maxUses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
+      // A room's invite list pages by room, and its deletion cascades through it
+      index("invites_roomId_index").on(roomId),
     ],
     schema: messageSchema,
   },

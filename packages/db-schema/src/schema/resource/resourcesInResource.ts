@@ -48,8 +48,10 @@ export const resourcesInResource = pgTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, tags }) => [
+    extraConfig: ({ name, tags, userId }) => [
       check("resources_name_length_check", createNameCheckSql(name, RESOURCE_NAME_MAX_LENGTH)),
+      // Every owner's list, count and cascade from a user's deletion filter on the owner first
+      index("resources_userId_index").on(userId),
       // GIN backs the `tags @> input` containment filter behind the /all Tag pill
       index("resources_tags_index").using("gin", tags),
       // Trigram GIN backs similarity() ranking in global search, so a typo still finds the resource.

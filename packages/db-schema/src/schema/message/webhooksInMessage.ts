@@ -6,7 +6,7 @@ import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, index, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const webhooksInMessage = pgTable(
@@ -29,7 +29,11 @@ export const webhooksInMessage = pgTable(
       .references(() => appUsersInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))],
+    extraConfig: ({ name, roomId }) => [
+      check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH)),
+      // A room's webhook list and its create-time count read by room, and its deletion cascades through it
+      index("webhooks_roomId_index").on(roomId),
+    ],
     schema: messageSchema,
   },
 );

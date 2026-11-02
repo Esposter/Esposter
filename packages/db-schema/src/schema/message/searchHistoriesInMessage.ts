@@ -7,7 +7,7 @@ import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { MAX_READ_LIMIT } from "@esposter/shared";
-import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const searchHistoriesInMessage = pgTable(
@@ -19,8 +19,10 @@ export const searchHistoriesInMessage = pgTable(
     ...createRoomUserColumns(),
   },
   {
-    extraConfig: ({ query }) => [
+    extraConfig: ({ query, roomId, userId }) => [
       check("searchHistories_query_length_check", createMaxLengthCheckSql(query, MESSAGE_MAX_LENGTH)),
+      // A member's history in one room is read by both, and either parent's deletion cascades through it
+      index("searchHistories_userId_roomId_index").on(userId, roomId),
     ],
     schema: messageSchema,
   },
