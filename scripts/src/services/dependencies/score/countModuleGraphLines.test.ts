@@ -38,4 +38,12 @@ describe(countModuleGraphLines, () => {
 
     expect(countModuleGraphLines(directory, manifest)).toBe(5);
   });
+
+  test("reads the default condition of an exports root that names neither import nor require", () => {
+    expect.hasAssertions();
+
+    expect(
+      countModuleGraphLines(directory, { exports: { default: `./${TEST_FILENAME}`, types: "./index.d.ts" } }),
+    ).toBe(5);
+  });
 });

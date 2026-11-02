@@ -1,6 +1,7 @@
 import { checkIsPlainObject } from "@esposter/shared";
 
-// The import condition's entry, else the require condition's, else `main`: the file a package's runtime loads
+// The import condition's entry, else the require condition's, else the default's, else `main`: the file a package's
+// Runtime loads
 export const readCondition = (value: unknown, condition: string): string | undefined => {
   if (typeof value === "string") return value;
   if (!checkIsPlainObject(value)) return undefined;

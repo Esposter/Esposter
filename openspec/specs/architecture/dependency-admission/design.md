@@ -65,7 +65,7 @@ An adapter is the cheapest item this page finds and the one that costs the most 
 
 `pnpm ai:dependencies:score` scores every catalog entry out of 100 for how sensibly it could be absorbed into our own code. A high score is a strong candidate, and each ledger verdict is read against it. Four dimensions, each read from something the repo already holds:
 
-- **Size, 35.** The lines of the package's runtime module graph: its entry for the `import` condition (else `require`, else `main`), followed through its relative imports. Declarations, source maps and minified copies are left out, so a package shipping CJS, ESM and UMD builds of one module is counted once. Fewer lines score higher.
+- **Size, 35.** The lines of the package's runtime module graph: its entry for the `import` condition (else `require`, else `default`, else `main`), followed through its relative imports. Declarations, source maps and minified copies are left out, so a package shipping CJS, ESM and UMD builds of one module is counted once. Fewer lines score higher.
 - **Stability, 25.** Releases in the last two years. Few releases means little upstream to track once we own it.
 - **Format, 20.** CommonJS scores highest, since our ESM build gains the most from owning it. Dual scores less, and ESM or types-only scores 0.
 - **Self-containment, 20.** The package's own dependency count. None scores highest.

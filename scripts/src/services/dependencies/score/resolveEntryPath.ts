@@ -8,5 +8,7 @@ export const resolveEntryPath = (manifest: InstalledManifest): string | undefine
   const { exports } = manifest;
   const root = checkIsPlainObject(exports) && "." in exports ? exports["."] : exports;
 
-  return readCondition(root, "import") ?? readCondition(root, "require") ?? manifest.main;
+  return (
+    readCondition(root, "import") ?? readCondition(root, "require") ?? readCondition(root, "default") ?? manifest.main
+  );
 };
