@@ -19,6 +19,7 @@ import { announceRoomMemberDeparture } from "#server/services/room/announceRoomM
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
+import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
@@ -452,8 +453,8 @@ export const baseRoomRouter = router({
     if (room) cursorPaginationData.items.push(room);
     return cursorPaginationData;
   }),
-  // Every id asked for comes back, a user who has left the room included, so a message whose author has left is still
-  // Named. `isMember` tells the two apart, and a user with no membership is named by their account
+  // A row comes back for every id that has an account, a user who has left the room included, so a message whose author
+  // Has left is still named. `isMember` tells the two apart, and a user with no membership is named by their account
   readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
     ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
@@ -463,10 +464,7 @@ export const baseRoomRouter = router({
           isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`,
         })
         .from(usersInAuth)
-        .leftJoin(
-          usersToRoomsInMessage,
-          and(eq(usersToRoomsInMessage.userId, usersInAuth.id), eq(usersToRoomsInMessage.roomId, roomId)),
-        )
+        .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
         .where(inArray(usersInAuth.id, userIds)),
   ),
   updateRoom: addProfanityFilterMiddleware(
