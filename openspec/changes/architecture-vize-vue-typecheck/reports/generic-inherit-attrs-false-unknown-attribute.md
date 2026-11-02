@@ -4,13 +4,13 @@ I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time.
 
 A generic component that sets `defineOptions({ inheritAttrs: false })` makes the mapper report TS2353 for any undeclared attribute written as a plain name, for example `p0`. `vue-tsc` accepts the same file unless `strictTemplates` is on. A component that is not generic accepts the attribute with the same option. Forwarding the attributes with `v-bind="$attrs"` opens the type, and forwarding them through `mergeProps(x, $attrs)` does not.
 
-This is one of a batch of issues filed together, all from that attempt:
+This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports nothing for the file.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports nothing for the file. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -107,7 +107,7 @@ The fix is likely to treat `$attrs` inside a call argument as forwarding, and to
 
 ## Real occurrence
 
-The shape in a real Nuxt app: [`App/Dock/CommandMenu.vue` line 35](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/App/Dock/CommandMenu.vue#L35) passes `p-0` to a generic menu component that sets `inheritAttrs: false` and forwards the attributes with `:="mergeProps(activatorProps, $attrs)"` ([`Ui/Menu/Index.vue` line 47](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Ui/Menu/Index.vue#L47)). `vue-tsc` accepts it. The same shape gives the same error in several other call sites.
+https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/App/Dock/CommandMenu.vue#L35
 
 ## Isolation
 

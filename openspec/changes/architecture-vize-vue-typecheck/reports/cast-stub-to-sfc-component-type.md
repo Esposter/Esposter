@@ -2,7 +2,7 @@
 
 I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
 
-This is one of a batch of issues filed together, all from that attempt:
+This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
@@ -10,7 +10,7 @@ A cast of a `defineComponent` stub to the type of a `.vue` component gives TS235
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -126,7 +126,7 @@ The fix is likely to define `$ComponentPublicBase` with `$MappedOmit` in place o
 
 ## Real occurrence
 
-The shape in a real Nuxt app: [`Message/RightSideBar/Search/Input.test.ts` lines 23 to 25](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Message/RightSideBar/Search/Input.test.ts#L23-L25) casts `defineComponent({ render: () => h("div") })` to the type of a `.vue` component. `vue-tsc` accepts it. In the app, the Nuxt plugin typing gives `ComponentCustomProperties` the `` `$${string}` `` key.
+https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Message/RightSideBar/Search/Input.test.ts#L23-L25
 
 ## Isolation
 

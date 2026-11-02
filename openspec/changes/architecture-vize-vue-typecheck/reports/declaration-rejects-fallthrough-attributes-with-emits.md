@@ -4,13 +4,13 @@ I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time.
 
 #11364 reported that a `.vue.d.ts` written by `vize check --declaration` makes `vue-tsc` report TS2345 for an attribute that the component does not declare, for example `disabled`. The issue is closed, but the bug is not fixed on 0.650.0. The reduction in #11364 (one required prop, no emits) already passes on every release I tried, so the closing change could not show the bug. A component with one emit, or with two required props, still fails.
 
-This is one of a batch of issues filed together, all from that attempt:
+This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
 ## Environment
 
-`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Linux. Oracle: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`.
+`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Linux. Source of truth: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`. The consumer check below gives the same error, at the same position, on `vize` 0.652.0 (macOS on Apple silicon).
 
 ## Reproduction
 
@@ -114,7 +114,7 @@ The fix is likely to drop the extra-key half of the guard from the declaration, 
 
 ## Real occurrence
 
-The shape in real code: [`Domain/Screen/Row/Index.vue` lines 33 to 37](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/packages/genshin-world/src/components/Domain/Screen/Row/Index.vue#L33-L37) passes `:disabled` and `@click` to a component from a sibling package whose root is a `<button>`. With the declarations of the sibling built by `vue-tsc`, `vue-tsc` accepts it. With the `vize` declarations of all components of that package, `vue-tsc` reports many errors of this one shape and the mapper reports none.
+https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/packages/genshin-world/src/components/Domain/Screen/Row/Index.vue#L33-L37
 
 ## Isolation
 

@@ -100,7 +100,7 @@ The app project through `tsrs --runExternalCode` (same scratch tsconfig as the e
 
 No type hack for a `vize` defect lives in the app. A global declaration of `__VLS_PROPS_FALLBACK` also clears those four diagnostics and was used only as a probe to confirm the cause; it is recorded in the draft and was not committed.
 
-Each of the 15 remaining diagnostics has a draft in `reports/` with a reduced reproduction, the oracle's result, the cause in the `vize` source and the nearest issues. None is a real finding in the app, and none is a regression: each reproduces on 0.638.0 and on the newest release.
+Each of the 15 remaining diagnostics has a draft in `reports/` with a reduced reproduction, the result of the source of truth, the cause in the `vize` source and the nearest issues. None is a real finding in the app, and none is a regression: each reproduces on 0.638.0 and on the newest release.
 
 | Draft (in `reports/`)                                   | Site in the app                                                           | Diagnostics             |
 | :------------------------------------------------------ | :------------------------------------------------------------------------ | :---------------------- |
@@ -118,7 +118,24 @@ Each of the 15 remaining diagnostics has a draft in `reports/` with a reduced re
 
 The `TS2590` beside the cast does not reduce with the `TS2352`: it needs 300 or more `ComponentCustomProperties` members, and the draft records it under "Not known". The slider error is new since 0.645.0, which is when the mapper began to resolve dotted tags. A `nitro` duplicate-type `TS2345` in `packages/nuxt-security-module/src/module.ts` showed once, depended on the local build state and did not recur.
 
-The three Vue packages (`vue-phaserjs`, `genshin-interface`, `genshin-world`) typecheck with 0 diagnostics through `tsrs` on 0.652.0. The oracle was not re-run: a full `nuxt typecheck` of the app is OOM-killed on a 15 GB container (SIGKILL at 1.5 and 2.5 minutes), so the live `vue-tsc` diff is left to a machine with more memory, and the recorded clean result from the earlier runs stands.
+The three Vue packages (`vue-phaserjs`, `genshin-interface`, `genshin-world`) typecheck with 0 diagnostics through `tsrs` on 0.652.0, and `vue-tsc` agrees.
+
+**The source of truth, run live (a fifth run on `vize` 0.652.0, macOS on Apple silicon with 16 GB).** A full `nuxt typecheck` of the app is OOM-killed on a 15 GB Linux container, so it was run on a machine with more memory. It finishes with 0 diagnostics, and its peak resident size was 4.7 to 8.5 GB across the runs. The mapper over the app project gives exactly the 15 diagnostics above, and every one of them is given by the mapper only. `vue-tsc` gives none that the mapper does not. The mapper checks the app project alone, while `nuxt typecheck` checks five projects (app, server, shared, node and the root), so the diff covers the app project and no more. Both tools were shown to read the files: three deliberate errors in a throwaway component (a script `TS2322`, an unused local `TS6133` and a template prop `TS2322`) were reported by both at the same positions.
+
+**The reductions, re-run on 0.652.0.** All eleven drafts that were open still reproduce: the first diagnostic matches the draft's "Actual" in code and position, `vue-tsc` reports none, and a deliberate real error is reported by both tools. The declaration draft, the successor of #11364, still fails for a producer with an emit or two required props. Each draft says so in its Environment. Three drafts are new, and they come from the compile side (see "The compile side, re-tested" below).
+
+**Timings, cold and warm.** Every run is a fresh process. Cold clears the tools' own caches: the cache folder of `vize`, `node_modules/.vize` and the build info of `nuxt typecheck`. Warm discards two priming runs. The OS page cache was not dropped because the machine had no passwordless `sudo` for `purge`, so cold is cold for the tools only. Medians in seconds over three cold runs and five warm runs, `vue-tsc` against the mapper through `tsrs`:
+
+| Target                 | `vue-tsc` cold | Mapper cold | `vue-tsc` warm | Mapper warm | Peak memory, warm (`vue-tsc` / mapper) |
+| :--------------------- | -------------: | ----------: | -------------: | ----------: | -------------------------------------: |
+| `vue-phaserjs`         |           1.08 |        0.53 |           1.15 |        0.53 |                           0.9 / 0.2 GB |
+| `genshin-interface`    |           1.10 |        0.25 |           1.12 |        0.26 |                           0.7 / 0.2 GB |
+| `genshin-world`        |           6.51 |        1.73 |           6.90 |        1.88 |                           3.9 / 1.0 GB |
+| `apps/web` app project |          26.71 |        6.32 |          25.15 |        6.82 |                           8.0 / 3.3 GB |
+
+The mapper is 2.0 to 4.4 times faster and uses about a third of the memory. `nuxt typecheck` takes 60.76 s cold and 51.23 s warm and is not comparable, because it checks five projects incrementally. On the app project one extended-diagnostics run of the mapper shows parse 2.8 s and check 3.3 s, with 2.7 s of waiting for the content mapper inside a 6.2 s total. Per-file timings are not available: `tsrs` has no trace output, the `vue-tsc` trace stops with an error before it holds check events, and `vize check` does not accept the tsgo-backed `typescript`. A draft of the comment for the upstream performance issue is in `comments/`. It is not posted, and it waits until the migration is complete.
+
+**The compile side, re-tested on 0.652.0.** The deferred page `openspec/deferred/architecture/vize-compiler/design.md` lists the blockers, and each was run again on small standalone projects. The Nuxt module still fails server rendering, and the failure now reduces to one `onPrehydrate` call: its bridge patches the handler of Nuxt's prehydrate transform and not the transform's id filter. The rolldown plugin drops `<style src>` with no warning, and the Vite plugin accepts `template.compilerOptions.isCustomElement` and ignores it. A setting that works for the library builds is `customRenderer` with the `customElements` patterns, which compiles TresJS elements as the renderer expects and keeps an imported `TresCanvas` a component. The module's peer range and the builder's `@vitejs/plugin-vue` dependency are unchanged. The three new drafts are `nuxt-module-skips-prehydrate-transform`, `unplugin-rolldown-drops-style-src` and `vite-plugin-ignores-template-is-custom-element`.
 
 **Decision: `apps/web` stays on `nuxt typecheck`.** Running the mapper beside it today would add a red check that is mostly mapper defects, and a check that is red on every run gets ignored. The comparison is repeated when the classes below are fixed upstream. The scratch tsconfig is not committed.
 

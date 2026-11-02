@@ -2,7 +2,7 @@
 
 I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue explains some of those 15.
 
-This is one of a batch of issues filed together, all from that attempt:
+This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
@@ -12,7 +12,7 @@ The issue #11367 reported the same symptom for the same element without `v-if`. 
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -165,7 +165,7 @@ The fix is likely to admit the alias in a slot when the `:is` expression and the
 
 ## Real occurrence
 
-The shape in a real Nuxt app: [`Message/RightSideBar/Search/Input.vue` line 45](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Message/RightSideBar/Search/Input.vue#L45) has `:is="SearchFilterComponentMap[activeSelectedFilter.type]"` with `v-if` and `@select` on the same element, inside `<template #panel>`. The handler assigns `value` to a field, so the error there is TS2322 and not TS2339. `vue-tsc` accepts it.
+https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Message/RightSideBar/Search/Input.vue#L45
 
 ## Isolation
 
@@ -187,7 +187,7 @@ Older versions: the row "Remove `v-if`" gives 1 error on 0.638.0 and 0.642.0 and
 
 ## Not known
 
-The fix is read from the source and not applied. A guard that reads a slot binding is not checked, and the alias must stay refused for it. Components with `v-for` in a slot are not varied.
+The fix is read from the source and not applied. A guard that reads a slot binding is not checked, and the alias must stay refused for it. Components with `v-for` in a slot are not varied. The real code gives TS2322 and the reproduction gives TS2339, because the handler of the real code assigns `value` to a field.
 
 ## Not a duplicate of
 

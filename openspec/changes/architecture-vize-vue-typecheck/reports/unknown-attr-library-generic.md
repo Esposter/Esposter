@@ -2,7 +2,7 @@
 
 I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into. A first run of this check on the app reported 103 diagnostics that `vue-tsc` does not report. The twelve issues of the first batch are closed, and a run on `vize` 0.652.0 reports 15. This issue is none of those 15, because the app now lists `vue` beside `vize` in its root manifest. It stays open because the mapper then reports a false error with no warning when it cannot find that `vue`.
 
-This is one of a batch of issues filed together, all from that attempt:
+This is one of a batch of 14 issues filed together, all from that attempt, so they can be tracked as one set:
 
 <batch list filled in when filed>
 
@@ -10,7 +10,7 @@ A library component declared as a function that returns `VNode & { __ctx }` (the
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux 6.18. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux 6.18. Source of truth: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction. The reproduction below gives the same diagnostics, at the same positions, on `vize` 0.652.0 (macOS on Apple silicon), and `vue-tsc` reports none.
 
 ## Reproduction
 
@@ -142,9 +142,7 @@ So the library's own term `typeof globalThis extends { __VLS_PROPS_FALLBACK: inf
 
 ## Real occurrence
 
-The shape in a real Nuxt monorepo: [`Ui/Tree/Item.vue` line 18](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Ui/Tree/Item.vue#L18) passes `:data-item-id` to a generic component of `@vuetify/v0`. `vue-tsc` accepts it.
-
-In that monorepo `vize` is a dependency of the root manifest and `vue` is a dependency of the app only, so `vue` is not resolvable from the root. Declaring `vue` in the root manifest beside `vize` removes the four errors of this shape from the app's mapper run, and so does the `declare global` of the Isolation table.
+https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Ui/Tree/Item.vue#L18
 
 ## Isolation
 
