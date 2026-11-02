@@ -109,4 +109,32 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     expect(pageBuilderCanvasStore.getSelectedNodeId(TEST_ID)).toBe(TEST_SECTION_ID);
   });
+
+  test("a delete confirm open when the toolbar unmounts releases the editor's keys", async () => {
+    expect.hasAssertions();
+
+    const onUpdateIsDeleteOpen = vi.fn<(isDeleteOpen: boolean) => void>();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [createTestImageNode(TEST_URL, TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        isDeleteOpen: true,
+        kind: webpageKind,
+        "onUpdate:isDeleteOpen": onUpdateIsDeleteOpen,
+        position: { left: 0, top: 0 },
+        resourceId: TEST_ID,
+      },
+    });
+
+    component.unmount();
+
+    expect(onUpdateIsDeleteOpen).toHaveBeenLastCalledWith(false);
+  });
 });

@@ -32,6 +32,10 @@ const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = use
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
 const { selectParent } = usePageBuilderSelection(kind, getPageDocument, () => resourceId);
+// A confirm open when its toolbar goes is gone with it, so the editor's keys are bound again rather than held by a dialog nobody sees
+onBeforeUnmount(() => {
+  isDeleteOpen.value = false;
+});
 </script>
 
 <!-- Placed by the canvas above the selected node, or below it when the frame has no room above -->
