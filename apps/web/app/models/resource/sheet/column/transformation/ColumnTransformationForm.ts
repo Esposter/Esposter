@@ -11,9 +11,10 @@ import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/tran
 import { stringPatternTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringPatternTransformation";
 import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringSplitTransformation";
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
+import { compileRegexMatchPattern } from "#shared/services/resource/sheet/column/transformation/compileRegexMatchPattern";
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { createSourceColumnIdFormShape } from "@/services/resource/sheet/column/createSourceColumnIdFormShape";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniqueArraySchema, noop } from "@esposter/shared";
 import { getMathExpressionNames, parseMathExpression } from "math-expression-compiler";
 import { z } from "zod";
 
@@ -59,8 +60,15 @@ const mathTransformationFormSchema = mathTransformationSchema
   })
   .meta({ title: ColumnTransformationType.Math });
 
+// The stored schema reads only a pattern's length, so a stored pattern the engine refuses still loads and reads empty.
+// The form refuses it on edit, naming what the engine cannot run
 const regexMatchTransformationFormSchema = regexMatchTransformationSchema
   .safeExtend(createSourceColumnIdFormShape(ColumnFormContextPropertyNames.stringColumnItems))
+  .superRefine(({ pattern }, ctx) => {
+    compileRegexMatchPattern(pattern).match(noop, (error) => {
+      ctx.addIssue({ code: "custom", message: `RE2 cannot run this pattern: ${error.message}`, path: ["pattern"] });
+    });
+  })
   .meta({ title: ColumnTransformationType.RegexMatch });
 
 const stringPatternTransformationFormSchema = stringPatternTransformationSchema

@@ -138,7 +138,7 @@ A date part column SHALL return the chosen calendar field of its source date, an
 
 ### Requirement: A regex column returns a capture group of its source
 
-A regex column SHALL return the chosen capture group of the pattern's match in its source text, and SHALL show an empty cell when nothing matches.
+A regex column SHALL return the chosen capture group of the pattern's match in its source text, and SHALL show an empty cell when nothing matches, when the pattern has no such group, or when the pattern is one the regex engine cannot run.
 
 #### Scenario: Domain of an email address
 
@@ -151,6 +151,35 @@ A regex column SHALL return the chosen capture group of the pattern's match in i
 - **GIVEN** a regex column captures the part after the at sign
 - **WHEN** its source holds text with no at sign
 - **THEN** the cell is empty
+
+#### Scenario: Nested quantifier over a long cell
+
+- **GIVEN** a regex column's pattern is `^(a+)+$`
+- **WHEN** its source holds a long run of a followed by an exclamation mark
+- **THEN** the cell is empty, and the read takes time proportional to the length of the source
+
+### Requirement: A regex pattern is one the engine runs in linear time
+
+The regex engine SHALL be RE2, which matches in time linear in the source text, so no pattern can stall a read in the server or in a tab. The transformation form SHALL refuse a pattern RE2 cannot run and name the construct it refuses. A stored pattern RE2 cannot run SHALL still load, and its column SHALL read empty until the owner edits the pattern.
+
+#### Scenario: Owner saves a pattern with a backreference
+
+- **GIVEN** the owner enters the pattern `(a)\1` in a regex column
+- **WHEN** the owner saves the column
+- **THEN** the column is not saved
+- **AND** the form names the backreference as something the engine cannot run
+
+#### Scenario: Stored pattern with a lookahead
+
+- **GIVEN** a stored regex column's pattern uses a lookahead
+- **WHEN** the sheet opens
+- **THEN** the sheet opens, and the column's cells are empty until the owner edits the pattern
+
+#### Scenario: Lookbehind without a capture
+
+- **GIVEN** a regex column's pattern is `(?<=@)(.+)`
+- **WHEN** its source holds a@example.com
+- **THEN** the cell shows example.com
 
 ### Requirement: Aggregations offer seven calculations over a column
 

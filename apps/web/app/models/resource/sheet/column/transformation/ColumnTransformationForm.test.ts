@@ -35,4 +35,32 @@ describe("columnTransformationFormSchema", () => {
 
     expect(result.error?.issues.map(({ message }) => message)).toStrictEqual(messages);
   });
+
+  test.each([
+    ["a backreference", "(a)\\1", "RE2 cannot run this pattern: error parsing regexp: invalid escape sequence: `\\1`"],
+    [
+      "a lookahead",
+      "a(?=b)",
+      "RE2 cannot run this pattern: error parsing regexp: invalid or unsupported Perl syntax: `(?=`",
+    ],
+  ])("refuses a pattern RE2 cannot run, %s", (_title, pattern, message) => {
+    expect.hasAssertions();
+
+    const result = columnTransformationFormSchema.safeParse({
+      groupIndex: 1,
+      pattern,
+      sourceColumnId: "",
+      type: ColumnTransformationType.RegexMatch,
+    });
+
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([message]);
+  });
+
+  test("keeps a stored pattern RE2 cannot run loadable, the column reads empty", () => {
+    expect.hasAssertions();
+
+    const stored = { groupIndex: 1, pattern: "(a)\\1", sourceColumnId: "", type: ColumnTransformationType.RegexMatch };
+
+    expect(columnTransformationSchema.safeParse(stored).success).toBe(true);
+  });
 });

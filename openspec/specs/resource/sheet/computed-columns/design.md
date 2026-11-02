@@ -8,7 +8,7 @@ A `ComputedColumn` is an ordinary column (`ColumnType.Computed`) whose `transfor
 
 Every read goes through one pipeline, `compileSheetColumns(columns)(rows)(row, column, rowIndex?)`, in three steps:
 
-- **Compile** — once per column list. Each computed column's transformation is turned into a binder by `ColumnTransformationCompileMap[transformation.type]`: a math expression is parsed and compiled once, a regex is built once, and a DatePart checks once that its source is a `Date` column. A transformation that cannot compile — a formula the parser refuses, a pattern that is no regular expression — binds to a reader that answers `null`. The source ids of every computed column are gathered (`ColumnTransformationSourceIdsMap`), and a Tarjan strongly-connected-components pass (`getCyclicColumnIds`) finds every column on a cycle up front.
+- **Compile** — once per column list. Each computed column's transformation is turned into a binder by `ColumnTransformationCompileMap[transformation.type]`: a math expression is parsed and compiled once, a regex pattern is compiled once by RE2, and a DatePart checks once that its source is a `Date` column. A transformation that cannot compile — a formula the parser refuses, a pattern RE2 refuses — binds to a reader that answers `null`. The source ids of every computed column are gathered (`ColumnTransformationSourceIdsMap`), and a Tarjan strongly-connected-components pass (`getCyclicColumnIds`) finds every column on a cycle up front.
 - **Bind** — once per row list, by the caller's `rows`. A column's reader is built from its binder: a binder reads its sources through `readSource`, which resolves each source's reader the same way, so a source two columns share is bound once. An aggregation builds its whole-column result (the total, the descending ranks, the running sums) at this point. A cyclic column binds to a reader that answers `null`, so a cycle never recurses.
 - **Read** — per cell. A stored column's reader is `row.data[column.name]`; a computed column's reader looks up what its binding already built. An aggregation answers by `rowIndex`, so a read with no row index answers `null`.
 
@@ -62,7 +62,14 @@ Three string-producing variants:
 
 ### RegexMatch
 
-Extracts a capture group from a string source: `pattern` plus `groupIndex` (e.g. `@(.+)` with group 1 pulls the domain out of an email column). The pattern is built once; a non-string value reads `null`.
+Extracts a capture group from a string source: `pattern` plus `groupIndex` (e.g. `@(.+)` with group 1 pulls the domain out of an email column). The pattern is compiled once by `compileRegexMatchPattern` with `re2js`, the JavaScript port of RE2, and each cell is matched with `matcher(value).find()` and reads `group(groupIndex)`. A non-string value, a pattern with no match, and a group the pattern does not have each read `null`; so does a group an optional branch skipped.
+
+A JavaScript `RegExp` backtracks, so a crafted pattern takes time exponential in the cell's length: `^(a+)+$` over a 26-character cell took 34 seconds on V8, and that read runs on the server's event loop and in every tab that opens the sheet. RE2 matches in time linear in the cell, so a read's cost follows the cell's length. The schema has no flags, and RE2 reads text as code points, as the `u` flag did. The price is syntax, and these are the differences from JavaScript:
+
+- **Refused** — a backreference (`\1`), a lookahead, a JavaScript `\u` escape, a long `\p{Name}` such as `\p{Letter}`, a repeat count above 1000, and a lookbehind holding a capture. The `LOOKBEHINDS` flag admits a lookbehind that holds none.
+- **Matching differently** — `.` also matches a carriage return and U+2028 or U+2029, and `\s` and `\S` are ASCII only, so a non-breaking space is not whitespace to them.
+
+A pattern RE2 refuses binds to a reader that answers `null`. The transformation form runs the same compile on save and refuses the pattern, naming the construct. A stored pattern RE2 refuses still loads, since the stored schema reads only its length, and its column reads empty until the owner edits the pattern.
 
 ### Aggregation
 
@@ -84,24 +91,25 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 Paths relative to `apps/web`.
 
-| File                                                                                          | Role                                                                                      |
-| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                                                 |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                                        |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                                         |
-| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell                            |
-| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set                       |
-| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                                       |
-| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                                              |
-| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind)                      |
-| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                                               |
-| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | Parse and compile once, run per row over the variables' values                            |
-| `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`                 | Edit form schemas: the math expression's parse and unbound-name check                     |
-| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                                                 |
-| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                                            |
-| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                                                   |
-| `app/store/resource/sheet/row.ts`                                                             | The grid's compiled columns as a computed value, and the reader bound to the rows in view |
-| `shared/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                                                   |
+| File                                                                                          | Role                                                                                             |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                                                        |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                                               |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                                                |
+| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell                                   |
+| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set                              |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                                              |
+| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                                                     |
+| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind)                             |
+| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                                                      |
+| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | Parse and compile once, run per row over the variables' values                                   |
+| `shared/services/resource/sheet/column/transformation/compileRegexMatchPattern.ts`            | The one RE2 compile a regex pattern goes through, shared with the form                           |
+| `app/models/resource/sheet/column/transformation/ColumnTransformationForm.ts`                 | Edit form schemas: the math expression's parse and unbound-name check, the pattern's RE2 compile |
+| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                                                        |
+| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                                                   |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                                                          |
+| `app/store/resource/sheet/row.ts`                                                             | The grid's compiled columns as a computed value, and the reader bound to the rows in view        |
+| `shared/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                                                          |
 
 ## Datasets
 
