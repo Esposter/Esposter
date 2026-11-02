@@ -8,7 +8,7 @@ import { getFileSize } from "@/services/file/getFileSize";
 import { validateFile } from "@/services/file/validateFile";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
+import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {
   roomId: RoomInMessage["id"];
@@ -29,9 +29,7 @@ const fileValidation = computed(() =>
   file.value ? validateFile(file.value.size, MAX_ROOM_EMOJI_SIZE_BYTES) : undefined,
 );
 // The fields are the library's, which the dialog's own form cannot count, so what they check gates the save here too
-const isNameValid = computed(
-  () => name.value.length <= ROOM_EMOJI_NAME_MAX_LENGTH && ROOM_EMOJI_NAME_REGEX.test(name.value),
-);
+const isNameValid = computed(() => selectRoomEmojiInMessageSchema.shape.name.safeParse(name.value).success);
 </script>
 
 <!-- Numbered steps rather than a bare pair of fields: uploading and naming are two decisions, and the name is

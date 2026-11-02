@@ -4,7 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
+import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {
   roomEmoji: RoomEmojiWithSasUrl;
@@ -36,7 +36,10 @@ watch(
       min-w-0
       @focusout="
         () => {
-          if (editedName === roomEmoji.name || !ROOM_EMOJI_NAME_REGEX.test(editedName)) {
+          if (
+            editedName === roomEmoji.name ||
+            !selectRoomEmojiInMessageSchema.shape.name.safeParse(editedName).success
+          ) {
             editedName = roomEmoji.name;
             return;
           }

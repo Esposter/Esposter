@@ -9,22 +9,46 @@ describe("messageModelRoomSettingsTypeOverviewSlowmodeField", () => {
   const modelValue = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
 
   // A number field emits whatever was typed rather than what its rules allow, and a Temporal duration rejects a
-  // Field that is not a finite integer as well as one past the range it can represent — so a fractional or
-  // Oversized entry threw a RangeError out of the handler, leaving the field stuck on it
-  test.each([
-    ["1.5", Temporal.Duration.from({ seconds: 1 }).total("milliseconds")],
-    ["1e999", 0],
-    ["1e16", 0],
-    ["0.5", 0],
-  ])("resolves the typed %s to a whole-second duration", async (typedSeconds, expected) => {
+  // Field that is not a finite integer as well as one past the range it can represent — so a fractional entry is
+  // Truncated to whole seconds rather than thrown out of the handler
+  test("resolves a fractional entry to its whole-second duration", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewSlowmodeField, {
       props: { modelValue },
     });
-    await component.get("input").setValue(typedSeconds);
+    await component.get("input").setValue("1.5");
 
-    expect(component.emitted("update:modelValue")).toStrictEqual([[expected]]);
+    expect(component.emitted("update:modelValue")).toStrictEqual([
+      [Temporal.Duration.from({ seconds: 1 }).total("milliseconds")],
+    ]);
+  });
+
+  // An entry the field refuses keeps the stored slowmode: the form saves on blur, and a 0 written here would switch
+  // Slowmode off without the reader asking for it
+  test.each(["1e999", "1e16", "0.5", "0", "-5"])(
+    "keeps the stored slowmode for the refused entry %s",
+    async (typedSeconds) => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewSlowmodeField, {
+        props: { modelValue },
+      });
+      await component.get("input").setValue(typedSeconds);
+
+      expect(component.emitted("update:modelValue")).toBeUndefined();
+    },
+  );
+
+  test("turns slowmode off when the field is emptied", async () => {
+    expect.hasAssertions();
+
+    const component = await mountSuspended(MessageModelRoomSettingsTypeOverviewSlowmodeField, {
+      props: { modelValue },
+    });
+    await component.get("input").setValue("");
+
+    expect(component.emitted("update:modelValue")).toStrictEqual([[0]]);
   });
 
   // An untruncated display renders the largest storable duration as a fraction of a second, which no whole-second

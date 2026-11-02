@@ -9,12 +9,7 @@ interface Props {
 
 const { mutualRooms } = defineProps<Props>();
 const items = computed(() =>
-  mutualRooms.map(({ id, image, name }) => ({
-    image: image ?? "",
-    title: name ?? "",
-    to: RoutePath.Messages(id),
-    value: id,
-  })),
+  mutualRooms.map(({ id, image, name }) => ({ image, title: name, to: RoutePath.Messages(id), value: id })),
 );
 </script>
 

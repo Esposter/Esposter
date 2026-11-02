@@ -17,13 +17,17 @@ const displaySeconds = computed(() =>
 const maxDisplaySeconds = Math.trunc(Temporal.Duration.from({ milliseconds: MAX_SLOWMODE_MS }).total("seconds"));
 const slowmodeRules = [UiRules.minValue(1), UiRules.maxValue(maxDisplaySeconds)];
 const onUpdateModelValue = (newDisplaySeconds: string) => {
+  // Only an empty field is no slowmode: the form saves on blur, so an entry out of range that wrote 0 would switch
+  // Slowmode off with it. Such an entry keeps the stored value, and the field's rules say why it is refused
+  if (!newDisplaySeconds) {
+    modelValue.value = 0;
+    return;
+  }
   // A number field hands over whatever was typed rather than what its rules allow, and a Temporal field must be a
   // Finite integer — so the entry is truncated to whole seconds and bounded here instead
   const seconds = Math.trunc(Number(newDisplaySeconds));
-  modelValue.value =
-    newDisplaySeconds && seconds >= 1 && seconds <= maxDisplaySeconds
-      ? Temporal.Duration.from({ seconds }).total("milliseconds")
-      : 0;
+  if (seconds >= 1 && seconds <= maxDisplaySeconds)
+    modelValue.value = Temporal.Duration.from({ seconds }).total("milliseconds");
 };
 </script>
 
