@@ -55,6 +55,8 @@ Because a slot's blob name is fixed, a replace and a delete name the same blob, 
 
 A browser without background-processor support still stores uploads, and applying one warns rather than failing.
 
+A call left, or a camera turned off, while a background is still being read ends that apply quietly. The processor it was writing to has been released by then, so there is nothing left to show, and the pick it made still stands, so it is remembered as any pick that finished applying is.
+
 ## Key files
 
 | File                                                                          | Role                                                    |

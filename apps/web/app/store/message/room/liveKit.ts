@@ -242,24 +242,27 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         }
 
         virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
+        // Held for this operation, since leaving the call or switching the camera off clears the store's ref while one
+        // Of the awaits below is open. Once the store no longer points at it, the operation has nothing left to write to
+        const processor = virtualBackgroundProcessor;
+        const checkIsCurrent = () => checkIsStale() || virtualBackgroundProcessor !== processor;
         if (!localCameraTrack.getProcessor()) {
-          await localCameraTrack.setProcessor(virtualBackgroundProcessor);
-          if (checkIsStale()) return;
-          if (virtualBackgroundProcessor.processedTrack)
-            mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
+          await localCameraTrack.setProcessor(processor);
+          if (checkIsCurrent()) return;
+          if (processor.processedTrack) mediaStore.localVideoStream = new MediaStream([processor.processedTrack]);
         }
         // A slot that has been deleted resolves to nothing, which lands here as the same disabled processor the
         // None entry selects - a missing image must never leave a call with a broken video track
         const imagePath = await readVirtualBackgroundImagePath(virtualBackground);
-        if (checkIsStale()) return;
+        if (checkIsCurrent()) return;
         else if (!imagePath) {
-          await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
+          await processor.switchTo({ mode: "disabled" });
           return;
         }
         // Only the presets are SVGs; an uploaded slot arrives as a signed url the processor can take directly
         const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-        if (checkIsStale() || !resolvedPath) return;
-        await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
+        if (checkIsCurrent() || !resolvedPath) return;
+        await processor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
       },
       { isSupersede: true, key: "virtualBackground" },
     );
