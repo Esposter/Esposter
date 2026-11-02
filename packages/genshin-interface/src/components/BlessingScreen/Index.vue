@@ -17,10 +17,9 @@ interface BlessingMember {
 }
 
 interface Props {
-  // The switch's words, and whether it is on
-  autoRecoverTitle: string;
   // The way out of the screen in the reader's language
   closeLabel: string;
+  // Whether auto-recover's switch is on
   isAutoRecoverOn: boolean;
   // The members of the deployed team, which the game lists as in combat
   members: BlessingMember[];
@@ -37,7 +36,6 @@ interface Props {
 }
 
 const {
-  autoRecoverTitle,
   closeLabel,
   isAutoRecoverOn,
   members,
@@ -65,7 +63,33 @@ const emit = defineEmits<{
   <div class="blessing-screen">
     <div class="glass" aria-hidden="true" />
     <div class="halo" aria-hidden="true" />
-    <div class="ring" aria-hidden="true" />
+    <svg class="ring" viewBox="0 0 300 300" aria-hidden="true">
+      <defs>
+        <linearGradient id="blessing-ring-band" gradientUnits="userSpaceOnUse" x1="150" x2="150" y1="30" y2="270">
+          <stop offset="0" stop-color="#b1ec86" />
+          <stop offset="1" stop-color="#46d69c" />
+        </linearGradient>
+      </defs>
+      <path
+        fill="url(#blessing-ring-band)"
+        d="M150 13Q154 26 168.5 31.5A120 120 0 0 1 268.5 131.5Q274 146 287 150Q274 154 268.5 168.5A120 120 0 0 1 168.5 268.5Q154 274 150 287Q146 274 131.5 268.5A120 120 0 0 1 31.5 168.5Q26 154 13 150Q26 146 31.5 131.5A120 120 0 0 1 131.5 31.5Q146 26 150 13Z"
+      />
+      <circle cx="150" cy="150" r="107" fill="rgb(38 80 76)" />
+      <g transform="translate(111.5 110) scale(0.3333)" fill="#87fc95">
+        <path
+          fill-rule="evenodd"
+          d="M118.5 8l3.5 2.5q2.79 7.21 8 12 2.94 8.56 8 15l15 19 1 3 11 13v2l3 6 8 11 2 6 6 10 1 5 2 3 1 7 1 1v23l-1 1-1 6-9 19-8.5 10.5-15 12-7 3h-6q-3.33-1.67-2.5-7.5l3.5-4.5 3-1 12.5-9.5 7-8 6-12 3-3 1-12 1-1v-12l-1-1-1-7-2-3-1-5-2-2-10-20-3-5-8.5-8.5-6.5-5.5-3.5-4.5-20-18-5.5 3.5-7.5 9.5-19.5 18.5q-3.9 7.1-10 12l-5 10v2l-3 3-3 9-3 5-1 7-1 1 1 1v15l4 12 7 12 7.5 8.5 12 7 5.5 5.5q1.46 7.96-2.5 10.5l-4-2-6-1-18.5-15.5-5-6-6-10-3-7v-3l-2-3v-38l7-17 4-5 1-4 7-9 5-10 26-33 3-5v-2l4-4v-2l3-5 7.5-9.5 2-1z"
+        />
+        <path
+          fill-rule="evenodd"
+          d="M41.5 49h3l3.5 2.5 1 2v10l-5 15-13 20-3 7v3l-3 6v4l-2 6v18l1 1v10l3 6v4l5 9 2 6 9.5 11.5 2.5 1.5 8.5 9.5 24 13 14 2 2-2h2l8.5-4v-1.5l3-3 1-3v-17l-5.5-7.5h-2l-4-3-4-1-12.5-11.5-6-10v-4l-2-5v-15l1-1v-3l2-5.5 2.5-1h4l1 1 11 2 9 5h2l2 2 4 1 8 5 6 1 1 1h6l1-1 7-1 2-2 9-3q1.75-3.25 6-4l3.5 2.5 1 2v16l-2 3v3l-3 7-5.5 7.5-6 5h-2l-4 4-5 3h-2l-2.5 2.5-4 7v21l-1 3-8.5 8.5-3 1-14 10q-4.68.82-7 4h-2l-11-5h-2l-2-2q-5.64-.86-9-4h-2l-18.5-12.5-2.5-3.5-10.5-9.5-7-8-5-11-3-3-2-8-2-3-1-8-3-5v-33l2-5v-4l1-1v-4l2-5v-4l4-7 3-10 15-26 4.5-4.5z"
+        />
+        <path
+          fill-rule="evenodd"
+          d="M188.5 51q8.31-1.31 10.5 3.5l6 13 5 5q.86 5.64 4 9l1 5 5 10v5l2 5 1 10 2 4v17l1 1-1 1v13l-2 3-1 7-5 11v3l-2 2v2l-4 7-9 11-10.5 10.5q-2.25-.75-1.5 1.5l-7.5 6.5-11 5-5 4-18 6-10 6-8.5 7.5-2.5 4.5-2.5 1.5v2l-4.5 7.5-3 1-4.5-3.5-4-9v-4l6.5-7.5 5-3 10-9 8-4 12-3 15-7 8-6 5-2 5.5-5.5 2.5-3.5 2.5-1.5 13-16 1-5 5-10v-4l3-6v-6l1-1v-22l-1-1v-6l-3-6-3-10-16-26v-3l-2-3q1-4-1-5v-10l2.5-2.5z"
+        />
+      </g>
+    </svg>
     <section class="section">
       <span class="diamond" aria-hidden="true" />
       <ul class="members">
@@ -82,6 +106,13 @@ const emit = defineEmits<{
         </li>
       </ul>
     </section>
+    <svg class="statue" viewBox="0 0 150 174" aria-hidden="true">
+      <path
+        fill="#82da74"
+        fill-rule="evenodd"
+        d="M67.5 22l7 3 21.5 20.5 6 7q2.34 6.16 7 10v2l3 3 12 25v21q-2.25 1.25-1 6l-2 2-2 6v3l-3 3-5 9-5.5 5.5-10 8-7 1-5 3h-30l-7-3-6-1-10.5-8.5-1.5-2.5-3.5-2.5-1-3-8-9-2-8-2-3v-27q1.75-.75 1-4l7-14 4-4v-3l3-6 5-7 19.5-21.5 9-8 7-3zm-2.5 45-2 1-4 7v13l-2 2h-15l-3 1-3 5q-1 6 1 9l5 3h10l1-1q0 2 4 1l2 3v12q2 0 1 4l6 4q4 1 7-1l3-4q-1-5 1-6v-10l2-2q4 1 6-1 6-1 10 1l4-4 1-3q1-5-1-6l-4-5h-15l-3-2-1-3 1-3v-7l-4-5v-2l-2-1h-6z"
+      />
+    </svg>
     <p class="title" role="heading" aria-level="1">{{ title }}</p>
     <CloseButton class="close" :label="closeLabel" :mark="CloseButtonMark.Cross" @click="emit('close')" />
     <p class="pool">
@@ -95,7 +126,6 @@ const emit = defineEmits<{
       tip=""
       @click="emit('toggleAutoRecover')"
     >
-      <span class="words">{{ autoRecoverTitle }}</span>
       <span :class="['toggle', { off: !isAutoRecoverOn }]" aria-hidden="true"><span class="knob" /></span>
     </GameButton>
     <button
@@ -173,20 +203,25 @@ const emit = defineEmits<{
   );
 }
 
-/* The emblem's ring, 240 units across with a 13 unit band lit from its top yellow-green to its foot teal. Its drop glyph
-   inside is the game's art and does not ship, so the ring stands empty over its dark fill */
+/* The statue's mark at the title's left, a green drop with its plus cut out, traced from the reference's own pixels at three
+   times (its SVG is 50 by 58 units at the reference's place) */
+.statue {
+  position: absolute;
+  top: calc(var(--unit) * 16);
+  left: calc(var(--unit) * 1408);
+  width: calc(var(--unit) * 50);
+  height: calc(var(--unit) * 58);
+}
+
+/* The emblem's ring, a 240 unit band of 13 units with four spikes at its compass points (its SVG is a 300 unit square about
+   the centre at 1643.5, 365), lit from its top yellow-green to its foot teal. Its drop glyph is traced from the reference's
+   own pixels (`trace`), as the game draws it, scaled back from the trace's three times */
 .ring {
   position: absolute;
-  top: calc(var(--unit) * 245);
-  left: calc(var(--unit) * 1523.5);
-  width: calc(var(--unit) * 240);
-  height: calc(var(--unit) * 240);
-  box-sizing: border-box;
-  border: calc(var(--unit) * 13) solid transparent;
-  border-radius: 50%;
-  background:
-    linear-gradient(rgb(30 80 70 / 35%), rgb(30 80 70 / 35%)) padding-box,
-    linear-gradient(#b1ec86, #46d69c) border-box;
+  top: calc(var(--unit) * 215);
+  left: calc(var(--unit) * 1493.5);
+  width: calc(var(--unit) * 300);
+  height: calc(var(--unit) * 300);
 }
 
 .title {
@@ -199,6 +234,7 @@ const emit = defineEmits<{
   font-size: calc(var(--unit) * 30);
   font-weight: 600;
   line-height: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 1.6);
   text-align: center;
 }
 
@@ -207,7 +243,7 @@ const emit = defineEmits<{
   top: calc(var(--unit) * 19);
   right: calc(var(--unit) * 38);
   background: #eee9e8;
-  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #757274;
+  box-shadow: inset 0 0 0 calc(var(--unit) * 6) #929390;
   color: #3e4251;
 }
 
@@ -247,13 +283,14 @@ const emit = defineEmits<{
 
 .pool {
   position: absolute;
-  top: calc(var(--unit) * 597);
-  right: calc(var(--unit) * 32);
+  top: calc(var(--unit) * 593);
+  right: calc(var(--unit) * 30);
   margin: 0;
   color: #cdd7cf;
-  font-size: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 32);
   font-weight: 600;
-  line-height: calc(var(--unit) * 27);
+  line-height: calc(var(--unit) * 32);
+  letter-spacing: calc(var(--unit) * 1.2);
   white-space: nowrap;
 }
 
@@ -272,7 +309,7 @@ const emit = defineEmits<{
 
 .band {
   height: calc(var(--unit) * 144);
-  background: rgb(0 0 0 / 12%);
+  background: rgb(0 0 0 / 16%);
 }
 
 .switch {
@@ -286,12 +323,6 @@ const emit = defineEmits<{
   font-weight: 600;
   line-height: calc(var(--unit) * 33);
   text-align: center;
-}
-
-.words {
-  display: block;
-  max-width: calc(var(--unit) * 270);
-  margin: 0 auto;
 }
 
 .toggle {
@@ -353,7 +384,7 @@ const emit = defineEmits<{
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: #e6dfcc;
+  background: #d9ceb8;
   box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 30%);
   outline: calc(var(--unit) * 1) solid transparent;
 }

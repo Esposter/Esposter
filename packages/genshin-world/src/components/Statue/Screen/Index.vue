@@ -6,7 +6,7 @@ import type { GameText } from "genshin-text";
 
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { AUTO_RECOVER_TITLE, RESTORATIVE_POWER_PER_STATUE } from "#src/services/statue/constants";
+import { RESTORATIVE_POWER_PER_STATUE } from "#src/services/statue/constants";
 import { healPartyMemberWithPower } from "#src/services/statue/healPartyMemberWithPower";
 import { regenerateRestorativePower } from "#src/services/statue/regenerateRestorativePower";
 import { stepAutoRecoverThreshold } from "#src/services/statue/stepAutoRecoverThreshold";
@@ -74,7 +74,6 @@ const heal = (characterId: number) => {
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.StatueBlessing]">
     <BlessingScreen
-      :auto-recover-title="AUTO_RECOVER_TITLE"
       :close-label="gameText[GameTextKey.Back]"
       :is-auto-recover-on="autoRecover.isOn"
       :members
