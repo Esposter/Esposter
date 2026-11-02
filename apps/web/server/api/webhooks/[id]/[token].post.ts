@@ -1,9 +1,11 @@
 import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
+import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { webhookRateLimiter } from "#server/services/rateLimiter/webhookRateLimiter";
+import { getIpAddress } from "#server/services/request/getIpAddress";
 import { MimeType } from "#shared/models/file/MimeType";
 import { selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-import { defineEventHandler, getRouterParams, useRuntimeConfig } from "nuxt/server";
+import { defineEventHandler, getRequestIP, getRouterParams, useRuntimeConfig } from "nuxt/server";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
@@ -19,6 +21,9 @@ export default defineEventHandler(async (event) => {
   // Passed through as it arrived, since the function validates the payload and answers its own 400
   const body = await event.req.text();
   return getResultAsync(async () => {
+    // The address is spent first: an id matching no webhook would otherwise draw a fresh budget of its own, and nothing
+    // Would cap the route across ids
+    await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""));
     await webhookRateLimiter.consume(id);
     // This route is a thin proxy for the function that owns the webhook: it answers 404 for an unknown id or a
     // Wrong token and 400 for an invalid payload, and its response is returned as it came back so the sender

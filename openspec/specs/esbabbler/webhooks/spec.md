@@ -101,6 +101,12 @@ A webhook SHALL be limited in how many posts it may send in a period, and a post
 - **WHEN** another post is sent to it
 - **THEN** the post is refused as too many requests
 
+#### Scenario: a sender posts to urls that match no webhook
+
+- **GIVEN** a sender's address has used its posting allowance for the period
+- **WHEN** it posts to a url whose id matches no webhook
+- **THEN** the post is refused as too many requests
+
 ### Requirement: Creating a webhook is limited more tightly than posting
 
 Creating a webhook SHALL be limited to a slower rate than the other webhook changes.

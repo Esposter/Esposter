@@ -111,6 +111,16 @@ Each inbound webhook SHALL have a budget of thirty points a minute keyed on that
 - **WHEN** it sends another push
 - **THEN** the push is refused as too many requests
 
+### Requirement: A push spends its address's budget before its webhook's
+
+A push to an inbound webhook SHALL spend a point from the budget of its address before it spends one from its webhook's, so that an id matching no webhook cannot be invented to draw a fresh budget for every push.
+
+#### Scenario: A caller pushes to ids that match no webhook
+
+- **GIVEN** a caller's address has spent its points for the window
+- **WHEN** it pushes to an id that matches no webhook
+- **THEN** the push is refused as too many requests
+
 ### Requirement: Asset requests are never locked out
 
 Asset requests SHALL NOT lock an address out after overspending, so that a burst of requests recovers within its window.
