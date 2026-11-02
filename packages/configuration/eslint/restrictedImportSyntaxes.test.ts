@@ -19,6 +19,12 @@ describe("restrictedImportSyntaxes", () => {
         violations: 1,
       },
       {
+        filePath: "zodAliasedImport.ts",
+        name: "zodAliasedImport",
+        source: `import { z as zod } from "zod";\nzod.string();`,
+        violations: 1,
+      },
+      {
         filePath: "zodNamedTypeImport.test.ts",
         name: "zodNamedTypeImport",
         source: `import type { ZodType } from "zod";\nexport const a: ZodType = b;`,

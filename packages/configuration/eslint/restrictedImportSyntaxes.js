@@ -8,9 +8,9 @@ export default [
     // The `z` namespace is the one spelling: `z.ZodType`, `z.ZodError`. A named type import is the same member under
     // A second name, which a reader then has to map back
     message:
-      'Import Zod as the `z` namespace only — `import { z } from "zod"` and `z.ZodError`, never a named import beside it. See the zod skill.',
+      'Import Zod as the `z` namespace only — `import { z } from "zod"` and `z.ZodError`, never a named import beside it or under another name. See the zod skill.',
     selector:
-      "ImportDeclaration[source.value='zod'] > :matches(ImportSpecifier[imported.name!='z'], ImportDefaultSpecifier, ImportNamespaceSpecifier)",
+      "ImportDeclaration[source.value='zod'] > :matches(ImportSpecifier:not([imported.name='z'][local.name='z']), ImportDefaultSpecifier, ImportNamespaceSpecifier)",
   },
   {
     // The editor and the plugins it runs must share one copy of ProseMirror's state classes, and tiptap re-exports
