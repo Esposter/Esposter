@@ -20,6 +20,10 @@ end. The test client sends each call as its own request, so no batch timer is ar
 `testing/no-faked-set-timeout` reports it in any suite importing `setupMswTrpc`. Name the timers the code under test actually runs on instead: `vi.useFakeTimers({ toFake: ["Date", "setInterval",
 "clearInterval"] })` for an interval sweep.
 
+The one exception is a debounce counted by the requests it sends. That suite restores real timers in its own `afterEach`:
+Vitest runs hooks last-in first-out, so the restore runs before the harness's wait, which then runs on the real clock. The
+line that fakes `setTimeout` carries `oxlint-disable-next-line testing/no-faked-set-timeout` with that reason.
+
 ## `Temporal.Now` is faked, but only when `toFake` names it
 
 `Temporal` is one of the methods vitest's fake clock accepts, and it is not in the default set — a suite that

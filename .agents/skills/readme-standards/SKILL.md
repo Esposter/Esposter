@@ -30,7 +30,7 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
 
 ## Content Rules
 
-Lead with what it does; one design-notes line linking the specs; Getting Started only where it is installed or run; Key Exports for what a reader calls; Commands only for an app, a plugin or a tool a person runs; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
+Written for an agent reader in ASD-STE100 style (`references/content-rules.md`, rule 10): lead with what it does; one design-notes line linking the specs; Getting Started only where it is installed or run; Key Exports for what a reader calls; Commands only for an app, a plugin or a tool a person runs; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
 
 Package READMEs carry no experimental notice: the root README states it once (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability).
 

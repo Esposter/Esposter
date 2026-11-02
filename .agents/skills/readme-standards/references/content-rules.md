@@ -11,3 +11,9 @@ Read when writing a README's description, Getting Started, design-notes line, Ke
 7. **No filler** — skip "we are excited to…" and any prose a reader does not act on. A README is for the person using the package.
 8. **Root README** — keep the Packages table in sync when adding or removing packages. Columns: Package (link), Description, Published (✓ or —). `scripts/src/workspace/packageInventories.test.ts` reads it.
 9. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (`.../tree/main/packages/shared` against `.../blob/main/LICENSE`). Never a relative path.
+10. **Written for an agent reader, in ASD-STE100 style** — a README is read mostly by agents that set a machine or a package up from it, so it is exact and short.
+    - A step is one imperative sentence in the active voice and present tense, about 20 words at most. One sentence gives one instruction.
+    - A procedure is a numbered list in run order. Each step that can fail ends in a check, the command or the observable result that proves it. A warning comes before the step it guards and names the consequence.
+    - A thing has one name in the whole README. Use the same word each time, and keep articles ("the", "a") — they are what keep a short sentence unambiguous.
+    - Prefer a list or a table to a paragraph. A description is two sentences at most, and explanatory prose belongs in the specs.
+    - Machine- and tool-specific tuning (an operating system's indexer, a cache location, a GPU setting) does not belong in a README. It belongs in the design that owns the reason (`openspec/specs/architecture/machine-efficiency/design.md`), and `pnpm ai:setup` reports what a machine still lacks.
