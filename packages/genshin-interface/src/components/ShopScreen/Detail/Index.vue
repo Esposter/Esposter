@@ -57,7 +57,7 @@ const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }
       :disabled="countMaximum < 1"
       :kind="GameButtonKind.Row"
       tip=""
-      @click="countMaximum >= 1 && emit('buy', good, pickedCount)"
+      @click="emit('buy', good, pickedCount)"
     >
       {{ buyLabel }}
     </GameButton>
@@ -157,4 +157,5 @@ const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }
 </style>
 
 <style scoped src="../../../styles/craftingShop.css"></style>
+
 <style scoped src="../../../styles/shopScreen.css"></style>
