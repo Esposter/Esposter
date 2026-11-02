@@ -105,8 +105,8 @@ const questStep = computed(() => {
 /* Its capitals' tops at 176.5, ending 17 short of the emblem */
 .journal {
   position: absolute;
-  top: calc(var(--unit) * 172.8);
-  right: calc(var(--unit) * 63);
+  top: calc(var(--unit) * 173.8);
+  right: calc(var(--unit) * 61);
   color: #d1be9a;
   font-size: calc(var(--unit) * 26);
   letter-spacing: calc(var(--unit) * 1.15);
@@ -142,7 +142,7 @@ const questStep = computed(() => {
   display: flex;
   height: calc(var(--unit) * 56);
   box-sizing: border-box;
-  padding: calc(var(--unit) * 15.4) calc(var(--unit) * 17) 0 calc(var(--unit) * 54);
+  padding: calc(var(--unit) * 15.4) calc(var(--unit) * 13) 0 calc(var(--unit) * 54);
   background: rgb(0 0 0 / 0.1);
   color: #ece7e1;
   font-size: calc(var(--unit) * 26);
@@ -158,7 +158,7 @@ const questStep = computed(() => {
 /* Its first line's capitals' tops at 319 */
 .description {
   position: absolute;
-  top: calc(var(--unit) * 313.7);
+  top: calc(var(--unit) * 314.7);
   left: calc(var(--unit) * 1);
   width: calc(var(--unit) * 880);
   color: #ede7df;
