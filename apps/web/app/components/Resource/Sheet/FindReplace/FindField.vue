@@ -14,6 +14,7 @@ const { findValue, isFindReplaceOpen } = storeToRefs(findReplaceStore);
     label="Find"
     @keydown="
       (event: KeyboardEvent) => {
+        if (event.isComposing) return;
         if (event.key === 'Enter') {
           event.preventDefault();
           goToOccurrence(event.shiftKey ? -1 : 1);

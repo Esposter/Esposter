@@ -20,7 +20,10 @@ const columnDialogStore = useColumnDialogStore();
 const { editingColumnName } = storeToRefs(columnDialogStore);
 const { isOpen } = useSingletonDialog(editingColumnName);
 const updateColumn = useUpdateColumn();
-const editedColumn = ref(structuredClone(toRawDeep(column)));
+const { cloned: editedColumn, sync: resetForm } = useCloned(() => column, {
+  clone: (source) => structuredClone(toRawDeep(source)),
+  deep: true,
+});
 const jsonSchema = zodToJsonSchema(columnFormSchema);
 const value = computed(() => extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column));
 const editedValue = computed(() =>
@@ -30,9 +33,6 @@ const { context, schema } = useColumnForm(
   () => dataSource,
   () => column.name,
 );
-const resetForm = () => {
-  editedColumn.value = structuredClone(toRawDeep(column));
-};
 </script>
 
 <template>

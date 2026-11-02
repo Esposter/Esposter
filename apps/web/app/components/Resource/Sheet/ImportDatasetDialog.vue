@@ -53,6 +53,8 @@ const readSurveys = () =>
     onSuccess: ({ items }) => {
       readError.value = "";
       surveys.value = items;
+      // A survey deleted since the dialog last read the list is no longer one to import, so the choice of it is dropped
+      if (!items.some(({ id }) => id === selectedSurveyId.value)) selectedSurveyId.value = "";
     },
   });
 
@@ -93,11 +95,13 @@ watch(isOpen, async (newIsOpen) => {
           answer(async () => {
             // The dataset is read before it is written, so the sheet it lands in is named when the import starts
             importingResourceId = currentResourceId;
+            const survey = surveys?.find(({ id }) => id === selectedSurveyId);
+            // Nothing to import leaves the dialog open on the choice, rather than closing as an import that landed
+            if (!survey) return false;
+
             const setDataSource = getDataSourceSetter();
             const outcome = await executeMutation(
               async () => {
-                const survey = surveys?.find(({ id }) => id === selectedSurveyId);
-                if (!survey) return;
                 const dataset = await $trpc.dataset.readDataset.query({
                   id: survey.id,
                   type: DatasetProviderType.SurveyResponses,

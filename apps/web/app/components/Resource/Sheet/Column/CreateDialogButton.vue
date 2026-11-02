@@ -8,6 +8,7 @@ import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
+import { toRawDeep } from "@esposter/shared";
 
 interface Props {
   dataSource: DataSource;
@@ -16,7 +17,10 @@ interface Props {
 const { dataSource } = defineProps<Props>();
 const createColumn = useCreateColumn();
 const initialColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
-const editedColumn = ref<Column>(structuredClone(initialColumn));
+const { cloned: editedColumn, sync: resetForm } = useCloned<Column>(initialColumn, {
+  clone: (source) => structuredClone(toRawDeep(source)),
+  deep: true,
+});
 const jsonSchema = zodToJsonSchema(columnFormSchema);
 const value = extractSchemaFields(ColumnTypeFormSchemaMap[initialColumn.type], initialColumn);
 const editedValue = computed(() =>
@@ -26,9 +30,6 @@ const { context, schema } = useColumnForm(
   () => dataSource,
   () => "",
 );
-const resetForm = () => {
-  editedColumn.value = structuredClone(initialColumn);
-};
 </script>
 
 <template>

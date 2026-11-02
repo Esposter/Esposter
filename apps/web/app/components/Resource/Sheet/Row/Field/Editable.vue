@@ -18,13 +18,14 @@ interface Props {
 const { column, item, rowIndex } = defineProps<Props>();
 const updateRow = useUpdateRow();
 const columnStore = useColumnStore();
-const { columns } = storeToRefs(columnStore);
+const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
 const { displayRows } = storeToRefs(rowStore);
 const cellStore = useCellStore();
 const { clearFocus, requestFocus } = cellStore;
+// Tab walks the columns the grid draws, since a hidden column has no cell for the focus to land in
 const editableColumns = computed(() =>
-  columns.value.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
+  displayColumns.value.filter((candidateColumn) => checkIsEditableColumnValue(candidateColumn)),
 );
 const editedValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;

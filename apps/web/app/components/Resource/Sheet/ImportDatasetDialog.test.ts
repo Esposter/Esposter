@@ -41,4 +41,35 @@ describe("resourceSheetImportDatasetDialog", () => {
 
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
+
+  // A survey deleted after it was picked leaves the list on the next open, so its choice is dropped rather than left to
+  // Import nothing and close as though it had landed
+  test("drops a picked survey the list no longer holds, so there is nothing left to import", async () => {
+    expect.hasAssertions();
+
+    const survey = createResourceListItem();
+    const { promise: isSurveysRead, resolve: onSurveysRead } = Promise.withResolvers<void>();
+    trpcMsw.survey.readResources.query(() => {
+      onSurveysRead();
+      return { hasMore: false, items: [{ ...survey, publication: null }] };
+    });
+    const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: false } });
+    await wrapper.setProps({ modelValue: true });
+    await isSurveysRead;
+    await flushPromises();
+    wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", survey.id);
+    await wrapper.setProps({ modelValue: false });
+    const { promise: isSurveysReread, resolve: onSurveysReread } = Promise.withResolvers<void>();
+    trpcMsw.survey.readResources.query(() => {
+      onSurveysReread();
+      return { hasMore: false, items: [] };
+    });
+    await wrapper.setProps({ modelValue: true });
+    await isSurveysReread;
+    await flushPromises();
+    const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
+    assert.exists(importButton);
+
+    expect(importButton.attributes("disabled")).toBeDefined();
+  });
 });
