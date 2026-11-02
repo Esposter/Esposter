@@ -50,7 +50,7 @@ describe(exportDashboardPng, () => {
     expect.hasAssertions();
 
     const grid = appendGrid();
-    const svg = await createElementSvg(grid);
+    const { svg } = await createElementSvg(grid);
     const svgText = await svg.text();
 
     for (const title of tileTitles) expect(svgText).toContain(title);

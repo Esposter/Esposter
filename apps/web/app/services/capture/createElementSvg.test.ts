@@ -12,7 +12,7 @@ describe(createElementSvg, () => {
     element.textContent = "A node";
     vi.spyOn(window, "getComputedStyle").mockReturnValue(element.style);
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 120, 80));
-    const svg = await createElementSvg(element);
+    const { svg } = await createElementSvg(element);
     const parsedSvg = new DOMParser().parseFromString(await svg.text(), "image/svg+xml");
     const foreignObject = parsedSvg.querySelector("foreignObject");
     const exportedCanvas = foreignObject?.querySelector("div");

@@ -13,8 +13,8 @@ export const exportDashboardPng = async (name: string) => {
     if (!grid) throw new InvalidOperationError(Operation.Read, exportDashboardPng.name, "Dashboard has no grid");
 
     await window.document.fonts.ready;
-    const { height, width } = grid.getBoundingClientRect();
-    const png = await rasterizeSvg(await createElementSvg(grid), width, height);
+    const { height, svg, width } = await createElementSvg(grid);
+    const png = await rasterizeSvg(svg, width, height);
     downloadFile(`${name}.png`, png, MimeType.Png);
   }).match(noop, () => {
     createAlert("Couldn't export this dashboard", "error");

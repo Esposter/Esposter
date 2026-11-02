@@ -11,10 +11,11 @@ export const createElementSvg = async (element: HTMLElement) => {
   copyComputedStyles(element, clone);
   const fontCss = escapeXml(await readFontFaceCss());
   const svgContent = new XMLSerializer().serializeToString(clone);
-  return new Blob(
+  const svg = new Blob(
     [
       `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><style>${fontCss}</style><foreignObject x="0" y="0" width="100%" height="100%">${svgContent}</foreignObject></svg>`,
     ],
     { type: MimeType.Svg },
   );
+  return { height, svg, width };
 };
