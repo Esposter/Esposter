@@ -231,8 +231,9 @@ export const baseRoomRouter = router({
         input,
       );
 
-      // The group removal can fail the leave, so it runs before the notify: a leave that throws has told nobody
-      await removeUserFromRoomGroup(ctx.db, userToRoom.roomId, userId);
+      // Out of the room's group before the notify, so the leaver's connections are not in it when `leaveRoom` goes out.
+      // Best-effort: a failed removal is logged, and the leave stands
+      await removeUserFromRoomGroup(ctx.db, userToRoom.roomId, userId).match(noop, console.error);
       roomEventEmitter.emit("leaveRoom", {
         roomId: userToRoom.roomId,
         sessionId: ctx.getSessionPayload.session.id,

@@ -199,7 +199,7 @@ export const directMessageRouter = router({
       return { targetUser: removedUser, updatedRoom: updatedRoomRow };
     });
     roomEventEmitter.emit("leaveRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, userId });
-    await removeUserFromRoomGroup(ctx.db, roomId, userId);
+    await removeUserFromRoomGroup(ctx.db, roomId, userId).match(noop, console.error);
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await createSystemRoomMessage(
       roomId,

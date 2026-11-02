@@ -66,12 +66,15 @@ describe(onWhileCallRoomMember, () => {
     await leaveCallAsParticipant(mockContext.db, callSessionId, leaver.session.id, leaver.user.id);
     // The call still raises an event after the leave, which a stream still open would yield
     callEventEmitter.emit("muteChanged", { callSessionId, id: other.session.id, isMuted: true });
-    const [left, stayed] = await Promise.all([
+    const [left, stayed] = await Promise.allSettled([
       leavingEvents[Symbol.asyncIterator]().next(),
       otherEvents[Symbol.asyncIterator]().next(),
     ]);
 
-    expect(left.done).toBe(true);
-    expect(stayed).toStrictEqual({ done: false, value: [{ callSessionId, id: other.session.id, isMuted: true }] });
+    expect(left).toStrictEqual({ status: "fulfilled", value: { done: true, value: undefined } });
+    expect(stayed).toStrictEqual({
+      status: "fulfilled",
+      value: { done: false, value: [{ callSessionId, id: other.session.id, isMuted: true }] },
+    });
   });
 });

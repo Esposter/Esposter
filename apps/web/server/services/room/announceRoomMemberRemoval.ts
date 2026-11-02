@@ -19,7 +19,7 @@ export const announceRoomMemberRemoval = async (
 ): Promise<void> => {
   roomEventEmitter.emit("leaveRoom", { roomId, sessionId, userId });
   // Out of the room's group before the line below is sent, so the removed member does not receive the line
-  await removeUserFromRoomGroup(db, roomId, userId);
+  await removeUserFromRoomGroup(db, roomId, userId).match(noop, console.error);
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {
