@@ -39,9 +39,6 @@ export interface TRPCProcedureInputs {
   "email.saveResourceContent": ResourceContentSaveInput<
     (typeof ResourceDefinitionMap)[ResourceType.Email]["contentSchema"]
   >;
-  "flowchart.saveResourceContent": ResourceContentSaveInput<
-    (typeof ResourceDefinitionMap)[ResourceType.Flowchart]["contentSchema"]
-  >;
   "invite.createInvite": z.input<typeof createInviteInputSchema>;
   "like.createLike": z.input<typeof createLikeInputSchema>;
   "like.deleteLike": z.input<typeof deleteLikeInputSchema>;

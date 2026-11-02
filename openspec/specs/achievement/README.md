@@ -1,6 +1,6 @@
 # Achievements
 
-Achievements reward activity across every Esposter product — posts, likes, messages, rooms, emails, surveys, sheets, flowcharts, webpages, and the games — from one system: definitions are data, unlocking is a single tRPC plugin, and unlocks toast in real time. The gallery at `/achievements` shows every achievement by category with progress.
+Achievements reward activity across every Esposter product — posts, likes, messages, rooms, emails, surveys, sheets, webpages, and the games — from one system: definitions are data, unlocking is a single tRPC plugin, and unlocks toast in real time. The gallery at `/achievements` shows every achievement by category with progress.
 
 ## Key concepts
 

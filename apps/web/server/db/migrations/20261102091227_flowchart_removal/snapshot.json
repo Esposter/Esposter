@@ -1,0 +1,172 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "560bcc59-ed60-4e81-85fa-96b2ff3f1131",
+  "prevIds": [
+    "40a97145-c172-4f47-86eb-2e2d899cd231"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_enum",
+      "statementTarget": [
+        "enum",
+        "achievement",
+        "achievementName"
+      ],
+      "writes": [
+        "s|enum|achievement.achievementName",
+        "n|enum|achievement.achievementName",
+        "e|enum|achievement.achievementName",
+        "n|type|achievement.achievementName",
+        "s|colprop|achievement.achievements.name.type",
+        "s|colprop|achievement.achievements.name.default"
+      ],
+      "reads": [
+        "n|sch|achievement",
+        "n|tbl|achievement.achievements",
+        "n|sch|achievement",
+        "n|col|achievement.achievements.name"
+      ],
+      "sqlHash": "bcc5eb54d1dcf622"
+    },
+    {
+      "statementType": "recreate_enum",
+      "statementTarget": [
+        "enum",
+        "resource",
+        "resourceType"
+      ],
+      "writes": [
+        "s|enum|resource.resourceType",
+        "n|enum|resource.resourceType",
+        "e|enum|resource.resourceType",
+        "n|type|resource.resourceType",
+        "s|colprop|resource.resources.type.type",
+        "s|colprop|resource.resources.type.default",
+        "s|colprop|app.bookmarks.resourceType.type",
+        "s|colprop|app.bookmarks.resourceType.default"
+      ],
+      "reads": [
+        "n|sch|resource",
+        "n|tbl|resource.resources",
+        "n|sch|resource",
+        "n|col|resource.resources.type",
+        "n|tbl|app.bookmarks",
+        "n|sch|app",
+        "n|col|app.bookmarks.resourceType"
+      ],
+      "sqlHash": "1de99bbe0d174b43"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"achievement\",\"achievementName\"]",
+      "set": {
+        "values": [
+          "ClickerAddict",
+          "ClickerArchitect",
+          "ClickerBillionaire",
+          "ClickerChampion",
+          "ClickerCompletionist",
+          "ClickerMillionaire",
+          "ClickerNovice",
+          "ClickerPro",
+          "ClickerSaver",
+          "ClickerTrillionaire",
+          "DungeonCrawler",
+          "DungeonHomeowner",
+          "DungeonMaster",
+          "MonsterCatcher",
+          "MonsterCollector",
+          "MonsterElite",
+          "MonsterTrainer",
+          "EmailMarketer",
+          "Critic",
+          "CriticalThinker",
+          "Disliker",
+          "Hater",
+          "Liker",
+          "SuperFan",
+          "Unliker",
+          "CenturyClub",
+          "Chatterbox",
+          "ConversationKeeper",
+          "EarlyBird",
+          "EmojiMaster",
+          "EssayWriter",
+          "FileSharer",
+          "FirstMessage",
+          "Gossip",
+          "LinkSharer",
+          "MessageEditor",
+          "MessageForwarder",
+          "MessageMaster",
+          "NightOwl",
+          "PinCollector",
+          "SecondThoughts",
+          "ShortAndSweet",
+          "Unpinner",
+          "Verbose",
+          "BriefComment",
+          "Commentator",
+          "CommentDeleter",
+          "CommentEditor",
+          "DetailedPost",
+          "Novelist",
+          "PostDeleter",
+          "PostEditor",
+          "PosterChild",
+          "ProlificPoster",
+          "Inviter",
+          "PartyHost",
+          "RoomCreator",
+          "RoomDestroyer",
+          "RoomHopper",
+          "RoomJoiner",
+          "RoomLeaver",
+          "RoomRenovator",
+          "Socialite",
+          "AllCaps",
+          "AllLower",
+          "EmojiLover",
+          "Meta",
+          "NumberEnthusiast",
+          "Palindrome",
+          "DataCollector",
+          "Modeler",
+          "Publisher",
+          "Respondent",
+          "ResponseEditor",
+          "SurveyDeleter",
+          "SurveyEditor",
+          "SurveyGuru",
+          "Surveyor",
+          "SurveySays",
+          "DataAnalyst",
+          "MathWhiz",
+          "WebDeveloper"
+        ]
+      }
+    },
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"resource\",\"resourceType\"]",
+      "set": {
+        "values": [
+          "Blueprint",
+          "Dashboard",
+          "Email",
+          "Note",
+          "Program",
+          "Sheet",
+          "Survey",
+          "TodoList",
+          "Webpage",
+          "Whiteboard"
+        ]
+      }
+    }
+  ]
+}

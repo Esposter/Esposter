@@ -3,7 +3,6 @@ import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinit
 
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
-import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
 import { noteResourceSchema } from "#shared/models/resource/note/NoteResource";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
@@ -32,12 +31,6 @@ export const ResourceDefinitionMap = {
     contentSchema: emailEditorSchema,
     icon: "i-mdi:email-edit",
     title: ResourceType.Email,
-  },
-  [ResourceType.Flowchart]: {
-    capabilities: { portable: true, publishable: true },
-    contentSchema: flowchartEditorSchema,
-    icon: "i-mdi:sitemap",
-    title: ResourceType.Flowchart,
   },
   [ResourceType.Note]: {
     capabilities: { fileAssets: true, portable: true, publishable: true },

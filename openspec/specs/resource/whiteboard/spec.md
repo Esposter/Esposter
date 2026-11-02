@@ -21,7 +21,7 @@ The create flow SHALL offer a Whiteboard resource, which opens on an empty canva
 
 The palette SHALL offer rectangles, ellipses and diamonds, and the six flowchart shapes, Terminal, Process, Decision, Input/Output, Predefined Process and Annotation, grouped together.
 
-#### Scenario: The palette lists the flowchart shapes
+#### Scenario: The palette lists the shapes
 
 - **GIVEN** an owner opens a whiteboard in the editor
 - **WHEN** the palette is shown

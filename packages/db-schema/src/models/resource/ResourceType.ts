@@ -4,7 +4,6 @@ export enum ResourceType {
   Blueprint = "Blueprint",
   Dashboard = "Dashboard",
   Email = "Email",
-  Flowchart = "Flowchart",
   Note = "Note",
   Program = "Program",
   Sheet = "Sheet",

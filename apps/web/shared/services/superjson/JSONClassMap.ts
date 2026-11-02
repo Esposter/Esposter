@@ -10,7 +10,6 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
 import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
@@ -33,7 +32,6 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   DateColumn,
   Dungeons,
   EmailEditor,
-  FlowchartEditor,
   MessageEmojiMetadataEntity,
   NumberColumn,
   Row,

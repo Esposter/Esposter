@@ -76,7 +76,6 @@ describe(getAgentJsonSchema, () => {
     [ResourceType.Blueprint]: ["/entries/-/content"],
     [ResourceType.Dashboard]: [],
     [ResourceType.Email]: [...childRichTextPaths, "/html"],
-    [ResourceType.Flowchart]: [],
     [ResourceType.Note]: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
     [ResourceType.Program]: [],
     [ResourceType.Sheet]: [

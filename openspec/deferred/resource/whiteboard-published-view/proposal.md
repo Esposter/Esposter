@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — a read-only whiteboard for anyone with its link: the canvas as the owner left it, with pan and zoom and no minimap. The Flowchart's published view had a minimap, and this one does not.
+Deferred — a read-only whiteboard for anyone with its link: the canvas as the owner left it, with pan and zoom and no minimap. The whiteboard dropped the minimap by the owner's decision, and this view leaves it out too.
 
 ## What Changes
 

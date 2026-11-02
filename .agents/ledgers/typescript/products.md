@@ -1,14 +1,14 @@
 # Products
 
-| Unit                                                                               | Swept                 | Notes                                                                             |
-| ---------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------- |
-| `app/store/clicker`, `post`, and the one-store trees                               | 2026-10-05 · Opus 5.5 | dashboard, emailEditor, flowchartEditor, webpageEditor, survey, user, achievement |
-| `app/composables/file`, `clicker`, `post`, `dashboard`, `survey`, `visual`, `user` | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/services/clicker`                                                             | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/services/post`, `phaser`, `dataset`, `auth`, `anime`, `achievement`           | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/Clicker`                                                           | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/Post`                                                              | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/Visual`                                                            | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/User`                                                              | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/Dashboard`                                                         | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/components/RichTextEditor`, `FlowchartEditor`, `Achievement`                  | 2026-10-05 · Opus 5.5 |                                                                                   |
+| Unit                                                                               | Swept                 | Notes                                                            |
+| ---------------------------------------------------------------------------------- | --------------------- | ---------------------------------------------------------------- |
+| `app/store/clicker`, `post`, and the one-store trees                               | 2026-10-05 · Opus 5.5 | dashboard, emailEditor, webpageEditor, survey, user, achievement |
+| `app/composables/file`, `clicker`, `post`, `dashboard`, `survey`, `visual`, `user` | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/services/clicker`                                                             | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/services/post`, `phaser`, `dataset`, `auth`, `anime`, `achievement`           | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/Clicker`                                                           | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/Post`                                                              | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/Visual`                                                            | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/User`                                                              | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/Dashboard`                                                         | 2026-10-05 · Opus 5.5 |                                                                  |
+| `app/components/RichTextEditor`, `Achievement`                                     | 2026-10-05 · Opus 5.5 |                                                                  |

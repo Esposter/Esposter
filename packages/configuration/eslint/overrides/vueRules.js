@@ -17,7 +17,7 @@ export default {
   // `defineComponent(...)` composition is banned with it: it buys nothing script setup does not, and leaving it
   // Allowed is what lets an options block back in one property at a time.
   "vue/component-api-style": ["error", ["script-setup"]],
-  // PascalCase for our components and PascalCase third-party (VueFlow, VuePdfEmbed); kebab-case is only for
+  // PascalCase for our components and PascalCase third-party (VuePdfEmbed); kebab-case is only for
   // TresJS's lowercase <primitive> special element, and a `v-*` tag is left to the Vuetify ban in
   // `vue/no-restricted-syntax` rather than reported twice. A compound part is PascalCase on both sides of its dot
   // (Vuetify 0's `Select.Root`), since the library exports each compound as one namespace object. The

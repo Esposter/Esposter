@@ -24,7 +24,7 @@ One conversion, `getAgentJsonSchema`, turns a Zod schema into the JSON Schema an
 - **Undescribed parts are marked.** `z.unknown()` and `z.any()` are stamped `x-opaque`, the key `OPAQUE_KEY` names, so the agent sees where the schema stops describing.
 - **Read-only fields say so.** A schema given `.readonly()` or `.meta({ readOnly: true })` reaches the agent as JSON Schema's own `readOnly` keyword.
 - **Enums come through as `enum` lists**, so the legal values arrive in the same answer as the shape.
-- **The resource schema follows its editor.** Flowchart node data describes its optional label and edges have no writable data; Notes check documents against the shared writing kit; Survey models must be JSON objects; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
+- **The resource schema follows its editor.** Notes check documents against the shared writing kit; Survey models must be JSON objects; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
 
 ## Reading
 
@@ -68,7 +68,7 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 
 ## The test that holds every type
 
-`getAgentJsonSchema.test.ts` iterates `ResourceTypes`, with no list of its own. For each type it converts the content schema through the agent conversion, expects a root object, and compares the paths the conversion marks `x-opaque` or `readOnly` — written as JSON Pointers, `-` for an array's items and `*` for a record's values, such as a Note's `/doc/attrs/*` — with what the test records for that type. A new `z.unknown()` or read-only field in any schema fails it until the part is described or its path recorded, so no type's reach widens or narrows unseen. A Flowchart's node label is described and writable; edge data has no writable keys. A page builder's rich text, in a Webpage's nodes and at any depth in an Email's body, leaves its `attrs` and `marks` undescribed as a Note's do, so those paths are recorded for both. Beside it, `getMcpTools.test.ts` names every tool each scope reaches, so a procedure opting in under a scope is a line someone wrote down.
+`getAgentJsonSchema.test.ts` iterates `ResourceTypes`, with no list of its own. For each type it converts the content schema through the agent conversion, expects a root object, and compares the paths the conversion marks `x-opaque` or `readOnly` — written as JSON Pointers, `-` for an array's items and `*` for a record's values, such as a Note's `/doc/attrs/*` — with what the test records for that type. A new `z.unknown()` or read-only field in any schema fails it until the part is described or its path recorded, so no type's reach widens or narrows unseen. A page builder's rich text, in a Webpage's nodes and at any depth in an Email's body, leaves its `attrs` and `marks` undescribed as a Note's do, so those paths are recorded for both. Beside it, `getMcpTools.test.ts` names every tool each scope reaches, so a procedure opting in under a scope is a line someone wrote down.
 
 ## Notes
 
@@ -94,8 +94,6 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 | `apps/web/shared/models/db/resource/JsonPatchOperation.ts`            | the operations' wire schema, checked at the request                        |
 | `packages/shared/src/services/jsonPatch/applyPatches.ts`              | the one RFC 6902 applier                                                   |
 | `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the follow-ups' change, through the generic update                         |
-| `apps/web/shared/models/flowchartEditor/data/GraphNode.ts`            | the node label the Flowchart editor reads and writes                       |
-| `apps/web/shared/models/flowchartEditor/data/GraphEdge.ts`            | the empty data shape the edge editor uses                                  |
 | `apps/web/shared/models/resource/note/NoteResource.ts`                | validates documents with the Note writing kit's schema                     |
 | `apps/web/shared/services/resource/note/getNoteExtensions.ts`         | the extension set shared by the Note editor, renderer and validator        |
 | `apps/web/shared/models/resource/survey/SurveyResource.ts`            | requires a serialized JSON object for a Survey model                       |

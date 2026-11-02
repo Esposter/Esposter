@@ -1,6 +1,6 @@
 # Resource
 
-The resource area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a flowchart are all the same thing to the resource layer — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
+The resource area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a whiteboard are all the same thing to the resource layer — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
 The standards the area applies live in architecture: the layer model ([cross-product layer model](../architecture/layer-model/design.md)), the resource model ([resource](../architecture/resource/design.md)), datasets ([dataset](../architecture/dataset/design.md)), and publishing ([publishing](../architecture/publishing/design.md)). The pages in this area describe the product surface built on them.
 
@@ -75,10 +75,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](email-preview-text/design.md) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy
-- [Flowchart connectors](flowchart-connectors/design.md) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
-- [Flowchart publish](flowchart-publish/design.md) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
-- [Flowchart image export](flowchart-image-export/design.md) — export the whole diagram as PNG or SVG from the resource menu
-- [Whiteboard](whiteboard/design.md) — a freeform canvas of shapes, arrows bound to them, strokes, text, images and sticky notes, exported as SVG or PNG, which succeeds the Flowchart
+- [Whiteboard](whiteboard/design.md) — a freeform canvas of shapes, arrows bound to them, strokes, text, images and sticky notes, exported as SVG or PNG
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
@@ -101,11 +98,12 @@ Azure service at any point.
 - **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
-- **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.
+- **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and, until its retirement, Flowchart.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it, and one Export CSV over every dataset provider.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
 - **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
 - **[Webpage social preview](webpage-social-preview/design.md)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
 - **Content-addressed assets** — uploaded files addressed by the hash of their bytes, reference rows written from a scan of each version, one release for every path that can unreference a file, and collection held behind a counting-only period.
-- **[Whiteboard](whiteboard/design.md)** — the freeform canvas that succeeds the Flowchart, drawn on the headless editor core's positioned elements with no third-party dependency and one enum migration, shipped without its read-only published view.
+- **[Whiteboard](whiteboard/design.md)** — the freeform canvas, drawn on the headless editor core's positioned elements with no third-party dependency and one enum migration, shipped without its read-only published view.
+- **Flowchart retirement** — the Flowchart type, its Vue Flow dependency and every stored flowchart removed in one release, once the whiteboard covered its feature check. Stored flowcharts were deleted, not converted.

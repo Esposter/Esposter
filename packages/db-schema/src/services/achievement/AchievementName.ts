@@ -1,7 +1,6 @@
 import { ClickerAchievementName } from "#src/models/achievement/ClickerAchievementName";
 import { DungeonsAchievementName } from "#src/models/achievement/DungeonsAchievementName";
 import { EmailAchievementName } from "#src/models/achievement/EmailAchievementName";
-import { FlowchartAchievementName } from "#src/models/achievement/FlowchartAchievementName";
 import { LikeAchievementName } from "#src/models/achievement/LikeAchievementName";
 import { MessageAchievementName } from "#src/models/achievement/MessageAchievementName";
 import { PostAchievementName } from "#src/models/achievement/PostAchievementName";
@@ -16,7 +15,6 @@ export const AchievementName = mergeObjectsStrict(
   ClickerAchievementName,
   DungeonsAchievementName,
   EmailAchievementName,
-  FlowchartAchievementName,
   LikeAchievementName,
   MessageAchievementName,
   PostAchievementName,
@@ -30,7 +28,6 @@ export type AchievementName =
   | ClickerAchievementName
   | DungeonsAchievementName
   | EmailAchievementName
-  | FlowchartAchievementName
   | LikeAchievementName
   | MessageAchievementName
   | PostAchievementName

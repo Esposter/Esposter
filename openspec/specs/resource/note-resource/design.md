@@ -1,6 +1,6 @@
 # Note resource
 
-A Note is the platform's plain **document**: meeting notes, a spec, a README-style page — authored in Tiptap (already a dependency, powering the messaging editor) and shareable through the standard publish flow. It fills the gap between the spreadsheet (Sheet), the form (Survey), the site builder (Webpage), the BI canvas (Dashboard), the diagram (Flowchart), and the email — the everyday page of formatted text none of those were for.
+A Note is the platform's plain **document**: meeting notes, a spec, a README-style page — authored in Tiptap (already a dependency, powering the messaging editor) and shareable through the standard publish flow. It fills the gap between the spreadsheet (Sheet), the form (Survey), the site builder (Webpage), the BI canvas (Dashboard), the diagram (Whiteboard), and the email — the everyday page of formatted text none of those were for.
 
 ## How it works
 

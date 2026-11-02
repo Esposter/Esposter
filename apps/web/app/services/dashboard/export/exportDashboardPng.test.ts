@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
-import { captureFlowchart } from "@/services/capture/captureFlowchart";
+import { createElementSvg } from "@/services/capture/createElementSvg";
+import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { useAlertStore } from "@/store/alert";
-import { downloadFile, InvalidOperationError, Operation } from "@esposter/shared";
+import { downloadFile, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -12,10 +12,10 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   downloadFile: vi.fn<typeof downloadFile>(),
 }));
 
-// The real capture runs in the test where the SVG is checked, and the PNG tests take its answer from a resolved once-value
-vi.mock(import("@/services/capture/captureFlowchart"), async (importOriginal) => {
-  const { captureFlowchart: captureOriginal } = await importOriginal();
-  return { captureFlowchart: vi.fn<typeof captureOriginal>(captureOriginal) };
+// The real rasteriser runs in no test here, since a PNG needs a canvas the test environment does not draw, so the PNG tests take its answer from a resolved once-value
+vi.mock(import("@/services/capture/rasterizeSvg"), async (importOriginal) => {
+  const { rasterizeSvg: rasterizeOriginal } = await importOriginal();
+  return { rasterizeSvg: vi.fn<typeof rasterizeOriginal>(rasterizeOriginal) };
 });
 
 describe(exportDashboardPng, () => {
@@ -50,7 +50,7 @@ describe(exportDashboardPng, () => {
     expect.hasAssertions();
 
     const grid = appendGrid();
-    const svg = await captureFlowchart(grid, FlowchartExportFormat.Svg);
+    const svg = await createElementSvg(grid);
     const svgText = await svg.text();
 
     for (const title of tileTitles) expect(svgText).toContain(title);
@@ -59,13 +59,16 @@ describe(exportDashboardPng, () => {
   test("the dashboard's page downloads as a PNG named after the dashboard", async () => {
     expect.hasAssertions();
 
-    const grid = appendGrid();
+    appendGrid();
     const png = new Blob([], { type: MimeType.Png });
-    vi.mocked(captureFlowchart).mockResolvedValueOnce(png);
+    vi.mocked(rasterizeSvg).mockResolvedValueOnce(png);
 
     await exportDashboardPng(dashboardName);
 
-    expect(captureFlowchart).toHaveBeenCalledExactlyOnceWith(grid, FlowchartExportFormat.Png);
+    const [svg, width, height] = takeOne(vi.mocked(rasterizeSvg).mock.calls);
+
+    expect(svg).toBeInstanceOf(Blob);
+    expect([width, height]).toStrictEqual([640, 480]);
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(`${dashboardName}.png`, png, MimeType.Png);
   });
 
@@ -73,9 +76,7 @@ describe(exportDashboardPng, () => {
     expect.hasAssertions();
 
     appendGrid();
-    vi.mocked(captureFlowchart).mockRejectedValueOnce(
-      new InvalidOperationError(Operation.Read, "captureFlowchart", " "),
-    );
+    vi.mocked(rasterizeSvg).mockRejectedValueOnce(new InvalidOperationError(Operation.Read, "rasterizeSvg", " "));
 
     await exportDashboardPng(dashboardName);
 

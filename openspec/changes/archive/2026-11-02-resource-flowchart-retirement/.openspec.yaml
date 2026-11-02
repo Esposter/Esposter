@@ -1,0 +1,4 @@
+schema: spec-driven
+retire_capabilities: true
+affected_areas: [resource]
+x-model: claude-haiku-5-5

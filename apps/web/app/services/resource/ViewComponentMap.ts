@@ -7,7 +7,6 @@ import { ResourceType } from "@esposter/db-schema";
 export const ViewComponentMap: Record<PublishableResourceType, Component> = {
   [ResourceType.Dashboard]: defineAsyncComponent(() => import("@/components/Resource/Dashboard/View.vue")),
   [ResourceType.Email]: defineAsyncComponent(() => import("@/components/Resource/Email/View.vue")),
-  [ResourceType.Flowchart]: defineAsyncComponent(() => import("@/components/Resource/Flowchart/View.vue")),
   [ResourceType.Note]: defineAsyncComponent(() => import("@/components/Resource/Note/View.vue")),
   [ResourceType.Survey]: defineAsyncComponent(() => import("@/components/Resource/Survey/View.vue")),
   [ResourceType.Webpage]: defineAsyncComponent(() => import("@/components/Resource/Webpage/View.vue")),

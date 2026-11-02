@@ -6,4 +6,4 @@ Decided — the flowchart's future is removal, in favour of the whiteboard. The 
 
 ## What Changes
 
-Nothing here: the removal is designed in `openspec/changes/resource-flowchart-retirement/`, which deletes the Flowchart type, its canvas dependency and its stored flowcharts.
+Nothing here: the removal is designed in [the flowchart retirement](../../../changes/archive/2026-11-02-resource-flowchart-retirement/design.md), which deletes the Flowchart type, its canvas dependency and its stored flowcharts.

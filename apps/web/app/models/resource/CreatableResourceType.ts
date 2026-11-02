@@ -8,7 +8,6 @@ export const CreatableResourceTypes = [
   ResourceType.Dashboard,
   ResourceType.Webpage,
   ResourceType.Email,
-  ResourceType.Flowchart,
   ResourceType.Note,
   ResourceType.Survey,
   ResourceType.Blueprint,

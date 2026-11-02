@@ -10,7 +10,6 @@ import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { emailRouter } from "#server/trpc/routers/email";
-import { flowchartRouter } from "#server/trpc/routers/flowchart";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import { genshinRouter } from "#server/trpc/routers/genshin";
@@ -51,7 +50,6 @@ export const trpcRouter = router({
   dataset: datasetRouter,
   dungeons: dungeonsRouter,
   email: emailRouter,
-  flowchart: flowchartRouter,
   friend: friendRouter,
   friendRequest: friendRequestRouter,
   genshin: genshinRouter,

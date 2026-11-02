@@ -19,7 +19,6 @@ describe("jsonClassMap", () => {
       "DateColumn",
       "Dungeons",
       "EmailEditor",
-      "FlowchartEditor",
       "MessageEmojiMetadataEntity",
       "NumberColumn",
       "Row",

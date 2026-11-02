@@ -2,7 +2,6 @@ export enum AchievementCategory {
   Clicker = "Clicker",
   Dungeons = "Dungeons",
   Email = "Email",
-  Flowchart = "Flowchart",
   Like = "Like",
   Message = "Message",
   Post = "Post",

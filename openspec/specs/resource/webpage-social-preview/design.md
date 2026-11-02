@@ -23,7 +23,7 @@ A change to the Settings blade reaches a shared link only once the page is publi
 
 ## Not in it
 
-- **No per-type rollout.** A Webpage is the one type whose purpose is to be shared as a page. A Note or a Flowchart takes the same two fields on its own content when an owner asks.
+- **No per-type rollout.** A Webpage is the one type whose purpose is to be shared as a page. A Note takes the same two fields on its own content when an owner asks.
 - **No generated description.** The first LLM dependency is [deferred](../../../deferred/resource/ai-resource-generation/design.md).
 
 ## Key files

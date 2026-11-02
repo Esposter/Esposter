@@ -4,14 +4,12 @@ import type { PortableResourceType } from "@/models/resource/PortableResourceTyp
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
 import { createBlueprintPortableFormat } from "@/services/resource/createBlueprintPortableFormat";
-import { createFlowchartPortableFormat } from "@/services/resource/createFlowchartPortableFormat";
 import { createNoteMarkdownPortableFormat } from "@/services/resource/createNoteMarkdownPortableFormat";
 import { createSheetPortableFormat } from "@/services/resource/createSheetPortableFormat";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -105,10 +103,6 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       },
       label: "MJML",
     },
-  ],
-  [ResourceType.Flowchart]: [
-    createFlowchartPortableFormat(FlowchartExportFormat.Png),
-    createFlowchartPortableFormat(FlowchartExportFormat.Svg),
   ],
   [ResourceType.Note]: [createNoteMarkdownPortableFormat()],
   [ResourceType.Sheet]: [

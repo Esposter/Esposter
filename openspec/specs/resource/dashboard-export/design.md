@@ -8,7 +8,7 @@ The Dashboard declares the Portable capability for export only, so its resource 
 
 ## Decisions
 
-- **The page is captured in the browser, not on the server.** A server render needs a headless browser, which is a service or a dependency the owner has ruled out. The flowchart's capture already turns live markup into an SVG with its styles and rasterizes it, and the dashboard reuses that path, so the capture lives in a shared folder rather than being copied.
+- **The page is captured in the browser, not on the server.** A server render needs a headless browser, which is a service or a dependency the owner has ruled out. The capture turns live markup into an SVG with its styles and rasterizes it, and the dashboard reuses that path, so the capture lives in a shared folder rather than being copied.
 - **PNG only.** The alternative, a PDF, needs a renderer. The browser's print path would need a print stylesheet for the grid, which is its own piece of work, so it waits for a request.
 - **A visual's CSV holds what the visual draws.** The alternative was the bound dataset's raw rows. Those rows carry every column of the source, and the publish snapshot deliberately keeps only the columns a query reads, so a public file of raw rows would leak what the snapshot removes. The drawn rows are the query's result: one row per category with a column per series, and one value for a Card.
 - **Every visual with categories writes the grouped rows its Table form draws, except a pie-shaped visual.** A table is the grouped result itself, and a bar, a treemap or a slope draws the same grouped numbers over one binding, so its file is those rows. A pie, a polar area or a radial bar draws only its first series, so its file is the grouped rows of that series alone. Exporting every series for a pie would write columns its chart never shows. No visual reads a second query either way.
@@ -38,8 +38,9 @@ flowchart LR
 | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | the Dashboard opts into the Portable capability, export only                      |
 | `apps/web/app/services/resource/PortableFormatMap.ts`                      | the Dashboard's PNG entry, with no import                                         |
-| `apps/web/app/services/capture/captureFlowchart.ts`                        | the capture and rasterizer the page image reuses, in the shared folder            |
-| `apps/web/app/services/capture/createFlowchartSvg.ts`                      | copies computed styles and embeds font faces                                      |
+| `apps/web/app/services/capture/createElementSvg.ts`                        | the element's SVG capture the page image reuses, in the shared folder             |
+| `apps/web/app/services/capture/copyComputedStyles.ts`                      | copies computed styles onto the clone                                             |
+| `apps/web/app/services/capture/readFontFaceCss.ts`                         | the fonts the page's text is drawn in, embedded in the SVG                        |
 | `apps/web/app/services/capture/rasterizeSvg.ts`                            | rasterizes the SVG at two times the pixel ratio                                   |
 | `apps/web/app/services/dashboard/export/exportDashboardPng.ts`             | captures the dashboard grid and downloads it as a PNG                             |
 | `apps/web/app/services/dashboard/export/exportDashboardVisualCsv.ts`       | the drawn rows of one visual, as a CSV file                                       |

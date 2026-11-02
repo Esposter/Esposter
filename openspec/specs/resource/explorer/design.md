@@ -113,7 +113,6 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 | Dashboard | Editor (canvas incl. bind-to-data, inline)                                                                                                |
 | Email     | Editor (page builder, inline)                                                                                                             |
 | Webpage   | Editor (page builder, inline)                                                                                                             |
-| Flowchart | Editor (VueFlow, inline)                                                                                                                  |
 | Note      | Editor (Tiptap, inline)                                                                                                                   |
 | Blueprint | Editor (inline)                                                                                                                           |
 

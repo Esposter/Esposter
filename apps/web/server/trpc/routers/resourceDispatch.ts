@@ -12,7 +12,6 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
-import { flowchartRouter } from "#server/trpc/routers/flowchart";
 import { noteRouter } from "#server/trpc/routers/note";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
@@ -42,7 +41,6 @@ interface PublishCaller {
 const resourceCallers = {
   [ResourceType.Dashboard]: (ctx: Context) => createCallerFactory(dashboardRouter)(ctx),
   [ResourceType.Email]: (ctx: Context) => createCallerFactory(emailRouter)(ctx),
-  [ResourceType.Flowchart]: (ctx: Context) => createCallerFactory(flowchartRouter)(ctx),
   [ResourceType.Note]: (ctx: Context) => createCallerFactory(noteRouter)(ctx),
   [ResourceType.Survey]: (ctx: Context) => createCallerFactory(surveyRouter)(ctx),
   [ResourceType.Webpage]: (ctx: Context) => createCallerFactory(webpageRouter)(ctx),

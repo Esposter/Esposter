@@ -8,11 +8,11 @@
 | `composables/resource/sheet`                                                                      | 2026-10-29 · Haiku 5.5 |                                                                         |
 | `services/resource/sheet`                                                                         | 2026-10-29 · Haiku 5.5 |                                                                         |
 | `store/resource/sheet` + `shared/models/resource/sheet`                                           | 2026-10-05 · Opus 5.5  | content-class casts pinned by each schema's satisfies ToData            |
-| `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`, `Resource/Flowchart`                  | 2026-10-05 · Opus 5.5  |                                                                         |
+| `Resource/Dashboard`, `Resource/Email`, `Resource/Webpage`                                        | 2026-10-05 · Opus 5.5  |                                                                         |
 | `Resource/Survey`, `Resource/Program`, `Resource/TodoList`, `Resource/Blueprint`, `Resource/Note` | 2026-10-05 · Opus 5.5  |                                                                         |
 | `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | 2026-10-05 · Opus 5.5  |                                                                         |
 | `app/store/resource`, less the `sheet` unit above                                                 | 2026-10-05 · Opus 5.5  |                                                                         |
-| `Dashboard`, `Dataset`, `FlowchartEditor` + their store, composable and service layers            | 2026-10-05 · Opus 5.5  |                                                                         |
+| `Dashboard`, `Dataset` + their store, composable and service layers                               | 2026-10-05 · Opus 5.5  |                                                                         |
 | `emailEditor`, `pageBuilder`, `survey` — store, composables, services; `webpageEditor` — store    | 2026-10-29 · Haiku 5.5 | their components are swept above; their shared models are `shared.md`'s |
 | `Resource/` root files less `Overview.vue`                                                        | 2026-10-05 · Opus 5.5  | the dialogs, toggles and readouts a blade mounts, owned by no blade     |
 | `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | 2026-10-29 · Haiku 5.5 |                                                                         |
