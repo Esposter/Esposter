@@ -1,10 +1,13 @@
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
+import { MessageType } from "@esposter/db-schema";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
+  const readMembersByIds = useReadMembersByIds();
+  const readAppUsers = useReadAppUsers();
   const {
     data: followedThreads,
     getData: getFollowedThreads,
@@ -28,7 +31,23 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // Thread open and every follow button in the room joins that one read rather than each issuing its own —
   // A caller handed nothing renders an unfollowed star for a thread the user follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
-    (roomId) => $trpc.message.readFollowedThreads.query({ roomId }),
+    async (roomId) => {
+      const followedThreadsResult = await $trpc.message.readFollowedThreads.query({ roomId });
+      // A row is drawn only once its root's author is known, so the authors the roots name are read with the list, as a
+      // Room's messages read theirs, and the list lands with them already known
+      const { threads } = followedThreadsResult;
+      await Promise.all([
+        readMembersByIds(
+          roomId,
+          threads.flatMap((thread) => (thread.type === MessageType.Webhook ? [] : [thread.userId])),
+        ),
+        readAppUsers(
+          roomId,
+          threads.flatMap((thread) => (thread.type === MessageType.Webhook ? [thread.appUser.id] : [])),
+        ),
+      ]);
+      return followedThreadsResult;
+    },
     {
       onSuccess: ({ threadRootRowKeys, threads }, roomId) => {
         setFollowedThreads(roomId, threads);

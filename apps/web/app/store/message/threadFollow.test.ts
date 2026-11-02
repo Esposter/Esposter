@@ -1,9 +1,10 @@
 // @vitest-environment nuxt
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 
+import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { getReverseTickedTimestamp } from "@esposter/db-schema";
+import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
@@ -31,5 +32,21 @@ describe(useThreadFollowStore, () => {
 
     expect(isFollowingAfterJoinedLoad).toBe(true);
     expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  // A row is drawn only for a thread whose root's author is known, so the list lands with that author read
+  test("reads each followed thread's root author with the list, so the thread's creator is known when it is drawn", async () => {
+    expect.hasAssertions();
+
+    const author = createUser();
+    const thread = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootRowKeys: [thread.rowKey], threads: [thread] }));
+    trpcMsw.room.readMembersByIds.query(() => [{ ...author, displayName: "displayName" }]);
+    const threadFollowStore = useThreadFollowStore();
+    const { readFollowedThreads } = threadFollowStore;
+    const creator = useCreator(() => thread);
+    await readFollowedThreads(roomId);
+
+    expect(creator.value?.id).toBe(author.id);
   });
 });
