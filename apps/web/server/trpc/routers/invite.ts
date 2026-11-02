@@ -37,6 +37,7 @@ import {
   RoomPermission,
   roomsInMessage,
   usersInAuth,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, Operation, takeOne } from "@esposter/shared";
 import { and, eq, getColumns } from "drizzle-orm";
@@ -115,10 +116,15 @@ export const inviteRouter = router({
       // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
       if (!invite || !checkIsInviteUsable(invite)) return undefined;
 
-      const membership = await ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-      return { ...invite, isMember: Boolean(membership) };
+      // The landing page shows how many are in the room, never who: the count is taken here, since the relation
+      // Reads the room without its memberships
+      const [membership, memberCount] = await Promise.all([
+        ctx.db.query.usersToRoomsInMessage.findFirst({
+          where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
+        }),
+        ctx.db.$count(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, invite.roomId)),
+      ]);
+      return { ...invite, isMember: Boolean(membership), room: { ...invite.room, memberCount } };
     }),
   readMyInvite: getMemberProcedure(roomIdSchema, "roomId")
     .use(assertIsRoomMiddleware)

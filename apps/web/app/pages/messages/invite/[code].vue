@@ -43,8 +43,8 @@ const { joinRoom } = roomStore;
           <p text-muted>{{ invite.user.name }} invited you to join</p>
           <h1 ui-title>{{ invite.room.name }}</h1>
           <p text-sm text-muted>
-            {{ invite.room.usersToRoomsInMessage.length }}
-            {{ pluralize("Member", invite.room.usersToRoomsInMessage.length) }}
+            {{ invite.room.memberCount }}
+            {{ pluralize("Member", invite.room.memberCount) }}
           </p>
         </div>
         <UiButton :is-pending="isJoinRoomPending" w-full :variant="UiButtonVariant.Accent" @click="joinRoom(code)">

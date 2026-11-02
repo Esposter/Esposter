@@ -76,6 +76,24 @@ describe("inviteRouter", () => {
     expect(invite.isMember).toBe(true);
   });
 
+  // The landing page is readable by anyone holding the code, so it carries how many are in the room and never who
+  test("reads the room's member count, not its members, to a stranger", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInvite.id);
+    await mockSessionOnce(mockContext.db);
+    const invite = await inviteCaller.readInvite(newInvite.id);
+
+    assert.exists(invite);
+
+    expect(invite.isMember).toBe(false);
+    expect(invite.room.memberCount).toBe(2);
+    expect(invite.room).not.toHaveProperty("usersToRoomsInMessage");
+  });
+
   test("reads non-existent invite", async () => {
     expect.hasAssertions();
 

@@ -45,14 +45,14 @@ flowchart TD
 
 The invite router, `server/trpc/routers/invite.ts`, holds every procedure over the invite table; `joinRoom`, which consumes a link, is the room router's (`server/trpc/routers/room/index.ts`):
 
-| Procedure                                               | Auth                             | Purpose                                                                        |
-| :------------------------------------------------------ | :------------------------------- | :----------------------------------------------------------------------------- |
-| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                  | replace own invite with a new token + options; returns the row and its creator |
-| `revokeInvite({ id, roomId })`                          | member (own row) or `ManageRoom` | delete an invite — the row's absence is what kills the token                   |
-| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                     | the room's usable links, each joined to its creator                            |
-| `readMyInvite({ roomId })`                              | member                           | own invite row for the dialog (`null` if none/expired)                         |
-| `readInvite(id)`                                        | authed                           | landing-page info; `null` for unknown/expired/exhausted                        |
-| `joinRoom(id)`                                          | authed                           | atomic validate + consume + insert membership                                  |
+| Procedure                                               | Auth                             | Purpose                                                                                                 |
+| :------------------------------------------------------ | :------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                  | replace own invite with a new token + options; returns the row and its creator                          |
+| `revokeInvite({ id, roomId })`                          | member (own row) or `ManageRoom` | delete an invite — the row's absence is what kills the token                                            |
+| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                     | the room's usable links, each joined to its creator                                                     |
+| `readMyInvite({ roomId })`                              | member                           | own invite row for the dialog (`null` if none/expired)                                                  |
+| `readInvite(id)`                                        | authed                           | landing-page info with the room's member count, never its members; `null` for unknown/expired/exhausted |
+| `joinRoom(id)`                                          | authed                           | atomic validate + consume + insert membership                                                           |
 
 ## Key files
 
