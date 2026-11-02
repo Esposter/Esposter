@@ -1,13 +1,11 @@
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
-import { MessageType } from "@esposter/db-schema";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const readMembersByIds = useReadMembersByIds();
-  const readAppUsers = useReadAppUsers();
+  const readMessageCreators = useReadMessageCreators();
   const {
     data: followedThreads,
     getData: getFollowedThreads,
@@ -35,17 +33,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       const followedThreadsResult = await $trpc.message.readFollowedThreads.query({ roomId });
       // A row is drawn only once its root's author is known, so the authors the roots name are read with the list, as a
       // Room's messages read theirs, and the list lands with them already known
-      const { threads } = followedThreadsResult;
-      await Promise.all([
-        readMembersByIds(
-          roomId,
-          threads.flatMap((thread) => (thread.type === MessageType.Webhook ? [] : [thread.userId])),
-        ),
-        readAppUsers(
-          roomId,
-          threads.flatMap((thread) => (thread.type === MessageType.Webhook ? [thread.appUser.id] : [])),
-        ),
-      ]);
+      await readMessageCreators(roomId, followedThreadsResult.threads);
       return followedThreadsResult;
     },
     {

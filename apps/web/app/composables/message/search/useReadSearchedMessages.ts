@@ -20,6 +20,7 @@ export const useReadSearchedMessages = () => {
   const { isMenuOpen, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
+  const readMessageCreators = useReadMessageCreators();
   return (offset?: number) => {
     const roomId = requirePartitionKey(currentRoomId.value, useReadSearchedMessages.name);
     // A newer search for the room cancels this one, and this search's own signal is what its failure is judged by
@@ -48,10 +49,12 @@ export const useReadSearchedMessages = () => {
       const boundPage = getBoundPage();
       return withFinalizerAsync(
         async () => {
-          const { count: newCount, data: items } = await $trpc.message.searchMessages.query(
+          const { count: newCount, data: page } = await $trpc.message.searchMessages.query(
             { filters, offset, query, roomId },
             { signal },
           );
+          // A hit is drawn only once its author is known, so the authors the hits name are read before they land
+          await readMessageCreators(roomId, page.items);
           // No offset means a fresh search rather than reading the next offset page.
           if (!offset) await createSearchHistory({ filters: filters.length > 0 ? filters : undefined, query, roomId });
           // A newer search began while this one was in flight, so its results and totals are dropped whole, and the
@@ -59,7 +62,7 @@ export const useReadSearchedMessages = () => {
           signal.throwIfAborted();
           if (!offset) boundPage.value = 1;
           if (newCount !== undefined) boundCount.value = newCount;
-          return items;
+          return page;
         },
         () => {
           // The newer search that cancelled this one raised the flag itself, and clears it when it lands

@@ -1,4 +1,4 @@
-import type { MessageEntity, RoomInMessage, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, RoomInMessage, StandardMessageEntity } from "@esposter/db-schema";
 
 import { MessageType } from "@esposter/db-schema";
 
@@ -6,7 +6,7 @@ import { MessageType } from "@esposter/db-schema";
 // Urls and its reactions — for a room's page read and a thread's read alike
 export const useReadMessageMetadata = () => {
   const readMembersByIds = useReadMembersByIds();
-  const readAppUsers = useReadAppUsers();
+  const readMessageCreators = useReadMessageCreators();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
@@ -15,12 +15,9 @@ export const useReadMessageMetadata = () => {
   return async (roomId: RoomInMessage["id"], messages: MessageEntity[]) => {
     if (messages.length === 0) return;
 
-    const webhookMessages: WebhookMessageEntity[] = [];
     const standardMessages: StandardMessageEntity[] = [];
 
-    for (const message of messages)
-      if (message.type === MessageType.Webhook) webhookMessages.push(message);
-      else standardMessages.push(message);
+    for (const message of messages) if (message.type !== MessageType.Webhook) standardMessages.push(message);
     // A reactor is named by its member row, so the reactors of the emojis read are read as members too
     const readReactorMembers = async () => {
       const emojis = await readEmojis(
@@ -33,8 +30,7 @@ export const useReadMessageMetadata = () => {
       );
     };
     await Promise.all([
-      readMembersByIds(roomId, [...new Set(standardMessages.map(({ userId }) => userId))]),
-      readAppUsers(roomId, [...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
+      readMessageCreators(roomId, messages),
       readReplies(roomId, [
         ...new Set(standardMessages.flatMap(({ replyRowKey }) => (replyRowKey ? [replyRowKey] : []))),
       ]),

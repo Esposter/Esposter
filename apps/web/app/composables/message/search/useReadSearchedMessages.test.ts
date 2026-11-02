@@ -4,6 +4,7 @@ import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
@@ -189,6 +190,7 @@ describe(useReadSearchedMessages, () => {
       await isStaleResponseReleased;
       return { count: newCount, data: { hasMore: false, items: [staleMessage] } };
     });
+    trpcMsw.room.readMembersByIds.query(() => []);
     await mountRead();
     searchQuery.value = query;
     const staleSearch = readSearchedMessages();
@@ -198,5 +200,21 @@ describe(useReadSearchedMessages, () => {
     await staleSearch;
 
     expect(items.value).toStrictEqual([latestMessage]);
+  });
+
+  // A hit is drawn only once its author is known, so the authors the hits name are read with the results, as a room's
+  // Messages read theirs — a member the reader has not loaded yet must not make the hit vanish
+  test("reads each hit's author with the results, so a hit from a member not yet loaded is drawn", async () => {
+    expect.hasAssertions();
+
+    const author = createUser();
+    const hit = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
+    trpcMsw.message.searchMessages.query(() => ({ count: newCount, data: { hasMore: false, items: [hit] } }));
+    trpcMsw.room.readMembersByIds.query(() => [{ ...author, displayName: "displayName" }]);
+    await mountRead();
+    searchQuery.value = query;
+    await readSearchedMessages();
+
+    expect(useCreator(() => hit).value?.id).toBe(author.id);
   });
 });

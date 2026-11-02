@@ -83,6 +83,8 @@ sequenceDiagram
   Read->>History: the filters and query that actually ran
 ```
 
+Each page's hits are read with their authors before the page lands, through `useReadMessageCreators` (the read a room's messages take), so a hit from a current member the reader has not loaded is drawn rather than dropped.
+
 A history row therefore records what was searched, not what was on screen — clicking one restores exactly that combination, which is why a pending chip must never reach it.
 
 The history lists each combination once: `createSearchHistory` returns the row an identical search already has rather than inserting another, so running a search again from Enter or from its history entry leaves the list as it was.
@@ -109,6 +111,7 @@ Within a room, a newer search cancels the one still in flight, whichever surface
 | `shared/services/message/getSearchableFilters.ts`                        | The filters a search runs with — pending chips and exact repeats dropped                                        |
 | `shared/services/message/checkIsSearchQueryEmpty.ts`                     | Whether there is anything to search on at all                                                                   |
 | `app/composables/message/search/useReadSearchedMessages.ts`              | The explicit-submit read, and the history row it earns                                                          |
+| `app/composables/message/message/useReadMessageCreators.ts`              | The authors a page of messages names, read before the page lands                                                |
 | `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
 | `server/services/message/searchMessages.ts`                              | Clause assembly and the paged index read                                                                        |
 | `packages/db/src/services/azure/search/filtersToClauses.ts`              | Each filter type's OData clause                                                                                 |
