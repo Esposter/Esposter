@@ -22,6 +22,7 @@ import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMes
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
+import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { trackMemberRoomIds } from "#server/services/room/trackMemberRoomIds";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
@@ -132,11 +133,7 @@ export const baseRoomRouter = router({
         input,
       );
 
-      await tx
-        .select({ id: roomsInMessage.id })
-        .from(roomsInMessage)
-        .where(eq(roomsInMessage.id, invitedRoom.roomId))
-        .for("update");
+      await lockRoomRow(tx, invitedRoom.roomId);
       // Usability check + use consumption in one statement so two concurrent joins can't both
       // Consume the last use. Expired/exhausted invites get the same error as unknown tokens.
       const [invite] = await tx

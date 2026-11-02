@@ -3,6 +3,7 @@ import type { AppUserInMessage, WebhookInMessage, WebhookInMessageWithRelations 
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "#server/services/auth/generateToken";
 import { inRoom } from "#server/services/db/inRoom";
+import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -20,7 +21,6 @@ import {
   DatabaseEntityType,
   roomIdSchema,
   RoomPermission,
-  roomsInMessage,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -35,13 +35,7 @@ export const webhookRouter = router({
     RateLimiterType.Slow,
   ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
     ctx.db.transaction(async (tx) => {
-      // The room row is locked first, because the cap is a count and a count has no constraint behind it: two
-      // Creates reading one below the cap would both insert. It is the same room-row lock createInvite takes
-      await tx
-        .select({ id: roomsInMessage.id })
-        .from(roomsInMessage)
-        .where(eq(roomsInMessage.id, roomId))
-        .for("update");
+      await lockRoomRow(tx, roomId);
       const webhookContext = JSON.stringify({ name, roomId });
       const webhookCount = takeOne(
         await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),

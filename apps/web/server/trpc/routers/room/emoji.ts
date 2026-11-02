@@ -11,6 +11,7 @@ import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmo
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { roomEmojiEventEmitter } from "#server/services/message/events/roomEmojiEventEmitter";
+import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -32,10 +33,9 @@ import {
   roomEmojisInMessage,
   roomIdSchema,
   RoomPermission,
-  roomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
-import { and, eq, notExists } from "drizzle-orm";
+import { and, notExists } from "drizzle-orm";
 
 export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
@@ -61,14 +61,9 @@ export const emojiRouter = router({
 
     const roomEmojiContext = JSON.stringify({ name, roomId });
     const newRoomEmoji = await ctx.db.transaction(async (tx) => {
-      // The room row is locked first, because the cap is a count and a count has no constraint behind it: two
-      // Transactions reading 49 would both insert. The unique index is what makes a duplicate name impossible;
-      // This is what makes the cap impossible to exceed, and it serializes only creates for the same room
-      await tx
-        .select({ id: roomsInMessage.id })
-        .from(roomsInMessage)
-        .where(eq(roomsInMessage.id, roomId))
-        .for("update");
+      // The unique index is what makes a duplicate name impossible; the lock is what makes the cap impossible to
+      // Exceed, and it serializes only creates for the same room
+      await lockRoomRow(tx, roomId);
       const roomEmojiCount = await readRoomEmojiCount(tx, roomId);
       if (roomEmojiCount >= MAX_ROOM_EMOJIS)
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomEmojiContext);

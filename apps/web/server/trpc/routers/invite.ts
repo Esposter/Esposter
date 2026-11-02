@@ -10,6 +10,7 @@ import { getCursorPaginationData } from "#server/services/pagination/cursor/getC
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
+import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -35,7 +36,6 @@ import {
   PublicUserColumns,
   roomIdSchema,
   RoomPermission,
-  roomsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -47,13 +47,9 @@ export const inviteRouter = router({
     .use(assertIsRoomMiddleware)
     .mutation<InviteInMessageWithCreator>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
       ctx.db.transaction(async (tx) => {
-        // The room row is locked first, because the pause is a read with no constraint behind it: without the lock
-        // A pause can commit between the check and the insert, and the room mints a link after it closed
-        await tx
-          .select({ id: roomsInMessage.id })
-          .from(roomsInMessage)
-          .where(eq(roomsInMessage.id, roomId))
-          .for("update");
+        // Locked before the check below, so a pause cannot commit between the check and the insert and let the room
+        // Mint a link after it closed
+        await lockRoomRow(tx, roomId);
         // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
         // Nobody can use
         const { isInvitePaused } = await requireEntity(
