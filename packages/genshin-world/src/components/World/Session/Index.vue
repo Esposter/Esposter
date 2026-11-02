@@ -4,6 +4,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance } from "@tresjs/core";
@@ -248,6 +249,8 @@ const {
   wishHistory,
   wishPityMap,
 } = useWorldSave({ emitGrant: () => emit("grant"), events, savedState });
+// The bag, the wallet and their setters, and the item data and names the composables that take from or pay into them read
+const bag: WorldBagDependencies = { inventory, materialDataMap, nameText, setInventory, setWallet, wallet };
 // The tips the world shows, each once per save, in the order the quests that trigger them finish
 const { closeTip, showingTip } = useWorldTips({ events, queuedTipIds, shownTipIds, tips });
 // The copies of each character the player holds, from the save's counts and as the wish screen grants them
@@ -431,6 +434,7 @@ const {
   strikeGatheringOres,
   worldDrops,
 } = useWorldPickups({
+  ...bag,
   archive: { archiveData, archiveProgressMap },
   events,
   gameDataBaseUrl,
@@ -438,13 +442,7 @@ const {
   getGroundHeight,
   getServerClockOffsetMs: () => serverClockOffsetMs,
   getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   reliquaryPieceEntryMap,
-  setInventory,
-  setWallet,
-  wallet,
   weaponDataMap: statTables.weaponDataMap,
 });
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
@@ -477,6 +475,7 @@ const { openShrineById, shrineInteractables } = useWorldShrines({
 });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
+  ...bag,
   artifactMainAffixPools,
   artifactRarityDataMap,
   events,
@@ -484,19 +483,13 @@ const { campLockSources, chestInteractables, digChestById, openChestById, worldC
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
-  inventory,
-  materialDataMap,
-  nameText,
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
-  setInventory,
-  setWallet,
   solvedPuzzleIds,
   timeTrialMarkers,
-  wallet,
   waterLevel: windriseData.water.level,
   weaponDataMap: statTables.weaponDataMap,
 });
@@ -518,35 +511,25 @@ const {
   worshipLevels,
   worshipRegionId,
 } = useWorldStatues({
+  ...bag,
   characterBody,
   events,
   foundOculusIds,
   gainWorldAdventureExp,
   gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
   placeWorldDrops,
   regionStatueProgressMap,
   screenKind,
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
+  ...bag,
   events,
   frostbearingTreeProgress,
   gainWorldAdventureExp,
   gameDataBaseUrl,
-  inventory,
-  materialDataMap,
-  nameText,
   placeWorldDrops,
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
 const {
@@ -622,6 +605,7 @@ const {
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
 const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
+    ...bag,
     artifactRarityDataMap,
     characterBody,
     characterDataMap: statTables.characterDataMap,
@@ -631,14 +615,8 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     closeScreen,
     gameDataBaseUrl,
     getGroundHeight,
-    inventory,
     jumpTo: (pose) => jumpTo(pose),
-    materialDataMap,
-    nameText,
     party,
-    setInventory,
-    setWallet,
-    wallet,
     weaponDataMap: statTables.weaponDataMap,
   });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
@@ -745,15 +723,10 @@ const { useBagEntry } = useWorldBagUse({
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
 const { cardGameExp, cardGameRewardedGameIds, payCardGameReward } = useWorldCardGame({
+  ...bag,
   getResidents,
-  inventory,
-  materialDataMap,
-  nameText,
   savedCardGameExp: savedState.cardGameExp,
   savedRewardedGameIds: savedState.cardGameRewardedGameIds,
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The talks a resident begins and the talk the world runs, held by id, with their words, the quest talks a resident's
 // Standing talk offers and the duel a resident offers from each talk
@@ -803,19 +776,14 @@ const {
   openAbyssEntrance,
   stepAbyss,
 } = useWorldSpiralAbyss({
+  ...bag,
   areaId: findAreaAt(catalogue, ABYSS_ENTRANCE_POSITION.x, ABYSS_ENTRANCE_POSITION.z)?.id ?? "",
   bonusLines: abyssBonusLines,
   events,
   gameDataBaseUrl,
   getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   savedProgressMap: savedState.spiralAbyssProgressMap,
-  setInventory,
-  setWallet,
-  wallet,
 });
 const reputationLevel = shallowRef(reputation.value.level);
 // The Oculi of the region published: those not found, those near the camera and the one the body touches
@@ -956,6 +924,7 @@ const {
   restoreOutcropClaim,
   touchOutcropsNear,
 } = useWorldOutcrops({
+  ...bag,
   adventureExp,
   adventureRankTables,
   areaId: ref(OUTCROP_REGION_ID),
@@ -967,16 +936,10 @@ const {
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   placements: outcropPlaces,
   rank,
   regionStatueProgressMap,
-  setInventory,
-  setWallet,
-  wallet,
 });
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
 const {
@@ -989,6 +952,7 @@ const {
   trounceBlossomInteractables,
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
+  ...bag,
   catalogue,
   characters,
   emitGrant: () => emit("grant"),
@@ -999,14 +963,8 @@ const {
   gameText,
   getGroundHeight,
   getWorldNow,
-  inventory,
-  materialDataMap,
-  nameText,
   party,
   savedState,
-  setInventory,
-  setWallet,
-  wallet,
   worldNow,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
@@ -1030,6 +988,7 @@ const {
   stepDomainChallenge,
   unlockedDomainEntrances,
 } = useWorldDomains({
+  ...bag,
   adventureExp,
   adventureRankTables,
   artifactMainAffixPools,
@@ -1041,21 +1000,15 @@ const {
   events,
   gameDataBaseUrl,
   getWorldNow,
-  inventory,
   jumpLandmarks,
   jumpTo,
   kitEffectState: kitContext.kitEffectState,
-  materialDataMap,
-  nameText,
   party,
   random: () => kitContext.random(),
   rank,
   reliquaryPieceEntryMap,
   reliquarySets,
-  setInventory,
-  setWallet,
   unlockedLandmarks,
-  wallet,
   weaponDataMap: statTables.weaponDataMap,
   worldNow,
 });
