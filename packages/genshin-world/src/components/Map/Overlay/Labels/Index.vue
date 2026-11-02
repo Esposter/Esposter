@@ -45,7 +45,9 @@ const { areaLabels, metres, subareaNames } = defineProps<Props>();
       :x
       :y="y + metres * MAP_PROGRESS_OFFSET_SHARE"
     >
-      <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color">{{ text }}</tspan>
+      <tspan v-for="({ color, text }, index) of progressSegments" :key="index" :fill="color" :stroke="color">{{
+        text
+      }}</tspan>
     </text>
   </template>
 </template>
@@ -53,10 +55,14 @@ const { areaLabels, metres, subareaNames } = defineProps<Props>();
 <style scoped>
 /* The labels' white, read off the English map's ink over Galesong Hill, which draws them with no outline. Signika is
    Narrower than the game's face at one cap height, so each line keeps the game's cap height and is spaced out toward
-   Its width (the name 252 pixels across, its line 278), at the spacing whose strokes score nearest the game's */
+   Its width (the name 252 pixels across, its line 278), at the spacing whose strokes score nearest the game's. Signika's
+   strokes are also thinner than the game's face at that cap height, so each glyph is thickened by a hairline in its own
+   colour; a progress segment's own colour is its stroke too, so a gold line stays gold */
 .area-name,
 .area-progress {
   fill: #e5e9e0;
+  stroke: #e5e9e0;
+  stroke-width: 0.4;
   font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
