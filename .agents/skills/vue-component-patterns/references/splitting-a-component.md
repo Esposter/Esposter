@@ -9,7 +9,7 @@ The goal is a root `Index.vue` that reads as a bill of materials: its `<script s
 1. **A distinct panel, region or screen state of the template** (a header, a list pane, a detail pane, a tab body, a dialog) becomes a child component.
 2. **A `v-for` item body** becomes a child that takes the item as a prop.
 3. **A cluster of refs, computeds and handlers serving one region** moves with that region into the child, or into a composable when two regions share it. Pure helpers and constants move to the package's `services/`, one export per file.
-4. **Props go down and events go up** (`defineEmits`, or `defineModel` for a two-way value). A child that needs many props usually means the state belongs inside it, or the cut runs along the wrong line. The exception is a layer of an integration root, whose overlays and screens legitimately read many values the root's composables return; those take as many props as their block reads, never `provide`/`inject`.
+4. **Props go down and events go up** (`defineEmits`, or `defineModel` for a two-way value). A child that needs many props usually means the state belongs inside it, or the cut runs along the wrong line. What a child shares with the rest of a root, the context and the bag and the events its siblings react through, is read from a store and never threaded as a prop (`openspec/changes/genshin-session-store/design.md`); a layer of an integration root takes the props of its own block's values and the store supplies the rest, never `provide`/`inject`.
 
 ## A group cut of an integration root is judged by what it adds
 
