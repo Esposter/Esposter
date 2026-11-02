@@ -5,10 +5,11 @@ import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuPaimonProfileBirthday from "#src/components/Menu/Paimon/Profile/Birthday/Index.vue";
+import MenuPaimonProfileInfo from "#src/components/Menu/Paimon/Profile/Info/Index.vue";
+import MenuPaimonProfileNamecard from "#src/components/Menu/Paimon/Profile/Namecard/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
-import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
-import { GameButton, GameButtonKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -49,11 +50,9 @@ const {
 } = defineProps<Props>();
 const emit = defineEmits<{ openBirthday: []; openNamecard: []; openWorldLevel: [] }>();
 const equippedNamecard = computed(() => namecards.find(({ itemId }) => itemId === namecardItemId));
-// The info mark's box, one object the button keeps rather than a fresh one per render
-const infoStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Info]);
-const worldLevelInfoButton = useTemplateRef("worldLevelInfoButton");
-// The World Level dialog closes back to the info button, which lives here, so the menu focuses it through this
-defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() });
+const info = useTemplateRef("info");
+// The World Level dialog closes back to the info button, which lives in its row, so the menu focuses it through this
+defineExpose({ focusWorldLevelInfo: () => info.value?.focusWorldLevelInfo() });
 </script>
 
 <template>
@@ -78,40 +77,23 @@ defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() })
   <div class="exp-bar"><div class="exp-fill" :style="{ width: `${adventureExpProgress * 100}%` }" /></div>
   <p class="world-level">{{ gameText[GameTextKey.WorldLevel] }}</p>
   <p class="world-level value">{{ worldLevel }}</p>
-  <GameButton
-    ref="worldLevelInfoButton"
-    class="info"
-    :aria-label="gameText[GameTextKey.WorldLevel]"
-    :kind="GameButtonKind.Plain"
-    :style="infoStyle"
-    tip=""
-    @click="emit('openWorldLevel')"
-  />
-  <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Info]" class="info-glyph" />
+  <MenuPaimonProfileInfo ref="info" :label="gameText[GameTextKey.WorldLevel]" @open="emit('openWorldLevel')" />
   <p v-if="!equippedNamecard" class="signature">
     {{ signature || gameText[GameTextKey.FriendNoSignature] }}
   </p>
   <p class="birthday">{{ gameText[GameTextKey.Birthday] }}</p>
   <p v-if="travelerBirthday" class="birthday-value value">{{ travelerBirthday.month }}/{{ travelerBirthday.day }}</p>
-  <GameButton
+  <MenuPaimonProfileBirthday
     v-else
     class="birthday-value value"
-    :aria-label="gameText[GameTextKey.BirthdaySet]"
-    :kind="GameButtonKind.Plain"
-    tip=""
-    @click="emit('openBirthday')"
-  >
-    -/-
-  </GameButton>
-  <GameButton
-    class="namecard"
-    :disabled="namecards.length === 0"
-    :kind="GameButtonKind.Plain"
-    tip=""
-    @click="emit('openNamecard')"
-  >
-    {{ equippedNamecard?.name }}
-  </GameButton>
+    :label="gameText[GameTextKey.BirthdaySet]"
+    @open="emit('openBirthday')"
+  />
+  <MenuPaimonProfileNamecard
+    :is-disabled="namecards.length === 0"
+    :namecard-name="equippedNamecard?.name"
+    @open="emit('openNamecard')"
+  />
 </template>
 
 <style scoped src="../../../../styles/paimonAlert.css"></style>
@@ -289,18 +271,6 @@ defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() })
   line-height: 1;
 }
 
-/* Provisional: the namecard's button takes the signature line's place, drawn when a namecard is equipped */
-.namecard {
-  position: absolute;
-  top: calc(var(--unit) * 105);
-  left: calc(var(--unit) * 331);
-  width: calc(var(--unit) * 300);
-  color: #e2e8ed;
-  font-size: calc(var(--unit) * 20);
-  font-weight: 600;
-  text-align: left;
-}
-
 /* The rank's and the Birthday's values end 33 units short of the panel's right edge, and the World Level's 18 units left of its
    Info disc, as the frame sets them */
 .value {
@@ -311,17 +281,6 @@ defineExpose({ focusWorldLevelInfo: () => worldLevelInfoButton.value?.focus() })
 
 .world-level.value {
   left: calc(var(--unit) * 725);
-}
-
-/* The game draws the info icon the same hovered and pressed: its disc reads #eae4d6 throughout, from the pointer's
-   Arrival to the click that opens the dialog (`yt-P13s7kSmVOE-world-level-dialog-2024.mkv`, 0.9 to 3.0 seconds at 60 frames) */
-.info {
-  position: absolute;
-  border-radius: 50%;
-}
-
-.info-glyph {
-  color: #ece5d7;
 }
 
 .exp-bar {

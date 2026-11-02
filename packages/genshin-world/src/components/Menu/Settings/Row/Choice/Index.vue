@@ -40,6 +40,9 @@ const checkIsActiveRow = (kind: SettingsRowKind): boolean => checkIsListRow(kind
 const choiceValue = computed(() =>
   row.kind === SettingsRowKind.Choice ? row.getValue(gameText, settings.value.language) : "",
 );
+// The game language's name in its own words, which a Language row shows; building its display names is the costly part,
+// So it is held until the language changes rather than rebuilt on every render of the row
+const languageValue = computed(() => getLanguageDisplayName(settings.value.language, settings.value.language));
 </script>
 
 <template>
@@ -64,9 +67,7 @@ const choiceValue = computed(() =>
     </svg>
     <span class="value">
       <template v-if="row.kind === SettingsRowKind.Quality">{{ qualityValue }}</template>
-      <template v-else-if="row.kind === SettingsRowKind.Language">{{
-        getLanguageDisplayName(settings.language, settings.language)
-      }}</template>
+      <template v-else-if="row.kind === SettingsRowKind.Language">{{ languageValue }}</template>
       <template v-else-if="row.kind === SettingsRowKind.Toggle">{{
         gameText[settings[row.setting] ? GameTextKey.SettingsOn : GameTextKey.SettingsOff]
       }}</template>

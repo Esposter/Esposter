@@ -19,14 +19,13 @@ interface Props {
 }
 
 const { alertedIcons, gameText, icon, labelKey } = defineProps<Props>();
-const isAlerted = computed(() => alertedIcons.includes(icon));
 </script>
 
 <template>
   <GameButton class="entry link" :kind="GameButtonKind.Row" tip="" disabled>
     <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
     <span class="label">{{ gameText[labelKey] }}</span>
-    <span v-if="isAlerted" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
   </GameButton>
 </template>
 

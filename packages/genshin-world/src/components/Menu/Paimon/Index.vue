@@ -7,9 +7,11 @@ import type { InteractionState } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
+import MenuPaimonBack from "#src/components/Menu/Paimon/Back/Index.vue";
 import MenuPaimonContents from "#src/components/Menu/Paimon/Contents/Index.vue";
 import MenuPaimonOverlays from "#src/components/Menu/Paimon/Overlays/Index.vue";
 import MenuPaimonProfile from "#src/components/Menu/Paimon/Profile/Index.vue";
+import MenuPaimonQuit from "#src/components/Menu/Paimon/Quit/Index.vue";
 import MenuPaimonSideEntry from "#src/components/Menu/Paimon/SideEntry/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import {
@@ -18,10 +20,9 @@ import {
   PAIMON_MENU_PANEL_DELAY_MS,
   PAIMON_MENU_SIDE_BAR,
 } from "#src/services/menu/constants";
-import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
-import { GAME_SMOOTHSTEP_EASING, GameButton, GameButtonKind, GameScreen } from "genshin-interface";
+import { GAME_SMOOTHSTEP_EASING, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
@@ -88,13 +89,6 @@ const emit = defineEmits<{
   setBirthday: [birthday: TravelerBirthdaySave];
   toggleWorldLevel: [];
 }>();
-// Quit is anchored from the bottom edge, as the frame anchors it: its box stands 36 of the 1440 high still's pixels above
-// That still's bottom, each still pixel drawn at `--reference-pixel`, which puts its centre 55 units above the frame's bottom
-const quitStyle = {
-  ...getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit]),
-  bottom: "calc(var(--reference-pixel) * 36)",
-  top: "auto",
-};
 // The side bar's buttons, each with the tooltip its screen is named by in the reader's language
 const sideBar = computed(() =>
   PAIMON_MENU_SIDE_BAR.map(({ icon, screenKind }) => ({
@@ -109,11 +103,9 @@ const menuStyle = {
   "--menu-fade": `${PAIMON_MENU_FADE_MS}ms`,
   "--menu-panel-delay": `${PAIMON_MENU_PANEL_DELAY_MS}ms`,
 };
-// The Quit mark's glyph, one object the button keeps rather than a fresh one per render
-const quitGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Quit], x: 0, y: 0 };
-const backButton = useTemplateRef("backButton");
+const back = useTemplateRef("back");
 const profile = useTemplateRef("profile");
-const quitGameButton = useTemplateRef("quitGameButton");
+const quitGame = useTemplateRef("quitGame");
 // The World Level dialog opens over the menu from the info icon beside the World Level, and closes back to it; the menu
 // Behind it is inert until it closes, so focus stays in the dialog
 const isWorldLevelDialogOpen = ref(false);
@@ -134,7 +126,7 @@ const isExitPrompted = ref(false);
 const closeExitPrompt = async () => {
   isExitPrompted.value = false;
   await nextTick();
-  quitGameButton.value?.focus();
+  quitGame.value?.focusQuitGame();
 };
 // Back plays the menu's closing before it closes the world, the side bar and the panel fading out as they came in
 const isClosing = ref(false);
@@ -146,7 +138,7 @@ const closeMenu = () => {
 };
 // The menu is a dialog over the world, so focus starts inside it, on its way back
 onMounted(() => {
-  backButton.value?.focus();
+  back.value?.focusBack();
 });
 onBeforeUnmount(() => {
   clearTimeout(closeTimeout);
@@ -172,14 +164,7 @@ onBeforeUnmount(() => {
       :inert="isBirthdayDialogOpen || isNamecardDialogOpen || isWorldLevelDialogOpen || isExitPrompted || isClosing"
     >
       <div class="side-bar" />
-      <GameButton
-        ref="backButton"
-        class="back"
-        :aria-label="gameText[GameTextKey.Back]"
-        :kind="GameButtonKind.Plain"
-        tip=""
-        @click="closeMenu()"
-      />
+      <MenuPaimonBack ref="back" :label="gameText[GameTextKey.Back]" @close="closeMenu()" />
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Back]" class="back-glyph" />
       <!-- Each side bar button is its icon's box, the icon drawn from the box's corner -->
       <MenuPaimonSideEntry
@@ -192,16 +177,7 @@ onBeforeUnmount(() => {
         :tip
         @open="emit('open', screenKind)"
       />
-      <GameButton
-        ref="quitGameButton"
-        class="side-entry"
-        :kind="GameButtonKind.Disc"
-        :style="quitStyle"
-        :tip="gameText[GameTextKey.QuitGame]"
-        @click="isExitPrompted = true"
-      >
-        <MenuGlyph :glyph="quitGlyph" />
-      </GameButton>
+      <MenuPaimonQuit ref="quitGame" :tip="gameText[GameTextKey.QuitGame]" @open="isExitPrompted = true" />
       <!-- The panel and everything on it, one layer so it is revealed on its own, after the side bar -->
       <div class="panel-layer">
         <div class="panel" />
@@ -325,25 +301,6 @@ onBeforeUnmount(() => {
   left: 0;
   width: calc(var(--unit) * 100);
   background: linear-gradient(#3e4a5a, #4b5464 18%, #47596c 55%, #446071 74%, #426a76 93%, #3f6a75);
-}
-
-/* Provisional: no recording shows Back hovered or pressed, so it is drawn with no state of its own */
-.back {
-  position: absolute;
-  top: calc(var(--unit) * 19.5);
-  left: calc(var(--unit) * 21);
-  width: calc(var(--unit) * 61);
-  height: calc(var(--unit) * 61);
-  border-radius: 50%;
-  background: #999a9b;
-}
-
-.back::after {
-  content: "";
-  position: absolute;
-  inset: calc(var(--unit) * 6.3);
-  border-radius: 50%;
-  background: #ece5d7;
 }
 
 .back-glyph {

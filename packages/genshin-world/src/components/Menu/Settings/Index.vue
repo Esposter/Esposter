@@ -12,7 +12,7 @@ import { useSettingsGameText } from "#src/composables/useSettingsGameText";
 import { useSettingsRowList } from "#src/composables/useSettingsRowList";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
+import { getMenuFrameMark } from "#src/services/menu/getMenuFrameMark";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
@@ -34,9 +34,8 @@ const settings = defineModel<GenshinSettings>("settings", { required: true });
 const tab = defineModel<SettingsTab>("tab", { default: SettingsTab.Graphics });
 const { defaultQualityTier, gameText, language } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-// The close mark's box and glyph, each one object the button and its mark keep rather than a fresh one per render
-const closeStyle = getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Close]);
-const closeGlyph = { ...MenuFrameGlyphMap[MenuFrameIcon.Close], x: 0, y: 0 };
+// The close mark's box and glyph, one object each the button and its mark keep rather than a fresh one per render
+const closeMark = getMenuFrameMark(MenuFrameIcon.Close);
 const page = useTemplateRef("page");
 const content = useTemplateRef("content");
 const openedList = shallowRef<SettingsRowKind>();
@@ -93,11 +92,11 @@ onMounted(() => {
       class="close"
       :aria-label="shownGameText[GameTextKey.Back]"
       :kind="GameButtonKind.Disc"
-      :style="closeStyle"
+      :style="closeMark.style"
       tip=""
       @click="emit('close')"
     >
-      <MenuGlyph :glyph="closeGlyph" class="close-glyph" />
+      <MenuGlyph :glyph="closeMark.glyph" class="close-glyph" />
     </GameButton>
     <MenuSettingsTabs v-model:tab="tab" :game-text="shownGameText" />
     <div :key="tab" ref="page" class="page" role="tabpanel" tabindex="0" @scroll="updateScrollThumb()">

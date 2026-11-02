@@ -24,7 +24,6 @@ interface Props {
 
 const { alertedIcons, checkIsBuilt, gameText, icon, screenKind } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
-const isAlerted = computed(() => alertedIcons.includes(icon));
 </script>
 
 <template>
@@ -37,7 +36,7 @@ const isAlerted = computed(() => alertedIcons.includes(icon));
   >
     <MenuGlyph :glyph="MenuEntryGlyphMap[icon]" />
     <span class="label">{{ gameText[ScreenKindGameTextKeyMap[screenKind]] }}</span>
-    <span v-if="isAlerted" aria-hidden="true" class="alert" />
+    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
   </GameButton>
 </template>
 

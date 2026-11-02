@@ -4,8 +4,7 @@ import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
-import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
-import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
+import { getMenuFrameMark } from "#src/services/menu/getMenuFrameMark";
 import { GameButton, GameButtonKind } from "genshin-interface";
 
 interface Props {
@@ -23,10 +22,8 @@ interface Props {
 
 const { alertedIcons, checkIsBuilt, icon, screenKind, tip } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
-const isAlerted = computed(() => alertedIcons.includes(icon));
-// The icon's box and glyph, each one object the button keeps rather than a fresh one per render
-const glyphStyle = computed(() => getMenuGlyphStyle(MenuFrameGlyphMap[icon]));
-const glyph = computed(() => ({ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }));
+// The icon's box and glyph, one object the button keeps rather than a fresh one per render
+const mark = computed(() => getMenuFrameMark(icon));
 </script>
 
 <template>
@@ -34,12 +31,12 @@ const glyph = computed(() => ({ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }));
     class="side-entry"
     :disabled="!checkIsBuilt(screenKind)"
     :kind="GameButtonKind.Disc"
-    :style="glyphStyle"
+    :style="mark.style"
     :tip
     @click="emit('open')"
   >
-    <MenuGlyph :glyph />
-    <span v-if="isAlerted" aria-hidden="true" class="alert" />
+    <MenuGlyph :glyph="mark.glyph" />
+    <span v-if="alertedIcons.includes(icon)" aria-hidden="true" class="alert" />
   </GameButton>
 </template>
 
