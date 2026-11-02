@@ -66,14 +66,17 @@ const { areaLabels, metres, subareaNames } = defineProps<Props>();
   letter-spacing: 0.04em;
 }
 
-/* The subarea names' white, read off the brightest ink the English map draws over Jueyun Karst, which it sets without an
-   outline, so the name is drawn alone */
+/* The subarea names' white, the mean of the ink the English map draws over Jueyun Karst, which it sets without an outline,
+   so the name is drawn alone. Measured against `map-overlay-jueyun`: the ink's mean is dimmer than the brightest name's, so
+   the fill is held at 90% and the name's baseline sits 2.4 units lower, where the page's font puts the reference's cap band */
 .subarea-name {
-  fill: rgb(245 255 255);
+  fill: rgb(232 250 252);
   font-weight: 600;
   text-anchor: middle;
   dominant-baseline: middle;
   letter-spacing: 0.07em;
+  translate: 0 2.4px;
+  fill-opacity: 0.9;
 }
 
 .area-progress {

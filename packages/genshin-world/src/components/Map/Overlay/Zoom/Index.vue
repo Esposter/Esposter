@@ -55,7 +55,7 @@ const onZoomPointerUp = () => {
     <path class="zoom-stop" d="M 28 241.5 L 39.5 253 L 28 264.5 L 16.5 253 Z" />
     <path class="zoom-sign" d="M 20 253 H 36" />
     <g :transform="`translate(28 ${zoomThumbY})`">
-      <path class="zoom-stop" d="M 0 -12.5 L 12.5 0 L 0 12.5 L -12.5 0 Z" />
+      <path class="zoom-thumb" d="M 0 -12.5 L 12.5 0 L 0 12.5 L -12.5 0 Z" />
       <path class="zoom-star" d="M 0 -6 Q 0.9 -0.9 6 0 Q 0.9 0.9 0 6 Q -0.9 0.9 -6 0 Q -0.9 -0.9 0 -6 Z" />
     </g>
   </svg>
@@ -80,22 +80,27 @@ const onZoomPointerUp = () => {
   stroke-width: 0.8;
 }
 
+/* The stops are diamonds outlined in cream over the track's dark, with a cream sign, as the reference draws them */
 .zoom-stop {
-  fill: #ede4e0;
-  stroke: #111317;
-  stroke-width: 1;
+  fill: #111317;
+  stroke: #ede4e0;
+  stroke-width: 4;
   stroke-linejoin: round;
 }
 
-/* The thumb is the cream diamond the stops are, with a dark four-pointed star, and stands where the zoom shows: at the
+/* The thumb is the cream diamond the stops were, with a dark four-pointed star, and stands where the zoom shows: at the
    reference's 1512 metres that is the middle of the track, so no stop is drawn there */
+.zoom-thumb {
+  fill: #ede4e0;
+}
+
 .zoom-star {
   fill: #4b5367;
 }
 
 .zoom-sign {
   fill: none;
-  stroke: #384150;
+  stroke: #ede4e0;
   stroke-width: 2.2;
   stroke-linecap: round;
 }
