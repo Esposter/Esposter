@@ -86,6 +86,27 @@ describe("uiToggleGroup", () => {
       expect(component.get('[role="radiogroup"]').attributes()).toHaveProperty(attribute);
     });
 
+    test("holds a disabled choice, which a click does not choose", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiToggleGroup<string>, {
+        props: {
+          items: [
+            { title: "a", value: "a" },
+            { isDisabled: true, title: "b", value: "b" },
+          ],
+          label,
+          modelValue: "a",
+        },
+      });
+      await flushPromises();
+      const second = component.findAll('[role="radio"]')[1];
+      await second?.trigger("click");
+
+      expect(component.emitted("update:modelValue")).toBeUndefined();
+      expect(second?.attributes("aria-disabled")).toBe("true");
+    });
+
     test("chooses a number as it does a string", async () => {
       expect.hasAssertions();
 

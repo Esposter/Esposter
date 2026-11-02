@@ -44,6 +44,7 @@ const { isIconOnly, isVertical, items, label } = defineProps<Props>();
         v-for="item of items"
         #default="{ attrs: itemAttrs }"
         :key="item.value"
+        :disabled="item.isDisabled"
         :value="item.value"
         renderless
       >
