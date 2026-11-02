@@ -22,8 +22,8 @@ A report is a small, checked experiment that someone else can run in a minute. I
 6. **Expected.** What the oracle does, and the proof that the oracle reads the file.
 7. **Cause.** The function and line in the target's source that produce the wrong output, quoted, at the tag of the version tested, and the one-sentence change that would fix it. Written as "the cause is" only when a run confirmed it, as "likely" when the source was only read, and as "not known" when the source was searched and nothing was found.
 8. **Real occurrence.** A permalink to one line of the real code that has the bug, from a public repository, pinned to a pushed commit (`https://github.com/<owner>/<repo>/blob/<sha>/<path>#L<line>`), so the line stays where it was read. The reproduction shows the bug is minimal and the occurrence shows it is real. One link, no description of the repository.
-9. **Isolation.** A table: one change at a time from the reproduction, and the result of each. Add the versions tested.
-10. **Not known.** What does not match the claim, and what was not checked.
+9. **Isolation.** Only when it shows which condition triggers the bug. A table: one change at a time from the reproduction, and the result of each. Leave it out when the reproduction is already the one condition.
+10. **Not known.** Only when something is. What does not match the claim, what was not checked, and any fix that was read and not applied. Leave it out when there is nothing to say.
 11. **Not a duplicate of.** The nearest issues and pull requests, and why each differs.
 
 ## Prove the report before writing it
