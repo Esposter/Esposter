@@ -5,8 +5,8 @@ import { OBJECT_DOWNLOAD_TIMEOUT_MS } from "#src/services/genshinParity/referenc
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { writePartialThenMove } from "@esposter/shared-node/cache";
 import { createWriteStream } from "node:fs";
-import { rename, rm } from "node:fs/promises";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 
@@ -18,11 +18,9 @@ export const downloadObjectTo = async (blobName: string, destination: string, sh
   });
   if (!response.ok || response.body === null)
     throw new InvalidOperationError(Operation.Read, blobName, `responds ${response.status}`);
-  const partPath = `${destination}.part`;
-  await pipeline(Readable.fromWeb(response.body as ReadableStream), createWriteStream(partPath));
-  if ((await sha256File(partPath)) !== sha256) {
-    await rm(partPath, { force: true });
-    throw new InvalidOperationError(Operation.Read, blobName, "does not hash to its name");
-  }
-  await rename(partPath, destination);
+  await writePartialThenMove(destination, async (partialPath) => {
+    await pipeline(Readable.fromWeb(response.body as ReadableStream), createWriteStream(partialPath));
+    if ((await sha256File(partialPath)) !== sha256)
+      throw new InvalidOperationError(Operation.Read, blobName, "does not hash to its name");
+  });
 };
