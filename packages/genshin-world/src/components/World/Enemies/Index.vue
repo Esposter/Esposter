@@ -2,7 +2,6 @@
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
-import type { CombatState } from "#src/models/combat/CombatState";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
@@ -14,43 +13,24 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture, Scene } from "three";
 
-import { CombatEvent } from "#src/models/combat/CombatEvent";
-import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
-import { EnemyState } from "#src/models/enemy/EnemyState";
-import { EnemyType } from "#src/models/enemy/EnemyType";
-import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
-import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
+import { useEnemyCampLocks } from "#src/composables/useEnemyCampLocks";
+import { useEnemySimulation } from "#src/composables/useEnemySimulation";
+import { useEnemySpawns } from "#src/composables/useEnemySpawns";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
 import { createSightProxy } from "#src/services/elementalSight/createSightProxy";
-import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
-import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned";
-import { checkIsEnemyShieldBroken } from "#src/services/enemy/checkIsEnemyShieldBroken";
-import { computeCampLockSources } from "#src/services/enemy/computeCampLockSources";
-import { computeEnemyDrops } from "#src/services/enemy/computeEnemyDrops";
-import { computeEnemyRespawnTime } from "#src/services/enemy/computeEnemyRespawnTime";
 import {
   ENEMY_CAPACITY,
   ENEMY_CAPSULE_HEIGHT,
   ENEMY_CAPSULE_RADIUS,
-  ENEMY_DEATH_SECONDS,
   ENEMY_HIT_FLASH_RADIUS,
   ENEMY_HIT_FLASH_SECONDS,
   ENEMY_HIT_TINT_SECONDS,
-  ENEMY_STEP_SECONDS,
   HIT_TINT_COLOR,
 } from "#src/services/enemy/constants";
-import { createEnemy } from "#src/services/enemy/createEnemy";
 import { EnemyStateColorMap } from "#src/services/enemy/EnemyStateColorMap";
-import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
-import { stepCombat } from "#src/services/enemy/stepCombat";
-import { stepEnemy } from "#src/services/enemy/stepEnemy";
-import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
-import { selectEnemyTaunt } from "#src/services/kit/selectEnemyTaunt";
 import { composeHeadingMatrix } from "#src/services/world/composeHeadingMatrix";
 import { useLoop } from "@tresjs/core";
-import { watchImmediate } from "@vueuse/core";
-import { createFixedStepLoop, createInstancedMesh, createToonMaterial } from "genshin-engine";
+import { createInstancedMesh, createToonMaterial } from "genshin-engine";
 import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 interface Props {
@@ -136,140 +116,40 @@ const emit = defineEmits<{
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 const { onBeforeRender } = useLoop();
-// The enemy types of a camp's members, by which a defeated member comes back
-const getCampEnemyTypes = (members: EnemyCamp["members"]) =>
-  members.map(({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType);
-// When each spawn was last defeated, kept for the page's life until a saved game keeps it
-const spawnKeyDefeatedAtMap = new Map<string, Temporal.Instant>();
-// The bosses the save holds as defeated, so a reload keeps each one down until its return
-for (const [spawnKey, defeatedAt] of bossDefeatMap)
-  spawnKeyDefeatedAtMap.set(spawnKey, Temporal.Instant.from(defeatedAt));
-// The party's combat as the enemies aggravated on it hold it, kept for the page's life
-const combat: CombatState = { clearSeconds: 0, isInCombat: false };
-const loadedCampIds = new Set<string>();
-// The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
-// Emits them
-let emittedCampLocksKey = "";
-// The enemies whose shield the last step saw broken, so a shield that is still broken counts as one break and not one
-// For each step
-const brokenShieldEnemies = new WeakSet<Enemy>();
-// Every camp of every region whose data has arrived
-const getEnemyCamps = () => [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps);
-const getCampLocks = (): ChestLockSource[] => computeCampLockSources(getEnemyCamps(), enemyMap);
-// A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
-// So an enemy comes back only on a load, never in view
-let spawnedWorldLevel = worldLevel;
-watchImmediate(
-  () => [worldLevel, getEnemyCamps(), outcropCamps] as const,
-  ([currentWorldLevel, enemyCamps, fightingCamps]) => {
-    emittedCampLocksKey = "";
-    if (currentWorldLevel !== spawnedWorldLevel) {
-      spawnedWorldLevel = currentWorldLevel;
-      enemyMap.clear();
-      loadedCampIds.clear();
-    }
-    const campIds = new Set([...enemyCamps, ...fightingCamps].map(({ id }) => id));
-    for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
-    for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
-    const now = getWorldNow();
-    for (const { areaId, id, members } of enemyCamps) {
-      if (loadedCampIds.has(id)) continue;
-      loadedCampIds.add(id);
-      const campEnemyTypes = getCampEnemyTypes(members);
-      for (const member of members) {
-        const spawnKey = getSpawnKey(id, member.id);
-        const savedRespawnAt = enemyRespawnMap.get(spawnKey);
-        if (savedRespawnAt === undefined) {
-          const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
-          if (
-            defeatedAt &&
-            !checkIsEnemyRespawned(
-              campEnemyTypes,
-              defeatedAt,
-              now,
-              areaId,
-              lastTeleportAts,
-              trounceBlossoms.get(spawnKey),
-            )
-          )
-            continue;
-        } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now) > 0) continue;
-        spawnKeyDefeatedAtMap.delete(spawnKey);
-        if (campEnemyTypes.includes(EnemyType.Boss)) emit("respawn", spawnKey);
-        enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
-      }
-    }
-    // An outcrop's camp spawns whole as its fight starts, so no member's respawn time applies to it
-    for (const { id, members } of fightingCamps) {
-      if (loadedCampIds.has(id)) continue;
-      loadedCampIds.add(id);
-      for (const member of members) {
-        const spawnKey = getSpawnKey(id, member.id);
-        spawnKeyDefeatedAtMap.delete(spawnKey);
-        enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
-      }
-    }
-  },
-);
-const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
-  let isAnyDefeated = false;
-  for (const enemy of enemyMap.values()) {
-    // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
-    advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
-    const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
-    const enemyEvent = stepEnemy(
-      enemy,
-      taunt ? taunt.body.position : target,
-      ENEMY_STEP_SECONDS,
-      checkIsEnemyKindId(enemy.enemyKindId) ? EnemyKindMovesMap[enemy.enemyKindId] : undefined,
-    );
-    // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
-    // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a
-    // Break after that stand is seen as a new one
-    if (!checkIsEnemyShieldBroken(enemy)) brokenShieldEnemies.delete(enemy);
-    else if (!brokenShieldEnemies.has(enemy)) {
-      brokenShieldEnemies.add(enemy);
-      emit("shieldBreak", enemy);
-    }
-    if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
-    else if (enemyEvent === EnemyEvent.Defeated) {
-      isAnyDefeated = true;
-      const enemyKind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
-      const spawnKey = getSpawnKey(enemy.campId, enemy.id);
-      const defeatedAt = getWorldNow();
-      spawnKeyDefeatedAtMap.set(spawnKey, defeatedAt);
-      emit(
-        "defeat",
-        enemy,
-        computeEnemyDrops(enemyKind, enemy.traits, enemy.level, () => Math.random()),
-      );
-      // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
-      const camp = getEnemyCamps().find(({ id }) => id === enemy.campId);
-      // A camp with no boss brings each defeated member back at an instant the save keeps
-      const campEnemyTypes = camp && getCampEnemyTypes(camp.members);
-      const respawnAt = campEnemyTypes && computeEnemyRespawnTime(campEnemyTypes, defeatedAt);
-      if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toString());
-      // A boss's defeat is kept too, since its return waits on a claim or a teleport out of its area that the save holds
-      if (campEnemyTypes?.includes(EnemyType.Boss)) emit("saveBossDefeat", spawnKey, defeatedAt.toString());
-      const [firstMember] = camp?.members ?? [];
-      if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))
-        emit("campCleared", { id: camp.id, position: firstMember.position });
-    }
-  }
-
-  if (isAnyDefeated)
-    for (const [spawnKey, { state, stateSeconds }] of enemyMap)
-      if (state === EnemyState.Dead && stateSeconds >= ENEMY_DEATH_SECONDS) enemyMap.delete(spawnKey);
-  const combatEvent = stepCombat(combat, enemyMap.values(), ENEMY_STEP_SECONDS);
-  if (combatEvent === CombatEvent.Enter) emit("enterCombat");
-  else if (combatEvent === CombatEvent.Leave) emit("leaveCombat");
-  wakeEnemyCamps([...enemyMap.values()]);
-  const campLocks = getCampLocks();
-  const campLocksKey = campLocks.map(({ isDone }) => (isDone ? "1" : "0")).join("");
-  if (campLocksKey !== emittedCampLocksKey) {
-    emittedCampLocksKey = campLocksKey;
-    emit("campLocks", campLocks);
-  }
+const campLocks = useEnemyCampLocks((locks) => emit("campLocks", locks));
+const { getCampEnemyTypes, getEnemyCamps, spawnKeyDefeatedAtMap } = useEnemySpawns({
+  bossDefeatMap,
+  enemyMap,
+  enemyRespawnMap: () => enemyRespawnMap,
+  enemyTables: () => enemyTables,
+  getWorldNow,
+  lastTeleportAts: () => lastTeleportAts,
+  onLoad: campLocks.reset,
+  onRespawn: (spawnKey) => emit("respawn", spawnKey),
+  outcropCamps: () => outcropCamps,
+  regionDataMap: () => regionDataMap,
+  trounceBlossoms: () => trounceBlossoms,
+  worldLevel: () => worldLevel,
+  worldLevelRows: () => worldLevelRows,
+});
+const fixedStepLoop = useEnemySimulation({
+  campLocks,
+  enemyMap,
+  enemyTables: () => enemyTables,
+  getCampEnemyTypes,
+  getEnemyCamps,
+  getWorldNow,
+  kitEffectState: () => kitEffectState,
+  onCampCleared: (camp) => emit("campCleared", camp),
+  onDefeat: (enemy, enemyDrops) => emit("defeat", enemy, enemyDrops),
+  onEnterCombat: () => emit("enterCombat"),
+  onLeaveCombat: () => emit("leaveCombat"),
+  onSaveBossDefeat: (spawnKey, defeatedAt) => emit("saveBossDefeat", spawnKey, defeatedAt),
+  onSaveRespawn: (spawnKey, respawnAt) => emit("saveRespawn", spawnKey, respawnAt),
+  onShieldBreak: (enemy) => emit("shieldBreak", enemy),
+  onStrike: (enemy, taunt) => emit("strike", enemy, taunt),
+  spawnKeyDefeatedAtMap,
+  target: () => target,
 });
 // Every enemy is one capsule of one instanced draw, stood on the ground, turned to its heading and tinted by its state,
 // And one that was hit in the last moments is tinted by the hit, with a small flash drawn at its middle
