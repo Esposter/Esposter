@@ -2,6 +2,7 @@ import type { ReviewIssueFindings } from "#src/models/review/ReviewIssueFindings
 
 import { ReviewOutcome } from "#src/models/review/ReviewOutcome";
 import { ReviewSessionLimitedError } from "#src/models/review/ReviewSessionLimitedError";
+import { assertCheckoutIsDisposable } from "#src/services/review/git/assertCheckoutIsDisposable";
 import { fetchRemote } from "#src/services/review/git/fetchRemote";
 import { landCommits } from "#src/services/review/git/landCommits";
 import { formatReviewFinding } from "#src/services/review/issues/formatReviewFinding";
@@ -23,6 +24,7 @@ import { getResultAsync, takeOne } from "@esposter/shared";
 export const runReviewFix = async ({ base, end, findings, issue }: ReviewIssueFindings): Promise<void> => {
   const summary = [`## Fix issue #${issue}`, "", `${findings.length} finding(s) to fix.`];
   fetchRemote();
+  assertCheckoutIsDisposable();
   const fixer = await getResultAsync(() => runFixer(base, end, findings)).match(
     (dispositions) => ({ dispositions, failureReason: "", isLimited: false }),
     (error) =>

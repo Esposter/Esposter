@@ -70,15 +70,9 @@ export const CLAUDE_EXEMPT_VARIABLE = "CLAUDE_CODE_OAUTH_TOKEN";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out
 export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|token/iu;
 // Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest are denied.
-export const REVIEWER_TOOLS: readonly string[] = [
-  "Read",
-  "Grep",
-  "Glob",
-  "Skill",
-  "Bash(git diff:*)",
-  "Bash(git log:*)",
-  "Bash(git show:*)",
-];
+// No git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path, and the batch's
+// Diff is already in the reviewer's prompt.
+export const REVIEWER_TOOLS: readonly string[] = ["Read", "Grep", "Glob", "Skill"];
 
 // Claude Code refusing to start prints its own sentence and exits non-zero. The phrase is bounded to its own line, so a
 // Review discussing "usage limit" in prose is not read as one (`runSession`'s `getIsLimited`).
