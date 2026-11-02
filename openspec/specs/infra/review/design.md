@@ -51,7 +51,7 @@ Because the prefix advances as the pool runs, a timeout or a crash loses only th
 
 ### Review issues
 
-Each newly passed window that has findings opens its review issues. A window's findings are split into chunks of at most `REVIEW_ISSUE_FINDING_CAP`, so each issue's body stays far under GitHub's body limit, and a window with more is split into parts. Each issue is titled with its range and its finding count, and its body holds one line saying the review owes these findings until the settle job closes it, the run's ID on a `Run:` line, the range, and each finding with its trigger.
+Each newly passed window that has findings opens its review issues. A window's findings are split into chunks of at most `REVIEW_ISSUE_FINDING_CAP`, so each issue's body stays far under GitHub's body limit, and a window with more is split into parts. Each issue is titled with its range and its finding count, and its body holds one line saying the review owes these findings until the settle job closes it, the run's ID on a `Run:` line, the range, and each finding on one line with its trigger beneath it. A line break in a finding's text collapses to a space, so it cannot open a line the settle job reads as a finding of its own.
 
 The `Run:` line is what lets the settle job tell an issue a fixer may still be on from one nobody is working on. An issue with no `Run:` line, such as one a person opened, is never held back.
 

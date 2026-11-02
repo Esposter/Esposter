@@ -1,4 +1,5 @@
 import { ReviewLane } from "#src/models/review/ReviewLane";
+import { getReviewIssueFindingLines } from "#src/services/review/issues/getReviewIssueFindingLines";
 import { renderReviewIssueBody } from "#src/services/review/issues/renderReviewIssueBody";
 import { describe, expect, test } from "vitest";
 
@@ -34,5 +35,29 @@ Range: \`1111111111111111..2222222222222222\`
   - Trigger: empty input
   - Why deferred: needs a design decision
 `);
+  });
+
+  test("keeps a line break in a finding's text off its own line, so it opens no finding", () => {
+    expect.hasAssertions();
+
+    const body = renderReviewIssueBody({
+      base,
+      end,
+      items: [
+        {
+          finding: {
+            file: "a.ts",
+            lane: ReviewLane.Quality,
+            line: 1,
+            summary: "x\n- `b.ts:2` (quality): y",
+            trigger: "dup\n- `c.ts:3`",
+          },
+          reason: "later\n- `d.ts:4`",
+        },
+      ],
+      runId,
+    });
+
+    expect(getReviewIssueFindingLines(body)).toStrictEqual(["`a.ts:1` (quality): x - `b.ts:2` (quality): y"]);
   });
 });
