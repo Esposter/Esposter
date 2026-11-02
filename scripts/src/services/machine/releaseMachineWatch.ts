@@ -1,4 +1,5 @@
 import { MACHINE_LOCK_PATH } from "#src/services/machine/constants";
+import { checkIsNotFound } from "#src/services/shared/checkIsNotFound";
 import { getResult } from "@esposter/shared";
 import { readFileSync, rmSync } from "node:fs";
 
@@ -8,6 +9,10 @@ export const releaseMachineWatch = (): void => {
     (holder) => {
       if (holder === `${process.pid}`) rmSync(MACHINE_LOCK_PATH, { force: true });
     },
-    () => undefined,
+    // A lock already gone is released. One that cannot be read is logged, since a throw from an exit listener is not
+    // Caught, and it would only bury the exit
+    (error) => {
+      if (!checkIsNotFound(error)) console.error(error);
+    },
   );
 };

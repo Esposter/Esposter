@@ -1,4 +1,5 @@
 import { EMPTY_LOCK_GRACE_MILLISECONDS } from "#src/services/machine/constants";
+import { checkIsNotFound } from "#src/services/shared/checkIsNotFound";
 import { getResult } from "@esposter/shared";
 import { statSync } from "node:fs";
 
@@ -6,5 +7,8 @@ import { statSync } from "node:fs";
 export const checkIsLockFresh = (path: string): boolean =>
   getResult(() => statSync(path).mtimeMs).match(
     (mtimeMilliseconds) => Date.now() - mtimeMilliseconds < EMPTY_LOCK_GRACE_MILLISECONDS,
-    () => false,
+    (error) => {
+      if (!checkIsNotFound(error)) throw error;
+      return false;
+    },
   );
