@@ -79,6 +79,8 @@ The bindings of places and modes the world does not have are left out (`packages
 ## Sources
 
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the default PC, Xbox and PlayStation binding of every action and menu, the ones a player cannot change, and the bumper's combinations on a pad. Read from `{data-root}/cache/genshin-wiki/Page_Controls.json` for the bindings the bullets cite; its mobile and Wonderland tables are not used (see Open).
+- `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 23 to 262, grounding "Every bound action keeps the game's default controls".
+- `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 188, 193 and 197, grounding "Keys of places and modes the world does not have stay unbound".
 - [Standard Gamepad](https://w3c.github.io/gamepad/#remapping), W3C Gamepad: the standard layout's button order, which `GAMEPAD_BUTTONS` follows.
 - [Pointer Lock 2.0](https://w3c.github.io/pointerlock/), W3C: the user agent leaving the lock on `Escape`.
 - [User activation](https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event), WHATWG HTML: `Escape` gives no activation, so no lock can be requested from it.

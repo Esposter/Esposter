@@ -36,7 +36,7 @@ Every damage a side deals SHALL pass every additive bonus on its field before an
 
 ### Requirement: A card's bonus applies only to the skills it names
 
-A card's damage bonus SHALL apply only to the skills it names, such as the next Normal Attack alone. Jueyun Guoba's status reads "this character's next Normal Attack deals +1 DMG" (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json` line 114933, card 303301).
+A card's damage bonus SHALL apply only to the skills it names, such as the next Normal Attack alone.
 
 #### Scenario: Bonus applies to the next Normal Attack only
 
@@ -210,7 +210,7 @@ A character SHALL eat no more than one food a round, and a second food in the sa
 
 ### Requirement: Opponent decks are legal decks
 
-An opponent deck SHALL be legal, meaning every talent card it holds has its character in the same deck. The game's card text says so on 135 of its 140 talent cards, such as card 215041 (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json` line 33967), and the other five name their character in their own text.
+An opponent deck SHALL be legal, meaning every talent card it holds has its character in the same deck.
 
 #### Scenario: Deck with a talent but no character is not legal
 

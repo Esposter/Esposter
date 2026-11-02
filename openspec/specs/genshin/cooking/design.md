@@ -98,6 +98,14 @@ The quality weights the table gives each dish are all the Delicious weight in th
 - [Cooking](https://genshin-impact.fandom.com/wiki/Cooking), Genshin Impact Wiki: the zones, proficiency, Auto Cook, special dishes, and stoves and campfires, the rules the proposal settles against. The claims it backs wait on the References sought.
 - `{data-root}/cache/genshin-wiki/Category_Xiangling_Talents.json`: grounds the requirement "A cooking talent adds a dish by chance".
 - `{data-root}/cache/genshin-wiki/Category_Hu_Tao_Talents.json`: grounds the requirement "A cooking talent adds a dish by chance".
+- `{data-root}/cache/genshin-wiki/Page_Cooking.json`, line 25, allowing up to 99 of one food to be cooked at once, grounding "Auto Cook makes a whole batch of Delicious dishes once proficiency is full".
+- `{data-root}/cache/genshin-wiki/Page_Cooking.json`, line 10, the game answering the selection of Raiden Shogun with "This character cannot cook.", grounding "No dish is made with Raiden Shogun".
+- `{data-root}/cache/genshin-wiki/Page_Cooking.json`, line 54, Pyro lighting a campfire and the five elements putting it out, grounding "Pyro lights a campfire and the other elements put it out".
+- `{data-root}/cache/genshin-wiki/Page_Fire.json`, line 8, the same elements with gauge units to put a lit fire out, grounding "Pyro lights a campfire and the other elements put it out".
+- `{data-root}/cache/genshin-wiki/Page_Fire.json`, line 21, Dendro only as the trigger of Burning on a lit fire, grounding "Pyro lights a campfire and the other elements put it out".
+- `{data-root}/cache/genshin-wiki/Page_Cooking.json`, line 54, rain extinguishing campfires out in the open, grounding "Rain puts out a campfire in the open".
+- `{data-root}/cache/genshin-wiki/Page_Weather.json`, line 24, rain douses campfires, grounding "Rain puts out a campfire in the open".
+- `{data-root}/cache/genshin-wiki/Page_Weather.json`, line 36, a thunderstorm applying all rain conditions, grounding "Rain puts out a campfire in the open".
 
 ## Open
 

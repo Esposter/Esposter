@@ -6,7 +6,7 @@ The game's default bindings on a PC and a gamepad, stated once in the engine's i
 
 ### Requirement: Every bound action keeps the game's default controls
 
-The world SHALL bind each action to the game's own default keys and buttons on a PC and a gamepad, and SHALL remap none of them. The wiki's Controls page gives the PC and Xbox defaults of every action the world binds, and each matches the map in `packages/genshin-engine/src/input/InputActionBindingMap.ts` (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 23 to 262).
+The world SHALL bind each action to the game's own default keys and buttons on a PC and a gamepad, and SHALL remap none of them.
 
 #### Scenario: The map key opens the map
 
@@ -181,7 +181,7 @@ Every action the game binds SHALL stay bound and read every frame, whether or no
 
 ### Requirement: Keys of places and modes the world does not have stay unbound
 
-The world SHALL leave unbound the keys of places and modes it does not have (which binds no `F6`, `F7` or `F8`). The wiki's Controls page gives `F6` as the settings menu within the Serenitea Pot and The Cat's Tail, `F7` as the Furnishing screen inside the Serenitea Pot, and `F8` as Stellar Reunion (`{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext lines 188, 193 and 197).
+The world SHALL leave unbound the keys of places and modes it does not have (which binds no `F6`, `F7` or `F8`). `F6` is for the settings menu within the Serenitea Pot and "The Cat's Tail", `F7` for the Furnishing screen inside the Serenitea Pot, and `F8` for "Stellar Reunion".
 
 #### Scenario: F6 presses no world action
 

@@ -6,7 +6,7 @@ Genshin's ley line outcrops as built — each region's Blossom of Revelation and
 
 ### Requirement: Two kinds per region
 
-Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora. The Revelation's reward preview gives its EXP fruits, and the Wealth's gives Mora (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RewardPreviewExcelConfigData.json`, id 4001 at line 35642 and id 4101 at line 37702, with item 202 named Mora in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`).
+Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora.
 
 #### Scenario: Seven cities each have both kinds
 
@@ -49,7 +49,7 @@ In every region except Mondstadt and Liyue, each kind SHALL also need a nation's
 
 ### Requirement: Start at a drawn fitted place
 
-Each kind SHALL start, each daily draw, at a fitted place drawn at random from those no kind before it holds (`packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts` lines 23 to 27, `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts` lines 6 to 14).
+Each kind SHALL start, each daily draw, at a fitted place drawn at random from those no kind before it holds.
 
 #### Scenario: Draw starts each kind
 
@@ -63,7 +63,7 @@ Each kind SHALL start, each daily draw, at a fitted place drawn at random from t
 
 ### Requirement: Moving on to the nearest free place
 
-A claimed outcrop SHALL move to the nearest fitted place of its region that is neither its own nor the other kind's, the lower id winning a tie (`packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` lines 15 to 23).
+A claimed outcrop SHALL move to the nearest fitted place of its region that is neither its own nor the other kind's, the lower id winning a tie.
 
 #### Scenario: Nearest place is free
 
@@ -77,7 +77,7 @@ A claimed outcrop SHALL move to the nearest fitted place of its region that is n
 
 ### Requirement: Staying where it is when no place is free
 
-A claimed outcrop SHALL stay where it is when no fitted place of its region is left but its own and the other kind's (`packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts` line 16 and lines 18 to 23, which give nothing when no place is left).
+A claimed outcrop SHALL stay where it is when no fitted place of its region is left but its own and the other kind's.
 
 #### Scenario: No place is free
 

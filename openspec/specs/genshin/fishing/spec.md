@@ -148,7 +148,7 @@ A fishing pool SHALL NOT be built with a stock that has no record.
 
 ### Requirement: A spot's ripple shows only while a stock of its region still has fish
 
-A fishing point SHALL be offered for a cast only while a stock of its region's pools stands at the hour with fish left, the ripple the wiki's Fishing page puts on the spot, which disappears once all its available fish are caught and returns once one respawns (`{data-root}/cache/genshin-wiki/Page_Fishing.json`, wikitext line 23).
+A fishing point SHALL be offered for a cast only while a stock of its region's pools stands at the hour with fish left, and its ripple SHALL disappear once all its available fish are caught and SHALL return once one respawns.
 
 #### Scenario: Points are withheld once every stock reads zero
 

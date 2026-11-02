@@ -100,6 +100,7 @@ flowchart TD
 - [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit. Not in the genshin-wiki cache, so its claims are unchecked here.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.
 - A character at no health is defeated and its side owes a replacement or loses: "The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard." That page is not in the cache, so the discard is unchecked here.
+- `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGKeywordExcelConfigData.json`, the keywords "$[K2]" and "$[K1]", at lines 13 and 6, with the text of "Leave It to Me!" making the switch a Fast Action instead of a Combat Action, grounding "A switch costs one die, less any reduction from the field".
 
 ## Open
 

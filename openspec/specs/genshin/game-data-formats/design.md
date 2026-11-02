@@ -150,6 +150,7 @@ The things that each cost a search to find, to reach for first:
 | `scripts/src/services/genshinAssets/world/readPrefabBlocks.ts`               | The blocks a prefab's game object may stand in                              |
 | `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`        | A Wwise package's banks and sounds                                          |
 | `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`            | The banks' tracks, segments and playlists                                   |
+| `scripts/src/models/shared/KitProvisionalCause.ts`                           | The provisional causes a kit's value is held under while no source gives it |
 
 ## Sources
 

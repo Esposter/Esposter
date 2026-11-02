@@ -80,7 +80,7 @@ A card attached to a character whose text names its holder SHALL reduce a cost o
 
 ### Requirement: A switch costs one die, less any reduction from the field
 
-A switch SHALL cost one die of any face, less any reduction the field's cards give to switches. Leave It to Me!'s text makes the switch a Fast Action instead of a Combat Action (the keywords "$[K2]" and "$[K1]", at lines 13 and 6 of `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGKeywordExcelConfigData.json`).
+A switch SHALL cost one die of any face, less any reduction the field's cards give to switches. The text of "Leave It to Me!" makes the switch a Fast Action instead of a Combat Action.
 
 #### Scenario: Switch with a field reduction may cost no die
 

@@ -38,7 +38,7 @@ A reader of a game data structure whose layout no longer matches its expected fi
 
 ### Requirement: Every derived value names its source
 
-A derived value SHALL name the key of the source it is taken from, or, where no source gives it, the provisional cause it is held under (`scripts/src/models/shared/KitProvisionalCause.ts`), so that any value can be traced back to the game data it came from or to the reason none gives it.
+A derived value SHALL name the key of the source it is taken from, or, where no source gives it, the provisional cause it is held under, so that any value can be traced back to the game data it came from or to the reason none gives it.
 
 #### Scenario: Source of a derived value can be opened again
 

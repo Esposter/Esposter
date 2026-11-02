@@ -146,7 +146,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: A boss drops nothing
 
-A boss SHALL drop nothing where it falls, its reward being claimed from the Trounce Blossom it leaves (`openspec/specs/genshin/bosses/design.md`).
+A boss SHALL drop nothing where it falls, its reward being claimed from the Trounce Blossom it leaves.
 
 #### Scenario: A defeated boss drops nothing
 
@@ -156,7 +156,7 @@ A boss SHALL drop nothing where it falls, its reward being claimed from the Trou
 
 ### Requirement: No enemy the world places gives Adventure EXP
 
-No enemy the world places SHALL give Adventure EXP where it falls, since `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` rolls none. The game awards it for a boss only on claiming the reward from its Trounce Blossom (`openspec/specs/genshin/bosses/design.md`).
+No enemy the world places SHALL give Adventure EXP where it falls. The game awards it for a boss only on claiming the reward from its Trounce Blossom.
 
 #### Scenario: A defeated enemy gives no Adventure EXP
 
@@ -256,7 +256,7 @@ An enemy within aggro range of a live taunt SHALL strike the nearest such taunt 
 
 ### Requirement: An enemy drops its energy once at each health threshold for its life
 
-An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed, except a Weekly Boss, which drops none at a threshold (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 391; the Stormterror kind holds no energy drop at `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts` line 179).
+An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed, except a Weekly Boss, which drops none at a threshold.
 
 #### Scenario: Falling to a threshold drops energy
 

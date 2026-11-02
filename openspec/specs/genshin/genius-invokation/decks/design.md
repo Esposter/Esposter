@@ -111,6 +111,8 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 - `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`, text 455966544, which reads "you play a Talent card or a Character uses an Elemental Skill". Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`, id 312014, the card's row. Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
 - The wiki's Equipment Card page reads "the character", so this reading is provisional (the Genshin Impact Wiki, not in the genshin-wiki cache). Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
+- `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json`, line 114933, card 303301, reading the status of "Jueyun Guoba" as "this character's next Normal Attack deals +1 DMG", grounding "A card's bonus applies only to the skills it names".
+- `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GCGCardExcelConfigData.json`, line 33967, card 215041, where the game's card text names its character on 135 of its 140 talent cards and the other five name their character in their own text, grounding "Opponent decks are legal decks".
 
 ## Open
 

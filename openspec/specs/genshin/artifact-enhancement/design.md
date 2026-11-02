@@ -244,6 +244,17 @@ The weights are not in the tables. They are cited as the wiki's: each slot's mai
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100051, grounding "Berserker's four-piece raises CRIT Rate at low HP".
 - `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100101: 30% over 5s, 6% of Max HP a second, grounding "Adventurer's four-piece restoration".
 - [gcsim](https://github.com/genshinsim/gcsim) (MIT), `{data-root}/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54, grounding scenario 'A running field starts no second one'.
+- `{data-root}/cache/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 16 to 92, whose slot chances `ArtifactMainAffixWeightMap` matches value for value, grounding "A new artifact's main affix comes from its slot".
+- `{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 143, a Mora for each point of EXP and each fodder's base EXP, grounding "Enhancing costs Mora per EXP point and the recovered share is free".
+- `{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175, a fodder's recovered share costing no Mora and an enhanced fodder costing only its base EXP in Mora, grounding "Enhancing costs Mora per EXP point and the recovered share is free".
+- `{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext lines 185 and 187, the chances of the times five and times two bonus, grounding "Each enhancement's EXP has a chance of a bonus".
+- `{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 189, calling the EXP past the top "wasted overflow", grounding "Levels follow the table and EXP past the top is lost".
+- `{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext lines 139 to 141, its table ending at level 20, grounding "Levels follow the table and EXP past the top is lost".
+- `{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 33, the wearer on the field for the bonus, grounding "Instructor's four-piece gives the team Elemental Mastery on a reaction".
+- `{data-root}/cache/gcsim-v2.47.2/internal/artifacts/instructor/instructor.go`, line 48, gcsim returning before adding the bonus unless the wearer is the active character, grounding "Instructor's four-piece gives the team Elemental Mastery on a reaction".
+- `{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 36, the buff not stacking with itself and another reaction refreshing its duration, grounding "Instructor's four-piece buff is restarted rather than stacked".
+- `{data-root}/cache/genshin-wiki/Page_The_Exile.json`, wikitext line 31, Energy Recharge not affecting the field, grounding "The Exile's four-piece regenerates the others' energy after a burst".
+- `{data-root}/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, line 69, gcsim adding a flat two energy per tick, grounding "The Exile's four-piece regenerates the others' energy after a burst".
 
 ## Open
 

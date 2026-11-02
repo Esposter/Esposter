@@ -35,28 +35,31 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                                                |
-| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`          | builds each city's region record under its key, from the dump's four tables         |
-| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                      |
-| `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                          |
-| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                       |
-| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`               | a kind's Adventure Rank and the nations whose areas it needs unlocked               |
-| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`                 | a region's kinds, sections and places, as its slice is written                      |
-| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`      | whether a kind is open at a rank with the listed areas unlocked                     |
-| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                | the Ley Line Blossoms of the official map written into each region's outcrop places |
-| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`           | the camp a touch spawns at an outcrop's place, of provisional size and kinds        |
-| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`         | the blossom reveals once every enemy of its place's camp is down                    |
-| `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                       |
-| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer    |
-| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                 |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free                      |
+| File                                                                         | Role                                                                                                                                                 |
+| :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`          | builds each city's region record under its key, from the dump's four tables                                                                          |
+| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                                                                                       |
+| `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                                                                                           |
+| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                                                                                        |
+| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`               | a kind's Adventure Rank and the nations whose areas it needs unlocked                                                                                |
+| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`                 | a region's kinds, sections and places, as its slice is written                                                                                       |
+| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`      | whether a kind is open at a rank with the listed areas unlocked                                                                                      |
+| `packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`        | the day's draw of each kind's starting place, lines 23 to 27                                                                                         |
+| `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts`                | the draw of fitted place ids no kind before holds, each taken once, lines 6 to 14                                                                    |
+| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                | the Ley Line Blossoms of the official map written into each region's outcrop places                                                                  |
+| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`           | the camp a touch spawns at an outcrop's place, of provisional size and kinds                                                                         |
+| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`         | the blossom reveals once every enemy of its place's camp is down                                                                                     |
+| `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                                                                                        |
+| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer                                                                     |
+| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                                                                                  |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free (lines 15 to 23, of which line 16 and lines 18 to 23 give none when no place is left) |
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the blossom refresh, group and section order tables, and the chest table's resin.
 - [Ley Line Outcrop Guide](https://game8.co/games/Genshin-Impact/archives/317049), Game8: Revelation at Adventure Rank 8 and Wealth at 12 in Mondstadt and Liyue, and from version 5.8 Adventure Rank 18 and a statue in the other regions. Its Liyue figures are the ones the table disagrees with. The guide is not on disk; the wiki's Ley Line Outcrop page gives the same Liyue figures (`{data-root}/cache/genshin-wiki/Page_Ley_Line_Outcrop.json`), so they are read there.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, its EXP and SCOIN rows for each city, grounding the requirement "Two kinds per region".
+- `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RewardPreviewExcelConfigData.json`, id 4001 at line 35642 and id 4101 at line 37702, with item 202 named Mora in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`, grounding the requirement "Two kinds per region".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, the area condition on the rows of cities 3 to 8 only, grounding the requirement "Opening by a nation's area".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime`, grounding the requirement "Daily reset at 04:00".
 - `{data-root}/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19, grounding scenario "Other challenges read no kind".

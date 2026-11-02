@@ -46,6 +46,9 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 - The weekly reset on Monday at 04:00, as the [reset clock](../reset-clock/design.md) gives it.
 - `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, id 800001, `14400;360000`, for Monday 04:00, grounding "The weekly reset falls on Monday at 04:00".
 - The export's weekly discount row, `{data-root}/genshin-parity/text/ExcelBinOutput/ConstValueExcelConfigData.json` "CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM", gives three claims at 0.5, grounding "The first three weekly claims of a week are priced at 30 resin" and "Later weekly claims of a week are priced at 60 resin".
+- `{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16, the unclaimed blossom keeping the boss defeated unless the player teleports out of the area, grounding "A normal boss stays defeated until its blossom is claimed or a teleport leaves its area".
+- `{data-root}/cache/genshin-wiki/Page_Weekly_Boss.json`, wikitext line 5, the first three claims at 30 resin for any weekly bosses and each later one at 60, grounding "The first three weekly claims of a week are priced at 30 resin".
+- `{data-root}/cache/genshin-wiki/Page_Domain.json`, wikitext line 50, the same two prices, grounding "The first three weekly claims of a week are priced at 30 resin".
 
 ## Open
 

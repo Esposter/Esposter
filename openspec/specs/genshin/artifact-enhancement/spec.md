@@ -6,7 +6,7 @@ An artifact rolled, enhanced and locked as the game does it: a drop's main and m
 
 ### Requirement: A new artifact's main affix comes from its slot
 
-A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. The weights are the wiki's: each slot's chances on the wiki's Artifact/Distribution page (`{data-root}/cache/genshin-wiki/Page_Artifact%2FDistribution.json`, wikitext lines 16 to 92) match `ArtifactMainAffixWeightMap` in `packages/genshin-world/src/services/artifact/constants.ts` value for value.
+A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights.
 
 #### Scenario: Plume of Death rolls flat ATK
 
@@ -45,9 +45,9 @@ A new artifact's minor affixes SHALL be drawn from its rarity's pool, never repe
 
 ### Requirement: Enhancing costs Mora per EXP point and the recovered share is free
 
-The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 143).
+The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP.
 
-The recovered share of a fodder's levelling SHALL cost nothing. An enhanced fodder costs only its base EXP in Mora (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 175).
+The recovered share of a fodder's levelling SHALL cost nothing. An enhanced fodder costs only its base EXP in Mora.
 
 #### Scenario: Recovered share of a fodder costs no Mora
 
@@ -64,7 +64,7 @@ The recovered share of a fodder's levelling SHALL cost nothing. An enhanced fodd
 
 ### Requirement: Each enhancement's EXP has a chance of a bonus
 
-Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is. The wiki's Artifact EXP page gives the same chances (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext lines 185 and 187).
+Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is.
 
 #### Scenario: Five-times bonus
 
@@ -86,7 +86,7 @@ Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two
 
 ### Requirement: Levels follow the table and EXP past the top is lost
 
-An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. The wiki's Artifact EXP page calls that excess "wasted overflow" (`{data-root}/cache/genshin-wiki/Page_Artifact_EXP.json`, wikitext line 189), and its table ends at level 20 (wikitext lines 139 to 141).
+An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost.
 
 #### Scenario: EXP past the highest level is wasted
 
@@ -133,7 +133,7 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 ### Requirement: Instructor's four-piece gives the team Elemental Mastery on a reaction
 
-A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds. The wiki's Instructor page requires the wearer on the field for the bonus (`{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 33), and gcsim returns before adding the bonus unless the wearer is the active character (`{data-root}/cache/gcsim-v2.47.2/internal/artifacts/instructor/instructor.go`, line 48).
+A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds.
 
 #### Scenario: Reaction on the field gives the team the buff
 
@@ -149,7 +149,7 @@ A reaction the Instructor's wearer triggers on the field SHALL give every deploy
 
 ### Requirement: Instructor's four-piece buff is restarted rather than stacked
 
-The Elemental Mastery buff SHALL be restarted rather than stacked. The wiki's Instructor page says the buff does not stack with itself and that another reaction refreshes its duration (`{data-root}/cache/genshin-wiki/Page_Instructor.json`, wikitext line 36).
+The Elemental Mastery buff SHALL be restarted rather than stacked, and another reaction SHALL refresh its duration.
 
 #### Scenario: Repeated reaction restarts the buff
 
@@ -159,7 +159,7 @@ The Elemental Mastery buff SHALL be restarted rather than stacked. The wiki's In
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
-A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. The wiki's The Exile page says Energy Recharge does not affect the field (`{data-root}/cache/genshin-wiki/Page_The_Exile.json`, wikitext line 31), and gcsim adds a flat two energy per tick (`{data-root}/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, line 69).
+A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart, which Energy Recharge does not raise.
 
 #### Scenario: Burst starts the energy field
 

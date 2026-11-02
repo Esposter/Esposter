@@ -6,7 +6,7 @@ The game's bosses as pure rules in genshin-world. A normal boss stays defeated u
 
 ### Requirement: A normal boss stays defeated until its blossom is claimed or a teleport leaves its area
 
-A normal boss SHALL stay defeated until its Trounce Blossom is claimed or the player teleports out of its area after the defeat. The wiki's Normal Boss page says an unclaimed blossom keeps the boss defeated unless the player teleports out of the area (`{data-root}/cache/genshin-wiki/Page_Normal_Boss.json`, wikitext line 16).
+A normal boss SHALL stay defeated until its Trounce Blossom is claimed or the player teleports out of its area after the defeat.
 
 #### Scenario: Unclaimed boss stays defeated
 
@@ -44,7 +44,7 @@ The weekly reset SHALL fall on Monday at 04:00 on the server's clock.
 
 The first three weekly-boss claims of each week SHALL cost 30 resin each.
 
-Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together. The wiki's Weekly Boss page prices the first three claims, for any weekly bosses the player chooses, at 30 resin and each later one at 60 (`{data-root}/cache/genshin-wiki/Page_Weekly_Boss.json`, wikitext line 5), and its Domain page says the same (`{data-root}/cache/genshin-wiki/Page_Domain.json`, wikitext line 50).
+Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together.
 
 #### Scenario: First claim of the week costs 30 resin
 
