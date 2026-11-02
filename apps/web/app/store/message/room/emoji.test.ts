@@ -28,14 +28,14 @@ describe(useRoomEmojiStore, () => {
     const roomEmojiStore = useRoomEmojiStore();
     const kept = createRoomEmoji();
     const removed = createRoomEmoji();
-    const created = createRoomEmoji();
+    const createdRoomEmoji = createRoomEmoji();
     trpcMsw.room.emoji.readRoomEmojis.query(() => {
       roomEmojiStore.storeDeleteRoomEmoji(roomId, { id: removed.id });
-      roomEmojiStore.storeCreateRoomEmoji(roomId, created);
+      roomEmojiStore.storeCreateRoomEmoji(roomId, createdRoomEmoji);
       return [kept, removed];
     });
     await roomEmojiStore.readRoomEmojis(roomId);
 
-    expect(roomEmojiStore.getSlice(roomId).items.value).toStrictEqual([kept, created]);
+    expect(roomEmojiStore.getSlice(roomId).items.value).toStrictEqual([kept, createdRoomEmoji]);
   });
 });

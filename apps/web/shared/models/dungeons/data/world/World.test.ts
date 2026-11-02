@@ -11,14 +11,14 @@ describe("worldSchema", () => {
     expect.hasAssertions();
 
     const tilemapKey = takeOne(TilemapKeys, 0);
-    const chest = new Chest();
+    const { isOpened, itemId } = new Chest();
     const chestId = `0${ID_SEPARATOR}0`;
-    const parsed = worldSchema.parse({
+    const parsedWorld = worldSchema.parse({
       ...getInitialWorld(),
-      [tilemapKey]: { chestMap: { [chestId]: { ...chest, junk: true } } },
+      [tilemapKey]: { chestMap: { [chestId]: { isOpened, itemId, junk: true } } },
     });
 
-    expect(parsed[tilemapKey]).toStrictEqual({ chestMap: { [chestId]: { ...chest } } });
+    expect(parsedWorld[tilemapKey]).toStrictEqual({ chestMap: { [chestId]: { isOpened, itemId } } });
   });
 
   test("refuses a map that holds more chests than MAX_CHESTS", () => {
