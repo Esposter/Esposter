@@ -12,10 +12,15 @@ import { z } from "zod";
 describe(createTRPCNuxtClient, () => {
   const t = initTRPC.create();
   const read = vi.fn<(input: number) => number>((input) => input);
+  const release = Promise.withResolvers<void>();
   const router = t.router({
     // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     count: t.procedure.subscription(async function* () {
       yield 0;
+    }),
+    echo: t.procedure.input(z.number()).mutation(async ({ input }) => {
+      await release.promise;
+      return input;
     }),
     fail: t.procedure.mutation(() => {
       throw new TRPCError({ code: "BAD_REQUEST", message: " " });
@@ -65,6 +70,18 @@ describe(createTRPCNuxtClient, () => {
 
     await expect(mutate()).rejects.toThrowErrorMatchingInlineSnapshot(`[HTTPError:  ]`);
     expect(error.value?.data?.code).toBe("BAD_REQUEST");
+  });
+
+  test("a mutate resolves with its own call's result, though a later call cancels the earlier call's request", async () => {
+    expect.hasAssertions();
+
+    const { mutate } = client.echo.useMutation();
+    const first = mutate(0);
+    const second = mutate(-1);
+    release.resolve();
+
+    await expect(first).resolves.toBe(0);
+    await expect(second).resolves.toBe(-1);
   });
 
   test("#106 caches under a given query key", async () => {

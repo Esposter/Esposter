@@ -5,31 +5,33 @@ import type { TRPCResolverDef, TRPCUntypedClient } from "@trpc/client";
 import type { AnyTRPCRouter } from "@trpc/server";
 
 import { getProcedureKey } from "#src/runtime/client/services/getProcedureKey";
-import { mergeSignals } from "#src/runtime/client/services/mergeSignals";
-import { useAsyncData } from "nuxt/app";
+import { createError, useAsyncData } from "nuxt/app";
 
 export const useProcedureMutation = (
   client: TRPCUntypedClient<AnyTRPCRouter>,
   path: string,
   { mutationKey = getProcedureKey(path), trpc, ...options }: UseMutationOptions<TRPCResolverDef> = {},
 ): UseMutationReturn<TRPCResolverDef, unknown, KeysOf<unknown>, undefined> => {
-  // What the next `execute` sends, set by `mutate` just before it runs one
-  let mutationInput: unknown;
-  const asyncData = useAsyncData(
-    mutationKey,
-    (_nuxtApp, { signal }) =>
-      client.mutation(path, mutationInput, { ...trpc, signal: mergeSignals(signal, trpc?.signal) }),
-    { ...options, immediate: false, server: false },
-  );
+  // The request the entry's next `execute` settles with, set by `mutate` just before it runs one
+  let request: Promise<unknown> = Promise.resolve();
+  const asyncData = useAsyncData(mutationKey, () => request, { ...options, immediate: false, server: false });
   // Assigned onto the `AsyncData` itself, which is also its promise, so the return stays awaitable
   return Object.assign(asyncData, {
     mutate: async (input: unknown) => {
-      mutationInput = input;
+      // The call's own request, which it resolves with. The entry cancels an earlier call's fetch when a later call runs,
+      // and holds the later call's data, so reading the entry would hand the earlier call the later result. The request
+      // takes the caller's signal and the timeout, never the entry's signal, which is the one a cancellation aborts
+      const signals = [trpc?.signal, options.timeout === undefined ? undefined : AbortSignal.timeout(options.timeout)];
+      const ownRequest = client.mutation(path, input, {
+        ...trpc,
+        signal: AbortSignal.any(signals.filter((signal): signal is AbortSignal => signal !== undefined)),
+      });
+      request = ownRequest;
       await asyncData.execute();
-      // `execute` settles either way and leaves a failure in the ref, so a caller awaiting the mutation would
-      // Otherwise read a rejection as a success with no data
-      if (asyncData.error.value) throw asyncData.error.value;
-      else return asyncData.data.value;
+      // A failure rejects with the error the entry wraps it in, as a caller has always been rejected with
+      const [outcome] = await Promise.allSettled([ownRequest]);
+      if (outcome.status === "rejected") throw createError(outcome.reason);
+      return outcome.value;
     },
   });
 };
