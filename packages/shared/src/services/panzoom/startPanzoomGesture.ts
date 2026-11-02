@@ -41,5 +41,5 @@ export const startPanzoomGesture = (context: PanzoomContext, event: PointerEvent
   if (!options.disablePan && options.panCursor)
     writePanzoomStyle(context, getPanzoomTarget(context), "cursor", options.panCursor);
 
-  dispatchPanzoomEvent(element, PanzoomEventName.Start, getPanzoomEventDetail(context, event), options);
+  dispatchPanzoomEvent(context, PanzoomEventName.Start, getPanzoomEventDetail(context, event), options);
 };

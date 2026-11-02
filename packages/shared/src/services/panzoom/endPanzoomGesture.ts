@@ -14,7 +14,7 @@ import { takeOne } from "#src/util/array/takeOne";
 // As a drag from where it is, gated by the threshold from the point the pinch broke, so a tap swallows no click.
 // The panzoomend event goes last, so a listener that destroys the panzoom has the final word on the styles
 export const endPanzoomGesture = (context: PanzoomContext, event: PointerEvent): void => {
-  const { element, options, pointers, state } = context;
+  const { options, pointers, state } = context;
   if (!pointers.has(event.pointerId)) return;
 
   pointers.delete(event.pointerId);
@@ -28,5 +28,5 @@ export const endPanzoomGesture = (context: PanzoomContext, event: PointerEvent):
 
   restorePanzoomStyles(context, ["user-select"]);
   applyPanzoomStyles(context);
-  dispatchPanzoomEvent(element, PanzoomEventName.End, getPanzoomEventDetail(context, event), options);
+  dispatchPanzoomEvent(context, PanzoomEventName.End, getPanzoomEventDetail(context, event), options);
 };

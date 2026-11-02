@@ -18,7 +18,7 @@ export const resetPanzoom = (context: PanzoomContext, callOptions: PanzoomZoomOp
   const measure = getPanzoomMeasure(element, parent, state);
   writePanzoomState(context, getPanzoomStartState(state, measure, options), options);
   const detail = getPanzoomEventDetail(context);
-  dispatchPanzoomChange(element, PanzoomEventName.Reset, detail, options);
+  dispatchPanzoomChange(context, PanzoomEventName.Reset, detail, options);
   reanchorPanzoomDrag(context);
 
   return detail;

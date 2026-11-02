@@ -27,7 +27,7 @@ export const panPanzoom = (
 
   writePanzoomState(context, { scale: state.scale, x: pan.x, y: pan.y }, options);
   const detail = getPanzoomEventDetail(context, originalEvent);
-  dispatchPanzoomChange(element, PanzoomEventName.Pan, detail, options);
+  dispatchPanzoomChange(context, PanzoomEventName.Pan, detail, options);
 
   return detail;
 };

@@ -438,6 +438,30 @@ describe(createPanzoom, () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
+  test("a destroyed panzoom sends no event, even from a listener that destroys it mid-change", () => {
+    expect.hasAssertions();
+
+    const element = getElement();
+    stubPanzoomLayout(element, { height: 100, left: 0, top: 0, width: 100 });
+    stubPanzoomParent(getParent(), { height: 200, left: 0, top: 0, width: 200 });
+    const panzoom = createPanzoom(element);
+    const sent: string[] = [];
+    for (const name of [PanzoomEventName.Change, PanzoomEventName.Pan, PanzoomEventName.Reset, PanzoomEventName.Zoom])
+      element.addEventListener(name, (event) => {
+        sent.push(event.type);
+      });
+    element.addEventListener(PanzoomEventName.Zoom, () => {
+      panzoom.destroy();
+    });
+
+    panzoom.zoom(2);
+    panzoom.pan(10, 10);
+    panzoom.reset();
+    panzoom.fit();
+
+    expect(sent).toStrictEqual([PanzoomEventName.Zoom]);
+  });
+
   test("destroy restores the styles it wrote, to the values they held before", () => {
     expect.hasAssertions();
 

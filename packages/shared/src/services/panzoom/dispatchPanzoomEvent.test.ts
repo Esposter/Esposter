@@ -14,7 +14,7 @@ describe(dispatchPanzoomEvent, () => {
     });
     const detail = { isSVG: false, scale: 1, x: 0, y: 0 };
 
-    dispatchPanzoomEvent(element, PanzoomEventName.Zoom, detail, {});
+    dispatchPanzoomEvent({ element, isDestroyed: false }, PanzoomEventName.Zoom, detail, {});
 
     const [event] = events;
     expect(events).toHaveLength(1);
@@ -29,7 +29,12 @@ describe(dispatchPanzoomEvent, () => {
     const listener = vi.fn<(event: Event) => void>();
     element.addEventListener(PanzoomEventName.Zoom, listener);
 
-    dispatchPanzoomEvent(element, PanzoomEventName.Zoom, { isSVG: false, scale: 1, x: 0, y: 0 }, { silent: true });
+    dispatchPanzoomEvent(
+      { element, isDestroyed: false },
+      PanzoomEventName.Zoom,
+      { isSVG: false, scale: 1, x: 0, y: 0 },
+      { silent: true },
+    );
 
     expect(listener).not.toHaveBeenCalled();
   });

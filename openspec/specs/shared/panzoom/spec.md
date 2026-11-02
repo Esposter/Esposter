@@ -82,7 +82,7 @@ The module SHALL start a drag only once the pointer has travelled the pan thresh
 
 ### Requirement: Destroy restores what the module wrote
 
-Destroying an instance SHALL abort its listeners and restore every style it wrote to the element and its parent, and a destroyed instance SHALL write nothing and bind nothing again, even when a listener destroys it mid-gesture.
+Destroying an instance SHALL abort its listeners and restore every style it wrote to the element and its parent, and a destroyed instance SHALL write nothing, send no event and bind nothing again, even when a listener destroys it mid-gesture.
 
 #### Scenario: Styles return to their previous values
 

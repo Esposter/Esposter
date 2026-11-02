@@ -26,7 +26,7 @@ export const zoomPanzoom = (
   const measure = getPanzoomMeasure(element, parent, state);
   writePanzoomState(context, getPanzoomZoomedState(state, measure, options, scale, options.focal), options);
   const detail = getPanzoomEventDetail(context, originalEvent);
-  dispatchPanzoomChange(element, PanzoomEventName.Zoom, detail, options);
+  dispatchPanzoomChange(context, PanzoomEventName.Zoom, detail, options);
   reanchorPanzoomDrag(context);
 
   return detail;

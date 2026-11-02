@@ -20,7 +20,7 @@ describe(dispatchPanzoomChange, () => {
     });
     const detail = { isSVG: false, scale: 1, x: 0, y: 0 };
 
-    dispatchPanzoomChange(element, PanzoomEventName.Pan, detail, {});
+    dispatchPanzoomChange({ element, isDestroyed: false }, PanzoomEventName.Pan, detail, {});
 
     expect(sent).toStrictEqual([PanzoomEventName.Pan, PanzoomEventName.Change]);
     expect(details).toStrictEqual([detail, detail]);
