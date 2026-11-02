@@ -4,6 +4,7 @@ import type { MailEntry } from "#src/models/mail/MailEntry";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
+import MailScreenConfirm from "#src/components/Mail/Screen/Confirm/Index.vue";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
@@ -31,6 +32,10 @@ const { birthdayMailIds, entry, gameText, materialDataMap, names, textMap } = de
 const emit = defineEmits<{ claim: [mail: MailSave]; deleteGift: [mail: MailSave]; pin: [mail: MailSave] }>();
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
+// The sender's line with the sender's name filled in, made once per selection rather than on every render of the detail
+const senderLine = computed(() =>
+  fillGameTextValues(gameText[GameTextKey.MailSender], textMap[entry.row.senderTextId] ?? ""),
+);
 // A currency's name is the game's, and an item's its material row's, read in the reader's language
 const getItemName = (itemId: number): string => {
   const currency = getWalletCurrency(itemId);
@@ -56,7 +61,7 @@ const itemTiles = computed(() =>
     <p class="detail-title">{{ textMap[entry.row.titleTextId] }}</p>
     <OrnamentDivider class="divider" />
     <p class="sender">
-      {{ fillGameTextValues(gameText[GameTextKey.MailSender], textMap[entry.row.senderTextId] ?? "") }}
+      {{ senderLine }}
     </p>
     <p class="date">
       {{ dateLine[0]
@@ -111,29 +116,20 @@ const itemTiles = computed(() =>
     >
       {{ gameText[GameTextKey.MailDelete] }}
     </GameButton>
-    <section
+    <MailScreenConfirm
       v-if="isConfirmingDeleteGift"
-      class="confirm-gift"
-      role="dialog"
+      is-gift
       :aria-label="gameText[GameTextKey.MailGiftDeleteWarningTitle]"
-    >
-      <p class="confirm-title">{{ gameText[GameTextKey.MailGiftDeleteWarningTitle] }}</p>
-      <p class="confirm-text">{{ gameText[GameTextKey.MailGiftDeleteWarning] }}</p>
-      <GameButton class="cancel" :kind="GameButtonKind.Pill" tip="" @click="isConfirmingDeleteGift = false">
-        {{ gameText[GameTextKey.Cancel] }}
-      </GameButton>
-      <GameButton
-        class="confirm-button"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="
-          isConfirmingDeleteGift = false;
-          emit('deleteGift', entry.mail);
-        "
-      >
-        {{ gameText[GameTextKey.MailDelete] }}
-      </GameButton>
-    </section>
+      :cancel-label="gameText[GameTextKey.Cancel]"
+      :confirm-label="gameText[GameTextKey.MailDelete]"
+      :text="gameText[GameTextKey.MailGiftDeleteWarning]"
+      :title="gameText[GameTextKey.MailGiftDeleteWarningTitle]"
+      @cancel="isConfirmingDeleteGift = false"
+      @confirm="
+        isConfirmingDeleteGift = false;
+        emit('deleteGift', entry.mail);
+      "
+    />
   </div>
 </template>
 
@@ -228,14 +224,5 @@ const itemTiles = computed(() =>
   height: calc(var(--unit) * 44);
   border-radius: 50%;
   background-color: #f4edd5;
-}
-
-.confirm-gift {
-  margin-top: calc(var(--unit) * 24);
-}
-
-.confirm-title {
-  margin: 0 0 calc(var(--unit) * 12);
-  font-size: calc(var(--unit) * 30);
 }
 </style>

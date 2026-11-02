@@ -5,6 +5,7 @@ import type { MailEntry } from "#src/models/mail/MailEntry";
 import type { MailSave } from "#src/models/mail/MailSave";
 import type { GameText } from "genshin-text";
 
+import MailScreenConfirm from "#src/components/Mail/Screen/Confirm/Index.vue";
 import MailScreenDetail from "#src/components/Mail/Screen/Detail/Index.vue";
 import MailScreenEntry from "#src/components/Mail/Screen/Entry/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
@@ -150,31 +151,22 @@ const selectTab = (isGift: boolean) => {
       <p class="empty-title">{{ gameText[GameTextKey.MailNoMail] }}</p>
       <p>{{ gameText[GameTextKey.MailNoMailDescription] }}</p>
     </div>
-    <section
+    <MailScreenConfirm
       v-if="isConfirmingDeleteRead"
-      class="confirm"
-      role="dialog"
       aria-modal="true"
       :aria-label="gameText[GameTextKey.MailDeleteRead]"
-    >
-      <p class="confirm-text">{{ gameText[GameTextKey.MailDeleteReadConfirm] }}</p>
-      <GameButton class="cancel" :kind="GameButtonKind.Pill" tip="" @click="isConfirmingDeleteRead = false">
-        {{ gameText[GameTextKey.Cancel] }}
-      </GameButton>
-      <GameButton
-        class="confirm-button"
-        :kind="GameButtonKind.Pill"
-        tip=""
-        @click="
-          () => {
-            isConfirmingDeleteRead = false;
-            emit('deleteRead');
-          }
-        "
-      >
-        {{ gameText[GameTextKey.Confirm] }}
-      </GameButton>
-    </section>
+      :cancel-label="gameText[GameTextKey.Cancel]"
+      :confirm-label="gameText[GameTextKey.Confirm]"
+      :text="gameText[GameTextKey.MailDeleteReadConfirm]"
+      title=""
+      @cancel="isConfirmingDeleteRead = false"
+      @confirm="
+        () => {
+          isConfirmingDeleteRead = false;
+          emit('deleteRead');
+        }
+      "
+    />
     <MailScreenDetail
       v-if="selectedEntry"
       v-model:is-confirming-delete-gift="isConfirmingDeleteGift"
@@ -332,4 +324,3 @@ const selectTab = (isGift: boolean) => {
 </style>
 
 <style scoped src="../../../styles/mailScreen.css"></style>
-<style scoped src="genshin-interface/styles/confirmDialog.css"></style>
