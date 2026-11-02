@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CookingZones } from "#src/models/CookingZones";
+
 import {
   COOKING_ARC_CENTRE_X,
   COOKING_ARC_CENTRE_Y,
@@ -9,8 +11,8 @@ import {
 interface Props {
   // The place of the pointer along the bar, as a fraction from its left end
   pointer: number;
-  // The indicator's zones as fractions of its bar from the left end: the Delicious zone lies within the Regular one
-  zones: { delicious: [number, number]; regular: [number, number] };
+  // The indicator's zones as fractions of its bar from the left end
+  zones: CookingZones;
 }
 
 const { pointer, zones } = defineProps<Props>();

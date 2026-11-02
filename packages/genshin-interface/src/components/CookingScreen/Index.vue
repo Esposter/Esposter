@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CookingZones } from "#src/models/CookingZones";
+
 import CloseButton from "#src/components/CloseButton/Index.vue";
 import CookingScreenStage from "#src/components/CookingScreen/Stage/Index.vue";
 import GameButton from "#src/components/GameButton/Index.vue";
@@ -22,8 +24,8 @@ interface Props {
   stopLabel: string;
   // The title the game shows at the top left
   title: string;
-  // The indicator's zones as fractions of its bar from the left end: the Delicious zone lies within the Regular one
-  zones: { delicious: [number, number]; regular: [number, number] };
+  // The indicator's zones as fractions of its bar from the left end
+  zones: CookingZones;
 }
 
 const { autoCookLabel, closeLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } =
