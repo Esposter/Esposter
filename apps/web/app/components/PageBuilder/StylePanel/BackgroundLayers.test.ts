@@ -23,7 +23,7 @@ describe("pageBuilderBackgroundLayers", () => {
 
     const component = await mountSuspended(PageBuilderBackgroundLayers, { props: { modelValue: TEST_LAYERS } });
     const [, secondLayerInput] = component.findAll("input");
-    secondLayerInput?.setValue("{");
+    await secondLayerInput?.setValue("{");
     const removeButton = component.findAll("button").find((button) => button.text() === "Remove");
     await removeButton?.trigger("click");
 

@@ -5,6 +5,16 @@ import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
+// Records whether the promise has settled, by the one thing a settled promise does: run its continuation
+const trackSettled = (started: Promise<unknown>) => {
+  const settlement = { isSettled: false };
+  const settled = (async () => {
+    await started;
+    settlement.isSettled = true;
+  })();
+  return { settled, settlement };
+};
+
 describe(subscribeStarted, () => {
   const subscription = { unsubscribe: noop };
 
@@ -16,15 +26,6 @@ describe(subscribeStarted, () => {
       return subscription;
     });
     return { handlers, started };
-  };
-  // Records whether the promise has settled, by the one thing a settled promise does: run its continuation
-  const trackSettled = (started: Promise<unknown>) => {
-    const settlement = { isSettled: false };
-    const settled = (async () => {
-      await started;
-      settlement.isSettled = true;
-    })();
-    return { settled, settlement };
   };
 
   // A read is issued only once the server has begun the subscription, so the promise holds until that answer arrives
