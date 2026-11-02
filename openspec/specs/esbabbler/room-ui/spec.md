@@ -1,6 +1,6 @@
 ## Purpose
 
-Room-shell polish — role-grouped member list, resizable sidebars, message density, empty states, one room header at every width, category drag-reorder. The room looks and is arranged as one cohesive surface, with visual preferences kept on the device and category order kept for everyone.
+Room-shell polish — role-grouped member list, resizable sidebars, message density, empty states, one room header at every width, category drag-reorder. The room looks and is arranged as one cohesive surface, with visual preferences kept on the device and each member's categories, and the room's place in them, kept for that member.
 
 ## Requirements
 
@@ -145,16 +145,16 @@ The room header SHALL offer the same controls on a phone as on a desktop, and SH
 - **THEN** the pinned messages open in the side panel
 - **AND** the menu shows the reader's notification level as a selected radio choice
 
-### Requirement: Room categories reorder by drag or by keyboard and the order is kept for everyone
+### Requirement: Room categories reorder by drag or by keyboard and the order is kept for the member who reorders them
 
-Room categories SHALL reorder by dragging their headers or with the alt and arrow keys, and the new order SHALL persist for every member of the room.
+Room categories SHALL reorder by dragging their headers or with the alt and arrow keys, and the new order SHALL persist for the member who reordered them and for no other member.
 
 #### Scenario: a member drags a category to the top
 
 - **GIVEN** a member with the category headers in view
 - **WHEN** the member drags a category above the others
 - **THEN** the new order shows at once
-- **AND** every member of the room sees the new order
+- **AND** every other member's categories keep the order they chose
 
 #### Scenario: a member moves a category with the keyboard
 
@@ -173,3 +173,28 @@ Room categories SHALL reorder by dragging their headers or with the alt and arro
 - **GIVEN** a room with existing categories
 - **WHEN** a member creates a category
 - **THEN** the new category is placed below the existing ones
+
+### Requirement: A room's category is each member's own
+
+A member SHALL file a room under one of their own categories, and each member's category for a room SHALL be kept apart from every other member's, so one member's choice never moves the room in another member's sidebar.
+
+#### Scenario: two members file one room under different categories
+
+- **GIVEN** two members of one room, each with a category of their own
+- **WHEN** each files the room under their own category
+- **THEN** each member's sidebar lists the room under the category that member chose
+- **AND** the other member's choice does not move the room
+
+#### Scenario: a member files a room under another member's category
+
+- **GIVEN** a member and a category that the other member owns
+- **WHEN** the member files the room under that category
+- **THEN** the filing is refused
+- **AND** the member's category for the room is unchanged
+
+#### Scenario: a category the member filed a room under is deleted
+
+- **GIVEN** a member who filed a room under a category of their own
+- **WHEN** the member deletes that category
+- **THEN** the room is listed as uncategorized in the member's sidebar
+- **AND** the room stays listed

@@ -1,6 +1,6 @@
 # Room UI
 
-The room shell's polish, matching Discord's refinements. Visual preferences (sidebar widths, message density) are device-local `localStorage`, per the [settings](../settings/design.md) persistence rule; the one exception is category ordering, which is server-persisted through a dedicated `reorderRoomCategories` procedure.
+The room shell's polish, matching Discord's refinements. Visual preferences (sidebar widths, message density) are device-local `localStorage`, per the [settings](../settings/design.md) persistence rule; the one exception is the categories, which are each member's own: their order is server-persisted through a dedicated `reorderRoomCategories` procedure, and each room's place among them is the member's own `categoryId` ([room category assignment](#room-category-assignment)).
 
 ## Role-grouped member list
 
@@ -73,28 +73,38 @@ Discord keeps a bell of its own in the header; folding it into the menu is the o
 
 ## Category drag-reorder
 
-Room categories in the left sidebar reorder by dragging their headers by the UI library's `REORDER_HANDLE_CLASS`, through its [drag reorder](../../architecture/drag-reorder/design.md); the held category wears the library's global `reorder-ghost`, lifted over the others while they move aside for it, as in every reorderable list and table. Touch drags wait the UI library's `TOUCH_DRAG_DELAY_MS`, as a reorderable list's do, so a swipe that starts on a header scrolls the list instead of reordering it. Alt+↑/Alt+↓ on a focused category header moves it without a pointer, through the same `getMovedItems` a reorderable list's keys use. The store applies the new positions optimistically (via [`useMutation`](../../architecture/client-data/design.md)), then persists only the rows whose position changed (`getRoomCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker, and `createRoomCategory` appends below the existing order (`max(position) + 1`) so a new category never jumps above a drag-assigned top.
+Room categories in the left sidebar reorder by dragging their headers by the UI library's `REORDER_HANDLE_CLASS`, through its [drag reorder](../../architecture/drag-reorder/design.md); the held category wears the library's global `reorder-ghost`, lifted over the others while they move aside for it, as in every reorderable list and table. Touch drags wait the UI library's `TOUCH_DRAG_DELAY_MS`, as a reorderable list's do, so a swipe that starts on a header scrolls the list instead of reordering it. Alt+↑/Alt+↓ on a focused category header moves it without a pointer, through the same `getMovedItems` a reorderable list's keys use. The store applies the new positions optimistically (via [`useMutation`](../../architecture/client-data/design.md)), then persists only the rows whose position changed (`getRoomCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker, and `createRoomCategory` appends below the existing order (`max(position) + 1`) so a new category never jumps above a drag-assigned top. The order is the caller's own: `reorderRoomCategories` writes only categories the caller owns, so a drag never reorders another member's sidebar.
+
+## Room category assignment
+
+A room's category is the member's own. Each member's `usersToRooms` row carries the `categoryId` of one of their own categories. `updateUserToRoom` writes it for the caller only and refuses a category the caller does not own (`ownedBy`, since the foreign key proves only that the category exists), and the foreign key sets it null when that category is deleted. The sidebar groups each room under the reader's own row through `resolveRoomCategoryId`, which lists a room whose category the reader no longer has as uncategorized rather than dropping it. The room-wide `categoryId` this replaced hid a room from every member but the one who set it, and let a second manager overwrite the first.
+
+The category is set from the Category field in the room settings' Overview panel. That panel is shown to holders of `ManageRoom` only ([room settings](../room-settings/design.md)), so a member without the permission has no field to file a room with. The gating is not changed here.
 
 ## Key files
 
-| File                                                                           | Role                                                          |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                     |
-| `apps/web/app/services/message/member/getMemberListItems.ts`                   | The member list's rows, each under its group's heading        |
-| `apps/web/app/services/message/member/getMemberGroupTitle.ts`                  | A group's heading: its role's name and how many hold it       |
-| `apps/web/app/services/message/member/getRolelessMemberCount.ts`               | The roleless group's count: the total less the role groups    |
-| `apps/web/app/services/message/member/getMemberDescription.ts`                 | A row's account name, when the room shows another, and status |
-| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                     |
-| `apps/web/app/services/message/member/memberRoleChangeHooks.ts`                | Role store → member store totals re-read hook                 |
-| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                        |
-| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection             |
-| `apps/web/app/components/Ui/ResizeHandle.vue`                                  | A sidebar's edge, dragged or stepped by the arrows to size it |
-| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                             |
-| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)                   |
-| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state              |
-| `apps/web/app/components/Message/Content/Header/Index.vue`                     | The one room header, at every width                           |
-| `apps/web/app/components/Message/Content/Header/OverflowMenu.vue`              | The room's occasional panes and its notification level        |
-| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence                |
+| File                                                                           | Role                                                                              |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                                         |
+| `apps/web/app/services/message/member/getMemberListItems.ts`                   | The member list's rows, each under its group's heading                            |
+| `apps/web/app/services/message/member/getMemberGroupTitle.ts`                  | A group's heading: its role's name and how many hold it                           |
+| `apps/web/app/services/message/member/getRolelessMemberCount.ts`               | The roleless group's count: the total less the role groups                        |
+| `apps/web/app/services/message/member/getMemberDescription.ts`                 | A row's account name, when the room shows another, and status                     |
+| `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                                         |
+| `apps/web/app/services/message/member/memberRoleChangeHooks.ts`                | Role store → member store totals re-read hook                                     |
+| `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                                            |
+| `apps/web/app/store/message/ui/layout.ts`                                      | Persisted sidebar widths + right drawer selection                                 |
+| `apps/web/app/components/Ui/ResizeHandle.vue`                                  | A sidebar's edge, dragged or stepped by the arrows to size it                     |
+| `apps/web/app/store/message/ui/appearance.ts`                                  | Persisted message display density                                                 |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Appearance/`         | Appearance settings panel (Message Display)                                       |
+| `apps/web/app/components/Ui/EmptyState.vue`                                    | The library's mark/title/description empty state                                  |
+| `apps/web/app/components/Message/Content/Header/Index.vue`                     | The one room header, at every width                                               |
+| `apps/web/app/components/Message/Content/Header/OverflowMenu.vue`              | The room's occasional panes and its notification level                            |
+| `apps/web/app/services/message/roomCategory/getRoomCategoryPositionUpdates.ts` | Position diff for category reorder persistence                                    |
+| `apps/web/app/services/message/roomCategory/resolveRoomCategoryId.ts`          | The category a room is listed under, resolved against the reader's own categories |
+| `apps/web/app/components/Message/LeftSideBar/Rooms.vue`                        | The sidebar's room groups, each room under the reader's own category              |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Overview/Index.vue`  | The Category field, saved on the reader's own membership                          |
+| `apps/web/server/services/message/updateUserToRoom.ts`                         | Writes a member's own row, refusing a category the caller does not own            |
 
 ## Notes
 

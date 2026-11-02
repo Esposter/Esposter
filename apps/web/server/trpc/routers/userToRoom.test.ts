@@ -10,9 +10,17 @@ import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
+import { categoryRouter } from "#server/trpc/routers/room/category";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
-import { NotificationType, RoomPermission, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import {
+  DatabaseEntityType,
+  NotificationType,
+  roomCategoriesInMessage,
+  RoomPermission,
+  roomsInMessage,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -22,6 +30,7 @@ describe("userToRoomRouter", () => {
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let categoryCaller: DecorateRouterRecord<TRPCRouter["room"]["category"]>;
   const name = "name";
   const displayName = "displayName";
   const position = 1;
@@ -38,6 +47,11 @@ describe("userToRoomRouter", () => {
     const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
     return takeOne(myUsersToRooms).mentionCount;
   };
+  const readMemberCategoryId = async (member: User, roomId: string) => {
+    await mockSessionOnce(mockContext.db, member);
+    const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
+    return takeOne(myUsersToRooms).categoryId;
+  };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -45,12 +59,14 @@ describe("userToRoomRouter", () => {
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
+    categoryCaller = createCallerFactory(categoryRouter)(mockContext);
   });
 
   afterEach(async () => {
     MockTableDatabase.clear();
     await mockContext.db.delete(usersToRoomsInMessage);
     await mockContext.db.delete(roomsInMessage);
+    await mockContext.db.delete(roomCategoriesInMessage);
   });
 
   test("reads own full record", async () => {
@@ -178,5 +194,52 @@ describe("userToRoomRouter", () => {
     expect(lastMessageAt).not.toBeNull();
     expect(updatedUserToRoom.lastMessageAt).toStrictEqual(lastMessageAt);
     expect(updatedUserToRoom.lastReadAt).toStrictEqual(lastReadAt);
+  });
+
+  // A category is its member's own, and the foreign key only proves that one exists, so a member files the room under
+  // Their own category and is refused another member's, which the row keeps as it was
+  test("files the room under the caller's own category and refuses another member's", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const ownerCategory = await categoryCaller.createRoomCategory({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, member);
+    const memberCategory = await categoryCaller.createRoomCategory({ name });
+    await mockSessionOnce(mockContext.db, member);
+    const updatedUserToRoom = await userToRoomCaller.updateUserToRoom({
+      categoryId: memberCategory.id,
+      roomId: newRoom.id,
+    });
+    await mockSessionOnce(mockContext.db, member);
+
+    await expect(
+      userToRoomCaller.updateUserToRoom({ categoryId: ownerCategory.id, roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, ownerCategory.id).message}]`,
+    );
+
+    expect(updatedUserToRoom.categoryId).toStrictEqual(memberCategory.id);
+    expect(await readMemberCategoryId(member, newRoom.id)).toStrictEqual(memberCategory.id);
+  });
+
+  // Each member files the room under a category of their own, so one member's assignment never moves another's
+  test("keeps the categories two members file one room under apart", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstMember = await createRoomMember(mockContext, newRoom.id);
+    const secondMember = await createRoomMember(mockContext, newRoom.id);
+    await mockSessionOnce(mockContext.db, firstMember);
+    const firstCategory = await categoryCaller.createRoomCategory({ name });
+    await mockSessionOnce(mockContext.db, secondMember);
+    const secondCategory = await categoryCaller.createRoomCategory({ name });
+    await mockSessionOnce(mockContext.db, firstMember);
+    await userToRoomCaller.updateUserToRoom({ categoryId: firstCategory.id, roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, secondMember);
+    await userToRoomCaller.updateUserToRoom({ categoryId: secondCategory.id, roomId: newRoom.id });
+
+    expect(await readMemberCategoryId(firstMember, newRoom.id)).toStrictEqual(firstCategory.id);
+    expect(await readMemberCategoryId(secondMember, newRoom.id)).toStrictEqual(secondCategory.id);
   });
 });

@@ -46,6 +46,7 @@ import {
   resourcesInResource,
   ResourceType,
   resourceWorkingAssetsInResource,
+  roomCategoriesInMessage,
   roomEmojisInMessage,
   roomRolesInMessage,
   roomsInMessage,
@@ -653,8 +654,12 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const role = takeOne(await mockDb.insert(roomRolesInMessage).values({ name, roomId: room.id }).returning());
+    const roomCategory = takeOne(await mockDb.insert(roomCategoriesInMessage).values({ name, userId }).returning());
     const membership = takeOne(
-      await mockDb.insert(usersToRoomsInMessage).values({ displayName: name, roomId: room.id, userId }).returning(),
+      await mockDb
+        .insert(usersToRoomsInMessage)
+        .values({ categoryId: roomCategory.id, displayName: name, roomId: room.id, userId })
+        .returning(),
     );
     // The other member's row and the person's row in a room they own are not the membership written
     await mockDb.insert(usersToRoomsInMessage).values([
@@ -669,10 +674,11 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // The membership keeps the person's own settings, the time they joined and the time they last read the room, and
-    // The roles they hold there
+    // The membership keeps the person's own settings, the category they filed it under, the time they joined and the
+    // Time they last read the room, and the roles they hold there
     expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
       {
+        categoryId: roomCategory.id,
         createdAt: membership.createdAt,
         displayName: membership.displayName,
         isHidden: membership.isHidden,

@@ -4,7 +4,8 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { db } from "#src/services/shared/db";
 
 // The person's memberships in rooms they do not own, each with the person's own settings there.
-// Each also carries the time they joined, the time they last read the room, and the roles they hold in it.
+// Each also carries the time they joined, the time they last read the room, the category they filed it under, and the
+// Roles they hold in it.
 // The other members of a room are not listed.
 // The mention count is derived from other people's messages, and the slowmode and timeout clocks are operational.
 // So none of them is written
@@ -17,6 +18,7 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
   const memberships = (
     await db.query.usersToRoomsInMessage.findMany({
       columns: {
+        categoryId: true,
         createdAt: true,
         displayName: true,
         isHidden: true,
