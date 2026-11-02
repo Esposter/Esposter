@@ -9,8 +9,9 @@ export const checkIsForwardingCall = (
   expression: ESTree.CallExpression | ESTree.NewExpression,
 ): boolean => {
   const receiverName = getReceiverName(expression);
-  // A member call is only a forward when the receiver came from the caller too; on anything else the wrapper
-  // Is supplying the object, and an UPPER_SNAKE one is supplying a constant outright
+  // A member call is no forward on a receiver that is not an identifier, nor on an UPPER_SNAKE constant, which the
+  // Wrapper supplies outright. Any other identifier receiver is matched as a plain call is, so a module's own binding
+  // Forwards as a parameter does: the rule exempts no other supplied object
   if (expression.type === "CallExpression" && expression.callee.type === "MemberExpression") {
     if (receiverName === undefined || UPPER_SNAKE_REGEX.test(receiverName)) return false;
   } else if (expression.callee.type !== "Identifier") return false;
