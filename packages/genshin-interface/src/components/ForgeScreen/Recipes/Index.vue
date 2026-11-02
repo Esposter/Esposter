@@ -122,21 +122,23 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .recipe:disabled {
   opacity: 0.4;
 }
-.recipe-name {
-  position: absolute;
-  top: calc(var(--unit) * 18);
-  left: calc(var(--unit) * 141);
-  font-size: calc(var(--unit) * 39);
-  line-height: 1;
-  letter-spacing: calc(var(--unit) * 1.8);
-}
-.recipe-time {
+.recipe-name,
+.recipe-time,
+.queue-name,
+.queue-progress,
+.queue-time {
   position: absolute;
   top: calc(var(--unit) * 64);
   left: calc(var(--unit) * 141);
   font-size: calc(var(--unit) * 29);
   line-height: 1;
   letter-spacing: calc(var(--unit) * 2.5);
+}
+.recipe-name,
+.queue-name {
+  top: calc(var(--unit) * 18);
+  font-size: calc(var(--unit) * 39);
+  letter-spacing: calc(var(--unit) * 1.8);
 }
 .recipe:not([aria-pressed="true"]) .recipe-name,
 .recipe:not([aria-pressed="true"]) .recipe-time {
@@ -182,18 +184,7 @@ const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 .queue-name,
 .queue-progress,
 .queue-time {
-  position: absolute;
-  top: calc(var(--unit) * 64);
-  left: calc(var(--unit) * 141);
-  font-size: calc(var(--unit) * 29);
-  line-height: 1;
-  letter-spacing: calc(var(--unit) * 2.5);
   white-space: nowrap;
-}
-.queue-name {
-  top: calc(var(--unit) * 18);
-  font-size: calc(var(--unit) * 39);
-  letter-spacing: calc(var(--unit) * 1.8);
 }
 .queue[data-state="Forging"] .queue-progress {
   color: #f0a53a;
