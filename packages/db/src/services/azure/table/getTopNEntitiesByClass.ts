@@ -12,6 +12,9 @@ export const getTopNEntitiesByClass = async <TEntity extends CompositeKey>(
   getClass: (entity: Record<string, unknown>) => Class<TEntity>,
   queryOptions?: TableEntityQueryOptions,
 ): Promise<TEntity[]> => {
+  // Zero asks for nothing, and the check after each push below only ends the walk once a push has landed, so a zero
+  // Would return the whole partition. It is answered before any row is read
+  if (topN === 0) return [];
   // Filter out the etag before deserializing the json
   // Azure may return a short page even when more rows exist, so keep paging until topN entities
   // Are collected or the partition is exhausted — a full first page still costs a single request,
