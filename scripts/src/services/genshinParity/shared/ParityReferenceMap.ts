@@ -106,6 +106,20 @@ const STATUE_BLESSING_PLATE = [
   { height: 45, width: 505, x: 1390, y: 585 },
   { height: 142, width: 546, x: 1372, y: 708 },
 ];
+// The dialogue's text, each line's own box filled from the world round it, so the world between the glyphs stays the
+// Frame's own pixels: the screen draws no band behind a line, so that world is what the game shows under its text
+const DIALOGUE_CHOICES_LINE_PLATE = [{ height: 26, width: 228, x: 526, y: 588 }];
+const DIALOGUE_LINE_PLATE = [
+  { height: 23, width: 790, x: 246, y: 588 },
+  { height: 21, width: 354, x: 461, y: 611 },
+];
+const DIALOGUE_PAIMON_LINE_PLATE = [{ height: 24, width: 412, x: 436, y: 577 }];
+// The two reply pills, each filled from the world round its footprint, so a pill's rest tone darkens the world beside it
+// And not the pill's own text
+const DIALOGUE_CHOICES_REPLIES_PLATE = [
+  { height: 37, width: 252, x: 848, y: 461 },
+  { height: 37, width: 252, x: 848, y: 503 },
+];
 
 // A character screen's tab column, its words and diamonds clear of the scene's light, scored by the five tab entries
 const CHARACTER_TABS_REGION = { height: 800, width: 900, x: 120, y: 180 };
@@ -389,6 +403,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Frame's clean plate, its scored region filled from its surroundings (`getCleanPlatePath`)
   "dialogue-choices-line": {
     isBackdrop: true,
+    plate: DIALOGUE_CHOICES_LINE_PLATE,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 28, width: 320, x: 480, y: 586 },
     screen: "DialogueTalk",
@@ -396,6 +411,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   },
   "dialogue-choices-replies": {
     isBackdrop: true,
+    plate: DIALOGUE_CHOICES_REPLIES_PLATE,
     props: { startProgress: { isRevealed: true, lineId: "ah-finally" } },
     region: { height: 74, width: 250, x: 850, y: 463 },
     screen: "DialogueTalk",
@@ -411,6 +427,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The same talk's line with no replies on offer, about 23 seconds in, its speaker's role line under the name left out
   "dialogue-line": {
     isBackdrop: true,
+    plate: DIALOGUE_LINE_PLATE,
     props: { startProgress: { isRevealed: true, lineId: "knights-of-favonius" } },
     region: { height: 50, width: 800, x: 240, y: 586 },
     screen: "DialogueTalk",
@@ -419,6 +436,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Paimon's line about 29 seconds in, from the same recording
   "dialogue-paimon-line": {
     isBackdrop: true,
+    plate: DIALOGUE_PAIMON_LINE_PLATE,
     props: { startProgress: { isRevealed: true, lineId: "so-it-is-jean" } },
     region: { height: 30, width: 420, x: 430, y: 582 },
     screen: "DialogueTalk",
