@@ -19,9 +19,22 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Import MJML** is the one import the editor offers. Because the types are MJML's own components, MJML source from another tool reads back faithfully through the package's `parseMjmlDocument`, unlike the HTML import the [program](../../../../changes/resource-page-builder-program/design.md) leaves out. The command opens a code field. An accepted import replaces the document as one history entry. A refused one leaves the document as it was and names the tag or attribute that did not fit.
 
-**Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a mutation that carries the document in its request body to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
+**Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a mutation that carries the document in its request body to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. A refused compile keeps the last good html, so the alert sits above the preview it did not replace. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
 The compile runs in the app server, on MJML's Node package.
+
+```mermaid
+sequenceDiagram
+  participant P as Preview
+  participant S as email router
+  participant C as compile service
+  P->>P: edit settles past the autosave debounce
+  P->>S: email.compile mutation, document in the body
+  S->>C: compile the document
+  C-->>S: html, or the validator's message
+  S-->>P: result
+  P->>P: show html, or the alert above the last good html
+```
 
 ## The shell's document kind
 
@@ -58,6 +71,9 @@ The owed items and their reasons are in the email page builder change's tasks.
 - **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. ([`substituteMergeFields.ts`](../../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
 - **Length hint.** The preview text's limit is `MAX_EMAIL_PREVIEW_LENGTH`, which is the schema's maximum. The schema form draws it beside the field as a count, so the hint and the enforced limit come from one constant.
 - **Preview placement.** Preview is reachable without leaving the editor, so the toggle the Preview paragraph places stays in the header.
+- **The document rides the request body, not the URL.** Preview's compile was a query, and a realistic email's document outgrows the request-header limit the server accepts, which answers 431 and leaves Preview blank. The alternative was compiling the saved copy on the server: it sends no document, but Preview would then lag the owner's edits by the autosave debounce and could not show an edit that is not yet saved, which Preview promises it does.
+- **A dropped compile is not retried automatically.** A mutation is not retried on its own, so a dropped compile waits for the next settled edit or for Preview's retry control. The compile is a pure function of the document it is sent, so a retry is always safe to make.
+- **The long-email scenario is proven by a proxy.** The mock server enforces no request-header limit, so no test can receive the 431 the scenario describes. `apps/web/app/components/PageBuilder/Email/Preview.test.ts` asserts the cause instead: one POST to the procedure's path with no query string, for a document whose encoded form is longer than Node's request-header limit.
 - **FileAssets.** Email keeps `fileAssets` on its resource definition, since its images are hosted by us. Its image field has no upload path, so Email is not counted as an adopter of [resource-file-assets](../../resource-file-assets/design.md) until that field lands.
 - **The export staging store stays.** `apps/web/app/store/emailEditor/exportDialog.ts` is the singleton target the personalised export's truncation confirm is staged in. It is not a bridge to a live editor, so it stays beside the blade that draws the decision.
 

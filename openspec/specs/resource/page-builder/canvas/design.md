@@ -53,7 +53,7 @@ flowchart TD
 
 **Text editing.** Enter on a selected text node, in the tree or the canvas, mounts TipTap on that node inside the frame and moves focus into it; Escape leaves the text and returns focus to the tree row. Inside the text, TipTap's own keys and undo apply; leaving it commits one history entry. The editor is the Note's, over the node's `content`, and each change while it is open is an update-props edit of `content` under the session's interaction id, so the history merges the session into that one entry and the canvas never holds a draft of its own. Composition and paste are ProseMirror's, which reads an input method's text and pasted markup through its schema rather than through `execCommand`.
 
-The canvas itself is one tab stop named after the page. With focus in it, its keys are the canvas rows of the [key table](../keyboard/design.md) — the same commands as the tree, so neither surface is the only way to do anything.
+The canvas itself is one tab stop named after the page. With focus in it, its keys are the [registered commands](../keyboard/design.md) — the same commands as the tree, so neither surface is the only way to do anything.
 
 ## The shell
 

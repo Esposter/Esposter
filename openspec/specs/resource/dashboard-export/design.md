@@ -40,7 +40,7 @@ flowchart LR
 | `apps/web/app/services/resource/PortableFormatMap.ts`                      | the Dashboard's PNG entry, with no import                                         |
 | `apps/web/app/services/capture/captureFlowchart.ts`                        | the capture and rasterizer the page image reuses, in the shared folder            |
 | `apps/web/app/services/capture/createFlowchartSvg.ts`                      | copies computed styles and embeds font faces                                      |
-| `apps/web/app/services/capture/rasterizeFlowchartSvg.ts`                   | rasterizes the SVG at two times the pixel ratio                                   |
+| `apps/web/app/services/capture/rasterizeSvg.ts`                            | rasterizes the SVG at two times the pixel ratio                                   |
 | `apps/web/app/services/dashboard/export/exportDashboardPng.ts`             | captures the dashboard grid and downloads it as a PNG                             |
 | `apps/web/app/services/dashboard/export/exportDashboardVisualCsv.ts`       | the drawn rows of one visual, as a CSV file                                       |
 | `apps/web/app/services/dashboard/export/createDrawnDataset.ts`             | the drawn values of one visual, as the dataset its CSV is written from            |

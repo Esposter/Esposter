@@ -94,6 +94,17 @@ A shape's text, an arrow's label and a sticky note's text SHALL be edited in pla
 - **WHEN** the owner views the canvas
 - **THEN** the label is drawn at the arrow's midpoint
 
+### Requirement: Text wraps at the element's width
+
+A shape's, a sticky note's and a text box's text SHALL wrap at the element's width, and an arrow's label at a fixed label width. The canvas and the exported image SHALL break the text at the same words.
+
+#### Scenario: A long label wraps inside its shape
+
+- **GIVEN** a Process shape whose text is longer than its width
+- **WHEN** the owner views the canvas or exports the whiteboard
+- **THEN** the text is drawn on more than one line, each line within the shape's width
+- **AND** the export breaks the text at the same words as the canvas
+
 ### Requirement: Freehand strokes follow the pointer
 
 A freehand stroke SHALL be drawn along the path the pointer takes while it is held down.

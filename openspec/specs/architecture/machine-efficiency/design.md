@@ -41,6 +41,16 @@ Each row is the magnitude the mechanism is kept for. The readings behind a row l
 
 The one-off mechanisms that were tried and removed are not kept here: a mechanism that was measured and dropped has no rule left to state. The GPU rows measure the scan's time alone; a peak memory figure for the decodes is not recorded.
 
+## macOS setup
+
+Do these steps once on a Mac. The Genshin parity extraction adds millions of files per run, and Spotlight indexes them unless told otherwise.
+
+- The parity data is in `{data-root}/genshin-parity`. `GENSHIN_PARITY_DIRECTORY` names another folder when set.
+- Create `{data-root}.noindex` as the data folder. macOS never indexes a `*.noindex` folder.
+- Make `{data-root}` a symlink to `{data-root}.noindex`. Spotlight follows no symlink, and every `{data-root}/...` path still resolves.
+- Do not create a real `{data-root}` folder beside the link.
+- In System Settings → Spotlight → Search Privacy, add `node_modules` and the pnpm store (`{home}/Library/pnpm/store`). This step is manual: no command does it.
+
 ## Key files
 
 | File                                                                          | Role                                                                                                                                                 |

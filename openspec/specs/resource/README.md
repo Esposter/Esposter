@@ -54,6 +54,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Note resource](note-resource/design.md) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
 - [Note Markdown portability](note-markdown-portability/design.md) — a note exports to and imports from a `.md` file on its overflow menu, through a converter over the catalog's `marked`, saving an import only on confirm
 - [Note slash menu](note-slash-menu/design.md) — `/` opens a filterable block menu at the caret, drawn by the editor on the composer's suggestion stack
+- [Note images](note-images/design.md) — an image added to a note from its menu, by paste or by drop, with alt text, shown in the published note only from its resource asset address
 - [Blueprint resource](blueprint-resource/design.md) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
 - [Blueprint capture](blueprint-capture/design.md) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
 - [Blueprint portability](blueprint-portability/design.md) — a blueprint's manifest exports to and imports from a `.json` file on its overflow menu, an import filling the Editor as unsaved text that only Save commits
@@ -77,6 +78,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Flowchart connectors](flowchart-connectors/design.md) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [Flowchart publish](flowchart-publish/design.md) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
 - [Flowchart image export](flowchart-image-export/design.md) — export the whole diagram as PNG or SVG from the resource menu
+- [Whiteboard](whiteboard/design.md) — a freeform canvas of shapes, arrows bound to them, strokes, text, images and sticky notes, exported as SVG or PNG, which succeeds the Flowchart
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
@@ -85,6 +87,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Page builder performance and proof](page-builder/performance-and-proof/design.md) — the targets the page builder's editors hold, and how their output is proved against the published page; the browser proofs are owed
 - [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile
 - [Page builder undo as patches](page-builder/undo-as-patches/design.md) — each open resource's undo and redo as JSON Patch operations with their inverses, one entry per interaction, cleared on reload
+- [Page builder critique](page-builder/critique/design.md) — the deterministic checks over a webpage's document (contrast, fixed widths, survey invites), shown by the editor's Check panel and answered to an agent under the Resources scope
 
 Open work is in the [roadmap](../../changes/resource-roadmap/tasks.md); the Azure-portal-parity designs it references live under [proposals](../../changes/). Ideas we chose not to pursue are under [deferred](../../deferred/resource/) (with revisit triggers) and [rejected](../../rejected/resource/). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](sheet/README.md).
 
@@ -105,3 +108,4 @@ Azure service at any point.
 - **[Webpage social preview](webpage-social-preview/design.md)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
 - **Content-addressed assets** — uploaded files addressed by the hash of their bytes, reference rows written from a scan of each version, one release for every path that can unreference a file, and collection held behind a counting-only period.
+- **[Whiteboard](whiteboard/design.md)** — the freeform canvas that succeeds the Flowchart, drawn on the headless editor core's positioned elements with no third-party dependency and one enum migration, shipped without its read-only published view.

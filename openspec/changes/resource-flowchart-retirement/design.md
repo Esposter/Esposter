@@ -15,13 +15,13 @@ A blob is deleted only inside the purge of its own resource, together with that 
 
 ## The whiteboard covers the feature list
 
-Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [gap analysis](../resource-whiteboard/design.md#gap-analysis), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
+Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [gap analysis](../../specs/resource/whiteboard/design.md#gap-analysis), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
 
 | Flowchart feature                                 | Whiteboard row, in its gap analysis                              | Status                                         |
 | ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------- |
 | Labelled step nodes                               | Node label                                                       | Covered                                        |
 | Node colour                                       | Node colour                                                      | Covered                                        |
-| Node resize with a minimum size                   | Node resize, with a minimum for each shape                       | Covered                                        |
+| Node resize with a minimum size                   | Node resize                                                      | Covered                                        |
 | Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                        |
 | Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                    |
 | Connector labels, edited inline                   | Edge label                                                       | Covered                                        |
@@ -40,45 +40,45 @@ Nothing is dropped unnoticed: each feature the Flowchart has is checked against 
 
 Each file below is removed or has its entry removed in the release. The paths are the ones that name the type, its canvas, its dependency or its agent surface; the sweep in the tasks finds the rest.
 
-| File                                                                    | Role in the removal                                                                             |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`                | Drops the Flowchart value                                                                       |
-| `packages/db-schema/src/services/resource/ResourceOwnedTablesMap.ts`    | Drops the Flowchart entry                                                                       |
-| `packages/db-schema/src/schema/resource/resourcesInResource.ts`         | The resource type enum column the migration drops a value from                                  |
-| `packages/db-schema/src/models/achievement/FlowchartAchievementName.ts` | Deleted with the achievement                                                                    |
-| `packages/db-schema/src/services/achievement/AchievementName.ts`        | Drops the achievement from the name union                                                       |
-| `apps/web/shared/models/achievement/AchievementCategory.ts`             | Drops the Flowchart category                                                                    |
-| `apps/web/shared/models/flowchartEditor`                                | Deleted: the graph's models and their tests                                                     |
-| `apps/web/shared/models/trpc/TRPCProcedureInputs.ts`                    | Drops the flowchart save input                                                                  |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`            | Drops the Flowchart definition                                                                  |
-| `apps/web/shared/services/superjson/JSONClassMap.ts`                    | Drops the flowchart classes                                                                     |
-| `apps/web/server/trpc/routers/flowchart.ts`                             | Deleted: the flowchart router                                                                   |
-| `apps/web/server/trpc/routers/index.ts`                                 | Drops the flowchart router                                                                      |
-| `apps/web/server/trpc/routers/resourceDispatch.ts`                      | Drops the flowchart dispatch entry                                                              |
-| `apps/web/app/components/Resource/Flowchart`                            | Deleted: editor, published view, dialogs and export canvas                                      |
-| `apps/web/app/components/FlowchartEditor`                               | Deleted: nodes, edges, panels and the sidebar                                                   |
-| `apps/web/app/services/flowchartEditor`                                 | Deleted: node and edge maps, path functions and constants                                       |
-| `apps/web/app/composables/flowchartEditor`                              | Deleted: drag and drop                                                                          |
-| `apps/web/app/store/flowchartEditor`                                    | Deleted: the editor and export stores                                                           |
-| "apps/web/app/services/resource/flowchart"                              | Deleted: the export capture and its SVG rasterizing                                             |
-| `apps/web/app/models/resource/FlowchartExportRequest.ts`                | Deleted                                                                                         |
-| `apps/web/app/models/resource/FlowchartExportFormat.ts`                 | Deleted                                                                                         |
-| `apps/web/app/services/resource/PortableFormatMap.ts`                   | Drops the flowchart formats                                                                     |
-| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`          | Drops the entry                                                                                 |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts`         | Drops the entry                                                                                 |
-| `apps/web/app/services/resource/ResourceEditorComponentMap.ts`          | Drops the entry                                                                                 |
-| `apps/web/app/services/resource/ResourceTypeDescriptionMap.ts`          | Drops the entry                                                                                 |
-| `apps/web/app/services/resource/ViewComponentMap.ts`                    | Drops the published view entry                                                                  |
-| `apps/web/package.json`                                                 | Drops the five `@vue-flow` dependencies                                                         |
-| `pnpm-workspace.yaml`                                                   | Drops the five catalog entries                                                                  |
-| `pnpm-lock.yaml`                                                        | Regenerated by `pnpm i`, without the Vue Flow packages                                          |
-| `.agents/ledgers/dependencies.md`                                       | Drops the Vue Flow rows, with their last import                                                 |
-| `.agents/ledgers/quality/shared.md`                                     | Drops the flowchart editor row                                                                  |
-| `packages/db/src/services/resource/purgeResource.ts`                    | The per-resource purge the one-time run calls: blob directory, partitions, ledger, then the row |
-| `apps/functions/src/services/resource/purgeExpiredResources.ts`         | The timer's per-resource body, whose two calls the one-time run repeats                         |
-| `openspec/specs/resource/README.md`                                     | Drops the three flowchart capabilities from the index                                           |
-| `openspec/specs/architecture/agent-content-tools/design.md`             | Drops its flowchart rows                                                                        |
-| `openspec/changes/resource-roadmap/tasks.md`                            | Drops the flowchart shapes line, and links this change                                          |
+| File                                                                    | Role in the removal                                                                                                                                        |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`                | Drops the Flowchart value                                                                                                                                  |
+| `packages/db-schema/src/services/resource/ResourceOwnedTablesMap.ts`    | Drops the Flowchart entry                                                                                                                                  |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`         | The resource type enum column the migration drops a value from                                                                                             |
+| `packages/db-schema/src/models/achievement/FlowchartAchievementName.ts` | Deleted with the achievement                                                                                                                               |
+| `packages/db-schema/src/services/achievement/AchievementName.ts`        | Drops the achievement from the name union                                                                                                                  |
+| `apps/web/shared/models/achievement/AchievementCategory.ts`             | Drops the Flowchart category                                                                                                                               |
+| `apps/web/shared/models/flowchartEditor`                                | Deleted: the graph's models and their tests                                                                                                                |
+| `apps/web/shared/models/trpc/TRPCProcedureInputs.ts`                    | Drops the flowchart save input                                                                                                                             |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`            | Drops the Flowchart definition                                                                                                                             |
+| `apps/web/shared/services/superjson/JSONClassMap.ts`                    | Drops the flowchart classes                                                                                                                                |
+| `apps/web/server/trpc/routers/flowchart.ts`                             | Deleted: the flowchart router                                                                                                                              |
+| `apps/web/server/trpc/routers/index.ts`                                 | Drops the flowchart router                                                                                                                                 |
+| `apps/web/server/trpc/routers/resourceDispatch.ts`                      | Drops the flowchart dispatch entry                                                                                                                         |
+| `apps/web/app/components/Resource/Flowchart`                            | Deleted: editor, published view, dialogs and export canvas                                                                                                 |
+| `apps/web/app/components/FlowchartEditor`                               | Deleted: nodes, edges, panels and the sidebar                                                                                                              |
+| `apps/web/app/services/flowchartEditor`                                 | Deleted: node and edge maps, path functions and constants                                                                                                  |
+| `apps/web/app/composables/flowchartEditor`                              | Deleted: drag and drop                                                                                                                                     |
+| `apps/web/app/store/flowchartEditor`                                    | Deleted: the editor and export stores                                                                                                                      |
+| "apps/web/app/services/resource/flowchart"                              | Deleted: the flowchart's export models only; the capture and its rasterizer stay, renamed `services/capture/rasterizeSvg.ts`, for the dashboard page image |
+| `apps/web/app/models/resource/FlowchartExportRequest.ts`                | Deleted                                                                                                                                                    |
+| `apps/web/app/models/resource/FlowchartExportFormat.ts`                 | Deleted                                                                                                                                                    |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                   | Drops the flowchart formats                                                                                                                                |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`          | Drops the entry                                                                                                                                            |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts`         | Drops the entry                                                                                                                                            |
+| `apps/web/app/services/resource/ResourceEditorComponentMap.ts`          | Drops the entry                                                                                                                                            |
+| `apps/web/app/services/resource/ResourceTypeDescriptionMap.ts`          | Drops the entry                                                                                                                                            |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                    | Drops the published view entry                                                                                                                             |
+| `apps/web/package.json`                                                 | Drops the five `@vue-flow` dependencies                                                                                                                    |
+| `pnpm-workspace.yaml`                                                   | Drops the five catalog entries                                                                                                                             |
+| `pnpm-lock.yaml`                                                        | Regenerated by `pnpm i`, without the Vue Flow packages                                                                                                     |
+| `.agents/ledgers/dependencies.md`                                       | Drops the Vue Flow rows, with their last import                                                                                                            |
+| `.agents/ledgers/quality/shared.md`                                     | Drops the flowchart editor row                                                                                                                             |
+| `packages/db/src/services/resource/purgeResource.ts`                    | The per-resource purge the one-time run calls: blob directory, partitions, ledger, then the row                                                            |
+| `apps/functions/src/services/resource/purgeExpiredResources.ts`         | The timer's per-resource body, whose two calls the one-time run repeats                                                                                    |
+| `openspec/specs/resource/README.md`                                     | Drops the three flowchart capabilities from the index                                                                                                      |
+| `openspec/specs/architecture/agent-content-tools/design.md`             | Drops its flowchart rows                                                                                                                                   |
+| `openspec/changes/resource-roadmap/tasks.md`                            | Drops the flowchart shapes line, and links this change                                                                                                     |
 
 ## Specs
 
@@ -87,5 +87,5 @@ This change writes no spec delta now. Its removal is recorded as REMOVED require
 ## Sources
 
 - [Flowchart on the editor core](../../deferred/resource/flowchart-on-editor-core/design.md): the removal future, and the rule that a resource type leaves PostgreSQL only once no row holds it.
-- [Whiteboard](../resource-whiteboard/design.md#gap-analysis): the gap analysis the feature check reads.
+- [Whiteboard](../../specs/resource/whiteboard/design.md#gap-analysis): the gap analysis the feature check reads.
 - [Purge a resource](../../../apps/functions/src/services/resource/purgePreCutoverResources.ts): the cutover's one-time run, the precedent the one-time purge follows.

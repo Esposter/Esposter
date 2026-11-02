@@ -7,8 +7,9 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 - [ ] [Survey form engine](../resource-survey-form-engine/design.md) — replace SurveyJS with a typed survey document, a runner and a Creator of our own, removing the old survey type's stored data after the owner confirms its counts
 
 - [ ] [AI-native resources](../archive/2026-10-25-architecture-ai-native-resources-program/design.md) — beyond the content tools every type has, an open editor adopting an agent's save, the lifecycle as tools, the schema fixes and typed commands, wired once at the resource layer rather than per editor
-- [ ] [Flowchart retirement](../resource-flowchart-retirement/proposal.md) — the Flowchart type, its canvas and every stored flowchart removed in one release, after the whiteboard ships and the owner confirms each environment's count
-- [ ] [Note images](../resource-note-images/design.md) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
+- [ ] [Flowchart retirement](../resource-flowchart-retirement/proposal.md) — the Flowchart type, its canvas and every stored flowchart removed in one release, once the built whiteboard covers its feature check and the owner confirms each environment's count
+
+- [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show
 
 ## Later
 

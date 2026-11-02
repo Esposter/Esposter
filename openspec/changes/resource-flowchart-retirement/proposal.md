@@ -2,7 +2,7 @@
 
 ## Why
 
-The Flowchart is a resource type that draws connected steps on Vue Flow. The [whiteboard](../resource-whiteboard/proposal.md), our own freeform canvas, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
+The Flowchart is a resource type that draws connected steps on Vue Flow. The [whiteboard](../archive/2026-11-02-resource-whiteboard/proposal.md), our own freeform canvas, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
 
 ## What Changes
 
@@ -29,7 +29,7 @@ Blobs follow one ordering rule: a blob is deleted only inside the purge of its o
 
 ## Waiting on
 
-- The [whiteboard](../resource-whiteboard/proposal.md) ships first, and every row of the feature check in the design is covered, or is one of the drops the design names, before the release, since afterwards the Flowchart's features have no other home.
+- The [whiteboard](../archive/2026-11-02-resource-whiteboard/proposal.md) is in the app, and every row of the feature check in the design is covered, or is one of the drops the design names, before the release, since afterwards the Flowchart's features have no other home.
 
 ## Decided against
 

@@ -98,7 +98,7 @@ Phase 2 is a Vue 3 component that draws the model as SVG. It has one SVG compone
 
 **Hand-drawn look.** The look is our own drawing code. Each element draws its outline with a small deterministic offset, seeded from the element's id, so a repeated render draws the same lines and the export matches the editor. The offset is a short function over the path, and two strokes of an outline keep the sketch feel without a drawing library.
 
-**Text.** The core stores a text box's width, which the person set, and no height. The renderer wraps the text and derives the height when it draws. An agent that writes text sets a width, and the renderer wraps it the same way. Text measurement is therefore a renderer concern and the core stays free of the DOM.
+**Text.** The core stores a text box's width, which the person set, and no height. The core wraps a text at its width by one rule, which the editor and the export both draw, and derives a text box's height from the lines it wraps to. A shape's and a sticky note's text wraps at its box's width, and an arrow's label at a constant width, since an arrow has no box of its own. An agent that writes text sets a width, and the core wraps it the same way. The rule is in the decision below.
 
 **Editing text.** Double clicking a shape, an arrow's label or a sticky note opens an inline editor over the element. The editor handles input-method composition, and a commit writes one command.
 
@@ -162,6 +162,10 @@ The estimates below are judgement, checked against the measured sizes above: the
 
 Say plainly: **this is a large build**, several times the Flowchart's current app code and larger than the headless core it extends. The engine the Flowchart rents today does a share of this work the whiteboard must do itself: hit testing, routing, pan and zoom, and the selection model. Phases 1 and 2 are the bulk. Phase 1 can ship and be tested without the renderer, and phase 2 can be built against it, so the work can be cut at phase boundaries.
 
+## Decisions
+
+- **Text wraps by one core rule, measured by a fixed estimate.** The core's pure function wraps a text at a width. It breaks at each newline, breaks a line at a space where the next word would pass the width, breaks a word wider than the width where the width runs out, and never hyphenates. Each character is measured by an advance in document units taken from the export's font size: a narrow character takes half the font size, and a full-width character (the Han ideographs, Hangul, kana and the fullwidth forms) takes double that. The editor's label and the export draw the lines this function returns, so they break a text at the same words on every machine, the server included. A text box's height is its line count times the line height, derived by the core's bounds, so the export's bounds and the hit testing read the same height without a DOM, and the editor takes no browser measure of a text box. Rejected: measuring the wrap with the DOM or a canvas in the editor. The measure differs between machines, so the export would differ from one machine to the next, and the server could not run the export. The estimate is coarser than the font, so a line may draw a little wider or narrower than its box, and the rule accepts that for one answer everywhere.
+
 ## Rejected alternatives
 
 - **A third-party whiteboard engine, embedded in the app.** This was the first recommendation of this change, with its editor mounted by a Vue component. It is rejected, because the owner's direction rules out a new third-party dependency. Its cost was also real: a second UI runtime beside the app's, a second element model to convert to, and an engine's own interaction and styling in place of ours. Excalidraw's feel is the reference for the whiteboard, not a package the whiteboard uses.
@@ -186,7 +190,7 @@ The content blobs are not touched. They are keyed by id, not by type, so no stor
 ## Notes
 
 - A patch cannot compute a reroute, so an agent's move of a shape goes through the typed move command. Without it, an arrow would stay where it was until the editor opened.
-- The renderer measures text, so an agent's text box is wrapped the same way the person's is, and the core does not store a measured height.
+- The core wraps text by its estimate, so an agent's text box is wrapped the same way the person's is, and the core stores no height for it: the height is derived from the wrapped lines.
 - The keyboard map's Backspace removes the selection, as the Flowchart's does, and the whiteboard names it: the Delete key and Backspace both delete, and the help text says so. The Flowchart's Backspace went unnamed on screen.
 - The core's element list is the same order the tree already keeps, so z-order needs no field of its own.
 
@@ -207,6 +211,11 @@ The table lists existing files this change touches, and the role each plays afte
 | `apps/web/app/services/resource/ResourceEditorComponentMap.ts`             | maps the whiteboard to its async editor                                   |
 | `apps/web/app/services/resource/ResourceTypeDescriptionMap.ts`             | the whiteboard's description in the create flow                           |
 | `apps/web/app/services/resource/PortableFormatMap.ts`                      | the PNG and SVG formats of the whiteboard                                 |
+| `packages/headless-block-editor/src/services/export/getWrappedLines.ts`    | the one wrapping rule, with `wrapParagraph.ts` and `getTextWidth.ts`      |
+| `packages/headless-block-editor/src/services/export/getTextLayout.ts`      | a text's wrapped lines laid out against its placement                     |
+| `packages/headless-block-editor/src/services/export/getTextPlacement.ts`   | where each element's text sits, and the width its lines wrap at           |
+| `packages/headless-block-editor/src/services/getElementBounds.ts`          | a text box's height, derived from the lines its text wraps to             |
+| `apps/web/app/components/Resource/Whiteboard/Label.vue`                    | the editor's text, drawn from the lines the export draws                  |
 
 ## Sources
 

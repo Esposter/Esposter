@@ -1,6 +1,6 @@
 ## Purpose
 
-A rich-text document resource type on the existing Tiptap dependency — a Tiptap editor blade, JSON at rest, and a publishable read view rendered through generateHTML. Notes hold text only: tables are plain text, and merged cells, formulas or typed values belong to a Sheet.
+A rich-text document resource type on the existing Tiptap dependency — a Tiptap editor blade, JSON at rest, and a publishable read view rendered through generateHTML. Its tables hold plain text, and merged cells, formulas or typed values belong to a Sheet.
 
 ## Requirements
 
