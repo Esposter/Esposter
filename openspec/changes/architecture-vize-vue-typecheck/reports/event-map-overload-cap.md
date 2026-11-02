@@ -84,7 +84,7 @@ src/Probe.vue(174,23): error TS2339: Property 'e0' does not exist on type '$Stat
   This location is in virtual code produced by the content mapper 'vize@0.644.0' and has no corresponding location in the original file.
 ```
 
-The component declares one emit and 16 models, so 17 events. The earliest event, `e0`, is the one missing. With one model fewer, `tsrs` reports no error.
+The component declares one emit and 16 models, so 17 events. The earliest event, `e0`, is the one missing. With one model fewer, `tsrs` reports no error. The lost events are also unchecked. A parent that binds a handler with the wrong payload to a lost event gets this error, and does not get the real type error.
 
 ## Expected
 
@@ -108,7 +108,7 @@ type $OverloadUnionRecursive<TOverload, TPartialOverload = unknown, TDepth exten
 
 The walk starts from the last overload, so the first events are the ones lost. A component with keys and no models does not fail at any size tested, so its map is likely built from the keys. The code that the content mapper generates inside `tsrs` is not saved, so this path is read and not observed.
 
-I confirmed this in plain TypeScript with the helper types copied from the binary. The same probe fails from 17 events with `tsrs` (with and without `--fast`), native TypeScript 7.0.2 and stock TypeScript 5.9.3, so the compiler is not the cause. With the depth set to 64, the 17-event and 22-event cases keep every event. At 32 events `tsrs` then stops the same recursion with `TS5114: Instantiations of type '$OverloadUnionRecursive' appear infinitely circular`. A higher limit alone does not fix this.
+I confirmed this in plain TypeScript with the helper types copied from the binary. The same probe fails from 17 events with `tsrs` (with and without `--fast`), native TypeScript 7.0.2 and stock TypeScript 5.9.3, so the compiler is not the cause. With the depth set to 64, the 17-event and 22-event cases keep every event. At 32 events `tsrs` then stops the same recursion with `TS5114: Instantiations of type '$OverloadUnionRecursive' appear infinitely circular`. A higher limit alone does not fix this. In the published package the same definition is in `virtual-ts-globals.d.ts`, and the content mapper run through `tsrs` reads it from there: changing that file changes the result, and changing the copies embedded in the native module does not.
 
 The same helper reads `Emits` in more places than `$StaticEventMap`. `__EmitProps` is defined on `__EmitOptions<T>`, so the handler props of a component come from the same walk (read in the source, not observed in a component). The change that fixes it is to build the union of overloads with an accumulator, so that the recursion is in tail position and the depth limit is no longer reached at 16 events. A second idea is to pass a keyed type to the helpers. The fix is tested below, and the idea is tested only in part.
 
@@ -140,16 +140,21 @@ A second idea passes a keyed type, and not the overloaded function, to `__EmitOp
 
 ### Checks of the fix
 
-All checks run in plain TypeScript. They use the helper text of the tag `v0.638.0`, once as it is and once with the fix, on TypeScript 5.9.3 and on `tsrs` 0.20.1-ts7.1.0-beta, with and without `--fast`. Vize's own test suite did not run (see "Not known").
+The checks are of two kinds. The type-level checks run in plain TypeScript, with the helper text of the tag `v0.638.0` once as it is and once with the fix, on TypeScript 5.9.3 and on `tsrs` 0.20.1-ts7.1.0-beta, with and without `--fast`. The real-run checks run single-file components through the content mapper of `vize` 0.644.0 in two projects that differ in one file, the package's `virtual-ts-globals.d.ts`, which holds the fix in one of them. Vize's own test suite did not run (see "Not known").
 
-| Check                                                                                 | Result                                                        |
-| :------------------------------------------------------------------------------------ | :------------------------------------------------------------ |
-| 15 emit shapes, 3 outputs each (45 comparisons), strict type identity, current vs fix | All identical                                                 |
-| Negative control: the same comparison with a changed payload                          | Fails with `TS2344` on both tools, so the comparison can fail |
-| Events held by the current helper, model branch                                       | 16 held, 17 and above fail                                    |
-| Events held by the fix, model branch                                                  | Every event at 17, 22, 32, 40, 100, 200 and 400               |
+| Check                                                                                | Result                                                                                 |
+| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| 15 emit shapes chosen by hand, 3 outputs each (45 comparisons), strict type identity | All identical                                                                          |
+| 300 emit shapes from a fixed random seed, 16 events or fewer, 3 outputs each (900)   | All identical on both tools                                                            |
+| Negative controls: a changed payload, and two different shapes compared              | Each fails with one error, so the comparisons can fail                                 |
+| Events held, model branch, plain TypeScript                                          | The current helper holds 16. The fix holds every event up to 400                       |
+| 28 components through the real content mapper, current helper against the fix        | Every component past 16 events whose emits are a type is clean with the fix. See below |
 
 The 15 shapes are the model branch with authored events, with models only and with models that share a name; call signatures; a single function type; a string event; literal events followed by a string fallback; a union event; an optional argument; a rest argument; a function with properties; no events; kebab-case events; labelled tuples; and generic payloads. The three outputs are the union of parameter tuples, the flattened `__EmitOptions` map and the flattened `__EmitProps` map.
+
+The random sample uses the seed 20261102. Its shapes are keyed events, call signatures and function types, each alone and intersected with 1 to 3 model events, with literal, union and string event names, optional, rest and labelled arguments, object and generic payloads, and kebab-case names.
+
+In the real run, every component with more than 16 events whose `defineEmits` takes a type is clean with the fix. They are 1 emit with 16 models, 12 and 5, 16 and 1, 6 and 16, 20 and 20, 50 and 50, call signatures with 8 models, and the declarations of the real component in "Real occurrence" (25 emits and 9 models, the imported types stubbed). With the current helper each of them gets one `TS2339` for every lost event, from 1 to 84 errors. Components with 16 events or fewer give the same output with both helpers, errors included. A parent that binds `@e0` with a wrong payload to a child of 17 events gets the real `TS2322` with the fix. With the current helper it gets a `TS2339` and no `TS2322`. The real component gives the same result: 18 `TS2339` with the current helper, and the real `TS2322` with the fix.
 
 Cost on TypeScript 5.9.3, from `--extendedDiagnostics`, for the model branch:
 
@@ -161,7 +166,7 @@ Cost on TypeScript 5.9.3, from `--extendedDiagnostics`, for the model branch:
 |    100 |          fails |             163,696 |          1.65 s |                              848 |
 |    400 |          fails |           2,393,446 |            95 s |                            3,248 |
 
-On `tsrs --fast` the fix takes 0.3 s at 16 events, as the current helper does, 0.6 s at 100 events and 20 s at 400 events. The keyed type takes 0.3 s at every size. The fix costs more as the count grows, and the keyed type does not. A component with 100 events is far past any real use, and the current helper drops events silently from 17.
+On `tsrs --fast` the fix takes 0.3 s at 16 events, as the current helper does, 0.6 s at 100 events and 20 s at 400 events. The keyed type takes 0.3 s at every size. In the real run, check time did not change up to 40 events and went from 0.4 s to 0.7 s at 100 events. The fix costs more as the count grows, and the keyed type does not. A component with 100 events is far past any real use, and the current helper drops events silently from 17.
 
 ## Real occurrence
 
@@ -185,7 +190,11 @@ One change at a time. Errors on `vize` 0.644.0 with `tsrs`, and `vue-tsc` on the
 
 ## Not known
 
-The same input with `typescript-native-bridge` 6.0.3 fails every file, including the 16-event one, with `TS18069: The content mapper process failed while handling the project request` on 0.638.0 and 0.644.0. That is a different failure and it is not analysed here. Releases older than 0.630.0 are not tested. The `defineEmits` call-signature form is tested only as a type in the 15 shapes, and not in a component. The fix is not applied to a build of vize, because no Rust toolchain was available, so vize's own tests did not run on it. Vue 2 mode, `emit-inference` and the `__vize_emits` runtime-array path are not tested. The handler props of a component are compared as types, and are not observed in a component that uses the child.
+The same input with `typescript-native-bridge` 6.0.3 fails every file, including the 16-event one, with `TS18069: The content mapper process failed while handling the project request` on 0.638.0 and 0.644.0. That is a different failure and it is not analysed here. Releases older than 0.630.0 are not tested.
+
+The fix is tested through the package's helper file and not through a build of vize, because no Rust toolchain was available, so vize's own tests, which may hold the helper text in a snapshot, did not run on it. The real component was tested with its imported types stubbed, and not in the repository's own type check. Vue 2 mode was not tested.
+
+A different defect shows in the same run. A component with a runtime array `defineEmits` and a model fails at any size. `defineEmits(["a0", "a1", "a2"])` with `defineModel<number>("m0")` gives `TS2339: Property 'update:m0' does not exist on type '$StaticEventMap'`. The same array without the model is clean at 6 and at 20 events, and 6 events with 4 models and 10 events with 10 models give one error per model. The fix above does not change it. The generator builds `$StaticEventMap` for that form from `__vize_emits` only, at `generator/emits.rs:300`, so the model events are not in it. It is not the closed issue #9429, which has no model.
 
 ## Not a duplicate of
 

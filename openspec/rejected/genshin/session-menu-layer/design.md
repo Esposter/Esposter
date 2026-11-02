@@ -24,6 +24,8 @@ Both cheaper shapes were measured on the real block, by counting the bindings of
 2. **Pages that own their composables.** Five pages read state that no other part of the template reads: the mailbox, the adventurer handbook, the bag, the wishes and the quests. The composables that produce that state take the root's shared state as inputs, a dozen for the mailbox and some twenty for the commission claims. A page that owns its composable therefore trades the bindings of its outputs for the bindings of its inputs, about one for one. It does not pay.
 3. **The layer stays where it is.** An integration root that wires many features is the form the guide allows, and a block of bindings with no logic is not a defect on its own. The block is long because the pages share the root's saved state and each takes its own handlers, and the cuts above move that wiring without removing it.
 
+Neither shape was built. The counts come from the real block and the real composables, and a build would add the pages' fixtures and tests to the adding side, so it can only widen the gap.
+
 A shape that gathers many events into one component forwards them, and that is the shape the checker's defect fails on. The defect did not decide the outcome. The shapes that pay would have far fewer events, so the defect would not have stopped them either.
 
 ## Key files
