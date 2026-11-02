@@ -1,6 +1,6 @@
 # content-mapper: an assignment in an inline callback prop does not narrow in the inference-only copy, so a later read reports TS18048
 
-I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
 
 This is one of a batch of issues filed together, all from that attempt:
 
@@ -10,7 +10,7 @@ An inline callback prop with a block body assigns a ref and reads the ref on the
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Node 26.13.0, Linux x64. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux x64. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which accepts the file.
 
 ## Reproduction
 

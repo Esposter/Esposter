@@ -1,6 +1,6 @@
 # content-mapper: an undeclared attribute on a library function component reports TS2353 when the project and `vize` do not share one `vue`
 
-I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
 
 This is one of a batch of issues filed together, all from that attempt:
 
@@ -10,11 +10,11 @@ A library component declared as a function that returns `VNode & { __ctx }` (the
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, pnpm 10.28.0, Node 26.13.0, Linux 6.18. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux 6.18. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no error for the reproduction.
 
 ## Reproduction
 
-A pnpm workspace. `vize` is in the root manifest and `vue` is only in the `app` manifest, as in a monorepo. `foo-lib` stands for a library that ships a generic component declaration.
+A pnpm workspace. `vize` is in the root manifest and `vue` is only in the `consumer` manifest, as in a monorepo. `foo-lib` stands for a library that ships a generic component declaration.
 
 `package.json`:
 
@@ -30,16 +30,16 @@ A pnpm workspace. `vize` is in the root manifest and `vue` is only in the `app` 
 
 ```yaml
 packages:
-  - app
+  - consumer
 ```
 
-`app/package.json`:
+`consumer/package.json`:
 
 ```json
 { "private": true, "type": "module", "dependencies": { "foo-lib": "file:../foo-lib", "vue": "3.5.44" } }
 ```
 
-`app/tsconfig.json`:
+`consumer/tsconfig.json`:
 
 ```json
 {
@@ -72,7 +72,7 @@ export declare const Foo: <T>(
 ) => VNode & { __ctx?: object };
 ```
 
-`app/src/Probe.vue`:
+`consumer/src/Probe.vue`:
 
 ```vue
 <script setup lang="ts">
@@ -86,7 +86,7 @@ import { Foo } from "foo-lib";
 
 ```sh
 pnpm i
-cd app
+cd consumer
 pnpm exec tsrs --runExternalCode --noEmit -p tsconfig.json
 pnpm exec vue-tsc --noEmit -p tsconfig.json
 ```
@@ -122,7 +122,7 @@ if !same_vue {
 }
 ```
 
-In the reproduction, `vue` is in `app/node_modules` and `vize` is in the root `node_modules`, so the search from `vize` finds no `vue`. With `None`, `resolve_open_project` does not enable the shared virtual module (`project.rs:158-163`). Each generated file then embeds its helpers, with `emit_import_meta_augmentation` as the only global (`crates/vize_canon/src/virtual_ts/generator/preamble.rs:28-31`, `crates/vize_canon/src/virtual_ts/import_meta.rs:11-20`).
+In the reproduction, `vue` is in the `node_modules` of `consumer` and `vize` is in the root `node_modules`, so the search from `vize` finds no `vue`. With `None`, `resolve_open_project` does not enable the shared virtual module (`project.rs:158-163`). Each generated file then embeds its helpers, with `emit_import_meta_augmentation` as the only global (`crates/vize_canon/src/virtual_ts/generator/preamble.rs:28-31`, `crates/vize_canon/src/virtual_ts/import_meta.rs:11-20`).
 
 Only the shared header declares the fallback that `vue-tsc` declares (`crates/vize_canon/src/virtual_ts/helpers/declarations/shared-header.d.ts.txt:20-22`, and the same line in `npm/cli/virtual-ts-globals.d.ts:28`):
 
@@ -144,27 +144,29 @@ So the library's own term `typeof globalThis extends { __VLS_PROPS_FALLBACK: inf
 
 The shape in a real Nuxt monorepo: [`Ui/Tree/Item.vue` line 18](https://github.com/Esposter/Esposter/blob/f67c89ea6421ef512da19a49a670746cb4be3b51/apps/web/app/components/Ui/Tree/Item.vue#L18) passes `:data-item-id` to a generic component of `@vuetify/v0`. `vue-tsc` accepts it.
 
+In that monorepo `vize` is a dependency of the root manifest and `vue` is a dependency of the app only, so `vue` is not resolvable from the root. Declaring `vue` in the root manifest beside `vize` removes the four errors of this shape from the app's mapper run, and so does the `declare global` of the Isolation table.
+
 ## Isolation
 
 One change at a time from the reproduction. Errors on `vize` 0.650.0, `tsrs` and `vue-tsc`:
 
-| Change                                                                            | `tsrs` | `vue-tsc` |
-| :-------------------------------------------------------------------------------- | -----: | --------: |
-| None                                                                              |      1 |         0 |
-| `vue` is also in the root manifest, so `vize` and `vue` share one folder          |      0 |         0 |
-| Same, and the library props have no `__VLS_PROPS_FALLBACK` term                   |      1 |         0 |
-| `declare global { var __VLS_PROPS_FALLBACK: Record<string, unknown> }` in the app |      0 |         0 |
-| The library props have no `__VLS_PROPS_FALLBACK` term                             |      1 |         0 |
-| The declaration is not generic (`value?: string`, no `<T>`)                       |      1 |         0 |
-| The return type is `VNode`, with no `__ctx`                                       |      0 |         0 |
-| The library exports `DefineComponent<{ value?: string }>`                         |      0 |         0 |
-| A local `.vue` component with `defineProps<{ value?: string }>()`                 |      0 |         0 |
-| The tag is dotted: `import * as Lib` and `<Lib.Foo>`                              |      1 |         0 |
-| The attribute is bound: `:data-bar="'a'"`                                         |      1 |         0 |
-| The attribute is `pt-4`                                                           |      1 |         0 |
-| `"vueCompilerOptions": { "checkUnknownProps": false }`                            |      1 |         0 |
-| `vize` 0.638.0                                                                    |      1 |         0 |
-| `vize` 0.651.0                                                                    |      1 |         0 |
+| Change                                                                                 | `tsrs` | `vue-tsc` |
+| :------------------------------------------------------------------------------------- | -----: | --------: |
+| None                                                                                   |      1 |         0 |
+| `vue` is also in the root manifest, so `vize` and `vue` share one folder               |      0 |         0 |
+| Same, and the library props have no `__VLS_PROPS_FALLBACK` term                        |      1 |         0 |
+| `declare global { var __VLS_PROPS_FALLBACK: Record<string, unknown> }` in the consumer |      0 |         0 |
+| The library props have no `__VLS_PROPS_FALLBACK` term                                  |      1 |         0 |
+| The declaration is not generic (`value?: string`, no `<T>`)                            |      1 |         0 |
+| The return type is `VNode`, with no `__ctx`                                            |      0 |         0 |
+| The library exports `DefineComponent<{ value?: string }>`                              |      0 |         0 |
+| A local `.vue` component with `defineProps<{ value?: string }>()`                      |      0 |         0 |
+| The tag is dotted: `import * as Lib` and `<Lib.Foo>`                                   |      1 |         0 |
+| The attribute is bound: `:data-bar="'a'"`                                              |      1 |         0 |
+| The attribute is `pt-4`                                                                |      1 |         0 |
+| `"vueCompilerOptions": { "checkUnknownProps": false }`                                 |      1 |         0 |
+| `vize` 0.638.0                                                                         |      1 |         0 |
+| `vize` 0.651.0                                                                         |      1 |         0 |
 
 The real library `@vuetify/v0` 1.3.1 in place of `foo-lib`, with `<Treeview.Item :data-item-id="'a'" />`, gives 1 error in `tsrs` and 0 in `vue-tsc` in the workspace layout. The same file in a single project, where `vue` and `vize` share one `node_modules` folder, gives 0 and 0.
 

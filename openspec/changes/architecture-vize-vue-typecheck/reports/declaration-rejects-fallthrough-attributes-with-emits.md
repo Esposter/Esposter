@@ -1,6 +1,6 @@
 # check --declaration: the emitted component type still refuses undeclared attributes when the component has an emit or two required props (#11364 closed, reduction too narrow)
 
-I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
 
 #11364 reported that a `.vue.d.ts` written by `vize check --declaration` makes `vue-tsc` report TS2345 for an attribute that the component does not declare, for example `disabled`. The issue is closed, but the bug is not fixed on 0.650.0. The reduction in #11364 (one required prop, no emits) already passes on every release I tried, so the closing change could not show the bug. A component with one emit, or with two required props, still fails.
 
@@ -10,7 +10,7 @@ This is one of a batch of issues filed together, all from that attempt:
 
 ## Environment
 
-`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, the repository's pinned Node, Linux. Oracle: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`.
+`vize` 0.650.0 with `tsrs` 0.20.1-ts7.1.0-beta, `vue` 3.5.44, Linux. Oracle: the declaration that `vue-tsc` 3.3.11 writes with `typescript` 6.0.3, consumed by the same `vue-tsc`.
 
 ## Reproduction
 

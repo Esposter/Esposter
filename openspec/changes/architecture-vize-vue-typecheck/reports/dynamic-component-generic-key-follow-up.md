@@ -1,6 +1,6 @@
 # content-mapper: `<component :is="map[foo]">` with a generic key still fails the generated component check (TS2345 and TS2322) when `map` holds different components
 
-I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
 
 This is one of a batch of issues filed together, all from that attempt:
 
@@ -12,7 +12,7 @@ The issue #11366 reported the same two errors for a map that holds one component
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Node 26.13.0, Linux for the reduction and Windows 11 for the Nuxt app. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Nuxt 5.0.0-2611010234-c709ec8, Linux for the reduction and for the Nuxt app. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which checks the same Nuxt app with no error.
 
 ## Reproduction
 

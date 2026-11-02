@@ -1,6 +1,6 @@
 # content-mapper: the event payload of a generic library component is `any`, so a `typeof` guard narrows it to `string` and a generic target rejects it
 
-I was trying to adopt vize for Nuxt type checking and ran into this, among a few others.
+I am replacing the Vue tooling of a Nuxt monorepo with vize, one tool at a time. `vue-tsc` becomes `tsrs` running the vize content mapper. `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins. Nuxt's Vue integration becomes `@vizejs/nuxt`. This issue comes from the first step, the type check, and is one of a few I ran into.
 
 This is one of a batch of issues filed together, all from that attempt:
 
@@ -12,7 +12,7 @@ This is the "second symptom" of the closed #11363, after the dotted tag was link
 
 ## Environment
 
-`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Node 26.13.0, Linux. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction.
+`vize` 0.650.0, `tsrs` 0.20.1-ts7.1.0-beta (`--runExternalCode`), `vue` 3.5.44, Linux. Oracle: `vue-tsc` 3.3.11 with `typescript` 6.0.3, which reports no diagnostic for the reproduction.
 
 ## Reproduction
 
