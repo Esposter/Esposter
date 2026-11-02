@@ -1775,6 +1775,9 @@ useWorldSaveSync({
       </template>
     </MenuScreen>
     <WorldSessionScreens
+      v-model:expeditions="expeditions"
+      v-model:reputation-level="reputationLevel"
+      v-model:shop-purchases="shopPurchases"
       :adventure-rank="rank"
       :cast-view
       :character-passive-group-id-map
@@ -1783,11 +1786,8 @@ useWorldSaveSync({
       :expedition-characters
       :game-data-base-url
       :game-text
-      v-model:expeditions="expeditions"
       :gcg-game-id
-      v-model:reputation-level="reputationLevel"
       :get-world-now
-      v-model:shop-purchases="shopPurchases"
       :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :language
@@ -1800,6 +1800,7 @@ useWorldSaveSync({
       :reputation-city
       :reputation-offer-title
       :screen-kind
+      :shop-id
       :talk
       :talk-duel-game-id
       :talk-offers

@@ -16,6 +16,8 @@ export const props = {
       id: 1,
       limitLabel: "Left This Month: 5",
       name: "Intertwined Fate",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
     {
@@ -23,6 +25,8 @@ export const props = {
       id: 2,
       limitLabel: "Left This Month: 5",
       name: "Acquaint Fate",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
     {
@@ -30,6 +34,8 @@ export const props = {
       id: 3,
       limitLabel: "Left This Month: 100",
       name: "Adventurer's Experience ×3",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
     {
@@ -37,6 +43,8 @@ export const props = {
       id: 4,
       limitLabel: "Left This Month: 60",
       name: "Mystic Enhancement Ore",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
     {
@@ -44,6 +52,8 @@ export const props = {
       id: 5,
       limitLabel: "Left This Month: 30",
       name: "Mora ×10000",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
     {
@@ -51,6 +61,8 @@ export const props = {
       id: 6,
       limitLabel: "Left This Month: 12",
       name: "Black Bronze Horn",
+      ownedLabel: "",
+      purchaseLabel: "",
       refreshLabel: "",
     },
   ],

@@ -24,13 +24,15 @@ interface Props {
   countMaximum: number;
   // The goods the shop sells, in the shop's order, one under another
   goods: ShopGoodCell[];
+  // The heading over where the shown good's item comes from, which its source box sits under
+  sourceLabel: string;
   // The title the game shows over the list
   title: string;
 }
 
 const count = defineModel<number>("count", { default: 1 });
 const goodId = defineModel<number>("goodId", { default: 0 });
-const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, title } = defineProps<Props>();
+const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, sourceLabel, title } = defineProps<Props>();
 const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
 // The good the player picked, if any, and the good the detail shows, which is the first good until one is picked
 const { pickedCount, pickedGood, setCount } = useShopGoodPick({
@@ -68,7 +70,7 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
           <span class="good-arrow" aria-hidden="true" />
           <span class="good-icon" />
           <span class="good-name">{{ good.name }}</span>
-          <span v-if="good.limitLabel" class="good-limit">{{ good.limitLabel }}</span>
+          <span v-if="good.purchaseLabel" class="good-limit">{{ good.purchaseLabel }}</span>
           <span class="good-costs">
             <span v-for="cost of good.costs" :key="cost.name" class="good-price price-line">
               <span class="coin" role="img" :aria-label="cost.name" />
@@ -86,9 +88,12 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
         <span class="detail-picture" />
       </div>
       <div class="detail-body">
+        <p class="detail-source-label">{{ sourceLabel }}</p>
         <span class="detail-source" />
       </div>
-      <div class="detail-owned" />
+      <div class="detail-owned">
+        <p class="detail-owned-count">{{ shownGood.ownedLabel }}</p>
+      </div>
     </section>
     <div v-if="pickedGood" class="amount-picker">
       <input
@@ -143,6 +148,7 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   color: #d9c48f;
   font-size: calc(var(--unit) * 24);
   line-height: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 2.5);
 }
 
 .balances {
@@ -259,20 +265,22 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
 
 .good-limit {
   position: absolute;
-  top: calc(var(--unit) * 15);
-  right: calc(var(--unit) * 25);
+  top: calc(var(--unit) * 14);
+  right: calc(var(--unit) * 24);
   box-sizing: border-box;
-  height: calc(var(--unit) * 28);
-  padding: 0 calc(var(--unit) * 14);
+  height: calc(var(--unit) * 34);
+  padding: 0 calc(var(--unit) * 11);
   border: calc(var(--unit) * 2) solid rgb(235 230 215 / 0.75);
-  border-radius: calc(var(--unit) * 14);
-  font-size: calc(var(--unit) * 20);
-  line-height: calc(var(--unit) * 24);
+  border-radius: calc(var(--unit) * 17);
+  font-size: calc(var(--unit) * 23);
+  line-height: calc(var(--unit) * 30);
+  letter-spacing: calc(var(--unit) * 1.2);
 }
 
 .good[aria-pressed="true"] .good-limit {
   right: calc(var(--unit) * 14);
   border-color: rgb(120 118 110 / 0.7);
+  color: #4a5164;
 }
 
 .good-costs {
@@ -344,6 +352,18 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   background: #ebe5d5;
 }
 
+.detail-source-label {
+  position: absolute;
+  top: calc(var(--unit) * 167);
+  left: calc(var(--unit) * 67);
+  margin: 0;
+  color: #4a5164;
+  font-size: calc(var(--unit) * 24);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 26);
+  letter-spacing: calc(var(--unit) * 0.8);
+}
+
 .detail-source {
   position: absolute;
   top: calc(var(--unit) * 208);
@@ -361,6 +381,16 @@ const shownGood = computed(() => pickedGood.value ?? goods[0]);
   width: 100%;
   height: calc(var(--unit) * 48);
   background: rgb(254 231 186);
+}
+
+.detail-owned-count {
+  margin: 0;
+  color: #4a5164;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+  line-height: calc(var(--unit) * 48);
+  letter-spacing: calc(var(--unit) * 0.6);
+  text-align: center;
 }
 
 .amount-picker {

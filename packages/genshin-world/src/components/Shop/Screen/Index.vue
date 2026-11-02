@@ -18,6 +18,7 @@ import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
 import { computeShopTabs } from "#src/services/shop/computeShopTabs";
 import { countShopCost } from "#src/services/shop/countShopCost";
 import { discountShopGood } from "#src/services/shop/discountShopGood";
+import { ShopTitleGameTextKeyMap } from "#src/services/shop/ShopTitleGameTextKeyMap";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 import { takeOne } from "@esposter/shared";
 import { GameScreen, ShopScreen } from "genshin-interface";
@@ -40,13 +41,15 @@ interface Props {
   now: Temporal.Instant;
   // The Reputation level the player has reached, which a city shop's Mora prices are discounted at
   reputationLevel: number;
+  // The id of the shop the screen is open at, which names its title
+  shopId: number;
 }
 
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 // Every good bought, by its id and the moment it was bought, which each good's limit is counted from
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
-const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel } =
+const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel, shopId } =
   defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const { count, goodId, resetShopPick } = useShopPick();
@@ -83,6 +86,7 @@ const balances = computed<CurrencyCount[]>(() =>
 const goodCells = useShopGoodCells({
   getCostName,
   getGameText: () => gameText,
+  getHeldCount: (itemId) => countShopCost(inventory.value, wallet.value, itemId),
   getNow: () => now,
   goods: computed(() =>
     offeredGoods.value.map((good) => ({ good, name: getItemDefinition(good.itemId, nameText, materialDataMap).name })),
@@ -139,7 +143,8 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-label="gameText[GameTextKey.CraftingAmount]"
       :count-maximum
       :goods="goodCells"
-      :title="gameText[GameTextKey.Shop]"
+      :source-label="gameText[GameTextKey.ShopSource]"
+      :title="gameText[ShopTitleGameTextKeyMap.get(shopId) ?? GameTextKey.Shop]"
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
     />
@@ -155,7 +160,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-maximum
       :goods="goodCells"
       :tabs
-      :title="gameText[GameTextKey.Shop]"
+      :title="gameText[ShopTitleGameTextKeyMap.get(shopId) ?? GameTextKey.Shop]"
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"
     />

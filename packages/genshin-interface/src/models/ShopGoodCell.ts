@@ -7,6 +7,10 @@ export interface ShopGoodCell {
   // The Left This Month, Left Today or Left This Week line, its count already filled, where the good has a limit
   limitLabel: string;
   name: string;
+  // The Owned line, the count the player holds of the good's item already filled
+  ownedLabel: string;
+  // The Purchase up to line, its count left over the limit already filled, where the good has a buy limit
+  purchaseLabel: string;
   // The Refreshes in line, its countdown already filled, where the good comes back on a refresh
   refreshLabel: string;
   // The sold-out line the game words in place of the limit line, where the good can no longer be bought

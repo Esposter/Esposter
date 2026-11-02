@@ -8,6 +8,11 @@ export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0)
 // How many pairs of characters Paimon's Bargains' rotation holds, and the offset that puts January on the fourth of them
 export const PAIMON_BARGAINS_PAIR_COUNT = 6;
 export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
+// The three General Goods shops, by the ids their goods are read under: Mondstadt's grocery, which the shop table types as an
+// Activity shop (see the shops page's Open), and Liyue's and Inazuma's, which the table types as groceries
+export const MONDSTADT_GENERAL_GOODS_SHOP_ID = 1004;
+export const LIYUE_GENERAL_GOODS_SHOP_ID = 1008;
+export const INAZUMA_GENERAL_GOODS_SHOP_ID = 1056;
 // Marjorie's shop, the Mondstadt Souvenir Shop, which the Frostbearing Tree's last level opens
 export const MONDSTADT_SOUVENIR_SHOP_ID = 1002;
 // Brook's and Draff's shops, the two city vendors the wiki gives by day only, from six in the morning until seven at night
@@ -39,7 +44,7 @@ export const REALM_DEPOT_GOODS_KEYS: readonly Extract<GameDataKey, `shops/${stri
 export const SHOP_GOODS_KEYS: readonly (readonly [number, readonly Extract<GameDataKey, `shops/${string}`>[]])[] = [
   [PAIMON_BARGAINS_SHOP_ID, ["shops/paimonsBargains"]],
   [MONDSTADT_SOUVENIR_SHOP_ID, ["shops/souvenirMondstadt"]],
-  [1004, ["shops/mondstadtGeneralGoods"]],
+  [MONDSTADT_GENERAL_GOODS_SHOP_ID, ["shops/mondstadtGeneralGoods"]],
   [1005, ["shops/goodHunter"]],
   [1011, ["shops/mondstadtFlora"]],
   [1012, ["shops/mondstadtCharles"]],

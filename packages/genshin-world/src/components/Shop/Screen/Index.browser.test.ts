@@ -7,6 +7,7 @@ import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { REALM_DEPOT_SHOP_ID } from "#src/services/shop/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -81,6 +82,7 @@ describe("shopScreen", () => {
             now,
             purchases: [],
             reputationLevel: 1,
+            shopId: REALM_DEPOT_SHOP_ID,
             wallet,
           }),
       }),

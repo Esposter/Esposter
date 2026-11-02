@@ -12,18 +12,21 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 import { computed } from "vue";
 
 // The goods a shop screen draws, each with the name it is drawn under, its costs named by the currency or item they are
-// Paid in, and the limit it has left and the refresh it reads from the moment the clock gives
+// Paid in, the count the player holds of its item, and the limit it has left and the refresh it reads from the moment the
+// Clock gives
 export const useShopGoodCells = ({
   getCostName,
   getGameText,
+  getHeldCount,
   getNow,
   goods,
   purchases,
 }: {
   getCostName: (itemId: number) => string;
   getGameText: () => GameText;
+  getHeldCount: (itemId: number) => number;
   getNow: () => Temporal.Instant;
-  goods: ComputedRef<{ good: Pick<ShopGood, "buyLimit" | "costs" | "goodsId" | "refresh">; name: string }[]>;
+  goods: ComputedRef<{ good: Pick<ShopGood, "buyLimit" | "costs" | "goodsId" | "itemId" | "refresh">; name: string }[]>;
   purchases: Readonly<Ref<ShopPurchase[]>>;
 }) =>
   computed<ShopGoodCell[]>(() => {
@@ -38,6 +41,11 @@ export const useShopGoodCells = ({
         id: good.goodsId,
         limitLabel: left === undefined || limitKey === undefined ? "" : fillGameTextValues(gameText[limitKey], left),
         name,
+        ownedLabel: fillGameTextValues(gameText[GameTextKey.ShopOwned], getHeldCount(good.itemId)),
+        purchaseLabel:
+          left === undefined
+            ? ""
+            : fillGameTextValues(gameText[GameTextKey.ShopPurchaseUpTo], `${left}/${good.buyLimit}`),
         refreshLabel:
           nextRefreshTime === undefined
             ? ""

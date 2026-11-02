@@ -99,7 +99,7 @@ committed.
 | `settings-audio-rows`                  | `MenuSettings`              |                                                                          1.01% | 0.997 |  0.38% | 0.0742 |
 | `settings-graphics`                    | `MenuSettings`              |                                                                          1.56% | 0.996 |  1.26% | 0.1010 |
 | `settings-graphics-rows`               | `MenuSettings`              |                                                                          1.07% | 0.998 |  0.41% | 0.0888 |
-| `shop-screen`                          | `ShopScreen`                |                                                                          6.29% | 0.751 |  4.18% | 0.2800 |
+| `shop-screen`                          | `ShopScreen`                |                                                                          6.37% | 0.798 |  4.34% | 0.2812 |
 | `spiral-abyss-benediction`             | `SpiralAbyssBenediction`    |                                                                          1.70% | 0.979 |  0.48% | 0.0696 |
 | `spiral-abyss-entry`                   | `SpiralAbyssEntry`          |                                       pending: no screenshot of the screen yet |       |        |        |
 | `splash-title-chinese-traditional`     | `SplashTitle`               |                                     pending: no screenshot of this variant yet |       |        |        |

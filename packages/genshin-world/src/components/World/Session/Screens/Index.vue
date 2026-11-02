@@ -48,6 +48,8 @@ interface Props {
   reputationCity?: ReputationCity;
   reputationOfferTitle?: string;
   screenKind: ScreenKind;
+  // The id of the shop the screen is open at, which names its title
+  shopId: number;
   talk?: Talk;
   talkDuelGameId?: number;
   talkOffers: TalkOffer[];
@@ -82,6 +84,7 @@ const {
   reputationCity,
   reputationOfferTitle,
   screenKind,
+  shopId,
   talk,
   talkDuelGameId,
   talkOffers,
@@ -155,6 +158,7 @@ const emit = defineEmits<{
     :name-text
     :now="worldNow"
     :reputation-level="reputation.level"
+    :shop-id
     :wallet
     @close="emit('close')"
     @update:inventory="(nextInventory) => emit('update:inventory', nextInventory)"

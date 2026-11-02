@@ -27,6 +27,7 @@ import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/check
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
 import { PAIMON_BARGAINS_TABS } from "#src/services/shop/constants";
+import { countShopCost } from "#src/services/shop/countShopCost";
 import { getPaimonsBargainsGoods } from "#src/services/shop/getPaimonsBargainsGoods";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -150,6 +151,7 @@ const offerNames = computed(() =>
 const shopGoodCells = useShopGoodCells({
   getCostName: (itemId) => gameText[takeOne(CurrencyGameTextKeyMap, currencyOf(itemId))],
   getGameText: () => gameText,
+  getHeldCount: (itemId) => countShopCost(inventory.value, wallet.value, itemId),
   getNow: () => now,
   goods: offerNames,
   purchases,
