@@ -7,13 +7,13 @@ import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisher
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/constants";
 import { InvocationContext } from "@azure/functions";
+import { MAX_EVENT_GRID_PUBLISH_BYTES } from "@esposter/azure";
 import {
   AzureContainer,
   AzureFunction,
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
-  MAX_EVENT_GRID_PUBLISH_BYTES,
 } from "@esposter/db-schema";
 import { getResult, ID_SEPARATOR, jsonDateParse, noop } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";

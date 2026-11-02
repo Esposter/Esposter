@@ -20,11 +20,11 @@ import type { Except } from "type-fest";
 
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
-import { MOCK_TABLE_BASE_URL } from "#src/services/constants";
+import { INVALID_INPUT_MESSAGE, MOCK_TABLE_BASE_URL } from "#src/services/constants";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { chunk, exhaustiveGuard, getOrCreate, getResult, ID_SEPARATOR, noop } from "@esposter/shared";
 
 /**
@@ -111,7 +111,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
             throw new RangeError("maxPageSize must be greater than 0.");
           // Azure Table Storage rejects a page size above its hard limit with InvalidInput (400)
           else if (maxPageSize !== undefined && maxPageSize > AZURE_MAX_PAGE_SIZE)
-            throw new MockRestError("One of the request inputs is not valid.", 400);
+            throw new MockRestError(INVALID_INPUT_MESSAGE, 400);
 
           if (entities.length === 0) return;
           else if (!maxPageSize) {
@@ -139,6 +139,8 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   // Its own writes, and the rollback below would then restore a snapshot predating them — silently dropping
   // Writes the service would have kept. Nothing may observe a half-applied batch, including a losing one.
   submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
+    // The service refuses a transaction over its action limit whole, before any of its actions applies
+    if (actions.length > AZURE_MAX_BATCH_SIZE) throw new MockRestError(INVALID_INPUT_MESSAGE, 400);
     let partitionKey: string | undefined;
     for (const [, entity] of actions)
       if (partitionKey === undefined) partitionKey = entity.partitionKey;

@@ -1,8 +1,8 @@
-import type { TableEntity } from "@azure/data-tables";
+import type { TableEntity, TransactionAction } from "@azure/data-tables";
 
 import { MockTableClient } from "#src/models/table/MockTableClient";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { AZURE_MAX_BATCH_SIZE, AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -155,6 +155,22 @@ describe(MockTableClient, () => {
     const storedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
 
     expect(storedEntity.count).toBe(1);
+  });
+
+  // The service refuses a transaction over its action limit whole, so none of its creates lands
+  test("rejects a transaction over the azure action limit and applies none of it", () => {
+    expect.hasAssertions();
+
+    const client = new MockTableClient(tableName, tableName);
+    const actions = Array.from({ length: AZURE_MAX_BATCH_SIZE + 1 }, (_value, index): TransactionAction => [
+      "create",
+      { partitionKey, rowKey: `${index}` },
+    ]);
+
+    expect(() => client.submitTransaction(actions)).toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: One of the request inputs is not valid.]`,
+    );
+    expect(client.table.size).toBe(0);
   });
 
   test("serves a fresh etag for every write so a reread never matches a superseded version", async () => {

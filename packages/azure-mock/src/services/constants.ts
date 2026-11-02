@@ -4,6 +4,8 @@ export const BLOB_NOT_FOUND_MESSAGE = "The specified blob does not exist.";
 // The service's wording for a conditional request its condition refused
 export const CONDITION_NOT_MET_ERROR_CODE = "ConditionNotMet";
 export const CONDITION_NOT_MET_MESSAGE = "The condition specified using HTTP conditional header(s) is not met.";
+// The service's wording for a request an input outside its limits makes it refuse
+export const INVALID_INPUT_MESSAGE = "One of the request inputs is not valid.";
 export const MOCK_BLOB_BASE_URL = "https://mockaccount.blob.core.windows.net";
 export const MOCK_QUEUE_BASE_URL = "https://mockaccount.queue.core.windows.net";
 export const MOCK_SEARCH_BASE_URL = "https://mockaccount.search.windows.net";

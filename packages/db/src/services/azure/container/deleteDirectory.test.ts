@@ -1,7 +1,7 @@
 import type { BatchSubResponse, ContainerClient } from "@azure/storage-blob";
 
 import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
-import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
+import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/azure";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

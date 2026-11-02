@@ -3,6 +3,7 @@ import { MockContainerClient } from "#src/models/container/MockContainerClient";
 import { MOCK_BLOB_BASE_URL } from "#src/services/constants";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
+import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/azure";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(MockBlobBatchClient, () => {
@@ -130,6 +131,23 @@ describe(MockBlobBatchClient, () => {
 
     expect(response.subResponses.map(({ status }) => status)).toStrictEqual([202]);
     expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(false);
+  });
+
+  // The sdk refuses a batch past its sub-request limit before sending any of it, so no blob in the batch is deleted
+  test("refuses a batch over the sub-request limit before deleting any of it", async () => {
+    expect.hasAssertions();
+
+    MockContainerDatabase.set(containerName, new Map([[blobName, Buffer.from("")]]));
+    const client = new MockBlobBatchClient(MOCK_BLOB_BASE_URL);
+    const url = `${MOCK_BLOB_BASE_URL}/${containerName}/${blobName}`;
+
+    await expect(
+      client.deleteBlobs(
+        Array.from({ length: MAX_BLOB_BATCH_DELETIONS + 1 }, () => url),
+        new AnonymousCredential(),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[RangeError: Cannot exceed 256 sub requests in a single batch]`);
+    expect(MockContainerDatabase.get(containerName)?.has(blobName)).toBe(true);
   });
 
   // A condition the mock does not reproduce would be dropped without a trace, so the call refuses it outright

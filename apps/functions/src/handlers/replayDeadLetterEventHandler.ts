@@ -9,6 +9,7 @@ import { formatReplayId } from "#src/services/deadLetter/formatReplayId";
 import { parseReplayId } from "#src/services/deadLetter/parseReplayId";
 import { writeDeadLetterBlob } from "#src/services/deadLetter/writeDeadLetterBlob";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
+import { MAX_EVENT_GRID_PUBLISH_BYTES, MAX_EVENT_GRID_PUBLISH_EVENT_COUNT } from "@esposter/azure";
 import {
   AzureContainer,
   AzureFunction,
@@ -17,8 +18,6 @@ import {
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
   DEAD_LETTER_QUARANTINED_LOG_MESSAGE_SUFFIX,
-  MAX_EVENT_GRID_PUBLISH_BYTES,
-  MAX_EVENT_GRID_PUBLISH_EVENT_COUNT,
 } from "@esposter/db-schema";
 import { chunkBySerializedSize, getResult, getResultAsync, noop } from "@esposter/shared";
 import { z } from "zod";

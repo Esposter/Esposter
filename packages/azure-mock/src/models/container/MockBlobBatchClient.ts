@@ -24,6 +24,7 @@ import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders } from "@azure/core-rest-pipeline";
+import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/azure";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -51,6 +52,9 @@ export class MockBlobBatchClient implements BlobBatchClient {
     )?.[0];
     if (unsupportedConditionName !== undefined)
       return Promise.reject(new NotImplementedError(`deleteBlobs with ${unsupportedConditionName}`));
+    // The sdk refuses the sub-request past its limit while the batch is still being built, so no blob in it is deleted
+    if (urls.length > MAX_BLOB_BATCH_DELETIONS)
+      return Promise.reject(new RangeError(`Cannot exceed ${MAX_BLOB_BATCH_DELETIONS} sub requests in a single batch`));
     const subResponses: BatchSubResponse[] = [];
     let subResponsesSucceededCount = 0;
     let subResponsesFailedCount = 0;

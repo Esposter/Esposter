@@ -1,6 +1,6 @@
 import type { BlobRequestConditions, ContainerClient } from "@azure/storage-blob";
 
-import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/db-schema";
+import { MAX_BLOB_BATCH_DELETIONS } from "@esposter/azure";
 import { chunk, InvalidOperationError, normalizeString, Operation, takeOne } from "@esposter/shared";
 
 // Deletes the named blobs in batches, returning the names a condition kept. A blob url is built through the sdk
