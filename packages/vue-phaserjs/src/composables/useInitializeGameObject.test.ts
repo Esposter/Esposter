@@ -59,6 +59,19 @@ describe(useInitializeGameObject, () => {
     expect(capturedSprite.depth).toBe(newDepth);
   });
 
+  test("emits the game object's own value when a configuration property updates to undefined, as setup does", async () => {
+    expect.hasAssertions();
+
+    const wrapper = mountGameObject(Sprite, { props: { configuration: depthConfiguration } });
+
+    const scene = startTestScene(sceneKey);
+
+    await wrapper.setProps({ configuration: { ...configuration, depth: undefined } });
+    stepScene(scene);
+
+    expect(wrapper.emitted("update:depth")).toStrictEqual([[depth], [depth]]);
+  });
+
   test("leaves a value written outside the configuration alone when a re-render passes an equal configuration", async () => {
     expect.hasAssertions();
 

@@ -32,13 +32,15 @@ export const useInitializeGameObjectSetters = <
     const setter = setterMap[key];
     if (!setter) continue;
     const updateEvent = getUpdateEvent(key as string);
-    setters.push((targetGameObject) => {
-      setter(targetGameObject, emit)(value);
-      if (value !== undefined) emit(updateEvent, value);
+    // The one path a value takes into the game object, at setup and on each update, so the parent hears the same either way
+    const applyValue = (targetGameObject: TGameObject, nextValue: TConfiguration[keyof TConfiguration]) => {
+      setter(targetGameObject, emit)(nextValue);
+      if (nextValue !== undefined) emit(updateEvent, nextValue);
       // If we haven't defined a proper value for the game object property,
       // We should emit the intrinsic gameObject value so vue can grab it
       else if (key in targetGameObject) emit(updateEvent, targetGameObject[key as keyof typeof targetGameObject]);
-    });
+    };
+    setters.push((targetGameObject) => applyValue(targetGameObject, value));
 
     setterWatchHandles.push(
       watch(
@@ -54,8 +56,7 @@ export const useInitializeGameObjectSetters = <
             // A value queued before unmount must not reach the game object the unmount destroyed
             if (isUnmounted.value) return;
 
-            setter(toValue(gameObject), emit)(newValue);
-            emit(updateEvent, newValue);
+            applyValue(toValue(gameObject), newValue);
           };
           if (immediate) updater();
           else
