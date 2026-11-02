@@ -69,23 +69,24 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                               | Role                                |
-| :--------------------------------------------------------------------------------- | :---------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                    |
-| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                   |
-| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission        |
-| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line   |
-| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls |
-| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts`                    | publish revokes at the SFU          |
-| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input           |
-| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers     |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate        |
-| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects       |
-| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender     |
-| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                    |
+| File                                                                               | Role                                            |
+| :--------------------------------------------------------------------------------- | :---------------------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                                |
+| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                               |
+| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                    |
+| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line               |
+| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls             |
+| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts`                    | publish revokes at the SFU                      |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                       |
+| `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target |
+| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers                 |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate                    |
+| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects                   |
+| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender                 |
+| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                                |
 
 ## Notes
 
-Adding a new action type touches five places (kept in lockstep by types — the permission, icon and color maps are a `Record<AdminActionType, …>`, and `ExecuteAdminActionInput.test-d.ts` holds the input union to the enum): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (a member of `UnparameterizedAdminActionInput` when the action takes nothing past its target, otherwise its own model file joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.
+Adding a new action type touches five places (kept in lockstep by types — the permission, icon and color maps are a `Record<AdminActionType, …>`, and `ExecuteAdminActionInput.test-d.ts` holds the input union to the enum): the `AdminActionType` enum, an `ExecuteAdminActionInput` variant (a member of `UnparameterizedAdminActionTypes`, the list `UnparameterizedAdminActionInput` and its schema both read, when the action takes nothing past its target, otherwise its own model file joined into the union), `AdminActionPermissionMap`, the `useAdminActionMap` client handler, and the icon/color/label maps in `app/services/message/moderation/`.
 
 A warning carries no free-text reason, because nothing would read one: the log row holds the actor, the target and the type alone, and the targeted client's notice is fixed. Its dialog is therefore a plain confirmation, like a kick's, and a reason field returns only together with somewhere to store and show it.
