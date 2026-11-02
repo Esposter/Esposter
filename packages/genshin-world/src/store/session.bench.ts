@@ -6,7 +6,7 @@ import { shallowRef } from "vue";
 const READ_COUNT = 1000;
 const NAME_TEXT: Readonly<Record<string, string>> = { "1": "Made-up Name" };
 const worldSessionStore = startTestWorldSession({ nameText: NAME_TEXT });
-// What a read is counted by: the length of the one string every read finds
+// What a read is counted by: the length of the string or array it finds, so the compiler keeps each read; the inventory's items are empty, so the third bench adds 0 and only its read is timed
 let reads = 0;
 
 // A session's frame reads the context a few times a frame, so the figure is the cost of one thousand reads of the same
