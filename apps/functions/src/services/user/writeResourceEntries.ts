@@ -3,10 +3,9 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
-import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { AzureContainer, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
+import { AzureContainer, FILES_DIRECTORY_SEGMENT, getResourceFileBlobName } from "@esposter/db-schema";
 
 // Each resource the person owns is written as its record, its working copy and the assets that copy embeds.
 // Its publication, when it is published, and the links it holds are written too.
@@ -51,7 +50,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
         archive,
         `${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`,
         containerClient,
-        getResourceAssetBlobName(resource.id, assetHash),
+        getResourceFileBlobName(resource.id, assetHash),
       );
   }
 };

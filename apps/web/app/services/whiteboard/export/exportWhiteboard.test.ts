@@ -3,7 +3,6 @@ import type { ImageElement, PositionedDocument } from "headless-block-editor";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
 import { rasterizeSvg } from "@/services/capture/rasterizeSvg";
@@ -11,7 +10,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { exportWhiteboard } from "@/services/whiteboard/export/exportWhiteboard";
 import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
-import { ResourceType } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "headless-block-editor";

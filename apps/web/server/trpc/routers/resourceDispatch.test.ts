@@ -13,10 +13,10 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
-import { AzureContainer, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import { AzureContainer, getResourceFilesDirectoryName, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getBlobUrl, MockContainerDatabase } from "azure-mock";
+import { createHash } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("resourceDispatchRouter", () => {
@@ -25,7 +25,9 @@ describe("resourceDispatchRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
-  const hash = "a".repeat(64);
+  // A held address names its own bytes, which the upload checks before it trusts the blob
+  const heldBytes = Buffer.alloc(1);
+  const hash = createHash("sha256").update(heldBytes).digest("hex");
   const mimetype = MimeType.Png;
   const size = 1;
   const webpageEditor = new WebpageEditor({ description: "a" });
@@ -88,7 +90,7 @@ describe("resourceDispatchRouter", () => {
       files: [{ hash, mimetype, size }],
       id: webpageResource.id,
     });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
     const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
 
     expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
@@ -101,7 +103,7 @@ describe("resourceDispatchRouter", () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const webpageResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
     const requestUploadAddress = () =>
       callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
         files: [{ hash, mimetype, size }],
@@ -115,7 +117,7 @@ describe("resourceDispatchRouter", () => {
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
     vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, heldBytes]]));
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
   });

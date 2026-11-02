@@ -11,10 +11,10 @@ import {
   ASSET_GRACE_MS,
   checkIsAssetCollectionEnabled,
 } from "#shared/services/resource/constants";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { checkIsNotFound } from "@esposter/db";
 import {
   AzureContainer,
+  getResourceFileBlobName,
   MAX_CONCURRENT_BLOB_COPIES,
   resourceVersionAssetsInResource,
   resourceWorkingAssetsInResource,

@@ -1,7 +1,7 @@
 import { RESOURCE_ASSET_URL_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
-import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
+import { getResourceFilesDirectoryName } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -11,23 +11,23 @@ describe(getResourceAssetUrl, () => {
   test("should encode delimiter characters into the closed charset", () => {
     expect.hasAssertions();
 
-    expect(getResourceAssetUrl(`${getFilesDirectoryName(resourceId)}/a${ID_SEPARATOR}a !'()*`)).toBe(
-      `${RESOURCE_ASSETS_URL_PREFIX}/${getFilesDirectoryName(resourceId)}/a%7Ca%20%21%27%28%29%2A`,
+    expect(getResourceAssetUrl(`${getResourceFilesDirectoryName(resourceId)}/a${ID_SEPARATOR}a !'()*`)).toBe(
+      `${RESOURCE_ASSETS_URL_PREFIX}/${getResourceFilesDirectoryName(resourceId)}/a%7Ca%20%21%27%28%29%2A`,
     );
   });
 
   test("should encode unicode filenames", () => {
     expect.hasAssertions();
 
-    expect(getResourceAssetUrl(`${getFilesDirectoryName(resourceId)}/图`)).toBe(
-      `${RESOURCE_ASSETS_URL_PREFIX}/${getFilesDirectoryName(resourceId)}/%E5%9B%BE`,
+    expect(getResourceAssetUrl(`${getResourceFilesDirectoryName(resourceId)}/图`)).toBe(
+      `${RESOURCE_ASSETS_URL_PREFIX}/${getResourceFilesDirectoryName(resourceId)}/%E5%9B%BE`,
     );
   });
 
   test("should emit urls the search regex matches fully", () => {
     expect.hasAssertions();
 
-    const url = getResourceAssetUrl(`${getFilesDirectoryName(resourceId)}/a${ID_SEPARATOR}a (1)`);
+    const url = getResourceAssetUrl(`${getResourceFilesDirectoryName(resourceId)}/a${ID_SEPARATOR}a (1)`);
     const match = takeOne([...`"${url}"`.matchAll(RESOURCE_ASSET_URL_REGEX)]);
 
     expect(match[0]).toBe(url);
@@ -38,7 +38,7 @@ describe(getResourceAssetUrl, () => {
   test("should not match the prefix inside another url", () => {
     expect.hasAssertions();
 
-    const url = getResourceAssetUrl(`${getFilesDirectoryName(resourceId)}/a`);
+    const url = getResourceAssetUrl(`${getResourceFilesDirectoryName(resourceId)}/a`);
 
     expect([...`"https://a.com${url}"`.matchAll(RESOURCE_ASSET_URL_REGEX)]).toStrictEqual([]);
   });
@@ -47,7 +47,7 @@ describe(getResourceAssetUrl, () => {
     expect.hasAssertions();
 
     const hash = "a".repeat(64);
-    const blobName = `${getFilesDirectoryName(resourceId)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(resourceId)}/${hash}`;
     const url = getResourceAssetUrl(blobName);
 
     expect(parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({

@@ -26,7 +26,6 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
-import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
@@ -36,6 +35,7 @@ import {
   AzureFunction,
   AzureTable,
   DatabaseEntityType,
+  getResourceFilesDirectoryName,
   resourcesInResource,
   ResourceType,
   ResourceViewEntity,
@@ -755,7 +755,7 @@ describe(createResourceProcedures, () => {
       id: newResource.id,
     });
 
-    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
 
     expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
@@ -778,7 +778,7 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
@@ -796,7 +796,7 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
@@ -815,7 +815,7 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),

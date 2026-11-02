@@ -3,16 +3,16 @@ import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFile
 import type { ResourceInResource, UserInAuth } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { touchResourceAssetBlob } from "#server/services/resource/touchResourceAssetBlob";
+import { checkIsResourceAssetHeld } from "#server/services/resource/checkIsResourceAssetHeld";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { generateWriteSasUrl } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getResourceFileBlobName } from "@esposter/db-schema";
 
 // The write targets for one batch of resource files, each addressed by the hash of its bytes. A file the resource
-// Already holds under its hash gets no signature and no quota hold: its blob's last-modified time moves instead, so the
-// Collection's grace window restarts from this upload, and the client skips the PUT. A held blob that is gone by the
-// Time it is touched is no longer held, so it is reserved and signed like any other file. Any other file is reserved
+// Already holds under its hash, with bytes that hash to it, gets no signature and no quota hold: its blob's last-modified
+// Time moves instead, so the Collection's grace window restarts from this upload, and the client skips the PUT. A held
+// Blob that is gone by the time it is touched is no longer held, and bytes that do not hash to the name are removed rather
+// Than held, so the file is reserved and signed like any other. Any other file is reserved
 // Against the owner's quota and given a write SAS for exactly its hash name. The reserve runs before the response, so a
 // Rejection is a write target the client never receives.
 export const generateReservedResourceAssetSasEntities = async (
@@ -25,7 +25,7 @@ export const generateReservedResourceAssetSasEntities = async (
   const fileEntries = await Promise.all(
     files.map(async (file) => {
       const blobName = getResourceFileBlobName(resourceId, file.hash);
-      const isHeld = await touchResourceAssetBlob(containerClient, blobName);
+      const isHeld = await checkIsResourceAssetHeld(containerClient, blobName, file.hash);
       return { ...file, blobName, isHeld };
     }),
   );

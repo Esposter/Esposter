@@ -1,6 +1,6 @@
 # Resources
 
-The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a flowchart. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
+The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a whiteboard. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
 
 ## Anatomy
 
@@ -165,7 +165,7 @@ Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedO
 
 Each type has its own router, and one cross-type `resource` router holds what must work without knowing the type. `apps/web/server/trpc/routers/index.ts` registers them all by name, and a type-specific procedure (a survey's responses, a program's participants, a blueprint's capture and deploy) lives on its type's router.
 
-Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path (`"flowchart.saveResourceContent"`), and type-specific procedures need a home.
+Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key off the literal tRPC path, and type-specific procedures need a home.
 
 ## Client
 
@@ -204,17 +204,17 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                                       | Role                                       |
-| -------------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/db-schema/src/schema/resource/resourcesInResource.ts`            | identity table                             |
-| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts` | publish state table                        |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | type definitions + capability declarations |
-| `apps/web/shared/models/resource/CapabilityResourceType.ts`                | derived capability unions                  |
-| `apps/web/shared/services/resource/getFilesDirectoryName.ts`               | the `{id}/files` path convention           |
-| `apps/web/shared/services/resource/checkHasCapability.ts`                  | runtime capability guard                   |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the procedure factory                      |
-| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`             | ownership middleware                       |
-| `apps/web/app/store/resource/index.ts`                                     | the open resource — state and every write  |
-| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`             | type-specific blades                       |
-| `apps/web/app/services/resource/ViewComponentMap.ts`                       | public view renderers (Publishable)        |
-| `apps/web/app/services/resource/PortableFormatMap.ts`                      | import/export formats (Portable)           |
+| File                                                                               | Role                                       |
+| ---------------------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`                    | identity table                             |
+| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts`         | publish state table                        |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                       | type definitions + capability declarations |
+| `apps/web/shared/models/resource/CapabilityResourceType.ts`                        | derived capability unions                  |
+| `packages/db-schema/src/services/azure/container/getResourceFilesDirectoryName.ts` | the `{id}/files` path convention           |
+| `apps/web/shared/services/resource/checkHasCapability.ts`                          | runtime capability guard                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`              | the procedure factory                      |
+| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`                     | ownership middleware                       |
+| `apps/web/app/store/resource/index.ts`                                             | the open resource — state and every write  |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`                     | type-specific blades                       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                               | public view renderers (Publishable)        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                              | import/export formats (Portable)           |

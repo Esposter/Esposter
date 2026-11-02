@@ -2,11 +2,11 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { BlobStorageStatusError } from "@/models/azure/container/BlobStorageStatusError";
 import { HTTP_STATUS_PRECONDITION_FAILED } from "@/services/azure/container/constants";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
+import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // The FileAssets round-trip for one file: the file is addressed by the hash of its bytes, uploaded only when the server does

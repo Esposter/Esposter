@@ -5,7 +5,6 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
-import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
 import {
   createMessage,
   getContentBlobName,
@@ -28,6 +27,7 @@ import {
   EmailAchievementName,
   friendRequestsInSocial,
   friendsInSocial,
+  getResourceFileBlobName,
   getReverseTickedTimestamp,
   getRoomEmojiBlobName,
   getSaveBlobName,
@@ -184,7 +184,7 @@ describe(buildUserDataArchive, () => {
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
     await resourceContainerClient
-      .getBlockBlobClient(getResourceAssetBlobName(resource.id, assetHash))
+      .getBlockBlobClient(getResourceFileBlobName(resource.id, assetHash))
       .upload(attachmentBytes, attachmentBytes.length);
     await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
       actorUserId: otherUserId,

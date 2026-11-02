@@ -2,8 +2,8 @@
 import type { ImageElement } from "headless-block-editor";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { useResourceStore } from "@/store/resource";
+import { getResourceFileBlobName } from "@esposter/db-schema";
 
 interface Props {
   image: ImageElement;

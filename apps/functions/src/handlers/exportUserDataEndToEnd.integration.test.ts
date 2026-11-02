@@ -6,7 +6,6 @@ import { getTableClient } from "#src/services/azure/getTableClient";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
 import { InvocationContext } from "@azure/functions";
 import {
   createMessage,
@@ -23,6 +22,7 @@ import {
   dataExportsInUser,
   DataExportStatus,
   friendsInSocial,
+  getResourceFileBlobName,
   getRoomEmojiBlobName,
   getSaveBlobName,
   getUserProfileImageBlobName,
@@ -123,7 +123,7 @@ describe(exportUserDataHandler, () => {
     );
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    await seedBlob(AzureContainer.ResourceAssets, getResourceAssetBlobName(resource.id, assetHash));
+    await seedBlob(AzureContainer.ResourceAssets, getResourceFileBlobName(resource.id, assetHash));
 
     // The account's profile image, a call background, its save, and a moderation record naming it as the target
     await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));

@@ -1,8 +1,8 @@
 import type { ResourceInResource } from "@esposter/db-schema";
+import { getResourceFileBlobName } from "@esposter/db-schema";
 import type { PositionedDocument } from "headless-block-editor";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { PositionedElementType } from "headless-block-editor";
 

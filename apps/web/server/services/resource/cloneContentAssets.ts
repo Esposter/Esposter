@@ -9,10 +9,9 @@ import { readResourceAccess } from "#server/services/resource/readResourceAccess
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { chargeAndCopyBlob } from "@esposter/db";
-import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { AzureContainer, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,

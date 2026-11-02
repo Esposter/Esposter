@@ -19,13 +19,13 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { ASSET_GRACE_MS, SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
   AzureContainer,
   AzureQueue,
   AzureTable,
+  getResourceFileBlobName,
   ResourceActivityType,
   resourceLinksInResource,
   ResourceLinkType,

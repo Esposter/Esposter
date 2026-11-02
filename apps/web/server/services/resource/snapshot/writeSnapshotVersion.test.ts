@@ -5,9 +5,9 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import {
   AzureContainer,
+  getResourceFileBlobName,
   resourcesInResource,
   ResourceType,
   resourceVersionAssetsInResource,

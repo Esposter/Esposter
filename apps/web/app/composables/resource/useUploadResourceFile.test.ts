@@ -3,12 +3,11 @@ import type { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
 import { BlobStorageStatusError } from "@/models/azure/container/BlobStorageStatusError";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { ResourceType } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 

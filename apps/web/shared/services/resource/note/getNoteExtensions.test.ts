@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { getResourceFileBlobName } from "@esposter/db-schema";
 import { Editor } from "@tiptap/core";
 import { describe, expect, test } from "vitest";
 

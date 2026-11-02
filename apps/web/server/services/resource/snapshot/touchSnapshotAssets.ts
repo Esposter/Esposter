@@ -2,8 +2,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { touchResourceAssetBlob } from "#server/services/resource/touchResourceAssetBlob";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
-import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { AzureContainer, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { settleAll } from "@esposter/shared";
 
 // Every asset a write is about to name that is still stored is touched rather than only checked, so its grace window
