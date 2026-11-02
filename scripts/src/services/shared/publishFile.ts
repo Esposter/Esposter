@@ -1,5 +1,6 @@
-import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { getResultAsync, noop } from "@esposter/shared";
+import { writePartialThenMove } from "@esposter/shared-node/cache";
+import { writeFile } from "node:fs/promises";
 
 // The publish each path's last writer queued, so writers of one path move their partial files in one after another:
 // On Windows a rename onto a file another rename is replacing at the same moment fails with EPERM
@@ -13,7 +14,7 @@ export const publishFile = async (path: string, data: string | Uint8Array): Prom
   // A publish that failed is reported to its own caller, so the publish queued behind it still runs
   const publish = getResultAsync(async () => {
     await previousPublish;
-    await writePartialThenMove(path, data);
+    await writePartialThenMove(path, (partialPath) => writeFile(partialPath, data));
   });
   queuedPublishes.set(path, publish);
   const result = await publish;

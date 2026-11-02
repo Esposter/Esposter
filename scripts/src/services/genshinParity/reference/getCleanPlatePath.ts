@@ -4,8 +4,9 @@ import { fillCleanPlate } from "#src/services/genshinParity/reference/fillCleanP
 import { getCleanPlateDigest } from "#src/services/genshinParity/reference/getCleanPlateDigest";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
+import { writePartialThenMove } from "@esposter/shared-node/cache";
 import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -27,6 +28,6 @@ export const getCleanPlatePath = async (
   const png = await sharp(plate, { raw: { channels: 4, height, width } })
     .png()
     .toBuffer();
-  await writePartialThenMove(platePath, png);
+  await writePartialThenMove(platePath, (partialPath) => writeFile(partialPath, png));
   return platePath;
 };

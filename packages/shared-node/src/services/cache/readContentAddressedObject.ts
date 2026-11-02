@@ -1,8 +1,9 @@
 import { CONTENT_CACHE_DIRECTORY } from "#src/services/cache/constants";
+import { writePartialThenMove } from "#src/services/cache/writePartialThenMove";
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const SHA_256_HEX_REGEX = /^[0-9a-f]{64}$/u;
@@ -23,14 +24,11 @@ export const readContentAddressedObject = async (
   const bytes = Buffer.from(await download());
   if (createHash("sha256").update(bytes).digest("hex") !== hash)
     throw new InvalidOperationError(Operation.Read, hash, "does not hash to its name");
-  await mkdir(directory, { recursive: true });
-  const temporaryPath = `${path}.${crypto.randomUUID()}.part`;
-  await getResultAsync(async () => {
-    await writeFile(temporaryPath, bytes);
-    await rename(temporaryPath, path);
-  }).match(noop, async (error) => {
-    await rm(temporaryPath, { force: true });
-    if (!existsSync(path)) throw error;
-  });
+  await getResultAsync(() => writePartialThenMove(path, (partialPath) => writeFile(partialPath, bytes))).match(
+    noop,
+    (error) => {
+      if (!existsSync(path)) throw error;
+    },
+  );
   return bytes;
 };

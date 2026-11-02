@@ -3,9 +3,9 @@ import { hashFile } from "#src/services/genshinParity/reference/hashFile";
 import { measureFrameSoftness } from "#src/services/genshinParity/reference/measureFrameSoftness";
 import { REFERENCE_SCRATCH_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
-import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
+import { writePartialThenMove } from "@esposter/shared-node/cache";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The Gaussian sigma of a recording's own blur is measured from the reference's bytes.
@@ -21,6 +21,6 @@ export const getReferenceSoftness = async (referenceId: string): Promise<number>
   if (!Number.isNaN(cachedSoftness)) return cachedSoftness;
   const softness = await measureFrameSoftness(await readFile(referencePath));
   // Written whole and renamed onto its name, so a write cut short is never read back as a smaller sigma
-  await writePartialThenMove(cachePath, String(softness));
+  await writePartialThenMove(cachePath, (partialPath) => writeFile(partialPath, String(softness)));
   return softness;
 };

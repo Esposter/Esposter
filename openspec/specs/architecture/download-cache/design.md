@@ -16,7 +16,7 @@ flowchart LR
   Check -->|"yes"| Keep["write a part file, rename it onto the name"]
 ```
 
-The name is matched against a pattern of sixty-four lowercase hex digits before anything joins it into a path, so a name carrying separators or parent segments never reaches the filesystem. A held object is read without being hashed again, because the only way a file gets under its name is a verified download. A miss runs the caller's download function once, hashes the result with node's `crypto`, and compares the digest with the name. Only a match creates the content folder, writes the bytes to a part file named with a random UUID beside the target, and renames that file onto the object's name.
+The name is matched against a pattern of sixty-four lowercase hex digits before anything joins it into a path, so a name carrying separators or parent segments never reaches the filesystem. A held object is read without being hashed again, because the only way a file gets under its name is a verified download. A miss runs the caller's download function once, hashes the result with node's `crypto`, and compares the digest with the name. Only a match is written, through `writePartialThenMove`, which creates the content folder, writes the bytes to a part file named with a random UUID beside the target, and renames that file onto the object's name.
 
 Two callers can fetch the same object at once. The later rename fails because the earlier one has already put the file in place. The later caller then deletes its own part file and returns its bytes, since both wrote identical content. The error of a failed write or rename is rethrown only when the target is still missing after it.
 
@@ -39,6 +39,7 @@ Two callers can fetch the same object at once. The later rename fails because th
 | `packages/shared-node/src/services/cache/readContentAddressedObject.ts`        | reads an object by hash, downloading and checking it on a miss |
 | `packages/shared-node/src/services/cache/constants.ts`                         | where the cache folder and its content folder are named        |
 | `packages/shared-node/src/services/cache/readContentAddressedObject.test.ts`   | the tests whose titles are this capability's scenarios         |
+| `packages/shared-node/src/services/cache/writePartialThenMove.ts`              | writes a file whole through a part file, removed on failure    |
 | `scripts/src/services/gameData/readPublishedGameDataObject.ts`                 | a caller that reads a published game data object by its hash   |
 | `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataFile.ts`   | a caller that reads a mirrored file by its hash                |
 | `packages/genshin-world/scripts/gameData/mirror/readMirroredGameDataObject.ts` | a caller that reads a mirrored object by its hash              |

@@ -11,8 +11,9 @@ import { readKnownGameVersion } from "#src/services/genshinParity/reference/read
 import { readManifestFile } from "#src/services/genshinParity/reference/readManifestFile";
 import { readReferenceFiles } from "#src/services/genshinParity/reference/readReferenceFiles";
 import { writeManifestFile } from "#src/services/genshinParity/reference/writeManifestFile";
-import { writePartialThenMove } from "#src/services/shared/writePartialThenMove";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
+import { writePartialThenMove } from "@esposter/shared-node/cache";
+import { writeFile } from "node:fs/promises";
 
 // Plans every reference the map names, then writes the files `planReferencePack` keeps and the manifest naming them.
 // A collision the options do not resolve refuses the run before anything is written.
@@ -47,7 +48,7 @@ export const packReferences = async (
       files.map(
         ({ bytes, path }) =>
           () =>
-            writePartialThenMove(path, bytes),
+            writePartialThenMove(path, (partialPath) => writeFile(partialPath, bytes)),
       ),
       REFERENCE_PACK_CONCURRENCY,
     );

@@ -1560,7 +1560,6 @@
 | `scripts/src/services/shared/toXyz.ts`                                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/writeJsonFile.test.ts`                                       | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/writeJsonFile.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/shared/writePartialThenMove.ts`                                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/constantScope`                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5  |       |
