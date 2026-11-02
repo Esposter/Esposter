@@ -10,10 +10,10 @@ import { ref } from "vue";
 const random = () => 0.5;
 
 describe(useMiningOutcrops, () => {
-  // The resets, 04:00 in UTC+8 on two game days: 20:00 UTC of the day before each day, counted from the epoch
+  // The draws, 06:00 in UTC+8 on two game days: 22:00 UTC of the day before each day, counted from the epoch
   const epoch = Temporal.Instant.fromEpochMilliseconds(0);
-  const resetDay1 = epoch.add({ hours: 480_000 }).subtract({ hours: 4 });
-  const resetDay2 = resetDay1.add({ hours: 24 });
+  const drawDay1 = epoch.add({ hours: 480_000 }).subtract({ hours: 2 });
+  const drawDay2 = drawDay1.add({ hours: 24 });
   const places: GatheringPlace[] = [
     { id: "a", kind: 101_004, position: { x: 0, z: 0 } },
     { id: "b", kind: 101_004, position: { x: 50, z: 50 } },
@@ -28,7 +28,7 @@ describe(useMiningOutcrops, () => {
   };
   // The region is placed directly rather than read, so the composable requests none of the game data
   const setup = (savedMinedOutcrops: MinedOutcrop[] = []) => {
-    const now = { value: resetDay1.add({ hours: 6 }) };
+    const now = { value: drawDay1.add({ hours: 6 }) };
     const breakOre = vi.fn<(place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void>();
     const mining = useMiningOutcrops({
       breakOre,
@@ -51,20 +51,20 @@ describe(useMiningOutcrops, () => {
     expect(breakOre).toHaveBeenCalledExactlyOnceWith(places[0], random);
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
-    now.value = resetDay2.add({ hours: 2 });
+    now.value = drawDay2;
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
   });
 
-  test("a reload keeps a mined outcrop gone past the next day's draw until its 06:00 respawn", () => {
+  test("a reload keeps a mined outcrop gone past the 04:00 reset until its 06:00 respawn", () => {
     expect.hasAssertions();
-    const { mining, now } = setup([{ id: "a", minedAt: resetDay1.add({ hours: 5 }) }]);
+    const { mining, now } = setup([{ id: "a", minedAt: drawDay1.add({ hours: 5 }) }]);
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
-    now.value = resetDay2;
+    now.value = drawDay2.subtract({ minutes: 1 });
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["b"]);
-    now.value = resetDay2.add({ hours: 2 });
+    now.value = drawDay2;
     mining.refreshMiningOutcrops(now.value, random);
     expect(mining.standingMiningOutcrops.value.map(({ id }) => id)).toStrictEqual(["a", "b"]);
   });

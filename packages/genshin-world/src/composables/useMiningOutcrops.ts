@@ -4,7 +4,6 @@ import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { Ref } from "vue";
 
-import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { computeDailyMiningOutcrops } from "#src/services/gathering/computeDailyMiningOutcrops";
 import { computeStandingMiningOutcrops } from "#src/services/gathering/computeStandingMiningOutcrops";
 import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
@@ -12,16 +11,15 @@ import { readMiningOutcropPlaces } from "#src/services/gathering/readMiningOutcr
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMiningOutcropStanding";
+import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastMiningOutcropDraw";
 import { computeNextMiningOutcropRespawn } from "#src/services/leyLine/computeNextMiningOutcropRespawn";
-import { computeShopRefreshTime } from "#src/services/shop/computeShopRefreshTime";
-import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
 
-// The mining outcrops of each region the world has loaded: a region's places are read once, and its daily reset draws
-// Its outcrops to stand at them until the next reset. A strike breaks one like an ore, dropping its Magical Crystal Chunks
-// And leaving it gone until its respawn. The mined ones are the save's, held until then
+// The mining outcrops of each region the world has loaded: a region's places are read once, and its draw at each 06:00
+// Sets its outcrops to stand at them until the next draw. A strike breaks one like an ore, dropping its Magical Crystal
+// Chunks and leaving it gone until its respawn. The mined ones are the save's, held until then
 export const useMiningOutcrops = ({
   breakOre,
   gameDataBaseUrl,
@@ -40,7 +38,7 @@ export const useMiningOutcrops = ({
   // Each region's places, read as the world loads it. A region no publish wrote holds none, so it draws none
   const placesMap = shallowRef(new Map<string, GatheringPlace[]>());
   const requestedRegionIds = new Set<string>();
-  // Each region's day's draw: the reset it was drawn at, and the places drawn
+  // Each region's day's draw: the 06:00 it was drawn at, and the places drawn
   const drawnMap = shallowRef(new Map<string, { at: Temporal.Instant; placeIds: string[] }>());
   const minedAtMap = shallowRef(new Map(savedMinedOutcrops.map(({ id, minedAt }) => [id, minedAt] as const)));
   const brokenShareMap = shallowRef(new Map<string, number>());
@@ -63,12 +61,12 @@ export const useMiningOutcrops = ({
     }
     await Promise.all(requests);
   });
-  // A region without a draw for the day's reset draws now, at that reset, from the places it has
+  // A region without the current draw draws now, at that 06:00, from the places it has
   const drawDayMiningOutcrops = (now: Temporal.Instant, random: () => number) => {
-    const at = computeShopRefreshTime(ShopRefresh.Daily, now);
+    const at = computeLastMiningOutcropDraw(now);
     for (const [regionId, places] of placesMap.value) {
       const drawn = drawnMap.value.get(regionId);
-      if (places.length === 0 || (drawn !== undefined && checkIsDailyResetDayCurrent(drawn.at, now))) continue;
+      if (places.length === 0 || (drawn !== undefined && Temporal.Instant.compare(drawn.at, at) >= 0)) continue;
       const placeIds = computeDailyMiningOutcrops(
         regionId,
         places.map(({ id }) => id),
@@ -78,7 +76,7 @@ export const useMiningOutcrops = ({
       drawnMap.value = new Map([...drawnMap.value, [regionId, { at, placeIds }]]);
     }
   };
-  // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. A reset reaches the standing
+  // Read each frame, so a place drawn at a draw or come back from its respawn shows at once. A draw reaches the standing
   // Places only through its day's draw, which replaces the draws, and a respawn comes between draws, so they are worked
   // Out again when the places, the draws or the mined map is replaced or the next respawn has come, and the list is
   // Replaced only when its places change

@@ -1,6 +1,6 @@
 # Gathering
 
-The plants and specialties of the open world are the gathering points the [proposal](../../../changes/genshin-gathering/design.md) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the build of that proposal for the points of the two categories that are picked, Local Specialties and Inventory / Materials. The ores are published beside them: the same builder places each ore the map marks under Ores, and the world keeps those points out of the pick ups, since an ore is struck until it breaks. Mining outcrops and investigation spots wait in the proposal.
+The plants and specialties of the open world are the gathering points the [proposal](../../../changes/genshin-gathering/design.md) describes: a point stands where the official map marks its item, and F picks it into the bag. This page is the build of that proposal for the points of the two categories that are picked, Local Specialties and Inventory / Materials. The ores are published beside them: the same builder places each ore the map marks under Ores, and the world keeps those points out of the pick ups, since an ore is struck until it breaks. Mining outcrops are built on [their own page](../mining-outcrops/design.md); investigation spots wait in the proposal.
 
 ## How it works
 
