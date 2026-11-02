@@ -10,7 +10,8 @@ export const useCancelScheduledMessageJobToDraft = () => {
   const scheduledMessageJobStore = useScheduledMessageJobStore();
   const { cancelScheduledMessageJob } = scheduledMessageJobStore;
   return async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
-    await cancelScheduledMessageJob(scheduledMessageJob.id);
-    setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
+    const isCancelled = await cancelScheduledMessageJob(scheduledMessageJob.id);
+    // A rejected cancel leaves the job scheduled, so a draft written now would let a send post a second copy
+    if (isCancelled) setDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
   };
 };

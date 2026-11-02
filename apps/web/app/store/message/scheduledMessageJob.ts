@@ -1,6 +1,8 @@
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
+import { MutationStatus } from "@/models/shared/MutationStatus";
+
 export const useScheduledMessageJobStore = defineStore("message/scheduledMessageJob", () => {
   const { $trpc } = useNuxtApp();
   // One executor for both writes, because a queue lives on the instance and not on the key: sending and
@@ -31,10 +33,12 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
     };
   };
   const cancelScheduledMessageJob = async (id: ScheduledMessageJobInMessage["id"]) => {
-    await executeScheduledMessageJobMutation(
+    const outcome = await executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id }),
       { applyOptimistic: getApplyOptimisticDelete(id), key: id },
     );
+    // A rejected cancel rolls the row back, so the job is still scheduled and a caller must not treat it as cancelled
+    return outcome.status === MutationStatus.Succeeded;
   };
   const sendScheduledMessageNow = async (id: ScheduledMessageJobInMessage["id"]) => {
     await executeScheduledMessageJobMutation(
