@@ -13,6 +13,14 @@ export const useMonsterPositions = (
   const monsterTween = ref<TweenBuilderConfiguration>();
   const monsterInfoContainerPosition = ref(structuredClone<Position>(frozenInitialMonsterInfoContainerPosition));
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
+  // A tween its scene's shutdown destroys never completes, so nothing else clears its ref: left set, the next battle's
+  // Monster would mount with that tween and replay it
+  const resetMonsterPositions = () => {
+    monsterPosition.value = { ...frozenInitialMonsterPosition };
+    monsterInfoContainerPosition.value = { ...frozenInitialMonsterInfoContainerPosition };
+    monsterTween.value = undefined;
+    monsterInfoContainerTween.value = undefined;
+  };
   return {
     initialMonsterInfoContainerPosition: frozenInitialMonsterInfoContainerPosition,
     initialMonsterPosition: frozenInitialMonsterPosition,
@@ -20,5 +28,6 @@ export const useMonsterPositions = (
     monsterInfoContainerTween,
     monsterPosition,
     monsterTween,
+    resetMonsterPositions,
   };
 };

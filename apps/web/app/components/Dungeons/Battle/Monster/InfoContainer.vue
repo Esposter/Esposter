@@ -14,15 +14,10 @@ interface Props {
 defineSlots<{ default: () => VNode }>();
 const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
-const { initialMonsterInfoContainerPosition } = battleMonsterStore;
 const { activeMonster, monsterInfoContainerPosition, monsterInfoContainerTween } = storeToRefs(battleMonsterStore);
 const monsterName = computed(() => prettify(activeMonster.value.key));
 const nameDisplayWidth = ref<number>();
 const { barPercentage: experienceBarPercentage } = useExperience(activeMonster);
-
-onUnmounted(() => {
-  monsterInfoContainerPosition.value = { ...initialMonsterInfoContainerPosition };
-});
 </script>
 
 <template>

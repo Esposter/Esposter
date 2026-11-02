@@ -8,11 +8,11 @@ interface Props {
 
 const { isEnemy } = defineProps<Props>();
 const battleMonsterStore = useBattleMonsterStore(isEnemy);
-const { initialMonsterPosition } = battleMonsterStore;
+const { resetMonsterPositions } = battleMonsterStore;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(battleMonsterStore);
 
 onUnmounted(() => {
-  monsterPosition.value = { ...initialMonsterPosition };
+  resetMonsterPositions();
 });
 </script>
 
