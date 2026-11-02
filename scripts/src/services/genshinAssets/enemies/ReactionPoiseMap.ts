@@ -8,7 +8,7 @@ import { TransformativeReactionType } from "genshin-world";
 // Reaction lands on, and reachPoiseDamage on each enemy it reaches. The page gives one figure for every reaction but
 // Swirl, whose primary target takes 130 and each enemy it spreads to takes 30. Only Overloaded is blunt, the one
 // Reaction the wiki's Blunt Attack list names (`{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json`)
-export const ReactionPoiseMap = {
+export const ReactionPoiseMap: Partial<Record<TransformativeReactionType, Except<ReactionPoise, "reactionType">>> = {
   [TransformativeReactionType.Bloom]: { isBlunt: false, poiseDamage: 25, reachPoiseDamage: 25 },
   [TransformativeReactionType.Burgeon]: { isBlunt: false, poiseDamage: 50, reachPoiseDamage: 50 },
   [TransformativeReactionType.Burning]: { isBlunt: false, poiseDamage: 30, reachPoiseDamage: 30 },
@@ -18,4 +18,4 @@ export const ReactionPoiseMap = {
   [TransformativeReactionType.Shattered]: { isBlunt: false, poiseDamage: 30, reachPoiseDamage: 30 },
   [TransformativeReactionType.Superconduct]: { isBlunt: false, poiseDamage: 30, reachPoiseDamage: 30 },
   [TransformativeReactionType.Swirl]: { isBlunt: false, poiseDamage: 130, reachPoiseDamage: 30 },
-} as const satisfies Partial<Record<TransformativeReactionType, Except<ReactionPoise, "reactionType">>>;
+};
