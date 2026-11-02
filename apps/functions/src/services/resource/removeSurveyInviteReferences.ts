@@ -12,7 +12,15 @@ import {
   resourcesInResource,
   ResourceType,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, noop, Operation, settleAll, takeOne } from "@esposter/shared";
+import {
+  checkIsPlainObject,
+  getResultAsync,
+  InvalidOperationError,
+  noop,
+  Operation,
+  settleAll,
+  takeOne,
+} from "@esposter/shared";
 import { and, eq, inArray, notInArray } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
@@ -25,12 +33,10 @@ const RESOURCE_REWRITE_CONCURRENCY = 4;
 
 type StoredNode = Record<string, unknown>;
 
-const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
-
 const isDeletedSurveyInvite = (node: StoredNode, deletedSurveyIds: Set<string>) =>
   typeof node.type === "string" &&
   SURVEY_INVITE_NODE_TYPES.has(node.type) &&
-  checkIsRecord(node.props) &&
+  checkIsPlainObject(node.props) &&
   typeof node.props.surveyId === "string" &&
   deletedSurveyIds.has(node.props.surveyId);
 
@@ -38,11 +44,11 @@ const isDeletedSurveyInvite = (node: StoredNode, deletedSurveyIds: Set<string>) 
 // `props.children`, on a webpage and in an email alike, so one walk serves both trees
 const removeSurveyInvites = (nodes: unknown[], deletedSurveyIds: Set<string>): unknown[] =>
   nodes.flatMap((node) => {
-    if (!checkIsRecord(node)) return [node];
+    if (!checkIsPlainObject(node)) return [node];
     if (isDeletedSurveyInvite(node, deletedSurveyIds)) return [];
 
     const { props } = node;
-    if (!checkIsRecord(props) || !Array.isArray(props.children)) return [node];
+    if (!checkIsPlainObject(props) || !Array.isArray(props.children)) return [node];
 
     return [{ ...node, props: { ...props, children: removeSurveyInvites(props.children, deletedSurveyIds) } }];
   });
@@ -60,7 +66,7 @@ const removeSurveyInviteReferencesFromResource = async (
   const serializedContent = (await readJsonBlob(containerClient, contentBlobName))?.toString();
   // oxlint-disable-next-line no-restricted-properties -- the stored content as written: the rewrite compares its re-serialised copy with the stored text, so a revived ISO string would look changed
   const document: unknown = serializedContent === undefined ? undefined : JSON.parse(serializedContent);
-  if (checkIsRecord(document) && Array.isArray(document.content)) {
+  if (checkIsPlainObject(document) && Array.isArray(document.content)) {
     const serializedNextContent = JSON.stringify({
       ...document,
       content: removeSurveyInvites(document.content, deletedSurveyIds),
