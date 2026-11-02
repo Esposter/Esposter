@@ -1,37 +1,16 @@
 import type { BaseExecuteAdminActionInput } from "#shared/models/db/moderation/BaseExecuteAdminActionInput";
+import type { UnparameterizedAdminActionType } from "#shared/models/db/moderation/UnparameterizedAdminActionType";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { baseExecuteAdminActionInputSchema } from "#shared/models/db/moderation/BaseExecuteAdminActionInput";
-import { AdminActionType } from "@esposter/db-schema";
+import { UnparameterizedAdminActionTypes } from "#shared/models/db/moderation/UnparameterizedAdminActionType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface UnparameterizedAdminActionInput
-  extends
-    BaseExecuteAdminActionInput,
-    ItemEntityType<
-      | AdminActionType.CreateBan
-      | AdminActionType.ForceMute
-      | AdminActionType.ForceUnmute
-      | AdminActionType.KickFromCall
-      | AdminActionType.KickFromRoom
-      | AdminActionType.SoftBan
-      | AdminActionType.StopScreenShare
-      | AdminActionType.Warn
-    > {}
+  extends BaseExecuteAdminActionInput, ItemEntityType<UnparameterizedAdminActionType> {}
 
 export const unparameterizedAdminActionInputSchema = z.object({
   ...baseExecuteAdminActionInputSchema.shape,
-  ...createItemEntityTypeSchema(
-    z.enum([
-      AdminActionType.CreateBan,
-      AdminActionType.ForceMute,
-      AdminActionType.ForceUnmute,
-      AdminActionType.KickFromCall,
-      AdminActionType.KickFromRoom,
-      AdminActionType.SoftBan,
-      AdminActionType.StopScreenShare,
-      AdminActionType.Warn,
-    ]),
-  ).shape,
+  ...createItemEntityTypeSchema(z.enum(UnparameterizedAdminActionTypes)).shape,
 }) satisfies z.ZodType<UnparameterizedAdminActionInput>;
