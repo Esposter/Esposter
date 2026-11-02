@@ -6,12 +6,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { MimeType } from "#shared/models/file/MimeType";
 import { NoteMarkdownWriteMode } from "#shared/models/resource/note/NoteMarkdownWriteMode";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import {
-  AzureContainer,
-  getResourceFilesDirectoryName,
-  ResourceType,
-  WRITE_SAS_DURATION_MS,
-} from "@esposter/db-schema";
+import { AzureContainer, getResourceFileBlobName, ResourceType, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getBlobUrl, getMockSasUrl } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -42,7 +37,7 @@ describe("noteRouter", () => {
       id: newResource.id,
     });
 
-    const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
+    const blobName = getResourceFileBlobName(newResource.id, hash);
     const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
     const expiresOn = new Date(WRITE_SAS_DURATION_MS);
 

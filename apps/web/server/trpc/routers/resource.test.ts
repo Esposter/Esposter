@@ -47,6 +47,7 @@ import {
   AzureContainer,
   AzureQueue,
   AzureTable,
+  getResourceFileBlobName,
   getResourceFilesDirectoryName,
   ResourceActivityType,
   resourceLinksInResource,
@@ -97,7 +98,7 @@ const createImageEditor = (blobName: string) => new WebpageEditor({ content: [cr
 
 // An asset lives under the resource's files directory, named by the hash of its bytes
 const createFilesBlobName = (id: ResourceInResource["id"]) =>
-  `${getResourceFilesDirectoryName(id)}/${createHash("sha256").update(crypto.randomUUID()).digest("hex")}`;
+  getResourceFileBlobName(id, createHash("sha256").update(crypto.randomUUID()).digest("hex"));
 const getAssetHash = (blobName: string) => blobName.slice(blobName.lastIndexOf("/") + 1);
 
 describe("resourceRouter", () => {
@@ -725,9 +726,7 @@ describe("resourceRouter", () => {
     const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
-    expect(duplicatedBlobName).toBe(
-      `${getResourceFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`,
-    );
+    expect(duplicatedBlobName).toBe(getResourceFileBlobName(duplicatedResource.id, getAssetHash(blobName)));
     expect(duplicatedResource.name).toBe(`${name}${DUPLICATE_NAME_SUFFIX}`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
@@ -775,9 +774,7 @@ describe("resourceRouter", () => {
         ),
       ),
     );
-    expect(duplicatedBlobName).toBe(
-      `${getResourceFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`,
-    );
+    expect(duplicatedBlobName).toBe(getResourceFileBlobName(duplicatedResource.id, getAssetHash(blobName)));
   });
 
   // A restore copies nothing: the restored version names the same objects the working copy already holds, so the
