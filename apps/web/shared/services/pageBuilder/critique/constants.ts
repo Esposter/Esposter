@@ -1,4 +1,4 @@
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 

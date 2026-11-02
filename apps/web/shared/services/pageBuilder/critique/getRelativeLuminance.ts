@@ -1,4 +1,4 @@
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import {
   BLUE_LUMINANCE_WEIGHT,

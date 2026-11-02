@@ -1,4 +1,4 @@
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { CONTRAST_LUMINANCE_OFFSET, CONTRAST_RATIO_SCALE } from "#shared/services/pageBuilder/critique/constants";
 import { getRelativeLuminance } from "#shared/services/pageBuilder/critique/getRelativeLuminance";

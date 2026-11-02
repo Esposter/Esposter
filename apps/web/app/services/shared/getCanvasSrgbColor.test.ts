@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
-import { MAX_COLOR_CHANNEL } from "@/services/pageBuilder/constants";
-import { getCanvasSrgbColor } from "@/services/pageBuilder/getCanvasSrgbColor";
+import { MAX_COLOR_CHANNEL } from "@/services/shared/constants";
+import { getCanvasSrgbColor } from "@/services/shared/getCanvasSrgbColor";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // The one-pixel canvas a browser draws the colour on, holding the sRGB channels of the colour as 8-bit values

@@ -1,4 +1,4 @@
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";

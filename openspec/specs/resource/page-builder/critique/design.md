@@ -111,7 +111,7 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 | `apps/web/shared/models/pageBuilder/CritiqueFindingKind.ts`              | the kinds of finding: a failure, or a check that could not run                                                    |
 | `apps/web/shared/models/pageBuilder/CritiqueSources.ts`                  | what the critique reads from its caller: a colour reader and a survey lookup                                      |
 | `apps/web/shared/models/pageBuilder/EffectiveColors.ts`                  | the colours a node is drawn in, each absent where none could be read                                              |
-| `apps/web/shared/models/pageBuilder/SrgbColor.ts`                        | a colour as its sRGB channels                                                                                     |
+| `apps/web/shared/models/shared/SrgbColor.ts`                             | a colour as its sRGB channels                                                                                     |
 | `apps/web/shared/models/pageBuilder/SurveyPublishState.ts`               | a survey's publish state as a lookup answers it                                                                   |
 | `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                  | the document the critique walks                                                                                   |
 | `apps/web/shared/models/pageBuilder/NodeStyle.ts`                        | the per-breakpoint, per-state style a node carries                                                                |
@@ -130,9 +130,9 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 | `apps/web/server/services/resource/readStoredResourceContent.ts`         | the saved content the read tool answers from                                                                      |
 | `apps/web/server/services/mcp/getMcpTools.ts`                            | turns each procedure whose meta opts into MCP into a tool, so the read tool is listed under the Resources scope   |
 | `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`         | the editor's critique: the open document's rows, with a survey lookup filled from the owner's published surveys   |
-| `apps/web/app/services/pageBuilder/readBrowserColor.ts`                  | a colour read off a probe element the browser computes its value on                                               |
-| `apps/web/app/services/pageBuilder/getCanvasSrgbColor.ts`                | a colour the browser computes outside sRGB, read off a one-pixel canvas                                           |
-| `apps/web/app/services/pageBuilder/parseRgbColor.ts`                     | a computed rgb colour as its channels, or nothing when it is translucent                                          |
+| `apps/web/app/services/shared/readBrowserColor.ts`                       | a colour read off a probe element the browser computes its value on                                               |
+| `apps/web/app/services/shared/getCanvasSrgbColor.ts`                     | a colour the browser computes outside sRGB, read off a one-pixel canvas                                           |
+| `apps/web/app/services/shared/parseRgbColor.ts`                          | a computed rgb colour as its channels, or nothing when it is translucent                                          |
 | `apps/web/app/services/pageBuilder/getCritiqueFindingRow.ts`             | a finding as a Check panel row, keyed by its node id and kind                                                     |
 | `apps/web/app/components/PageBuilder/Check/Index.vue`                    | the Check panel: the findings list, and choosing a row selects its node on the canvas                             |
 | `apps/web/app/components/PageBuilder/Editor.vue`                         | the editor's tabs, which include the Check panel for a webpage                                                    |

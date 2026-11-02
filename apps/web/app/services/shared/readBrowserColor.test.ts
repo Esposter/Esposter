@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { readBrowserColor } from "@/services/pageBuilder/readBrowserColor";
+import { readBrowserColor } from "@/services/shared/readBrowserColor";
 import { describe, expect, test } from "vitest";
 
 describe(readBrowserColor, () => {

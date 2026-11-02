@@ -175,5 +175,3 @@ export const STYLE_SECTORS = [
   { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
   { properties: ["opacity", "box-shadow"], title: "Effects" },
 ] satisfies { properties: StyleProperty[]; title: string }[];
-// The largest value of one 8-bit colour channel, which a colour the browser computes in rgb and a canvas pixel both state
-export const MAX_COLOR_CHANNEL = 255;

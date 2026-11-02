@@ -12,3 +12,5 @@ export const BATCHED_REFRESH_MAX_DELAY_MS = Temporal.Duration.from({ seconds: 30
 export const LOCAL_STORAGE_KEY_SEPARATOR = ":";
 // A row is always in the map it was built from, so this only satisfies the lookup type
 export const NO_ACTION_ITEMS: Item[] = [];
+// The largest value of one 8-bit colour channel, which a colour the browser computes in rgb and a canvas pixel both state
+export const MAX_COLOR_CHANNEL = 255;

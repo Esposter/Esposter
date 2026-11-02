@@ -1,9 +1,9 @@
 import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
 import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
 import type { SurveyInviteNode } from "#shared/models/pageBuilder/SurveyInviteNode";
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";

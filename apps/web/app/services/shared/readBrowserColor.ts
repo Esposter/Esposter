@@ -1,8 +1,8 @@
-import type { SrgbColor } from "#shared/models/pageBuilder/SrgbColor";
 import type { StyleValue } from "#shared/models/pageBuilder/StyleValue";
+import type { SrgbColor } from "#shared/models/shared/SrgbColor";
 
-import { getCanvasSrgbColor } from "@/services/pageBuilder/getCanvasSrgbColor";
-import { parseRgbColor } from "@/services/pageBuilder/parseRgbColor";
+import { getCanvasSrgbColor } from "@/services/shared/getCanvasSrgbColor";
+import { parseRgbColor } from "@/services/shared/parseRgbColor";
 
 // The sRGB channels a colour value is drawn in, read off a probe element the browser computes the value on, so every
 // Syntax the style panel takes is read by the browser that draws it. A value the browser refuses reads as nothing

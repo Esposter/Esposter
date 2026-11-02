@@ -2,7 +2,7 @@ import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishStat
 import { checkHasSurveyInvite } from "#shared/services/pageBuilder/critique/checkHasSurveyInvite";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
 import { getCritiqueFindingRow } from "@/services/pageBuilder/getCritiqueFindingRow";
-import { readBrowserColor } from "@/services/pageBuilder/readBrowserColor";
+import { readBrowserColor } from "@/services/shared/readBrowserColor";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
