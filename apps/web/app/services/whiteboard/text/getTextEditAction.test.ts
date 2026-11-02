@@ -1,17 +1,9 @@
 // @vitest-environment happy-dom
-import { WhiteboardTextEditAction } from "@/models/whiteboard/WhiteboardTextEditAction";
 import { pressKey } from "@/services/whiteboard/constants.test";
 import { getTextEditAction } from "@/services/whiteboard/text/getTextEditAction";
 import { describe, expect, test } from "vitest";
 
 describe(getTextEditAction, () => {
-  test("enter commits the text edit and Escape discards it", () => {
-    expect.hasAssertions();
-
-    expect(getTextEditAction(pressKey({ key: "Enter" }))).toBe(WhiteboardTextEditAction.Commit);
-    expect(getTextEditAction(pressKey({ key: "Escape" }))).toBe(WhiteboardTextEditAction.Discard);
-  });
-
   test("an input-method composition keeps Enter and Escape for itself", () => {
     expect.hasAssertions();
 

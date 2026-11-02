@@ -28,22 +28,15 @@ describe(checkTextContrast, () => {
     expect(checkTextContrast(text, { background: [0, 0, 0], textColor: exactRatioGrey })).toStrictEqual([]);
   });
 
-  test("an unreadable colour is reported unchecked", () => {
+  test.each([
+    ["text colour", { background: PAGE_BACKGROUND_COLOR }],
+    ["background", { textColor: PAGE_TEXT_COLOR }],
+  ])("an unreadable %s is reported unchecked", (_, colors) => {
     expect.hasAssertions();
 
     const text = createTestTextNode(TEST_ID, {});
 
-    expect(checkTextContrast(text, { background: PAGE_BACKGROUND_COLOR })).toStrictEqual([
-      { kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID },
-    ]);
-  });
-
-  test("an unreadable background is reported unchecked", () => {
-    expect.hasAssertions();
-
-    const text = createTestTextNode(TEST_ID, {});
-
-    expect(checkTextContrast(text, { textColor: PAGE_TEXT_COLOR })).toStrictEqual([
+    expect(checkTextContrast(text, colors)).toStrictEqual([
       { kind: CritiqueFindingKind.UncheckedContrast, nodeId: TEST_ID },
     ]);
   });

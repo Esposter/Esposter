@@ -27,24 +27,27 @@ const mountKeyboard = (editState: Ref<WhiteboardEditState>, selectedIds: Ref<str
   );
 
 describe(useWhiteboardKeyboard, () => {
-  test("deleting a shape from the canvas asks first and then removes its arrows", async () => {
-    expect.hasAssertions();
+  test.each(["Delete", "Backspace"])(
+    "deleting a shape from the canvas asks first and then removes its arrows, with the %s key",
+    async (key) => {
+      expect.hasAssertions();
 
-    const document = { elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] };
-    const editState = ref(createWhiteboardEditState(document));
-    const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
-    const deletingIds = ref<string[]>([]);
-    const keyboard = await mountKeyboard(editState, selectedIds, deletingIds);
+      const document = { elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] };
+      const editState = ref(createWhiteboardEditState(document));
+      const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
+      const deletingIds = ref<string[]>([]);
+      const keyboard = await mountKeyboard(editState, selectedIds, deletingIds);
 
-    pressKey({ bubbles: true, key: "Delete" });
+      pressKey({ bubbles: true, key });
 
-    expect(deletingIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
-    expect(editState.value.document).toStrictEqual(document);
+      expect(deletingIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
+      expect(editState.value.document).toStrictEqual(document);
 
-    keyboard.vm.confirmDelete();
+      keyboard.vm.confirmDelete();
 
-    expect(editState.value.document).toStrictEqual({ elements: [] });
-  });
+      expect(editState.value.document).toStrictEqual({ elements: [] });
+    },
+  );
 
   test("a confirmed delete drops the deleted shape from the selection, so the next Delete asks about nothing", async () => {
     expect.hasAssertions();
@@ -64,19 +67,6 @@ describe(useWhiteboardKeyboard, () => {
 
     expect(selectedIds.value).toStrictEqual([]);
     expect(deletingIds.value).toStrictEqual([]);
-  });
-
-  test("backspace asks first to delete the selection too", async () => {
-    expect.hasAssertions();
-
-    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
-    const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
-    const deletingIds = ref<string[]>([]);
-    await mountKeyboard(editState, selectedIds, deletingIds);
-
-    pressKey({ bubbles: true, key: "Backspace" });
-
-    expect(deletingIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
   });
 
   test("escape clears the selection", async () => {

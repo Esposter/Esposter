@@ -19,27 +19,19 @@ describe(checkFixedWidth, () => {
     ]);
   });
 
-  test("a mobile override that narrows the node is not reported", () => {
-    expect.hasAssertions();
+  test.each([StyleBreakpoint.Mobile, StyleBreakpoint.Tablet] as const)(
+    "a %s override that narrows the node is not reported",
+    (breakpoint) => {
+      expect.hasAssertions();
 
-    const section = createTestSectionNode(TEST_ID, [], {
-      ...wideBaseStyle,
-      [StyleBreakpoint.Mobile]: { [StyleState.Default]: { width: "320px" } },
-    });
+      const section = createTestSectionNode(TEST_ID, [], {
+        ...wideBaseStyle,
+        [breakpoint]: { [StyleState.Default]: { width: "320px" } },
+      });
 
-    expect(checkFixedWidth(section)).toStrictEqual([]);
-  });
-
-  test("a tablet override that narrows the node is not reported", () => {
-    expect.hasAssertions();
-
-    const section = createTestSectionNode(TEST_ID, [], {
-      ...wideBaseStyle,
-      [StyleBreakpoint.Tablet]: { [StyleState.Default]: { width: "320px" } },
-    });
-
-    expect(checkFixedWidth(section)).toStrictEqual([]);
-  });
+      expect(checkFixedWidth(section)).toStrictEqual([]);
+    },
+  );
 
   test.each([
     ["30rem", 480],

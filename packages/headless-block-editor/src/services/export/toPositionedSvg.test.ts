@@ -16,6 +16,7 @@ describe(toPositionedSvg, () => {
   const STICKY_NOTE_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000004";
   const STROKE_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000005";
   const TEXT_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000006";
+  const WRAPPED_PROCESS_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000007";
   const FILE_ID = "0000000000000000000000000000000000000000000000000000000000000000";
 
   test("the whiteboard exports to SVG", () => {
@@ -67,23 +68,10 @@ describe(toPositionedSvg, () => {
         },
         { fileId: FILE_ID, height: 50, id: IMAGE_ID, type: PositionedElementType.Image, width: 50, x: 100, y: 200 },
         { id: TEXT_ID, text: "d", type: PositionedElementType.Text, width: 100, x: 400, y: 0 },
-      ],
-    };
-
-    expect(toPositionedSvg(positionedDocument, getAssetUrl)).toMatchInlineSnapshot(
-      `"<svg xmlns="http://www.w3.org/2000/svg" width="532" height="412" viewBox="-16 -16 532 412"><rect x="-16" y="-16" width="532" height="412" fill="#ffffff"/><path d="M199.21457084115343 -0.785429157449598 L299.2145721836549 -0.7854278149481062 L299.2145735261564 99.21457352755338 L199.2145748686579 99.21457487005488 Z" fill="#ffffff" stroke="#1e1e1e" stroke-width="2"/><text x="250" y="55.333333333333336" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="250" dy="0">a</tspan></text><path d="M49.21199055328592 99.21199055468291 L149.2119918957874 249.2119918971844" fill="none" stroke="#1e1e1e" stroke-width="2"/><polygon points="150,250 139.18334617360804,242.788897449072 147.50384911698646,237.24189548681971" fill="#1e1e1e"/><text x="100" y="180.33333333333334" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="100" dy="0">b</tspan></text><path d="M299.21586098508715 299.21586098648413 L379.21586232758864 299.2158623289856 L379.21586367009013 379.2158636714871 L299.2158650125916 379.2158650139886 Z" fill="#ffff00" stroke="#1e1e1e" stroke-width="2"/><text x="340" y="345.3333333333333" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="340" dy="0">c</tspan></text><path d="M0 200 L50 250" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><image x="100" y="200" width="50" height="50" preserveAspectRatio="none" href="/assets/0000000000000000000000000000000000000000000000000000000000000000"/><text x="400" y="16" text-anchor="start" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="400" dy="0">d</tspan></text></svg>"`,
-    );
-  });
-
-  test("the export breaks a long label at the same words", () => {
-    expect.hasAssertions();
-
-    const positionedDocument: PositionedDocument = {
-      elements: [
         {
           fill: "#ffffff",
           height: 100,
-          id: PROCESS_ID,
+          id: WRAPPED_PROCESS_ID,
           kind: ShapeKind.Process,
           text: "a b c d",
           type: PositionedElementType.Shape,
@@ -91,12 +79,11 @@ describe(toPositionedSvg, () => {
           x: 0,
           y: 0,
         },
-        { id: TEXT_ID, text: "a b c", type: PositionedElementType.Text, width: 16, x: 200, y: 200 },
       ],
     };
 
     expect(toPositionedSvg(positionedDocument, getAssetUrl)).toMatchInlineSnapshot(
-      `"<svg xmlns="http://www.w3.org/2000/svg" width="248" height="292" viewBox="-16 -16 248 292"><rect x="-16" y="-16" width="248" height="292" fill="#ffffff"/><path d="M-0.7854291588465818 -0.785429157449598 L23.21457218365491 -0.7854278149481062 L23.214573526156403 99.21457352755338 L-0.7854251313421061 99.21457487005488 Z" fill="#ffffff" stroke="#1e1e1e" stroke-width="2"/><text x="12" y="45.333333333333336" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="12" dy="0">a b</tspan><tspan x="12" dy="20">c d</tspan></text><text x="200" y="216" text-anchor="start" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="200" dy="0">a</tspan><tspan x="200" dy="20">b</tspan><tspan x="200" dy="20">c</tspan></text></svg>"`,
+      `"<svg xmlns="http://www.w3.org/2000/svg" width="532" height="412" viewBox="-16 -16 532 412"><rect x="-16" y="-16" width="532" height="412" fill="#ffffff"/><path d="M199.21457084115343 -0.785429157449598 L299.2145721836549 -0.7854278149481062 L299.2145735261564 99.21457352755338 L199.2145748686579 99.21457487005488 Z" fill="#ffffff" stroke="#1e1e1e" stroke-width="2"/><text x="250" y="55.333333333333336" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="250" dy="0">a</tspan></text><path d="M49.21199055328592 99.21199055468291 L149.2119918957874 249.2119918971844" fill="none" stroke="#1e1e1e" stroke-width="2"/><polygon points="150,250 139.18334617360804,242.788897449072 147.50384911698646,237.24189548681971" fill="#1e1e1e"/><text x="100" y="180.33333333333334" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="100" dy="0">b</tspan></text><path d="M299.21586098508715 299.21586098648413 L379.21586232758864 299.2158623289856 L379.21586367009013 379.2158636714871 L299.2158650125916 379.2158650139886 Z" fill="#ffff00" stroke="#1e1e1e" stroke-width="2"/><text x="340" y="345.3333333333333" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="340" dy="0">c</tspan></text><path d="M0 200 L50 250" fill="none" stroke="#1e1e1e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><image x="100" y="200" width="50" height="50" preserveAspectRatio="none" href="/assets/0000000000000000000000000000000000000000000000000000000000000000"/><text x="400" y="16" text-anchor="start" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="400" dy="0">d</tspan></text><path d="M-0.7802685831115901 -0.7802685817146062 L23.219732759389903 -0.7802672392131144 L23.219734101891394 99.21973410328837 L-0.7802645556071143 99.21973544578987 Z" fill="#ffffff" stroke="#1e1e1e" stroke-width="2"/><text x="12" y="45.333333333333336" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1e1e1e"><tspan x="12" dy="0">a b</tspan><tspan x="12" dy="20">c d</tspan></text></svg>"`,
     );
   });
 

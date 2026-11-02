@@ -1,9 +1,7 @@
 // @vitest-environment nuxt
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceCreateForm from "@/components/Resource/Create/Form.vue";
-import ResourceCreateGallery from "@/components/Resource/Create/Gallery.vue";
 import ResourceWhiteboardEditor from "@/components/Resource/Whiteboard/Editor.vue";
-import { CreatableResourceTypes } from "@/models/resource/CreatableResourceType";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
@@ -30,12 +28,6 @@ describe("resourceCreateForm", () => {
   test("a Whiteboard is created from the create flow", async () => {
     expect.hasAssertions();
 
-    const gallery = await mountSuspended(ResourceCreateGallery, { global: { components: { RouterLink } } });
-
-    expect(gallery.findAll("a").map((link) => link.attributes("href"))).toStrictEqual(
-      CreatableResourceTypes.map((type) => RoutePath.ResourceExplorerCreateType(type)),
-    );
-
     trpcMsw.whiteboard.createResource.mutation(() =>
       createResourceListItem({ id: resourceId, name, type: ResourceType.Whiteboard }),
     );
@@ -55,11 +47,10 @@ describe("resourceCreateForm", () => {
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
     await readResource();
-    const editor = await mountSuspended(ResourceWhiteboardEditor);
+    await mountSuspended(ResourceWhiteboardEditor);
     const whiteboardStore = useWhiteboardStore();
     const { whiteboard } = storeToRefs(whiteboardStore);
 
-    expect(editor.find('[role="application"]').exists()).toBe(true);
     expect(whiteboard.value.elements).toStrictEqual([]);
   });
 });

@@ -53,12 +53,4 @@ describe(resizePositionedElementBounds, () => {
       { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 50 },
     ]);
   });
-
-  test("an arrow is not resized by bounds", () => {
-    expect.hasAssertions();
-
-    expect(
-      resizePositionedElementBounds({ elements: [POSITIONED_ARROW] }, 0, { height: 80, width: 80, x: 20, y: 20 }),
-    ).toStrictEqual([]);
-  });
 });

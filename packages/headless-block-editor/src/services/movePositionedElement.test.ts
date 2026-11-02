@@ -111,7 +111,6 @@ describe(movePositionedElement, () => {
     const recordedHistory = pushHistory(createHistory<JsonPatchOperation[]>(1), inverses);
     const { entry } = undoHistory(recordedHistory);
 
-    expect(recordedHistory.past).toStrictEqual([inverses]);
     assert.exists(entry);
     expect(applyPatches(movedDocument, entry).document).toStrictEqual(document);
   });

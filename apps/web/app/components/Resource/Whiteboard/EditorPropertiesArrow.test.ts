@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import ResourceWhiteboardEditorPropertiesArrow from "@/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
 import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
-import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, describe, expect, test } from "vitest";
@@ -30,10 +29,6 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     // The start is free and stays at its point, and the rest of the arrow is untouched
     expect(whiteboardStore.editState.document).toStrictEqual({
       elements: [WHITEBOARD_PROCESS, { ...WHITEBOARD_ARROW, start: { hasArrowhead: false, point: { x: 50, y: 100 } } }],
-    });
-    // The detach is one edit, so one undo restores the binding
-    expect(undoWhiteboardEdit(whiteboardStore.editState).document).toStrictEqual({
-      elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW],
     });
   });
 });

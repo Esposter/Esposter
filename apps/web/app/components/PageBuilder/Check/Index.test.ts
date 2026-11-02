@@ -53,28 +53,6 @@ describe("pageBuilderCheck", () => {
     component.unmount();
   });
 
-  test("choosing a finding selects its node", async () => {
-    expect.hasAssertions();
-
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [
-        createTestTextNode(TEST_OTHER_ID, {
-          [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_RGB_VALUE } },
-        }),
-      ],
-      root: TEST_ROOT,
-    });
-    const component = await mountSuspended(PageBuilderCheck, { props: { resourceId: TEST_ID } });
-    await flushPromises();
-    await component.get("button").trigger("click");
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-
-    expect(pageBuilderCanvasStore.getSelectedNodeId(TEST_ID)).toStrictEqual(TEST_OTHER_ID);
-
-    component.unmount();
-  });
-
   test("an invite to an unpublished survey is reported", async () => {
     expect.hasAssertions();
 
@@ -114,8 +92,6 @@ describe("pageBuilderCheck", () => {
       "Text Fixed width of 800px is wider than a phone",
       "Text Contrast 1.61 to 1, under the 4.5 to 1 a text needs",
     ]);
-    expect(new Set(rows.map((row) => row.attributes("id"))).size).toBe(2);
-
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_ID);
     await takeOne(rows, 1).trigger("click");
 

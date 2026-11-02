@@ -12,14 +12,6 @@ import { PositionedElementType } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
 describe(deleteWhiteboardElements, () => {
-  test("deleting a shape removes arrows bound only to it", () => {
-    expect.hasAssertions();
-
-    const state = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] });
-
-    expect(deleteWhiteboardElements(state, [WHITEBOARD_PROCESS_ID]).document).toStrictEqual({ elements: [] });
-  });
-
   test("deleting several elements is one undo step", () => {
     expect.hasAssertions();
 

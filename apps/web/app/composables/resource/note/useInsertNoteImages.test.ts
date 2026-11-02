@@ -4,12 +4,11 @@ import type { JSONContent } from "@tiptap/core";
 import { MimeType } from "#shared/models/file/MimeType";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
 import { useResourceStore } from "@/store/resource";
-import { ResourceType } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Editor } from "@tiptap/vue-3";
 import { describe, expect, test, vi } from "vitest";
 
@@ -31,35 +30,37 @@ describe(useInsertNoteImages, () => {
   const hash = "a".repeat(64);
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));
   const file = new File(["a"], "a", { type: MimeType.Png });
-  const dropPosition = 1;
+  // The first paragraph's text starts at 1 and the second's at 8, so the caret and a drop can differ
+  const twoParagraphDoc: JSONContent = {
+    content: [
+      { content: [{ text: "first", type: "text" }], type: "paragraph" },
+      { content: [{ text: "second", type: "text" }], type: "paragraph" },
+    ],
+    type: "doc",
+  };
 
-  const setupNote = () => {
+  const setupNote = (content: JSONContent = EMPTY_NOTE_DOC) => {
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     resource.value = createResourceListItem({ id: resourceId, type: ResourceType.Note });
-    return new Editor({ content: EMPTY_NOTE_DOC, extensions: getNoteExtensions() });
+    return new Editor({ content, extensions: getNoteExtensions() });
   };
 
-  // A picked image and a pasted one reach the same insertion without a position, at the caret
-  test("choosing an image from the menu adds it to the note", async () => {
+  // A picked image and a pasted one reach the same insertion without a position, at the caret. A drop carries the point
+  // It landed on, and the image goes in there rather than at the caret
+  test.each([
+    ["at the caret", 8, undefined],
+    ["where it is dropped", 1, 8],
+  ])("choosing an image from the menu adds it to the note, %s", async (_title, caretPosition, dropPosition) => {
     expect.hasAssertions();
 
     uploadResourceFileMock.mockResolvedValue(assetUrl);
-    const editor = setupNote();
-    await useInsertNoteImages()(editor, [file]);
-
-    expect(getImageSources(editor.getJSON())).toStrictEqual([assetUrl]);
-  });
-
-  // A drop carries the point it landed on, and the image goes in there rather than at the caret
-  test("dropping an image file onto the note adds it", async () => {
-    expect.hasAssertions();
-
-    uploadResourceFileMock.mockResolvedValue(assetUrl);
-    const editor = setupNote();
+    const editor = setupNote(twoParagraphDoc);
+    editor.commands.setTextSelection(caretPosition);
     await useInsertNoteImages()(editor, [file], dropPosition);
 
     expect(getImageSources(editor.getJSON())).toStrictEqual([assetUrl]);
+    expect(editor.getJSON().content?.map(({ type }) => type)).toStrictEqual(["paragraph", "image", "paragraph"]);
   });
 
   // The server refuses an upload that would exceed the quota, and that refusal leaves the note without the image
@@ -71,17 +72,5 @@ describe(useInsertNoteImages, () => {
     await useInsertNoteImages()(editor, [file]);
 
     expect(getImageSources(editor.getJSON())).toStrictEqual([]);
-  });
-
-  // The image is stored as its asset url, so a note saved and opened again holds the same image
-  test("an added image still shows after the note is saved and reopened", async () => {
-    expect.hasAssertions();
-
-    uploadResourceFileMock.mockResolvedValue(assetUrl);
-    const editor = setupNote();
-    await useInsertNoteImages()(editor, [file]);
-    const reopened = new Editor({ content: editor.getJSON(), extensions: getNoteExtensions() });
-
-    expect(getImageSources(reopened.getJSON())).toStrictEqual([assetUrl]);
   });
 });

@@ -10,22 +10,14 @@ import {
 import { describe, expect, test } from "vitest";
 
 describe(checkHasSurveyInvite, () => {
-  test("an invite nested in a section is found", () => {
+  test.each([
+    [true, [createTestSectionNode(TEST_ID, [createTestSurveyInviteNode(TEST_OTHER_ID, TEST_SURVEY_ID)], {})]],
+    [false, [createTestTextNode(TEST_OTHER_ID, {})]],
+  ])("an invite nested in a section is found: %s", (isFound, content) => {
     expect.hasAssertions();
 
-    const document: WebpageDocument = {
-      content: [createTestSectionNode(TEST_ID, [createTestSurveyInviteNode(TEST_OTHER_ID, TEST_SURVEY_ID)], {})],
-      root: TEST_ROOT,
-    };
+    const document: WebpageDocument = { content, root: TEST_ROOT };
 
-    expect(checkHasSurveyInvite(document)).toBe(true);
-  });
-
-  test("a page with no survey invite has none", () => {
-    expect.hasAssertions();
-
-    const document: WebpageDocument = { content: [createTestTextNode(TEST_OTHER_ID, {})], root: TEST_ROOT };
-
-    expect(checkHasSurveyInvite(document)).toBe(false);
+    expect(checkHasSurveyInvite(document)).toBe(isFound);
   });
 });

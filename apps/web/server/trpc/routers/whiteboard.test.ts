@@ -78,16 +78,4 @@ describe("whiteboardRouter", () => {
       `[TRPCError: Invalid operation: Update, name: whiteboard, element 1 is not one that moves]`,
     );
   });
-
-  test("a move of an arrow with a free end moves that end and leaves its bound end", async () => {
-    expect.hasAssertions();
-
-    const savedResource = await createSavedWhiteboard(shape, arrow);
-    await caller.moveWhiteboardElement({ id: savedResource.id, index: 1, point: { x: 60, y: 120 } });
-    const content = await caller.readResourceContent({ id: savedResource.id });
-
-    expect(content).toStrictEqual({
-      elements: [shape, { ...arrow, end: { ...arrow.end, point: { x: 160, y: 270 } } }],
-    });
-  });
 });

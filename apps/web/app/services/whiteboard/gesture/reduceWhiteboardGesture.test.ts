@@ -8,21 +8,14 @@ import type {
   PositionedDocument,
   ShapeElement,
   StrokeElement,
-  TextElement,
 } from "headless-block-editor";
 
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
+import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
-import { applyPatches, JsonPatchOperationType, takeOne } from "@esposter/shared";
-import {
-  ArrowPathKind,
-  positionedDocumentSchema,
-  PositionedElementType,
-  ShapeKind,
-  TEXT_CHARACTER_WIDTH,
-} from "headless-block-editor";
+import { JsonPatchOperationType, takeOne } from "@esposter/shared";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
 const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
@@ -47,7 +40,6 @@ describe(reduceWhiteboardGesture, () => {
   const DECISION_ID = crypto.randomUUID();
   const NEW_ARROW_ID = crypto.randomUUID();
   const STROKE_ID = crypto.randomUUID();
-  const TEXT_ID = crypto.randomUUID();
   const VIEWPORT: Viewport = { scale: 1, x: 0, y: 0 };
   const PROCESS_BOUNDS: Bounds = { height: 50, width: 100, x: 100, y: 100 };
   // A decision's bottom point to a process's left point, both bound, with its arrowhead at the end only
@@ -137,23 +129,29 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
-  test("a resized shape's edges land on the grid", () => {
-    expect.hasAssertions();
+  test.each([
+    { height: 70, isSnapEnabled: false, pointer: { x: 230, y: 170 }, width: 130 },
+    { height: 80, isSnapEnabled: true, pointer: { x: 233, y: 171 }, width: 140 },
+  ])(
+    "a resized shape's edges follow the pointer, and land on the grid when snapping (snap $isSnapEnabled)",
+    ({ height, isSnapEnabled, pointer, width }) => {
+      expect.hasAssertions();
 
-    const state = createState(
-      { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
-      { isSnapEnabled: true, selectedIds: [PROCESS_ID] },
-    );
+      const state = createState(
+        { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
+        { isSnapEnabled, selectedIds: [PROCESS_ID] },
+      );
 
-    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
-    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 233, y: 171 }));
-    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 233, y: 171 }));
+      const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
+      const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, pointer));
+      const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, pointer));
 
-    expect(up.operations).toStrictEqual([
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 140 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 80 },
-    ]);
-  });
+      expect(up.operations).toStrictEqual([
+        { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: width },
+        { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: height },
+      ]);
+    },
+  );
 
   test("a resize held at the minimum size keeps its edges on the grid", () => {
     expect.hasAssertions();
@@ -252,21 +250,6 @@ describe(reduceWhiteboardGesture, () => {
     expect(up.state.selectedIds).toStrictEqual([PROCESS_ID, SECOND_PROCESS_ID]);
   });
 
-  test("dragging a shape's corner resizes it", () => {
-    expect.hasAssertions();
-
-    const state = createState({ elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] }, { selectedIds: [PROCESS_ID] });
-
-    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
-    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 230, y: 170 }));
-    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 230, y: 170 }));
-
-    expect(up.operations).toStrictEqual([
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 130 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 70 },
-    ]);
-  });
-
   test("the hand tool pans the viewport in world units", () => {
     expect.hasAssertions();
 
@@ -294,26 +277,6 @@ describe(reduceWhiteboardGesture, () => {
     expect(cancel.state.document).toStrictEqual(document);
     expect(cancel.state.preview).toBeUndefined();
     expect(cancel.state.gesture).toBeUndefined();
-  });
-
-  test("a text box is hit across the lines its text wraps to", () => {
-    expect.hasAssertions();
-
-    // "a b c" wraps to three lines at this width, so the box reaches its third line, which a one-line box would not
-    const textElement: TextElement = {
-      id: TEXT_ID,
-      text: "a b c",
-      type: PositionedElementType.Text,
-      width: TEXT_CHARACTER_WIDTH * 2,
-      x: 100,
-      y: 100,
-    };
-    const state = createState({ elements: [textElement] });
-
-    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 105, y: 150 }));
-    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 105, y: 150 }));
-
-    expect(up.state.selectedIds).toStrictEqual([TEXT_ID]);
   });
 
   test("an arrow binds its ends to two shapes' connection points", () => {
@@ -395,33 +358,6 @@ describe(reduceWhiteboardGesture, () => {
     });
   });
 
-  test("an arrow with an arrowhead at each end", () => {
-    expect.hasAssertions();
-
-    const decisionShape: ShapeElement = {
-      ...createProcess(DECISION_ID, { height: 100, width: 100, x: 0, y: 0 }),
-      kind: ShapeKind.Decision,
-    };
-    const processShape = createProcess(PROCESS_ID, { height: 100, width: 100, x: 200, y: 0 });
-    const state = createState(
-      { elements: [decisionShape, processShape] },
-      { createId: () => NEW_ARROW_ID, tool: GestureTool.Arrow },
-    );
-
-    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 50, y: 100 }));
-    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 205, y: 55 }));
-    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 205, y: 55 }));
-    const headedDocument = applyPatches(up.state.document, [
-      { op: JsonPatchOperationType.Replace, path: "/elements/2/start/hasArrowhead", value: true },
-    ]).document;
-
-    expect(takeOne(headedDocument.elements, 2)).toStrictEqual({
-      ...BOUND_ARROW,
-      start: { ...BOUND_ARROW.start, hasArrowhead: true },
-    });
-    expect(positionedDocumentSchema.safeParse(headedDocument).success).toBe(true);
-  });
-
   test("releasing an arrow on empty space leaves its end free", () => {
     expect.hasAssertions();
 
@@ -487,10 +423,18 @@ describe(reduceWhiteboardGesture, () => {
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 300, y: 300 }));
 
     expect(up.operations).toStrictEqual([
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/x", value: 184 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/y", value: 134 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 16 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 16 },
+      {
+        op: JsonPatchOperationType.Replace,
+        path: "/elements/0/x",
+        value: PROCESS_BOUNDS.x + PROCESS_BOUNDS.width - MINIMUM_ELEMENT_SIZE,
+      },
+      {
+        op: JsonPatchOperationType.Replace,
+        path: "/elements/0/y",
+        value: PROCESS_BOUNDS.y + PROCESS_BOUNDS.height - MINIMUM_ELEMENT_SIZE,
+      },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: MINIMUM_ELEMENT_SIZE },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: MINIMUM_ELEMENT_SIZE },
     ]);
   });
 

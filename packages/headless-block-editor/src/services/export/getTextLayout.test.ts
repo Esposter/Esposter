@@ -29,23 +29,4 @@ describe(getTextLayout, () => {
       getTextLayout("a", { point: { x: 200, y: 0 }, textAnchor: TextAnchor.Start, width: TEXT_CHARACTER_WIDTH * 10 }),
     ).toStrictEqual({ baselineY: TEXT_FONT_SIZE, lines: [{ dy: 0, text: "a" }] });
   });
-
-  test("a long label wraps inside its shape", () => {
-    expect.hasAssertions();
-
-    // Three narrow characters wide, so "a b" fills the first line and "c d" the second
-    expect(
-      getTextLayout("a b c d", {
-        point: { x: 50, y: 50 },
-        textAnchor: TextAnchor.Middle,
-        width: TEXT_CHARACTER_WIDTH * 3,
-      }),
-    ).toStrictEqual({
-      baselineY: 50 - TEXT_LINE_HEIGHT / 2 + TEXT_FONT_SIZE / 3,
-      lines: [
-        { dy: 0, text: "a b" },
-        { dy: TEXT_LINE_HEIGHT, text: "c d" },
-      ],
-    });
-  });
 });

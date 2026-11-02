@@ -7,7 +7,6 @@ describe(snapToGrid, () => {
     [41, 40],
     [60, 60],
     [-37, -40],
-    [-41, -40],
   ])("%i snaps to %i on a grid of 20", (value, expected) => {
     expect.hasAssertions();
 

@@ -8,7 +8,7 @@ import { describe } from "vitest";
 
 export const POSITIONED_ANNOTATION_ID: string = crypto.randomUUID();
 const POSITIONED_ARROW_ID: string = crypto.randomUUID();
-export const POSITIONED_FREE_ARROW_ID: string = crypto.randomUUID();
+const POSITIONED_FREE_ARROW_ID: string = crypto.randomUUID();
 export const POSITIONED_PROCESS_ID: string = crypto.randomUUID();
 export const POSITIONED_RECTANGLE_ID: string = crypto.randomUUID();
 

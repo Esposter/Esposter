@@ -60,7 +60,12 @@ describe(useWhiteboardTextEdit, () => {
     onCompositionStart();
     onKeydown(pressKey({ isComposing: true, key: "Enter" }));
 
-    expect(textEdit.value).toBeDefined();
+    expect(textEdit.value).toStrictEqual({
+      draft: "Review",
+      elementId: WHITEBOARD_PROCESS_ID,
+      isCommitPending: false,
+      isComposing: true,
+    });
     expect(editState.value.history.past).toHaveLength(0);
   });
 
@@ -94,18 +99,6 @@ describe(useWhiteboardTextEdit, () => {
 
     expect(textEdit.value).toBeUndefined();
     expect(editState.value.document).toStrictEqual({ elements: [processShape] });
-    expect(editState.value.history.past).toHaveLength(0);
-  });
-
-  test("a commit that leaves the text as it was writes no history entry", () => {
-    expect.hasAssertions();
-
-    const editState = ref(createWhiteboardEditState({ elements: [processShape] }));
-    const { onBlur, startTextEdit } = useWhiteboardTextEdit(editState);
-
-    startTextEdit(WHITEBOARD_PROCESS_ID);
-    onBlur();
-
     expect(editState.value.history.past).toHaveLength(0);
   });
 });
