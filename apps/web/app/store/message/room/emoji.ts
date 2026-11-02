@@ -59,7 +59,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   );
   const { executeQuery: executeReadRoomEmojisQuery } = useMutation();
   const readRoomEmojis = async (roomId: RoomInMessage["id"]) => {
-    // The room's subscription is opened before this read, so what lands while the read is in flight is replayed over
+    // The room's subscription has started before this read, so what lands while the read is in flight is replayed over
     // Its answer rather than lost in the gap between the two. Keyed by the room, so re-entering it supersedes the read
     // It interrupted: the room lifecycle issues one read per activation, and A→B→A would otherwise let the first A
     // Response land last and overwrite the newer list
