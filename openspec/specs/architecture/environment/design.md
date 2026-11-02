@@ -35,7 +35,7 @@ These are set automatically:
 
 **`IS_PRODUCTION` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
 
-**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `apps/functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, which the Nuxt build evaluates and never ships), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
+**`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `apps/functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, whose code the Nuxt build evaluates and never ships, but whose values it does: each non-`public` `runtimeConfig` entry is written into the server bundle as that key's default, so a built artifact holds the secrets of the environment it was built in, and a runtime override of one is a `NUXT_`-prefixed variable, never the plain name `configuration/` read), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet.
 
 ## What not to do
 
