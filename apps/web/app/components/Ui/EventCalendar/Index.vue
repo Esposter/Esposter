@@ -254,3 +254,10 @@ useCommands((): UiCommand[] => [
     </div>
   </section>
 </template>
+
+<style scoped>
+/* While an event is dragged, the blocks step aside, so the slot under a block takes the drop rather than the block */
+section[data-dragging] :deep(.placed) {
+  pointer-events: none;
+}
+</style>
