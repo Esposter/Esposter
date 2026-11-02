@@ -10,5 +10,5 @@ Nothing here.
 
 ## Open
 
-- [ ] **Quest: the journal's emblem is a solid disc** — the still shows a cream ring round a dark interior with a light star, which is a traced asset to name in the roadmap's asset rows and not a hand-drawn badge.
-- [ ] **Quest: our title and description ink is heavier than the still's** — the parity page loads only Signika 600 (`packages/genshin-world/parity/main.ts`), about 20 to 50 percent more bright pixels than the game's face, so a weight change renders the same until the game's face is on the page.
+- [ ] **Quest: the journal's emblem is a solid disc** — the still shows a cream ring round a dark interior with a light star, which is a missing asset named in the roadmap's asset rows (`openspec/changes/genshin-roadmap/tasks.md`, the quest screen's journal emblem) and not a hand-drawn badge.
+- [ ] **Quest: our title and description ink is heavier than the still's** — the parity page loads only Signika 600 (`packages/genshin-world/parity/main.ts`), about 20 to 50 percent more bright pixels than the game's face, so a weight change renders the same until the game's face is on the page. A shared page limit, not the screen's error: a second face is a change to `parity/main.ts`, which every screen loads.
