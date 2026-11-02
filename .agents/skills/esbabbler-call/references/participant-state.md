@@ -11,6 +11,8 @@ The client `callSessionParticipantsMap` mirrors the server structure for O(1) lo
 - **`selfParticipant` computed** — derive `isInCall`, `isMuted`, `isHandRaised` for the current session from one `computed(() => sessionId.value ? callSessionParticipantsMap.value.get(activeCallSessionId.value)?.get(sessionId.value) : undefined)` rather than per-value `.find()`/`.includes()`.
 - **Never wrap raw store state in a getter for read-only access** — expose `callSessionParticipantsMap` directly via `storeToRefs` (components) or dot access (stores), and inline the guard within each consumer's reactive context. A `getFooMap(id)` wrapper hides tracked deps, can break reactivity when the reference escapes, and returns a new empty `Map` each call (breaking computed caching). Inline `participantStore.callSessionParticipantsMap.get(id) ?? new Map<string, CallParticipant>()` instead.
 
+- **A join's snapshot is written before its connect, never after it.** The viewed room's subscription keeps applying participant events to the map it holds while the LiveKit connect is open. A snapshot written once the connect resolves replaces that map and discards those events, so `joinCall` and `joinCallByRoomId` call `setParticipantMap` ahead of `connect`.
+
 ```ts
 // Map-based, O(1), state on entity, reactive deps visible at the call site
 // In stores (dot access on store instance):

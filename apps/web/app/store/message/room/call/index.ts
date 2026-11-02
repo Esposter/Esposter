@@ -182,13 +182,15 @@ export const useCallStore = defineStore("message/room/call", () => {
         liveKitUrl,
         participantMap,
       } = await $trpc.callSession.joinCall.mutate({ id });
+      // Seeded before the connect rather than after it: the participant events delivered while the connect is open
+      // Land in this map in place, and a snapshot written once the connect resolves would discard them
+      setParticipantMap(callSessionId, participantMap);
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
       isDoorkeeper.value = newIsDoorkeeper;
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
-      setParticipantMap(callSessionId, participantMap);
       // The call is connected by here, so these only sync the participant row and report their own
       // Failures — a rejected flag must not tear down a call that is already up
       if (!isMicrophoneEnabled) await setMuted(true);
@@ -215,13 +217,15 @@ export const useCallStore = defineStore("message/room/call", () => {
     await getResultAsync(async () => {
       const { callSessionId, liveKitToken, liveKitUrl, participantMap } =
         await $trpc.callSession.joinCallByRoomId.mutate({ roomId, threadRootRowKey });
+      // Seeded before the connect, as in `joinCall`: the room's participant events that arrive while it is open
+      // Would otherwise be overwritten by this snapshot once it resolves
+      setParticipantMap(callSessionId, participantMap);
       await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
       if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;
-      setParticipantMap(callSessionId, participantMap);
       isCallViewOpen.value = true;
     }).match(noop, (error) => unwindJoin(isJoined, error));
     isConnecting.value = false;

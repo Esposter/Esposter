@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
@@ -17,6 +18,16 @@ import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+
+const createParticipant = (id: string): CallParticipant => ({
+  id,
+  image: "image",
+  isCameraEnabled: false,
+  isHandRaised: false,
+  isMuted: false,
+  name: "name",
+  userId: "userId",
+});
 
 describe(useCallStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -171,6 +182,75 @@ describe(useCallStore, () => {
 
     expect(isConnecting.value).toBe(false);
     expect(takeOne(alerts.value).text).toBe(" ");
+  });
+
+  // The room's subscription keeps applying participant events while the connect is open, to the map it holds. The
+  // Join's snapshot used to replace that map once the connect resolved, so the leave and the join that landed in the
+  // Meantime were lost and the leaver stayed listed
+  test.each<{
+    join: (callStore: ReturnType<typeof useCallStore>) => Promise<unknown>;
+    registerJoin: (participantMap: Map<string, CallParticipant>) => void;
+    title: string;
+  }>([
+    {
+      join: (callStore) => callStore.joinCall(callSessionId),
+      registerJoin: (participantMap) => {
+        trpcMsw.callSession.joinCall.mutation(() => ({
+          callSessionId,
+          isDoorkeeper: false,
+          liveKitToken: "",
+          liveKitUrl: "",
+          participantMap,
+        }));
+      },
+      title: "an id",
+    },
+    {
+      join: (callStore) => callStore.joinCallByRoomId(roomId),
+      registerJoin: (participantMap) => {
+        trpcMsw.callSession.joinCallByRoomId.mutation(() => ({
+          callSessionId,
+          liveKitToken: "",
+          liveKitUrl: "",
+          participantMap,
+        }));
+      },
+      title: "a room id",
+    },
+  ])("keeps the participant events a join's connect delivers, by $title", async ({ join, registerJoin }) => {
+    expect.hasAssertions();
+
+    const { session } = getMockSession();
+    const leavingId = crypto.randomUUID();
+    const joiningId = crypto.randomUUID();
+    registerJoin(
+      new Map([
+        [leavingId, createParticipant(leavingId)],
+        [session.id, createParticipant(session.id)],
+      ]),
+    );
+    const participantStore = useParticipantStore();
+    const { callSessionParticipantsMap } = storeToRefs(participantStore);
+    participantStore.setParticipantMap(callSessionId, new Map([[leavingId, createParticipant(leavingId)]]));
+    const liveKitStore = useLiveKitStore();
+    const connectStarted = Promise.withResolvers<void>();
+    const connectEnded = Promise.withResolvers<void>();
+    vi.spyOn(liveKitStore, "connect").mockImplementation(async () => {
+      connectStarted.resolve();
+      await connectEnded.promise;
+    });
+    const callStore = useCallStore();
+    const joining = join(callStore);
+    await connectStarted.promise;
+    participantStore.deleteCallParticipant(callSessionId, leavingId);
+    participantStore.createCallParticipant(callSessionId, createParticipant(joiningId));
+    connectEnded.resolve();
+    await joining;
+
+    expect([...(callSessionParticipantsMap.value.get(callSessionId)?.keys() ?? [])]).toStrictEqual([
+      session.id,
+      joiningId,
+    ]);
   });
 
   test("routes to the call's own page when the call belongs to no room", () => {
