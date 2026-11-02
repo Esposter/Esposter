@@ -100,7 +100,7 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
   margin: 0;
   padding: calc(var(--unit) * 2) calc(var(--unit) * 12);
   border-radius: calc(var(--unit) * 18);
-  background: rgb(62 195 238);
+  background: rgb(44 180 238);
   font-size: calc(var(--unit) * 28);
   letter-spacing: calc(var(--unit) * 0.4);
   line-height: calc(var(--unit) * 33);
@@ -201,7 +201,7 @@ const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeat
   box-sizing: border-box;
   margin: calc(var(--unit) * 3) 0 0 calc(var(--unit) * -7);
   padding: 0 calc(var(--unit) * 19);
-  background: rgb(20 30 50 / 0.7);
+  background: rgb(18 16 46 / 0.8);
   color: #dfc896;
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 29);

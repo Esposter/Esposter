@@ -212,13 +212,14 @@ const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id ==
   width: calc(var(--unit) * 157);
   height: calc(var(--unit) * 58);
   border: calc(var(--unit) * 2) solid rgb(255 255 255 / 0.25);
-  background: rgb(84 120 172 / 0.9);
+  /* The tab's fill, measured on the reference's own pixels beside its portrait, is opaque */
+  background: rgb(86 120 173);
 }
 
 .banner[aria-pressed="true"] {
   width: calc(var(--unit) * 175);
   height: calc(var(--unit) * 66);
-  background: #fffdea;
+  background: #faf9e6;
 }
 
 .close {
@@ -246,6 +247,8 @@ const bannerLabelText = computed(() => bannerLabels.value.find(({ id }) => id ==
   box-sizing: border-box;
   width: calc(var(--unit) * 172);
   height: calc(var(--unit) * 42);
+  /* The game's words sit five units above the button's centre, so the link's bottom padding lifts them there */
+  padding-bottom: calc(var(--unit) * 10);
   background: #f6f0e9;
   color: #36323a;
   font-size: calc(var(--unit) * 22);

@@ -47,7 +47,7 @@ const bottomCurrencies = computed(() => currencies.filter(({ isTopUp }) => !isTo
 }
 
 .currencies-bottom {
-  top: calc(var(--unit) * 958);
+  top: calc(var(--unit) * 956.5);
   left: calc(var(--unit) * 68);
   gap: calc(var(--unit) * 47);
 }

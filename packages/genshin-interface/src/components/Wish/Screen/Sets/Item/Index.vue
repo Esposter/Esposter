@@ -27,7 +27,10 @@ const { cost, isAffordable, label } = defineProps<Props>();
   font-weight: 600;
 }
 
+/* The cost sits three units under the label's line, where the game's gem and its count lie */
 .cost {
+  position: relative;
+  top: calc(var(--unit) * 3);
   font-size: calc(var(--unit) * 24);
   opacity: 0.85;
 }
