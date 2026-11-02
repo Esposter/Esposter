@@ -10,6 +10,6 @@ Nothing here.
 
 ## Open
 
-- [ ] **Crafting: the mask scores of the first three parts, 54.43% to 52.26%, then 51.79% and 51.67%** — no source yet: a recorded parity run of each part's mask, which the snapshot keeps only for the final 39.00%.
+- [ ] **Crafting: the mask scores of the first three parts, 54.43% to 52.26%, then 51.79% and 51.67%** — no source yet: a recorded parity run of each part's mask, which the snapshot does not keep for any part, its row reading pending.
 - [ ] **The compare reads the crafting-table plate** — no source yet: the crafting-table plate crafting-table.png is not in genshin-parity's references, and the snapshot's row for it reads "pending: its recording is not on disk" (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` line 27), so a recording of the table with the screen closed is what would settle it.
 - [ ] **The plate is the clip's frame at 39.5 seconds, and the clip has no frame of the spot with the screen closed (37 seconds the camera still moving, 38 seconds the screen up)** — no source yet: the clip yt-qQILsaJKlsI-crafting-table.mp4 is not in genshin-parity's captures (no crafting file is listed under `{data-root}/genshin-parity/captures`), so its frame at 39.5 seconds is the missing recording.

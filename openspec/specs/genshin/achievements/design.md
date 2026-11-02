@@ -51,7 +51,7 @@ A trigger type the map does not name is not watched, and its achievements never 
 
 ## Parity
 
-The Achievements screen is judged against its reference (`achievement-screen`: a 1080-high frame, the window pillarboxed 96 pixels each side, from a public tutorial at 37 seconds), at 3.68% mean difference, shape 0.895 and FLIP 0.1678, its snapshot committed beside the component. The roadmap owns the words and the art it still lacks.
+The Achievements screen is judged against its reference (`achievement-screen`: a 1080-high frame, the window pillarboxed 96 pixels each side, from a public tutorial at 37 seconds), at 3.73% mean difference, shape 0.915 and FLIP 0.1674, its snapshot committed beside the component. The roadmap owns the words and the art it still lacks.
 
 ## Key files
 
