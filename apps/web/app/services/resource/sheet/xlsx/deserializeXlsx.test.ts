@@ -68,6 +68,47 @@ describe(deserializeXlsx, () => {
     ]);
   });
 
+  // A date-styled cell is read back as a Date, so the test writes one with its own number format rather than a string
+  const createDateCellFile = async (value: Date | number, format: string) => {
+    const { default: writeXlsxFile } = await import("write-excel-file/browser");
+    const blob = await writeXlsxFile([["a"], [{ format, value }]]).toBlob();
+    return new File([blob], "a.xlsx", { type: MIME_TYPE });
+  };
+
+  test("reads a date-styled cell as a date column", async () => {
+    expect.hasAssertions();
+
+    const epochDate = new Date(0).toISOString().slice(0, 10);
+    const file = await createDateCellFile(new Date(0), "yyyy-mm-dd");
+    const { columns, rows } = await deserializeXlsx(file, defaultSettings);
+
+    expect(columns.map(({ name, type }) => ({ name, type }))).toStrictEqual([{ name: "a", type: ColumnType.Date }]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: epochDate }]);
+  });
+
+  test("keeps the time of a date-styled cell that has one", async () => {
+    expect.hasAssertions();
+
+    const epochDate = new Date(0).toISOString().slice(0, 10);
+    const tenHours = new Date(Temporal.Duration.from({ hours: 10 }).total("milliseconds"));
+    const file = await createDateCellFile(tenHours, "yyyy-mm-dd hh:mm:ss");
+    const { columns, rows } = await deserializeXlsx(file, defaultSettings);
+
+    expect(columns.map(({ type }) => type)).toStrictEqual([ColumnType.Date]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: `${epochDate}T10:00:00` }]);
+  });
+
+  test("a date-styled cell outside the calendar does not fail the import", async () => {
+    expect.hasAssertions();
+
+    // A serial past the last day a Date can hold, which the reader hands over as an Invalid Date
+    const outOfCalendarSerial = 1e10;
+    const file = await createDateCellFile(outOfCalendarSerial, "yyyy-mm-dd");
+    const { rows } = await deserializeXlsx(file, defaultSettings);
+
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "Invalid Date" }]);
+  });
+
   test("only header row returns columns with no rows", async () => {
     expect.hasAssertions();
 

@@ -19,8 +19,8 @@ export const deserializeJson = async (file: File, _settings: JsonFileSettings) =
       throw new InvalidOperationError(Operation.Read, file.name, error.message);
     },
   );
-  const [firstRow] = rows;
-  const sourceNames = firstRow ? Object.keys(firstRow) : [];
+  // A key first seen in a later object is a column too, so the columns are every key in first-seen order
+  const sourceNames = [...new Set(rows.flatMap((row) => Object.keys(row)))];
   const bodyRows = rows.map((row) => sourceNames.map((sourceName) => getCellText(takeOne(row, sourceName))));
   return deserializeToDataSource(sourceNames, bodyRows, DataSourceType.Json, file);
 };

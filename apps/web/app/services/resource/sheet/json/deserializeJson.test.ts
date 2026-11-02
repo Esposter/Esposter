@@ -27,6 +27,19 @@ describe(deserializeJson, () => {
     ]);
   });
 
+  test("a key first seen in a later object is a column too, and an object without it reads empty", async () => {
+    expect.hasAssertions();
+
+    const file = createJsonFile(JSON.stringify([{ a: 0 }, { a: 2, b: 3 }]));
+    const { columns, rows } = await deserializeJson(file, JSON_SETTINGS);
+
+    expect(columns.map(({ name }) => name)).toStrictEqual(["a", "b"]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([
+      { a: 0, b: null },
+      { a: 2, b: 3 },
+    ]);
+  });
+
   test("empty array returns DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
