@@ -231,12 +231,13 @@ export const baseRoomRouter = router({
         input,
       );
 
+      // The group removal can fail the leave, so it runs before the notify: a leave that throws has told nobody
+      await removeUserFromRoomGroup(ctx.db, userToRoom.roomId, userId);
       roomEventEmitter.emit("leaveRoom", {
         roomId: userToRoom.roomId,
         sessionId: ctx.getSessionPayload.session.id,
         userId: userToRoom.userId,
       });
-      await removeUserFromRoomGroup(ctx.db, userToRoom.roomId, userId);
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
       // A failure costs the room one "X left" line, never the leave that already landed.
       await getResultAsync(async () => {
@@ -458,7 +459,7 @@ export const baseRoomRouter = router({
     return cursorPaginationData;
   }),
   // Every id asked for comes back, a user who has left the room included, so a message whose author has left is still
-  // named. `isMember` tells the two apart, and a user with no membership is named by their account
+  // Named. `isMember` tells the two apart, and a user with no membership is named by their account
   readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
     ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
