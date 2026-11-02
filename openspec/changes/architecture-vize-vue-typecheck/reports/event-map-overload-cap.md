@@ -110,11 +110,62 @@ The walk starts from the last overload, so the first events are the ones lost. A
 
 I confirmed this in plain TypeScript with the helper types copied from the binary. The same probe fails from 17 events with `tsrs` (with and without `--fast`), native TypeScript 7.0.2 and stock TypeScript 5.9.3, so the compiler is not the cause. With the depth set to 64, the 17-event and 22-event cases keep every event. At 32 events `tsrs` then stops the same recursion with `TS5114: Instantiations of type '$OverloadUnionRecursive' appear infinitely circular`. A higher limit alone does not fix this.
 
-Building the map from the keyed object, as `__EmitOptions` does for a type that is not a function, keeps every event. The probe with 16, 17, 40 and 100 keys has no error. The fix is to build `$StaticEventMap` from the keyed event types and not from the overloaded function.
+The same helper reads `Emits` in more places than `$StaticEventMap`. `__EmitProps` is defined on `__EmitOptions<T>`, so the handler props of a component come from the same walk (read in the source, not observed in a component). The change that fixes it is to build the union of overloads with an accumulator, so that the recursion is in tail position and the depth limit is no longer reached at 16 events. A second fix is to pass a keyed type to the helpers. Both are described and tested below.
+
+### Proposed fix
+
+The smaller fix changes one line of `helpers/declarations/emit-overloads.d.ts.txt`. `$OverloadUnionRecursive` builds its union on the way out of the recursion, so the conditional type is not in tail position and the compiler stops it at about 30 levels. A form with an accumulator builds the union on the way in. The compiler evaluates a conditional type in tail position for up to 1000 iterations. The result is the same union, and the walk is cheaper. Every other line stays as it is:
+
+```ts
+type $OverloadUnionRecursive<
+  TOverload,
+  TPartialOverload = unknown,
+  TDepth extends unknown[] = [],
+  TAccumulated = never,
+> = TDepth["length"] extends 900
+  ? TAccumulated
+  : TOverload extends (...args: infer TArgs) => infer TReturn
+    ? TPartialOverload extends TOverload
+      ? TAccumulated
+      : $OverloadUnionRecursive<
+          TPartialOverload & TOverload,
+          TPartialOverload & ((...args: TArgs) => TReturn) & $OverloadProps<TOverload>,
+          [...TDepth, unknown],
+          TAccumulated | ((...args: TArgs) => TReturn)
+        >
+    : TAccumulated;
+```
+
+The larger fix passes a keyed type, and not the overloaded function, to `__EmitOptions` and `__EmitProps`. The generator passes `Emits` to them at eight lines in four files: `generator/emits.rs` (85, 310, 315 and 320), `generator/component_constructors.rs` (156 and 182), `generator/component_constructors/emission.rs` (91) and `generator/setup_props.rs` (292). A keyed type needs no walk, and the cost below is the lowest. Each of the eight lines must change, so this is the larger change.
+
+### Checks of the fix
+
+All checks run in plain TypeScript. They use the helper text of the tag `v0.638.0`, once as it is and once with the fix, on TypeScript 5.9.3 and on `tsrs` 0.20.1-ts7.1.0-beta, with and without `--fast`. Vize's own test suite did not run (see "Not known").
+
+| Check                                                                                 | Result                                                        |
+| :------------------------------------------------------------------------------------ | :------------------------------------------------------------ |
+| 15 emit shapes, 3 outputs each (45 comparisons), strict type identity, current vs fix | All identical                                                 |
+| Negative control: the same comparison with a changed payload                          | Fails with `TS2344` on both tools, so the comparison can fail |
+| Events held by the current helper, model branch                                       | 16 held, 17 and above fail                                    |
+| Events held by the fix, model branch                                                  | Every event at 17, 22, 32, 40, 100, 200 and 400               |
+
+The 15 shapes are the model branch with authored events, with models only and with models that share a name; call signatures; a single function type; a string event; literal events followed by a string fallback; a union event; an optional argument; a rest argument; a function with properties; no events; kebab-case events; labelled tuples; and generic payloads. The three outputs are the union of parameter tuples, the flattened `__EmitOptions` map and the flattened `__EmitProps` map.
+
+Cost on TypeScript 5.9.3, from `--extendedDiagnostics`, for the model branch:
+
+| Events | Current helper | Fix, instantiations | Fix, check time | Keyed type, instantiations |
+| -----: | -------------: | ------------------: | --------------: | -------------------------: |
+|     16 |          9,689 |               7,078 |          0.08 s |                        176 |
+|     22 |          fails |              11,479 |          0.11 s |                          - |
+|     40 |          fails |              30,946 |          0.25 s |                        368 |
+|    100 |          fails |             163,696 |          1.65 s |                        848 |
+|    400 |          fails |           2,393,446 |            95 s |                      3,248 |
+
+On `tsrs --fast` the fix takes 0.3 s at 16 events, as the current helper does, 0.6 s at 100 events and 20 s at 400 events. The keyed type takes 0.3 s at every size. The fix costs more as the count grows, and the keyed type does not. A component with 100 events is far past any real use, and the current helper drops events silently from 17.
 
 ## Real occurrence
 
-The shape in a real component: [`Menu/Index.vue` lines 230 to 256](https://github.com/Esposter/Esposter/blob/a92c7863855db4ea45ff1cefce698b6c7f9039b4/packages/genshin-world/src/components/World/Session/Menu/Index.vue#L230-L256) has the shape: `defineEmits` and `defineModel` together in one component.
+https://github.com/Esposter/Esposter/blob/a92c7863855db4ea45ff1cefce698b6c7f9039b4/packages/genshin-world/src/components/World/Session/Menu/Index.vue#L230
 
 ## Isolation
 
@@ -134,7 +185,7 @@ One change at a time. Errors on `vize` 0.644.0 with `tsrs`, and `vue-tsc` on the
 
 ## Not known
 
-The same input with `typescript-native-bridge` 6.0.3 fails every file, including the 16-event one, with `TS18069: The content mapper process failed while handling the project request` on 0.638.0 and 0.644.0. That is a different failure and it is not analysed here. Releases older than 0.630.0 are not tested. The `defineEmits` call-signature form is not tested. The fix is read from the source and not applied.
+The same input with `typescript-native-bridge` 6.0.3 fails every file, including the 16-event one, with `TS18069: The content mapper process failed while handling the project request` on 0.638.0 and 0.644.0. That is a different failure and it is not analysed here. Releases older than 0.630.0 are not tested. The `defineEmits` call-signature form is tested only as a type in the 15 shapes, and not in a component. The fix is not applied to a build of vize, because no Rust toolchain was available, so vize's own tests did not run on it. Vue 2 mode, `emit-inference` and the `__vize_emits` runtime-array path are not tested. The handler props of a component are compared as types, and are not observed in a component that uses the child.
 
 ## Not a duplicate of
 
