@@ -93,19 +93,19 @@ While the opening line offers a quest talk or a duel, a click, F or Space waits 
 
 Registered, not yet within the bar. Five references are cut from the English PC client's dialogue in `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` (1280 by 720) and shot as `DialogueTalk`, which takes a `startProgress` naming the line the talk is held on, so each state is the reference's own props rather than the reveal's clock. Sara's line with the Traveler's two replies is scored three ways, the speaker, the line and the replies, at 19 seconds. Sara's line with no replies is at 23 seconds, and Paimon's line at 29 seconds.
 
-The five are judged over their clean plate, the reference frame with its scored region filled from its surroundings (`isBackdrop`, see Parity above), so the overlay is scored against what the world shows there. The bare render is that plate with nothing drawn on it, so a state beats its bare render only by drawing the dialogue closer than the plate already is.
+The five are judged over their clean plate, the reference frame with the dialogue's own pieces filled from their surroundings (`isBackdrop`, see Parity above): the three line states' plates are each line's text box and the replies' are the two pill footprints, so the world between the glyphs and beside a pill is the frame's own and the overlay is scored against what the game shows there. A plate that fills the whole scored region from its border smears the scene's texture behind the text and darkens a pill's edge twice, which read as 10.61% and 13.39% before the plates were cut to the pieces.
 
-| Reference                  | Plate, softened shot | Bare render |
-| :------------------------- | :------------------- | :---------- |
-| `dialogue-choices-line`    | 8.99%                | 9.64%       |
-| `dialogue-choices-replies` | 13.39%               | 17.80%      |
-| `dialogue-choices-speaker` | 6.37%                | 12.60%      |
-| `dialogue-line`            | 10.61%               | 11.65%      |
-| `dialogue-paimon-line`     | 9.67%                | 11.86%      |
+| Reference                  | Softened shot |
+| :------------------------- | :------------ |
+| `dialogue-choices-line`    | 8.70%         |
+| `dialogue-choices-replies` | 13.02%        |
+| `dialogue-choices-speaker` | 6.37%         |
+| `dialogue-line`            | 8.52%         |
+| `dialogue-paimon-line`     | 8.56%         |
 
-The softened column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
+The column is each reference's row in the parity snapshot (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`).
 
-Every state beats its bare render by the margin its snapshot row sets against the bare column, which is not yet the compare's bar of 1% mean difference. What moved each figure:
+None is yet within the compare's bar of 1% mean difference. What moved each figure:
 
 - **Position.** The line's first ascender lands on the reference's row, 591 of 720 for Sara's lines. The speaker's role line, `Waitress, Good Hunter`, sits between the name and the line and is drawn from the talk line's `speakerRoleTextId`. Paimon's line has no role, so its line sits a role's height higher, as the frame shows: scored at the role's place it was 21.93%, and at the frame's place 9.73%. The margin under the name is 15 units (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`), so the line sits 30 units under the name with a role and 15 without.
 - **The role's gold rule and curls.** The role sits on a gold rule 1263 units wide through its middle, 3 units thick at `rgb(255 199 0 / 0.28)`, with a gold curl either side of the words. The curl is its own shape, not the silver divider's diamond, so it is `ROLE_FLOURISH_PATH` (`packages/genshin-interface/src/services/constants.ts`), traced from the recording's left curl and mirrored for the right. Every dialogue id's scored region stops above the role row, so `compare` does not see the rule or the curls: they are checked by measuring the shot's rule and curls against the reference's rows.
@@ -113,7 +113,7 @@ Every state beats its bare render by the margin its snapshot row sets against th
 - **Softness.** The recording is soft and the game's face is not Signika, so a glyph a pixel off its place scores twice. The component is drawn crisp, and the comparison blurs our shot by the recording's own measured blur (`{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4`, sigma 0.641, see the toolbox's Softness). A component blurred to the recording scores better, but that blur is the video's and not the game's, so it is not shipped. The Signika substitute is the [interface library](../interface-library/design.md)'s.
 - **Colour.** The line stays white, the recording's peak. A paler white scored lower only by making up for the blur, so it was refused.
 - **Band.** The band's gradient stays removed. Restored at 0.3 and 0.5, it scored worse on the three line states and on Paimon's line (`dialogue-line` 11.96% and 13.61%), and better only on the speaker.
-- **Replies.** The pill's darkness is 0.22 of black, the best of 0.15 to 0.45 swept against the plate. The text starts 48 units in, past the mark's place, and moving the first pill up three pixels scored worse (23.78% against 22.03%), so its top stays where it was.
+- **Replies.** The pill's rest tone is the dialogue's own slate, `DIALOGUE_REPLY_REST` (`packages/genshin-interface/src/services/constants.ts`), set on the pill in `packages/genshin-interface/src/components/DialogueScreen/Choices/Index.vue`: the reference's pill is a neutral slate, which a black overlay does not give over the warm world beneath it, and the slate at 0.65 and 0.8 of alpha scored worse than 0.72. Each pill is as wide as its words, 48 units high and 15 apart, hung from 1275 units in from the left at 695 down, its words set 1.2 units wider than the reply kind's. The reply kind's own rest, `GAME_REPLY_REST`, stays for the Wish and Talents screens.
 - **Rows.** Measured off the five frames at 1280 by 720 by their ink rows: Sara's one line runs from 591 to 607 and Paimon's from 580 to 597, the two lines of `dialogue-line` start at 591 and 613 (33 units apart at 1920, against the line's 32), and the name's gold runs from 549 to 563 and the role's from 572 to 581. Each lands within about two units of the component's place, so the rows stay as the component places them.
 
 The reveal is timed off three lines of `{data-root}/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4` (Notes).
@@ -180,7 +180,6 @@ The reveal's rate is open in [the spec](spec.md).
 - [ ] **The bare-render column of the Parity table** — no source yet: the softened column is the snapshot's rows (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` lines 28 to 32), and no run of the bare-render shots is committed; `pnpm -C scripts genshin:parity compare` on each of the five ids, scored against its bare render, must print 9.64%, 17.80%, 12.60%, 11.65% and 11.86%.
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `{data-root}/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed; the frames at about 0 to 134 s show a dialogue with Sara, but a softness measure is not read by eye.
-- [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — contradicted by `packages/genshin-interface/src/services/constants.ts` line 128: `GAME_REPLY_REST` is `rgb(0 0 0 / 0.26)`, the value the pill's GameButton kind draws (`packages/genshin-interface/src/components/GameButton/Index.vue` line 389).
 - [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json` line 4640: talk 34781's first dialog is 3477101, outside its hundred; 1,773 of the 22,426 talks whose first dialog resolves start outside it, across it and `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_1.json`.
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 161624: "Donna" is under hash 1307310371, and nine of the table's first 50,000 title hashes resolve in it (19 of all 203,908).
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: 702 dialogs in `{data-root}/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json` hold a gadget or mate-avatar role, and the carried quests' talk ids are not matched to them in this pass; a read of the carried quests' talks by `scripts/src/services/genshinText/readTalk.ts`, joined to those 702 ids, must count none.

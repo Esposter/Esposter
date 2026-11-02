@@ -123,9 +123,8 @@ export const GAME_SMOOTHSTEP_EASING = "cubic-bezier(0.333, 0, 0.667, 1)";
 // Plain button, so no recording gives a row's tint: these are the jump list's hover tint, and a press a step stronger
 export const GAME_ROW_HOVER = "rgb(255 255 255 / 0.2)";
 export const GAME_ROW_PRESS = "rgb(255 255 255 / 0.3)";
-// The dialogue reply's pill, a black of 0.26 over the scene at rest, fitted to the English client's dialogue choices.
-// The fit is the alpha that minimises the mean difference over the pills' pixels of `dialogue-choices-replies`.
-// It is measured in the reply frame the dialogue page is placed by.
+// The reply kind's pill, a black of 0.26 over the scene at rest, the Wish and Talents screens' own. The dialogue sets its
+// Own slate, `DIALOGUE_REPLY_REST`, since its reference's pill is not a black over the world.
 // Its hover and press are provisional: no recording shows a reply under the pointer.
 // They are the look a lit reply took before the kind, a white pill with its words slate
 export const GAME_REPLY_REST = "rgb(0 0 0 / 0.26)";
