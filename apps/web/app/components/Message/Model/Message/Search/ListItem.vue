@@ -2,6 +2,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
+import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {
   message: MessageEntity;
@@ -20,7 +21,11 @@ const scrollToMessage = useScrollToMessage();
     role="button"
     tabindex="0"
     ui-card
-    @click="scrollToMessage(message.partitionKey, message.rowKey)"
+    @click="
+      (event: MouseEvent) => {
+        if (!checkIsNestedInteraction(event)) scrollToMessage(message.partitionKey, message.rowKey);
+      }
+    "
     @keydown.enter.self.prevent="scrollToMessage(message.partitionKey, message.rowKey)"
     @keydown.space.self.prevent="scrollToMessage(message.partitionKey, message.rowKey)"
   >

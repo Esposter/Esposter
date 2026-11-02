@@ -41,7 +41,8 @@ const listItems = computed(() =>
             const searchHistory = items.find((item) => item.id === id);
             if (!searchHistory) return;
             searchQuery = searchHistory.query;
-            selectedFilters = searchHistory.filters;
+            // A copy, since the search being edited adds to and writes into these filters, and the entry keeps what it ran
+            selectedFilters = searchHistory.filters.map((filter) => ({ ...filter }));
             await readSearchedMessages();
           }
         "
