@@ -33,4 +33,25 @@ describe(useDocumentPictureInPicture, () => {
 
     scope.stop();
   });
+
+  test("closes a window that arrives after its owner is disposed, rather than leaving it open with nothing to close it", async () => {
+    expect.hasAssertions();
+
+    const target = {
+      addEventListener: vi.fn<Window["addEventListener"]>(),
+      close: vi.fn<Window["close"]>(),
+      closed: false,
+      document: window.document.implementation.createHTMLDocument(),
+    };
+    vi.stubGlobal("documentPictureInPicture", { requestWindow: () => Promise.resolve(target) });
+    const scope = effectScope();
+    const documentPictureInPicture = scope.run(() => useDocumentPictureInPicture());
+    assert.exists(documentPictureInPicture);
+    const opening = documentPictureInPicture.open();
+    scope.stop();
+    await opening;
+
+    expect(target.close).toHaveBeenCalledOnce();
+    expect(documentPictureInPicture.pictureInPictureWindow.value).toBeUndefined();
+  });
 });

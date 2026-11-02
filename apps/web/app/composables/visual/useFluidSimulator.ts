@@ -29,9 +29,29 @@ const getSize = ({ clientHeight, clientWidth }: HTMLElement) => ({ height: clien
 
 export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | undefined>) => {
   const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
-  // Assigned only at the tail of onMounted, past every await.
-  // An unmount that races setup leaves it undefined, so teardown no-ops instead of dereferencing a handle never created
+  // Assigned only at the tail of onMounted, past every await, so an unmount that races setup finds it undefined
   let fluidResources: FluidResources | undefined;
+  // Set by an unmount, which the tail of onMounted then answers by tearing down the resources it has just built
+  let isUnmounted = false;
+  const disposeFluidResources = async (resources: FluidResources) => {
+    const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
+      resources;
+    stopResize();
+    await renderer.setAnimationLoop(null);
+    renderPipeline.dispose();
+    water.geometry.dispose();
+    water.material.dispose();
+    water.waterNormals.dispose();
+    sky.geometry.dispose();
+    sky.material.dispose();
+    box.geometry.dispose();
+    box.material.dispose();
+    pmremGenerator.dispose();
+    disposeRenderTarget();
+    controls.dispose();
+    await renderer.dispose();
+    renderer.domElement.remove();
+  };
 
   onMounted(async () => {
     const containerValue = toValue(container);
@@ -174,29 +194,11 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
       stopResize,
       water,
     };
+    if (isUnmounted) await disposeFluidResources(fluidResources);
   });
-  // Teardown is idempotent and undefined-safe: an early unmount, before or between the onMounted awaits, leaves nothing set.
-  // Nothing is dereferenced then, and clearing the handle first makes a repeat call a no-op
+  // An unmount before the tail finds no handle, so it only sets the flag that the tail reads
   onUnmounted(async () => {
-    if (!fluidResources) return;
-
-    const { box, controls, disposeRenderTarget, pmremGenerator, renderer, renderPipeline, sky, stopResize, water } =
-      fluidResources;
-    fluidResources = undefined;
-    stopResize();
-    await renderer.setAnimationLoop(null);
-    renderPipeline.dispose();
-    water.geometry.dispose();
-    water.material.dispose();
-    water.waterNormals.dispose();
-    sky.geometry.dispose();
-    sky.material.dispose();
-    box.geometry.dispose();
-    box.material.dispose();
-    pmremGenerator.dispose();
-    disposeRenderTarget();
-    controls.dispose();
-    await renderer.dispose();
-    renderer.domElement.remove();
+    isUnmounted = true;
+    if (fluidResources) await disposeFluidResources(fluidResources);
   });
 };

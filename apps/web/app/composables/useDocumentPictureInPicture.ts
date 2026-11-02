@@ -54,6 +54,7 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
   const isSupported = useSupported(() => "documentPictureInPicture" in window);
   const pictureInPictureWindow = shallowRef<Window>();
   let styleObserver: MutationObserver | undefined;
+  let isDisposed = false;
   const bridgeStyles = async (target: Window) => {
     const pendingSheets = [
       ...Array.from(window.document.styleSheets, (styleSheet) => cloneStyleSheet(target, styleSheet)),
@@ -92,6 +93,11 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     await getResultAsync(() =>
       window.documentPictureInPicture.requestWindow({ height: options.height, width: options.width }),
     ).match(async (target) => {
+      // Once its owner is gone nothing is left to close a window, so it is closed rather than bridged or surfaced
+      if (isDisposed) {
+        target.close();
+        return;
+      }
       target.addEventListener(
         "pagehide",
         () => {
@@ -100,13 +106,15 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
         { once: true },
       );
       await bridgeStyles(target);
-      // The window may have been closed while its stylesheets loaded; don't surface a dead window.
-      if (target.closed) return;
-      pictureInPictureWindow.value = target;
+      // The owner may have been disposed while the stylesheets loaded, and the window may have been closed meanwhile;
+      // neither case surfaces a dead window
+      if (isDisposed) target.close();
+      else if (!target.closed) pictureInPictureWindow.value = target;
     }, noop);
   };
 
   tryOnScopeDispose(() => {
+    isDisposed = true;
     close();
   });
 
