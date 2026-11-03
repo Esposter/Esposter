@@ -15,6 +15,8 @@ export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const SPECS_URL: string = `${GITHUB_REPOSITORY_URL}/tree/main/openspec/specs`;
 export const NUXT_MODULE_ENTRY_PATH = "src/module.ts";
+// Where a Nuxt module declares `MODULE_NAME`, the constant its `meta.name` reads and the workspace test holds to the package name
+export const NUXT_MODULE_CONSTANTS_PATH = "src/runtime/constants.ts";
 export const PLUGIN_SCOPE = "@esposter";
 // The two configuration files every member carries are identical across kinds.
 // The shared factories read each member's own manifest and directory, so the file never differs

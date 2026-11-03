@@ -44,7 +44,7 @@ const isUpdateDismissed = ref(false);
     >
       A new version is ready.
       <template #actions>
-        <UiButton :variant="UiButtonVariant.Accent" @click="$pwa?.updateServiceWorker(true)">Reload</UiButton>
+        <UiButton :variant="UiButtonVariant.Accent" @click="$pwa?.updateServiceWorker()">Reload</UiButton>
       </template>
     </UiToast>
     <AppNotificationToast v-if="session" />

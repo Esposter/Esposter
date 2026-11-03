@@ -32,6 +32,7 @@ flowchart TD
 - **`src/runtime/**` is built unbundled**, one output per source file, which is Nuxt's own convention for a module's runtime: `entry` is the module plus the runtime glob, `unbundle: true` and `root: "src"`. tsdown writes an `exports` entry per file, so a new runtime file ships with nothing added by hand. A `services` folder under the runtime is the package's own and is excluded from `exports`; what stays public is the functions a consumer calls and the `models` that type them.
 - **A type-only dependency the declarations reference is a `dependency`, never inlined.** Unbundled, tsdown cannot flatten an inlined package's declarations into one file and copies them under `dist/node_modules`, which npm never publishes — the bundled packages keep inlining because their declarations are flattened.
 - **The runtime imports published packages only** — `nuxt/app`, `nitro/h3`, `vue`, `crossws` — never `#imports` or `#app`, nor bare `h3` or `nitropack/*`, whose server code Nuxt runs under its Nitro compatibility layer (the `nuxt` entry of the `pnpm-workspace.yaml` catalog names the version). Nuxt's virtual modules resolve only inside a Nuxt build and export values, not types, so a runtime file importing them fails `deps.onlyImport`, fails under a test runner, and ships declarations that collapse to `any`. Nuxt, Vue, Nitro and every engine the module joins are `peerDependencies`; `@nuxt/kit` and `@nuxt/schema` are `dependencies` of the module entry.
+- **A module is named for its package.** `meta.name`, the hook prefix and the specifier a generated template imports are all the package's name, so it is declared once as `MODULE_NAME` in `src/runtime/constants.ts` and read from there. It is not imported from `package.json`: a JSON import types the name as `string`, which turns every hook name built from it into `string` and loses the literal-keyed hook map, and a runtime file, which tsdown leaves unbundled, would import a path that is one folder away in `dist` from where it is in `src`. A workspace test holds the constant to the manifest's `name` for every module, and the package scaffolder writes the file.
 - **Nuxt transpiles a module's own root**, so the app carries no `build.transpile` entry for it.
 
 ## What the module generates
@@ -44,6 +45,7 @@ flowchart TD
 
 - **Composables run inside a fixture app.** The package's Vitest config is `defineVitestProject` over the shared factory, rooted at `test/fixture` — a `nuxt.config.ts` and nothing else — with the default environment put back to `node`, so only a file headed `// @vitest-environment nuxt` pays for the Nuxt runtime. That is Nuxt's own recommendation for testing a module, and it is what lets a composable run over the real `useAsyncData` rather than a mock of it.
 - **Server runtime runs against a real h3 app** on a real node server, and a WebSocket handler against crossws's node adapter with tRPC's own client — the transport under test is the one production uses.
+- **A module that builds a file is proven by a fixture build.** `unplugin-pwa-nuxt` runs `nuxt build` once over a fixture app and reads the worker, the precache and the manifest back, and the build must write nothing to stderr, because a bundler reports an import it cannot resolve as a warning and the app breaks at runtime. Its unit suites mock `@nuxt/kit`'s `add*` functions and assert the module's own decisions.
 - **The generated templates are not asserted as text.** What they produce is proven by the app that registers the module: its typecheck, its suites and its dev server.
 
 ## Key files
@@ -55,6 +57,8 @@ flowchart TD
 | `packages/trpc-nuxt-module/src/runtime/constants.ts`    | The runtime hook names, readable from both the module and the runtime |
 | `packages/trpc-nuxt-module/vitest.config.ts`            | The fixture-rooted Nuxt project with a node default                   |
 | `packages/trpc-nuxt-module/test/fixture/nuxt.config.ts` | The fixture app the composable suites run in                          |
+| `packages/unplugin-pwa-nuxt/test/build.test.ts`         | One fixture build whose output is read back                           |
+| `scripts/src/workspace/nuxtModuleNames.test.ts`         | Every module's `MODULE_NAME` is its package's name                    |
 | `apps/web/configuration/modules.ts`                     | The app registering a workspace module by its source                  |
 
 ## Sources

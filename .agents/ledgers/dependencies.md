@@ -87,7 +87,11 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@typesafe-ai/sdk`                      | 2026-11-01 · Haiku 5.5  | Keep — SDK       | the typed-decision client behind the scripts' Jev and triage tools; the persona pins its own copy      |
 | `@unocss/eslint-config`                 | 2026-11-01 · Haiku 5.5  | Keep — framework | the styling engine's integration                                                                       |
 | `@unocss/nuxt`                          | 2026-11-01 · Haiku 5.5  | Keep — framework | the styling engine's integration                                                                       |
-| `@vite-pwa/nuxt`                        | 2026-11-01 · Haiku 5.5  | Keep — framework | the PWA module                                                                                         |
+| `@unplugin-pwa/core`                    | 2026-11-03 · Sonnet 5.5 | Keep — framework | the PWA engine's options and context, under `unplugin-pwa-nuxt`                                        |
+| `@unplugin-pwa/vite`                    | 2026-11-03 · Sonnet 5.5 | Keep — framework | the PWA engine's Vite plugins, under `unplugin-pwa-nuxt`                                               |
+| `@vite-pwa/workbox-build`               | 2026-11-03 · Sonnet 5.5 | Keep — framework | the engine's Workbox build, which `unplugin-pwa-nuxt` names for its option types                       |
+| `@vite-pwa/workbox-swkit`               | 2026-11-03 · Sonnet 5.5 | Keep — framework | the service worker's precache and navigation route, as the engine's runtime subpaths                   |
+| `@vite-pwa/workbox-window`              | 2026-11-03 · Sonnet 5.5 | Keep — framework | the window half of the engine's register code, which `unplugin-pwa-nuxt` resolves for the app          |
 | `@vitest/browser`                       | 2026-11-01 · Haiku 5.5  | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/browser-playwright`            | 2026-11-01 · Haiku 5.5  | Keep — tooling   | the browser provider our browser-mode config imports, at the version vite-plus's peer names            |
 | `@vitest/browser-preview`               | 2026-11-01 · Haiku 5.5  | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
@@ -208,8 +212,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vue-router`                            | 2026-11-01 · Haiku 5.5  | Keep — framework | routing                                                                                                |
 | `vue-tsc`                               | 2026-11-01 · Haiku 5.5  | Keep — tooling   | Vue's typecheck                                                                                        |
 | `web-push`                              | 2026-11-01 · Haiku 5.5  | Keep — security  | push encryption, on the stop list                                                                      |
-| `workbox-precaching`                    | 2026-11-01 · Haiku 5.5  | Keep — framework | the service worker's precache of the app shell                                                         |
-| `workbox-routing`                       | 2026-11-01 · Haiku 5.5  | Keep — framework | the service worker's offline navigation route                                                          |
 | `write-excel-file`                      | 2026-11-01 · Haiku 5.5  | Keep — spec      | the spreadsheet format                                                                                 |
 | `ws`                                    | 2026-11-01 · Haiku 5.5  | Keep — engine    | the agent console's WebSocket server                                                                   |
 | `zod`                                   | 2026-11-01 · Haiku 5.5  | Keep — framework | the schema library                                                                                     |

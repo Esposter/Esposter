@@ -8,6 +8,7 @@ import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.t
 // Clone does not have yet
 const NUXT_SECURITY_MODULE_PATH = "../../packages/nuxt-security-module/src/module.ts";
 const TRESJS_NUXT_MODULE_PATH = "../../packages/tresjs-nuxt/src/module.ts";
+const UNPLUGIN_PWA_NUXT_MODULE_PATH = "../../packages/unplugin-pwa-nuxt/src/module.ts";
 // The tRPC module's options are the router and context the generated handlers import, the endpoints they are
 // Registered at, and the keep-alive the WebSocket handler pings its connections with
 const trpcNuxtModule: [string, ModuleOptions] = [
@@ -19,10 +20,10 @@ const trpcNuxtModule: [string, ModuleOptions] = [
     webSocket: { endpoint: TRPC_WS_PATH, keepAlive: { enabled: true } },
   },
 ];
+// @TODO: no upstream issue — nuxt/test-utils on Windows fails to load a Nuxt config whose module registers a virtual module id (`file:///@unplugin-pwa/virtual:pwa-register/vue`); drop the allowlist for unplugin-pwa-nuxt once it loads
 // Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
 // SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
-// E.g. @vite-pwa/nuxt trips the Windows "filename must be a file URL" crash on its virtual register module (taking
-// Down even pure-node tests) and builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
+// E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
 // Leaks an EnvironmentTeardownError after teardown, and nuxt-security-module adds headers/CSP nothing asserts.
 export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@nuxt/eslint",
@@ -33,11 +34,11 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@nuxtjs/seo",
   "@pinia/nuxt",
   "@unocss/nuxt",
-  "@vite-pwa/nuxt",
   "@vueuse/nuxt",
   NUXT_SECURITY_MODULE_PATH,
   TRESJS_NUXT_MODULE_PATH,
   trpcNuxtModule,
+  UNPLUGIN_PWA_NUXT_MODULE_PATH,
 ];
 // Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
 export const modules: NuxtConfig["modules"] = process.env.VITEST

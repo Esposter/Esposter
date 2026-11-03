@@ -19,6 +19,7 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 
 ## Rules
 
+- **A package or a hook is absent only after the scoped name and the installed dist are read.** An unscoped name that 404s proves nothing (`unplugin-pwa` is `@unplugin-pwa/core` and `@unplugin-pwa/vite`), and a hook the docs omit may still fire (`nitro:build:public-assets` is Nitro's `vite:compile:before`): search the registry for the scope and grep the installed package for the name before telling the user it does not exist.
 - **The upstream audit runs before any code is written** — every issue, open and closed, read with its comments (`references/upstream-audit.md`).
 - **The replacement is a rewrite from the ground up, never a port.**
   - It is designed from the surface's behaviour on the current engines, in our conventions, and sheds whatever only served the upstream's older users or its own internals.

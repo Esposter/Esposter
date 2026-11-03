@@ -74,3 +74,24 @@ A module's composables SHALL be tested inside a Nuxt fixture app over the real d
 - **GIVEN** a server handler of the module is under test
 - **WHEN** its suite runs
 - **THEN** it runs on a real server with the same transport production uses
+
+### Requirement: A module is named for its package
+
+A module's `meta.name` SHALL be its package's name, declared once as a `MODULE_NAME` constant in the module's runtime constants and read from there, and a workspace check SHALL fail when the constant differs from the manifest's `name` or the module does not read it.
+
+#### Scenario: A module's name drifts from its package's
+
+- **GIVEN** a Nuxt module package whose `MODULE_NAME` no longer equals its manifest's `name`
+- **WHEN** the workspace tests run
+- **THEN** the check names the package and the two names
+
+### Requirement: A module that builds a file is proven by a fixture build
+
+A module that writes a file into the build SHALL be proven by building a fixture app once and reading the output back, and the build SHALL write nothing to stderr.
+
+#### Scenario: The module's output is wrong
+
+- **GIVEN** a fixture app that uses the module
+- **WHEN** the fixture is built
+- **THEN** the files the module wrote are read back and compared with what the module promises
+- **AND** an import the bundler could not resolve fails the build test

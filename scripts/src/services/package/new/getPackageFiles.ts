@@ -1,7 +1,12 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
-import { ESLINT_CONFIG_SOURCE, PACKAGES_DIRECTORY, VITEST_CONFIG_SOURCE } from "#src/services/package/new/constants";
+import {
+  ESLINT_CONFIG_SOURCE,
+  NUXT_MODULE_CONSTANTS_PATH,
+  PACKAGES_DIRECTORY,
+  VITEST_CONFIG_SOURCE,
+} from "#src/services/package/new/constants";
 import { getEntryPath } from "#src/services/package/new/getEntryPath";
 import { getEntrySource } from "#src/services/package/new/getEntrySource";
 import { getManifest } from "#src/services/package/new/getManifest";
@@ -23,6 +28,13 @@ export const getPackageFiles = (options: CreatePackageOptions, version: string):
     [`${packageDirectory}/tsconfig.json`, toJson(getTsconfig(kind))],
     [`${packageDirectory}/vitest.config.ts`, VITEST_CONFIG_SOURCE],
   ]);
+  if (kind === PackageKind.NuxtModule)
+    files.set(
+      `${packageDirectory}/${NUXT_MODULE_CONSTANTS_PATH}`,
+      `// The package's name, which is also the module's \`meta.name\`
+export const MODULE_NAME = ${JSON.stringify(name)};
+`,
+    );
   if (kind === PackageKind.Plugin)
     files.set(`${packageDirectory}/.claude-plugin/plugin.json`, toJson(getPluginManifest(options)));
   else files.set(`${packageDirectory}/tsdown.config.ts`, getTsdownSource(kind));

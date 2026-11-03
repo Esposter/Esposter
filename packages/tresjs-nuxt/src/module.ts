@@ -1,6 +1,7 @@
 import type { ModuleOptions } from "#src/models/ModuleOptions";
 import type { NuxtModule } from "@nuxt/schema";
 
+import { MODULE_NAME } from "#src/runtime/constants";
 import { checkIsTresCustomElement } from "#src/services/checkIsTresCustomElement";
 import { CORE_PACKAGE_NAME, GLSL_PACKAGE_NAME, THREE_PACKAGE_NAME, TRES_CANVAS_NAME } from "#src/services/constants";
 import { getExportNames } from "#src/services/getExportNames";
@@ -14,7 +15,7 @@ const LOWERCASE_NAME_REGEX = /^[a-z]/u;
 
 const tresjsModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
   defaults: { glsl: false, modules: [] },
-  meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "tres", name: "tresjs-nuxt" },
+  meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "tres", name: MODULE_NAME },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url);
     nuxt.options.build.transpile.push(/@tresjs\//u);

@@ -128,17 +128,22 @@ export default tsdownConfiguration;
     expect(readFileSync(join(root, packageDirectory, "src/module.ts"), "utf8"))
       .toBe(`import type { NuxtModule } from "@nuxt/schema";
 
+import { MODULE_NAME } from "#src/runtime/constants";
 import { defineNuxtModule } from "@nuxt/kit";
 
 // oxlint-disable-next-line typescript/no-empty-object-type -- empty until the module declares its options
 export interface ModuleOptions {}
 
 const demoNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
-  meta: { name: "demo-nuxt-module" },
+  meta: { name: MODULE_NAME },
   setup() {},
 });
 
 export default demoNuxtModule;
+`);
+    expect(readFileSync(join(root, packageDirectory, "src/runtime/constants.ts"), "utf8"))
+      .toBe(`// The package's name, which is also the module's \`meta.name\`
+export const MODULE_NAME = "demo-nuxt-module";
 `);
   });
 

@@ -1,17 +1,21 @@
+// The navigation denylist is a virtual module of the PWA module, typed by the types it ships
+/// <reference types="unplugin-pwa-nuxt/navigation-denylist" />
 import type { PushNotificationPayload } from "@esposter/db-schema";
-import type { PrecacheEntry } from "workbox-precaching";
+import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
-import { NavigationRoute, registerRoute } from "workbox-routing";
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
+import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
+import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylist";
 
 // The build replaces `__WB_MANIFEST` with the precache list, and the home page joins it, so an offline
-// Navigation to any route is answered by the app shell
+// Navigation to any route is answered by the app shell, except one the server answers itself: an API route or a
+// File it serves is the server's to answer, so the module hands over its routes as the denylist
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
 
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
-registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
+registerRoute(new NavigationRoute(createHandlerBoundToURL("/"), { denylist: navigationDenylist }));
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
 self.addEventListener("message", (event) => {

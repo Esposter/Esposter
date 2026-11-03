@@ -74,8 +74,14 @@ The service worker SHALL precache the build's assets and the home page at instal
 #### Scenario: A route is opened offline
 
 - **GIVEN** the reader has installed the app and is offline
-- **WHEN** the reader navigates to any route
+- **WHEN** the reader navigates to any page route
 - **THEN** the app shell answers, and the client router renders the route
+
+#### Scenario: A server route is opened
+
+- **GIVEN** a route the server answers itself, such as an API route
+- **WHEN** the reader navigates to it
+- **THEN** the request reaches the server and the app shell does not answer it
 
 ### Requirement: Push notifications are shown by the service worker
 

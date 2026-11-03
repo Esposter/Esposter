@@ -36,3 +36,7 @@ rejects it. `pnpm run` puts the executable it is in `npm_execpath`, so `scripts`
 `PNPM_ARGS` ahead of its own (`scripts/src/services/shared/constants.ts`) and every argument reaches pnpm
 verbatim, with no quoting for a shell that is not there. A whole command line under `shell` — `crossOS`
 running a manifest's per-platform string — stays a single string.
+
+## Patching a file from a Bash heredoc on Windows
+
+A Python snippet in `python - <<'EOF'` that writes the two characters backslash and zero (a Vite virtual-module prefix in a template literal) wrote a real NUL byte, and grep then reported `Binary file matches`. Build the escape with `bytes([92, 48])`, check it with `od -c`, or make the edit with the Edit tool. Git Bash has no `pkill`: stop a background server with PowerShell's `Get-CimInstance Win32_Process` and `Stop-Process`, and never leave a shell's working directory inside a build's output folder, which then fails to be removed with `EBUSY`.

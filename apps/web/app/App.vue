@@ -26,7 +26,6 @@ const dockInsetClass = computed(() => {
 </script>
 
 <template>
-  <NuxtPwaAssets />
   <NuxtTheme>
     <NuxtSEO>
       <div :class="dockInsetClass" flex flex-col min-h-dvh>

@@ -11,13 +11,14 @@ export const getEntrySource = (options: CreatePackageOptions): string => {
   if (kind === PackageKind.NuxtModule)
     return `import type { NuxtModule } from "@nuxt/schema";
 
+import { MODULE_NAME } from "#src/runtime/constants";
 import { defineNuxtModule } from "@nuxt/kit";
 
 // oxlint-disable-next-line typescript/no-empty-object-type -- empty until the module declares its options
 export interface ModuleOptions {}
 
 const ${toCamelCase(name)}: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
-  meta: { name: ${JSON.stringify(name)} },
+  meta: { name: MODULE_NAME },
   setup() {},
 });
 

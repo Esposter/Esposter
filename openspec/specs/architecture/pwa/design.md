@@ -6,9 +6,11 @@ The web app is installable, its service worker is one TypeScript file built into
 
 ```mermaid
 flowchart LR
-  Src["service-worker/sw.ts"] -->|injectManifest, precache list injected| SW["sw.js at the root"]
-  Cfg["configuration/pwa.ts"] -->|manifest, client, strategy| Mod["@vite-pwa/nuxt"]
+  Src["service-worker/sw.ts"] -->|buildSW, precache list injected| SW["sw.js at the root"]
+  Cfg["configuration/pwa.ts"] -->|manifest, buildSW, strategy| Mod["unplugin-pwa-nuxt"]
   Mod --> SW
+  Mod -->|the server's routes| Deny["navigation denylist<br/>virtual module"]
+  Deny --> SW
   Mod --> Plugin["$pwa<br/>the module's client plugin"]
   Plugin -->|needRefresh| Toast["ToastStack's Reload notice"]
   Toast -->|updateServiceWorker, SKIP_WAITING| SW
@@ -16,7 +18,9 @@ flowchart LR
   SW -->|push| OS["operating-system notification"]
 ```
 
-`configuration/pwa.ts` sets the manifest, the client and the strategy. `@vite-pwa/nuxt` builds `service-worker/sw.ts` with [Workbox](https://developer.chrome.com/docs/workbox) through its `injectManifest` strategy, which injects the precache list into `self.__WB_MANIFEST`. The module's client plugin registers the worker and provides `$pwa`, whose `needRefresh` and `updateServiceWorker` drive the Reload notice.
+`configuration/pwa.ts` sets the manifest, the worker's source and the strategy. [`unplugin-pwa-nuxt`](../../unplugin-pwa-nuxt/README.md) builds `service-worker/sw.ts` with [Workbox](https://developer.chrome.com/docs/workbox) through the engine's `buildSW` strategy once Nitro has copied the app into its public folder, which injects the precache list into `self.__WB_MANIFEST`. The module's client plugin registers the worker and provides `$pwa`, whose `needRefresh` and `updateServiceWorker` drive the Reload notice, and its head carries the manifest link.
+
+**The shell never answers the server.** The worker's navigation route takes a denylist from the module, the server's own routes as Nitro holds them when the worker is built, so a navigation to an API route or a file the server serves reaches the server and only a page route is answered with the home page offline.
 
 **The reader decides when an update lands.** `registerType` is `"prompt"`. A worker that installs during a call or while text is unsent waits, and the notice in `ToastStack` lets the reader accept it. The worker answers the `SKIP_WAITING` message the notice sends, and the page reloads once the new worker takes control.
 
@@ -24,26 +28,28 @@ flowchart LR
 
 ## Key files
 
-| File                                                                    | Role                                                                          |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `apps/web/configuration/pwa.ts`                                         | The manifest, the client options, the strategy and the update policy          |
-| `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                               |
-| `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click      |
-| `apps/web/service-worker/tsconfig.json`                                 | The worker's typecheck, extending the shared Node base with the WebWorker lib |
-| `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node       |
-| `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                 |
-| `apps/web/app/plugins/pushNotification.client.ts`                       | The tab's end of the worker's `postMessage`                                   |
-| `apps/web/public/pwa/`                                                  | The manifest and Apple icons, each named by its path in `pwa.ts`              |
-| `packages/db-schema/src/models/notification/PushNotificationPayload.ts` | The payload type both ends read                                               |
+| File                                                                    | Role                                                                                               |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `apps/web/configuration/pwa.ts`                                         | The manifest, the worker's source, the strategy and the update policy                              |
+| `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                                                    |
+| `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click                           |
+| `packages/unplugin-pwa-nuxt/`                                           | The module that builds the worker and registers it ([its page](../../unplugin-pwa-nuxt/README.md)) |
+| `apps/web/service-worker/tsconfig.json`                                 | The worker's typecheck, extending the shared Node base with the WebWorker lib                      |
+| `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node                            |
+| `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                                      |
+| `apps/web/app/plugins/pushNotification.client.ts`                       | The tab's end of the worker's `postMessage`                                                        |
+| `apps/web/public/pwa/`                                                  | The manifest and Apple icons, each named by its path in `pwa.ts`                                   |
+| `packages/db-schema/src/models/notification/PushNotificationPayload.ts` | The payload type both ends read                                                                    |
 
 ## Notes
 
 - **Rejected: `registerType: "autoUpdate"`.** It skips waiting and reloads every open tab on install, which would end a call or drop unsent text. The notice keeps the reader in charge of the moment.
-- **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `injectManifest` worker is typed and checked with the app.
+- **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `buildSW` worker is typed and checked with the app.
+- **Rejected: `injectManifest` for the worker.** The engine reads a JavaScript worker from the public folder under that strategy and migrates a TypeScript one to `buildSW` with a deprecation warning, so the config names `buildSW`.
 - **Declined: screenshots and shortcuts in the manifest.** Screenshots need captures of the real app, which this repo does not produce. Shortcuts add icons and an install surface nobody asked for.
 - **Declined: a custom install prompt.** The browser's own install affordance is the one the reader already knows.
 - **The worker's evaluation is tested, not linted.** Its scope has no `window` and no `process`, and a module's top level can read either as it loads, which fails the evaluation and leaves the worker unregistered with only a "script evaluation failed" to show for it. [Worker scope](../worker-scope/design.md) builds the worker, as it does every worker, and runs it in a scope that has what a worker has and nothing a window or Node adds.
-- **The worker imports Workbox and types only.** That keeps the bundle small, and the `SKIP_WAITING` handler hands `skipWaiting()` to `event.waitUntil`, so the browser holds the worker open until it settles and no fire-and-forget helper from a package is needed.
+- **The worker imports Workbox, the module's denylist and types only.** That keeps the bundle small, and the `SKIP_WAITING` handler hands `skipWaiting()` to `event.waitUntil`, so the browser holds the worker open until it settles and no fire-and-forget helper from a package is needed.
 - **Orientation is unlocked.** The app has landscape surfaces, the Genshin world and the call stage, which a portrait lock would block on installed Android copies.
 - **Maskable icons are drawn, not padded.** The mark sits at 70% scale on the light background, inside the safe zone, so no launcher's mask crops it. The `any` icons keep the unpadded artwork.
 - **The offline home entry has no revision.** The `/` entry in the precache list carries `revision: null`, so each new worker fetches it at install rather than trusting a cached copy.

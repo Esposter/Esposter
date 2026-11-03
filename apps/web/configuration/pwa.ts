@@ -13,14 +13,8 @@ import { UiPaletteMap } from "./UiPaletteMap.ts";
 const manifestPalette = UiPaletteMap[DEFAULT_UI_STYLE][ThemeMode.Light];
 
 export const pwa: NuxtConfig["pwa"] = {
-  client: {
-    // Checks for a new worker hourly, so a tab left open for days is offered the update rather than only one on
-    // Navigation
-    periodicSyncForUpdates: 3600,
-    registerPlugin: true,
-  },
   // The service worker is TypeScript in `service-worker/`, built by the module with its precache list injected
-  filename: "sw.ts",
+  buildSW: { swSrc: fileURLToPath(new URL("../service-worker/sw.ts", import.meta.url)) },
   manifest: {
     background_color: manifestPalette[UiToken.Background],
     description: SITE_DESCRIPTION,
@@ -50,10 +44,11 @@ export const pwa: NuxtConfig["pwa"] = {
     start_url: "/",
     theme_color: manifestPalette[UiToken.Panel],
   },
+  // Checks for a new worker hourly, so a tab left open for days is offered the update rather than only one on
+  // Navigation
+  periodicSyncForUpdates: 3600,
   // A new worker waits until the reader takes the update, since a reload mid-call or mid-message would lose it. The
   // Update toast in `ToastStack` is that choice
   registerType: "prompt",
-  // Absolute, since the module resolves a relative `srcDir` against Vite's root, which is Nuxt's `app/` and not the app
-  srcDir: fileURLToPath(new URL("../service-worker", import.meta.url)),
-  strategies: "injectManifest",
+  strategies: "buildSW",
 };

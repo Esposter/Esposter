@@ -16,7 +16,8 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "navigation-denylist.d.ts"
   ],
   "type": "module",
   "sideEffects": false,
@@ -29,12 +30,18 @@
       "source": "./src/module.ts",
       "default": "./dist/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./navigation-denylist": {
+      "types": "./navigation-denylist.d.ts"
+    }
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./navigation-denylist": {
+        "types": "./navigation-denylist.d.ts"
+      }
     },
     "access": "public"
   },
@@ -46,15 +53,28 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "@nuxt/kit": "catalog:",
-    "@nuxt/schema": "catalog:"
+    "@nuxt/schema": "catalog:",
+    "@unplugin-pwa/core": "catalog:",
+    "@unplugin-pwa/vite": "catalog:",
+    "@vite-pwa/workbox-build": "catalog:",
+    "@vite-pwa/workbox-window": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "tsdown": "catalog:"
+    "@esposter/shared-node": "workspace:*",
+    "@nuxt/nitro-server": "catalog:",
+    "@nuxt/test-utils": "catalog:",
+    "@types/node": "catalog:",
+    "@vite-pwa/workbox-swkit": "catalog:",
+    "happy-dom": "catalog:",
+    "tsdown": "catalog:",
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "nitro": "catalog:",
-    "nuxt": "catalog:"
+    "nuxt": "catalog:",
+    "vue": "catalog:"
   }
 }

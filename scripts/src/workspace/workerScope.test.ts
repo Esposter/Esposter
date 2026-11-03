@@ -20,6 +20,7 @@ const getPackageDirectory = (path: string): string => {
  * without anyone listing it.
  */
 describe("workerScope", () => {
+  const NAVIGATION_DENYLIST_MODULE = "virtual:unplugin-pwa-nuxt/navigation-denylist";
   // Every `*.worker.ts`, and the service worker, which the PWA module fixes at `service-worker/sw.ts`
   const WORKER_ENTRY_PATHSPECS = [":(glob)**/*.worker.ts", ":(glob)**/service-worker/sw.ts"];
   // What a worker has and Node also has. `process`, `Buffer`, `global` and `setImmediate` are Node's alone and `window`
@@ -72,6 +73,15 @@ describe("workerScope", () => {
         // A library build leaves it as written, and the PWA module defines it as it builds the service worker
         define: { "process.env.NODE_ENV": '"production"' },
         logLevel: "silent",
+        plugins: [
+          {
+            // The PWA module defines the service worker's navigation denylist as it builds the worker
+            load: (id) =>
+              id === `\0${NAVIGATION_DENYLIST_MODULE}` ? "export const navigationDenylist = [];" : undefined,
+            name: "navigation-denylist",
+            resolveId: (id) => (id === NAVIGATION_DENYLIST_MODULE ? `\0${id}` : undefined),
+          },
+        ],
         resolve: { tsconfigPaths: true },
         root: getPackageDirectory(entryPath),
       });
