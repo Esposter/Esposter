@@ -28,15 +28,37 @@ A survey's accent and background colours SHALL apply to its respondent page, and
 - **WHEN** the owner opens the Theme tab
 - **THEN** the preview draws with that accent colour, in every design style
 
-### Requirement: The respondent page shows the progress bar where the survey sets it
+### Requirement: The respondent page shows the progress bar and question numbers the survey sets
 
-The respondent page SHALL show the progress bar at the position the survey's progress bar setting names, or no progress bar when that setting is off.
+The respondent page SHALL show the progress bar at the position the survey's progress bar setting names, and SHALL number its questions when the survey's question numbering setting is on; a survey with both settings off SHALL show neither.
+
+#### Scenario: Owner turns on question numbering
+
+- **GIVEN** a published survey with question numbering on
+- **WHEN** a respondent opens the survey
+- **THEN** each question shows its number
 
 #### Scenario: Owner moves the progress bar to the bottom
 
 - **GIVEN** a published survey whose progress bar is set to the bottom
 - **WHEN** a respondent opens the survey
 - **THEN** the progress bar is drawn below the page's questions
+
+### Requirement: The Theme tab sets the progress bar and question numbering
+
+The Theme tab SHALL let the owner choose where the progress bar is drawn, or none, and turn question numbering on or off.
+
+#### Scenario: Owner sets the progress bar on the Theme tab
+
+- **GIVEN** the owner is editing a survey whose progress bar is off
+- **WHEN** the owner chooses the bottom of the survey for the progress bar
+- **THEN** the survey's progress bar is set to the bottom
+
+#### Scenario: Owner turns on question numbers on the Theme tab
+
+- **GIVEN** the owner is editing a survey with question numbers off
+- **WHEN** the owner turns question numbers on
+- **THEN** the survey's question numbers are on, and the Theme tab shows them on
 
 ### Requirement: A file the survey no longer references is deleted when the editor closes
 
