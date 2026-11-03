@@ -1,0 +1,60 @@
+// @vitest-environment happy-dom
+import type { SurveyDropdownNode } from "survey-engine";
+
+import SurveyFieldDropdown from "@/components/Resource/Survey/Field/Dropdown.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiStyles } from "@/models/ui/UiStyle";
+import { flushPromises, mount } from "@vue/test-utils";
+import { SurveyNodeType, surveyDropdownNodePropsSchema } from "survey-engine";
+import { describe, expect, test } from "vitest";
+
+describe("resourceSurveyFieldDropdown", () => {
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
+
+    const choices = [
+      { text: "a", value: "a" },
+      { text: "b", value: "b" },
+      { text: "c", value: "c" },
+    ];
+    const error = "message";
+    const title = "Favourite colour";
+    const createNode = (): SurveyDropdownNode => ({
+      props: { ...surveyDropdownNodePropsSchema.parse({ choices, name: "a", title }), id: crypto.randomUUID() },
+      type: SurveyNodeType.Dropdown,
+    });
+
+    test("is a select named by the question's title", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldDropdown, { props: { error: "", isDisabled: false, node: createNode() } });
+
+      expect(component.get('[role="combobox"]').attributes("aria-label")).toBe(title);
+    });
+
+    test("answers with the choice the keyboard picks from its open list", async () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldDropdown, {
+        attachTo: document.body,
+        props: { error: "", isDisabled: false, node: createNode() },
+      });
+      const activator = component.get('[role="combobox"]');
+      await activator.trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+      await activator.trigger("keydown", { key: "End" });
+      await activator.trigger("keydown", { key: "Enter" });
+      await flushPromises();
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([["c"]]);
+    });
+
+    test("shows its error beside it", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldDropdown, { props: { error, isDisabled: false, node: createNode() } });
+
+      expect(component.get('[role="alert"]').text()).toBe(error);
+    });
+  });
+});

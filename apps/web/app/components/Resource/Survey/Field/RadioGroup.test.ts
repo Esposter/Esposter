@@ -1,0 +1,72 @@
+// @vitest-environment happy-dom
+import type { SurveyRadioGroupNode } from "survey-engine";
+
+import SurveyFieldRadioGroup from "@/components/Resource/Survey/Field/RadioGroup.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiStyles } from "@/models/ui/UiStyle";
+import { flushPromises, mount } from "@vue/test-utils";
+import { SurveyNodeType, surveyRadioGroupNodePropsSchema } from "survey-engine";
+import { describe, expect, test } from "vitest";
+
+describe("resourceSurveyFieldRadioGroup", () => {
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
+
+    const choices = [
+      { text: "a", value: "a" },
+      { text: "b", value: "b" },
+      { text: "c", value: "c" },
+    ];
+    const error = "message";
+    const title = "Favourite colour";
+    const createNode = (hasOther?: boolean): SurveyRadioGroupNode => ({
+      props: {
+        ...surveyRadioGroupNodePropsSchema.parse({ choices, hasOther, name: "a", title }),
+        id: crypto.randomUUID(),
+      },
+      type: SurveyNodeType.RadioGroup,
+    });
+
+    test("is a radio group named by the question's title, with a radio for each choice", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, { props: { error: "", isDisabled: false, node: createNode() } });
+
+      expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(title);
+      expect(component.findAll('[role="radio"]')).toHaveLength(choices.length);
+    });
+
+    test("answers with the choice an arrow key moves to", async () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, { props: { error: "", isDisabled: false, node: createNode() } });
+      const [first] = component.findAll('[role="radio"]');
+      await first?.trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([["b"]]);
+    });
+
+    test("reveals a text field for the other option, whose text is the answer", async () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, {
+        props: { error: "", isDisabled: false, node: createNode(true) },
+      });
+      const other = component.findAll('[role="radio"]')[choices.length];
+      await other?.trigger("click");
+      await flushPromises();
+      await component.get("input").setValue("a");
+
+      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual(["a"]);
+    });
+
+    test("shows its error beside it", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, { props: { error, isDisabled: false, node: createNode() } });
+
+      expect(component.get('[role="alert"]').text()).toBe(error);
+    });
+  });
+});
