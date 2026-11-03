@@ -10,16 +10,16 @@ The licence is the other reason. SurveyJS's Creator is commercially licensed. Es
 
 The survey is rebuilt on our own code and SurveyJS is removed. One change would be far past one reviewable size, so this program splits it into parts that share the `resource-survey-form-engine` prefix and are built in the order the design draws.
 
-- **[Logic](../resource-survey-form-engine-logic/design.md)**: the expression language as the `survey-logic` package.
-- **[Document](../resource-survey-form-engine-document/design.md)**: the survey as a typed document on the headless block editor core, validated on every save.
-- **[Runner](../resource-survey-form-engine-runner/design.md)**: the headless state a respondent's session moves through, and the validation of answers.
-- **[Fields](../resource-survey-form-engine-fields/design.md)**: one field component per question kind, and the page renderer.
-- **[Respondent](../resource-survey-form-engine-respondent/design.md)**: the respondent page and its resume and submit, over the runner.
-- **[Readers](../resource-survey-form-engine-readers/design.md)**: the response summary and the dataset, read from the typed document.
-- **[Creator](../resource-survey-form-engine-creator/design.md)**: the owner's editor shell, history, canvas, layers and palette.
-- **[Properties](../resource-survey-form-engine-properties/design.md)**: the property grid and the choice, matrix and column editors.
-- **[Logic builder](../resource-survey-form-engine-logic-builder/design.md)**: the condition builder beside the raw expression.
-- **[Theme and files](../resource-survey-form-engine-theme-files/design.md)**: the theme subset and the uploads with their delete hooks.
+- **[Logic](../../specs/resource/survey-logic/design.md)**: the expression language as the `survey-logic` package.
+- **[Document](../../specs/resource/survey-document/design.md)**: the survey as a typed document on the headless block editor core, validated on every save.
+- **[Runner](../../specs/resource/survey-runner/design.md)**: the headless state a respondent's session moves through, and the validation of answers.
+- **[Fields](../../specs/resource/survey-fields/design.md)**: one field component per question kind, and the page renderer.
+- **[Respondent](../../specs/resource/survey-respondent/design.md)**: the respondent page and its resume and submit, over the runner.
+- **[Readers](../../specs/resource/survey-response-summary/design.md)**: the response summary and the dataset, read from the typed document.
+- **[Creator](../../specs/resource/survey-creator/design.md)**: the owner's editor shell, history, canvas, layers and palette.
+- **[Properties](../../specs/resource/survey-properties/design.md)**: the property grid and the choice, matrix and column editors.
+- **[Logic builder](../../specs/resource/survey-logic-builder/design.md)**: the condition builder beside the raw expression.
+- **[Theme and files](../../specs/resource/survey-theme-files/design.md)**: the theme subset and the uploads with their delete hooks.
 - **[Removal](../resource-survey-form-engine-removal/design.md)**: the one-time purge, SurveyJS's removal and the prose the change makes stale.
 
 The rejected alternative, keeping SurveyJS and checking its document on save, is recorded in [its rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md).
