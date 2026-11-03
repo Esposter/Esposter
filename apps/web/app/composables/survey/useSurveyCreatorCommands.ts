@@ -178,7 +178,8 @@ export const useSurveyCreatorCommands = () => {
   const moveNodeTo = (nodePointer: string, slotPointer: string, index: number) =>
     moveElement(moveBlockNode(document.value, surveyRegistry, surveyNodeChildren, nodePointer, slotPointer, index));
   // The renames a copy needs: each question in the copied subtree takes a name no element holds, since a copy would
-  // Otherwise repeat the name of the question it copies
+  // Otherwise repeat the name of the question it copies. The name is numbered from its base without a trailing number,
+  // So a copy of question1 is question2 as an inserted question is, rather than question11
   const getCopyNameOperations = (nodePointer: string, copyPointer: string): JsonPatchOperation[] => {
     const names = getElementNames(document.value);
     return getBlockLayerRows(document.value, surveyNodeChildren).flatMap(({ nodePointer: rowPointer }) => {
@@ -190,7 +191,7 @@ export const useSurveyCreatorCommands = () => {
         {
           op: JsonPatchOperationType.Replace,
           path: getBlockPropPointer(`${copyPointer}${rowPointer.slice(nodePointer.length)}`, "name"),
-          value: addUniqueName(name, names),
+          value: addUniqueName(name.replace(/\d+$/u, "") || name, names),
         },
       ];
     });

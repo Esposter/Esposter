@@ -71,6 +71,17 @@ describe(useSurveyCreatorCommands, () => {
     expect(selectedPointer.value).toBe("/content/0/props/children/1");
   });
 
+  test("names a duplicate from the stem of its question's name, as an inserted question is named", () => {
+    expect.hasAssertions();
+
+    const { document, duplicateNode } = setup([createPage([createQuestion("question1")])]);
+    duplicateNode("/content/0/props/children/0");
+
+    expect(
+      document.value.content[0]?.props.children.map(({ props }) => ("name" in props ? props.name : undefined)),
+    ).toStrictEqual(["question1", "question2"]);
+  });
+
   test("moves a question up past its previous sibling, and the document passes the survey check", () => {
     expect.hasAssertions();
 
