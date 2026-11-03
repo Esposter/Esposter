@@ -1,21 +1,21 @@
 # The App's Scripts
 
-Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
+Read when running a script from `apps/web`, or reaching past `typecheck` (`nuxt prepare`, then `tsrs` over each project Nuxt generates, the app's through the vize mapper) or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
 
 | Command          | When to use                                                        |
 | ---------------- | ------------------------------------------------------------------ |
 | `pnpm lint`      | CI/check-only lint verification                                    |
 | `pnpm lint:fix`  | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck` | TypeScript type checking — never `vue-tsc` directly                |
+| `pnpm typecheck` | TypeScript type checking — never `tsrs` or `vue-tsc` directly      |
 | `pnpm test`      | Run this package's tests in watch mode                             |
 | `pnpm dev`       | Start dev server, after bringing each package it loads up to date  |
 | `pnpm bench`     | Run this package's benchmarks                                      |
 | `pnpm build`     | Build for production                                               |
 
 **`apps/web`'s `pnpm typecheck` is the only typecheck, and `vp run lint` from the repo root is the only lint.** Reaching past
-either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
+either for the underlying binary — `tsrs -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
 strictly less than CI does and reports success while CI fails: the app's real project is the generated
-`.nuxt` tsconfig rather than the one in the package, and a package's `lint` is ESLint alone. Which rules only
+`.nuxt` tsconfig rather than the one in the package (the one that reads its `.vue` files is `tsconfig.vize.json`, which names the mapper), and a package's `lint` is ESLint alone. Which rules only
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's ("Running lint").
 
 **A root check is an aggregate over named leaves through `dependsOn`, never a `&&` chain.** `lint`, `lint:packages` and

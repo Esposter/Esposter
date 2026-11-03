@@ -2,21 +2,25 @@
 
 ## Why
 
-Three packages check `.vue` files with `vue-tsc`, and `apps/web` checks them with `nuxt typecheck`, which runs `vue-tsc` underneath. `vue-tsc` reads the classic TypeScript API, so it is the last reason the `typescript-native-bridge` override exists. [The Rust toolchain change](../architecture-rust-typescript-toolchain/proposal.md) moved every plain `tsc` check to `tsrs`, and the Vue checks are the part it left behind. `vize` checks `.vue` files through a content mapper that TypeScript runs as a separate process, and `tsrs` implements that mapper protocol in its CLI. If the pair works, the Vue checks use the same compiler as everything else.
+`.vue` files were checked by `vue-tsc` in three packages and by `nuxt typecheck` in `apps/web`, which runs `vue-tsc` underneath. `vue-tsc` reads the classic TypeScript API, so it is the last reason the `typescript-native-bridge` override exists. [The Rust toolchain change](../architecture-rust-typescript-toolchain/proposal.md) moved every plain `tsc` check to `tsrs`, and the Vue checks were the part it left behind. `vize` checks `.vue` files through a content mapper that TypeScript runs as a separate process, and `tsrs` implements that mapper protocol in its CLI. With the pair working, the Vue checks use the same compiler as everything else.
+
+## Where it stands
+
+Every Vue check now runs on `tsrs` with the mapper: the three Vue packages and `apps/web`, whose `typecheck` no longer runs `nuxt typecheck`. On `vize` 0.661.0 the mapper reports no diagnostic that `vue-tsc` does not, and is 3.6 to 4.9 times faster on a quarter to under half of the memory (`design.md`, "Timings, cold and warm"). What is left is the declaration emit for `.vue` files, which still goes through `vue-tsc`, and the removal that follows it.
 
 ## What the spike showed
 
-The spike's commands and results are in [the design's spike section](design.md#the-spike). In short, the content-mapper path works through the TypeScript 7.1 beta's `tsc` and fails inside `tsrs` with `TS18069`, so the failure to report upstream is `tsrs`'s, not vize's.
+The spike's commands and results are in [the design's spike section](design.md#the-spike). In short, the content-mapper path worked through the TypeScript 7.1 beta's `tsc` and failed inside `tsrs` with `TS18069`. That was `tsrs`'s Windows launch of the mapper's bare `node`, reported as `tsrs` `#820` and fixed in 0.20.1.
 
 ## What changes
 
-The migration is gated, and nothing is removed until its gate passes.
+The migration was gated, and nothing is removed until its gate passes.
 
-1. **Hold the `tsrs` gap open and recorded.** The Vue packages keep `vue-tsc` until `tsrs` runs the vize mapper. The gap is written upstream by the owner, with the spike's project as the reproduction.
-2. **Decide the compiler the Vue checks run on.** The mapper path the spike proved needs the TypeScript 7.1 beta, so either `typescript` moves to that release for the Vue packages, or the Vue packages get their own `typescript` alias. The choice is taken in the design, against the other in-process uses of the `typescript` package.
-3. **Pilot one small Vue package.** Run `vize` through the chosen compiler on one package, and compare its diagnostics with `vue-tsc` on the same program. The gate is a match on every diagnostic the package produces.
-4. **Extend the pilot to the three `vue-tsc` packages and `apps/web`.** `apps/web`'s `nuxt typecheck` is the hard one, because Nuxt generates the types it checks against. That gate is a separate decision in the design.
-5. **Retire `vue-tsc` and the override only after every Vue package passes.** The `typescript-native-bridge` override is removed in the same change, since nothing else reads it.
+1. **Hold the `tsrs` gap open and recorded.** Done. The Vue packages kept `vue-tsc` until `tsrs` ran the vize mapper, which 0.20.1 does.
+2. **Decide the compiler the Vue checks run on.** Not needed. `tsrs` runs the mapper on its own compiler, so neither moving `typescript` to the 7.1 beta nor aliasing a second copy was taken.
+3. **Pilot one small Vue package.** Done on `vue-phaserjs`, then `genshin-interface` and `genshin-world`. The gate was a match on every diagnostic the package produces.
+4. **Extend the pilot to the three `vue-tsc` packages and `apps/web`.** Done. `apps/web` runs the mapper over the app project Nuxt generates and `tsrs` over its other four generated projects, in place of `nuxt typecheck`.
+5. **Retire `vue-tsc` and the override only after every Vue package passes.** Waiting on the declaration emit (`tasks.md`, 6.1). The `typescript-native-bridge` override is removed in the same change, since nothing else reads it.
 
 ## Out of scope
 
@@ -24,7 +28,7 @@ The migration is gated, and nothing is removed until its gate passes.
 - Replacing `oxlint-tsgolint`, which runs its own native binaries and does not load the `typescript` package.
 - Editor diagnostics for `.vue` files. `tsrs`'s language server does not run content mappers, so the editor keeps its current path until that changes upstream.
 
-## Open questions
+## Settled questions
 
-- Does the 7.1 beta compiler still need the `typescript-native-bridge` fork for the Vue packages' speed, and what is the speed difference on a real package? The spike did not measure it.
-- vize's own conformance runs against one pinned TypeScript commit and its parity check against `vue-tsc` is report-only. Which of those is the bar for "matches" is the owner's call.
+- Does the mapper need the `typescript-native-bridge` fork for speed? No. It runs on `tsrs` and is 3.6 to 4.9 times faster than `vue-tsc` on the bridge, on every target (`design.md`, "Timings, cold and warm").
+- What is the bar for "matches"? The mapper and `vue-tsc` report the same diagnostics on the same program, and each catches a deliberate error written into a `.vue` file. Both report none on all four targets. vize's own conformance runs against one pinned TypeScript commit and its parity check against `vue-tsc` is report-only, so neither is the bar.

@@ -2,7 +2,9 @@
 
 ## Context
 
-Plain typecheck now runs through `tsrs` ([Rust toolchain change](../architecture-rust-typescript-toolchain/design.md)). The Vue checks did not move, because `vue-tsc` reads the classic TypeScript API that the `typescript-native-bridge` override provides, and `tsrs` ships no classic API. Two things make the Vue path different: `vize` checks `.vue` files through a content mapper, a separate process that TypeScript spawns and asks for virtual TypeScript per file, and that mapper protocol is implemented by `tsrs`'s CLI but not by its language server.
+Plain typecheck runs through `tsrs` ([Rust toolchain change](../architecture-rust-typescript-toolchain/design.md)). The Vue checks stayed on `vue-tsc` at first, because it reads the classic TypeScript API that the `typescript-native-bridge` override provides and `tsrs` ships no classic API. `vize` checks `.vue` files through a content mapper, a separate process that TypeScript spawns and asks for virtual TypeScript per file. `tsrs`'s CLI implements that protocol and its language server does not.
+
+Every Vue check now runs through the mapper on `tsrs`: `vue-phaserjs`, `genshin-interface`, `genshin-world` and the app project of `apps/web`. What `vue-tsc` still does is generate the declarations of the Vue packages' `.vue` files, and that is what keeps it installed.
 
 ## The spike
 
@@ -15,24 +17,19 @@ A scratch project in the session's scratchpad, installed with `vize@0.587.0`, `t
 | `tsrs --noEmit -p tsconfig.json`                   | `TS18068`: content mappers require `--runExternalCode`                                        |
 | `tsrs` with the mapper's declared options set      | the same `TS18069`, so `rootDir`, `checkJs` and `noUnusedLocals` are not the cause            |
 
-The mapper is declared in vize's `package.json` under `typescript.contentMapper`, with `exec` running `node ./bin/vize content-mapper`, `dynamicConfig: true`, and the compiler options it reads. The `tsc` run is the reference for what the mapper returns, and the `tsrs` run fails on the request that precedes any output.
+The mapper is declared in vize's `package.json` under `typescript.contentMapper`, with `exec` running `node ./bin/vize content-mapper`, `dynamicConfig: true`, and the compiler options it reads. The `tsc` run is the reference for what the mapper returns, and the `tsrs` run failed on the request that precedes any output. The failure was `tsrs`'s Windows launch of the mapper's bare `node`, reported as `tsrs` `#820` and fixed by `#822` (resolve Windows executables through `PATHEXT`), which 0.20.1 holds.
 
 ## Decisions
 
-### The Vue checks wait on `tsrs`, not on a second compiler
+### The Vue checks run on `tsrs`, not on a second compiler
 
-The goal is one compiler for every check. A permanent split, with `tsrs` for TypeScript and `tsc` for `.vue`, keeps the classic API alive and gives the Vue path a separate speed and memory profile to maintain. So the Vue packages stay on `vue-tsc` until `tsrs` runs the mapper. The mapper gap is reported upstream, not patched around in the repo.
+The goal is one compiler for every check. A permanent split, with `tsrs` for TypeScript and `tsc` for `.vue`, keeps the classic API alive and gives the Vue path a separate speed and memory profile to maintain. So the Vue packages stayed on `vue-tsc` until `tsrs` ran the mapper, and moved when 0.20.1 did.
 
-Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc` now. It works in the spike, but it makes the Vue checks depend on a beta classic compiler that the rest of the repo does not use, and it is the same dependency the `tsrs` path would remove.
+Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc`. It works in the spike, but it makes the Vue checks depend on a beta classic compiler that the rest of the repo does not use, and it is the same dependency the `tsrs` path removes.
 
 ### The compiler for the proven path
 
-If the Vue packages move before `tsrs` does, they need the TypeScript 7.1 beta, because that is the release vize's mapper is conformance-tested against. The `typescript` package is pinned to `6.0.3` through the native bridge, and `scripts/` imports it in-process. Two options:
-
-- Move the `typescript` package to the 7.1 beta for everything. This changes the in-process API `scripts/` reads, and the native bridge goes with it.
-- Alias a second `typescript` for the Vue packages only. This keeps `scripts/` on the bridge, and puts two TypeScript copies in the lockfile.
-
-The choice is taken at the pilot gate, against which in-process uses `scripts/` has.
+Not needed. The mapper conformance-tests against the TypeScript 7.1 beta, and `tsrs` runs the mapper on its own copy of that compiler. So the Vue checks neither move the `typescript` package to the beta nor alias a second one, and `scripts/` keeps no classic-API reader (it reads sources through `oxc-parser`).
 
 ### Formatter and linter stay on oxfmt and oxlint
 
@@ -40,173 +37,160 @@ The choice is taken at the pilot gate, against which in-process uses `scripts/` 
 
 ### Pilot before scope
 
-`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot is `packages/vue-phaserjs`: the smallest package that runs `vue-tsc` today and has real `.vue` files (27). Its result: `vue-tsc` reports nothing, and the `tsrs` run through the mapper reports no diagnostic in any `.vue` file, with 27 `.vue` files in the program. It reported one `.ts` diagnostic, the canvas mock in `src/test/setupCanvas.ts` missing `lang`. That diagnostic also appears with `tsrs` and no mapper, so it comes from the TypeScript 7.1 DOM typings, and the mock gained `lang` in the same change. After the canvas mock's cast in `src/test/setupCanvas.ts`, `tsrs --fast` and `vue-tsc --noEmit` both exit with 0 diagnostics on the package, so the pilot's diff is empty. Its gate is that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded in this design before the next package starts, and a mismatch that is a `vize` or `tsrs` defect is reported upstream.
+`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot was `packages/vue-phaserjs`, the smallest package that ran `vue-tsc` and has real `.vue` files (27). The gate was that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded here before the next package starts, and one that is a `vize` or `tsrs` defect is reported upstream.
 
-The first package after the pilot is `packages/genshin-interface`, also compared. Its `tsrs` run reports 0 diagnostics and its `vue-tsc` run reports 0 diagnostics, so the diff is empty on both the error set and the locations. `packages/genshin-world` is compared clean as well, at `9d1bb6fc19`: `tsrs` and `vue-tsc` each report 0 diagnostics, so the diff is empty. With `packages/vue-phaserjs` clean after its canvas mock cast, that closes task 4.1 across the three packages. `packages/vue-phaserjs` was compared as the pilot above, and its post-cast result is recorded there.
+The pilot matched after one change in the package: TypeScript 7.1's DOM typings require `lang` on `CanvasRenderingContext2D`, so the canvas mock in `src/test/setupCanvas.ts` gained it. That is a compiler-version difference and not a `vize` defect. `packages/genshin-interface` and `packages/genshin-world` matched with no change, and the app followed (below).
 
 ### `.vue` declarations from `vize check --declaration`
 
 `vize check --declaration --declaration-dir` was run through `tsrs` on `packages/genshin-interface` and compared with `vue-tsc --declaration --emitDeclarationOnly` on the same build tsconfig. It is not a drop-in:
 
 - **No component declaration matches.** `vue-tsc` writes Vue's own `DefineComponent` with a slots wrapper. `vize` writes its own component model: exported `Props`, `Emits` and `Slots` types, a `__setup` function carrying the template slots and exposed members, and a `new <$AuthoredProps>()` constructor type, with every file importing a shared `__vize_helpers.d.ts` that the emit writes beside them. The props, slots and exposed members are all present, in a different type.
-- **A consumer checked by `vue-tsc` rejects that type.** The consumer test pointed `packages/genshin-world`, through a scratch tsconfig `paths` entry, at a declaration tree for `genshin-interface`, once from `vue-tsc` and once from `vize` (the barrels and the non-`.vue` files from `vue-tsc` in both), and checked it with each checker. A dependent otherwise reaches a sibling through the `source` condition and never reads built declarations, so the redirect is what makes the test mean something. The result is a matrix:
+- **A consumer checked by `vue-tsc` rejected that type on 0.638.0.** The consumer test pointed `packages/genshin-world`, through a scratch tsconfig `paths` entry, at a declaration tree for `genshin-interface`, once from `vue-tsc` and once from `vize` (the barrels and the non-`.vue` files from `vue-tsc` in both), and checked it with each checker. A dependent otherwise reaches a sibling through the `source` condition and never reads built declarations, so the redirect is what makes the test mean something. The result is a matrix:
 
   | Dependent checked by   | `vue-tsc` declarations | `vize` declarations |
   | :--------------------- | :--------------------- | :------------------ |
   | `tsrs` with the mapper | clean                  | clean               |
   | `vue-tsc`              | clean                  | tens of `TS2345`    |
 
-  Every `vue-tsc` error is the same shape: attributes passed to a component that its props do not declare (`role`, `aria-*`, `class`, a listener) are refused against `$AuthoredKeyWitness`, because the `vize` constructor type is written for the mapper's own virtual code and not for `vue-tsc`'s call.
+  Every `vue-tsc` error is the same shape: attributes passed to a component that its props do not declare (`role`, `aria-*`, `class`, a listener) are refused against `$AuthoredKeyWitness`, because the `vize` constructor type is written for the mapper's own virtual code and not for `vue-tsc`'s call. Rerun over the 57 components of `genshin-interface` with `genshin-world` as the consumer, the control gave 0 errors and the `vize` tree gave 51, 19 with the guard also allowing `import("vue").HTMLAttributes`, and 0 with it also allowing `Record<string, unknown>`. The guard measures extra keys against the props and emits alone, and Vue lets undeclared attributes fall through to the root element, so one edit in the helper cleared the pair.
 
 - **It does not read the build the way tsdown does.** With no file patterns it found only the config files, because the shared Vue tsconfig's `${configDir}` include is not expanded; with a `src` pattern it ignores the tsconfig's excludes and emits the fixtures and visual files too, and it reports every auto-imported name as missing until the package's `auto-imports.d.ts` and `vite-env.d.ts` are named on the command line as well.
-- **It is slower than `vue-tsc` on the native bridge**, by roughly an order of magnitude on this package.
+- **It is slower than `vue-tsc` on the native bridge**, by roughly an order of magnitude on this package (11 seconds for the 57 components, helpers file included).
 - **It emits per file, with no barrel.** The bundling into one `.d.ts` per entry stays with the declaration plugin, which would take the per-file output and inline the helper file.
+- **`vue-phaserjs` adds no gap.** Its only dependent is `apps/web`, and checking the app against a `vue-tsc` tree and a `vize` tree gave the same seven errors, all stale generated barrels of the local checkout. A probe assigning `Scene` to `number` showed the redirect took effect. The emit has one finding of its own: it exits 1 with `TS4094` and `TS5088` in `__vize_external__/…/shared/dist/index.js` while `tsconfig.vue.json` sets `allowJs`, and passes with `allowJs` off. Two standalone attempts with a JavaScript dependency did not reproduce it, so it is recorded here and not filed.
 
-**Decision: `vue-tsc` stays the declaration generator until every consumer is checked by the mapper.** The `vize` declarations work for a mapper-checked dependent and break a `vue-tsc`-checked one, and `apps/web` is `vue-tsc`-checked, and stays so after its mapper diagnostics are triaged. A published package also reaches consumers outside this repo, and any of them on `vue-tsc` would hit the same refusal, so these declarations cannot be what a published package ships while `vue-tsc` is the common checker. The gate is not reachable by triage alone: `apps/web` stays on `nuxt typecheck` ("`apps/web` last", below), which is `vue-tsc`-based, so passing task 5.2 leaves the app `vue-tsc`-checked. Task 5.3 weighs two ways to clear the gate: move `apps/web` onto the mapper, or narrow the gate to the published consumers. The decision below rejects both. The order is therefore the app first (tasks 5.2 and 5.3), then the plugin that runs the emit on the build's own file list and feeds the bundler (task 6.1).
+**Decision: `vue-tsc` stays the declaration generator until a `vue-tsc`-checked consumer accepts the `vize` declarations.** A published package reaches projects outside this repository that check with `vue-tsc`, so narrowing the gate to the repo's own consumers does not help, and the declarations are judged by their consumers and not by the app's checker. Moving `apps/web` onto the mapper therefore did not settle it either. The one thing the gate waited on was the report that the declaration refuses undeclared attributes: #11364, then #11454 for the shape its reduction missed (a producer with an emit or two required props). #11454 is closed as completed in 0.661.0. Task 6.1 re-runs the matrix on 0.661.0, for `genshin-interface` and `genshin-world` with their size snapshots read, before `dts.tsc.vue` is replaced.
 
-**Rerun on `vize` 0.638.0 over `genshin-interface` and `genshin-world`, and the gate it settles (task 5.3).** The declarations of the 57 components of `genshin-interface` were built twice, by `vue-tsc` and by `vize check --declaration` (11 seconds for the package, helpers file included), then swapped into one tree of `.d.ts` files, and `genshin-world` was checked against each tree by `vue-tsc` and by `tsrs` with the mapper. The trees had to sit inside the package for `vue` to resolve, and the `#src/` subpath imports of the `vue-tsc` emit had to be made relative, as the real build bundles both away. The control and the variants:
+**The compile plugin is a separate job.** Compiling a component and checking its types do not depend on each other, so the compile side (the Nuxt module and the rolldown plugin) is the deferred compiler page's and does not gate this change.
 
-| Declaration tree                                         | `vue-tsc` consumer | mapper consumer |
-| :------------------------------------------------------- | -----------------: | --------------: |
-| `vue-tsc` declarations (control)                         |                  0 |               0 |
-| `vize` declarations                                      |                 51 |               0 |
-| `vize`, guard also allows `import("vue").HTMLAttributes` |                 19 |               0 |
-| `vize`, guard also allows `Record<string, unknown>`      |                  0 |               0 |
+### `apps/web` on the mapper
 
-Every error is the same TS2345 on `__vizeInvalidComponentProps`. The guard in the emitted constructor measures extra keys against the props and emits alone, and Vue lets undeclared attributes fall through to the root element: `GameButton` declares `kind` and `tip`, and its callers pass `disabled` and `@click`. The global HTML attributes cover only part of that (`id`, `role`, `onClick`), so the report is about undeclared attributes in general: #11364, closed but not fixed on 0.652.0 and 0.653.0 (#11454 is the reduction that fails). The one edit that clears the whole package pair is in the helper, so that issue's fix is the only thing this pair needed. A package other than these two may need more, which is why 6.1 re-runs the matrix on each.
+`nuxt typecheck` generates the type declarations it checks against (auto-imports, route types, `.nuxt`) and checks them with `vue-tsc`. Its checker list is fixed in `@nuxt/cli` (`vue-tsc` or `golar`), so the Nuxt route to the mapper does not exist. The app runs the generation itself and calls `tsrs` on what Nuxt writes:
 
-**Decision: the gate is a `vue-tsc`-checked consumer accepting the `vize` declarations, and `apps/web` does not move onto the mapper for it.** Narrowing the gate to the published consumers does not help, because those are `vue-tsc` consumers too: a published package reaches projects outside this repository that check with `vue-tsc`. Moving `apps/web` onto the mapper is blocked on its own (eight mapper defect classes, and `nuxt typecheck` takes only `vue-tsc` or `golar`), and it would not unblock the declarations, since the declarations are judged by their consumers and not by the app's checker. So task 6.1 waits on one thing: the matrix above coming out clean for a `vue-tsc` consumer, which is the report's fix, then the same matrix again on `genshin-interface` and `genshin-world` with their size snapshots read. Until then `vue-tsc` stays the declaration generator.
+```bash
+nuxt prepare
+tsrs --fast --runExternalCode -p tsconfig.vize.json   # the app project, through the mapper
+tsrs --fast -p .nuxt/tsconfig.server.json
+tsrs --fast -p .nuxt/tsconfig.shared.json
+tsrs --fast -p .nuxt/tsconfig.node.json
+tsrs --fast -p tsconfig.root.json
+tsrs --fast -p service-worker/tsconfig.json
+```
 
-**The third Vue package, `vue-phaserjs` (27 components), adds no gap to the declaration gate.** Its only dependent is `apps/web`, which `vue-tsc` checks. The app was checked against a `vue-tsc` tree and against a `vize` tree, and the `vize` declarations add no error: both report the same seven errors, all stale generated barrels of the local checkout. A probe assigning `Scene` to `number` shows the redirect took effect (the `vue-tsc` tree resolves it to `DefineComponent`, the `vize` tree to `vize`'s component type), so the clean result is not an unresolved import. The emit has one finding of its own: `vize check --declaration` over `vue-phaserjs` exits 1 with `TS4094` and `TS5088` in `__vize_external__/…/shared/dist/index.js` while `tsconfig.vue.json` sets `allowJs`, and passes with `allowJs` off (28 files). It was not reduced: two standalone attempts with a JavaScript dependency did not reproduce it, so it is recorded here and is not filed.
+`tsconfig.vize.json` extends `.nuxt/tsconfig.app.json`, names `vize` as the `.vue` content mapper and `useTemplateRef` as Vue's composable. Only the app project names the mapper, because only it holds `.vue` files, so it is the only run that passes `--runExternalCode`. A deliberate type error written into a `.vue` file fails the script, and the script reports 0 diagnostics on the tree.
 
-**The emit fails under `noUnusedLocals` for a component used twice.** `vize check --declaration` reports `TS6196` on the generated `__Foo_Component_1`, `_CheckProps_1` and `_CheckTail_1` aliases and writes no helpers file, which is why the matrix above needed a scratch tsconfig with `noUnusedLocals` off. The other paths (`vize check` without `--declaration`, and `tsrs --runExternalCode`) are clean on the same input. Filed as #11365, closed and fixed in a release.
+Two causes were fixed in the app and not upstream. `services/capture/inlineFontFace.ts` spread a font face's descriptors, which TypeScript 7.1's DOM typings do not make iterable (6.0.3 types `CSSFontFaceRule.style` as an iterable `CSSStyleDeclaration`, and 7.1 as a `CSSFontFaceDescriptors` with no iterator, though the browser object has one), so it uses `Array.from` and carries an unfiled `@TODO` for the typing. The root manifest lists `vue` from the catalog beside `vize`; without it the mapper runs in its silent fallback and reports four false `TS2353` diagnostics on three library components (`Tabs.Item`, `Treeview.Item`, `Select.Item`). That is configuration of this monorepo, and #11444, the report for the silent fallback, was closed as configuration.
 
-**`apps/web` keeps `vue-tsc` regardless.** `nuxt typecheck` runs it, so the `typescript-native-bridge` override that `vue-tsc` needs stays while the app does. Task 7.1 therefore removes `vue-tsc` from the Vue packages and leaves the override and the app's dependency until the app has another checker.
+`Input.test.ts` names its stub before the cast to the picker's instance type. Written inside the cast, the call takes the cast's type as its context, and `vize`'s component type makes that a union TypeScript refuses to compute (`TS2590`). That is #11499, open. The named stub type-checks and reads no worse, so no ignore is carried.
 
-**The compile plugin stays `unplugin-vue/rolldown`, and no gap there blocks anything.** `vize` states in its 0.638.0 notes that its Vite plugin is the drop-in replacement for `@vitejs/plugin-vue`, and that the unplugin and the other bundlers are experimental and outside that claim. The package builds run on rolldown through tsdown. Compiling a component and checking its types are separate jobs, so a `vize` compile plugin is neither a step toward the type check nor a requirement of it.
+**The diagnostics `vue-tsc` does not report, by release.** The first runs were hidden behind syntax errors in the mapper's virtual code (#11140 and #11257, both fixed).
 
-### `apps/web` last
+| `vize` release      | Diagnostics on the app project |
+| :------------------ | -----------------------------: |
+| 0.637.0 and 0.638.0 |                            103 |
+| 0.650.0 and 0.652.0 |               21, then 15 \*\* |
+| 0.658.0             |                             11 |
+| 0.659.0             |                              6 |
+| 0.661.0             |                       0 (1 \*) |
 
-`nuxt typecheck` generates the type declarations it checks against (auto-imports, route types, `.nuxt`), and that generation runs through Nuxt's own `vue-tsc` integration. Replacing it means either wiring vize into Nuxt's typecheck, or running vize outside Nuxt's generated config. `vize` ships a Nuxt module, but whether its check replaces `nuxt typecheck` or sits beside it is not established by the spike. That decision is written here when the pilot is done.
+\* One `TS2590` in `Input.test.ts`, cleared by naming the stub (#11499).
 
-**The comparison, history.** `nuxt typecheck` (`vue-tsc` 3.3.11 on the native bridge) is clean on the app, in 91 to 252 seconds depending on the machine. The same app project through `tsrs --runExternalCode` is a tsconfig that extends `.nuxt/tsconfig.app.json`, names `vize` as the `.vue` mapper and `useTemplateRef` as Vue's composable, and checks four to nine times faster. Early runs were hidden behind syntax errors in the mapper's virtual code (#11140 and #11257, both fixed, see "Landmines"). The runs on `vize` 0.637.0 and 0.638.0 gave 103 diagnostics in 63 files that `vue-tsc` does not report, none in `node_modules`: 30 `TS7053`, 28 `TS2339`, 21 `TS6133` and `TS6196`, 7 `TS7006` and `TS7031`, 6 `TS18048`, 4 `TS2353`, and single diagnostics of the classes listed under "Landmines". The per-file lists of those runs are not kept: the fourth run below replaces them.
+\*\* After the two changes in the app above, and 30 seconds on Linux. A mapper run over a `.nuxt` older than the checkout reported 913 diagnostics, 855 of them in the app, where the regenerated one reported 15 on 0.652.0, so the check regenerates `.nuxt` first.
 
-**The comparison, run a fourth time on `vize` 0.650.0 (Linux, `tsrs` 0.20.1), after all twelve filed issues (#11359 to #11368, #11390, #11391) were closed upstream.** Closed is not fixed in a release, so each report's reduction was run on the release published after the fixes merged (0.650.0, after #11379, #11380, #11382, #11383 and #11395), against the old version named in its report as a control. Eleven are fixed: the control reproduces the drafted diagnostic, 0.650.0 reports none, and the same file with a deliberate real error still reports it (and `vue-tsc` agrees). The twelfth, the declaration that refuses undeclared attributes (filed as #11454, the successor of #11364), is not: its reduction as drafted (one required prop, no emits) already passes `vue-tsc` on 0.638.0, because the helper's `$RelaxedDynamicUnionExtra` rule covers that shape. A producer with `defineEmits<{ change: [] }>()` or with two required props still gives the drafted `__vizeInvalidComponentProps` TS2345 for `disabled`, `id`, `role` and an unknown attribute on a `vue-tsc` consumer, on 0.638.0 and on 0.650.0 alike, the emitted `Foo.vue.d.ts` is byte-identical, and the guard (`Exclude<keyof Authored, keyof Allowed>`) is still in the shipped helper. The issue is closed but the bug is not, and the reduction should be corrected upstream. Not fixed means task 6.1 is still blocked.
+The tools agree on the other targets throughout: the three Vue packages report 0 diagnostics through the mapper and through `vue-tsc` on every release since 0.652.0, and each catches a deliberate error. The one-run `nuxt typecheck` of the app on 0.652.0 gave 0 diagnostics, as it does now.
 
-The app project through `tsrs --runExternalCode` (same scratch tsconfig as the earlier runs, after the workspace dependencies were built so their barrels exist) first reported **21 diagnostics, down from 103**: the `defineModel` `TS7053`, the generic slot `TS2339` and the dotted-tag `TS6133` classes were gone. Two changes in the app took it to **15 on `vize` 0.652.0, in 30 seconds**:
+### Resolved upstream
 
-- `services/capture/inlineFontFace.ts` spread a font face's descriptors, which TypeScript 7.1's DOM typings do not make iterable. That is a typings gap and not a `vize` defect: TypeScript 6.0.3 types `CSSFontFaceRule.style` as an iterable `CSSStyleDeclaration`, and 7.1 types it as a `CSSFontFaceDescriptors` with no iterator, though the browser object has one. `Array.from` types under both, and the file carries an unfiled `@TODO` for the DOM typings, listed in the `todos` skill.
-- The root manifest lists `vue` from the catalog beside `vize`. Without it the mapper ran in its silent fallback and reported four false `TS2353` diagnostics on three library components (`Tabs.Item`, `Treeview.Item`, `Select.Item`); see "Landmines". That is configuration of this monorepo and not a workaround for a defect, and the report for that silent fallback, #11444, was closed as configuration: the guide says to keep `vue` aligned with the analyzed project, which listing it beside `vize` does.
+Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass), #11444 to #11457 (second), and #11481 to #11484 (the library builds).
 
-No type hack for a `vize` defect lives in the app. A global declaration of `__VLS_PROPS_FALLBACK` also clears those four diagnostics and was used only as a probe to confirm the cause; it is recorded in #11444, the silent-fallback report, and was not committed.
+| Issue  | What                                                  | Closed as                       | First release |
+| :----- | :---------------------------------------------------- | :------------------------------ | :------------ |
+| #11455 | the Nuxt module's `onPrehydrate` transform never ran  | completed                       | 0.657.0       |
+| #11456 | the rolldown plugin dropped `<style src>`             | completed (an error in 0.656.0) | 0.658.0       |
+| #11446 | `inheritAttrs: false` on a generic component          | completed                       | 0.659.0       |
+| #11447 | the payload of a generic library component            | completed                       | 0.659.0       |
+| #11451 | a destructured parameter of a nested callback         | completed                       | 0.659.0       |
+| #11452 | an assignment in an inline callback prop              | completed                       | 0.659.0       |
+| #11450 | a generic alias written at module scope               | completed                       | 0.660.0       |
+| #11445 | a cast to a `.vue` component type (`TS2352`)          | completed                       | 0.661.0       |
+| #11448 | a dynamic component with a generic key                | completed                       | 0.661.0       |
+| #11449 | a listener on a dynamic component in a slot           | completed                       | 0.661.0       |
+| #11453 | an event declared in camelCase and kebab-case         | completed                       | 0.661.0       |
+| #11454 | the declaration refuses undeclared attributes         | completed                       | 0.661.0       |
+| #11481 | a production build keeps the development output shape | completed                       | 0.661.0       |
+| #11482 | a package specifier in `<style src>` fails the build  | completed                       | 0.661.0       |
+| #11444 | the mapper's silent fallback on a mismatched `vue`    | configuration                   | none          |
+| #11457 | the Vite plugin ignores `isCustomElement`             | configuration                   | none          |
+| #11484 | `customElements` with a bound tag                     | configuration                   | none          |
 
-Each of the 15 remaining diagnostics is filed on `ubugeeei-prod/vize`, in a batch of fourteen issues with the compile side (#11444 to #11457), of which twelve stay open (#11445 to #11456), each with a reduced reproduction, the result of the source of truth, the cause in the `vize` source and the nearest issues. None is a real finding in the app, and none is a regression: each reproduces on 0.638.0 and on the newest release.
+The twelve of the first pass (#11359 to #11368, #11390, #11391) are closed. Eleven were fixed in releases up to 0.650.0, which holds #11379, #11380, #11382, #11383 and #11395, and each reduction was re-run on 0.650.0 against the old release as its control: the control reproduced the diagnostic, 0.650.0 did not, and the same file with a deliberate real error still reported it. The twelfth, #11364, was closed with a reduction that already passed on every release (one required prop, no emits), which is why #11454 replaced it. Earlier landmines, also fixed: #11140 (dynamic event listeners wrote raw expressions into the virtual code, 1063 syntax errors across 15 `components/Dungeons` files), #11023 by #11074 in 0.606.0 (inline callback props typed from a child's prop got implicit `any`), #11257 in 0.628.0 (a `type: null` runtime prop, which `@nuxt/image` and `@nuxt/scripts` ship in about a dozen components), and #11365 (the declaration emit under `noUnusedLocals`).
 
-| Issue                                                 | Site in the app                                                           | Diagnostics             |
-| :---------------------------------------------------- | :------------------------------------------------------------------------ | :---------------------- |
-| #11446, `inheritAttrs: false` on a generic component  | `Ui/OverflowMenu.vue`, `App/Dock/CommandMenu.vue`, `Styled/EmojiPicker/*` | 4 `TS2353`              |
-| #11448, a dynamic component with a generic key        | `User/ProfileCard/Row.vue`                                                | `TS2345`, `TS2322`      |
-| #11449, a listener on a dynamic component in a slot   | `Message/RightSideBar/Search/Input.vue`                                   | `TS2322`                |
-| #11447, the payload of a generic library component    | `Ui/Tabs.vue`                                                             | `TS2322`                |
-| #11450, a generic alias written at module scope       | `Ui/List/Index.vue`                                                       | `TS6196`                |
-| #11451, a destructured parameter of a nested callback | `Dungeons/World/Character/Index.vue`                                      | `TS7031`                |
-| #11452, an assignment in an inline callback prop      | `Dungeons/World/Character/Player.vue`                                     | 2 `TS18048`             |
-| #11453, an event in camelCase and kebab-case          | `Ui/Slider.vue`                                                           | `TS2345`                |
-| #11445, a cast to a `.vue` component type             | `Message/RightSideBar/Search/Input.test.ts`                               | `TS2352` (and `TS2590`) |
-| #11454, the declaration refuses undeclared attributes | none: it blocks the declaration emit (task 6.1)                           | `TS2345` in a consumer  |
+Open: **#11499** (the `TS2590` above, with two further gaps in the generated helper). **#11483** (plain `<style>` is injected at run time and no CSS file is written, a compile-side report on the deferred compiler page) is closed as completed on main by #11523 and is in no release yet.
 
-The `TS2590` beside the cast does not reduce with the `TS2352`: it needs 300 or more `ComponentCustomProperties` members, and the issue records it under "Not known". The slider error is new since 0.645.0, which is when the mapper began to resolve dotted tags. A `nitro` duplicate-type `TS2345` in `packages/nuxt-security-module/src/module.ts` showed once, depended on the local build state and did not recur.
+### Timings, cold and warm
 
-**Rewrites in the app, tried and not adopted.** Each of the eight classes was rewritten in a standalone copy to see whether the app could pass the mapper with only its dependencies changed. Every rewrite passes both tools in its copy, and none is in the app:
+Every run is a fresh process. Cold clears the tools' own caches: the cache folder of `vize`, `node_modules/.vize` and the build info of `nuxt typecheck`. Warm discards two priming runs. The OS page cache was not dropped, because the machine had no passwordless `sudo` for `purge`, so cold is cold for the tools only. Wall time is the median of 3 cold and 5 warm runs, and peak memory is the largest resident set size of any run. Apple M1 with 8 cores and 16 GiB, `vize` 0.661.0, `tsrs` 0.20.1, `vue-tsc` 3.3.11 on `typescript-native-bridge`.
 
-- #11446: `mergeProps(x, { ...$attrs })` in place of `mergeProps(x, $attrs)`. In `Ui/Menu/Index.vue` it cleared three of the four sites on the app, and `Ui/ToggleGroup.vue` needs the same for the fourth. `defineOptions({ inheritAttrs: false })` with `$attrs` is the pattern for forwarding attributes to an inner element, and `vue-tsc` accepts it, so the spread only serves the mapper.
-- #11450: the alias body written twice in `Props`, which duplicates the alias.
-- #11448: a `computed` key indexed in place of `row.type`.
-- #11449: a `computed` for the component and a `v-if` conjunct that is always true.
-- #11447: the listener payload annotated as `T | T[] | undefined`, which copies the library's payload type into the app.
-- #11445: a double assertion, `as Component as ...`, in the test.
-- #11453: `v-bind="{ 'onUpdate:modelValue': ... }"` in place of `@update:model-value`.
-- #11451 and #11452: a parameter type on a callback, which is neutral and erased at compile time. These two clear 3 of the 15 diagnostics, so the app would still report 12 and wait on upstream.
+| Target                 | `vue-tsc` cold | Mapper cold | `vue-tsc` warm | Mapper warm | Peak memory (`vue-tsc` / mapper) |
+| :--------------------- | -------------: | ----------: | -------------: | ----------: | -------------------------------: |
+| `vue-phaserjs`         |           1.08 |        0.30 |           1.09 |        0.29 |                    0.9 / 0.2 GiB |
+| `genshin-interface`    |           1.07 |        0.25 |           1.07 |        0.25 |                    0.7 / 0.2 GiB |
+| `genshin-world`        |           6.25 |        1.28 |           6.22 |        1.27 |                    3.7 / 1.0 GiB |
+| `apps/web` app project |          24.99 |        5.76 |          28.12 |        6.15 |                    7.4 / 3.4 GiB |
 
-No rewrite is better than the code it replaces, and a rewrite that only serves a `vize` defect would carry an `@TODO` linking its issue. The migration of `apps/web` therefore waits on the fixes and does not become a dependency swap alone. A mapper run over a `.nuxt` older than the checkout reported 913 diagnostics, 855 of them in the app, where the regenerated one reported 15 in the app and ten in the sibling packages' stale barrels. `nuxt prepare` and `pnpm build` in those packages come before a comparison.
+The whole app script against the command it replaced, on the same runs:
 
-The three Vue packages (`vue-phaserjs`, `genshin-interface`, `genshin-world`) typecheck with 0 diagnostics through `tsrs` on 0.652.0, and `vue-tsc` agrees.
+| Check                                                   |    Cold |    Warm | Peak memory | Diagnostics |
+| :------------------------------------------------------ | ------: | ------: | ----------: | ----------: |
+| `nuxt typecheck`                                        | 62.73 s | 64.26 s |     9.5 GiB |           0 |
+| `pnpm typecheck` (`nuxt prepare`, then six `tsrs` runs) | 12.30 s | 12.20 s |     3.3 GiB |           0 |
 
-**The source of truth, run live (a fifth run on `vize` 0.652.0, macOS on Apple silicon with 16 GB).** A full `nuxt typecheck` of the app is OOM-killed on a 15 GB Linux container, so it was run on a machine with more memory. It finishes with 0 diagnostics, and its peak resident size was 4.7 to 8.5 GB across the runs. The mapper over the app project gives exactly the 15 diagnostics above, and every one of them is given by the mapper only. `vue-tsc` gives none that the mapper does not. The mapper checks the app project alone, while `nuxt typecheck` checks five projects (app, server, shared, node and the root), so the diff covers the app project and no more. Both tools were shown to read the files: three deliberate errors in a throwaway component (a script `TS2322`, an unused local `TS6133` and a template prop `TS2322`) were reported by both at the same positions.
+The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds on the same release, with the Rolldown plugin in place of `unplugin-vue`, are on the deferred compiler page.
 
-**The reductions, re-run on 0.652.0 and 0.653.0.** All eleven type-check reductions still reproduce on both: the first diagnostic matches the issue's "Actual" in code and position, `vue-tsc` reports none, and a deliberate real error is reported by both tools. The declaration issue (#11454), the successor of #11364, still fails for a producer with an emit or two required props. Each issue says so in its Environment. Three more come from the compile side (see "The compile side, re-tested" below). All fourteen were filed as one batch, #11444 to #11457. #11444 and #11457 were closed afterwards because they are configuration, and they stay in every batch list as the record. The other twelve stay open, #11445 to #11456. #11456 carries a comment that the docs put it outside the documented scope, and the close is left to the maintainer.
-
-**Timings, cold and warm.** Every run is a fresh process. Cold clears the tools' own caches: the cache folder of `vize`, `node_modules/.vize` and the build info of `nuxt typecheck`. Warm discards two priming runs. The OS page cache was not dropped because the machine had no passwordless `sudo` for `purge`, so cold is cold for the tools only. Medians in seconds on `vize` 0.659.0 with `tsrs` 0.20.1 and `vue-tsc` 3.3.11, over three cold runs and five warm runs, `vue-tsc` against the mapper through `tsrs`:
-
-| Target                 | `vue-tsc` cold | Mapper cold | `vue-tsc` warm | Mapper warm | Peak memory, warm (`vue-tsc` / mapper) |
-| :--------------------- | -------------: | ----------: | -------------: | ----------: | -------------------------------------: |
-| `vue-phaserjs`         |           1.08 |        0.27 |           1.15 |        0.26 |                          0.9 / 0.2 GiB |
-| `genshin-interface`    |           1.07 |        0.26 |           1.09 |        0.26 |                          0.7 / 0.2 GiB |
-| `genshin-world`        |           6.36 |        1.32 |           7.10 |        1.46 |                          4.1 / 1.0 GiB |
-| `apps/web` app project |          24.92 |        5.75 |          25.23 |        6.07 |                          8.3 / 3.2 GiB |
-
-The mapper is 4.0 to 4.9 times faster and uses a quarter to two fifths of the memory. On 0.652.0 the same table gave 2.0 to 4.4 times; the small packages gained most, from 0.53 s to 0.27 s. `nuxt typecheck` takes 61.87 s cold and 64.60 s warm and is not comparable, because it checks five projects incrementally. On the app project one extended-diagnostics run of the mapper shows parse 2.06 s and check 3.82 s, with 1.95 s of waiting for the content mapper inside a 5.94 s total. Per-file timings are not available: `tsrs` has no trace output, the `vue-tsc` trace stops with an error before it holds check events, and `vize check` does not accept the tsgo-backed `typescript`. The same numbers, with the environment, the script and every measured run, are on the maintainer's performance issue, [#10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514), as one comment that is edited in place when a run changes them.
-
-**The diagnostics, re-run on 0.658.0 and 0.659.0.** The app project reports 6 diagnostics on 0.659.0, from 11 on 0.658.0 and 15 on 0.652.0, and the three Vue packages report none, as `vue-tsc` does. Of the fourteen reports, nine are closed as completed (#11446, #11447, #11448, #11449, #11450, #11451, #11452, #11455 and #11456), two are closed as configuration (#11444 and #11457) and three are open (#11445, #11453 and #11454). The six that remain are two of #11445 (`TS2352` and `TS2590` in `Input.test.ts`), two of #11448 (`Row.vue`), one of #11449 (`Input.vue`) and one of #11450 (`Ui/List/Index.vue`). #11448, #11449 and #11450 were closed after release 0.659.0 was published, so their fixes are not in a release yet, and only #11445 is open. `Ui/Slider.vue`, the site of #11453, reports nothing on 0.658.0 or 0.659.0, and whether the app or the mapper changed is not established. The app still has the rewrites above available and adopts none.
-
-**The compile side, re-tested on 0.653.0.** The deferred page `openspec/deferred/architecture/vize-compiler/design.md` lists the blockers, and each was run again on small standalone projects. The Nuxt module still fails server rendering, and the failure now reduces to one `onPrehydrate` call: its bridge patches the handler of Nuxt's prehydrate transform and not the transform's id filter. The rolldown plugin drops `<style src>` with no warning, and the Vite plugin accepts `template.compilerOptions.isCustomElement` and ignores it. A setting that works for the library builds is `customRenderer` with the `customElements` patterns, which compiles TresJS elements as the renderer expects and keeps an imported `TresCanvas` a component. The module's peer range and the builder's `@vitejs/plugin-vue` dependency are unchanged. The three issues are #11455 (the Nuxt module), #11456 (the rolldown plugin) and #11457 (the Vite plugin). #11455 is a defect. #11456 was still open at this re-test, as a possible gap, with a comment that the guides call `@vizejs/unplugin` experimental and out of scope, and the close was left to the maintainer; it is closed as completed by the 0.659.0 re-run above. #11457 was closed as configuration: the Vite plugin guide documents `customElements` with `customRenderer` for custom element tags and lists plugin-option parity as not complete yet, so the TresJS function moves to those options (the deferred compiler page has the migration).
-
-**Decision: `apps/web` stays on `nuxt typecheck`.** Running the mapper beside it today would add a red check that is mostly mapper defects, and a check that is red on every run gets ignored. The comparison is repeated when the classes below are fixed upstream. The scratch tsconfig is not committed.
+`nuxt typecheck` is not a like-for-like row against one `tsrs` run: it checks five projects with incremental build info. The corpus numbers in [that thread](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6507703018) (2,500 generated components, an M2 Max, no warmup) are not comparable in seconds, only in ratio.
 
 ## Mechanism
 
 ```mermaid
 flowchart TD
-  T["tsrs runs the vize mapper?"] -->|"no, today"| VUE["Vue packages stay on vue-tsc"]
-  T -->|"yes, once upstream ships it"| PILOT["pilot: one small Vue package"]
-  PILOT --> M{"diagnostics match vue-tsc, every one"}
-  M -->|"no"| RECORD["record the mismatch here, report upstream if it is a defect"]
-  RECORD --> PILOT
-  M -->|"yes"| SCOPE["extend to the three vue-tsc packages"]
-  SCOPE --> NUXT{"apps/web: nuxt typecheck replaceable?"}
-  NUXT -->|"yes"| RETIRE["retire vue-tsc and the native-bridge override"]
-  NUXT -->|"no"| BESIDE["run vize beside nuxt typecheck, decided here"]
+  CHECK["pnpm typecheck in a Vue package or apps/web"] --> TSRS["tsrs --runExternalCode"]
+  TSRS --> MAP["vize content mapper"]
+  MAP --> OK["diagnostics for every .vue file, 0 today"]
+  BUILD["tsdown build of a Vue package"] --> DTS["dts.tsc.vue"]
+  DTS --> VUETSC["vue-tsc emits the .vue declarations"]
+  VUETSC -->|"task 6.1: re-run the consumer matrix on vize 0.661.0"| VIZE["vize check --declaration"]
+  VIZE --> RETIRE["task 7.1: remove vue-tsc and the native-bridge override"]
 ```
 
 ## Key files
 
-| File                                                       | Role                                                                                                                            |
-| :--------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-interface/package.json`                  | `typecheck` runs `tsrs --fast --runExternalCode`                                                                                |
-| `packages/genshin-world/package.json`                      | `typecheck` runs `tsrs --fast --runExternalCode`                                                                                |
-| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `tsrs --fast --runExternalCode`; the shared Vue tsconfig names vize; `vue-tsc` stays for the declaration build |
-| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                                     |
-| `packages/configuration/tsconfig.vue.json`                 | the shared Vue tsconfig: names `vize` as the `.vue` content mapper and `useTemplateRef` as Vue's composable                     |
-| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                                |
-| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                                      |
+| File                                                               | Role                                                                                                                       |
+| :----------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/package.json`                          | `typecheck` runs `tsrs --fast --runExternalCode`                                                                           |
+| `packages/genshin-world/package.json`                              | `typecheck` runs `tsrs --fast --runExternalCode`                                                                           |
+| `packages/vue-phaserjs/package.json`                               | `typecheck` runs `tsrs --fast --runExternalCode`                                                                           |
+| `apps/web/package.json`                                            | `typecheck` is `nuxt prepare` followed by six `tsrs` runs: the app (mapper), server, shared, node, root and service worker |
+| `apps/web/tsconfig.vize.json`                                      | the app project: extends Nuxt's generated app config, names `vize` as the `.vue` content mapper                            |
+| `packages/configuration/tsconfig.vue.json`                         | the shared Vue tsconfig: names `vize` as the `.vue` content mapper and `useTemplateRef` as Vue's composable                |
+| `packages/configuration/src/services/getTsdownConfigurationVue.ts` | `dts.tsc.vue` loads `vue-tsc` for the `.vue` declarations, the last reader of it                                           |
+| `pnpm-workspace.yaml`                                              | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                           |
+| `openspec/changes/architecture-rust-typescript-toolchain/`         | the change this one depends on, for every plain `tsc` path                                                                 |
 
 ## Notes
 
-- `tsrs --noEmit` on a config with `contentMappers` is refused without `--runExternalCode`. That flag is required for the mapper, and the scripts that will use it must pass it explicitly.
-- The `TS18069` message points at the mapper process. It is not a type error in the `.vue` file, so a green or red run here does not yet say anything about the Vue source.
-- Removing `vue-tsc` from a package is not the same as switching its `typecheck` script. Every non-private Vue package builds its declarations through `dts.tsc.vue` (`packages/configuration/src/services/getTsdownConfigurationVue.ts`), and `rolldown-plugin-dts` loads `vue-tsc` with `require.resolve("vue-tsc")` and runs it in a separate process. So `vue-tsc` stays a build dependency until declarations for `.vue` files come from somewhere else. `apps/web`'s `nuxt typecheck` runs `vue-tsc` the same way, through Nuxt. `scripts/` no longer uses the classic API: it reads sources through `oxc-parser` (`969e141dec`). `vite-plugin-checker` and `@volar/typescript` have no tracked references in the repo.
-- On Windows, `tsrs` before 0.20.1 did not launch the mapper's bare `node` command: with `node` in `exec` it reported `TS18069` without spawning anything, and `node.exe` worked. Fixed upstream as `tsrs` `#820`, by `#822` (resolve Windows executables through `PATHEXT`), which 0.20.1 holds. `packages/vue-phaserjs` typechecks through the mapper on Windows with no workaround.
-- `vize`'s Nuxt module (`@vizejs/nuxt`) does not touch `nuxt typecheck`. It replaces Nuxt's Vue SFC compiler and adds an oxlint-based lint checker in dev. Registering it would change how every component compiles, so it is a separate decision from the typecheck migration.
-- The 7.1 beta package does not replace the native bridge. It exports the CLI and the sync and async APIs, and `createSourceFile` and `createProgram` are undefined on its classic module, so it cannot host the consumers above.
+- `tsrs --noEmit` on a config with `contentMappers` is refused without `--runExternalCode`, so the scripts that use the mapper pass it explicitly.
+- Removing `vue-tsc` from a package is not the same as switching its `typecheck` script. Every non-private Vue package builds its declarations through `dts.tsc.vue`, and `rolldown-plugin-dts` loads `vue-tsc` with `require.resolve("vue-tsc")` and runs it in a separate process. So `vue-tsc` stays a build dependency until declarations for `.vue` files come from somewhere else (task 6.1). `vite-plugin-checker` and `@volar/typescript` have no tracked references in the repo.
+- The 7.1 beta package does not replace the native bridge. It exports the CLI and the sync and async APIs, and `createSourceFile` and `createProgram` are undefined on its classic module, so it cannot host a classic-API consumer.
+- `vize`'s Nuxt module (`@vizejs/nuxt`) does not touch the type check. It replaces Nuxt's Vue SFC compiler and adds an oxlint-based lint checker in dev, so registering it would change how every component compiles. That is the deferred compiler page's decision.
 
-## Landmines
+## Constraints that remain
 
-Found while running the mapper on the repo. Each has its status against the upstream trackers; none is filed from this repo, since the owner files upstream reports by hand.
-
-- **Dynamic event listeners on components break the mapper's virtual code.** A dynamic listener argument on a component that is a literal, call or member expression (``@[`...`]``, `@["..."]`, `@[getKey(name)]`; an identifier, a concatenation or a conditional is fine, and so is a native element) makes the mapper write the expression raw into a type literal as a key, which is a syntax error in the virtual file. `apps/web` has 15 `components/Dungeons` files that use it, which gives 1063 syntax errors across 15 of them (about 55 to 70 per listener) under `tsrs --runExternalCode`, and the syntax errors stop the semantic pass for the whole program, so no other file's result is visible. `vue-tsc` accepts them. Reported as vize `#11140` with a one-line reproduction; the nearest existing issues, `#10617` (undeclared `$`-prefixed template globals) and `#10251` (dynamic component refs), are different. Fixed upstream since, but `apps/web` has not been run through the mapper again, so its typecheck stays on `nuxt typecheck` until it is.
-- **`tsrs` did not spawn the mapper's bare `node` on Windows, fixed in `tsrs` 0.20.1.** Reported as `tsrs` `#820` and fixed by `#822` (`PATHEXT`), so a local Windows run needs no `node.exe` edit.
-- **The mapper's virtual code imports `vize/content-mapper-helpers`**, so every package that uses the mapper needs `vize` resolvable from its own folder. This is a requirement, not a defect, and it changes the lockfile per package.
-- **A mismatched `vue` makes the mapper fall back silently, with four false `TS2353` diagnostics on three library components.** The fallback is silent and the diagnostics look like real attribute errors. The root manifest lists `vue` beside `vize`, which clears them; why it sits at the root is in the build skill's dependency placement page. `vize`'s documentation says only that it resolves Vue types from the analyzed project, so #11444 was closed as configuration.
-- **`vue-tsc` is still needed for `.vue` declarations** (see Notes). Switching a package's `typecheck` script does not remove it.
-- **TypeScript 7.1's DOM typings require `lang` on `CanvasRenderingContext2D`**, which fails the canvas mock under `tsrs` and not under TypeScript 6.0.3. This is a compiler-version difference, not a vize defect.
-- **Nuxt's `typecheck` takes only `vue-tsc` or `golar`.** The checker list is fixed in `@nuxt/cli`, and no module can add to it, so the Nuxt route to the mapper is not in Nuxt's own command.
-- **Upstream performance is open:** vize `#10620` reports `vize check` slower than `tsc` with the same mapper on a mid-size Nuxt app. Speed is not measured here.
-- **Inline callback props typed from a child's prop got implicit `any` in the mapper's virtual code (TS7006, TS7053), fixed in `vize@0.606.0`.** The shape was vize `#11023`, fixed by vize `#11074` (merged, in 0.606.0, not in 0.605.0). With 0.606.0 installed, `tsrs --runExternalCode` types the callbacks in `packages/genshin-world/src/components/Menu/Screen/Index.vue` and `World/Session/Index.vue` with no annotation, and a deliberate type error in one is still reported, so the three annotations are removed.
-- **A plain-JavaScript `<script setup>` with a `type: null` runtime prop broke the mapper's virtual code, fixed in `vize@0.628.0` (#11257).** `defineProps({ options: { type: null, required: false } })`, which is how a library's compiled output spells an untyped prop, made the mapper write a syntax error into the file's virtual code. `@nuxt/image` and `@nuxt/scripts` ship about a dozen such components and `.nuxt/types/components.d.ts` imports them, so the syntax errors hid every semantic result in the app's program until the fix.
-- **On the app, the mapper's semantic diagnostics that `vue-tsc` does not report** are mapper defects, listed with their issues in "The comparison, run a fourth time". The twelve classes of the first pass were filed upstream as #11359 to #11368, #11390 and #11391 and are all closed. Eleven are fixed in a release and no longer reproduce, each with its real-error variant still reported. The twelfth, #11364 (the declaration emit refusing undeclared attributes), is closed but not fixed, because its reduction passes on every release: a component with an emit or two required props still fails, and #11454 replaces the reduction. A fix that covers the reduced input and not the app's shape is why several of the new issues are follow-ups of a closed issue; #11447 has a different root cause from #11363 and says so.
-- **Not mapper defects:** `CSSFontFaceDescriptors` is not iterable in the 7.1 DOM typings and is in 6.0.3, a compiler-version difference fixed in the app; and the `useTemplateRef` composable option in `tsconfig.vue.json` is a `vueCompilerOptions` setting that `vue-tsc` reads too, so it is configuration both checkers share and not a mapper workaround.
+- **The mapper's virtual code imports `vize/content-mapper-helpers`**, so every package that uses the mapper needs `vize` resolvable from its own folder. This is a requirement and not a defect, and it changes the lockfile per package.
+- **A mismatched `vue` makes the mapper fall back silently**, with diagnostics that look like real attribute errors. The root manifest lists `vue` beside `vize`, which clears them; why it sits at the root is in the build skill's dependency placement page.
+- **A global `useTemplateRef` is Vue's only when the config says so.** From `vize@0.607.0` a call that resolves to an ambient declaration instead of a `vue` import is typed as that declaration says, because a separately authored function can share Vue's signature. The packages' committed `auto-imports.d.ts` declares `const useTemplateRef: typeof import('vue').useTemplateRef`, which is ambient, so every template ref came out `unknown` until `tsconfig.vue.json` named it with `vueCompilerOptions.composables.useTemplateRef`, the option `vue-tsc` reads from the same tsconfig. It is configuration both checkers share and not a mapper workaround, and the other spelling of the declaration does not change the result.
+- **TypeScript 7.1's DOM typings differ from 6.0.3's** (`lang` on `CanvasRenderingContext2D`, the iterable `CSSFontFaceDescriptors`), which fails code written against 6.0.3 under `tsrs` and not under `vue-tsc` on the bridge. Both are fixed in the code.
 - **Releases come about hourly, and a closed issue is not a fixed release.** Each reduction is re-run on the newest release before its issue is filed, and a closed issue is checked the same way before its marker or its task is ticked.
-- **A global `useTemplateRef` is Vue's only when the config says so.** From `vize@0.607.0` a call that resolves to an ambient declaration instead of a `vue` import is typed as that declaration says, because a separately authored function can share Vue's signature. The packages' committed `auto-imports.d.ts` declares `const useTemplateRef: typeof import('vue').useTemplateRef`, which is ambient, so every template ref came out `unknown` (TS2339, TS2769, TS2322) across the Vue packages. `tsconfig.vue.json` now names it with `vueCompilerOptions.composables.useTemplateRef`, the option `vue-tsc` reads from the same tsconfig, and `tsrs --runExternalCode` reports no diagnostics on `packages/vue-phaserjs`, `packages/genshin-interface` or `packages/genshin-world`. The other spelling of the declaration (`typeof import('vue')['useTemplateRef']`) does not change the result, so the config entry is the mechanism, not the spelling.
 
 ## Sources
 
