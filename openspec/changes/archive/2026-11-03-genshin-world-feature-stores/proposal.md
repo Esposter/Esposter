@@ -2,7 +2,7 @@
 
 ## Why
 
-[The session store change](../genshin-session-store/proposal.md) took the context every feature shares out of the world session's root and made the mailbox its first feature store: the shared keys in the root's composable calls went from 128 to 0 and the package came out 121 lines smaller. The root still passes 388 option keys across 48 calls, because three quarters of the keys were never shared context: they are one feature's results handed to another, and only a feature that owns its state in a store lets the next one read it without a list.
+[The session store change](../../genshin-session-store/proposal.md) took the context every feature shares out of the world session's root and made the mailbox its first feature store: the shared keys in the root's composable calls went from 128 to 0 and the package came out 121 lines smaller. The root still passes 388 option keys across 48 calls, because three quarters of the keys were never shared context: they are one feature's results handed to another, and only a feature that owns its state in a store lets the next one read it without a list.
 
 ## What changes
 
