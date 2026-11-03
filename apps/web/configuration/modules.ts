@@ -20,6 +20,7 @@ const trpcNuxtModule: [string, ModuleOptions] = [
     webSocket: { endpoint: TRPC_WS_PATH, keepAlive: { enabled: true } },
   },
 ];
+// @TODO: https://github.com/vitest-dev/vitest/issues/11842 — drop unplugin-pwa-nuxt from the allowlist once a virtual id starting with `/` loads under Vitest on Windows
 // Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
 // SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
 // E.g. unplugin-pwa-nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
