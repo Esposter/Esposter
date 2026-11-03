@@ -28,6 +28,14 @@ describe("resourceSurveyFieldText", () => {
       expect(component.get(`label[for="${control.attributes("id")}"]`).text()).toBe(title);
     });
 
+    test("shows an empty field while the question has no answer", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldText, { props: { error: "", isDisabled: false, node: createNode() } });
+
+      expect(component.get<HTMLInputElement>("input").element.value).toBe("");
+    });
+
     test("answers with the text typed, and no answer once it is emptied", async () => {
       expect.hasAssertions();
 

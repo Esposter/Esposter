@@ -12,7 +12,7 @@ interface Props {
 }
 
 // A block holds no answer, and declaring the model keeps the chooser's binding from falling through onto the markup
-defineModel<SurveyAnswerValue | undefined>();
+defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
 // The markup is sanitised where it renders, as every markup a respondent reads is
 const sanitizedHtml = computed(() => sanitizeHtml(node.props.html));

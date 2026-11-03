@@ -10,7 +10,7 @@ interface Props {
 }
 // The answer is one list: the values of the choices picked, none's own value on its own, and the typed other text, which
 // Is the one entry that is neither a choice's value nor none, so other needs no second key
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const seed = useSurveyChoiceSeed();

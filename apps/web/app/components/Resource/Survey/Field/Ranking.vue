@@ -15,7 +15,7 @@ interface KeyedChoice {
   key: string;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 // A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text

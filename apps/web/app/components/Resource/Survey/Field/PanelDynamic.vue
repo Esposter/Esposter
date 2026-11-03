@@ -12,7 +12,7 @@ interface Props {
   node: SurveyPanelDynamicNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const panels = computed(() => getSurveyAnswerRows(answer.value, node.props.panelCount));

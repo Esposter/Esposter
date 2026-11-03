@@ -12,7 +12,7 @@ interface Props {
 }
 
 // A picture holds no answer, and declaring the model keeps the chooser's binding from falling through onto the image
-defineModel<SurveyAnswerValue | undefined>();
+defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
 // The fit states how the picture fills the box it is drawn in, which both of its dimensions constrain
 const imageFitClassMap: Record<SurveyImageFit, string> = {

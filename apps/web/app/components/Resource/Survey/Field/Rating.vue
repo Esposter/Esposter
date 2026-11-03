@@ -9,7 +9,7 @@ interface Props {
 }
 // A number from one up to the scale's count, drawn as a toggle group of its numbers with the text at either end. No icon
 // names a star or a smiley, so every rate type draws its numbers, and the scale's type waits for one that does
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number>[]>(() =>

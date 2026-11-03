@@ -23,7 +23,7 @@ const IMAGE_FIT_CLASSES: Record<SurveyImageFit, string> = {
   [SurveyImageFit.None]: "object-none",
 };
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const imageFitClass = computed(() => IMAGE_FIT_CLASSES[node.props.imageFit]);

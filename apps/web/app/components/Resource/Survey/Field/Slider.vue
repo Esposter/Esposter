@@ -8,7 +8,7 @@ interface Props {
 }
 // A number picked along the range. With no answer yet the thumb sits at the minimum, and an answer is written only once
 // The respondent moves it, so an untouched question stays unanswered
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const value = computed<number>({

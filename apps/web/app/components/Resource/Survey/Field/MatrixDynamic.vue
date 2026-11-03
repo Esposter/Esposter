@@ -15,7 +15,7 @@ interface Props {
   node: SurveyMatrixDynamicNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const rows = computed(() => getSurveyAnswerRows(answer.value, node.props.rowCount));
 // A choice is keyed by its value as text, which is how a select and a toggle group key their options

@@ -9,7 +9,7 @@ interface Props {
   node: SurveyQuestionNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 </script>
 

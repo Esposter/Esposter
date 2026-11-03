@@ -10,7 +10,7 @@ interface Props {
   node: SurveyCommentNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
 const hint = computed(() => getSurveyFieldHint(node.props.description, node.props.isRequired));

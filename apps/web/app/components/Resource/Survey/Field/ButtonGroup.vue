@@ -11,7 +11,7 @@ interface Props {
 }
 // A choice drawn as a toggle group, whose model is a choice's own value. An answer no choice has yet is the empty text,
 // as a select's absent value is, because the group's model cannot be undefined
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number | string>[]>(() =>

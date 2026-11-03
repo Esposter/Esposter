@@ -10,7 +10,7 @@ interface Props {
   node: SurveyMatrixNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each row's value to the value of the column chosen in it, read as the empty record until one is given

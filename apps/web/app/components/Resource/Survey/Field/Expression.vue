@@ -10,7 +10,7 @@ interface Props {
 }
 
 // The calculated value is the answer the runner gives it, which the reader only reads, so the model is never written
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { node } = defineProps<Props>();
 // An absent value reads as the empty string, and a number is shown in the format its owner chose, to the places it keeps
 const text = computed(() => {

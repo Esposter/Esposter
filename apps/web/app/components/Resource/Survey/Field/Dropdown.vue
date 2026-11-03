@@ -8,7 +8,7 @@ interface Props {
   node: SurveyDropdownNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
 const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherText } = useSurveyChoiceAnswer(

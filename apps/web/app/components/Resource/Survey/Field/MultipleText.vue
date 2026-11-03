@@ -11,7 +11,7 @@ interface Props {
   node: SurveyMultipleTextNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each item's name to its text, read as the empty record until one is given

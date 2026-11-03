@@ -12,7 +12,7 @@ interface Props {
   node: SurveyTextNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 // The input types the library's text field draws as its own control; the rest are typed as plain text
 const TEXT_FIELD_TYPES: Partial<Record<SurveyTextInputType, UiTextFieldType>> = {
