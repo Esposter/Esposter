@@ -98,4 +98,3 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 | `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the core's document schema builder: the shape, then the ids and the node limit                      |
 | `apps/web/shared/models/resource/survey/SurveyResource.ts`                 | the survey resource's content schema, the document schema with the save check as a refinement       |
 | `apps/web/app/components/Resource/Survey/Editor.vue`                       | the Editor, which runs the save check before it saves                                               |
-| `apps/web/shared/services/survey/constants.ts`                             | the question name and count bounds the response table holds                                         |
