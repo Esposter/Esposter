@@ -1,18 +1,14 @@
 import { PackageKind } from "#src/models/package/PackageKind";
 
 // A library is built through the platform-agnostic factory, which generates its barrel.
-// A nuxt-module is built unbundled beside its one source file, since Nuxt loads the module by path.
-// Its imports of Nuxt itself are not evaluated by the build
+// A nuxt-module is built through the Nuxt factory, which keeps its module an unbundled entry Nuxt loads by path
 export const getTsdownSource = (kind: PackageKind): string =>
   kind === PackageKind.NuxtModule
     ? `import type { UserConfig } from "tsdown";
 
-import { getTsdownConfigurationNode } from "@esposter/configuration";
-import { mergeConfig } from "tsdown";
+import { getTsdownConfigurationNuxtModule } from "@esposter/configuration";
 
-const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode({ exportsGeneration: "none" }), {
-  entry: [{ index: "src/module.ts" }],
-});
+const tsdownConfiguration: UserConfig = getTsdownConfigurationNuxtModule([]);
 
 export default tsdownConfiguration;
 `

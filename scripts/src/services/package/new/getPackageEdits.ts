@@ -22,6 +22,8 @@ export const getPackageEdits = (options: CreatePackageOptions): Map<string, (tex
   const packageName = getPackageName(options);
   const packagePath = `${PACKAGES_DIRECTORY}/${name}`;
   const moduleConstant = `${name.replaceAll("-", "_").toUpperCase()}_MODULE_PATH`;
+  // A plugin is private, so its manifest and its README's published column agree that it is not published
+  const publishedMark = kind === PackageKind.Plugin ? "—" : "✓";
   const edits = new Map<string, (text: string) => string>([
     // `packageInventories` holds the agent guide to every member, paired with its npm name
     [
@@ -36,14 +38,14 @@ export const getPackageEdits = (options: CreatePackageOptions): Map<string, (tex
     ],
     // `ledgerMembers` holds the quality ledger to every member: a new unit is unswept until a sitting reads it
     [QUALITY_LEDGER_FILE, (text) => insertAfterLastMatch(text, /^\| `packages\//u, `| \`${packagePath}\` | — | |`)],
-    // `packageInventories` holds the root README to every member, paired with its repository link
+    // `packageInventories` holds the root README to every member, paired with its repository link and its published mark
     [
       README_FILE,
       (text) =>
         insertSortedRow(
           text,
           /^\| \[`packages\//u,
-          `| [\`${packagePath}\`](${GITHUB_REPOSITORY_URL}/tree/main/${packagePath}) | ${description} |`,
+          `| [\`${packagePath}\`](${GITHUB_REPOSITORY_URL}/tree/main/${packagePath}) | ${description} | ${publishedMark} |`,
           getPathKey,
         ),
     ],

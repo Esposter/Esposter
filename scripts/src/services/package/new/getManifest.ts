@@ -27,7 +27,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     return {
       ...manifest,
       private: true,
-      scripts: { lint: "eslint .", "lint:fix": "eslint --fix .", test: "vitest", typecheck: "tsc" },
+      scripts: { lint: "eslint .", "lint:fix": "eslint --fix .", test: "vitest", typecheck: "tsrs --fast" },
     };
 
   const isNuxtModule = kind === PackageKind.NuxtModule;
@@ -40,10 +40,17 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     files: ["dist"],
     keywords: ["typescript"],
     publishConfig: { access: "public", exports: { ".": "./dist/index.js", "./package.json": "./package.json" } },
-    scripts: { build: "tsdown", lint: "eslint .", "lint:fix": "eslint --fix .", test: "vitest", typecheck: "tsc" },
+    scripts: {
+      build: "tsdown",
+      lint: "eslint .",
+      "lint:fix": "eslint --fix .",
+      test: "vitest",
+      typecheck: "tsrs --fast",
+    },
     sideEffects: false,
     types: "dist/index.d.ts",
-    ...(isNuxtModule ? { dependencies: { "@nuxt/kit": "catalog:" }, peerDependencies: { nuxt: "catalog:" } } : {}),
+    ...(isNuxtModule ? { dependencies: { "@nuxt/kit": "catalog:", "@nuxt/schema": "catalog:" } } : {}),
     devDependencies: { "@esposter/configuration": "workspace:*", tsdown: "catalog:" },
+    ...(isNuxtModule ? { peerDependencies: { nitro: "catalog:", nuxt: "catalog:" } } : {}),
   };
 };

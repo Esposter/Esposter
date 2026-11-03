@@ -16,6 +16,16 @@ import { describe, expect, onTestFinished, test } from "vitest";
 
 const readRepositoryLines = (root: string, path: string): string[] =>
   readFileSync(join(root, path), "utf8").split("\n");
+// The formatter pads a table's cells, so a row is compared by its trimmed cells rather than its characters
+const readRowCells = (root: string, path: string, packagePath: string): string[][] =>
+  readRepositoryLines(root, path)
+    .filter((line) => line.includes(`\`${packagePath}\``))
+    .map((line) =>
+      line
+        .split("|")
+        .map((cell) => cell.trim())
+        .slice(1, -1),
+    );
 const readManifest = (root: string, packageDirectory: string): Record<string, unknown> =>
   parseMachineJson<Record<string, unknown>>(readFileSync(join(root, packageDirectory, "package.json"), "utf8"));
 
@@ -74,24 +84,62 @@ describe(createPackage, () => {
       { description: "A demo library.", kind: PackageKind.Library, name: "demo-library", register: false },
       root,
     );
-    // The formatter pads a table's cells, so the row is compared by its trimmed cells rather than its characters
-    const readRowCells = (path: string): string[][] =>
-      readRepositoryLines(root, path)
-        .filter((line) => line.includes("`packages/demo-library`"))
-        .map((line) =>
-          line
-            .split("|")
-            .map((cell) => cell.trim())
-            .slice(1, -1),
-        );
-
-    expect(readRowCells(AGENTS_FILE)).toStrictEqual([["`packages/demo-library`", "`demo-library`", "A demo library."]]);
-    expect(readRowCells(README_FILE)).toStrictEqual([
+    expect(readRowCells(root, AGENTS_FILE, "packages/demo-library")).toStrictEqual([
+      ["`packages/demo-library`", "`demo-library`", "A demo library."],
+    ]);
+    expect(readRowCells(root, README_FILE, "packages/demo-library")).toStrictEqual([
       [
         "[`packages/demo-library`](https://github.com/Esposter/Esposter/tree/main/packages/demo-library)",
         "A demo library.",
+        "✓",
       ],
     ]);
+  });
+
+  test("builds a nuxt-module through the Nuxt factory, typed by annotation, with the Nuxt dependencies it imports", () => {
+    expect.hasAssertions();
+
+    const root = createFixtureRoot();
+    createPackage(
+      { description: "A demo module.", kind: PackageKind.NuxtModule, name: "demo-nuxt-module", register: false },
+      root,
+    );
+    const packageDirectory = "packages/demo-nuxt-module";
+    const manifest = readManifest(root, packageDirectory);
+
+    expect(manifest.dependencies).toStrictEqual({ "@nuxt/kit": "catalog:", "@nuxt/schema": "catalog:" });
+    expect(manifest.peerDependencies).toStrictEqual({ nitro: "catalog:", nuxt: "catalog:" });
+    expect(manifest.scripts).toStrictEqual({
+      build: "tsdown",
+      lint: "eslint .",
+      "lint:fix": "eslint --fix .",
+      test: "vitest",
+      typecheck: "tsrs --fast",
+    });
+    expect(readFileSync(join(root, packageDirectory, "tsdown.config.ts"), "utf8"))
+      .toBe(`import type { UserConfig } from "tsdown";
+
+import { getTsdownConfigurationNuxtModule } from "@esposter/configuration";
+
+const tsdownConfiguration: UserConfig = getTsdownConfigurationNuxtModule([]);
+
+export default tsdownConfiguration;
+`);
+    expect(readFileSync(join(root, packageDirectory, "src/module.ts"), "utf8"))
+      .toBe(`import type { NuxtModule } from "@nuxt/schema";
+
+import { defineNuxtModule } from "@nuxt/kit";
+
+// oxlint-disable-next-line typescript/no-empty-object-type -- empty until the module declares its options
+export interface ModuleOptions {}
+
+const demoNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
+  meta: { name: "demo-nuxt-module" },
+  setup() {},
+});
+
+export default demoNuxtModule;
+`);
   });
 
   test("gives a nuxt-module the shared Nuxt module tsconfig, a module entry and its registration in the app's module list", () => {
@@ -126,6 +174,13 @@ describe(createPackage, () => {
     expect(manifest.private).toBe(true);
     expect(existsSync(join(root, "packages/demo-plugin/tsdown.config.ts"))).toBe(false);
     expect(existsSync(join(root, "packages/demo-plugin/.claude-plugin/plugin.json"))).toBe(true);
+    expect(readRowCells(root, README_FILE, "packages/demo-plugin")).toStrictEqual([
+      [
+        "[`packages/demo-plugin`](https://github.com/Esposter/Esposter/tree/main/packages/demo-plugin)",
+        "A demo plugin.",
+        "—",
+      ],
+    ]);
   });
 
   test("refuses a name that a directory already holds", () => {
