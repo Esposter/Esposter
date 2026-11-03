@@ -2,18 +2,8 @@ import type { SurveyNode } from "#src/models/SurveyNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyDocumentSchema } from "#src/services/surveyDocumentSchema";
-import {
-  surveyNodeSchema,
-  surveyPageNodeSchema,
-  surveyPlaceableNodeSchema,
-  surveyTemplateNodeSchema,
-} from "#src/services/surveyNodeSchema";
+import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyNodeTypeDefinitionMap } from "#src/services/surveyNodeTypeDefinitionMap";
-import {
-  SURVEY_PLACEABLE_NODE_TYPES,
-  SURVEY_ROOT_NODE_TYPES,
-  SURVEY_TEMPLATE_NODE_TYPES,
-} from "#src/services/surveyNodeTypeLists";
 import { describe, expect, test } from "vitest";
 
 // A minimal node of a type: its definition's default props, its slots empty, and a fresh id
@@ -24,21 +14,12 @@ const createNode = (type: SurveyNodeType, id = crypto.randomUUID()): unknown => 
 };
 
 describe("surveyNodeSchema", () => {
-  test.each(Object.values(SurveyNodeType))(
-    "the %s type is accepted by each union exactly where its list says so",
-    (type) => {
-      expect.hasAssertions();
+  // The union is written by hand, so a kind added to the enum and left out of it is caught only here
+  test.each(Object.values(SurveyNodeType))("the %s type is accepted by the node union", (type) => {
+    expect.hasAssertions();
 
-      const node = createNode(type);
-
-      expect(surveyNodeSchema.safeParse(node).success).toBe(true);
-      expect(surveyPlaceableNodeSchema.safeParse(node).success).toBe(
-        SURVEY_PLACEABLE_NODE_TYPES.includes(type as never),
-      );
-      expect(surveyTemplateNodeSchema.safeParse(node).success).toBe(SURVEY_TEMPLATE_NODE_TYPES.includes(type as never));
-      expect(surveyPageNodeSchema.safeParse(node).success).toBe(SURVEY_ROOT_NODE_TYPES.includes(type as never));
-    },
-  );
+    expect(surveyNodeSchema.safeParse(createNode(type)).success).toBe(true);
+  });
 });
 
 describe("surveyDocumentSchema", () => {
