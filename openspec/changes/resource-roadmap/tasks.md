@@ -6,12 +6,10 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 - [ ] [Survey form engine](../resource-survey-form-engine/design.md) — replace SurveyJS with a typed survey document, a runner and a Creator of our own, removing the old survey type's stored data after the owner confirms its counts
 
-- [ ] [AI-native resources](../archive/2026-10-25-architecture-ai-native-resources-program/design.md) — beyond the content tools every type has, an open editor adopting an agent's save, the lifecycle as tools, the schema fixes and typed commands, wired once at the resource layer rather than per editor
-
 - [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show
 
 ## Later
 
 - [ ] [Flowchart removal's client delta](../archive/2026-11-02-resource-flowchart-retirement/proposal.md#bundle-measurement) — measure the client bytes the removal released against the last release before it. The archived change's task 3.5 is ticked, but its proposal records only the built size of the five Vue Flow packages, a ceiling, so the exact delta is not on record; this item measures it, or the owner accepts the ceiling as the figure
 
-- [ ] [Page builder](../resource-page-builder-program/design.md) — the Webpage and Email editors rebuilt on a typed node tree and MJML on the server, with GrapesJS and its plugin belt removed in one cutover; it replaces the plugin-belt pruning, which stops now — the cutover, email and style-panel changes are archived, while the canvas and performance-and-proof changes are archived with tasks still open, and the program's own tasks 3.1 and 4.1 stay open until they close
+- [ ] [Page builder](../resource-page-builder-program/design.md) — the Webpage and Email editors rebuilt on a typed node tree and MJML on the server, with GrapesJS and its plugin belt removed in one cutover; it replaces the plugin-belt pruning, which stops now — the cutover, email and style-panel changes are archived, while the canvas and performance-and-proof changes are archived with tasks still open, and the program's own tasks 4.1, 5.1 and 5.2 stay open until they close: the browser proof of both editors, the editor script sizes measured on the cutover's production build, and the purge and the Blueprint backfill run once in each environment
