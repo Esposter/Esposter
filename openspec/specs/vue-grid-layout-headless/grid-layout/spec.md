@@ -2,31 +2,19 @@
 
 ## Purpose
 
-The grid's placement of items on a grid of cells, and the pointer gestures that move, resize, drop and compact them, as the headless package `vue-grid-layout-headless` states them without styling.
+The grid's placement of items on a grid of cells, and the pointer gestures that move, resize and drop them, as the headless package `vue-grid-layout-headless` states them without styling.
 
 ## Requirements
 
-### Requirement: Items stay within the columns and compact
+### Requirement: Items stay within the columns and compact upward
 
-The package SHALL keep every item within the grid's columns and compact the layout upward, sideways or not at all, as the consumer chooses.
+The package SHALL keep every item within the grid's columns and compact the layout upward.
 
 #### Scenario: Compacting upward
 
-- **GIVEN** an item with an empty row above it and vertical compaction
+- **GIVEN** an item with an empty row above it
 - **WHEN** the layout is placed
 - **THEN** the item rises into the empty row
-
-#### Scenario: Compacting sideways
-
-- **GIVEN** an item with an empty column to its left and horizontal compaction
-- **WHEN** the layout is placed
-- **THEN** the item moves left into the empty column
-
-#### Scenario: Leaving a dropped item where it lands
-
-- **GIVEN** a grid with no compaction
-- **WHEN** an item is dropped with empty rows above it
-- **THEN** it stays where it was dropped
 
 #### Scenario: An item wider than the grid
 
@@ -34,45 +22,21 @@ The package SHALL keep every item within the grid's columns and compact the layo
 - **WHEN** the layout is placed
 - **THEN** the item is narrowed to the grid's width
 
-#### Scenario: An overlap left under no compaction moves down until it clears
+#### Scenario: An item that starts inside another moves down until it clears
 
-- **GIVEN** an item left overlapping another in a grid with no compaction
+- **GIVEN** an item left overlapping another
 - **WHEN** the layout is placed
 - **THEN** the overlapping item moves down until it clears the other
 
-#### Scenario: A horizontal push past the last column moves the item down a row
+### Requirement: A dropped item pushes the items it lands on
 
-- **GIVEN** two items in one row that a sideways compaction pushes past the last column
-- **WHEN** the layout is placed
-- **THEN** the pushed item moves down a row and then as far left as the row allows
-
-### Requirement: A collision pushes, swaps or refuses
-
-The package SHALL resolve an item dropped onto others by pushing them aside, swapping with the one it lands on, or refusing the move, as the consumer chooses.
+The package SHALL resolve an item dropped onto others by pushing them down out of its way.
 
 #### Scenario: Pushing items aside
 
-- **GIVEN** the push mode
-- **WHEN** an item is dropped onto another
+- **GIVEN** an item dropped onto another
+- **WHEN** the layout is placed
 - **THEN** the other item moves down out of its way
-
-#### Scenario: Swapping two items on drop
-
-- **GIVEN** the swap mode
-- **WHEN** an item is dropped onto exactly one other
-- **THEN** the two items trade places
-
-#### Scenario: A swap that lands on several items
-
-- **GIVEN** the swap mode
-- **WHEN** an item is dropped across two others
-- **THEN** the two are pushed aside as in the push mode
-
-#### Scenario: A move refused under prevent
-
-- **GIVEN** the prevent mode
-- **WHEN** an item is dropped onto another
-- **THEN** both items stay where they were
 
 ### Requirement: A press becomes a drag and writes once
 
@@ -112,22 +76,22 @@ The package SHALL start a drag only once a press moves past the start distance, 
 - **THEN** no drag starts
 - **AND** nothing is written
 
-### Requirement: An item resizes from any edge within the grid
+### Requirement: An item resizes from its south-east corner within the grid
 
-The package SHALL resize an item from any of its four edges or four corners, keeping the opposite edge in place and the item within the grid.
+The package SHALL resize an item from its south-east corner, keeping its origin in place and the item within the grid.
 
-#### Scenario: Resizing from the left edge
+#### Scenario: Resizing from the south-east corner
 
 - **GIVEN** an item two columns from the grid's left edge
-- **WHEN** its left edge is pulled one column left
-- **THEN** the item starts one column further left and spans one column more
-- **AND** its right edge stays where it was
+- **WHEN** its south-east corner is pulled one column right and one row down
+- **THEN** the item spans one column and one row more
+- **AND** its origin stays where it was
 
-#### Scenario: A resize past the grid's edge
+#### Scenario: A resize past the grid's right edge
 
-- **GIVEN** an item at the grid's left edge
-- **WHEN** its left edge is pulled further left
-- **THEN** the item stays at the grid's left edge
+- **GIVEN** an item that reaches the grid's right side
+- **WHEN** its south-east corner is pulled further right
+- **THEN** the item stays within the grid's columns
 
 ### Requirement: The grid's padding is apart from its gaps
 
@@ -146,26 +110,9 @@ The package SHALL place a padding around the grid that the consumer sets apart f
 - **WHEN** the grid's height is read
 - **THEN** it is 80
 
-### Requirement: An item can take its height from its content
+### Requirement: Items move between grids
 
-The package SHALL size an item marked as sized to its content to the whole rows that hold the content's height.
-
-#### Scenario: An item grows to hold its content
-
-- **GIVEN** an item sized to its content, one row tall
-- **WHEN** its content grows to just over two rows
-- **THEN** the item spans three rows
-- **AND** the change is written as a gesture's would be
-
-### Requirement: Items drop in from outside and between grids
-
-The package SHALL take an item dragged in from outside any grid or from another grid, and return an item dropped outside every grid to where it was.
-
-#### Scenario: Dropping a palette entry into the grid
-
-- **GIVEN** a palette entry dragged with the span it would take
-- **WHEN** it is released over an empty cell of the grid
-- **THEN** the grid writes a new item at that cell
+The package SHALL take an item dragged from another grid and drop it onto the grid under the pointer, and return an item released over no grid to where it was.
 
 #### Scenario: Moving an item into another grid
 
@@ -180,36 +127,11 @@ The package SHALL take an item dragged in from outside any grid or from another 
 - **WHEN** it is released over no grid
 - **THEN** nothing is written and the item returns to its cell
 
-#### Scenario: A palette entry dropped onto an item under prevent is refused
-
-- **GIVEN** the prevent mode and a palette entry dragged with the span it would take
-- **WHEN** it is released over an item of the grid
-- **THEN** the grid writes nothing
-
-#### Scenario: A dropped item wider than the grid is narrowed to its columns
-
-- **GIVEN** a palette entry wider than the grid's columns
-- **WHEN** it is released over the grid's first column
-- **THEN** the grid writes it at the first column, spanning every column
-
-#### Scenario: A move refused by the grid under the pointer commits nothing
-
-- **GIVEN** two grids on one page, the second in the prevent mode with an item where the drop would land
-- **WHEN** an item is dragged from the first and released over the second
-- **THEN** the second grid writes nothing
-- **AND** the first grid writes nothing, so the item stays where it was
-
 #### Scenario: A release over another grid routes past the dragged tile
 
 - **GIVEN** the dragged item's own tile under the pointer, with another grid's tile beneath it
 - **WHEN** the item is released
 - **THEN** the release reaches the grid beneath the dragged tile
-
-#### Scenario: A cancelled palette press accepts once on the next release
-
-- **GIVEN** a palette press that the browser cancels
-- **WHEN** the pointer is pressed and released again over the grid
-- **THEN** the grid writes the entry once
 
 ### Requirement: A nested grid owns its items' gestures
 
