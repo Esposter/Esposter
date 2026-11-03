@@ -2,7 +2,7 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyTagBoxNode } from "survey-engine";
 
-import { getSurveyChoiceText } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices } from "survey-engine";
 
 interface Props {
   error: string;
@@ -15,6 +15,9 @@ const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const id = useId();
 const label = computed(() => node.props.title || node.props.name);
+const seed = useSurveyChoiceSeed();
+// The options in the order the reader sees them, so a key is a choice's place in what the select lists
+const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceKey = (index: number) => `${id}-${index}`;
 const otherKey = `${id}-other`;
 const chosen = computed<SurveyAnswerValue[]>(() => (Array.isArray(answer.value) ? answer.value : []));
@@ -25,21 +28,21 @@ const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
 const isOtherChosen = computed(() => node.props.hasOther && chosen.value.some(isOtherEntry));
 const otherText = computed(() => chosen.value.find(isOtherEntry) ?? "");
 const items = computed<UiMenuItem<string>[]>(() => {
-  const choices = node.props.choices.map((choice, index) => ({
+  const choices = orderedChoices.value.map((choice, index) => ({
     title: getSurveyChoiceText(choice),
     value: choiceKey(index),
   }));
   return node.props.hasOther ? [...choices, { title: node.props.otherText || "Other", value: otherKey }] : choices;
 });
 const selectedKeys = computed(() => {
-  const keys = node.props.choices.flatMap(({ value }, index) =>
+  const keys = orderedChoices.value.flatMap(({ value }, index) =>
     chosen.value.includes(value) ? [choiceKey(index)] : [],
   );
   return isOtherChosen.value ? [...keys, otherKey] : keys;
 });
 // The other text stays as it was while a choice is picked or dropped, and is empty the first time other is picked
 const choose = (keys: string[]) => {
-  const picked = node.props.choices.flatMap(({ value }, index) => (keys.includes(choiceKey(index)) ? [value] : []));
+  const picked = orderedChoices.value.flatMap(({ value }, index) => (keys.includes(choiceKey(index)) ? [value] : []));
   answer.value = keys.includes(otherKey) ? [...picked, otherText.value] : picked;
 };
 const setOtherText = (text: string) => {

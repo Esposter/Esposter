@@ -5,7 +5,7 @@ import SurveyFieldRadioGroup from "@/components/Resource/Survey/Field/RadioGroup
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyRadioGroupNodePropsSchema } from "survey-engine";
+import { SurveyChoicesOrder, SurveyNodeType, surveyRadioGroupNodePropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRadioGroup", () => {
@@ -19,9 +19,9 @@ describe("resourceSurveyFieldRadioGroup", () => {
     ];
     const error = "message";
     const title = "Favourite colour";
-    const createNode = (hasOther?: boolean): SurveyRadioGroupNode => ({
+    const createNode = (hasOther?: boolean, choicesOrder?: SurveyChoicesOrder): SurveyRadioGroupNode => ({
       props: {
-        ...surveyRadioGroupNodePropsSchema.parse({ choices, hasOther, name: "a", title }),
+        ...surveyRadioGroupNodePropsSchema.parse({ choices, choicesOrder, hasOther, name: "a", title }),
         id: crypto.randomUUID(),
       },
       type: SurveyNodeType.RadioGroup,
@@ -34,6 +34,17 @@ describe("resourceSurveyFieldRadioGroup", () => {
 
       expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(title);
       expect(component.findAll('[role="radio"]')).toHaveLength(choices.length);
+    });
+
+    test("lists its choices in descending text order when its choices are ordered so", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, {
+        props: { error: "", isDisabled: false, node: createNode(undefined, SurveyChoicesOrder.Descending) },
+      });
+      const texts = component.findAll('[role="radio"]').map((radio) => radio.text());
+
+      expect(texts).toStrictEqual(["c", "b", "a"]);
     });
 
     test("answers with the choice an arrow key moves to", async () => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCheckboxNode } from "survey-engine";
 
-import { getSurveyChoiceText } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices } from "survey-engine";
 
 interface Props {
   error: string;
@@ -14,6 +14,9 @@ const NONE_VALUE = "none";
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
+const seed = useSurveyChoiceSeed();
+// The options in the order the reader sees them, which the list draws and a pick is read against
+const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
 const chosen = computed<SurveyAnswerValue[]>(() => (Array.isArray(answer.value) ? answer.value : []));
 const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
@@ -65,14 +68,14 @@ const setOtherText = (text: string) => {
           @update:model-value="toggleAll"
         />
         <UiCheckbox
-          v-for="{ text, value } of node.props.choices"
-          :key="value"
+          v-for="choice of orderedChoices"
+          :key="choice.value"
           is-label-shown
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
-          :label="getSurveyChoiceText({ text, value })"
-          :model-value="isChosen(value)"
-          @update:model-value="(isPicked: boolean) => toggleChoice(value, isPicked)"
+          :label="getSurveyChoiceText(choice)"
+          :model-value="isChosen(choice.value)"
+          @update:model-value="(isPicked: boolean) => toggleChoice(choice.value, isPicked)"
         />
         <UiCheckbox
           v-if="node.props.hasNone"
