@@ -561,4 +561,31 @@ describe(useWorldMapStore, () => {
 
     expect(domainEntryUnlocked).not.toHaveBeenCalled();
   });
+
+  test("a region read a stopped world began settles into nothing once the world restarts", async () => {
+    expect.hasAssertions();
+
+    // The first start's region read is still pending when the world stops and starts again, so it lands after
+    // The second start has read every region
+    const staleRegionRead = Promise.withResolvers<RegionData>();
+    vi.mocked(readRegionData).mockReturnValueOnce(staleRegionRead.promise);
+    startTestWorldSession(
+      { gameDataBaseUrl: "game-data", getWorldNow: () => epoch },
+      { inventory: { ...EMPTY_INVENTORY }, wallet: EMPTY_WALLET },
+    );
+    const catalogue = { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] };
+    const worldMapStore = useWorldMapStore();
+    worldMapStore.start(catalogue, "region-data", new Set());
+    worldMapStore.stop();
+    worldMapStore.start(catalogue, "region-data", new Set());
+    await waitForReads();
+    const { isJumpLandmarksLoaded, jumpLandmarks } = storeToRefs(worldMapStore);
+    const loadedLandmarkCount = jumpLandmarks.value.length;
+
+    staleRegionRead.resolve(region);
+    await waitForReads();
+
+    expect(isJumpLandmarksLoaded.value).toBe(true);
+    expect(jumpLandmarks.value).toHaveLength(loadedLandmarkCount);
+  });
 });

@@ -76,13 +76,18 @@ export const useWorldMapStore = defineStore("world/map", () => {
   // Is placed and the pose let go, so the screen fades back in
   const jumpPose = shallowRef<WorldJumpPose>();
 
+  // Each start and stop begins a new generation, so a read the last session began settles into nothing once the world has
+  // Stopped or restarted, rather than into the session that replaced it
+  let generation = 0;
   const start = (catalogue: Catalogue, regionDataBaseUrl: string, savedUnlockedLandmarkIds: ReadonlySet<string>) => {
+    const startedGeneration = ++generation;
     unlockedLandmarkIds.value = savedUnlockedLandmarkIds;
     unsettledRegionCount.value = catalogue.regions.length;
-    for (const { id } of catalogue.regions)
+    const readRegion = (id: string) => {
       getSynchronizedFunction(() =>
         getResultAsync(() => readRegionData(regionDataBaseUrl, id)).match(
           ({ landmarks }) => {
+            if (startedGeneration !== generation) return;
             jumpLandmarks.value = [
               ...jumpLandmarks.value,
               ...landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)),
@@ -91,14 +96,17 @@ export const useWorldMapStore = defineStore("world/map", () => {
           },
           (error) => {
             console.error(error);
+            if (startedGeneration !== generation) return;
             unsettledRegionCount.value = (unsettledRegionCount.value ?? 0) - 1;
           },
         ),
       )();
+    };
+    for (const { id } of catalogue.regions) readRegion(id);
     getSynchronizedFunction(() =>
       getResultAsync(() => readMapSubareaLabels(worldSessionStore.gameDataBaseUrl)).match(
         (labels) => {
-          subareaLabels.value = labels;
+          if (startedGeneration === generation) subareaLabels.value = labels;
         },
         (error) => {
           console.error(error);
@@ -108,7 +116,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
     getSynchronizedFunction(() =>
       getResultAsync(() => readOpenWorldTransPointUnlocks(worldSessionStore.gameDataBaseUrl)).match(
         (unlocks) => {
-          transPointUnlocks.value = unlocks;
+          if (startedGeneration === generation) transPointUnlocks.value = unlocks;
         },
         (error) => {
           console.error(error);
@@ -117,6 +125,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
     )();
   };
   const stop = () => {
+    generation++;
     jumpLandmarks.value = [];
     unsettledRegionCount.value = undefined;
     subareaLabels.value = [];
