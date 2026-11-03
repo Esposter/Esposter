@@ -5,10 +5,11 @@ import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Surve
 import UiFileField from "@/components/Ui/FileField.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getBlockNode } from "headless-block-editor";
-import { SurveyNodeType, surveyDocumentSchema, surveyNodeChildren } from "survey-engine";
+import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
 import { describe, expect, test, vi } from "vitest";
 
 const { uploadFile } = vi.hoisted(() => ({ uploadFile: vi.fn<(file: File) => Promise<string>>() }));
@@ -60,9 +61,12 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     component.getComponent(UiFileField).vm.$emit("update:modelValue", [new File(["a"], "a")]);
     await flushPromises();
 
-    expect(getChoices(surveyDocument.value, pointer)).toStrictEqual([
-      { imageLink: url, text: "", value: expect.any(String) },
-    ]);
+    const choices = getChoices(surveyDocument.value, pointer);
+    const choice = takeOne(choices, 0);
+
+    expect(choices).toHaveLength(1);
+    expect(choice.value).toBeTypeOf("string");
+    expect(choice).toStrictEqual({ imageLink: url, text: "", value: choice.value });
   });
 
   test("moving a choice down swaps it with the choice after it", async () => {
@@ -73,7 +77,7 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 
     const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
-    component.get('[aria-label="Move choice 1 down"]').trigger("click");
+    await component.get('[aria-label="Move choice 1 down"]').trigger("click");
     await flushPromises();
 
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["b", "a"]);
@@ -87,7 +91,7 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 
     const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
-    component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await component.get('[aria-label="Remove choice 1"]').trigger("click");
     await flushPromises();
 
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["b"]);

@@ -39,12 +39,12 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
         flex-col
         gap-4
       >
-        <div v-for="(panel, panelIndex) of panels" :key="panelIndex" ui-frame p-4 flex flex-col gap-4>
+        <div v-for="(panel, panelIndex) of panels" :key="panelIndex" p-4 flex flex-col gap-4 ui-frame>
           <ResourceSurveyField
             v-for="question of node.props.template"
             :key="question.props.id"
             error=""
-            :is-disabled="isDisabled"
+            :is-disabled
             :model-value="panel[question.props.name]"
             :node="question"
             @update:model-value="(value) => setPanel(panelIndex, withSurveyAnswer(panel, question.props.name, value))"

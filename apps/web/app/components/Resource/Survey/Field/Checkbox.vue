@@ -17,18 +17,20 @@ const seed = useSurveyChoiceSeed();
 // The options in the order the reader sees them, which the list draws and a pick is read against
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
-const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
+const checkIsOtherEntry = (entry: SurveyAnswerValue): entry is string =>
   typeof entry === "string" && entry !== SURVEY_NONE_ANSWER && !choiceValues.value.includes(entry);
 // The picks, none and the other text are held here as the reader makes them. The answer holds other text as itself, so
 // A text equal to a choice's value cannot be read back from it: it would tick that choice and hide the other field
 const initial = Array.isArray(answer.value) ? answer.value : [];
 const pickedValues = ref(choiceValues.value.filter((value) => initial.includes(value)));
 const isNoneChosen = ref(initial.includes(SURVEY_NONE_ANSWER));
-const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => isOtherEntry(entry)));
-const otherText = ref(initial.find((entry): entry is string => isOtherEntry(entry)) ?? "");
-const isChosen = (value: number | string) => pickedValues.value.includes(value);
-const isAllChosen = computed(() => choiceValues.value.length > 0 && choiceValues.value.every(isChosen));
-const isSomeChosen = computed(() => choiceValues.value.some(isChosen));
+const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => checkIsOtherEntry(entry)));
+const otherText = ref(initial.find((entry): entry is string => checkIsOtherEntry(entry)) ?? "");
+const checkIsChosen = (value: number | string) => pickedValues.value.includes(value);
+const isAllChosen = computed(
+  () => choiceValues.value.length > 0 && choiceValues.value.every((value) => checkIsChosen(value)),
+);
+const isSomeChosen = computed(() => choiceValues.value.some((value) => checkIsChosen(value)));
 const emitAnswer = () => {
   answer.value = isNoneChosen.value
     ? [SURVEY_NONE_ANSWER]
@@ -80,7 +82,7 @@ const setOtherText = (text: string) => {
           :is-mixed="isSomeChosen && !isAllChosen ? true : undefined"
           :label="node.props.selectAllText || 'Select all'"
           :model-value="isAllChosen"
-          @update:model-value="toggleAll"
+          @update:model-value="(isPicked) => toggleAll(isPicked)"
         />
         <UiCheckbox
           v-for="choice of orderedChoices"
@@ -89,7 +91,7 @@ const setOtherText = (text: string) => {
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
           :label="getSurveyChoiceText(choice)"
-          :model-value="isChosen(choice.value)"
+          :model-value="checkIsChosen(choice.value)"
           @update:model-value="(isPicked: boolean) => toggleChoice(choice.value, isPicked)"
         />
         <UiCheckbox
@@ -99,7 +101,7 @@ const setOtherText = (text: string) => {
           :disabled="isDisabled"
           :label="node.props.noneText || 'None'"
           :model-value="isNoneChosen"
-          @update:model-value="toggleNone"
+          @update:model-value="(isPicked) => toggleNone(isPicked)"
         />
         <template v-if="node.props.hasOther">
           <UiCheckbox
@@ -108,7 +110,7 @@ const setOtherText = (text: string) => {
             :disabled="isDisabled"
             :label="node.props.otherText || 'Other'"
             :model-value="isOtherChosen"
-            @update:model-value="toggleOther"
+            @update:model-value="(isPicked) => toggleOther(isPicked)"
           />
           <UiTextField
             v-if="isOtherChosen"
@@ -116,7 +118,7 @@ const setOtherText = (text: string) => {
             is-label-hidden
             :label="node.props.otherText || 'Other'"
             :model-value="otherText"
-            @update:model-value="setOtherText"
+            @update:model-value="(text) => setOtherText(text)"
           />
         </template>
       </div>

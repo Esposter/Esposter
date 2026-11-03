@@ -4,8 +4,9 @@ import type { SurveyAnswerValue, SurveyRankingNode } from "survey-engine";
 import ResourceSurveyFieldRanking from "@/components/Resource/Survey/Field/Ranking.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { SurveyNodeType, surveyRankingNodePropsSchema } from "survey-engine";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { SurveyNodeType, surveyRankingNodePropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRanking", () => {
@@ -37,15 +38,15 @@ describe("resourceSurveyFieldRanking", () => {
       expect(component.get('[role="list"]').attributes("aria-label")).toBe(title);
     });
 
-    test("A ranking question is reordered by keyboard", async () => {
+    test("a ranking question is reordered by keyboard", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldRanking, {
         attachTo: document.body,
         props: { error: "", isDisabled: false, node },
       });
-      const [, , third] = component.findAll("button");
-      await third?.trigger("keydown", { altKey: true, key: "ArrowUp" });
+      const third = takeOne(component.findAll("button"), 2);
+      await third.trigger("keydown", { altKey: true, key: "ArrowUp" });
 
       expect(component.emitted<[SurveyAnswerValue[]]>("update:modelValue")?.map(([answer]) => answer)).toStrictEqual([
         [0, -1, 0.1],

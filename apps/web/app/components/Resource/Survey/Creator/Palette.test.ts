@@ -2,7 +2,7 @@
 import ResourceSurveyCreatorPalette from "@/components/Resource/Survey/Creator/Palette.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyDocumentSchema, surveyNodeTypeDefinitionMap } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorPalette", () => {
@@ -17,7 +17,11 @@ describe("resourceSurveyCreatorPalette", () => {
         .findAll("button")
         .map((button) => button.text())
         .toSorted(),
-    ).toStrictEqual(kinds.map((type) => surveyNodeTypeDefinitionMap[type].label).toSorted());
+    ).toStrictEqual(
+      kinds
+        .map((type) => surveyNodeTypeDefinitionMap[type].label)
+        .toSorted((firstLabel, secondLabel) => firstLabel.localeCompare(secondLabel)),
+    );
   });
 
   test("choosing a kind inserts it after the selected question", async () => {

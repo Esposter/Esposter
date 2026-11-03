@@ -5,7 +5,6 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseEntity } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, test } from "vitest";
-import { nextTick } from "vue";
 
 describe(useSurveyResponse, () => {
   const { trpcMsw } = setupMswTrpc();

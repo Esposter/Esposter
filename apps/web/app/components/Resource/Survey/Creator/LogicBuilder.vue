@@ -3,10 +3,10 @@ import type { SurveyConditionProp } from "@/models/resource/survey/SurveyConditi
 import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
 import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
 import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
 import {
   SURVEY_BOOLEAN_VALUE_ITEMS,
@@ -22,15 +22,16 @@ import { getSurveyConditionOperators } from "@/services/resource/survey/getSurve
 import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
 import { parseSurveyConditionRows } from "@/services/resource/survey/parseSurveyConditionRows";
 import { toSurveyConditionInputValue } from "@/services/resource/survey/toSurveyConditionInputValue";
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyNodeType } from "survey-engine";
 
 const surveyCreatorStore = useSurveyCreatorStore();
+const { document: surveyDocument, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { updateNodeProps } = useSurveyCreatorCommands();
-const selectedNode = computed(() => surveyCreatorStore.selectedNode);
 // The conditions the selected node holds, each the text it saves under its prop, so a prop the node lacks is no condition of it
 const conditions = computed<Partial<Record<SurveyConditionProp, string>>>(() => selectedNode.value?.props ?? {});
 const sections = computed(() => SURVEY_CONDITION_SECTIONS.filter(({ prop }) => Object.hasOwn(conditions.value, prop)));
-const answers = computed(() => getSurveyConditionAnswers(surveyCreatorStore.document));
+const answers = computed(() => getSurveyConditionAnswers(surveyDocument.value));
 const answerItems = computed(() =>
   answers.value.map(({ name, title }) => ({
     description: title !== "" && title !== name ? name : undefined,
@@ -47,8 +48,8 @@ const getFault = (prop: SurveyConditionProp): string | undefined => getDraft(pro
 // A condition is written only while its text checks, and an empty one holds always. A text that does not check, or that
 // The store refuses, stays in its field as a draft, so the saved condition is left as it was
 const writeCondition = (prop: SurveyConditionProp, text: string): void => {
-  const fault = text.trim() === "" ? undefined : getSurveyExpressionFault(text);
-  if (fault === undefined && updateNodeProps(surveyCreatorStore.selectedPointer, { [prop]: text })) {
+  const fault = checkIsBlankSource(text) ? undefined : getSurveyExpressionFault(text);
+  if (fault === undefined && updateNodeProps(selectedPointer.value, { [prop]: text })) {
     drafts.delete(prop);
     return;
   }
@@ -101,7 +102,7 @@ const getOperatorItems = (questionName: string) =>
 </script>
 
 <template>
-  <div :key="surveyCreatorStore.selectedPointer" flex flex-col gap-6>
+  <div :key="selectedPointer" flex flex-col gap-6>
     <p v-if="selectedNode === undefined" text-muted>Select an element to set its conditions.</p>
     <section v-for="{ label, prop } of sections" :key="prop" flex flex-col gap-3>
       <h3 ui-title>{{ label }}</h3>

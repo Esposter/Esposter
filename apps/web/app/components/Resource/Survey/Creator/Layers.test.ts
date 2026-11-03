@@ -2,40 +2,40 @@
 import ResourceSurveyCreatorLayers from "@/components/Resource/Survey/Creator/Layers.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyDocumentSchema } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
-describe("resourceSurveyCreatorLayers", () => {
-  const loadSurvey = () => {
-    const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
-      surveyDocumentSchema.parse({
-        content: [
-          {
-            props: {
-              children: [
-                {
-                  props: {
-                    children: [
-                      { props: { id: "colour", name: "colour", title: "Favourite colour" }, type: SurveyNodeType.Text },
-                    ],
-                    id: "panel",
-                    title: "Panel",
-                  },
-                  type: SurveyNodeType.Panel,
+const loadSurvey = () => {
+  const surveyCreatorStore = useSurveyCreatorStore();
+  surveyCreatorStore.load(
+    surveyDocumentSchema.parse({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    { props: { id: "colour", name: "colour", title: "Favourite colour" }, type: SurveyNodeType.Text },
+                  ],
+                  id: "panel",
+                  title: "Panel",
                 },
-              ],
-              id: "page",
-            },
-            type: SurveyNodeType.Page,
+                type: SurveyNodeType.Panel,
+              },
+            ],
+            id: "page",
           },
-        ],
-        root: { props: {} },
-      }),
-    );
-    return surveyCreatorStore;
-  };
+          type: SurveyNodeType.Page,
+        },
+      ],
+      root: { props: {} },
+    }),
+  );
+  return surveyCreatorStore;
+};
 
+describe("resourceSurveyCreatorLayers", () => {
   test("the tree lists every node in layer order, each row under its own pointer", async () => {
     expect.hasAssertions();
 

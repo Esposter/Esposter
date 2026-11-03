@@ -3,8 +3,8 @@ import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyNode } from "survey-engine";
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
 import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "headless-block-editor";
 import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "survey-engine";

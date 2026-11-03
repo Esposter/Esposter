@@ -20,18 +20,18 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
 <template>
   <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
     <UiRadioGroup
-      :is-disabled="isDisabled"
+      :is-disabled
       :items
       :label="title"
       :model-value="selectedKey"
-      @update:model-value="pick"
+      @update:model-value="(key) => pick(key)"
     />
     <UiTextField
       v-if="isOther"
       :is-disabled="isDisabled || undefined"
       :label="otherTitle"
       :model-value="otherText"
-      @update:model-value="updateOtherText"
+      @update:model-value="(value) => updateOtherText(value)"
     />
   </ResourceSurveyFieldShell>
 </template>

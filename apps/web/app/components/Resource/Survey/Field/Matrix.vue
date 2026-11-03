@@ -44,10 +44,10 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
         <table w-full>
           <tbody>
             <tr v-for="row of node.props.rows" :key="row.value">
-              <th scope="row" text-start font-normal align-top pr-4>{{ getSurveyChoiceText(row) }}</th>
+              <th scope="row" fw-normal pr-4 text-start align-top>{{ getSurveyChoiceText(row) }}</th>
               <td>
                 <UiRadioGroup
-                  :is-disabled="isDisabled"
+                  :is-disabled
                   :items="columnItems"
                   :label="getSurveyChoiceText(row)"
                   :model-value="getColumnKey(row)"

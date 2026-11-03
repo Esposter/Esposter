@@ -32,7 +32,7 @@ const valueText = computed(() => (node.props.showValue ? String(value.value) : "
         :max="node.props.max"
         :min="node.props.min"
         :step="node.props.step"
-        :value-text="valueText"
+        :value-text
       />
     </div>
     <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>

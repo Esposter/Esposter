@@ -2,6 +2,7 @@
 import type { SurveyAnswers, SurveyDocument } from "survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { SURVEY_FOCUSABLE_SELECTOR } from "@/services/resource/survey/constants";
 import { SurveyProgressBarPlacement } from "survey-engine";
 
 interface Props {
@@ -19,7 +20,6 @@ const emit = defineEmits<{
   change: [value: { answers: SurveyAnswers; pageIndex: number }];
   complete: [answers: SurveyAnswers];
 }>();
-const FOCUSABLE_SELECTOR = "input, select, textarea, button";
 const rootProps = computed(() => document.root.props);
 const themeStyle = useSurveyTheme(rootProps);
 const {
@@ -51,10 +51,10 @@ const focusFirstError = () => {
   const [firstError] = errors.value;
   if (!firstError) return;
 
-  const wrapper = Array.from(root.value?.querySelectorAll<HTMLElement>("[data-pointer]") ?? []).find(
+  const wrapper = [...(root.value?.querySelectorAll<HTMLElement>("[data-pointer]") ?? [])].find(
     (element) => element.dataset.pointer === firstError.pointer,
   );
-  wrapper?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+  wrapper?.querySelector<HTMLElement>(SURVEY_FOCUSABLE_SELECTOR)?.focus();
 };
 // A passing completion hands its answers to the page; a blocked one leaves focus where the error is
 const submit = () => {
@@ -86,9 +86,9 @@ const submit = () => {
         v-for="view of pageElements"
         :key="view.pointer"
         :answers="state.answers"
-        :error-by-pointer="errorByPointer"
-        :is-disabled="isDisabled"
-        :question-numbers="questionNumbers"
+        :error-by-pointer
+        :is-disabled
+        :question-numbers
         :view
         @answer="
           (name, value) => {

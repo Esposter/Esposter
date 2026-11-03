@@ -2,8 +2,8 @@
 import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 import type { SurveyCalculatedValue } from "survey-engine";
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
 import {
   SURVEY_CALCULATED_VALUE_EXPRESSION,
   SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE,
@@ -14,10 +14,12 @@ import { getNewCalculatedValueName } from "@/services/resource/survey/getNewCalc
 import { getSurveyCalculatedValueIssue } from "@/services/resource/survey/getSurveyCalculatedValueIssue";
 import { getSurveyConditionAnswers } from "@/services/resource/survey/getSurveyConditionAnswers";
 import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 
 const surveyCreatorStore = useSurveyCreatorStore();
+const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 const { updateRootProps } = useSurveyCreatorCommands();
-const calculatedValues = computed(() => surveyCreatorStore.document.root.props.calculatedValues);
+const calculatedValues = computed(() => surveyDocument.value.root.props.calculatedValues);
 // Drafts are held by the index of the value they were typed into, and a removal clears them, since it shifts the indices
 const nameDrafts = reactive(new Map<number, SurveyEditDraft>());
 const expressionDrafts = reactive(new Map<number, SurveyEditDraft>());
@@ -51,10 +53,9 @@ const holdOrWrite = (
 const setName = (index: number, newName: string): void => {
   const savedName = calculatedValues.value[index]?.name ?? "";
   const values = withValue(index, { name: newName });
-  const fault =
-    newName.trim() === ""
-      ? SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE
-      : getSurveyCalculatedValueIssue(surveyCreatorStore.document, values, index);
+  const fault = checkIsBlankSource(newName)
+    ? SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE
+    : getSurveyCalculatedValueIssue(surveyDocument.value, values, index);
   holdOrWrite(nameDrafts, index, savedName, newName, fault, values);
 };
 const setExpression = (index: number, newExpression: string): void => {
@@ -66,9 +67,7 @@ const setIncludeIntoResult = (index: number, newIncludeIntoResult: boolean): voi
   updateRootProps({ calculatedValues: withValue(index, { includeIntoResult: newIncludeIntoResult }) });
 };
 const addValue = (): void => {
-  const newName = getNewCalculatedValueName(
-    getSurveyConditionAnswers(surveyCreatorStore.document).map(({ name }) => name),
-  );
+  const newName = getNewCalculatedValueName(getSurveyConditionAnswers(surveyDocument.value).map(({ name }) => name));
   updateRootProps({
     calculatedValues: [
       ...getValues(),

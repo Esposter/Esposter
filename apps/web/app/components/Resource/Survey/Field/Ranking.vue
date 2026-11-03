@@ -4,15 +4,15 @@ import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "survey-
 
 import { getSurveyChoiceText } from "survey-engine";
 
+interface KeyedChoice {
+  choice: SurveyChoice;
+  key: string;
+}
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
   isDisabled: boolean;
   node: SurveyRankingNode;
-}
-interface KeyedChoice {
-  choice: SurveyChoice;
-  key: string;
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
@@ -55,7 +55,7 @@ const onReorder = (keys: string[]) => {
         :is-reorderable="isDisabled ? undefined : true"
         :items
         :label
-        @reorder="onReorder"
+        @reorder="(keys) => onReorder(keys)"
       >
         <template #mark="{ item }">{{ items.indexOf(item) + 1 }}</template>
       </UiList>

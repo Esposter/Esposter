@@ -22,8 +22,8 @@ describe("resourceSurveyCreatorMultipleTextItemsEditor", () => {
     expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
       [{ inputType: SurveyMultipleTextItemInputType.Text, isRequired: false, name: "Email", title: "Email" }],
     ]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toMatchObject([
-      [{ inputType: SurveyMultipleTextItemInputType.Email }],
+    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([
+      [{ inputType: SurveyMultipleTextItemInputType.Email, isRequired: false, name: "Email", title: "Email" }],
     ]);
   });
 });

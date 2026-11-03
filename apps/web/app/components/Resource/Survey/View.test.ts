@@ -33,7 +33,7 @@ describe("resourceSurveyView", () => {
   const id = crypto.randomUUID();
   const name = "a";
   // A one-page survey, so its only button is the page's Complete
-  const mockPublishedSurvey = (settings: object, completedHtml = "") =>
+  const mockPublishedSurvey = (settings: object, completedHtml = "") => {
     trpcMsw.survey.readPublishedResourceContent.query(() => ({
       content: {
         document: {
@@ -44,6 +44,7 @@ describe("resourceSurveyView", () => {
       },
       name,
     }));
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,7 +81,7 @@ describe("resourceSurveyView", () => {
     await flushPromises();
 
     expect(component.text()).toContain(DEFAULT_COMPLETED_MESSAGE);
-    expect(clearSurveyResponseIdMock).toHaveBeenCalledOnce();
+    expect(clearSurveyResponseIdMock).toHaveBeenCalledTimes(1);
   });
 
   test("does not thank the respondent after a submit that did not persist", async () => {

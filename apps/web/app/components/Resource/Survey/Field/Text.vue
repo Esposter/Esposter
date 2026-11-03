@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyTextNode } from "survey-engine";
 
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
 import { getSurveyFieldHint } from "@/services/survey/getSurveyFieldHint";
 import { SurveyTextInputType } from "survey-engine";
 
@@ -14,12 +14,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-// The input types the library's text field draws as its own control; the rest are typed as plain text
-const TEXT_FIELD_TYPES: Partial<Record<SurveyTextInputType, UiTextFieldType>> = {
-  [SurveyTextInputType.Number]: UiTextFieldType.Number,
-  [SurveyTextInputType.Password]: UiTextFieldType.Password,
-  [SurveyTextInputType.Time]: UiTextFieldType.Time,
-};
 const title = computed(() => node.props.title || node.props.name);
 const hint = computed(() => getSurveyFieldHint(node.props.description, node.props.isRequired));
 const isDate = computed(
@@ -66,8 +60,8 @@ const date = computed<Date | undefined>({
       :maxlength="node.props.maxLength"
       :model-value="text"
       :placeholder="node.props.placeholder"
-      :type="TEXT_FIELD_TYPES[node.props.inputType]"
-      @update:model-value="updateText"
+      :type="SURVEY_TEXT_FIELD_TYPES[node.props.inputType]"
+      @update:model-value="(value) => updateText(value)"
     />
     <template v-if="isDate">
       <span v-if="hint" text-sm text-muted>{{ hint }}</span>

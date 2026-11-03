@@ -1,6 +1,7 @@
+import type { SurveyAnswerValue } from "survey-engine";
+
 import { useSurveyRecordAnswer } from "@/composables/survey/useSurveyRecordAnswer";
 import { describe, expect, test } from "vitest";
-import { ref } from "vue";
 
 describe(useSurveyRecordAnswer, () => {
   test("reads a record answer as it is", () => {
@@ -15,7 +16,7 @@ describe(useSurveyRecordAnswer, () => {
   test("reads an absent answer as the empty record", () => {
     expect.hasAssertions();
 
-    const answers = useSurveyRecordAnswer(ref(undefined));
+    const answers = useSurveyRecordAnswer(ref<SurveyAnswerValue>());
 
     expect(answers.value).toStrictEqual({});
   });

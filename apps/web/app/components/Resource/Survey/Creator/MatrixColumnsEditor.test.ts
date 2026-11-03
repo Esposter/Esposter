@@ -26,7 +26,9 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
       [{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Often", title: "Often" }],
     ]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toMatchObject([[{ name: "Sometimes" }]]);
+    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([
+      [{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Sometimes", title: "Often" }],
+    ]);
     expect(wrapper.emitted("update:modelValue")?.[2]).toStrictEqual([[]]);
   });
 
@@ -41,7 +43,9 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", SurveyMatrixCellType.Dropdown);
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("update:modelValue")?.[0]).toMatchObject([[{ cellType: SurveyMatrixCellType.Dropdown }]]);
+    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([
+      [{ cellType: SurveyMatrixCellType.Dropdown, choices: [], isRequired: false, name: "often", title: "" }],
+    ]);
     expect(wrapper.findComponent(ResourceSurveyCreatorChoiceListEditor).exists()).toBe(true);
   });
 });

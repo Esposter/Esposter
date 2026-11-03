@@ -12,7 +12,8 @@ interface Props {
 }
 
 const { node, pointer } = defineProps<Props>();
-const { selectedPointer } = storeToRefs(useSurveyCreatorStore());
+const surveyCreatorStore = useSurveyCreatorStore();
+const { selectedPointer } = storeToRefs(surveyCreatorStore);
 const { select } = useSurveyCreatorCommands();
 </script>
 
@@ -21,15 +22,15 @@ const { select } = useSurveyCreatorCommands();
   <div
     :class="{ 'outline-accent': selectedPointer === pointer }"
     outline-2
+    outline-transparent
     outline-offset-2
     outline-solid
-    outline-transparent
-    rd-[var(--ui-container-radius)]
+    rd="[--ui-container-radius]"
     tabindex="0"
     @click.stop="select(pointer)"
     @keydown.enter.self="select(pointer)"
   >
-    <div v-if="node.type === SurveyNodeType.Panel" b-border p-3 flex flex-col gap-3 rd-[var(--ui-container-radius)]>
+    <div v-if="node.type === SurveyNodeType.Panel" p-3 b-border rd="[--ui-container-radius]" flex flex-col gap-3>
       <h3 v-if="node.props.title" ui-title>{{ node.props.title }}</h3>
       <ResourceSurveyCreatorCanvasNode
         v-for="(child, index) of node.props.children"
@@ -39,7 +40,7 @@ const { select } = useSurveyCreatorCommands();
       />
     </div>
     <div v-else pointer-events-none>
-      <ResourceSurveyField error="" :node="node" is-disabled />
+      <ResourceSurveyField error="" :node is-disabled />
     </div>
   </div>
 </template>

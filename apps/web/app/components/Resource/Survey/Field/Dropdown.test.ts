@@ -5,7 +5,7 @@ import SurveyFieldDropdown from "@/components/Resource/Survey/Field/Dropdown.vue
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyDropdownNodePropsSchema } from "survey-engine";
+import { surveyDropdownNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldDropdown", () => {

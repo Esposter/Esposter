@@ -8,6 +8,26 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { SurveyMatrixCellType, surveyMatrixDynamicNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
+const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAnswerValue, error = "") => {
+  const component = mount(ResourceSurveyFieldMatrixDynamic, {
+    props: {
+      error,
+      isDisabled: false,
+      modelValue,
+      node,
+      "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
+    },
+  });
+  return component;
+};
+
+const findButton = (component: ReturnType<typeof mountMatrixDynamic>, text: string) => {
+  const button = component.findAll("button").find((item) => item.text() === text);
+  assert.exists(button);
+
+  return button;
+};
+
 describe("resourceSurveyFieldMatrixDynamic", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
@@ -30,24 +50,6 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       },
       type: SurveyNodeType.MatrixDynamic,
     });
-    const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAnswerValue, error = "") => {
-      const component = mount(ResourceSurveyFieldMatrixDynamic, {
-        props: {
-          error,
-          isDisabled: false,
-          modelValue,
-          node,
-          "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
-        },
-      });
-      return component;
-    };
-    const findButton = (component: ReturnType<typeof mountMatrixDynamic>, text: string) => {
-      const button = component.findAll("button").find((item) => item.text() === text);
-      assert.exists(button);
-
-      return button;
-    };
 
     test("is a table captioned by its title, with one row of cells per answer row", () => {
       expect.hasAssertions();

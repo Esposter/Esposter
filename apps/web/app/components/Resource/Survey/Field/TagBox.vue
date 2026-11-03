@@ -22,14 +22,14 @@ const choiceKey = (index: number) => `${id}-${index}`;
 const otherKey = `${id}-other`;
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
 // A string that is no choice's value is the typed other text, which the answer holds as itself
-const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
+const checkIsOtherEntry = (entry: SurveyAnswerValue): entry is string =>
   typeof entry === "string" && !choiceValues.value.includes(entry);
 // The picks, whether other is picked and its text are held here as the reader makes them. The answer holds other text as
 // Itself, so a text equal to a choice's value cannot be read back from it: it would pick that choice and drop the field
 const initial = Array.isArray(answer.value) ? answer.value : [];
 const pickedValues = ref(choiceValues.value.filter((value) => initial.includes(value)));
-const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => isOtherEntry(entry)));
-const otherText = ref(initial.find((entry): entry is string => isOtherEntry(entry)) ?? "");
+const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => checkIsOtherEntry(entry)));
+const otherText = ref(initial.find((entry): entry is string => checkIsOtherEntry(entry)) ?? "");
 const items = computed<UiMenuItem<string>[]>(() => {
   const choices = orderedChoices.value.map((choice, index) => ({
     title: getSurveyChoiceText(choice),
@@ -69,14 +69,14 @@ const setOtherText = (text: string) => {
     :is-required="node.props.isRequired"
     :title="label"
   >
-    <UiSelect :is-disabled="isDisabled" :items :label :model-value="selectedKeys" @update:model-value="choose" />
+    <UiSelect :is-disabled :items :label :model-value="selectedKeys" @update:model-value="(keys) => choose(keys)" />
     <UiTextField
       v-if="isOtherChosen"
       :is-disabled="isDisabled ? true : undefined"
       is-label-hidden
       :label="node.props.otherText || 'Other'"
       :model-value="otherText"
-      @update:model-value="setOtherText"
+      @update:model-value="(text) => setOtherText(text)"
     />
   </ResourceSurveyFieldShell>
 </template>

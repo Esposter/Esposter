@@ -2,7 +2,6 @@
 import { provideSurveyChoiceSeed, useSurveyChoiceSeed } from "@/composables/survey/useSurveyChoiceSeed";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { defineComponent, h } from "vue";
 
 describe(useSurveyChoiceSeed, () => {
   const Reader = defineComponent({ render: () => h("i"), setup: () => ({ seed: useSurveyChoiceSeed() }) });

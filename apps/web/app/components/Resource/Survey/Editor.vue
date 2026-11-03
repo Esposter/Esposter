@@ -13,7 +13,8 @@ const { loadContent, saveDocument } = surveyStore;
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: editedDocument } = storeToRefs(surveyCreatorStore);
 const { load } = surveyCreatorStore;
-const { createAlert } = useAlertStore();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const { sweep, track } = useSurveyFiles();
 // The creator holds its own copy of the document, so a restore is loaded into it, not left the pre-restore one
 useAdoptResourceContent(ResourceType.Survey, () => {
@@ -29,11 +30,11 @@ await loadContent();
 load(storedDocument.value);
 track(storedDocument.value);
 // A document the survey check refuses is not written: its first issue is shown, and the save reports the refusal
-const saveEditedDocument = async (newDocument: SurveyDocument) => {
+const saveEditedDocument = (newDocument: SurveyDocument) => {
   const [issue] = checkSurveyDocument(newDocument);
   if (issue) {
     createAlert(`${issue.pointer}: ${issue.message}`, "error");
-    return false;
+    return Promise.resolve(false);
   }
 
   return saveDocument(newDocument);

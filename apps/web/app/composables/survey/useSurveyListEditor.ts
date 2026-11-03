@@ -15,12 +15,12 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     return { id, item };
   };
   // Shallow, since every change replaces the rows whole, and a generic item is not one a deep ref can unwrap
-  const rows = shallowRef(modelValue.value.map(createRow));
+  const rows = shallowRef(modelValue.value.map((item) => createRow(item)));
   const getItems = () => rows.value.map(({ item }) => item);
   // The rows of a write this editor made already hold its items, so they keep their ids and the focus stays where it
   // Was; a change from outside, such as an undo, rebuilds them
   watch(modelValue, (items) => {
-    if (!checkIsDeepEqual(items, getItems())) rows.value = items.map(createRow);
+    if (!checkIsDeepEqual(items, getItems())) rows.value = items.map((item) => createRow(item));
   });
   // A key repeated within the list is flagged on every row after its first, so the first one stays as it was written
   const errors = computed(() => {
@@ -40,7 +40,7 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     if (isValid.value && !checkIsDeepEqual(items, modelValue.value)) modelValue.value = items;
   };
   const addItems = (items: T[]) => {
-    rows.value = [...rows.value, ...items.map(createRow)];
+    rows.value = [...rows.value, ...items.map((item) => createRow(item))];
     commit();
   };
   const updateItem = (id: string, update: Partial<T>) => {

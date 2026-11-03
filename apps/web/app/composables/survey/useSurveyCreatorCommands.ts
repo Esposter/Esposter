@@ -38,10 +38,6 @@ import {
   surveyRegistry,
 } from "survey-engine";
 
-// The survey's root holds its pages in the content slot, and the first page is where an empty selection places a new element
-const CONTENT_POINTER = "/content";
-const FIRST_PAGE_POINTER = `${CONTENT_POINTER}/0`;
-
 // The slot a node sits in and its index there, or none for a pointer that names no element of a slot
 const getNodeLocation = (nodePointer: string) => {
   const segments = parseJsonPointer(nodePointer);
@@ -92,7 +88,7 @@ const getInsertTarget = (document: SurveyDocument, selectedPointer: string, type
     return location && { index: location.index + 1, slotPointer: location.slotPointer };
   }
 
-  const slotPointer = [getBlockPropPointer(FIRST_PAGE_POINTER, "children"), CONTENT_POINTER].find((candidate) =>
+  const slotPointer = [getBlockPropPointer("/content/0", "children"), "/content"].find((candidate) =>
     getAcceptedTypes(document, surveyRegistry, surveyNodeChildren, candidate).includes(type),
   );
   return slotPointer === undefined ? undefined : { index: getSlotLength(document, slotPointer), slotPointer };

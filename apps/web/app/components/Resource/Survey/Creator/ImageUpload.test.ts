@@ -8,7 +8,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getBlockNode } from "headless-block-editor";
-import { SurveyNodeType, surveyDocumentSchema, surveyNodeChildren } from "survey-engine";
+import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
 import { describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
@@ -66,7 +66,7 @@ describe("resourceSurveyCreatorImageUpload", () => {
     const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 
     const component = await mountSuspended(ResourceSurveyCreatorImageUpload, { props: { pointer } });
-    component
+    await component
       .findAll("button")
       .find((button) => button.text() === "Remove image")
       ?.trigger("click");
@@ -89,7 +89,7 @@ describe("resourceSurveyCreatorImageUpload", () => {
     const component = await mountSuspended(ResourceSurveyCreatorImageUpload, { props: { pointer } });
     component.getComponent(UiFileField).vm.$emit("update:modelValue", [new File(["a"], "a")]);
     await flushPromises();
-    component
+    await component
       .findAll("button")
       .find((button) => button.text() === "Remove image")
       ?.trigger("click");

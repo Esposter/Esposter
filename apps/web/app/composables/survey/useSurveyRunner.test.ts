@@ -66,7 +66,7 @@ describe(useSurveyRunner, () => {
     surveyDocument.root.props.showQuestionNumbers = true;
     const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
 
-    expect(Array.from(runner.questionNumbers.value.values())).toStrictEqual([1, 2]);
+    expect([...runner.questionNumbers.value.values()]).toStrictEqual([1, 2]);
   });
 
   test("numbers no question when the survey's question numbering is off", () => {

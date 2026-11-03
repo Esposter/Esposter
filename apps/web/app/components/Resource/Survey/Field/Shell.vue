@@ -8,7 +8,7 @@ interface Props {
   title: string;
 }
 
-defineSlots<{ default: (props: { describedBy: string | undefined }) => VNode }>();
+defineSlots<{ default: (props: { describedBy?: string }) => VNode }>();
 const { description, error, isRequired, title } = defineProps<Props>();
 const id = useId();
 const descriptionId = `${id}-description`;
@@ -27,7 +27,7 @@ const describedBy = computed(
       <span v-if="isRequired" sr-only> required</span>
     </span>
     <span v-if="description" :id="descriptionId" text-sm text-muted>{{ description }}</span>
-    <slot :described-by="describedBy" />
+    <slot :described-by />
     <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
   </div>
 </template>

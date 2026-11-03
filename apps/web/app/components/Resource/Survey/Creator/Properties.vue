@@ -22,9 +22,7 @@ const nodeProps = computed<Record<string, unknown>>(() => ({ ...selectedNode.val
 // The form draws every prop its schema holds except the lists the extra editors draw, so each list is drawn once
 const nodeFormSchema = computed(() => {
   const omitted: Record<string, true> = {};
-  for (const { key } of extraEditors.value) {
-    omitted[key] = true;
-  }
+  for (const { key } of extraEditors.value) omitted[key] = true;
 
   return nodeDefinition.value?.formSchema.omit(omitted);
 });
@@ -43,9 +41,7 @@ const rootJsonSchema = zodToJsonSchema(
 // The props an edit changed, the only ones written, so the rest of the props are left as they were
 const getChangedProps = <T extends object>(value: T, saved: T): Partial<T> => {
   const changed: Partial<T> = {};
-  for (const key in value) {
-    if (!checkIsDeepEqual(value[key], saved[key])) changed[key] = value[key];
-  }
+  for (const key in value) if (!checkIsDeepEqual(value[key], saved[key])) changed[key] = value[key];
 
   return changed;
 };

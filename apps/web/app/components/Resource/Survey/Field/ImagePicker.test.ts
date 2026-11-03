@@ -4,8 +4,8 @@ import type { SurveyAnswerValue, SurveyImagePickerNode } from "survey-engine";
 import ResourceSurveyFieldImagePicker from "@/components/Resource/Survey/Field/ImagePicker.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { SurveyNodeType, surveyImagePickerNodePropsSchema } from "survey-engine";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { surveyImagePickerNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldImagePicker", () => {

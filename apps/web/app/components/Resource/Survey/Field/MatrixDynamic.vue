@@ -49,17 +49,17 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
 <template>
   <div flex flex-col gap-2>
     <div of-x-auto>
-      <table w-full text-left :aria-invalid="error ? true : undefined">
+      <table text-left w-full :aria-invalid="error ? true : undefined">
         <caption text-left>
           <span block>
             {{ node.props.title || node.props.name }}
             <span v-if="node.props.isRequired" text-error>*<span sr-only> required</span></span>
           </span>
-          <span v-if="node.props.description" block text-sm text-muted>{{ node.props.description }}</span>
+          <span v-if="node.props.description" text-sm text-muted block>{{ node.props.description }}</span>
         </caption>
         <thead>
           <tr>
-            <th v-for="column of node.props.columns" :key="column.name" scope="col" p-1 text-sm text-muted>
+            <th v-for="column of node.props.columns" :key="column.name" scope="col" text-sm text-muted p-1>
               {{ column.title || column.name }}
             </th>
           </tr>
@@ -86,7 +86,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               />
               <UiSelect
                 v-else-if="column.cellType === SurveyMatrixCellType.Dropdown"
-                :is-disabled="isDisabled"
+                :is-disabled
                 :items="takeOne(choiceItemsMap, column.name)"
                 :label="column.title || column.name"
                 :model-value="getChoiceKey(row[column.name])"
@@ -128,7 +128,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
                 "
               />
             </td>
-            <td align-top p-1>
+            <td p-1 align-top>
               <UiIconButton
                 :disabled="isDisabled || rows.length <= node.props.minRowCount"
                 :label="node.props.removeRowText || 'Remove row'"

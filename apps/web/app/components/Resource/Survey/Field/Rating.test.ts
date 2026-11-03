@@ -5,7 +5,7 @@ import ResourceSurveyFieldRating from "@/components/Resource/Survey/Field/Rating
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { surveyRatingNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { SurveyNodeType, surveyRatingNodePropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRating", () => {

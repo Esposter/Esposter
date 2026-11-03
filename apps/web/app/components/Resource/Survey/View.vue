@@ -109,8 +109,8 @@ onMounted(async () => {
       :initial-answers="resumedDraft?.answers"
       :initial-page-index="resumedDraft?.pageIndex"
       :seed="resumedDraft?.seed ?? seed"
-      @change="onChange"
-      @complete="onComplete"
+      @change="(value) => onChange(value)"
+      @complete="(answers) => onComplete(answers)"
     />
   </template>
 </template>

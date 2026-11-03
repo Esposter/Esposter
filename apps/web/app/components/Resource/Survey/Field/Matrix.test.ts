@@ -4,8 +4,8 @@ import type { SurveyAnswerValue, SurveyMatrixNode } from "survey-engine";
 import ResourceSurveyFieldMatrix from "@/components/Resource/Survey/Field/Matrix.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { SurveyNodeType, surveyMatrixNodePropsSchema } from "survey-engine";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { surveyMatrixNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldMatrix", () => {

@@ -2,15 +2,14 @@
 import ResourceSurveyFieldShell from "@/components/Resource/Survey/Field/Shell.vue";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
-import { h } from "vue";
+
+// A control that takes the shell's description and error as its own, as a field's control does
+const slot = ({ describedBy }: { describedBy?: string }) => h("input", { "aria-describedby": describedBy });
 
 describe("resourceSurveyFieldShell", () => {
   const description = "Pick one";
   const error = "message";
   const title = "title";
-  // A control that takes the shell's description and error as its own, as a field's control does
-  const slot = ({ describedBy }: { describedBy: string | undefined }) =>
-    h("input", { "aria-describedby": describedBy });
   const mountShell = (props: { description?: string; error?: string; isRequired?: boolean } = {}) =>
     mount(ResourceSurveyFieldShell, {
       props: { description: "", error: "", isRequired: false, title, ...props },

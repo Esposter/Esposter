@@ -5,7 +5,7 @@ import SurveyFieldBoolean from "@/components/Resource/Survey/Field/Boolean.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyBooleanDisplayStyle, SurveyNodeType, surveyBooleanNodePropsSchema } from "survey-engine";
+import { SurveyBooleanDisplayStyle, surveyBooleanNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldBoolean", () => {

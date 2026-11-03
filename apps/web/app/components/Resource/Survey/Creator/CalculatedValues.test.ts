@@ -5,7 +5,7 @@ import type { SurveyDocument, SurveyNode } from "survey-engine";
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { checkSurveyDocument, surveyNodeTypeDefinitionMap, surveyRootPropsSchema, SurveyNodeType } from "survey-engine";
+import { checkSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 // A survey of one page holding a question named "a", and the calculated values given by name

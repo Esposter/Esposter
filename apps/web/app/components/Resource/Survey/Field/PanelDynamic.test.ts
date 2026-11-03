@@ -5,8 +5,27 @@ import ResourceSurveyFieldPanelDynamic from "@/components/Resource/Survey/Field/
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { surveyPanelDynamicNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { SurveyNodeType, surveyPanelDynamicNodePropsSchema } from "survey-engine";
 import { assert, describe, expect, test } from "vitest";
+
+const mountPanelDynamic = (node: SurveyPanelDynamicNode, error = "") => {
+  const component = mount(ResourceSurveyFieldPanelDynamic, {
+    props: {
+      error,
+      isDisabled: false,
+      node,
+      "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
+    },
+  });
+  return component;
+};
+
+const findAddButton = (component: ReturnType<typeof mountPanelDynamic>) => {
+  const button = component.findAll("button").find((item) => item.text() === "Add panel");
+  assert.exists(button);
+
+  return button;
+};
 
 describe("resourceSurveyFieldPanelDynamic", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -28,23 +47,6 @@ describe("resourceSurveyFieldPanelDynamic", () => {
       },
       type: SurveyNodeType.PanelDynamic,
     });
-    const mountPanelDynamic = (node: SurveyPanelDynamicNode, error = "") => {
-      const component = mount(ResourceSurveyFieldPanelDynamic, {
-        props: {
-          error,
-          isDisabled: false,
-          node,
-          "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
-        },
-      });
-      return component;
-    };
-    const findAddButton = (component: ReturnType<typeof mountPanelDynamic>) => {
-      const button = component.findAll("button").find((item) => item.text() === "Add panel");
-      assert.exists(button);
-
-      return button;
-    };
 
     test("is a group named by its title", () => {
       expect.hasAssertions();

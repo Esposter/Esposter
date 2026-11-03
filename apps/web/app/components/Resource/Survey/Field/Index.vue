@@ -16,7 +16,7 @@ const { error, isDisabled, node } = defineProps<Props>();
 <template>
   <!-- A field loads on demand, so the question is held in its region until the field arrives -->
   <Suspense>
-    <component :is="SurveyFieldComponentMap[node.type]" v-model="answer" :error :is-disabled="isDisabled" :node />
+    <component :is="SurveyFieldComponentMap[node.type]" v-model="answer" :error :is-disabled :node />
     <template #fallback>
       <UiSkeleton h-10 />
     </template>

@@ -6,8 +6,8 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import {
-  SurveyNodeType,
   surveyDocumentSchema,
+  SurveyNodeType,
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
 } from "survey-engine";
@@ -42,8 +42,23 @@ describe("resourceSurveyCreatorProperties", () => {
     wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { ...question.props, name: "renamed" });
     await wrapper.vm.$nextTick();
 
-    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toMatchObject({
+    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual({
+      choices: [],
+      choicesOrder: "none",
+      description: "",
+      enableIf: "",
+      hasNone: false,
+      hasOther: false,
+      id: "question",
+      isRequired: false,
       name: "renamed",
+      noneText: "",
+      otherText: "",
+      requiredErrorText: "",
+      requiredIf: "",
+      title: "",
+      validators: [],
+      visibleIf: "",
     });
   });
 
@@ -60,8 +75,23 @@ describe("resourceSurveyCreatorProperties", () => {
     wrapper.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { ...question.props, name: "a{b" });
     await wrapper.vm.$nextTick();
 
-    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toMatchObject({
+    expect(takeOne(takeOne(surveyDocument.value.content, 0).props.children, 0).props).toStrictEqual({
+      choices: [],
+      choicesOrder: "none",
+      description: "",
+      enableIf: "",
+      hasNone: false,
+      hasOther: false,
+      id: "question",
+      isRequired: false,
       name: "question",
+      noneText: "",
+      otherText: "",
+      requiredErrorText: "",
+      requiredIf: "",
+      title: "",
+      validators: [],
+      visibleIf: "",
     });
   });
 
@@ -98,7 +128,20 @@ describe("resourceSurveyCreatorProperties", () => {
     expect(rootSchema).toContain('"title"');
     expect(rootSchema).not.toContain('"logo"');
     expect(rootSchema).not.toContain('"calculatedValues"');
-    expect(surveyDocument.value.root.props).toMatchObject({ title: "Renamed survey" });
+    expect(surveyDocument.value.root.props).toStrictEqual({
+      accentColor: "",
+      backgroundColor: "",
+      calculatedValues: [],
+      completedHtml: "",
+      completeText: "",
+      description: "",
+      logo: "",
+      pageNextText: "",
+      pagePrevText: "",
+      showProgressBar: "off",
+      showQuestionNumbers: false,
+      title: "Renamed survey",
+    });
   });
 
   // Each kind's form draws exactly the fields its props schema holds, so a setting cannot appear or vanish without the

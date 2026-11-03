@@ -33,7 +33,7 @@ describe("resourceSurveyCreatorTheme", () => {
       const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 
       const component = await mountSuspended(ResourceSurveyCreatorTheme);
-      component
+      await component
         .findAll("button")
         .find((button) => button.text() === "Clear accent colour")
         ?.trigger("click");

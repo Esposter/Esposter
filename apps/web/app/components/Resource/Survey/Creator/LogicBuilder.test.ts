@@ -5,7 +5,7 @@ import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyNodeTypeDefinitionMap, surveyRootPropsSchema, SurveyNodeType } from "survey-engine";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 // A survey of one page holding the given text questions, each with the condition it shows under

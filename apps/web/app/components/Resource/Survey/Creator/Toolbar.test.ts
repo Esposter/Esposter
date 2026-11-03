@@ -2,14 +2,15 @@
 import ResourceSurveyCreatorToolbar from "@/components/Resource/Survey/Creator/Toolbar.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyDocumentSchema } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorToolbar", () => {
   test("undo and redo are disabled until an edit gives them something to act on", async () => {
     expect.hasAssertions();
 
-    useSurveyCreatorStore().load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
     expect(component.get<HTMLButtonElement>('[aria-label="Undo"]').element.disabled).toBe(true);

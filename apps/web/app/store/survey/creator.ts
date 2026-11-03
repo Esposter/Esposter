@@ -27,8 +27,8 @@ export const useSurveyCreatorStore = defineStore("survey/creator", () => {
     },
   });
   const selectedNode = computed(() => getBlockNode(document.value, selectedPointer.value, surveyNodeChildren));
-  const canRedo = computed(() => history.value.future.length > 0);
-  const canUndo = computed(() => history.value.past.length > 0);
+  const isRedoable = computed(() => history.value.future.length > 0);
+  const isUndoable = computed(() => history.value.past.length > 0);
   // The document and the history an edit leaves land together, so neither is ever ahead of the other
   const commit = (newDocument: SurveyDocument, newHistory: History<PageBuilderHistoryEntry>) => {
     document.value = newDocument;
@@ -40,5 +40,5 @@ export const useSurveyCreatorStore = defineStore("survey/creator", () => {
     selectedId.value = "";
   };
 
-  return { canRedo, canUndo, commit, document, history, isPreview, load, selectedNode, selectedPointer };
+  return { commit, document, history, isPreview, isRedoable, isUndoable, load, selectedNode, selectedPointer };
 });

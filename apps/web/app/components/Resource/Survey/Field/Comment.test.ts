@@ -5,7 +5,7 @@ import SurveyFieldComment from "@/components/Resource/Survey/Field/Comment.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyCommentNodePropsSchema } from "survey-engine";
+import { surveyCommentNodePropsSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldComment", () => {
