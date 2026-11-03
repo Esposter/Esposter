@@ -18,7 +18,7 @@ export const SurveyExpressionBinaryOperatorMap: Readonly<Record<string, SurveyEx
   "==": { operator: SurveyExpressionBinaryOperator.Equal, power: 3 },
   ">": { operator: SurveyExpressionBinaryOperator.Greater, power: 3 },
   ">=": { operator: SurveyExpressionBinaryOperator.GreaterOrEqual, power: 3 },
-  "^": { operator: SurveyExpressionBinaryOperator.Power, power: 6, rightAssociative: true },
+  "^": { operator: SurveyExpressionBinaryOperator.Power, power: 6 },
   allof: { operator: SurveyExpressionBinaryOperator.AllOf, power: 3 },
   and: { operator: SurveyExpressionBinaryOperator.And, power: 2 },
   anyof: { operator: SurveyExpressionBinaryOperator.AnyOf, power: 3 },

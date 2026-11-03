@@ -12,6 +12,8 @@ describe(substringFunction, () => {
     ["is empty when the start is not a number", ["hello", "x"], ""],
     ["is empty with no start", ["hello"], ""],
     ["is empty when the text is not a text", [5, 1], ""],
+    ["reads a list holding one number as that index", ["hello", ["1"], 3], "el"],
+    ["reads a binary number text as its binary value", ["hello", "0b1", 3], "el"],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

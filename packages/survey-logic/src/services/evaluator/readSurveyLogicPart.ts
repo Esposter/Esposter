@@ -1,0 +1,29 @@
+import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
+
+import { getOwnValue } from "#src/services/shared/getOwnValue";
+
+// A key holds no bracket, so a bracket after it is the index that follows
+const PART_REGEX = /^(?<key>[^[]*)(?:\[(?<index>\d+)\])?$/u;
+
+// The value a part of a name reads: a key of the value before it, then an item of the list under that key when the part
+// Ends in an index. A list reads its items by a digit key as well, as `{list.0}` does
+export const readSurveyLogicPart = (container: SurveyLogicValue, part: string): SurveyLogicValue => {
+  const match = PART_REGEX.exec(part);
+  if (match === null) return undefined;
+
+  const { index, key = "" } = match.groups ?? {};
+  const value = readSurveyLogicKey(container, key);
+  if (index === undefined) return value;
+
+  return Array.isArray(value) ? value.at(Number(index)) : undefined;
+};
+
+const DIGITS_ONLY_REGEX = /^\d+$/u;
+
+// A list is read by its digit keys and a record by its own keys. Any other value holds no key
+const readSurveyLogicKey = (container: SurveyLogicValue, key: string): SurveyLogicValue => {
+  if (Array.isArray(container)) return DIGITS_ONLY_REGEX.test(key) ? container.at(Number(key)) : undefined;
+  if (typeof container === "object" && container !== null) return getOwnValue(container, key);
+
+  return undefined;
+};

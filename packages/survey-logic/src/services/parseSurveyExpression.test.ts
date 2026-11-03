@@ -92,12 +92,13 @@ describe(parseSurveyExpression, () => {
     expect(getShapeOf(source)).toBe(shape);
   });
 
-  // A higher power binds tighter, a left-associative chain groups to the left and a right-associative one to the right
+  // A higher power binds tighter, and a chain of one operator groups to the left, the power included
   test.each([
     ["1 + 2 * 3", "add(1, multiply(2, 3))"],
     ["1 * 2 + 3", "add(multiply(1, 2), 3)"],
     ["1 - 2 - 3", "subtract(subtract(1, 2), 3)"],
-    ["2 ^ 3 ^ 2", "power(2, power(3, 2))"],
+    ["2 ^ 3 ^ 2", "power(power(2, 3), 2)"],
+    ["2 ^ 3 * 2", "multiply(power(2, 3), 2)"],
     ["-2 ^ 2", "power(negate(2), 2)"],
     ["2 ^ -2", "power(2, negate(2))"],
     ["not {a} = 1", "not(equal({a}, 1))"],
