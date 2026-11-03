@@ -22,12 +22,13 @@ describe(getNavigationDenylist, () => {
   test("a parameter matches one segment and a single wildcard matches within one", () => {
     expect.hasAssertions();
 
-    const [parameter, wildcard] = getNavigationDenylist(["/users/:id", "/files/*"], "/");
+    // The output is sorted, so the `/files/*` pattern comes before the `/users/:id` one
+    const [wildcard, parameter] = getNavigationDenylist(["/users/:id", "/files/*"], "/");
 
-    expect(parameter?.test("/files/a")).toBe(true);
-    expect(parameter?.test("/files/a/b")).toBe(false);
-    expect(wildcard?.test("/users/1")).toBe(true);
-    expect(wildcard?.test("/users/1/posts")).toBe(false);
+    expect(wildcard?.test("/files/a")).toBe(true);
+    expect(wildcard?.test("/files/a/b")).toBe(false);
+    expect(parameter?.test("/users/1")).toBe(true);
+    expect(parameter?.test("/users/1/posts")).toBe(false);
   });
 
   test("a regular expression character in a route is matched literally", () => {
