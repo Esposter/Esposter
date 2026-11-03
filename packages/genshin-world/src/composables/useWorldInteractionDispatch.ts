@@ -19,6 +19,7 @@ import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldChestsStore } from "#src/store/chests";
+import { useWorldCookingStore } from "#src/store/cooking";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPickupsStore } from "#src/store/pickups";
@@ -37,9 +38,6 @@ export const useWorldInteractionDispatch = ({
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
-  cookingProgress,
-  cookingRecipe,
-  cookingRecipes,
   drawReputationOffer,
   forgeNow,
   frostbearingTreeLevels,
@@ -51,7 +49,6 @@ export const useWorldInteractionDispatch = ({
   grantRewards,
   offerFrostbearingTree,
   openAbyssEntrance,
-  openCookingRecipes,
   openDomain,
   openDomainTreeClaim,
   openFishingPoint,
@@ -74,6 +71,8 @@ export const useWorldInteractionDispatch = ({
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldChestsStore = useWorldChestsStore();
   const { digChestById, openChestById } = worldChestsStore;
+  const worldCookingStore = useWorldCookingStore();
+  const { cookingProgress, cookingRecipe, cookingRecipes, openCookingRecipes } = storeToRefs(worldCookingStore);
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { shrineMarkers } = storeToRefs(worldPuzzlesStore);
   const worldPickupsStore = useWorldPickupsStore();

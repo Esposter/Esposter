@@ -2,19 +2,16 @@ import type { WorldBagUseOptions } from "#src/models/inventory/WorldBagUseOption
 
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { useWorldCookingStore } from "#src/store/cooking";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 
 // Using an entry of the bag: the entry's use is read off the bag, the dishes and the recipes, and what it gives back is
 // Written into the bag, the wallet and the cooking progress. A use the entry has none of changes nothing
-export const useWorldBagUse = ({
-  cookingProgress,
-  dishUseMap,
-  getMemberMaxHealth,
-  instructionRecipeMap,
-  kitContext,
-}: WorldBagUseOptions) => {
+export const useWorldBagUse = ({ dishUseMap, getMemberMaxHealth, kitContext }: WorldBagUseOptions) => {
+  const worldCookingStore = useWorldCookingStore();
+  const { cookingProgress, instructionRecipeMap } = storeToRefs(worldCookingStore);
   const worldPartyStore = useWorldPartyStore();
   const { party } = worldPartyStore;
   const worldSessionStore = useWorldSessionStore();

@@ -22,6 +22,7 @@ import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/se
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldChestsStore } from "#src/store/chests";
+import { useWorldCookingStore } from "#src/store/cooking";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPickupsStore } from "#src/store/pickups";
@@ -37,7 +38,6 @@ import { computed } from "vue";
 export const useWorldInteractables = ({
   blacksmithPlace,
   characterBody,
-  cookingStovePlace,
   craftingBenchPlace,
   domainArena,
   fishingPointPlaces,
@@ -56,6 +56,7 @@ export const useWorldInteractables = ({
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldChestsStore = useWorldChestsStore();
+  const worldCookingStore = useWorldCookingStore();
   const { chestInteractables } = storeToRefs(worldChestsStore);
   const worldPickupsStore = useWorldPickupsStore();
   const { pickUpInteractables } = storeToRefs(worldPickupsStore);
@@ -152,7 +153,7 @@ export const useWorldInteractables = ({
         getGroundHeight,
       ),
       ...computeCookingStoveInteractables(
-        cookingStovePlace.value,
+        worldCookingStore.cookingStovePlace,
         {
           cooking: worldSessionStore.gameText[GameTextKey.CookingTitle],
           processing: worldSessionStore.gameText[GameTextKey.ProcessingStart],

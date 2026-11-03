@@ -61,7 +61,6 @@ import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldConstellations } from "#src/composables/useWorldConstellations";
-import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldDevHandles } from "#src/composables/useWorldDevHandles";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldDoings } from "#src/composables/useWorldDoings";
@@ -117,6 +116,7 @@ import { useWorldAchievementsStore } from "#src/store/achievements";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldChestsStore } from "#src/store/chests";
+import { useWorldCookingStore } from "#src/store/cooking";
 import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
@@ -296,20 +296,33 @@ const { start: startAchievements, stop: stopAchievements } = worldAchievementsSt
 const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);
 startAchievements(savedState.achievementProgressMap);
 onUnmounted(stopAchievements);
+// The cooking recipes, the processing recipes and the cooks' talents, read as the world starts, with the progress the save
+// Holds. They start before the save watches them, as the chests do
+const worldCookingStore = useWorldCookingStore();
+const { start: startCooking, stop: stopCooking } = worldCookingStore;
+const {
+  cookingProgress,
+  cookingRecipe,
+  cookingTalents,
+  instructionRecipeMap,
+  openCookingRecipes,
+  processingJobs,
+  processingRecipes,
+} = storeToRefs(worldCookingStore);
+startCooking({ cookingProgress: savedState.cookingProgress, processingJobs: savedState.processingJobs });
+onUnmounted(stopCooking);
 const {
   applyDestruction,
   bossDefeatMap,
   chooseTravelerBirthday,
   clearedCamps,
   clearedDomainIds,
-  cookingProgress,
   craftedCountMap,
   craftingProgress,
   enemyRespawnMap,
   forgetBossDefeat,
   frostbearingTreeProgress,
   namecardItemId,
-  processingJobs,
   queuedTipIds,
   setBossDefeatAt,
   setEnemyRespawnAt,
@@ -553,15 +566,6 @@ const { dishUseMap } = useWorldDishes();
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
 const {
-  cookingRecipe,
-  cookingRecipes,
-  cookingStovePlace,
-  cookingTalents,
-  instructionRecipeMap,
-  openCookingRecipes,
-  processingRecipes,
-} = useWorldCooking();
-const {
   blacksmithPlace,
   forgeAmount,
   forgeDefinitions,
@@ -588,13 +592,7 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards();
 // Using an entry of the bag, which the bag's screen offers
-const { useBagEntry } = useWorldBagUse({
-  cookingProgress,
-  dishUseMap,
-  getMemberMaxHealth,
-  instructionRecipeMap,
-  kitContext,
-});
+const { useBagEntry } = useWorldBagUse({ dishUseMap, getMemberMaxHealth, kitContext });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // The card game's EXP and the games whose one-time reward is paid, which a won week game's duel pays into
@@ -783,9 +781,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
-  cookingProgress,
-  cookingRecipe,
-  cookingRecipes,
   drawReputationOffer,
   forgeNow,
   frostbearingTreeLevels,
@@ -797,7 +792,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   grantRewards,
   offerFrostbearingTree,
   openAbyssEntrance,
-  openCookingRecipes,
   openDomain,
   openDomainTreeClaim,
   openFishingPoint,
@@ -818,7 +812,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
 const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
   blacksmithPlace,
   characterBody,
-  cookingStovePlace,
   craftingBenchPlace,
   domainArena,
   fishingPointPlaces,

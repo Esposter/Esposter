@@ -1,5 +1,3 @@
-import type { CookingProgress } from "#src/models/cooking/CookingProgress";
-import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { HomeRealmToggleOptions } from "#src/models/home/HomeRealmToggleOptions";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
@@ -18,9 +16,6 @@ export interface WorldInteractionDispatchOptions {
   characterBody: Object3D;
   checkIsFishingPoint: (id: string) => boolean;
   claimKatheryneBonus: () => void;
-  cookingProgress: Readonly<Ref<CookingProgress>>;
-  cookingRecipe: Ref<CookingRecipe | undefined>;
-  cookingRecipes: Readonly<Ref<readonly CookingRecipe[]>>;
   drawReputationOffer: () => void;
   forgeNow: Ref<Temporal.Instant>;
   frostbearingTreeLevels: readonly OfferingLevel[];
@@ -32,7 +27,6 @@ export interface WorldInteractionDispatchOptions {
   grantRewards: (rewards: QuestRewardItem[]) => void;
   offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
   openAbyssEntrance: () => void;
-  openCookingRecipes: Ref<CookingRecipe[]>;
   openDomain: (landmark: DomainEntranceLandmark) => void;
   openDomainTreeClaim: (now: Temporal.Instant) => void;
   openFishingPoint: (id: string) => void;

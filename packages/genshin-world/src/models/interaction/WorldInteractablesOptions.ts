@@ -14,7 +14,6 @@ import type { Ref } from "vue";
 export interface WorldInteractablesOptions {
   blacksmithPlace: Readonly<Ref<SceneGroupPlace | undefined>>;
   characterBody: Object3D;
-  cookingStovePlace: Readonly<Ref<SceneGroupPlace | undefined>>;
   craftingBenchPlace: CraftingBenchPlace;
   domainArena: Readonly<Ref<undefined | { center: { x: number; z: number } }>>;
   fishingPointPlaces: Readonly<Ref<FishingPointPlace[]>>;
