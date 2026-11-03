@@ -106,17 +106,18 @@ Never ported: **`ofetch` options on the links** (its fetch options and header pi
 
 ## Key files
 
-| File                                                                          | Role                                                                        |
-| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `packages/trpc-nuxt-module/src/module.ts`                                     | The module — options, generated handlers, the hooks' type template, imports |
-| `packages/trpc-nuxt-module/src/runtime/server/createTRPCEventHandler.ts`      | The HTTP handler over tRPC's fetch adapter                                  |
-| `packages/trpc-nuxt-module/src/runtime/server/createTRPCWebSocketHandler.ts`  | The WebSocket handler over tRPC's `applyWSSHandler` and crossws             |
-| `packages/trpc-nuxt-module/src/runtime/server/models/PeerWebSocketAdapter.ts` | A crossws peer presented as the socket tRPC's handler drives                |
-| `packages/trpc-nuxt-module/src/runtime/client/createTRPCNuxtClient.ts`        | The client proxy and the composables it decorates each procedure with       |
-| `packages/trpc-nuxt-module/src/runtime/client/services/getLinkFetch.ts`       | `fetchWithEvent` during server rendering, the global `fetch` in the browser |
-| `apps/web/configuration/modules.ts`                                           | The app's registration — router, context, endpoints and keep-alive          |
-| `apps/web/app/plugins/trpc.ts`                                                | The app's link chain around the module's client                             |
-| `apps/web/server/plugins/webSocketConnection.ts`                              | The connect and disconnect callers on the WebSocket hooks                   |
+| File                                                                            | Role                                                                                            |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `packages/trpc-nuxt-module/src/module.ts`                                       | The module — options, generated handlers, the hooks' type template, imports                     |
+| `packages/trpc-nuxt-module/src/runtime/server/createTRPCEventHandler.ts`        | The HTTP handler over tRPC's fetch adapter                                                      |
+| `packages/trpc-nuxt-module/src/runtime/server/createTRPCWebSocketHandler.ts`    | The WebSocket handler over tRPC's `applyWSSHandler` and crossws                                 |
+| `packages/trpc-nuxt-module/src/runtime/server/models/PeerWebSocketAdapter.ts`   | A crossws peer presented as the socket tRPC's handler drives                                    |
+| `packages/trpc-nuxt-module/src/runtime/server/models/WebSocketClientAdapter.ts` | The `ws.WebSocket` members tRPC drives over a transport, which the peer and msw adapters extend |
+| `packages/trpc-nuxt-module/src/runtime/client/createTRPCNuxtClient.ts`          | The client proxy and the composables it decorates each procedure with                           |
+| `packages/trpc-nuxt-module/src/runtime/client/services/getLinkFetch.ts`         | `fetchWithEvent` during server rendering, the global `fetch` in the browser                     |
+| `apps/web/configuration/modules.ts`                                             | The app's registration — router, context, endpoints and keep-alive                              |
+| `apps/web/app/plugins/trpc.ts`                                                  | The app's link chain around the module's client                                                 |
+| `apps/web/server/plugins/webSocketConnection.ts`                                | The connect and disconnect callers on the WebSocket hooks                                       |
 
 ## Sources
 

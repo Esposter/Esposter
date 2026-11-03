@@ -2,7 +2,7 @@
 import { createTRPCNuxtClient } from "#src/runtime/client/createTRPCNuxtClient";
 import { getQueryKey } from "#src/runtime/client/getQueryKey";
 import { SubscriptionStatus } from "#src/runtime/client/models/SubscriptionStatus";
-import { unstable_localLink } from "@trpc/client";
+import { localLink } from "@trpc/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { useNuxtData } from "nuxt/app";
 import { describe, expect, test, vi } from "vitest";
@@ -29,7 +29,7 @@ describe(createTRPCNuxtClient, () => {
     read: t.procedure.input(z.number()).query(({ input }) => read(input)),
   });
   const client = createTRPCNuxtClient<typeof router>({
-    links: [unstable_localLink({ createContext: () => Promise.resolve({}), router })],
+    links: [localLink({ createContext: () => Promise.resolve({}), router })],
   });
 
   test("#239 fetches a changed input under its own key", async () => {

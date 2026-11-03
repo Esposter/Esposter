@@ -3,6 +3,7 @@ import type { SubscriptionRegistration } from "#src/models/SubscriptionRegistrat
 import type { TRPCMsw } from "#src/models/TRPCMsw";
 import type { TRPCMswOptions } from "#src/models/TRPCMswOptions";
 import type { AnyTRPCRouter, TRPCProcedureType } from "@trpc/server";
+import type { WSSHandlerOptions } from "@trpc/server/adapters/ws";
 import type { HttpHandler, WebSocketHandler } from "msw";
 
 import { WEBSOCKET_ROUTER_REPLACED_CLOSE_CODE } from "#src/constants";
@@ -59,7 +60,9 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
     applyWSSHandler({
       createContext,
       router: createMockRouter(t, new Map(procedureTypes), registrations, router),
-      wss: webSocketServer,
+      // @TODO: no upstream issue — drop the cast once tRPC types `wss` by the two members `applyWSSHandler` reads
+      // TRPC types `wss` as the whole `ws.WebSocketServer`, and reads only `on` and `clients` of it
+      wss: webSocketServer as WSSHandlerOptions<AnyTRPCRouter>["wss"],
     });
     return webSocketServer;
   };
@@ -77,7 +80,7 @@ export const createTRPCMsw = <TRouter extends AnyTRPCRouter, TContext extends ob
         const request = new IncomingMessage(new Socket());
         request.url = `${client.url.pathname}${client.url.search}`;
         webSocketServer ??= createWebSocketServer();
-        webSocketServer.addConnection(new MswWebSocketAdapter(client), request);
+        webSocketServer.emit("connection", new MswWebSocketAdapter(client), request);
       }),
     );
 

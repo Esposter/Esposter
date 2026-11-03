@@ -1,6 +1,7 @@
 import type { TRPCWebSocketHandler } from "#src/runtime/server/models/TRPCWebSocketHandler";
 import type { TRPCWebSocketHandlerOptions } from "#src/runtime/server/models/TRPCWebSocketHandlerOptions";
 import type { AnyTRPCRouter, inferRouterContext } from "@trpc/server";
+import type { CreateWSSContextFnOptions, WSSHandlerOptions } from "@trpc/server/adapters/ws";
 
 import { PeerWebSocketAdapter } from "#src/runtime/server/models/PeerWebSocketAdapter";
 import { WebSocketServerAdapter } from "#src/runtime/server/models/WebSocketServerAdapter";
@@ -22,7 +23,13 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
   ...options
 }: TRPCWebSocketHandlerOptions<TRouter>): TRPCWebSocketHandler => {
   const webSocketServer = new WebSocketServerAdapter<PeerWebSocketAdapter>();
-  const { broadcastReconnectNotification } = applyWSSHandler({ ...options, createContext, wss: webSocketServer });
+  const { broadcastReconnectNotification } = applyWSSHandler({
+    ...options,
+    createContext,
+    // @TODO: no upstream issue — drop the cast once tRPC types `wss` by the two members `applyWSSHandler` reads
+    // TRPC types `wss` as the whole `ws.WebSocketServer`, and reads only `on` and `clients` of it
+    wss: webSocketServer as WSSHandlerOptions<TRouter>["wss"],
+  });
   const peerConnections = new Map<string, PeerConnection<inferRouterContext<TRouter>>>();
   return {
     broadcastReconnectNotification,
@@ -31,7 +38,7 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         const peerConnection = peerConnections.get(peer.id);
         if (!peerConnection) return;
         peerConnections.delete(peer.id);
-        peerConnection.client.receiveClose(code, reason);
+        PeerWebSocketAdapter.receiveClose(peerConnection.client, code, reason);
         // A context that never built was never opened, so this close has no onOpen to answer. Its failure is logged
         // When the peer opened
         await peerConnection.context.match(
@@ -40,10 +47,12 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
         );
       },
       error: (peer, error) => {
-        peerConnections.get(peer.id)?.client.receiveError(error);
+        const peerConnection = peerConnections.get(peer.id);
+        if (peerConnection) PeerWebSocketAdapter.receiveError(peerConnection.client, error);
       },
       message: (peer, message) => {
-        peerConnections.get(peer.id)?.client.receiveMessage(message.text());
+        const peerConnection = peerConnections.get(peer.id);
+        if (peerConnection) PeerWebSocketAdapter.receiveMessage(peerConnection.client, message.text());
       },
       open: async (peer) => {
         const client = new PeerWebSocketAdapter(peer);
@@ -64,12 +73,14 @@ export const createTRPCWebSocketHandler = <TRouter extends AnyTRPCRouter>({
                 url: new URL(peer.request.url),
               },
               req: request,
-              res: client,
+              // The peer presented as the socket tRPC hands its context. The compiler cannot see that the callbacks
+              // Read only the members `PeerWebSocketAdapter` declares
+              res: client as CreateWSSContextFnOptions["res"],
             }),
           ),
         );
         peerConnections.set(peer.id, { client, context });
-        webSocketServer.addConnection(client, request);
+        webSocketServer.emit("connection", client, request);
         // `crossws` never awaits this hook, so a failure is logged here rather than thrown. A context that fails is
         // Answered and closed by tRPC on the same client, and takes no onOpen with it
         await context
