@@ -41,10 +41,10 @@ const { gridHeight, startGesture, startResize, tiles } = useGridLayout(root, () 
   items: items.value,
   rowHeight: 40,
   spacing: { gap: 10, padding: 10 },
-  // A release replaces the cells it changed and drops the ids it removed
-  onCommit: ({ changes, removed }) => {
+  // A release replaces the cells it changed
+  onCommit: (changes) => {
     const changedIds = new Set(changes.map(({ id }) => id));
-    items.value = [...items.value.filter(({ id }) => !changedIds.has(id) && !removed.includes(id)), ...changes];
+    items.value = [...items.value.filter(({ id }) => !changedIds.has(id)), ...changes];
   },
 }));
 </script>
@@ -77,7 +77,6 @@ Each tile supplies these values:
 
 | Export              | Kind       | Purpose                                                                                                    |
 | ------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed or added, and the ids it removed            |
 | `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                    |
 | `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the drag placeholder, the height and the press handlers |
 | `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter           |

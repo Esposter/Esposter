@@ -4,14 +4,10 @@ import type { GridGesture } from "#src/models/GridGesture";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
 import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
-import type { GridPoint } from "#src/models/GridPoint";
 import type { GridTile } from "#src/models/GridTile";
-import type { MountedGrid } from "#src/models/MountedGrid";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
 import { checkIsSameCell } from "#src/placement/checkIsSameCell";
-import { compactLayout } from "#src/placement/compactLayout";
-import { correctBounds } from "#src/placement/correctBounds";
 import { fitLayout } from "#src/placement/fitLayout";
 import { getCellPosition } from "#src/placement/getCellPosition";
 import { getCellSize } from "#src/placement/getCellSize";
@@ -19,10 +15,7 @@ import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
 import { placeMove } from "#src/placement/placeMove";
-import { findGridAt } from "#src/services/findGridAt";
-import { findGridRoot } from "#src/services/findGridRoot";
-import { mountedGrids } from "#src/services/mountedGrids";
-import { checkIsNestedControl, takeOne } from "@esposter/shared";
+import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
@@ -101,9 +94,7 @@ export const useGridLayout = <T extends GridItem>(
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
     if (gesture.value && gesture.value.pointerId !== event.pointerId) return;
-    if (!(event.currentTarget instanceof Element) || !(event.target instanceof Element)) return;
-    // A press on a nested grid's item belongs to that grid, so the grid around it takes no gesture from it
-    if (findGridRoot(event.target) !== root.value) return;
+    if (!(event.currentTarget instanceof Element)) return;
 
     gesture.value = {
       element: event.currentTarget,
@@ -156,54 +147,21 @@ export const useGridLayout = <T extends GridItem>(
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
-  // A dropped item lands with its top-left under the point, within the columns, and pushes and compacts as a move here does
-  const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint): boolean => {
-    const element = root.value;
-    if (!element || !getOptions().isEditable) return false;
-
-    const { left, top } = element.getBoundingClientRect();
-    const { padding } = getOptions().spacing;
-    const offset = { x: point.x - left - padding, y: point.y - top - padding };
-    const columnIndex = Math.floor(offset.x / columnPitch.value);
-    const rowIndex = Math.floor(offset.y / rowPitch.value);
-    const y = Math.max(0, rowIndex);
-    const cell = takeOne(
-      correctBounds([{ h: item.h, id: item.id, w: item.w, x: columnIndex, y }], getOptions().columnNumber),
-    );
-    const landedLayout = placeMove([...layout.value, cell], cell);
-    const changes = getChangedCells(landedLayout);
-    getOptions().onCommit({ changes, removed: [] });
-    return true;
-  };
-  const self: MountedGrid = { accept };
-  // A release over this grid writes what the drag previewed. A drag released over another grid leaves this one and lands there,
-  // And a drag released over no grid is dropped, so the item stays where it was
+  // A release writes what the drag previewed, once, and a release that changed no cell writes nothing
   const handlePointerUp = (event: PointerEvent) => {
     const activeGesture = gesture.value;
     if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
 
-    const point = { x: event.clientX, y: event.clientY };
-    const dropGrid = draggedGesture.value ? findGridAt(point, activeGesture.element) : self;
     const changes = getChangedCells(preview.value ?? []);
     resetGesture();
-    if (dropGrid === self) {
-      if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
-      return;
-    }
-    if (!dropGrid) return;
-    // The source lets go of the item only once the grid under the pointer has taken it, so a refused drop stays in its source
-    if (!dropGrid.accept(activeGesture.origin, point)) return;
-
-    const remainingItems = layout.value.filter((item) => item.id !== activeGesture.origin.id);
-    const remainingLayout = compactLayout(remainingItems);
-    getOptions().onCommit({ changes: getChangedCells(remainingLayout), removed: [activeGesture.origin.id] });
+    if (changes.length > 0) getOptions().onCommit(changes);
   };
   const handlePointerCancel = (event: PointerEvent) => {
     if (event.pointerId === gesture.value?.pointerId) resetGesture();
   };
 
-  // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount attached
-  const attached = shallowRef<{ controller: AbortController; element: HTMLElement; observer: ResizeObserver }>();
+  // The observer and the listeners' controller are held from mount, so unmount detaches what mount attached
+  const attached = shallowRef<{ controller: AbortController; observer: ResizeObserver }>();
   onMounted(() => {
     const element = root.value;
     if (!element) return;
@@ -217,15 +175,13 @@ export const useGridLayout = <T extends GridItem>(
     element.addEventListener("pointermove", handlePointerMove, { signal });
     element.addEventListener("pointerup", handlePointerUp, { signal });
     element.addEventListener("pointercancel", handlePointerCancel, { signal });
-    mountedGrids.set(element, self);
-    attached.value = { controller, element, observer };
+    attached.value = { controller, observer };
   });
   onUnmounted(() => {
     if (!attached.value) return;
 
-    const { controller, element, observer } = attached.value;
+    const { controller, observer } = attached.value;
     observer.disconnect();
-    mountedGrids.delete(element);
     controller.abort();
   });
 

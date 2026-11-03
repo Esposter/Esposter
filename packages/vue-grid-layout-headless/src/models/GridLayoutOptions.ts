@@ -1,4 +1,3 @@
-import type { GridCommit } from "#src/models/GridCommit";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridSpacing } from "#src/models/GridSpacing";
 
@@ -10,8 +9,8 @@ export interface GridLayoutOptions<T extends GridItem = GridItem> {
   dragStartDistance: number;
   isEditable: boolean;
   items: T[];
-  // Receives what one gesture changed, once, when its pointer is released
-  onCommit: (commit: GridCommit) => void;
+  // Receives the cells one gesture changed, once, when its pointer is released
+  onCommit: (changes: GridItem[]) => void;
   rowHeight: number;
   spacing: GridSpacing;
 }
