@@ -23,7 +23,8 @@
   "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
-    "#src/*": "./src/*.ts"
+    "#src/*": "./src/*.ts",
+    "#src/*.json": "./src/*.json"
   },
   "exports": {
     ".": {

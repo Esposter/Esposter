@@ -23,9 +23,27 @@ An expression over a record of answers SHALL evaluate to the value SurveyJS's ex
 - **THEN** the value is true
 - **AND** the expression `{age} > 5` evaluates to false
 
+#### Scenario: An unanswered question is unequal to a number and equal to the empty text
+
+- **GIVEN** an answer record with no entry for "age"
+- **WHEN** the expression `{age} != 5` is evaluated
+- **THEN** the value is true
+- **AND** the expression `{age} = ''` evaluates to true
+
+#### Scenario: A nested answer is read by its path
+
+- **GIVEN** the answers `{ "matrix": { "row1": { "col1": 7 } } }`
+- **WHEN** the expression `{matrix.row1.col1} = 7` is evaluated
+- **THEN** the value is true
+
+#### Scenario: A chain of powers groups to the left
+
+- **WHEN** the expression `2 ^ 3 ^ 2` is evaluated
+- **THEN** the value is 64
+
 ### Requirement: A malformed expression is refused with the position of the fault
 
-Checking an expression that is not in the language, or that calls a function the language lacks, SHALL return an error holding a message and the character position of the fault, and SHALL return no tree.
+Checking an expression that is not in the language, that calls a function the language lacks, or that calls an array function's filter form, which the package does not support, SHALL return an error holding a message and the character position of the fault, and SHALL return no tree.
 
 #### Scenario: An unclosed parenthesis
 
@@ -40,3 +58,10 @@ Checking an expression that is not in the language, or that calls a function the
 - **WHEN** the text is checked
 - **THEN** the check is refused
 - **AND** the error names the function
+
+#### Scenario: A filter form is refused at its call
+
+- **GIVEN** the text `1 + avgInArray({matrix}, 'price', '{price} > 1')`
+- **WHEN** the text is checked
+- **THEN** the check is refused
+- **AND** the error names the function and the position its call starts at, which is 4

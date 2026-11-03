@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. Its answers match SurveyJS's recorded answers for every expression the survey uses.
+It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. Its answers match SurveyJS's recorded answers, except for the deliberate deviations its design lists.
 
 Design notes live in [the logic change](https://github.com/Esposter/Esposter/tree/main/openspec/changes/resource-survey-form-engine-logic/design.md).
 
@@ -16,36 +16,53 @@ Design notes live in [the logic change](https://github.com/Esposter/Esposter/tre
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                                                                                        | Kind     | Purpose                                                                                                       |
-| :-------------------------------------------------------------------------------------------- | :------- | :------------------------------------------------------------------------------------------------------------ |
-| `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at |
-| `tokenizeSurveyExpression`                                                                    | function | Reads an expression's source into the tokens the parser reads                                                 |
-| `collectSurveyExpressionReferences`                                                           | function | The distinct question names a tree reads, in the order each is first read                                     |
-| `SurveyExpressionNode`                                                                        | type     | A parsed expression, each node told apart by its `type`                                                       |
-| `SurveyExpressionNodeType`, `SurveyExpressionBinaryOperator`, `SurveyExpressionUnaryOperator` | enum     | The node types and the operators a tree holds                                                                 |
-| `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                             |
-| `SurveyLogicError`                                                                            | type     | The message and the character position a parse is refused for                                                 |
+| Export                                                                                        | Kind     | Purpose                                                                                                                                              |
+| :-------------------------------------------------------------------------------------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at                                        |
+| `tokenizeSurveyExpression`                                                                    | function | Reads an expression's source into the tokens the parser reads                                                                                        |
+| `collectSurveyExpressionReferences`                                                           | function | The distinct question names a tree reads, in the order each is first read                                                                            |
+| `runSurveyExpression`                                                                         | function | Parses an expression and evaluates it over a survey's answers at the context's clock, or returns the parse's fault                                   |
+| `checkSurveyExpression`                                                                       | function | Refuses an expression that does not parse, calls a function the package lacks, or calls an array function's filter form, naming the first such fault |
+| `SurveyExpressionNode`                                                                        | type     | A parsed expression, each node told apart by its `type`                                                                                              |
+| `SurveyExpressionNodeType`, `SurveyExpressionBinaryOperator`, `SurveyExpressionUnaryOperator` | enum     | The node types and the operators a tree holds                                                                                                        |
+| `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                                                                    |
+| `SurveyLogicError`                                                                            | type     | The message and the character position a parse is refused for                                                                                        |
 
 ## <a name="functions">🧮 Functions</a>
 
 Each function is called by its name, written in any case. A call to a name no function has is refused when the expression is checked.
 
-| Function       | Returns                                                                            |
-| :------------- | :--------------------------------------------------------------------------------- |
-| `avg`          | The average of the values passed, arrays flattened                                 |
-| `avgInArray`   | The average of a field over the items of an array value                            |
-| `count`        | How many values are passed, arrays flattened                                       |
-| `countInArray` | How many items of an array value hold a value in a field                           |
-| `iif`          | The second value when the condition is truthy, otherwise the third                 |
-| `max`          | The largest of the values passed, arrays flattened                                 |
-| `maxInArray`   | The largest value of a field over an array's items, or another field of that item  |
-| `min`          | The smallest of the values passed, arrays flattened                                |
-| `minInArray`   | The smallest value of a field over an array's items, or another field of that item |
-| `substring`    | The part of a text from a start index up to an end index                           |
-| `sum`          | The sum of the values passed, arrays flattened                                     |
-| `sumInArray`   | The sum of a field over the items of an array value                                |
+| Function       | Returns                                                                                      |
+| :------------- | :------------------------------------------------------------------------------------------- |
+| `age`          | The whole years from a birthdate to the clock, or the whole months when the interval says so |
+| `avg`          | The average of the values passed, arrays flattened                                           |
+| `avgInArray`   | The average of a field over the items of an array value                                      |
+| `count`        | How many values are passed, arrays flattened                                                 |
+| `countInArray` | How many items of an array value hold a value in a field                                     |
+| `currentDate`  | The clock's moment, as a date and time                                                       |
+| `currentYear`  | The year of the clock                                                                        |
+| `dateAdd`      | A date moved by an amount of an interval, in days by default                                 |
+| `dateDiff`     | The amount of an interval between two dates, counted in exact time                           |
+| `day`          | The day of the month of a date, or of the clock's day when the date is empty                 |
+| `diffDays`     | The calendar days between two dates                                                          |
+| `getDate`      | A value read as a date and written back in the form a date answer takes                      |
+| `getYear`      | The year of a date                                                                           |
+| `iif`          | The second value when the condition is truthy, otherwise the third                           |
+| `max`          | The largest of the values passed, arrays flattened                                           |
+| `maxInArray`   | The largest value of a field over an array's items, or another field of that item            |
+| `min`          | The smallest of the values passed, arrays flattened                                          |
+| `minInArray`   | The smallest value of a field over an array's items, or another field of that item           |
+| `month`        | The month of a date, from one for January, or of the clock's day when the date is empty      |
+| `round`        | The number rounded to a number of decimal places, or to a whole number when none is given    |
+| `substring`    | The part of a text from a start index up to an end index                                     |
+| `sum`          | The sum of the values passed, arrays flattened                                               |
+| `sumInArray`   | The sum of a field over the items of an array value                                          |
+| `today`        | The clock's day at midnight, moved by a number of days when one is given                     |
+| `trunc`        | The number cut to a number of decimal places, or to its whole part when none is given        |
+| `weekday`      | The day of the week of a date, from zero for Sunday                                          |
+| `year`         | The year of a date, or of the clock's day when the date is empty                             |
 
-The `...InArray` functions take a filter as a last argument, a condition over each item's fields. A function receives its arguments as values, not as conditions to evaluate per item, so a call that passes a filter reads as empty.
+The `...InArray` functions take a field and, optionally, another field of the item to return. A filter, a condition over each item's fields as a last argument, is not supported: `checkSurveyExpression` refuses the call, and `runSurveyExpression` answers empty for it.
 
 ## <a name="license">⚖️ License</a>
 
