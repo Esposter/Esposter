@@ -2304,6 +2304,68 @@
   },
   { "expression": "avg('', 2)", "answers": {}, "value": { "type": "number", "value": 1 } },
   {
+    "expression": "avg('', 5, 5)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": 18.333333333333332 }
+  },
+  { "expression": "avg('', 5, 5)", "answers": {}, "value": { "type": "number", "value": 18.333333333333332 } },
+  {
+    "expression": "avg(5, '', 5)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": 18.333333333333332 }
+  },
+  { "expression": "avg(5, '', 5)", "answers": {}, "value": { "type": "number", "value": 18.333333333333332 } },
+  {
+    "expression": "avg('a', 4)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": "NaN" }
+  },
+  { "expression": "avg('a', 4)", "answers": {}, "value": { "type": "number", "value": "NaN" } },
+  {
+    "expression": "avg('', '')",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": 0 }
+  },
+  { "expression": "avg('', '')", "answers": {}, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "avg('2', 4)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": 3 }
+  },
+  { "expression": "avg('2', 4)", "answers": {}, "value": { "type": "number", "value": 3 } },
+  {
+    "expression": "avg('')",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "number", "value": 0 }
+  },
+  { "expression": "avg('')", "answers": {}, "value": { "type": "number", "value": 0 } },
+  { "expression": "avg({x}, 4)", "answers": { "x": null }, "value": { "type": "number", "value": 4 } },
+  { "expression": "avg(4, {x})", "answers": { "x": null }, "value": { "type": "number", "value": 4 } },
+  {
+    "expression": "avg({x}, 4, 6)",
+    "answers": { "x": "" },
+    "value": { "type": "number", "value": 15.333333333333334 }
+  },
+  { "expression": "avg({x}, 4, 6)", "answers": {}, "value": { "type": "number", "value": 5 } },
+  {
     "expression": "avgInArray({m}, 'p')",
     "answers": {
       "a": 5,
@@ -2771,6 +2833,25 @@
     "value": { "type": "string", "value": "0a1" }
   },
   { "expression": "sum('a', 1)", "answers": {}, "value": { "type": "string", "value": "0a1" } },
+  {
+    "expression": "sum('', 5, 5)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "string", "value": "055" }
+  },
+  { "expression": "sum('', 5, 5)", "answers": {}, "value": { "type": "string", "value": "055" } },
+  {
+    "expression": "sum('a', 4)",
+    "answers": {
+      "a": 5,
+      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
+    },
+    "value": { "type": "string", "value": "0a4" }
+  },
+  { "expression": "sum('a', 4)", "answers": {}, "value": { "type": "string", "value": "0a4" } },
+  { "expression": "sum({x}, 4)", "answers": { "x": null }, "value": { "type": "number", "value": 4 } },
   {
     "expression": "sum(1.5, 'a')",
     "answers": {

@@ -7,7 +7,7 @@ describe(avgFunction, () => {
     ["averages the values passed", [1, 2], 1.5],
     ["averages the values of an array among them", [[2, 4]], 3],
     ["averages decimals without the float error", [0.1, 0.2], 0.15],
-    ["reads an empty text as zero in the total", ["", 5], 2.5],
+    ["joins an empty text to the total as text and counts it in the divisor", ["", 5], 2.5],
     ["reads a text that is not a number as not a number", ["abc"], Number.NaN],
     ["averages nothing to zero", [], 0],
   ])("%s", (_title, args, expected) => {
