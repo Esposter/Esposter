@@ -1,6 +1,6 @@
 # The features other features read, as stores: design
 
-The measurements are in [the first change's investigation](../genshin-session-store/investigation.md), whose fan-out table orders the slices; the pattern, the guidelines and the definition of done are in [its design](../genshin-session-store/design.md) and are not restated here.
+The measurements are in [the first change's investigation](../../genshin-session-store/investigation.md), whose fan-out table orders the slices; the pattern, the guidelines and the definition of done are in [its design](../../genshin-session-store/design.md) and are not restated here.
 
 ## The decision
 
