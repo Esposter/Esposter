@@ -30,7 +30,7 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MockTableClient, MockTableDatabase } from "azure-mock";
 import {
   createSurveyDocument,
-  SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
   surveyDocumentSchema,
   SurveyNodeType,
@@ -842,7 +842,7 @@ describe("surveyRouter", () => {
       const ratingErrorMessage = new InvalidOperationError(
         Operation.Create,
         AzureEntityType.SurveyResponse,
-        `Answer to "rating": ${SURVEY_INVALID_ANSWER_MESSAGE}`,
+        `Answer to "rating": ${SURVEY_OUT_OF_RANGE_MESSAGE}`,
       ).message;
 
       await expect(
