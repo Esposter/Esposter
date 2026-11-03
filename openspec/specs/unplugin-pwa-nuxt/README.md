@@ -59,15 +59,15 @@ The [audit](upstream/design.md) states targets R1 to R20. Where the build took a
 
 ## Key files
 
-| File                                                                 | Role                                                                                                        |
-| :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------- |
-| `packages/unplugin-pwa-nuxt/src/module.ts`                           | The module: head link, client plugin, type template, and the hooks that build the worker                    |
-| `packages/unplugin-pwa-nuxt/src/services/configurePwaOptions.ts`     | The engine's `configurePWAOptions`: output folder, immutable assets, working directory, the denylist plugin |
-| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`      | The precache globs, the manifest transform, the `generateSW` fallback and denylist, and the engine's build  |
-| `packages/unplugin-pwa-nuxt/src/services/getNavigationDenylist.ts`   | Nitro's routes as anchored patterns                                                                         |
-| `packages/unplugin-pwa-nuxt/src/services/createManifestTransform.ts` | Pages keyed by route, app manifests without a revision                                                      |
-| `packages/unplugin-pwa-nuxt/src/runtime/createPwaPlugin.ts`          | The client plugin: registration, the update check and `$pwa`                                                |
-| `packages/unplugin-pwa-nuxt/navigation-denylist.d.ts`                | The types of the denylist's virtual module                                                                  |
-| `apps/web/configuration/pwa.ts`                                      | The app's options: manifest, `buildSW` source, prompt registration and the hourly check                     |
+| File                                                                 | Role                                                                                                                                                   |
+| :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/unplugin-pwa-nuxt/src/module.ts`                           | The module: head link, client plugin, type template, and the hooks that build the worker                                                               |
+| `packages/unplugin-pwa-nuxt/src/services/configurePwaOptions.ts`     | The engine's `configurePWAOptions`: output folder, immutable assets, working directory, the public folder the icons are read from, the denylist plugin |
+| `packages/unplugin-pwa-nuxt/src/services/buildServiceWorker.ts`      | The precache globs, the manifest transform, the `generateSW` fallback and denylist, and the engine's build                                             |
+| `packages/unplugin-pwa-nuxt/src/services/getNavigationDenylist.ts`   | Nitro's routes as anchored patterns                                                                                                                    |
+| `packages/unplugin-pwa-nuxt/src/services/createManifestTransform.ts` | Pages keyed by route, app manifests without a revision                                                                                                 |
+| `packages/unplugin-pwa-nuxt/src/runtime/createPwaPlugin.ts`          | The client plugin: registration, the update check and `$pwa`                                                                                           |
+| `packages/unplugin-pwa-nuxt/navigation-denylist.d.ts`                | The types of the denylist's virtual module                                                                                                             |
+| `apps/web/configuration/pwa.ts`                                      | The app's options: manifest, `buildSW` source, prompt registration, the hourly check and the precache size policy                                      |
 
 Upstream: [audit of both trackers](upstream/design.md) and [its spec](upstream/spec.md).
