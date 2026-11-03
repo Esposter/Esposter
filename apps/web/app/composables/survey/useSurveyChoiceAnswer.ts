@@ -1,23 +1,19 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyChoice, SurveyChoicesOrder } from "survey-engine";
-import type { Ref } from "vue";
+import type { SurveyAnswerValue, SurveyChoiceOptionsProps, SurveyNoneChoiceProps } from "survey-engine";
 
-import { getSurveyChoiceText, getSurveyOrderedChoices } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "survey-engine";
 
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
 // Option a radio group may add. A dropdown has no none option, so its node leaves both out
-export interface SurveyChoiceOptions {
-  choices: SurveyChoice[];
-  choicesOrder: SurveyChoicesOrder;
-  hasNone?: boolean;
-  hasOther: boolean;
-  noneText?: string;
-  otherText: string;
-}
+export type SurveyChoiceOptions = Pick<
+  SurveyChoiceOptionsProps,
+  "choices" | "choicesOrder" | "hasOther" | "otherText"
+> &
+  Partial<SurveyNoneChoiceProps>;
 
 // The key a none option is drawn under, which is also the answer it gives. A choice is keyed by its place in the list,
 // So no choice's own value has to be a key
-const NONE = "none";
+const NONE = SURVEY_NONE_ANSWER;
 const NONE_TITLE = "None";
 const OTHER = "other";
 const OTHER_TITLE = "Other";

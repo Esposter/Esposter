@@ -9,7 +9,7 @@ import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/cons
 import { isAnsweringSurveyQuestion } from "#shared/services/survey/isAnsweringSurveyQuestion";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
-import { SurveyExpressionDisplayFormat, SurveyNodeType, SurveyTextInputType } from "survey-engine";
+import { getSurveyChoiceText, SurveyExpressionDisplayFormat, SurveyNodeType, SurveyTextInputType } from "survey-engine";
 
 type Answer = NonNullable<ColumnValue>;
 
@@ -30,7 +30,7 @@ interface ChoiceSource {
 const DEFAULT_OTHER_LABEL = "Other";
 
 const toChoiceOptions = (choices: SurveyChoice[]): ChoiceOption[] =>
-  choices.map(({ text, value }) => ({ label: text || String(value), value }));
+  choices.map((choice) => ({ label: getSurveyChoiceText(choice), value: choice.value }));
 
 // A rating's steps run from one to its count, each labelled by its own value
 const toRatingOptions = (rateCount: number): ChoiceOption[] =>
