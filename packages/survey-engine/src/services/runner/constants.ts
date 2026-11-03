@@ -18,3 +18,7 @@ export const SURVEY_NOT_A_CHOICE_MESSAGE = "This answer is not one of the choice
 export const SURVEY_WRONG_COUNT_MESSAGE = "This answer has the wrong number of rows or panels.";
 // The value a none choice holds when a respondent picks it, the one answer that is not a choice's own value
 export const SURVEY_NONE_ANSWER = "none";
+// The message for an answer under a name the document holds no question for
+export const SURVEY_UNKNOWN_QUESTION_MESSAGE = "Unknown question";
+// The message for an answer to a question the survey does not show, since its visibility condition does not hold
+export const SURVEY_NOT_SHOWN_MESSAGE = "This question is not shown";
