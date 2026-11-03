@@ -53,6 +53,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey respondent](survey-respondent/design.md) — the public respondent page: the runner, a draft saved as the respondent moves, resume and submit, and the server's check of each answer
 - [Survey document](survey-document/design.md) — the survey as a typed document of pages, panels and questions, refused on save for a repeated name, an unknown kind or an expression that does not parse
 - [Survey logic](survey-logic/design.md) — the survey's expression language: conditions, calculated values and validators parsed to a tree and evaluated over the answers, a malformed one refused with its position
+- [Survey runner](survey-runner/design.md) — the flow a respondent's session moves through as plain functions: conditions, page moves, answer checks and completion
 - [Program resource](program-resource/design.md) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
 - [Note resource](note-resource/design.md) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
 - [Note Markdown portability](note-markdown-portability/design.md) — a note exports to and imports from a `.md` file on its overflow menu, through a converter over the catalog's `marked`, saving an import only on confirm
