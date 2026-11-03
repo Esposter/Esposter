@@ -2,7 +2,6 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { removeEditorEntryContent } from "#server/services/blueprint/removeEditorEntryContent";
 import { createCallerFactory } from "#server/trpc";
 import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { programRouter } from "#server/trpc/routers/program";
@@ -129,13 +128,11 @@ describe("blueprintRouter", () => {
   test("a Blueprint's webpage entry deploys as a fresh document", async () => {
     expect.hasAssertions();
 
-    // The backfill's output: the entry keeps no content, so it deploys to a resource whose content was never written
-    const blueprint = await createBlueprint(
-      removeEditorEntryContent({
-        entries: [{ content: editorContent, key: "a", name: "a", type: ResourceType.Webpage }],
-        parameters: [],
-      }),
-    );
+    // An entry that holds no content deploys to a resource whose content was never written
+    const blueprint = await createBlueprint({
+      entries: [{ key: "a", name: "a", type: ResourceType.Webpage }],
+      parameters: [],
+    });
     const deployment = takeOne(await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} }));
 
     expect(deployment.resource.type).toBe(ResourceType.Webpage);
