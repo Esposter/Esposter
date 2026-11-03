@@ -16,6 +16,7 @@ describe(dateAddFunction, () => {
     ["an interval SurveyJS does not know leaves the date as it is", [TEST_EPOCH_DATE, 1, "weeks"], "1970-01-01"],
     ["a numeric string amount is read as its number, not joined onto the day", [TEST_EPOCH_DATE, "5"], "1970-01-06"],
     ["a zero amount is empty, as SurveyJS reads it", [TEST_EPOCH_DATE, 0], undefined],
+    ["the epoch given as the number zero is a date, not an empty one", [0, 1], "1970-01-02"],
     ["an amount that reads as no number makes the date invalid, so it is empty", [TEST_EPOCH_DATE, "x"], undefined],
     ["an unreadable date is empty", ["x", 1], undefined],
     ["an empty date is empty", [undefined, 1], undefined],

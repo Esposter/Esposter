@@ -1,5 +1,6 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
+import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { getDateDifference } from "#src/services/shared/getDateDifference";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
@@ -11,7 +12,8 @@ const millisecondsPerUnitMap: Record<string, number> = { hours: 3_600_000, minut
 export const dateDiffFunction: SurveyLogicFunction = (args) => {
   const [fromValue, toValue, intervalValue] = args;
 
-  if (args.length < 2 || !fromValue || !toValue) return undefined;
+  if (args.length < 2 || checkIsSurveyLogicValueEmpty(fromValue) || checkIsSurveyLogicValueEmpty(toValue))
+    return undefined;
 
   const interval = intervalValue || "days";
   const from = parseSurveyLogicDate(fromValue);

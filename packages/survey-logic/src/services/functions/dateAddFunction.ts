@@ -1,5 +1,6 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
+import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
@@ -32,7 +33,7 @@ export const dateAddFunction: SurveyLogicFunction = (args) => {
   const [dateValue, amountValue, intervalValue] = args;
 
   // SurveyJS reads a zero amount as no amount, so the result is empty rather than the date
-  if (args.length < 2 || !dateValue || !amountValue) return undefined;
+  if (args.length < 2 || checkIsSurveyLogicValueEmpty(dateValue) || !amountValue) return undefined;
 
   const amount = getSurveyNumber(amountValue);
   const interval = intervalValue || "days";

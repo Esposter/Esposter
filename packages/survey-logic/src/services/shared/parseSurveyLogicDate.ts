@@ -1,6 +1,6 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-const DATE_ONLY_REGEX = /\d{4}-\d{2}-\d{2}/u;
+const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/u;
 
 // A date-only string names a local day, so it is read at local midnight rather than at the UTC midnight the platform uses
 const checkIsDateOnly = (text: string): boolean =>
