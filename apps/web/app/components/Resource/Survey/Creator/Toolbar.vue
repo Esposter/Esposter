@@ -39,11 +39,12 @@ const mode = computed({
 const importFault = ref("");
 const isClearOpen = ref(false);
 const exportSurvey = () => exportJsonFile(resource.value?.name ?? "", surveyDocument.value);
-// The file is parsed, checked against the document schema and then the survey check, and only a file passing both replaces the survey
+// The file is parsed without reviving dates, since a text that looks like an ISO date is still text to the document schema,
+// Then checked against that schema and the survey check, and only a file passing both replaces the survey
 const importSurvey = () =>
   importJsonFile(async (file) => {
     importFault.value = "";
-    await getResultAsync(async (): Promise<unknown> => JSON.parse(await file.text())).match(
+    await getResultAsync<unknown>(() => new Response(file).json()).match(
       (json) => {
         const result = surveyDocumentSchema.safeParse(json);
         if (!result.success) {
