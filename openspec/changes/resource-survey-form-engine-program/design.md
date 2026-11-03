@@ -39,18 +39,24 @@ The document schema is the one check on a save. The runner evaluates conditions 
 
 Every part is written against the contracts its design states, so the parts that do not read each other's code are built at the same time. The two packages are scaffolded first. The shared files that name every question kind (the type enum, the node union, the children port, the registry and the definition map) are written once, by the main session, before the kinds are built, so that building a kind creates its own files and edits no shared one.
 
+The work runs in two waves, because the document's kinds are what every later unit is typed by and the container kinds need the others' types. The first wave builds the language and the kinds; the main session then writes the shared kind files and the container kinds; the second wave builds everything that reads the document, each unit in its own worktree against the contracts above.
+
 ```mermaid
 flowchart TD
-  CONTRACT["contract: the shared kind files, the package scaffold, the pilot kind"] --> WAVE
-  subgraph WAVE["one wave, every unit in its own worktree"]
+  CONTRACT["contract: the package scaffold, the foundation and the pilot kind"] --> W1
+  subgraph W1["wave one: the language and the leaf kinds"]
     LOGIC["logic: parser, evaluator, functions"]
-    KINDS["document: the question kinds, in three groups"]
-    RUN["runner: state, then answer validation"]
-    FIELD["fields: four groups and the renderer"]
+    KINDS["document: the leaf question kinds, in three groups"]
+  end
+  W1 --> SHARED["main session: the container kinds, the unions, the registry, the schema"]
+  SHARED --> W2
+  subgraph W2["wave two: every reader of the document"]
+    RUN["runner: state and flow, answer schemas, the save check"]
+    FIELD["fields: four groups, the chooser and the renderer"]
     READ["readers: summary and dataset"]
     CREATE["creator, properties, logic builder, theme and files"]
   end
-  WAVE --> ORACLE["logic: the oracle fixtures, while SurveyJS is still in the tree"]
+  W2 --> ORACLE["logic: the oracle fixtures, while SurveyJS is still in the tree"]
   ORACLE --> FIXER["one fixer: the touched packages' typecheck and tests, once"]
   FIXER --> SWAP["respondent: the public page swaps to the runner"]
   SWAP --> REMOVE["removal: purge confirmed, SurveyJS out, prose swept"]
