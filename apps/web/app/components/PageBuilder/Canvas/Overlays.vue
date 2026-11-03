@@ -35,13 +35,17 @@ const dropIndicator = shallowRef<DropIndicator>();
 // Reach the layer teleported into it: the layer and each box it draws carry their styles inline
 const LAYER_STYLE = { inset: "0", pointerEvents: "none", position: "absolute" } as const;
 const ACCENT = "var(--ui-accent, currentColor)";
-const HOVER_STYLE = { opacity: "0.5", outline: `1px solid ${ACCENT}`, position: "absolute" } as const;
+const HOVER_STYLE = { opacity: "0.5", outline: `0.0625rem solid ${ACCENT}`, position: "absolute" } as const;
 const DROP_LINE_STYLE = { background: ACCENT, position: "absolute" } as const;
-const DROP_OUTLINE_STYLE = { border: `2px dashed ${ACCENT}`, boxSizing: "border-box", position: "absolute" } as const;
-const SELECTION_STYLE = {
-  border: `2px solid ${ACCENT}`,
+const DROP_OUTLINE_STYLE = {
+  border: `0.125rem dashed ${ACCENT}`,
   boxSizing: "border-box",
-  outline: "1px solid white",
+  position: "absolute",
+} as const;
+const SELECTION_STYLE = {
+  border: `0.125rem solid ${ACCENT}`,
+  boxSizing: "border-box",
+  outline: "0.0625rem solid white",
   position: "absolute",
 } as const;
 // The library's accent, read from the app's own document each time the theme or style that sets it changes, since the
