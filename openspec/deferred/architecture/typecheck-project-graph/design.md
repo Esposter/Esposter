@@ -2,7 +2,7 @@
 
 The idea is one solution tsconfig at the repository root, with `files: []` and a `references` entry per package, checked by a single `tsrs -b --fast`. Today every package's `typecheck` is its own `tsrs --fast` process and pnpm runs them in parallel. `apps/web` already has the solution shape for the four projects Nuxt generates, so the mechanism is proven here; the question is whether it earns the same shape across the packages.
 
-## Why not
+## Why deferred
 
 **A cold run is slower than the per-package processes.** On a four-core Linux machine, over the packages that can be referenced, one `tsrs -b` took roughly one and a half times the wall-clock and CPU of the same projects run as separate processes four at a time. Adding `--builders` made no difference. The cause was not isolated, so the finding is the measurement and not an explanation.
 
