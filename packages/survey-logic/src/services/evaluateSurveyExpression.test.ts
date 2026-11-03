@@ -111,6 +111,8 @@ describe(evaluateSurveyExpression, () => {
     ["a string does not contain an empty substring", "{a} notcontains ''", { a: "abc" }, false],
     ["an empty string does not contain a value", "{a} notcontains 'x'", { a: "" }, true],
     ["a list does not contain a list with a missing item", "{a} notcontains ['x', 'y']", { a: ["red", "blue"] }, true],
+    ["a record contains no text", "{a} contains 'x'", { a: { b: "x" } }, false],
+    ["a record is not contained in a not-contains", "{a} notcontains 'x'", { a: { b: 1 } }, true],
     [
       "a list containing one of the values is a negated containment",
       "{a} notcontains ['red', 'x']",

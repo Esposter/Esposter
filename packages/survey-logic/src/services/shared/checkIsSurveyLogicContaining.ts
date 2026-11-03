@@ -2,10 +2,11 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { checkIsSurveyLogicValueEqual } from "#src/services/shared/checkIsSurveyLogicValueEqual";
+import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
 
 // SurveyJS's containment, behind `contains` when `isContains` is true and `notcontains` when it is false.
 // A list holds each item of the right side, a text holds the right side as a substring in any case.
-// An empty side decides alone
+// An empty side decides alone, and a record holds no text, so it contains nothing
 export const checkIsSurveyLogicContaining = (
   left: SurveyLogicValue,
   right: SurveyLogicValue,
@@ -21,9 +22,10 @@ export const checkIsSurveyLogicContaining = (
     return isEveryItemFound === isContains;
   }
   if (checkIsSurveyLogicValueEmpty(left)) return false;
-  if (typeof left !== "string") return checkIsSurveyLogicContaining(String(left), right, isContains);
+  if (typeof left === "object") return !isContains;
+  if (typeof left !== "string") return checkIsSurveyLogicContaining(toSurveyLogicText(left), right, isContains);
   if (!right) return false;
 
-  const isFound = left.toLowerCase().includes(String(right).toLowerCase());
+  const isFound = left.toLowerCase().includes(toSurveyLogicText(right).toLowerCase());
   return isContains ? isFound : !isFound;
 };

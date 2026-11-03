@@ -2,6 +2,7 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { addSurveyLogicValues } from "#src/services/shared/addSurveyLogicValues";
 import { roundSurveyLogicSum } from "#src/services/shared/roundSurveyLogicSum";
+import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
 
 // A list and a value that is not a list.
 // A text joins the list's items with a comma and a space, a number adds the list's numbers, and anything else adds as
@@ -13,7 +14,7 @@ export const sumSurveyLogicListWithValue = (
   isListFirst: boolean,
 ): SurveyLogicValue => {
   if (typeof value === "string") {
-    const joinedList = list.join(", ");
+    const joinedList = list.map((item) => toSurveyLogicText(item)).join(", ");
     return isListFirst ? joinedList + value : value + joinedList;
   }
   if (typeof value === "number") {
