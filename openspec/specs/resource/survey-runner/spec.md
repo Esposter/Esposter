@@ -66,7 +66,7 @@ The runner SHALL keep, on completion, only the answers of visible questions and 
 
 ### Requirement: A survey with an error on a shown page does not complete
 
-The runner SHALL refuse to complete a survey while a shown page holds an error, and SHALL return the first such page with its errors, with the state moved to that page and unfinished.
+The runner SHALL refuse to complete a survey while a shown page holds an error, returning the first such page's errors with the state moved to that page and left unfinished.
 
 #### Scenario: the first page with errors is returned, and the state moves to it unfinished
 
