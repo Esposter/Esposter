@@ -1,4 +1,4 @@
-// @TODO: no upstream issue — vite-pwa/unplugin-pwa's register module imports `@vite-pwa/workbox-window` from a virtual module, which Vite resolves from the app's root; drop this plugin once the engine resolves its own dependency
+// @TODO: https://github.com/vite-pwa/unplugin-pwa/issues/48 — drop this plugin once the engine resolves its own dependency
 import type { Plugin } from "vite";
 
 import { MODULE_NAME } from "#src/runtime/constants";
