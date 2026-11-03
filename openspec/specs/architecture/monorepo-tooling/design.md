@@ -42,6 +42,8 @@ Every package's `typecheck` is plain `tsc` — `vue-tsc` where the package holds
 
 The trade is memory for wall-clock: the Go state shares the Node process, so peak RSS is several times a stock run's while the JS heap stays lower, and the app's `vue-tsc` pass loses roughly a third of its wall-clock. Diagnostics are the Go compiler's, not stock TypeScript's, so an error's wording may differ from what the same code reports under the `typescript` version the catalog names.
 
+**One solution build over the packages is not adopted.** Each package's `typecheck` stays its own process, run in parallel by pnpm, as `apps/web` is the one place a solution file is used. Why, and what brings the question back, are in the [deferred record](../../../deferred/architecture/typecheck-project-graph/design.md).
+
 `oxlint-tsgolint` is unaffected either way — it ships its own Go binaries as optional dependencies and never loads the `typescript` package, so the type-aware lint pass neither gains nor loses from the override.
 
 ## Recursive script orchestration
