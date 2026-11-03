@@ -9,6 +9,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ## Table of Contents
 
 - 🧩 [Key Exports](#key-exports)
+- 🧮 [Functions](#functions)
 - ⚖️ [License](#license)
 
 ---
@@ -24,6 +25,27 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 | `SurveyExpressionNodeType`, `SurveyExpressionBinaryOperator`, `SurveyExpressionUnaryOperator` | enum     | The node types and the operators a tree holds                                                                 |
 | `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                             |
 | `SurveyLogicError`                                                                            | type     | The message and the character position a parse is refused for                                                 |
+
+## <a name="functions">🧮 Functions</a>
+
+Each function is called by its name, written in any case. A call to a name no function has is refused when the expression is checked.
+
+| Function       | Returns                                                                            |
+| :------------- | :--------------------------------------------------------------------------------- |
+| `avg`          | The average of the values passed, arrays flattened                                 |
+| `avgInArray`   | The average of a field over the items of an array value                            |
+| `count`        | How many values are passed, arrays flattened                                       |
+| `countInArray` | How many items of an array value hold a value in a field                           |
+| `iif`          | The second value when the condition is truthy, otherwise the third                 |
+| `max`          | The largest of the values passed, arrays flattened                                 |
+| `maxInArray`   | The largest value of a field over an array's items, or another field of that item  |
+| `min`          | The smallest of the values passed, arrays flattened                                |
+| `minInArray`   | The smallest value of a field over an array's items, or another field of that item |
+| `substring`    | The part of a text from a start index up to an end index                           |
+| `sum`          | The sum of the values passed, arrays flattened                                     |
+| `sumInArray`   | The sum of a field over the items of an array value                                |
+
+The `...InArray` functions take a filter as a last argument, a condition over each item's fields. A function receives its arguments as values, not as conditions to evaluate per item, so a call that passes a filter reads as empty.
 
 ## <a name="license">⚖️ License</a>
 

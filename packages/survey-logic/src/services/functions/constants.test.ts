@@ -1,4 +1,7 @@
 import type { SurveyLogicContext } from "#src/models/SurveyLogicContext";
+import type { SurveyLogicRecord } from "#src/models/SurveyLogicRecord";
+
+import { describe } from "vitest";
 
 // The clock the date functions are tested at: Friday the second of January 1970 at one in the afternoon, in local time.
 // Local time keeps a day or an hour read from it the same in every zone the suite runs in.
@@ -13,3 +16,14 @@ export const TEST_BIRTHDATE: string = epochDate.subtract({ years: 36 }).toString
 // Two days after the test birthdate, so at the test clock its birthday is still to come and its age is one year short
 export const TEST_LATER_BIRTHDATE: string = epochDate.subtract({ years: 36 }).add({ days: 2 }).toString();
 export const TEST_NEXT_YEAR_DATE: string = epochDate.add({ years: 1 }).toString();
+
+// A matrix's items, each holding a numeric field, a text that reads as a number, a text that reads as none, an empty
+// Field, and a missing one
+export const SURVEY_ITEMS: SurveyLogicRecord[] = [
+  { name: "a", price: 2, q: "3" },
+  { name: "b", price: 5, q: "x" },
+  { name: "c", price: "" },
+  { name: "d", price: -1 },
+];
+
+describe.todo("constants");
