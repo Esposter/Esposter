@@ -4,6 +4,7 @@ import type { SurveyDocument } from "survey-engine";
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import UiFileField from "@/components/Ui/FileField.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
+import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -12,9 +13,13 @@ import { getBlockNode } from "headless-block-editor";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
 import { describe, expect, test, vi } from "vitest";
 
-const { uploadFile } = vi.hoisted(() => ({ uploadFile: vi.fn<(file: File) => Promise<string>>() }));
+const { deleteFile, uploadFile } = vi.hoisted(() => ({
+  deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
+  uploadFile: vi.fn<(file: File) => Promise<string>>(),
+}));
 
 vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 // A survey whose one page holds an image picker, offering a choice for each of the given pictures
 const createDocument = (imageLinks: string[]) =>
@@ -114,5 +119,29 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a", "b"]);
     expect(valueField?.props("modelValue")).toBe("a");
     expect(valueField?.props("error")).toBe("Choice values must be unique");
+  });
+
+  // The editor opens on a picker with no choices, adds one from a picked image and removes it, and closes: the picture is
+  // Then deleted
+  test("an image added as a choice and removed in the session is deleted when the editor closes", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument([]));
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+    const { sweep, track } = useSurveyFiles();
+    track(surveyDocument.value);
+    const url = "b";
+    uploadFile.mockResolvedValue(url);
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+    component.getComponent(UiFileField).vm.$emit("update:modelValue", [new File(["a"], "a")]);
+    await flushPromises();
+    await component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await flushPromises();
+    await sweep(surveyDocument.value);
+
+    expect(getChoices(surveyDocument.value, pointer)).toStrictEqual([]);
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
   });
 });

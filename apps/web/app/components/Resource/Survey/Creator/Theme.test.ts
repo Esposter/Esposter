@@ -1,18 +1,31 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorTheme from "@/components/Resource/Survey/Creator/Theme.vue";
+import UiFileField from "@/components/Ui/FileField.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { surveyDocumentSchema } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+const { deleteFile, uploadFile } = vi.hoisted(() => ({
+  deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
+  uploadFile: vi.fn<(file: File) => Promise<string>>(),
+}));
+
+vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({ useUploadResourceFile: () => uploadFile }));
+vi.mock(import("@/composables/resource/useDeleteResourceFile"), () => ({ useDeleteResourceFile: () => deleteFile }));
 
 describe("resourceSurveyCreatorTheme", () => {
   const accentColor = "#00ff00";
 
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
 
     test("the accent colour is applied to the preview as the library's accent token", async () => {
       expect.hasAssertions();
@@ -40,6 +53,31 @@ describe("resourceSurveyCreatorTheme", () => {
       await flushPromises();
 
       expect(surveyDocument.value.root.props.accentColor).toBe("");
+    });
+
+    // The editor opens on a survey with no logo, uploads one, removes it, and closes: the logo's file is then deleted
+    test("a logo uploaded and removed in the session is deleted when the editor closes", async () => {
+      expect.hasAssertions();
+      const surveyCreatorStore = useSurveyCreatorStore();
+      const { load } = surveyCreatorStore;
+      load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
+      const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+      const { sweep, track } = useSurveyFiles();
+      track(surveyDocument.value);
+      const url = "b";
+      uploadFile.mockResolvedValue(url);
+
+      const component = await mountSuspended(ResourceSurveyCreatorTheme);
+      component.getComponent(UiFileField).vm.$emit("update:modelValue", [new File(["a"], "a")]);
+      await flushPromises();
+      await component
+        .findAll("button")
+        .find((button) => button.text() === "Remove logo")
+        ?.trigger("click");
+      await flushPromises();
+      await sweep(surveyDocument.value);
+
+      expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
     });
   });
 });

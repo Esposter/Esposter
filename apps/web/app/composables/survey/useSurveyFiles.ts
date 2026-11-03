@@ -17,13 +17,24 @@ export const useSurveyFiles = () => {
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
   const deleteFile = useDeleteResourceFile(ResourceType.Survey, getResourceId);
   const surveyFilesStore = useSurveyFilesStore();
-  const { fileUrls } = storeToRefs(surveyFilesStore);
-  const { addFileUrl, setFileUrls } = surveyFilesStore;
-  // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads nothing
+  const { fileUrls, isClosed } = storeToRefs(surveyFilesStore);
+  const { addFileUrl, closeSession, openSession } = surveyFilesStore;
+  // The editor is gone by the time a file is deleted, so nothing can alert: a file that fails to delete is logged, and the
+  // Rest still go
+  const deleteUrls = (urls: string[]) =>
+    getResultAsync(() => Promise.all(urls.map((url) => deleteFile(url)))).match(noop, console.error);
+  // A file is validated before the upload, and a rejected one alerts itself, so the undefined it leaves uploads nothing.
+  // A file that lands after the editor closed is deleted at once, since the close has already swept, and is handed back
+  // To nothing
   const upload = async (file: File) => {
     if (!validateFile(file)) return undefined;
 
     const url = await uploadFile(file);
+    if (isClosed.value) {
+      await deleteUrls([url]);
+      return undefined;
+    }
+
     addFileUrl(url);
     return url;
   };
@@ -40,14 +51,13 @@ export const useSurveyFiles = () => {
   };
   // Called as the editor opens, with the document it opened on, so the files that document holds are candidates too
   const track = (document: SurveyDocument) => {
-    setFileUrls(collectSurveyFileUrls(document));
+    openSession(collectSurveyFileUrls(document));
   };
   const sweep = async (document: SurveyDocument) => {
     const referencedUrls = new Set(collectSurveyFileUrls(document));
     const orphanUrls = [...fileUrls.value].filter((url) => !referencedUrls.has(url));
-    setFileUrls([]);
-    // The editor is gone by now, so nothing can alert: a file that fails to delete is logged, and the rest still go
-    await getResultAsync(() => Promise.all(orphanUrls.map((url) => deleteFile(url)))).match(noop, console.error);
+    closeSession();
+    await deleteUrls(orphanUrls);
   };
 
   return { sweep, track, upload, uploadPicked };

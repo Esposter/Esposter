@@ -6,7 +6,7 @@ import ResourceSurveyCreatorMultipleTextItemsEditor from "@/components/Resource/
 import { SurveyNodeType } from "survey-engine";
 
 // The editors a kind's settings take beside its form, each for a list the form leaves out and the editor draws under the
-// Props key it is held at. The image kinds' editors are added beside these by the survey's theme and files
+// Props key it is held at. The image kinds' editors are not lists, so they are in SurveyImageExtras
 const choicesEditor: SurveyNodeExtraEditor = {
   component: ResourceSurveyCreatorChoiceListEditor,
   key: "choices",

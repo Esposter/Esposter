@@ -61,6 +61,12 @@ When the owner closes the editor, the survey's files that its document no longer
 - **WHEN** the owner uploads a picture, removes it from the survey and closes the editor
 - **THEN** the uploaded picture's file is deleted
 
+#### Scenario: A picture still uploading when the owner closes the editor is deleted
+
+- **GIVEN** a survey with no pictures, and a picture for an image question still uploading
+- **WHEN** the owner closes the editor before the upload finishes
+- **THEN** the picture's file is deleted as it lands
+
 ### Requirement: A picked file is validated before it is uploaded
 
 A picked file SHALL be validated before it is uploaded.

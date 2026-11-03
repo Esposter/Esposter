@@ -13,5 +13,5 @@ Build order. The theme and the files are independent.
 
 - [x] 2.1 Write `useSurveyFiles`: collect the urls a document references, and the sweep.
       Verify: both scenarios in the spec delta's file requirement are tests, and a url still referenced is kept.
-- [ ] 2.2 Build the image upload editors for the image question, the image picker's choices and the logo, and add their entries to the extras map. Not done: the editors are built and tested, but `SurveyImageExtras` is not mounted by the properties panel, which reads only `SurveyNodeExtrasComponentMap`, so the image question and the image picker have no editor in the Creator. The logo's upload is mounted in the Theme tab.
+- [x] 2.2 Build the image upload editors for the image question, the image picker's choices and the logo, and add their entries to the extras map.
       Verify: an upload then a removal then a close leaves no orphaned file for any of the three.

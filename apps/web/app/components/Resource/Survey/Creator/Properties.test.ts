@@ -1,5 +1,7 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
+import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
+import ResourceSurveyCreatorImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
 import ResourceSurveyCreatorProperties from "@/components/Resource/Survey/Creator/Properties.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
@@ -13,15 +15,12 @@ import {
 } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
-// A page holding one radio group, which the panel edits once it is selected
-const createSurveyDocument = () =>
+// A page holding one question of the given kind, which the panel edits once it is selected
+const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup) =>
   surveyDocumentSchema.parse({
     content: [
       {
-        props: {
-          children: [{ props: { id: "question", name: "question" }, type: SurveyNodeType.RadioGroup }],
-          id: "page",
-        },
+        props: { children: [{ props: { id: "question", name: "question" }, type }], id: "page" },
         type: SurveyNodeType.Page,
       },
     ],
@@ -108,6 +107,52 @@ describe("resourceSurveyCreatorProperties", () => {
       '"choices"',
     );
     expect(wrapper.findComponent(ResourceSurveyCreatorChoiceListEditor).exists()).toBe(true);
+  });
+
+  test("an image question draws its upload editor beside its form, for the question at the selection", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createSurveyDocument(SurveyNodeType.Image));
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0");
+    const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
+
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageUpload).props("pointer")).toBe(
+      "/content/0/props/children/0",
+    );
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageChoicesEditor).exists()).toBe(false);
+  });
+
+  test("an image picker draws its choices editor, and its form leaves the choices to that editor", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createSurveyDocument(SurveyNodeType.ImagePicker));
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0");
+    const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
+
+    expect(JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"))).not.toContain(
+      '"choices"',
+    );
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageChoicesEditor).props("pointer")).toBe(
+      "/content/0/props/children/0",
+    );
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageUpload).exists()).toBe(false);
+  });
+
+  test("a text question draws neither image editor", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createSurveyDocument(SurveyNodeType.Text));
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0");
+    const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
+
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageUpload).exists()).toBe(false);
+    expect(wrapper.findComponent(ResourceSurveyCreatorImageChoicesEditor).exists()).toBe(false);
   });
 
   test("with nothing selected, the root's form writes the survey's own texts", async () => {

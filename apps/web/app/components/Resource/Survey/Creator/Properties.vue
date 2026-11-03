@@ -2,6 +2,7 @@
 import type { SurveyRootProps } from "survey-engine";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { SurveyImageExtras, SurveyImageExtrasKeyMap } from "@/services/resource/survey/SurveyImageExtras";
 import { SurveyNodeExtrasComponentMap } from "@/services/resource/survey/SurveyNodeExtrasComponentMap";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { checkIsDeepEqual } from "@esposter/shared";
@@ -17,12 +18,16 @@ const nodeDefinition = computed(
 const extraEditors = computed(
   () => (selectedNode.value && SurveyNodeExtrasComponentMap[selectedNode.value.type]) ?? [],
 );
+const imageEditors = computed(() => (selectedNode.value && SurveyImageExtras[selectedNode.value.type]) ?? []);
+const imageEditorKeys = computed(() => (selectedNode.value && SurveyImageExtrasKeyMap[selectedNode.value.type]) ?? []);
 // The props a node's form holds: a copy, so the form never writes into the document it is drawn from
 const nodeProps = computed<Record<string, unknown>>(() => ({ ...selectedNode.value?.props }));
-// The form draws every prop its schema holds except the lists the extra editors draw, so each list is drawn once
+// The form draws every prop its schema holds except the lists the extra editors draw and the props the image editors
+// Draw, so each is drawn once
 const nodeFormSchema = computed(() => {
   const omitted: Record<string, true> = {};
   for (const { key } of extraEditors.value) omitted[key] = true;
+  for (const key of imageEditorKeys.value) omitted[key] = true;
 
   return nodeDefinition.value?.formSchema.omit(omitted);
 });
@@ -81,6 +86,12 @@ const setRootProps = (props: SurveyRootProps) => {
         :label="editor.label"
         :model-value="nodeProps[editor.key]"
         @update:model-value="(value) => updateNodeProps(selectedPointer, { [editor.key]: value })"
+      />
+      <component
+        :is="editor"
+        v-for="(editor, index) of imageEditors"
+        :key="`${selectedPointer}:image:${index}`"
+        :pointer="selectedPointer"
       />
     </template>
     <UiSchemaForm

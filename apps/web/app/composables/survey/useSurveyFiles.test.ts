@@ -75,6 +75,22 @@ describe(useSurveyFiles, () => {
     expect(deleteFile).not.toHaveBeenCalled();
   });
 
+  test("a picture whose upload lands after the editor closed is deleted, and no url is handed back to write", async () => {
+    expect.hasAssertions();
+
+    const { sweep, track, upload } = useSurveyFiles();
+    track(createDocument("", ""));
+    const { promise, resolve } = Promise.withResolvers<string>();
+    uploadFile.mockReturnValueOnce(promise);
+    const uploading = upload(new File(["a"], "a"));
+    await sweep(createDocument("", ""));
+    resolve("c");
+    const url = await uploading;
+
+    expect(url).toBeUndefined();
+    expect(deleteFile).toHaveBeenCalledExactlyOnceWith("c");
+  });
+
   test("an empty file is rejected before the upload, which then never runs", async () => {
     expect.hasAssertions();
 
