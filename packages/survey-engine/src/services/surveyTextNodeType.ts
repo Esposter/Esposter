@@ -2,12 +2,10 @@ import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinit
 import type { SurveyTextNode } from "#src/models/SurveyTextNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
-import { SurveyTextInputType } from "#src/models/SurveyTextInputType";
 import { surveyTextNodePropsSchema } from "#src/models/SurveyTextNodeProps";
 
-// A text question. Its form and its props share one schema, since every prop is one its owner edits.
-// A webpage's text node holds a style its form does not edit, so its form and its props differ.
-// The schema's own type is written out so its shape survives into the emitted declaration.
+// A text question. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
+// The type is written out so the schema's shape survives into the emitted declaration
 export const surveyTextNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyTextNode>["createDefaultProps"];
   formSchema: typeof surveyTextNodePropsSchema;
@@ -16,12 +14,7 @@ export const surveyTextNodeType: {
   slots: SurveyNodeTypeDefinition<SurveyTextNode>["slots"];
   type: SurveyNodeType.Text;
 } = {
-  createDefaultProps: () => ({
-    inputType: SurveyTextInputType.Text,
-    isRequired: false,
-    name: "question",
-    validators: [],
-  }),
+  createDefaultProps: () => surveyTextNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyTextNodePropsSchema,
   label: "Text",
   propsSchema: surveyTextNodePropsSchema,

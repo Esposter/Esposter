@@ -8,17 +8,17 @@ export interface SurveyMultipleTextItem {
   inputType: SurveyMultipleTextItemInputType;
   isRequired: boolean;
   name: string;
-  title?: string;
+  title: string;
 }
 
 export const surveyMultipleTextItemSchema: z.ZodObject<{
   inputType: z.ZodEnum<typeof SurveyMultipleTextItemInputType>;
   isRequired: z.ZodDefault<z.ZodBoolean>;
   name: typeof surveyNameSchema;
-  title: z.ZodOptional<z.ZodString>;
+  title: z.ZodDefault<z.ZodString>;
 }> = z.object({
   inputType: z.enum(SurveyMultipleTextItemInputType),
   isRequired: z.boolean().default(false),
   name: surveyNameSchema,
-  title: z.string().max(MAX_SURVEY_TEXT_LENGTH).optional(),
+  title: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<SurveyMultipleTextItem>;

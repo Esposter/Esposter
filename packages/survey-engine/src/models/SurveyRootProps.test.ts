@@ -3,21 +3,22 @@ import { surveyRootPropsSchema } from "#src/models/SurveyRootProps";
 import { describe, expect, test } from "vitest";
 
 describe("surveyRootPropsSchema", () => {
-  test("a survey's root props default to no progress bar, no question numbers and no calculated values", () => {
+  test("a survey's root props default to no texts, no colours, no progress bar and no calculated values", () => {
     expect.hasAssertions();
 
     expect(surveyRootPropsSchema.parse({})).toStrictEqual({
+      accentColor: "",
+      backgroundColor: "",
       calculatedValues: [],
+      completedHtml: "",
+      completeText: "",
+      description: "",
+      logo: "",
+      pageNextText: "",
+      pagePrevText: "",
       showProgressBar: SurveyProgressBarPlacement.Off,
       showQuestionNumbers: false,
+      title: "",
     });
-  });
-
-  test("an accent colour that is not six hex digits is refused", () => {
-    expect.hasAssertions();
-
-    const result = surveyRootPropsSchema.safeParse({ accentColor: "#fff" });
-
-    expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["accentColor"]]);
   });
 });

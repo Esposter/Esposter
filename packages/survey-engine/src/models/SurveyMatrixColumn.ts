@@ -10,22 +10,22 @@ import { z } from "zod";
 // A column of a matrix question: its name and title, and the kind of cell each row holds in it
 export interface SurveyMatrixColumn {
   cellType: SurveyMatrixCellType;
-  choices?: SurveyChoice[];
+  choices: SurveyChoice[];
   isRequired: boolean;
   name: string;
-  title?: string;
+  title: string;
 }
 
 export const surveyMatrixColumnSchema: z.ZodObject<{
   cellType: z.ZodEnum<typeof SurveyMatrixCellType>;
-  choices: z.ZodOptional<z.ZodArray<typeof surveyChoiceSchema>>;
+  choices: z.ZodDefault<z.ZodArray<typeof surveyChoiceSchema>>;
   isRequired: z.ZodDefault<z.ZodBoolean>;
   name: typeof surveyNameSchema;
-  title: z.ZodOptional<z.ZodString>;
+  title: z.ZodDefault<z.ZodString>;
 }> = z.object({
   cellType: z.enum(SurveyMatrixCellType),
-  choices: createUniqueArraySchema(surveyChoiceSchema, "value").max(MAX_SURVEY_CHOICE_COUNT).optional(),
+  choices: createUniqueArraySchema(surveyChoiceSchema, "value").max(MAX_SURVEY_CHOICE_COUNT).default([]),
   isRequired: z.boolean().default(false),
   name: surveyNameSchema,
-  title: z.string().max(MAX_SURVEY_TEXT_LENGTH).optional(),
+  title: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<SurveyMatrixColumn>;
