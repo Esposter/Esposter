@@ -22,3 +22,7 @@ export const MAX_SURVEY_CALCULATED_VALUE_COUNT = 100;
 export const MAX_SURVEY_PATTERN_LENGTH = 200;
 // The most characters a URL may hold, the bound the app keeps on its own URLs, mirrored here since this package cannot import it
 export const MAX_SURVEY_URL_LENGTH = 2048;
+// The most characters an answer's text may hold, the bound every string an answer holds is held to whatever its question allows
+export const MAX_SURVEY_ANSWER_LENGTH = 10_000;
+// The most entries a list or a record inside an answer may hold, the most any question's rows, columns or choices reach
+export const MAX_SURVEY_ANSWER_ENTRY_COUNT = 200;
