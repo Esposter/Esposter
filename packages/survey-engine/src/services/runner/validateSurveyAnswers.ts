@@ -7,6 +7,7 @@ import type { SurveyQuestionNode } from "#src/models/SurveyQuestionNode";
 import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
+import { collectSurveyLeafNodes } from "#src/services/runner/collectSurveyLeafNodes";
 import { SURVEY_NOT_SHOWN_MESSAGE, SURVEY_UNKNOWN_QUESTION_MESSAGE } from "#src/services/runner/constants";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
@@ -15,12 +16,8 @@ import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValue
 
 // The questions a list of nodes holds, read through the panels that hold them. A dynamic panel's template is left out
 // Its questions are named among themselves, so a name in it is no top-level answer
-const collectQuestionNodes = (nodes: SurveyPlaceableNode[]): SurveyQuestionNode[] =>
-  nodes.flatMap((node) => {
-    if (node.type === SurveyNodeType.Panel) return collectQuestionNodes(node.props.children);
-
-    return node.type === SurveyNodeType.Html || node.type === SurveyNodeType.Image ? [] : [node];
-  });
+const checkIsQuestionNode = (node: SurveyPlaceableNode): node is SurveyQuestionNode =>
+  node.type !== SurveyNodeType.Html && node.type !== SurveyNodeType.Image;
 
 // The issues a response's answers hold against the document: a name no question holds, an answer to a question that is not shown
 // Each answer a shown question refuses, by the runner's own check of a question
@@ -38,8 +35,9 @@ export const validateSurveyAnswers = (
     document.content.flatMap((_node, pageIndex) => getSurveyPageViews(document, pageIndex, values, now)),
   );
   const questionNames = new Set(
-    collectQuestionNodes(
+    collectSurveyLeafNodes(
       document.content.flatMap((node) => (node.type === SurveyNodeType.Page ? node.props.children : [])),
+      checkIsQuestionNode,
     ).map((node) => node.props.name),
   );
   const shownNames = new Set(
