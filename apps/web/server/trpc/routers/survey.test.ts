@@ -28,7 +28,16 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableClient, MockTableDatabase } from "azure-mock";
-import { createSurveyDocument, SurveyNodeType, surveyPageNodeType, surveyTextNodeType } from "survey-engine";
+import {
+  createSurveyDocument,
+  SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_REQUIRED_MESSAGE,
+  surveyDocumentSchema,
+  SurveyNodeType,
+  surveyPageNodeType,
+  SurveyTextInputType,
+  surveyTextNodeType,
+} from "survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // A text question of the given name, the one kind a save with repeated question names needs
@@ -36,6 +45,13 @@ const createQuestion = (questionName: string): SurveyTextNode => ({
   props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name: questionName },
   type: SurveyNodeType.Text,
 });
+
+// A document whose one page holds the elements given, parsed so a fixture is a document a save would accept
+const createPageDocument = (children: unknown[]) =>
+  surveyDocumentSchema.parse({
+    content: [{ props: { children, id: crypto.randomUUID() }, type: SurveyNodeType.Page }],
+    root: { props: {} },
+  });
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
@@ -87,9 +103,19 @@ describe("surveyRouter", () => {
       partitionKey: surveyResponse.partitionKey,
       rowKey: surveyResponse.rowKey,
     });
+  // The answers the response tests write are one number, to the question named "a"
+  const numberDocument = createPageDocument([
+    { props: { id: "a", inputType: SurveyTextInputType.Number, name: "a" }, type: SurveyNodeType.Text },
+  ]);
+  // A response is checked against the document the survey published, so a survey takes responses once it is published
+  const createPublishedSurvey = async (surveySettings = settings, surveyDocument = numberDocument) => {
+    const survey = await createSurvey(caller, name, { document: surveyDocument, settings: surveySettings });
+    await caller.publishResource({ id: survey.id });
+    return survey;
+  };
   // An Identified survey plus a program bound to it, returning the survey and its one valid token
   const setupIdentifiedSurvey = async () => {
-    const survey = await createSurvey(caller, name, { document, settings: identifiedSettings });
+    const survey = await createPublishedSurvey(identifiedSettings);
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -198,7 +224,7 @@ describe("surveyRouter", () => {
   test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { document, settings });
+    const newResource = await createPublishedSurvey();
     await createSurveyResponse(newResource.id, 0);
 
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
@@ -236,7 +262,7 @@ describe("surveyRouter", () => {
   test("creates and reads survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const surveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
@@ -249,7 +275,7 @@ describe("surveyRouter", () => {
   test("fails read of a response to a recycle-binned survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.deleteResource({ id: newResource.id });
 
@@ -290,7 +316,7 @@ describe("surveyRouter", () => {
   test("updates survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
@@ -301,7 +327,7 @@ describe("surveyRouter", () => {
   test("fails update survey response with duplicate model", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
     await expect(
@@ -320,7 +346,7 @@ describe("surveyRouter", () => {
   test("persists a page-only advance for the same answers", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { a: 0 },
       pageNo: 0,
@@ -344,7 +370,7 @@ describe("surveyRouter", () => {
   test("rejects a same-answer resubmit that does not advance the page", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { a: 0 },
       pageNo: 2,
@@ -374,7 +400,7 @@ describe("surveyRouter", () => {
   test("rejects a save that a concurrent save overtook", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const { updateEntity } = MockTableClient.prototype;
     const { promise: isFirstWriting, resolve: resolveFirstWriting } = Promise.withResolvers<string>();
@@ -417,7 +443,7 @@ describe("surveyRouter", () => {
   test("fails update survey response with old model version", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await updateSurveyResponse(newSurveyResponse, 1);
 
@@ -435,7 +461,7 @@ describe("surveyRouter", () => {
   test("stores no token for an anonymous survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     // A stale participant link into an anonymous survey still works, it just carries nothing
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0, crypto.randomUUID());
 
@@ -545,7 +571,7 @@ describe("surveyRouter", () => {
   test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const survey = await createSurvey(caller, name, { document, settings: identifiedSettings });
+    const survey = await createPublishedSurvey(identifiedSettings);
     // Two recipients of the same program: both tokens are valid, but a response belongs to exactly one
     const program = await createBoundProgram({
       keyValues: [keyValue, `${keyValue} `],
@@ -619,10 +645,10 @@ describe("surveyRouter", () => {
   test("fails update with closed survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     // An in-flight respondent — form open when the survey closed — gets the rejection on submit
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { document, settings: closedSettings });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings: closedSettings });
 
     await expect(updateSurveyResponse(newSurveyResponse, 1)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${closedSurveyErrorMessage}]`,
@@ -684,7 +710,7 @@ describe("surveyRouter", () => {
   test("reopening accepts responses again", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { document, settings: closedSettings });
+    const newResource = await createPublishedSurvey(closedSettings);
     // No re-publish involved — the toggle alone reopens collection
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings });
     await createSurveyResponse(newResource.id, 0);
@@ -696,7 +722,7 @@ describe("surveyRouter", () => {
   test("deletes survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await createSurveyResponse(newResource.id, 1);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
@@ -711,7 +737,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response with non-existent row key", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
 
@@ -725,7 +751,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response for a user who does not own the survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await mockSessionOnce(mockContext.db);
 
@@ -737,7 +763,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response across surveys", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const otherResource = await caller.createResource({ name });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
@@ -752,7 +778,7 @@ describe("surveyRouter", () => {
   test("counts survey responses", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const emptyCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
@@ -766,7 +792,7 @@ describe("surveyRouter", () => {
   test("counts a draft only once the same answers submit it", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const draftSurveyResponse = await caller.createSurveyResponse({
       isDraft: true,
       model: { a: 0 },
@@ -791,7 +817,7 @@ describe("surveyRouter", () => {
   test("keeps a submitted response submitted when a later save says draft", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.createResource({ name });
+    const newResource = await createPublishedSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.updateSurveyResponse({
       isDraft: true,
@@ -803,5 +829,62 @@ describe("surveyRouter", () => {
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
+  });
+
+  describe("response validation", () => {
+    test("refuses a rating outside its scale, naming the question", async () => {
+      expect.hasAssertions();
+
+      const survey = await createPublishedSurvey(
+        settings,
+        createPageDocument([{ props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating }]),
+      );
+      const ratingErrorMessage = new InvalidOperationError(
+        Operation.Create,
+        AzureEntityType.SurveyResponse,
+        `Answer to "rating": ${SURVEY_INVALID_ANSWER_MESSAGE}`,
+      ).message;
+
+      await expect(
+        caller.createSurveyResponse({
+          model: { rating: 9 },
+          participantToken: "",
+          partitionKey: survey.id,
+          rowKey: crypto.randomUUID(),
+        }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${ratingErrorMessage}]`);
+    });
+
+    test("saves a draft with a required question unanswered, and refuses the submit for it", async () => {
+      expect.hasAssertions();
+
+      const survey = await createPublishedSurvey(
+        settings,
+        createPageDocument([{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }]),
+      );
+      const requiredErrorMessage = new InvalidOperationError(
+        Operation.Create,
+        AzureEntityType.SurveyResponse,
+        `Answer to "a": ${SURVEY_REQUIRED_MESSAGE}`,
+      ).message;
+
+      await expect(
+        caller.createSurveyResponse({
+          isDraft: true,
+          model: {},
+          participantToken: "",
+          partitionKey: survey.id,
+          rowKey: crypto.randomUUID(),
+        }),
+      ).resolves.toHaveProperty("isDraft", true);
+      await expect(
+        caller.createSurveyResponse({
+          model: {},
+          participantToken: "",
+          partitionKey: survey.id,
+          rowKey: crypto.randomUUID(),
+        }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${requiredErrorMessage}]`);
+    });
   });
 });

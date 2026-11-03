@@ -38,7 +38,7 @@ export const surveyRouter = router({
   createSurveyResponse: slowRespondentProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, input);
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, { isDraft, ...input });
       // A submitted response carries no draft key at all, since the reads ask for the key to be absent
       const newSurveyResponse = new SurveyResponseEntity({ ...input, ...(isDraft && { isDraft }), participantToken });
       await createEntity(surveyResponseClient, newSurveyResponse);
@@ -86,7 +86,7 @@ export const surveyRouter = router({
   updateSurveyResponse: standardRespondentProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, input);
+      const { participantToken, surveyResponseClient } = await openSurveyResponseWrite(ctx.db, { isDraft, ...input });
       const entityWithEtag = await requireEntity(
         getEntityWithEtag(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
