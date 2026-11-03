@@ -33,6 +33,13 @@ A choice question's card SHALL show a bar for each choice, labelled with the num
 - **THEN** each choice's share is of all respondents who answered the question
 - **AND** the shares together can pass one hundred percent
 
+#### Scenario: counts an other answer under its own line, once for each answer that holds one
+
+- **GIVEN** a choice question that offers an other option, and responses that pick it
+- **WHEN** the Summary view is shown
+- **THEN** the other answers are counted under a line of their own, labelled with the other option's text or "Other" when it has none
+- **AND** an answer holding several other values is counted once
+
 ### Requirement: Rating questions show a distribution and an average
 
 A rating question's card SHALL show a bar for each rating value and the average rating.
@@ -44,15 +51,28 @@ A rating question's card SHALL show a bar for each rating value and the average 
 - **THEN** each rating value has a bar labelled with its count
 - **AND** the average of the ratings is shown
 
-### Requirement: Numeric written answers show a range and an average
+### Requirement: Numeric answers show a range and an average
 
-A text question with a numeric input SHALL show the minimum, average and maximum of its answers on its card.
+A question whose answers are numbers, a text question with a numeric input, a slider or an expression shown as a number, SHALL show the minimum, average and maximum of its answers on its card.
 
 #### Scenario: Numeric question card
 
 - **GIVEN** a text question whose input is numeric and has responses
 - **WHEN** the Summary view is shown
 - **THEN** its minimum, average and maximum are shown
+
+#### Scenario: summarises a slider's answers by their range and average
+
+- **GIVEN** a slider question with responses
+- **WHEN** the Summary view is shown
+- **THEN** its minimum, average and maximum are shown
+
+#### Scenario: summarises a calculated value shown as a percent as a number and one shown as it is as a list
+
+- **GIVEN** a calculated value shown as a percent, and one shown as it is
+- **WHEN** the Summary view is shown
+- **THEN** the percent is summarised by its minimum, average and maximum
+- **AND** the value shown as it is gets a card of its first written answers
 
 ### Requirement: Written answers show a first sample and a path to the rest
 
