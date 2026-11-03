@@ -1,21 +1,45 @@
 <script setup lang="ts">
-import { registerSurveyCreatorPlugin } from "@/services/survey/registerSurveyCreatorPlugin";
-import { checkIsServer } from "@esposter/shared";
+import type { SurveyDocument } from "survey-engine";
 
-// The creator renders only once mounted, so its components register on the client alone
-if (!checkIsServer()) registerSurveyCreatorPlugin(useNuxtApp().vueApp);
+import { useAlertStore } from "@/store/alert";
+import { useSurveyStore } from "@/store/survey";
+import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { ResourceType } from "@esposter/db-schema";
+import { checkSurveyDocument } from "survey-engine";
 
-const { creator } = useSurveyCreator();
+const surveyStore = useSurveyStore();
+const { document: storedDocument } = storeToRefs(surveyStore);
+const { loadContent, saveDocument } = surveyStore;
+const surveyCreatorStore = useSurveyCreatorStore();
+const { document: editedDocument } = storeToRefs(surveyCreatorStore);
+const { load } = surveyCreatorStore;
+const { createAlert } = useAlertStore();
+const { sweep, track } = useSurveyFiles();
+// The creator holds its own copy of the document, so a restore is loaded into it, not left the pre-restore one
+useAdoptResourceContent(ResourceType.Survey, () => {
+  load(storedDocument.value);
+});
+// Deletion waits for the close: until then a removal can still be undone, so an unreferenced file must not go sooner
+onUnmounted(() => {
+  sweep(editedDocument.value);
+});
+await loadContent();
+load(storedDocument.value);
+track(storedDocument.value);
+// A document the survey check refuses is not written: its first issue is shown, and the save reports the refusal
+const saveEditedDocument = async (newDocument: SurveyDocument) => {
+  const [issue] = checkSurveyDocument(newDocument);
+  if (issue) {
+    createAlert(`${issue.pointer}: ${issue.message}`, "error");
+    return false;
+  }
+
+  return saveDocument(newDocument);
+};
+// Set once the document is loaded, so the load itself is not autosaved back
+useSurveyCreatorAutosave(saveEditedDocument);
 </script>
 
 <template>
-  <UiSkeleton v-if="!creator" h-full min-h-64 />
-  <SurveyCreatorComponent v-else :model="creator" />
+  <ResourceSurveyCreatorShell />
 </template>
-
-<!-- eslint-disable-next-line vue/enforce-style-attribute -- SurveyCreatorComponent renders a Fragment, and Vue passes the scope id onto a child's root element only when it has exactly one — so `scoped` matches nothing here and `:deep()` has no ancestor to anchor to -->
-<style>
-.svc-creator__banner {
-  display: none;
-}
-</style>
