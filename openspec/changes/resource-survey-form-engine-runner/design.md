@@ -19,10 +19,10 @@ flowchart TD
 
 ## State and functions
 
-The state is `{ answers, pageIndex, isCompleted }`, answers keyed by question name. Every function takes the document and the state and returns a new state or a derived value; none mutates.
+The state is `{ answers, pageIndex, isCompleted }`, answers keyed by question name. Every function returns a new state or a derived value, and none mutates; the signature table below gives each one's parameters.
 
 - `createSurveyRunnerState(document, answers, pageIndex)`: a state, with the page clamped to the document.
-- `getSurveyRunnerValues(document, answers, clock)`: the answers plus every calculated value and expression question, evaluated in order and repeated until stable, at most five passes, so a value that reads an earlier one settles.
+- `getSurveyRunnerValues(document, answers, now)`: the answers plus every calculated value and expression question, evaluated in order and repeated until stable, at most five passes, so a value that reads an earlier one settles.
 - `checkSurveyNodeVisible`, `checkSurveyNodeEnabled`, `checkSurveyNodeRequired`: a node's condition over the values. No condition is visible, enabled and as required as the node's `isRequired`. A condition that fails to evaluate counts as not holding for `visibleIf` and `enableIf`, and as not required for `requiredIf`.
 - `getSurveyVisiblePageIndexes` and `getSurveyPageElements`: the visible pages, and the current page's elements as a tree of `{ node, pointer, isEnabled, isRequired, children }`, a hidden panel hiding its children.
 - `setSurveyAnswer`: the new state, with an empty answer removed from the record.
@@ -33,7 +33,7 @@ The state is `{ answers, pageIndex, isCompleted }`, answers keyed by question na
 
 ## Signatures
 
-Every function takes the document, the state and the current time as `now`, and none mutates. The time is a parameter so a test or the preview fixes it.
+A function that reads the document takes it first, and a function whose result depends on the time takes the current time as `now`, the parameter a test or the preview fixes. `setSurveyAnswer` takes the state alone, since it only writes the answer. None mutates.
 
 | Function                                                | Returns                                                                             |
 | ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
