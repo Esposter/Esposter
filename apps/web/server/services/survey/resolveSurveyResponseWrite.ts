@@ -35,7 +35,7 @@ export const resolveSurveyResponseWrite = async (
     );
 
   const resolvedParticipantToken = await SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);
-  // A respondent answers the page they were served, so a republish since then does not refuse their draft
+  // The write is checked against the publication a respondent is served now, not the working copy the owner may have edited since
   if (!survey.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, surveyId);
   const publishedContent = await readSnapshotVersionContent(db, survey, {
     channel: SnapshotChannel.Published,
