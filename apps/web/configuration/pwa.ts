@@ -52,7 +52,7 @@ export const pwa: NuxtConfig["pwa"] = {
   registerType: "prompt",
   strategies: "buildSW",
   // A file past the 2 MiB precache limit is left out of the list with a warning, and the page fetches it when it needs it,
-  // Since the default fails the build on the one large chunk. The engine copies this option onto `buildSW` itself, so a
-  // Value inside `buildSW` is overwritten
+  // Since the default fails the build on the one large chunk. The engine moved this option to the root of the plugin
+  // Options, so `buildSW` does not take it
   throwMaximumFileSizeToCacheInBytes: false,
 };
