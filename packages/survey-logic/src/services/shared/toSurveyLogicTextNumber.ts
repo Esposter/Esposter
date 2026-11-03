@@ -7,7 +7,7 @@ import { checkIsSurveyLogicStringOperator } from "#src/services/shared/checkIsSu
 export const toSurveyLogicTextNumber = (value: string): number => {
   const text = value.trim();
   if (!text) return Number.NaN;
-  if (text.startsWith("0x")) return text.length > 32 ? Number.NaN : Number.parseInt(text, 16);
+  if (text.startsWith("0x")) return text.length > 32 ? Number.NaN : Number(text);
   if (text.length > 15 && checkIsSurveyLogicDigitsOnly(text)) return Number.NaN;
   if (checkIsSurveyLogicStringOperator(text)) return Number.NaN;
 
