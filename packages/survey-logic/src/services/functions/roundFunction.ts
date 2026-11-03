@@ -1,13 +1,10 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
-import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
+import { getSurveyNumberWithPrecision } from "#src/services/shared/getSurveyNumberWithPrecision";
 
 // The number rounded to a number of decimal places, or to a whole number when the precision is empty
 export const roundFunction: SurveyLogicFunction = (args) => {
-  const values = flattenSurveyValues(args);
-  const number = getSurveyNumber(values[0]);
-  const precision = getSurveyNumber(values[1] || 0);
+  const [number, precision] = getSurveyNumberWithPrecision(args);
 
   if (Number.isNaN(number) || Number.isNaN(precision)) return Number.NaN;
 
