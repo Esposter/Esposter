@@ -1,6 +1,6 @@
 # Survey Document
 
-The survey as a typed document in the `survey-engine` package, on the [headless block editor core](../../specs/headless-block-editor/editor-core/design.md), built on the [expression language](../resource-survey-form-engine-logic/design.md) for its save check. The document follows the shape the core already checks: a root holding pages, pages and panels holding elements, and questions holding none. It is the contract every other part reads, so its kinds, props and limits are stated here and nowhere else.
+The survey as a typed document in the `survey-engine` package, on the [headless block editor core](../../../specs/headless-block-editor/editor-core/design.md), built on the [expression language](../2026-11-04-resource-survey-form-engine-logic/design.md) for its save check. The document follows the shape the core already checks: a root holding pages, pages and panels holding elements, and questions holding none. It is the contract every other part reads, so its kinds, props and limits are stated here and nowhere else.
 
 ## How it works
 
@@ -64,7 +64,7 @@ A choice is `{ value, text }` with a string or number `value` and an optional `t
 
 ## Decisions
 
-- **The document is bound later.** The package, with its schema, registry and kinds, lands beside SurveyJS and are not yet the resource's content schema. Binding the schema earlier would leave SurveyJS saving a string the schema refuses. The [respondent part](../resource-survey-form-engine-respondent/design.md) swaps the store, the router and the two pages together.
+- **The document is bound later.** The package, with its schema, registry and kinds, lands beside SurveyJS and are not yet the resource's content schema. Binding the schema earlier would leave SurveyJS saving a string the schema refuses. The [respondent part](../2026-11-04-resource-survey-form-engine-respondent/design.md) swaps the store, the router and the two pages together.
 - **One answer for "other".** The respondent's typed other text is the answer itself, not a separate `-Comment` key as SurveyJS writes. Rejected: SurveyJS's pair of keys, which makes a response record's columns depend on what a respondent chose.
 - **A dynamic panel's template does not nest.** Rejected: unbounded nesting, which the Creator's canvas and the runner's scopes would each have to bound for themselves.
 

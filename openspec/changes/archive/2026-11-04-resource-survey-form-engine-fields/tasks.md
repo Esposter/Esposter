@@ -4,7 +4,7 @@ Build order. Each group of fields is independent of the others; the renderer com
 
 ## 1. Fields
 
-- [x] 1.1 Build the `text`, `comment`, `boolean`, `radiogroup` and `dropdown` fields, each held to the component test the [ui-library skill](../../../.agents/skills/ui-library/SKILL.md) requires, run once per style.
+- [x] 1.1 Build the `text`, `comment`, `boolean`, `radiogroup` and `dropdown` fields, each held to the component test the [ui-library skill](../../../../.agents/skills/ui-library/SKILL.md) requires, run once per style.
       Verify: each field's contract test passes in both styles and its label is the question's title.
 - [x] 1.2 Build the `checkbox`, `tagbox`, `buttongroup`, `rating` and `slider` fields.
       Verify: as 1.1, and select-all, none and other behave as the document's props state.

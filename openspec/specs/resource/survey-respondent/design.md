@@ -27,7 +27,7 @@ The server checks every write in `resolveSurveyResponseWrite`, the one boundary 
 
 ## Decisions
 
-- **The server runs the runner's validation.** `validateSurveyAnswers` is the function the browser runs, so the server refuses what the respondent's page refuses. The response procedures are public and rate limited, and the answers are the only unauthenticated write, so the browser is not trusted.
+- **The server runs the runner's validation.** `validateSurveyAnswers` is the server's wrapper over `getSurveyQuestionErrors`, the per-question check the respondent's page runs through its page checks, so the server refuses what the page refuses. The response procedures are public and rate limited, and the answers are the only unauthenticated write, so the browser is not trusted.
 - **The server validates against the published snapshot.** A name the document does not hold is refused, so a response record holds only a question's answers. Recording the content version on each response and reading that version's snapshot was rejected, since it adds an entity field and a read by version for a case the resume already handles.
 - **A submit is checked for completeness, a draft is not.** A draft may hold a partial survey. Only the submit requires every visible required question, so a respondent can leave and come back.
 - **The content is the typed document.** The resource's content is `{ document, settings }`, a strict object. Its schema accepts no other shape, so a save carrying the old `{ model }` string is refused at the boundary.

@@ -1,6 +1,6 @@
 # Survey Logic
 
-The survey's expression language as a workspace package: a tokenizer and parser that return a tree or a positioned error, and an evaluator over a record of answers. It is a grammar and an interpreter, so it is an engine of its own, and the [survey engine package](../resource-survey-form-engine-document/design.md) and the app both import it. The [math expression compiler](../../specs/math-expression-compiler/language/design.md) is numeric by design and stays out of this, since the survey's value model is strings, booleans, numbers and lists.
+The survey's expression language as a workspace package: a tokenizer and parser that return a tree or a positioned error, and an evaluator over a record of answers. It is a grammar and an interpreter, so it is an engine of its own, and the [survey engine package](../2026-11-04-resource-survey-form-engine-document/design.md) and the app both import it. The [math expression compiler](../../../specs/math-expression-compiler/language/design.md) is numeric by design and stays out of this, since the survey's value model is strings, booleans, numbers and lists.
 
 ## How it works
 

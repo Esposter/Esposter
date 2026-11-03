@@ -1,6 +1,6 @@
 # Survey Fields
 
-One field component per question kind, and the chooser that picks one for each question on a page. Each field is drawn from the app's UI library, so it meets the library's keyboard and ARIA contract rather than a contract of its own. The page that holds the fields, and owns the state, the errors and the focus, is the [survey runner](../survey-runner/design.md).
+One field component per question kind, and the chooser that picks one for each question on a page. Each field is drawn from the app's UI library, so it meets the library's keyboard and ARIA contract rather than a contract of its own. The page that holds the fields, and owns the state, the errors and the focus, is the [survey runner](../../../specs/resource/survey-runner/design.md).
 
 ## How it works
 
