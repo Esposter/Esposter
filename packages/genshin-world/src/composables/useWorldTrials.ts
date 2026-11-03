@@ -1,8 +1,5 @@
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
-import type { Character } from "#src/models/character/Character";
 import type { CharacterData } from "#src/models/character/CharacterData";
-import type { Kit } from "#src/models/kit/Kit";
-import type { Party } from "#src/models/party/Party";
 import type { Trial } from "#src/models/trial/Trial";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { TrialArena } from "#src/models/world/TrialArena";
@@ -11,7 +8,6 @@ import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { Object3D } from "three";
-import type { Ref } from "vue";
 
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
@@ -28,6 +24,7 @@ import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
@@ -42,21 +39,18 @@ export const useWorldTrials = ({
   artifactRarityDataMap,
   characterBody,
   characterDataMap,
-  characterIdKitMap,
-  characters,
   claimedStageIds,
-  party,
   weaponDataMap,
 }: {
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   characterBody: Object3D;
   characterDataMap: ReadonlyMap<number, Pick<CharacterData, "ascensionPhases">>;
-  characterIdKitMap: Ref<ReadonlyMap<number, Kit>>;
-  characters: Ref<Character[]>;
   claimedStageIds: ReadonlySet<number>;
-  party: Party;
   weaponDataMap: ReadonlyMap<number, Pick<WeaponData, "ascensionPhases">>;
 }) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { characterIdKitMap, characters } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();

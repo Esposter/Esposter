@@ -1,5 +1,4 @@
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
-import type { Character } from "#src/models/character/Character";
 import type { Kit } from "#src/models/kit/Kit";
 import type { Trial } from "#src/models/trial/Trial";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -11,18 +10,17 @@ import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { createParty } from "#src/services/party/createParty";
-import { createWorldParty } from "#src/services/party/createWorldParty";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { useWorldMapStore } from "#src/store/map";
+import { startTestWorldParty } from "#src/store/party.fixture";
 import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { Object3D } from "three";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { shallowRef } from "vue";
 
 const CHARACTER_ID = 1001;
 const TRIAL_AVATAR_ID = 1022;
@@ -70,10 +68,7 @@ describe(useWorldTrials, () => {
     artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
     characterBody: new Object3D(),
     characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
-    characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
-    characters: shallowRef<Character[]>([]),
     claimedStageIds: new Set<number>(),
-    party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
     weaponDataMap: new Map([
       [
         2001,
@@ -85,11 +80,21 @@ describe(useWorldTrials, () => {
   const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
     const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
     startTestWorldGround();
+    const worldPartyStore = startTestWorldParty({
+      characterIdKitMap: new Map([[OWNED_CHARACTER_ID, OWNED_KIT]]),
+      party: createParty([OWNED_CHARACTER_ID]),
+    });
     const worldMapStore = useWorldMapStore();
     const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
     const worldScreenStore = useWorldScreenStore();
     const closeScreen = vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(() => {});
-    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), closeScreen, jumpTo, worldSessionStore };
+    return {
+      ...useWorldTrials({ ...createDependencies(), ...overrides }),
+      closeScreen,
+      jumpTo,
+      worldPartyStore,
+      worldSessionStore,
+    };
   };
 
   beforeEach(() => {
@@ -129,39 +134,35 @@ describe(useWorldTrials, () => {
 
   test("a trial takes the player's roster for its fight, and the roster is given back when it ends", async () => {
     expect.hasAssertions();
-    const characters = shallowRef<Character[]>([]);
-    const ownedCharacters = characters.value;
-    const ownedKitMap: ReadonlyMap<number, Kit> = new Map([[OWNED_CHARACTER_ID, OWNED_KIT]]);
-    const characterIdKitMap = shallowRef<ReadonlyMap<number, Kit>>(ownedKitMap);
-    const party = createWorldParty(createParty([OWNED_CHARACTER_ID]));
-    const { enterTrial, stepTrial, trials } = setUpTrials({ characterIdKitMap, characters, party });
+    const { enterTrial, stepTrial, trials, worldPartyStore } = setUpTrials();
+    const { party } = worldPartyStore;
+    const ownedCharacters = worldPartyStore.characters;
+    const ownedKitMap = worldPartyStore.characterIdKitMap;
     await flushReads();
 
     await enterTrial(takeOne(trials.value), RETURN_POSE);
-    expect(characters.value).toHaveLength(1);
-    expect(takeOne(characters.value).id).toBe(CHARACTER_ID);
-    expect(characterIdKitMap.value).toStrictEqual(new Map([[CHARACTER_ID, TRIAL_KIT]]));
+    expect(worldPartyStore.characters).toHaveLength(1);
+    expect(takeOne(worldPartyStore.characters).id).toBe(CHARACTER_ID);
+    expect(worldPartyStore.characterIdKitMap).toStrictEqual(new Map([[CHARACTER_ID, TRIAL_KIT]]));
     expect([...party.characterIdMemberMap.keys()]).toStrictEqual([CHARACTER_ID]);
 
     stepTrial(TIMED_OUT_STEP);
-    expect(characters.value).toBe(ownedCharacters);
-    expect(characterIdKitMap.value).toBe(ownedKitMap);
+    expect(worldPartyStore.characters).toBe(ownedCharacters);
+    expect(worldPartyStore.characterIdKitMap).toBe(ownedKitMap);
     expect([...party.characterIdMemberMap.keys()]).toStrictEqual([OWNED_CHARACTER_ID]);
   });
 
   test("a party down ends a trial with no reward and gives the player's roster back", async () => {
     expect.hasAssertions();
-    const characters = shallowRef<Character[]>([]);
-    const ownedCharacters = characters.value;
-    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials, worldSessionStore } = setUpTrials({
-      characters,
-    });
+    const { enterTrial, stepTrial, trialArena, trialClaimedStageIds, trials, worldPartyStore, worldSessionStore } =
+      setUpTrials();
+    const ownedCharacters = worldPartyStore.characters;
     await flushReads();
 
     await enterTrial(takeOne(trials.value), RETURN_POSE);
     stepTrial({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false });
     expect(trialArena.value).toBeUndefined();
-    expect(characters.value).toBe(ownedCharacters);
+    expect(worldPartyStore.characters).toBe(ownedCharacters);
     expect(trialClaimedStageIds.value.size).toBe(0);
     expect(worldSessionStore.wallet).toStrictEqual(EMPTY_WALLET);
   });

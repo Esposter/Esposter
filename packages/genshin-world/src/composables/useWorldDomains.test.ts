@@ -23,6 +23,7 @@ import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { useWorldMapStore } from "#src/store/map";
+import { startTestWorldParty } from "#src/store/party.fixture";
 import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
@@ -109,6 +110,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
   const worldScreenStore = useWorldScreenStore();
   const closeScreen = vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(() => {});
+  startTestWorldParty({ party: createParty([TRAVELER_CHARACTER_ID]) });
   const domains = useWorldDomains({
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
     artifactMainAffixPools: [],
@@ -116,7 +118,6 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     clearedDomainIds: shallowRef(new Set<string>()),
     domainChallengeLevels,
     kitEffectState: { effects: [] },
-    party: createParty([TRAVELER_CHARACTER_ID]),
     random: () => 0.5,
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],

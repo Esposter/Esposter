@@ -1,6 +1,4 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { Character } from "#src/models/character/Character";
-import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
@@ -8,22 +6,17 @@ import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { HudMember } from "#src/models/hud/HudMember";
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
-import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { Ref } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createCharacter } from "#src/services/character/createCharacter";
 import { getCharacterElement } from "#src/services/character/getCharacterElement";
-import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
-import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
+import { WORLD_RANDOM_SEED } from "#src/services/constants";
 import { getEnemyDroppedItems } from "#src/services/enemy/getEnemyDroppedItems";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
@@ -32,12 +25,8 @@ import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { hitPartyMember } from "#src/services/kit/hitPartyMember";
-import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
-import { createWorldParty } from "#src/services/party/createWorldParty";
-import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getDeployedElements } from "#src/services/party/getDeployedElements";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getImpetuousWindsStaminaConsumptionMultiplier } from "#src/services/party/getImpetuousWindsStaminaConsumptionMultiplier";
@@ -46,42 +35,34 @@ import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
-import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
-import { useTimeoutFn } from "@vueuse/core";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createSeededRandom, createStamina, LocomotionState } from "genshin-engine";
-import { computed, shallowReactive, shallowRef, watch } from "vue";
+import { computed, shallowReactive, watch } from "vue";
 
-// The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
+// The combat of the party the player fields, and the world's combat state the kit on the
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
 // Doing the quests count, and a team that falls opens the game over screen, whose revive the host places
 export const useWorldCombat = ({
-  characterIdConstellationsMap,
   enemyTables,
   onPartyDown,
   onPartyRevived,
   partyBonusLines,
-  savedCharacters,
-  savedParty,
   staminaMaximum,
-  startingCharacterIdKitMap,
   statTables,
   travelerBonusLines,
   travelerElement,
   wildlifePlaces,
 }: {
-  characterIdConstellationsMap: Readonly<Ref<ReadonlyMap<number, Constellation[]>>>;
   enemyTables: EnemyTables;
   onPartyDown: () => void;
   onPartyRevived: () => void;
   // The bonuses the whole party holds from the Spiral Abyss's chamber, which every character of the party takes
   partyBonusLines: Readonly<Ref<AttributeLine[]>>;
-  savedCharacters: Character[];
-  savedParty: Party;
   // The most the party's stamina holds, which the statues raise as their levels are reached
   staminaMaximum: Readonly<Ref<number>>;
-  startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
   // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
   travelerBonusLines: Readonly<Ref<AttributeLine[]>>;
@@ -93,56 +74,9 @@ export const useWorldCombat = ({
   const { placeWorldDrops } = worldPickupsStore;
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
-  // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party
-  const characters = shallowRef<Character[]>(
-    savedCharacters.length > 0
-      ? savedCharacters
-      : [createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)],
-  );
-  const party = createWorldParty(savedParty);
-  // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
-  // Changes to take it in, its module and multipliers read on demand, playing each talent at the level it holds with what
-  // Its constellations add
-  const characterIdKitMap = shallowRef(startingCharacterIdKitMap);
-  const deployedCharacterIds = computed(() => getDeployedCharacterIds(party));
-  // A failed read is read again a wait later, as a team that does not change starts no other
-  const { start: retryCharacterKits } = useTimeoutFn(
-    () => {
-      readUnloadedCharacterKits();
-    },
-    DATA_FETCH_RETRY_MS,
-    { immediate: false },
-  );
-  const readUnloadedCharacterKits = () => {
-    const unloadedCharacters = characters.value.filter(
-      ({ id }) => deployedCharacterIds.value.includes(id) && !characterIdKitMap.value.has(id),
-    );
-    if (unloadedCharacters.length === 0) return;
-    const characterTalentLevelMap = new Map(
-      unloadedCharacters.map(
-        (character) =>
-          [
-            character.id,
-            getPlayedTalentLevels(character, characterIdConstellationsMap.value.get(character.id) ?? []),
-          ] as const,
-      ),
-    );
-    getSynchronizedFunction(() =>
-      getResultAsync(() => readCharacterKits(worldSessionStore.gameDataBaseUrl, characterTalentLevelMap)).match(
-        (newCharacterIdKitMap) => {
-          // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
-          characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);
-        },
-        (error) => {
-          console.error(error);
-          retryCharacterKits();
-        },
-      ),
-    )();
-  };
-  watch(deployedCharacterIds, readUnloadedCharacterKits);
-  // The character on the field, which the screens and the HUD name the active member by
-  const activeCharacterId = computed(() => getActiveCharacterId(party));
+  const worldPartyStore = useWorldPartyStore();
+  const { activeCharacterId, characterIdKitMap, characters, deployedCharacterIds } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   // How the character on the field moves, its body type's
   const locomotion = computed(() => getCharacterLocomotion(activeCharacterId.value, statTables.characterDataMap));
   // Each character's combat once its kit is built, a character whose kit has not arrived having none yet. The character on
@@ -177,15 +111,6 @@ export const useWorldCombat = ({
   });
   const activeCombatant = computed(() => characterIdCombatantMap.value.get(activeCharacterId.value));
   const activePartyMember = computed(() => getPartyMember(party, activeCharacterId.value));
-  // The deployed team's skill and burst icons the HUD's buttons carry, by character id, each carried by its kit
-  const characterIdSkillGlyphsMap = computed(
-    () =>
-      new Map(
-        [...characterIdKitMap.value].flatMap(([characterId, { skillGlyphs }]) =>
-          skillGlyphs ? [[characterId, skillGlyphs] as const] : [],
-        ),
-      ),
-  );
   const startingCombatant = activeCombatant.value;
   if (!startingCombatant)
     throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${activeCharacterId.value}`);
@@ -334,10 +259,6 @@ export const useWorldCombat = ({
       : undefined;
   };
   return {
-    activeCharacterId,
-    characterIdKitMap,
-    characterIdSkillGlyphsMap,
-    characters,
     chargeParty,
     clearKitEffects,
     coldDamageParty,
@@ -346,7 +267,6 @@ export const useWorldCombat = ({
     hudMember,
     kitContext,
     locomotion,
-    party,
     respawnParty,
     reviveFallenParty,
     strikeParty,

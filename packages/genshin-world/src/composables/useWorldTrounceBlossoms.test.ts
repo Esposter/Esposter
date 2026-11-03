@@ -1,5 +1,4 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
-import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -25,7 +24,6 @@ import {
   WEEKLY_BOSS_TALENT_DROPS,
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -33,7 +31,6 @@ import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { computeBlossomClaimOffers } from "#src/services/originalResin/computeBlossomClaimOffers";
-import { createParty } from "#src/services/party/createParty";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
@@ -107,11 +104,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     useWorldTrounceBlossoms({
       catalogue,
-      characters: shallowRef<Character[]>([]),
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
       friendshipLevels: shallowRef<FriendshipLevels>(),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     const defeatListener = vi.fn<(enemy: Enemy) => void>();
@@ -134,11 +129,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     const { lastTeleportAts } = useWorldTrounceBlossoms({
       catalogue,
-      characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     // The map fixture's player stands in the Sea of Clouds, and the far point is past every outline
@@ -155,11 +148,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
-      characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([
@@ -188,11 +179,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
-      characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
@@ -223,11 +212,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
-      characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
@@ -276,11 +263,9 @@ describe(useWorldTrounceBlossoms, () => {
     startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
-      characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([

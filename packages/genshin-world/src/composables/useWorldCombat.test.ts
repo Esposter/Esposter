@@ -13,6 +13,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER, REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { STAMINA_MAX } from "genshin-engine";
@@ -22,32 +23,43 @@ import { nextTick, shallowRef } from "vue";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> = {}) => {
+const createCombat = (
+  overrides: Partial<Parameters<typeof useWorldCombat>[0]> = {},
+  roster: Partial<Parameters<ReturnType<typeof useWorldPartyStore>["start"]>[0]> = {},
+) => {
   startTestWorldSession({ gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL });
-  return useWorldCombat({
+  const worldPartyStore = useWorldPartyStore();
+  worldPartyStore.start({
+    characterDataMap: statTables.characterDataMap,
     characterIdConstellationsMap: shallowRef(new Map()),
+    savedCharacters: [],
+    savedParty: createParty([TRAVELER_CHARACTER_ID]),
+    startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
+    ...roster,
+  });
+  const combat = useWorldCombat({
     enemyTables,
     onPartyDown: () => {},
     onPartyRevived: () => {},
     partyBonusLines: shallowRef([]),
-    savedCharacters: [],
-    savedParty: createParty([TRAVELER_CHARACTER_ID]),
     staminaMaximum: shallowRef(STAMINA_MAX),
-    startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
     statTables,
     travelerBonusLines: shallowRef([]),
     travelerElement: shallowRef<Element>(),
     wildlifePlaces: [],
     ...overrides,
   });
+  return { ...combat, worldPartyStore };
 };
 
 describe(useWorldCombat, () => {
   test("a new player starts with the Traveler alone", () => {
     expect.hasAssertions();
-    const { characters } = createCombat();
+    const { worldPartyStore } = createCombat();
 
-    expect(characters.value).toStrictEqual([createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)]);
+    expect(worldPartyStore.characters).toStrictEqual([
+      createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap),
+    ]);
   });
 
   test("a chest opened in the world reaches the combat", () => {
@@ -68,12 +80,14 @@ describe(useWorldCombat, () => {
         .slice(0, 3)
         .map(([characterId]) => characterId),
     ];
-    const { kitContext } = createCombat({
-      savedCharacters: characterIds.map((characterId) => createCharacter(characterId, statTables.characterDataMap)),
-      savedParty: createParty(characterIds),
-      startingCharacterIdKitMap: new Map(characterIds.map((characterId) => [characterId, TRAVELER_KIT])),
-      travelerElement: shallowRef(Element.Anemo),
-    });
+    const { kitContext } = createCombat(
+      { travelerElement: shallowRef(Element.Anemo) },
+      {
+        savedCharacters: characterIds.map((characterId) => createCharacter(characterId, statTables.characterDataMap)),
+        savedParty: createParty(characterIds),
+        startingCharacterIdKitMap: new Map(characterIds.map((characterId) => [characterId, TRAVELER_KIT])),
+      },
+    );
     const amount = 1;
     kitContext.stamina.spend(amount);
 
@@ -118,7 +132,8 @@ describe(useWorldCombat, () => {
     expect.hasAssertions();
     const onPartyDown = vi.fn<() => void>();
     const onPartyRevived = vi.fn<() => void>();
-    const { party, respawnParty, reviveFallenParty } = createCombat({ onPartyDown, onPartyRevived });
+    const { respawnParty, reviveFallenParty, worldPartyStore } = createCombat({ onPartyDown, onPartyRevived });
+    const { party } = worldPartyStore;
     getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare = 0;
     respawnParty();
 

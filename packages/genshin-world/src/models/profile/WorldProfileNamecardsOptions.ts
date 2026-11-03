@@ -1,7 +1,6 @@
 import type { Achievement } from "#src/models/achievement/Achievement";
 import type { AchievementCategory } from "#src/models/achievement/AchievementCategory";
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { Character } from "#src/models/character/Character";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNamecard";
 import type { Ref } from "vue";
@@ -11,7 +10,6 @@ import type { Ref } from "vue";
 export interface WorldProfileNamecardsOptions {
   achievementData: Readonly<Ref<undefined | { achievements: Achievement[]; categories: AchievementCategory[] }>>;
   achievementProgressMap: Readonly<Ref<ReadonlyMap<number, AchievementProgress>>>;
-  characters: Readonly<Ref<readonly Pick<Character, "friendshipExp" | "id">[]>>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   friendshipNamecards: Readonly<Ref<readonly FriendshipNamecard[]>>;
 }

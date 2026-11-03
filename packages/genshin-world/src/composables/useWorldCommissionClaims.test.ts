@@ -21,9 +21,10 @@ import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/consta
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { computed, shallowRef } from "vue";
 
 describe(useWorldCommissionClaims, () => {
@@ -124,24 +125,33 @@ describe(useWorldCommissionClaims, () => {
     );
     const { wallet } = storeToRefs(worldSessionStore);
     startTestAdventureRank(DEALT_RANK);
-    const characters = shallowRef<Character[]>([{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER]);
+    const worldPartyStore = startTestWorldParty({
+      characters: [{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER],
+      party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
+    });
+    const startingCharacters = worldPartyStore.characters;
     const friendshipLevels = shallowRef<FriendshipLevels | undefined>([
       { exp: 0, level: 1 },
       { exp: 100, level: 2 },
     ]);
-    const setCharacters = vi.fn<(nextCharacters: Character[]) => void>();
     const claims = useWorldCommissionClaims({
       adventureRankTables,
-      characters,
       commissionDay,
       commissionSlice: computed(() => slice),
       encounterPoints,
       friendshipLevels,
       longTermEncounterPoints,
-      party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
-      setCharacters,
     });
-    return { claims, commissionDay, encounterPoints, friendshipLevels, longTermEncounterPoints, setCharacters, wallet };
+    return {
+      claims,
+      commissionDay,
+      encounterPoints,
+      friendshipLevels,
+      longTermEncounterPoints,
+      startingCharacters,
+      wallet,
+      worldPartyStore,
+    };
   };
 
   test("should claim a finished commission free, routing its Mora into the wallet and recording the claim", () => {
@@ -172,13 +182,16 @@ describe(useWorldCommissionClaims, () => {
   test("should refuse a claim while the friendship levels are unread, leaving the day and the wallet as they were", () => {
     expect.hasAssertions();
     const day = dayWith(FINISH_PROGRESS);
-    const { claims, commissionDay, friendshipLevels, setCharacters, wallet } = createClaims({ ...baseClaims, day });
+    const { claims, commissionDay, friendshipLevels, startingCharacters, wallet, worldPartyStore } = createClaims({
+      ...baseClaims,
+      day,
+    });
     friendshipLevels.value = undefined;
 
     claims.claimCommission(commission.id);
 
     expect(commissionDay.value).toBe(day);
-    expect(setCharacters).not.toHaveBeenCalled();
+    expect(worldPartyStore.characters).toBe(startingCharacters);
     expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
   });
 

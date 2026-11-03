@@ -1,5 +1,4 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
-import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
@@ -10,7 +9,6 @@ import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
-import type { Party } from "#src/models/party/Party";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { Ref } from "vue";
 
@@ -38,6 +36,7 @@ import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldGroundStore } from "#src/store/ground";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -52,22 +51,21 @@ import { computed, shallowRef } from "vue";
 export const useWorldOutcrops = ({
   adventureRankTables,
   areaId,
-  characters,
   enemyMap,
   friendshipLevels,
-  party,
   placements,
   regionStatueProgressMap,
 }: {
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
-  characters: Ref<Character[]>;
   enemyMap: ReadonlyMap<string, Enemy>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();

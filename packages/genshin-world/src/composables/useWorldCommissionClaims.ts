@@ -1,12 +1,10 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
-import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionRouting } from "#src/models/commission/CommissionRouting";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Party } from "#src/models/party/Party";
 import type { ComputedRef, Ref } from "vue";
 
 import { claimCommissionWithPoints } from "#src/services/commission/claimCommissionWithPoints";
@@ -16,6 +14,7 @@ import { convertLongTermEncounterPoint } from "#src/services/commission/convertL
 import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
 import { takeKatheryneBonus } from "#src/services/commission/takeKatheryneBonus";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
@@ -25,25 +24,22 @@ import { computed } from "vue";
 // A claim leaves is written back to the session's state, the day and the points held here and the rest where it is kept
 export const useWorldCommissionClaims = ({
   adventureRankTables,
-  characters,
   commissionDay,
   commissionSlice,
   encounterPoints,
   friendshipLevels,
   longTermEncounterPoints,
-  party,
-  setCharacters,
 }: {
   adventureRankTables: AdventureRankTables;
-  characters: Ref<Character[]>;
   commissionDay: Ref<CommissionDay>;
   commissionSlice: ComputedRef<CommissionSlice | undefined>;
   encounterPoints: Ref<EncounterPoints>;
   friendshipLevels: Ref<FriendshipLevels | undefined>;
   longTermEncounterPoints: Ref<LongTermEncounterPoints>;
-  party: Party;
-  setCharacters: (nextCharacters: Character[]) => void;
 }) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();
@@ -52,7 +48,7 @@ export const useWorldCommissionClaims = ({
   // Where a routing's items land: the Adventure EXP, the characters, the bag and the wallet
   const writeRouting = (routing: CommissionRouting) => {
     adventureExp.value = routing.adventureExp;
-    setCharacters(routing.characters);
+    characters.value = routing.characters;
     setInventory(routing.inventory);
     setWallet(routing.wallet);
   };

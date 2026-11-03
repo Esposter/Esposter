@@ -2,6 +2,7 @@ import type { WorldProfileNamecardsOptions } from "#src/models/profile/WorldProf
 
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { computed } from "vue";
 
@@ -9,10 +10,11 @@ import { computed } from "vue";
 export const useWorldProfileNamecards = ({
   achievementData,
   achievementProgressMap,
-  characters,
   friendshipLevels,
   friendshipNamecards,
 }: WorldProfileNamecardsOptions) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
   const worldSessionStore = useWorldSessionStore();
   const profileNamecards = computed(() =>
     computeProfileNamecardItemIds({

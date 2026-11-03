@@ -11,11 +11,12 @@ import { MaterialType } from "#src/models/inventory/MaterialType";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
 import { CHARACTER_EXP_ITEM_ID, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { createParty } from "#src/services/party/createParty";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { ref } from "vue";
 
 describe(useWorldQuestRewards, () => {
   // A made-up item and quest, since no record is copied into a test. Its rewards are Mora, a made-up item, Adventure
@@ -73,17 +74,12 @@ describe(useWorldQuestRewards, () => {
     );
     const { events } = worldSessionStore;
     const { inventory, wallet } = storeToRefs(worldSessionStore);
-    const characters = ref<Character[]>([CHARACTER, BENCHED_CHARACTER]);
+    const { characters } = storeToRefs(
+      startTestWorldParty({ characters: [CHARACTER, BENCHED_CHARACTER], party: createParty([CHARACTER.id]) }),
+    );
     const worldAdventureRankStore = useWorldAdventureRankStore();
     const gainAdventureExp = vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
-    useWorldQuestRewards({
-      characters,
-      getDeployedCharacterIds: () => [CHARACTER.id],
-      getMaxLevel: () => MAX_LEVEL,
-      setCharacters: (nextCharacters) => {
-        characters.value = nextCharacters;
-      },
-    });
+    useWorldQuestRewards({ getMaxLevel: () => MAX_LEVEL });
     events.emit("finishQuest", QUEST, PROGRESS, PROGRESS);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 2);
     expect(inventory.value.items.map(({ definition, quantity }) => ({ id: definition.id, quantity }))).toStrictEqual([

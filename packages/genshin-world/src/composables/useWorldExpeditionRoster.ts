@@ -2,16 +2,15 @@ import type { Expedition } from "#src/models/expedition/Expedition";
 import type { WorldExpeditionRosterOptions } from "#src/models/expedition/WorldExpeditionRosterOptions";
 
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
+import { useWorldPartyStore } from "#src/store/party";
 import { computed, shallowRef } from "vue";
 
 // The expeditions out from the Adventurers' Guild, held for the session so a reload empties them, and the roster their
 // Picker lists
-export const useWorldExpeditionRoster = ({
-  characters,
-  characterTalentKits,
-  getCharacterName,
-  party,
-}: WorldExpeditionRosterOptions) => {
+export const useWorldExpeditionRoster = ({ characterTalentKits, getCharacterName }: WorldExpeditionRosterOptions) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   const expeditions = shallowRef<Expedition[]>([]);
   // The roster the expedition picker lists in the game's order, each named by the game's text, and the characters down,
   // Whom no expedition is sent with

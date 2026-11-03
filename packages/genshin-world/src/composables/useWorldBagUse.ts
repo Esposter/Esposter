@@ -2,6 +2,7 @@ import type { WorldBagUseOptions } from "#src/models/inventory/WorldBagUseOption
 
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 
@@ -13,8 +14,9 @@ export const useWorldBagUse = ({
   getMemberMaxHealth,
   instructionRecipeMap,
   kitContext,
-  party,
 }: WorldBagUseOptions) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { party } = worldPartyStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory, setWallet } = worldSessionStore;

@@ -124,6 +124,7 @@ import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldReputationStore } from "#src/store/reputation";
@@ -469,12 +470,20 @@ const {
 const abyssBonusLines = shallowRef<AttributeLine[]>([]);
 // The constellations each character holds and the name of its own Stella Fortuna, which the character screen and the wish read
 const { characterIdConstellationsMap, stellaFortunaNameTextIdMap } = useWorldConstellations();
-// The party, the characters, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
+// The roster the player fields, which the combat and every feature that reads the team are started over
+const worldPartyStore = useWorldPartyStore();
+const { activeCharacterId, characterIdSkillGlyphsMap, characters } = storeToRefs(worldPartyStore);
+const { party, start: startParty, stop: stopParty } = worldPartyStore;
+startParty({
+  characterDataMap: statTables.characterDataMap,
+  characterIdConstellationsMap,
+  savedCharacters: savedState.characters,
+  savedParty: savedState.party,
+  startingCharacterIdKitMap,
+});
+onUnmounted(stopParty);
+// The combat of the party, the enemies and the kit's effects, which a defeat places drops among and a team's fall revives
 const {
-  activeCharacterId,
-  characterIdKitMap,
-  characterIdSkillGlyphsMap,
-  characters,
   chargeParty,
   clearKitEffects,
   coldDamageParty,
@@ -483,12 +492,10 @@ const {
   hudMember,
   kitContext,
   locomotion,
-  party,
   respawnParty,
   reviveFallenParty,
   strikeParty,
 } = useWorldCombat({
-  characterIdConstellationsMap,
   enemyTables,
   onPartyDown: () => {
     // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
@@ -511,10 +518,7 @@ const {
     if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
   },
   partyBonusLines: abyssBonusLines,
-  savedCharacters: savedState.characters,
-  savedParty: savedState.party,
   staminaMaximum,
-  startingCharacterIdKitMap,
   statTables,
   travelerBonusLines,
   travelerElement,
@@ -526,21 +530,13 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     artifactRarityDataMap,
     characterBody,
     characterDataMap: statTables.characterDataMap,
-    characterIdKitMap,
-    characters,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
-    party,
     weaponDataMap: statTables.weaponDataMap,
   });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
-  characters,
-  getDeployedCharacterIds: () => getDeployedCharacterIds(party),
   getMaxLevel: (character) =>
     statTables.characterDataMap.get(character.id)?.ascensionPhases[character.ascension]?.maxLevel ?? 0,
-  setCharacters: (nextCharacters) => {
-    characters.value = nextCharacters;
-  },
 });
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
 const { dishUseMap } = useWorldDishes();
@@ -571,22 +567,16 @@ const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
   useWorldCommissionClaims({
     adventureRankTables,
-    characters,
     commissionDay,
     commissionSlice,
     encounterPoints,
     friendshipLevels,
     longTermEncounterPoints,
-    party,
-    setCharacters: (nextCharacters) => {
-      characters.value = nextCharacters;
-    },
   });
 // The namecards the profile holds, which the profile's screen lists
 const { profileNamecards } = useWorldProfileNamecards({
   achievementData,
   achievementProgressMap,
-  characters,
   friendshipLevels,
   friendshipNamecards,
 });
@@ -597,7 +587,6 @@ const { useBagEntry } = useWorldBagUse({
   getMemberMaxHealth,
   instructionRecipeMap,
   kitContext,
-  party,
 });
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
@@ -644,7 +633,6 @@ const {
 } = useWorldSpiralAbyss({
   areaId: findAreaAt(catalogue, ABYSS_ENTRANCE_POSITION.x, ABYSS_ENTRANCE_POSITION.z)?.id ?? "",
   bonusLines: abyssBonusLines,
-  party,
   savedProgressMap: savedState.spiralAbyssProgressMap,
 });
 const reputationLevel = shallowRef(reputation.value.level);
@@ -716,10 +704,8 @@ useWorldDevHandles({
 });
 // The expeditions out from the Adventurers' Guild and the roster the expedition picker lists
 const { characterPassiveGroupIdMap, downCharacterIds, expeditionCharacters, expeditions } = useWorldExpeditionRoster({
-  characters,
   characterTalentKits,
   getCharacterName,
-  party,
 });
 // The artifact tables the Mystic Offering rolls its strongbox's artifact from, the same ones the chests draw from
 const craftingArtifactDropTables = { artifactMainAffixPools, artifactRarityDataMap, reliquarySets };
@@ -749,10 +735,8 @@ const {
 } = useWorldOutcrops({
   adventureRankTables,
   areaId: ref(OUTCROP_REGION_ID),
-  characters,
   enemyMap: kitContext.enemyMap,
   friendshipLevels,
-  party,
   placements: outcropPlaces,
   regionStatueProgressMap,
 });
@@ -768,11 +752,9 @@ const {
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
   catalogue,
-  characters,
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
   friendshipLevels,
-  party,
   savedState,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
@@ -802,7 +784,6 @@ const {
   clearedDomainIds,
   domainChallengeLevels,
   kitEffectState: kitContext.kitEffectState,
-  party,
   random: () => kitContext.random(),
   reliquaryPieceEntryMap,
   reliquarySets,

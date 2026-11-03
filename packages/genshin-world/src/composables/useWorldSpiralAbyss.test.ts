@@ -15,6 +15,7 @@ import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/
 import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
+import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
@@ -97,12 +98,8 @@ describe(useWorldSpiralAbyss, () => {
       { inventory: { ...EMPTY_INVENTORY }, wallet: { ...EMPTY_WALLET } },
     );
     const { events } = worldSessionStore;
-    const abyss = useWorldSpiralAbyss({
-      areaId: AREA_ID,
-      bonusLines: shallowRef([]),
-      party: createParty([TRAVELER_CHARACTER_ID]),
-      savedProgressMap: new Map(),
-    });
+    startTestWorldParty({ party: createParty([TRAVELER_CHARACTER_ID]) });
+    const abyss = useWorldSpiralAbyss({ areaId: AREA_ID, bonusLines: shallowRef([]), savedProgressMap: new Map() });
     await flushReads();
 
     abyss.openAbyssEntrance();

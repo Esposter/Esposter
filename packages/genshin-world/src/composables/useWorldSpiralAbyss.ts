@@ -1,5 +1,4 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { Party } from "#src/models/party/Party";
 import type { AbyssArena } from "#src/models/spiralAbyss/AbyssArena";
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
 import type { AbyssBlessingState } from "#src/models/spiralAbyss/AbyssBlessingState";
@@ -38,6 +37,7 @@ import { readAbyssFloors } from "#src/services/spiralAbyss/readAbyssFloors";
 import { readAbyssPeriods } from "#src/services/spiralAbyss/readAbyssPeriods";
 import { settleAbyssClear } from "#src/services/spiralAbyss/settleAbyssClear";
 import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
@@ -56,14 +56,14 @@ interface AbyssPendingChoice {
 export const useWorldSpiralAbyss = ({
   areaId,
   bonusLines,
-  party,
   savedProgressMap,
 }: {
   areaId: string;
   bonusLines: Ref<AttributeLine[]>;
-  party: Party;
   savedProgressMap: ReadonlyMap<string, AbyssProgress>;
 }) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { party } = worldPartyStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;

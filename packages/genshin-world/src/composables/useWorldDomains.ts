@@ -11,7 +11,6 @@ import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
-import type { Party } from "#src/models/party/Party";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
@@ -57,6 +56,7 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
@@ -105,7 +105,6 @@ export const useWorldDomains = ({
   clearedDomainIds,
   domainChallengeLevels,
   kitEffectState,
-  party,
   random,
   reliquaryPieceEntryMap,
   reliquarySets,
@@ -117,12 +116,13 @@ export const useWorldDomains = ({
   clearedDomainIds: Ref<ReadonlySet<string>>;
   domainChallengeLevels: DomainChallengeLevelMap;
   kitEffectState: KitEffectState;
-  party: Party;
   random: () => number;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldPartyStore = useWorldPartyStore();
+  const { party } = worldPartyStore;
   const worldScreenStore = useWorldScreenStore();
   const { closeScreen } = worldScreenStore;
   const worldMapStore = useWorldMapStore();

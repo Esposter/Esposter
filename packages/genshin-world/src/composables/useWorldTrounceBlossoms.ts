@@ -1,10 +1,8 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
-import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
-import type { Party } from "#src/models/party/Party";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Ref } from "vue";
@@ -35,6 +33,7 @@ import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldGroundStore } from "#src/store/ground";
+import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { takeOne } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -46,28 +45,27 @@ import { computed, shallowRef, watch } from "vue";
 // On. Choosing a claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
 export const useWorldTrounceBlossoms = ({
   catalogue,
-  characters,
   emitGrant,
   enemyKindMap,
   friendshipLevels,
-  party,
   savedState,
 }: {
   catalogue: Catalogue;
-  characters: Ref<Character[]>;
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  party: Party;
   savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
 }) => {
-  const worldGroundStore = useWorldGroundStore();
-  const { getGroundHeight } = worldGroundStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
+  const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
+  const { party } = worldPartyStore;
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(savedState.trounceBlossoms);
   // The last teleport into each area, which holds a boss down until a teleport lands outside its area after its defeat
   const lastTeleportAts = shallowRef<ReadonlyMap<string, Temporal.Instant>>(savedState.lastTeleportAts);
