@@ -22,7 +22,7 @@ import {
 // The nodes a respondent is not asked a question about, so they carry no number
 const UNNUMBERED_NODE_TYPES: SurveyNodeType[] = [SurveyNodeType.Panel, SurveyNodeType.Html, SurveyNodeType.Image];
 
-// Questions are numbered in order across the survey, as SurveyJS numbers them, so a page carries on from the pages before it
+// Questions are numbered in order across the survey, so a page carries on from the pages before it
 const numberQuestions = (views: SurveyElementView[], numbers: Map<string, number>) => {
   for (const view of views) {
     // The next number is one past every question numbered so far
