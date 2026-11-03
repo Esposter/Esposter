@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useSurveyCreatorStore } from "@/store/survey/creator";
+
 // The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its
 // Elements, a page and every element is chosen by a click or Enter, and the chosen one is outlined
 const { document: surveyDocument, selectedPointer } = storeToRefs(useSurveyCreatorStore());

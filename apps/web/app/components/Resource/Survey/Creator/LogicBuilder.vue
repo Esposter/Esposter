@@ -3,6 +3,7 @@ import type { SurveyConditionProp } from "@/models/resource/survey/SurveyConditi
 import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
 import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

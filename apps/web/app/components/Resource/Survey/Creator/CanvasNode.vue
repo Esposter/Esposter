@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyPlaceableNode } from "survey-engine";
 
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyNodeType } from "survey-engine";
 
 interface Props {

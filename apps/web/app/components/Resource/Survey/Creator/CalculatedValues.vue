@@ -2,6 +2,7 @@
 import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 import type { SurveyCalculatedValue } from "survey-engine";
 
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import {
   SURVEY_CALCULATED_VALUE_EXPRESSION,

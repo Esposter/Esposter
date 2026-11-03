@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyImageChoice } from "survey-engine";
 
+import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
