@@ -137,4 +137,19 @@ describe(useSurveyCreatorCommands, () => {
     );
     expect(canRedo.value).toBe(false);
   });
+
+  test("typing into one property of a question is a single undo step", () => {
+    expect.hasAssertions();
+
+    const first = createQuestion("question1");
+    const page = createPage([first]);
+    const { canUndo, document, original, undo, updateNodeProps } = setup([page]);
+    updateNodeProps("/content/0/props/children/0", { title: "W" });
+    updateNodeProps("/content/0/props/children/0", { title: "Wh" });
+    updateNodeProps("/content/0/props/children/0", { title: "Why" });
+    undo();
+
+    expect(document.value).toStrictEqual(original);
+    expect(canUndo.value).toBe(false);
+  });
 });

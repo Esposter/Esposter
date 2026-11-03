@@ -4,12 +4,12 @@ import type { BlockNodeProps } from "headless-block-editor";
 import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "survey-engine";
 
 import { ROOT_POINTER } from "@/services/pageBuilder/constants";
+import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import {
   JsonPatchOperationType,
   parseArrayIndex,
   parseJsonPointer,
-  pushHistory,
   readJsonValue,
   redoHistory,
   toJsonPointer,
@@ -103,12 +103,12 @@ export const useSurveyCreatorCommands = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document, history, selectedPointer } = storeToRefs(surveyCreatorStore);
   const { commit } = surveyCreatorStore;
-  const applyEdit = (operations: JsonPatchOperation[], label: string) => {
+  const applyEdit = (operations: JsonPatchOperation[], label: string, interactionId?: string) => {
     if (operations.length === 0) return false;
 
     return applyBlockEdit(surveyDocumentSchema, document.value, operations).match(
       ({ document: editedDocument, inverses }) => {
-        commit(editedDocument, pushHistory(history.value, { inverses, label, operations }));
+        commit(editedDocument, getRecordedHistory(history.value, { interactionId, inverses, label, operations }));
         return true;
       },
       (error) => {
@@ -225,8 +225,13 @@ export const useSurveyCreatorCommands = () => {
     if (isRemoved && isSelectionRemoved) selectedPointer.value = focusPointer;
     return isRemoved;
   };
+  // A run of edits to the same props of one node, a field typed into key by key, is one interaction and so one undo step
   const updateNodeProps = (nodePointer: string, props: Record<string, unknown>) =>
-    applyEdit(updateBlockNodeProps<BlockNodeProps>(nodePointer, props), "Edit element");
+    applyEdit(
+      updateBlockNodeProps<BlockNodeProps>(nodePointer, props),
+      "Edit element",
+      `props:${nodePointer}:${Object.keys(props).toSorted().join(",")}`,
+    );
   // The core's node-props command takes a node's id as one of its props, which the root does not hold, so the root's props are
   // Written at the root's own pointer
   const updateRootProps = (props: Partial<SurveyRootProps>) =>
@@ -237,6 +242,7 @@ export const useSurveyCreatorCommands = () => {
         value,
       })),
       "Edit survey",
+      `root:${Object.keys(props).toSorted().join(",")}`,
     );
 
   return {
