@@ -11,7 +11,7 @@ If neither holds, the subpath is a duplicate or a leftover, and it goes.
 
 ## What never earns one
 
-- **A re-export of what the root already exports.** A second bundle of the same functions is a second copy in every consumer that reaches both. `vue-pdfjs-headless/xfdf` was this: its bundle repeated `readXfdf` and `writeXfdf`, which the barrel already carried, and nothing imported the subpath.
+- **A re-export of what the root already exports.** A second bundle of the same functions is a second copy in every consumer that reaches both. `vue-pdfjs-headless/xfdf` was this: its bundle repeated "readXfdf" and "writeXfdf", which the barrel already carried, and nothing imported the subpath.
 - **"Framework-free" with no consumer that lacks the framework.** The wish to keep Vue out of a bundle is not a consumer. Name the consumer that needs it or leave the functions in the barrel.
 - **A program exposed as an export.** A module with a top-level side effect (a `runMain` call, a server start) runs on import, so exporting it turns importing the package into running it. `generateExports.ts` already refuses to list a module with no export for this reason. A program is reached through a `bin` entry, which runs the built file, not an import specifier. `agent-console-server/cli` was one: its export is removed, and the entry stays because the bin runs `dist/cli.js`.
 
