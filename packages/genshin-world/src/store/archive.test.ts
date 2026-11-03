@@ -15,13 +15,7 @@ describe(useWorldArchiveStore, () => {
   const setUpArchive = () => {
     const worldSessionStore = startTestWorldSession();
     const worldArchiveStore = useWorldArchiveStore();
-    worldArchiveStore.start({
-      archiveKillsMap: new Map(),
-      archiveProgressMap: new Map(),
-      enemyKindMap,
-      reliquaryPieceEntryMap: new Map(),
-      reliquarySets: [],
-    });
+    worldArchiveStore.start({ archiveKillsMap: new Map(), archiveProgressMap: new Map(), enemyKindMap });
     return { worldArchiveStore, worldSessionStore };
   };
 

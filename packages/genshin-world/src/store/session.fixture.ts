@@ -24,12 +24,17 @@ export const startTestWorldSession = (
   const worldSessionStore = useWorldSessionStore();
   worldSessionStore.start(
     {
+      artifactMainAffixPools: [],
+      artifactRarityDataMap: new Map(),
       gameDataBaseUrl: "",
       gameText: ENGLISH_GAME_TEXT,
       getWorldNow,
       language: GameLanguage.English,
       materialDataMap: new Map(),
       nameText: {},
+      reliquaryPieceEntryMap: new Map(),
+      reliquarySets: [],
+      weaponDataMap: new Map(),
       worldNow: shallowRef(getWorldNow()),
       ...overrides,
     },

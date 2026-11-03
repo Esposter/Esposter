@@ -4,8 +4,6 @@ import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitBody } from "#src/models/kit/KitBody";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 
@@ -44,8 +42,6 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
   const worldGroundStore = useWorldGroundStore();
   const worldSessionStore = useWorldSessionStore();
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
-  let reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry> = new Map();
-  let weaponDataMap: ReadonlyMap<number, WeaponData> = new Map();
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
   // Which numbers the next ones
   const worldDrops = shallowRef<WorldDrop[]>([]);
@@ -73,9 +69,9 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
           : getDroppedItemDefinition(
               itemId,
               worldSessionStore.nameText,
-              weaponDataMap,
+              worldSessionStore.weaponDataMap,
               worldSessionStore.materialDataMap,
-              reliquaryPieceEntryMap,
+              worldSessionStore.reliquaryPieceEntryMap,
             ).name,
       position: { x, y: worldGroundStore.getGroundHeight(x, z), z },
     }));
@@ -128,8 +124,8 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
       worldSessionStore.wallet,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
-      reliquaryPieceEntryMap,
-      weaponDataMap,
+      worldSessionStore.reliquaryPieceEntryMap,
+      worldSessionStore.weaponDataMap,
     );
     setInventory(pickUp.inventory);
     setWallet(pickUp.wallet);
@@ -210,11 +206,7 @@ export const useWorldPickupsStore = defineStore("world/pickups", () => {
       oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
     }
   };
-  const start = (tables: {
-    reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-    weaponDataMap: ReadonlyMap<number, WeaponData>;
-  }) => {
-    ({ reliquaryPieceEntryMap, weaponDataMap } = tables);
+  const start = () => {
     getSynchronizedFunction(() =>
       getResultAsync(() =>
         Promise.all([

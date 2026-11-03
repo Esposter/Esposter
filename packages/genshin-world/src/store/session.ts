@@ -22,11 +22,16 @@ export const useWorldSessionStore = defineStore("world/session", () => {
     if (!context.value) throw new NotInitializedError("WorldSessionStore");
     return context.value;
   };
+  const artifactMainAffixPools = computed(() => getContext().artifactMainAffixPools);
+  const artifactRarityDataMap = computed(() => getContext().artifactRarityDataMap);
   const gameDataBaseUrl = computed(() => getContext().gameDataBaseUrl);
   const gameText = computed(() => getContext().gameText);
   const language = computed(() => getContext().language);
   const materialDataMap = computed(() => getContext().materialDataMap);
   const nameText = computed(() => getContext().nameText);
+  const reliquaryPieceEntryMap = computed(() => getContext().reliquaryPieceEntryMap);
+  const reliquarySets = computed(() => getContext().reliquarySets);
+  const weaponDataMap = computed(() => getContext().weaponDataMap);
   const worldNow = computed(() => getContext().worldNow.value);
   const getWorldNow = () => getContext().getWorldNow();
   const start = (nextContext: WorldSessionContext, savedBag: { inventory: Inventory; wallet: Wallet }) => {
@@ -53,6 +58,8 @@ export const useWorldSessionStore = defineStore("world/session", () => {
     wallet.value = nextWallet;
   };
   return {
+    artifactMainAffixPools,
+    artifactRarityDataMap,
     events,
     gameDataBaseUrl,
     gameText,
@@ -61,11 +68,14 @@ export const useWorldSessionStore = defineStore("world/session", () => {
     language,
     materialDataMap,
     nameText,
+    reliquaryPieceEntryMap,
+    reliquarySets,
     setInventory,
     setWallet,
     start,
     stop,
     wallet,
+    weaponDataMap,
     worldNow,
   };
 });

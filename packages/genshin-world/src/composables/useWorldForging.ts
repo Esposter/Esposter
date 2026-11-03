@@ -1,6 +1,5 @@
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
@@ -18,7 +17,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The blacksmith's recipes and its place in Mondstadt as the world starts, each read from the hosted game data
-export const useWorldForging = ({ weaponDataMap }: { weaponDataMap: ReadonlyMap<number, WeaponData> }) => {
+export const useWorldForging = () => {
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
@@ -54,7 +53,7 @@ export const useWorldForging = ({ weaponDataMap }: { weaponDataMap: ReadonlyMap<
   const forgeRecipeId = ref(FIRST_FORGE_RECIPE_ID);
   const forgeTab = ref(ForgeTab.Materials);
   const forgeWeapons = computed(() =>
-    computeForgeWeapons(forgeRecipes.value, weaponDataMap, worldSessionStore.nameText),
+    computeForgeWeapons(forgeRecipes.value, worldSessionStore.weaponDataMap, worldSessionStore.nameText),
   );
   useIntervalFn(() => {
     if (screenKind.value === ScreenKind.Forge) forgeNow.value = getWorldNow();

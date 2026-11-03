@@ -243,7 +243,20 @@ const worldSessionStore = useWorldSessionStore();
 const { events, setInventory, setWallet, start, stop } = worldSessionStore;
 const { inventory, wallet } = storeToRefs(worldSessionStore);
 start(
-  { gameDataBaseUrl, gameText, getWorldNow, language, materialDataMap, nameText, worldNow },
+  {
+    artifactMainAffixPools,
+    artifactRarityDataMap,
+    gameDataBaseUrl,
+    gameText,
+    getWorldNow,
+    language,
+    materialDataMap,
+    nameText,
+    reliquaryPieceEntryMap,
+    reliquarySets,
+    weaponDataMap: statTables.weaponDataMap,
+    worldNow,
+  },
   { inventory: savedState.inventory, wallet: savedState.wallet },
 );
 onUnmounted(stop);
@@ -358,8 +371,6 @@ startArchive({
   archiveKillsMap: savedState.archiveKillsMap,
   archiveProgressMap: savedState.archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
-  reliquaryPieceEntryMap,
-  reliquarySets,
 });
 onUnmounted(stopArchive);
 // The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
@@ -403,7 +414,7 @@ onUnmounted(stopMail);
 const worldPickupsStore = useWorldPickupsStore();
 const { bagFullHint } = storeToRefs(worldPickupsStore);
 const { start: startPickups, stop: stopPickups, strikeGatheringOres } = worldPickupsStore;
-startPickups({ reliquaryPieceEntryMap, weaponDataMap: statTables.weaponDataMap });
+startPickups();
 onUnmounted(stopPickups);
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
 // Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
@@ -423,13 +434,8 @@ onUnmounted(stopPuzzles);
 const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
-  artifactMainAffixPools,
-  artifactRarityDataMap,
   openedChestIds,
-  reliquaryPieceEntryMap,
-  reliquarySets,
   waterLevel: windriseData.water.level,
-  weaponDataMap: statTables.weaponDataMap,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
@@ -519,11 +525,9 @@ const {
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
 const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
-    artifactRarityDataMap,
     characterBody,
     characterDataMap: statTables.characterDataMap,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
-    weaponDataMap: statTables.weaponDataMap,
   });
 // The rewards each quest's finish pays into the bag, the wallet, the deployed team and the rank, as it finishes
 const { grantRewards } = useWorldQuestRewards({
@@ -553,7 +557,7 @@ const {
   forgeRecipes,
   forgeTab,
   forgeWeapons,
-} = useWorldForging({ weaponDataMap: statTables.weaponDataMap });
+} = useWorldForging();
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
@@ -768,15 +772,10 @@ const {
   unlockedDomainEntrances,
 } = useWorldDomains({
   adventureRankTables,
-  artifactMainAffixPools,
-  artifactRarityDataMap,
   clearedDomainIds,
   domainChallengeLevels,
   kitEffectState: kitContext.kitEffectState,
   random: () => kitContext.random(),
-  reliquaryPieceEntryMap,
-  reliquarySets,
-  weaponDataMap: statTables.weaponDataMap,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
 const fightingCamps = computed(() => [

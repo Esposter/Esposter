@@ -1,6 +1,6 @@
-import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { Trial } from "#src/models/trial/Trial";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 
@@ -54,16 +54,9 @@ vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
 
 // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
 const createDependencies = () => ({
-  artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
   characterBody: new Object3D(),
   characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
   claimedStageIds: new Set<number>(),
-  weaponDataMap: new Map([
-    [
-      2001,
-      { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
-    ],
-  ]),
 });
 
 describe(useWorldTrials, () => {
@@ -78,7 +71,17 @@ describe(useWorldTrials, () => {
   };
 
   const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
-    const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
+    const worldSessionStore = startTestWorldSession({
+      gameDataBaseUrl: "https://example.test/game-data/",
+      weaponDataMap: new Map([
+        [
+          2001,
+          {
+            ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }],
+          } as unknown as WeaponData,
+        ],
+      ]),
+    });
     startTestWorldGround();
     const worldPartyStore = startTestWorldParty({
       characterIdKitMap: new Map([[OWNED_CHARACTER_ID, OWNED_KIT]]),

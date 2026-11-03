@@ -19,18 +19,7 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
-  return {
-    openedChestIds,
-    ...useWorldChests({
-      artifactMainAffixPools: [],
-      artifactRarityDataMap: new Map(),
-      openedChestIds,
-      reliquaryPieceEntryMap: new Map(),
-      reliquarySets: [],
-      waterLevel: -1,
-      weaponDataMap: new Map(),
-    }),
-  };
+  return { openedChestIds, ...useWorldChests({ openedChestIds, waterLevel: -1 }) };
 };
 
 describe(useWorldChests, () => {

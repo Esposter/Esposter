@@ -113,15 +113,10 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   startTestWorldParty({ party: createParty([TRAVELER_CHARACTER_ID]) });
   const domains = useWorldDomains({
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
-    artifactMainAffixPools: [],
-    artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
     domainChallengeLevels,
     kitEffectState: { effects: [] },
     random: () => 0.5,
-    reliquaryPieceEntryMap: new Map(),
-    reliquarySets: [],
-    weaponDataMap: new Map(),
   });
   return { closeScreen, domains, events, jumpTo };
 };

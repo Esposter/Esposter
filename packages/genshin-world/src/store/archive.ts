@@ -3,8 +3,6 @@ import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 
 import { bookBodySchema } from "#src/models/archive/ArchiveBook";
@@ -48,8 +46,6 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
   const archiveKillsMap = shallowRef<ArchiveKills>(new Map());
   // The tables an entry opens against, held for the session once it starts
   let enemyKindMap: ReadonlyMap<number, EnemyKind> = new Map();
-  let reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry> = new Map();
-  let reliquarySets: readonly ReliquarySetData[] = [];
   const archiveData = shallowRef<ArchiveData>();
   // The place each viewpoint stands at, as the scene group record gives it, read with the Archive's entries
   const viewpointPlaceMap = shallowRef<ReadonlyMap<number, SceneGroupPlace>>(new Map());
@@ -99,9 +95,9 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
     );
     archiveProgressMap.value = openArchiveArtifactSets(
       archiveProgressMap.value,
-      getArchiveArtifacts(items, reliquaryPieceEntryMap),
+      getArchiveArtifacts(items, worldSessionStore.reliquaryPieceEntryMap),
       equipmentEntryIds,
-      reliquarySets,
+      worldSessionStore.reliquarySets,
     );
   };
   const isArchiveUnlocked = computed(() => worldQuestsStore.finishedMainQuestIds.has(ARCHIVE_UNLOCK_QUEST_ID));
@@ -136,12 +132,10 @@ export const useWorldArchiveStore = defineStore("world/archive", () => {
     archiveKillsMap: ArchiveKills;
     archiveProgressMap: ArchiveProgress;
     enemyKindMap: ReadonlyMap<number, EnemyKind>;
-    reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-    reliquarySets: readonly ReliquarySetData[];
   }) => {
     archiveKillsMap.value = saved.archiveKillsMap;
     archiveProgressMap.value = saved.archiveProgressMap;
-    ({ enemyKindMap, reliquaryPieceEntryMap, reliquarySets } = saved);
+    ({ enemyKindMap } = saved);
     // The quest may already be done as the world opens, when the watch above has nothing to change to
     if (isArchiveUnlocked.value) loadArchive();
     // The Travel Log entries of the main quests finished are opened as each one finishes, read off the Archive's table when

@@ -1,6 +1,4 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
-import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
-import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
 import type { DomainChallengeLevel } from "#src/models/domains/DomainChallengeLevel";
 import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
@@ -11,10 +9,7 @@ import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { GroundPoint } from "genshin-engine";
@@ -100,26 +95,16 @@ interface DomainChallengeRun {
 // Challenge ends as the rule says. A clear raises the Petrified Tree the player claims before leaving the domain
 export const useWorldDomains = ({
   adventureRankTables,
-  artifactMainAffixPools,
-  artifactRarityDataMap,
   clearedDomainIds,
   domainChallengeLevels,
   kitEffectState,
   random,
-  reliquaryPieceEntryMap,
-  reliquarySets,
-  weaponDataMap,
 }: {
   adventureRankTables: AdventureRankTables;
-  artifactMainAffixPools: ArtifactMainAffixPool[];
-  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   clearedDomainIds: Ref<ReadonlySet<string>>;
   domainChallengeLevels: DomainChallengeLevelMap;
   kitEffectState: KitEffectState;
   random: () => number;
-  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  reliquarySets: readonly ReliquarySetData[];
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { party } = worldPartyStore;
@@ -433,9 +418,9 @@ export const useWorldDomains = ({
     // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to draw
     // From is refused with the resin still held
     const artifacts = Array.from({ length: offer.claimCount }, () =>
-      drawDomainArtifacts(arena.treeArtifacts, arena.artifactSetIds, reliquarySets, random, {
-        artifactMainAffixPools,
-        artifactRarityDataMap,
+      drawDomainArtifacts(arena.treeArtifacts, arena.artifactSetIds, worldSessionStore.reliquarySets, random, {
+        artifactMainAffixPools: worldSessionStore.artifactMainAffixPools,
+        artifactRarityDataMap: worldSessionStore.artifactRarityDataMap,
       }),
     ).flat();
     const claim = claimPetrifiedTree(
@@ -461,9 +446,9 @@ export const useWorldDomains = ({
           getDroppedItemDefinition(
             dropped.itemId,
             worldSessionStore.nameText,
-            weaponDataMap,
+            worldSessionStore.weaponDataMap,
             worldSessionStore.materialDataMap,
-            reliquaryPieceEntryMap,
+            worldSessionStore.reliquaryPieceEntryMap,
           ),
         ).inventory,
       claim.inventory,

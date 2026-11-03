@@ -1,7 +1,5 @@
-import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { CharacterData } from "#src/models/character/CharacterData";
 import type { Trial } from "#src/models/trial/Trial";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { TrialArena } from "#src/models/world/TrialArena";
 import type { TrialRoster } from "#src/models/world/TrialRoster";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
@@ -36,17 +34,13 @@ import { computed, shallowRef } from "vue";
 // The stage's first-clear reward once (PROVISIONAL, until the design names the rule). A party down ends the arena with no
 // Reward, and either end gives the player's roster back as it was
 export const useWorldTrials = ({
-  artifactRarityDataMap,
   characterBody,
   characterDataMap,
   claimedStageIds,
-  weaponDataMap,
 }: {
-  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   characterBody: Object3D;
   characterDataMap: ReadonlyMap<number, Pick<CharacterData, "ascensionPhases">>;
   claimedStageIds: ReadonlySet<number>;
-  weaponDataMap: ReadonlyMap<number, Pick<WeaponData, "ascensionPhases">>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characterIdKitMap, characters } = storeToRefs(worldPartyStore);
@@ -103,7 +97,11 @@ export const useWorldTrials = ({
     const tables = trialTables.value;
     if (!tables || trialArena.value) return false;
     const stage = Object.values(tables.stages).find(({ trialAvatarId }) => trialAvatarId === trial.trialId);
-    const character = createTrialCharacter(trial, tables, { artifactRarityDataMap, characterDataMap, weaponDataMap });
+    const character = createTrialCharacter(trial, tables, {
+      artifactRarityDataMap: worldSessionStore.artifactRarityDataMap,
+      characterDataMap,
+      weaponDataMap: worldSessionStore.weaponDataMap,
+    });
     if (!stage || !character) return false;
     const kits = await getResultAsync(() =>
       readCharacterKits(

@@ -15,7 +15,7 @@ describe(useWorldPickupsStore, () => {
     const worldSessionStore = startTestWorldSession();
     startTestWorldGround(GROUND_HEIGHT);
     const worldPickupsStore = useWorldPickupsStore();
-    worldPickupsStore.start({ reliquaryPieceEntryMap: new Map(), weaponDataMap: new Map() });
+    worldPickupsStore.start();
     return { worldPickupsStore, worldSessionStore };
   };
 

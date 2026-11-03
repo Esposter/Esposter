@@ -1,12 +1,7 @@
-import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
-import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -35,21 +30,11 @@ import { computed, shallowRef } from "vue";
 // Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
 // Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done
 export const useWorldChests = ({
-  artifactMainAffixPools,
-  artifactRarityDataMap,
   openedChestIds,
-  reliquaryPieceEntryMap,
-  reliquarySets,
   waterLevel,
-  weaponDataMap,
 }: {
-  artifactMainAffixPools: readonly ArtifactMainAffixPool[];
-  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
-  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  reliquarySets: readonly ReliquarySetData[];
   waterLevel: number;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { puzzleChestPlaces, solvedPuzzleIds, timeTrialMarkers } = storeToRefs(worldPuzzlesStore);
@@ -111,7 +96,11 @@ export const useWorldChests = ({
       random,
       Currency.AnemoSigil,
       checkIsDropFallingAway(getGroundHeight(x, z), waterLevel),
-      { artifactMainAffixPools, artifactRarityDataMap, reliquarySets },
+      {
+        artifactMainAffixPools: worldSessionStore.artifactMainAffixPools,
+        artifactRarityDataMap: worldSessionStore.artifactRarityDataMap,
+        reliquarySets: worldSessionStore.reliquarySets,
+      },
     );
     setWallet(opening.wallet);
     gainWorldAdventureExp(opening.adventureExp);
@@ -123,9 +112,9 @@ export const useWorldChests = ({
       const definition = getDroppedItemDefinition(
         itemId,
         worldSessionStore.nameText,
-        weaponDataMap,
+        worldSessionStore.weaponDataMap,
         worldSessionStore.materialDataMap,
-        reliquaryPieceEntryMap,
+        worldSessionStore.reliquaryPieceEntryMap,
       );
       const addition = addDroppedItem(nextInventory, dropped, definition);
       nextInventory = addition.inventory;
