@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The grid's placement of items on a grid of cells, and the pointer gestures that move, resize and drop them, as the headless package `vue-grid-layout-headless` states them without styling.
+The grid's placement of items on a grid of cells, and the pointer gestures that move and resize them, as the headless package `vue-grid-layout-headless` states them without styling.
 
 ## Requirements
 
@@ -28,9 +28,9 @@ The package SHALL keep every item within the grid's columns and compact the layo
 - **WHEN** the layout is placed
 - **THEN** the overlapping item moves down until it clears the other
 
-### Requirement: A dropped item pushes the items it lands on
+### Requirement: A moved item pushes the items it lands on
 
-The package SHALL resolve an item dropped onto others by pushing them down out of its way.
+The package SHALL push the items a moved item lands on down out of its way, and the items those land on in turn.
 
 #### Scenario: Pushing items aside
 
@@ -109,40 +109,6 @@ The package SHALL place a padding around the grid that the consumer sets apart f
 - **GIVEN** a gap of 10, a padding of 20, rows 40 tall, and one item one row tall at the top
 - **WHEN** the grid's height is read
 - **THEN** it is 80
-
-### Requirement: Items move between grids
-
-The package SHALL take an item dragged from another grid and drop it onto the grid under the pointer, and return an item released over no grid to where it was.
-
-#### Scenario: Moving an item into another grid
-
-- **GIVEN** two grids on one page
-- **WHEN** an item is dragged from the first and released over the second
-- **THEN** the first grid writes its removal
-- **AND** the second writes its addition at the cell under the pointer
-
-#### Scenario: A drop outside every grid
-
-- **GIVEN** an item dragged out of its grid
-- **WHEN** it is released over no grid
-- **THEN** nothing is written and the item returns to its cell
-
-#### Scenario: A release over another grid routes past the dragged tile
-
-- **GIVEN** the dragged item's own tile under the pointer, with another grid's tile beneath it
-- **WHEN** the item is released
-- **THEN** the release reaches the grid beneath the dragged tile
-
-### Requirement: A nested grid owns its items' gestures
-
-The package SHALL give a press to the grid nearest the pressed element, so a grid inside an item moves its own items without moving the item it sits in.
-
-#### Scenario: Dragging inside a nested grid
-
-- **GIVEN** a grid inside an item of an outer grid
-- **WHEN** an item of the inner grid is dragged
-- **THEN** the inner grid moves that item
-- **AND** the outer grid's item stays where it was
 
 ### Requirement: A gesture ends when its layout is replaced
 

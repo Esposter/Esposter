@@ -4,30 +4,26 @@ The grid's placement and its pointer gestures, as `vue-grid-layout-headless` bui
 
 ## How it works
 
-The consumer binds three things. The grid's root element is the one the pointer is followed across. Each tile's press goes to `startGesture`, and the corner handle's press goes to `startResize`. The consumer draws the returned tiles at their geometry, the placeholder where a drop would land, and the grid's height. The width comes from a `ResizeObserver` on the root, so the column pitch follows the element and not the window. Until the observer reports that width the grid returns no tiles, since a tile's geometry is computed from it, while the grid keeps the height it reserves.
+The consumer binds three things. The grid's root element is the one the pointer's events are listened to on. Each tile's press goes to `startGesture`, and the corner handle's press goes to `startResize`. The consumer draws the returned tiles at their geometry, the placeholder where a drop would land, and the grid's height. The width comes from a `ResizeObserver` on the root, so the column pitch follows the element and not the window. Until the observer reports that width the grid returns no tiles, since a tile's geometry is computed from it, while the grid keeps the height it reserves.
 
 A press becomes a gesture, and the gesture becomes a drag only once the pointer has travelled `dragStartDistance`, so a press that barely moves stays a click, and only the primary button starts a gesture. The drag then captures the pointer on the element that was pressed. Each move turns the pointer's offset into whole cells with `getGestureCell`: a move shifts the item's origin, and a resize pulls its south-east corner. The cell is placed with `placeMove`, which pushes the items it lands on and compacts the result upward, and held as a preview. Nothing is written during a gesture. A gesture ends when the layout it previews is replaced, since its release would otherwise write cells the new layout never had.
 
-On release, the cells the preview changed leave the grid as one `onCommit({ changes, removed })`. A resize always commits here. A drag released over another mounted grid is different. The grid under the pointer is asked to accept the item first, and only if it does does this grid commit the removal of the item and the compaction of the rest. The accepting grid commits the addition. A grid that is not editable refuses every drop, so the target commits nothing and the item stays in its source. A drag released over no grid commits nothing, so the item stays where it was.
+On release, the cells the preview changed leave the grid as one `onCommit(changes)`, and a release that changed no cell commits nothing. The drag holds the pointer, so the release arrives at the grid wherever the pointer is, and a drag released beyond the grid's box lands at the cells the grid clamps it to. A grid that is not editable starts no gesture, so it commits nothing.
 
 ```mermaid
 flowchart TD
-  press["pointerdown on a tile or the handle"] -->|"nearest grid root is this grid's, no gesture held"| gesture["gesture recorded"]
-  press -->|"a nested grid's root is nearer, or another pointer holds the gesture"| ignored["ignored"]
+  press["pointerdown on a tile or the handle"] -->|"primary button, editable grid, no gesture held"| gesture["gesture recorded"]
   gesture -->|"pointerup before the start distance"| click["a click, nothing written"]
   gesture -->|"pointermove past the start distance"| captured["pointer captured, then each move"]
   captured --> cell["getGestureCell: a move, or a resize of the south-east corner"]
   cell --> place["placeMove: push the items landed on, then compact upward"]
   place --> preview["preview held in the grid"]
-  preview -->|"pointerup over this grid, or a resize"| commit["one commit of the changed cells"]
-  preview -->|"pointerup over another mounted grid"| handoff["the grid under the pointer accepts the item"]
-  handoff -->|"accepted"| transferred["removal committed here, addition committed there"]
-  handoff -->|"refused, not editable"| refused["item stays in source"]
-  preview -->|"a drag released over no grid"| dropped["nothing written"]
+  preview -->|"pointerup, wherever the pointer is"| commit["one commit of the changed cells"]
+  captured -->|"the layout is replaced"| ended["gesture ended, nothing written"]
   gesture -->|"pointercancel"| discarded["gesture and preview discarded"]
 ```
 
-**Placement is pure.** Everything under `src/placement/` takes a layout and returns a new one. Column and row pitch and cell position and size are arithmetic on the grid's spacing. Pushing the items a move lands on, the bounds correction a narrower column count needs, and the upward compaction are all functions of a layout alone. Compaction also resolves overlaps: an item that starts inside another moves down until it clears, so no placement stacks items on each other. A dropped item wider than the grid is narrowed to its columns before it is placed.
+**Placement is pure.** Everything under `src/placement/` takes a layout and returns a new one. Column and row pitch and cell position and size are arithmetic on the grid's spacing. Pushing the items a move lands on, the bounds correction a narrower column count needs, and the upward compaction are all functions of a layout alone. Compaction also resolves overlaps: an item that starts inside another moves down until it clears, so no placement stacks items on each other.
 
 **Resizing the south-east corner.** A resize moves the item's right and bottom edges by whole cells and keeps its origin in place. The right edge stops at the grid's right side and at the least span, and the bottom edge stops at the least span, so an item never shrinks below one cell or leaves the columns.
 
@@ -37,17 +33,14 @@ flowchart TD
 
 - **A composable over styled components.** Shipping a `GridLayout` and `GridItem` pair, as the `grid-layout-plus` library does, was rejected. The pair's markup and class names would be the styling contract a consumer must follow, and the library's own defects were in that contract. The composable returns state and handlers, and the consumer renders them with its own tokens.
 - **One resize corner.** A resize pulls the south-east corner, the one handle the dashboard draws, and an item's origin stays where it is under a resize. Resizing from the other edges and corners, which moves the origin when the left or top edge is pulled, is [deferred](../../../deferred/vue-grid-layout-headless/every-edge-resize/design.md): no consumer draws those handles.
-- **Crossing between grids through the mounted grids.** Cross-grid moves on the HTML Drag and Drop API were rejected. That API does not fire for touch input, and it would split one gesture across two event models. The pointer stays captured by the source grid, and the composable finds the grid under the pointer among the grids mounted on the page. The lookup takes the hit list the browser reports at the pointer, skips the dragged element that is drawn under the pointer, and takes the nearest registered root of the first hit that remains, so a release over another grid reaches that grid past the dragged tile.
-- **A drop lands with its top-left under the pointer.** A dropped item from another grid has no offset from a grab point the target could read, so its cell is the one under the pointer's top-left, offset by the grid's padding. Carrying the grab offset across grids was rejected, since the source's grab point is not meaningful to the target.
-- **Nested grids take a press by their nearest root.** Each grid's presses are those whose nearest registered root is its own, so an outer grid never starts a gesture on an inner grid's item. The check is the grid's own root, so a nested grid needs no configuration.
+- **A release commits the grid's own preview.** Handing a release to whichever grid lies under the pointer was rejected for this package, since its one consumer mounts one grid per page and nothing needs the hand-off. [Cross-grid moves](../../../deferred/vue-grid-layout-headless/cross-grid-move/design.md) are deferred for that reason.
 - **The package depends on `@esposter/shared` for one helper.** `checkIsNestedControl` refuses a press on a control inside a tile, and the rest of the package is native (`addEventListener`, `ResizeObserver`, `setPointerCapture`). The helper is shared rather than copied, so a press rule has one definition.
 - **The drag threshold is an option, not a constant.** The package takes `dragStartDistance` from its consumer. The dashboard keeps its own distance in its UI constants, so a consumer tunes its own feel.
 
 ## Notes
 
 - The package draws no handle. The corner handle's press is the consumer's `startResize` binding, and the package resizes from that corner only.
-- A drag over another grid shows no preview in that grid until the release. The source grid's tile follows the pointer, and the target grid commits the addition on release, so the target's cells are not drawn as the item moves across it.
-- A release with the pointer outside the browser's viewport hits no element, so it finds no grid and the drag is dropped.
+- A grid hosted inside another grid's tile is not supported: a press on the inner tile also reaches the outer tile's handler, so both grids start a gesture. The check that would keep a press with its nearest grid is [deferred](../../../deferred/vue-grid-layout-headless/nested-grids/design.md) with the nesting it serves.
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.
 - The package's main entry is a barrel by design, and its bundle is measured by its size snapshot, which the `build` skill owns.
 
@@ -56,16 +49,12 @@ flowchart TD
 | File                                                                 | Role                                                                                            |
 | :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
 | `packages/vue-grid-layout-headless/src/vueGridLayoutHeadless.ts`     | The main entry: `useGridLayout` and the grid's models                                           |
-| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts` | The gesture state, the preview, the commits and the resize observer                             |
-| `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`     | The grids mounted on the page, keyed by root                                                    |
-| `packages/vue-grid-layout-headless/src/services/findGridRoot.ts`     | The nearest mounted grid root at or above an element, so an inner grid's root wins              |
-| `packages/vue-grid-layout-headless/src/services/findGridAt.ts`       | The grid under a point: the first hit outside the dragged element, then its nearest root        |
+| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts` | The gesture state, the preview, the commit and the resize observer                              |
 | `packages/vue-grid-layout-headless/src/placement/getGestureCell.ts`  | Turns a pointer's offset into the whole cells a move or a south-east resize lands on            |
 | `packages/vue-grid-layout-headless/src/placement/placeMove.ts`       | Places a move: pushes the items it lands on, then compacts upward                               |
 | `packages/vue-grid-layout-headless/src/placement/moveItem.ts`        | Moves an item onto its cell and pushes the items it lands on, and the items those land on, down |
 | `packages/vue-grid-layout-headless/src/placement/compactLayout.ts`   | Rises each item upward and pushes one that starts inside another down until it clears           |
 | `packages/vue-grid-layout-headless/src/placement/fitLayout.ts`       | Fits a saved layout to a column count, then compacts it                                         |
-| `packages/vue-grid-layout-headless/src/models/GridCommit.ts`         | The commit a release writes: the changed or added cells and the removed ids                     |
 
 ## Sources
 

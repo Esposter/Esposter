@@ -4,7 +4,7 @@
 
 The package's capabilities, each with its own design page and requirements:
 
-- [Grid layout](grid-layout/design.md) places items on a grid of cells and runs the pointer gestures that move an item, resize it from its south-east corner, and drop it into another grid.
+- [Grid layout](grid-layout/design.md) places items on a grid of cells and runs the pointer gestures that move an item and resize it from its south-east corner.
 
 The app's own use of the package is the [dashboard grid](../resource/dashboard-grid/design.md): the dashboard binds it to its visuals in the editor and in the published view.
 
@@ -30,8 +30,8 @@ The library the package replaces is `qmhc/grid-layout-plus`. Its tracker is read
 | [#17](https://github.com/qmhc/grid-layout-plus/issues/17) | In scope — feature              | "#17 #62 Padding the grid apart from its gaps", built by the [grid layout](grid-layout/design.md)                                                                |
 | [#18](https://github.com/qmhc/grid-layout-plus/issues/18) | In scope — defect               | by construction: fitLayout compacts the layout at every column count, so a responsive reflow never leaves its visuals stacked                                    |
 | [#19](https://github.com/qmhc/grid-layout-plus/issues/19) | False positive — usage          | v-model bound to a const, not a ref (commenter fix)                                                                                                              |
-| [#21](https://github.com/qmhc/grid-layout-plus/issues/21) | In scope — feature              | "#21 Moving an item into another grid", built by the [grid layout](grid-layout/design.md)                                                                        |
-| [#22](https://github.com/qmhc/grid-layout-plus/issues/22) | In scope — defect               | "#22 #40 Dragging inside a nested grid", since a press belongs to the nearest grid root, built by the [grid layout](grid-layout/design.md)                       |
+| [#21](https://github.com/qmhc/grid-layout-plus/issues/21) | Deferred — feature              | Not built: [cross-grid move](../../deferred/vue-grid-layout-headless/cross-grid-move/design.md)                                                                  |
+| [#22](https://github.com/qmhc/grid-layout-plus/issues/22) | Deferred — feature              | Not built: [nested grids](../../deferred/vue-grid-layout-headless/nested-grids/design.md)                                                                        |
 | [#23](https://github.com/qmhc/grid-layout-plus/issues/23) | False positive — usage          | w is an integer column span; raise colNum (owner)                                                                                                                |
 | [#24](https://github.com/qmhc/grid-layout-plus/issues/24) | False positive — usage          | verticalCompact=false allows free placement (commenter)                                                                                                          |
 | [#25](https://github.com/qmhc/grid-layout-plus/issues/25) | In scope — defect               | by construction: the grid has no max-rows setting, so a drop or push has no row limit to pass                                                                    |
@@ -46,7 +46,7 @@ The library the package replaces is `qmhc/grid-layout-plus`. Its tracker is read
 | [#36](https://github.com/qmhc/grid-layout-plus/issues/36) | Deferred — feature              | Not built: [compaction sideways or none](../../deferred/vue-grid-layout-headless/compaction-sideways-or-none/design.md)                                          |
 | [#38](https://github.com/qmhc/grid-layout-plus/issues/38) | Deferred — feature              | Not built: [every-edge resize](../../deferred/vue-grid-layout-headless/every-edge-resize/design.md)                                                              |
 | [#39](https://github.com/qmhc/grid-layout-plus/issues/39) | False positive — usage          | layoutUpdate() already exposed on GridLayout                                                                                                                     |
-| [#40](https://github.com/qmhc/grid-layout-plus/issues/40) | In scope — feature              | "#22 #40 Dragging inside a nested grid", built by the [grid layout](grid-layout/design.md)                                                                       |
+| [#40](https://github.com/qmhc/grid-layout-plus/issues/40) | Deferred — feature              | Not built: [nested grids](../../deferred/vue-grid-layout-headless/nested-grids/design.md)                                                                        |
 | [#42](https://github.com/qmhc/grid-layout-plus/issues/42) | Deferred — feature              | Not built: [grow to content](../../deferred/vue-grid-layout-headless/grow-to-content/design.md)                                                                  |
 | [#44](https://github.com/qmhc/grid-layout-plus/issues/44) | False positive — docs           | Docs example inserts a duplicate on every throttled tick                                                                                                         |
 | [#45](https://github.com/qmhc/grid-layout-plus/issues/45) | In scope — defect               | "#45 Dragging across several cells writes the visual once, after the release"                                                                                    |
