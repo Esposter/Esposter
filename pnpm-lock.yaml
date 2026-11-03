@@ -709,7 +709,7 @@ catalogs:
       specifier: ^2.45.6
       version: 2.45.6
     three-mesh-bvh:
-      specifier: ^0.9.17
+      specifier: ^0.9.18
       version: 0.9.18
     tsdown:
       specifier: 0.23.2
@@ -1349,7 +1349,7 @@ importers:
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -1989,7 +1989,7 @@ importers:
         version: 6.1.7
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -2233,7 +2233,7 @@ importers:
         version: 0.4.17(srvx@1.0.8)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
@@ -2300,7 +2300,7 @@ importers:
         version: 8.0.13
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -10180,8 +10180,8 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
-    resolution: {integrity: sha512-lWmbEVpk5LoLJ3NATrVeSLnsRu09e3aX+Dt8gZhKe7aQU8y/FKIMeSV8x8YnlZPv+KYRxm8I3FamT6GOV22VXQ==}
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
+    resolution: {integrity: sha512-45C9iKqLGYLlc5Ce6HxBc9VwBuUdVQbMm2aJgaKk6uJtG3wdmvoQBtGPN5IvjHJcU1S67vsT/syPv6lS12Ftgg==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -15273,7 +15273,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
       ofetch: 2.0.0-alpha.3
@@ -15335,7 +15335,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
       ofetch: 2.0.0-alpha.3
@@ -21774,7 +21774,7 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.67.4
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
     dependencies:
       crossws: 0.4.17(srvx@1.0.8)
       env-runner: 0.3.11
