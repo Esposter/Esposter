@@ -1,6 +1,6 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { getSurveyLogicNumber } from "#src/services/shared/getSurveyLogicNumber";
+import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
 import { toSurveyLogicDate } from "#src/services/shared/toSurveyLogicDate";
 
 // The clock's day at midnight, moved by a number of days when one is given
@@ -11,7 +11,7 @@ export const todayFunction: SurveyLogicFunction = (args, context) => {
 
   if (args.length === 1) {
     // An empty shift moves nothing, as SurveyJS reads it as zero
-    const days = args[0] ? (getSurveyLogicNumber(args[0]) ?? Number.NaN) : 0;
+    const days = args[0] ? getSurveyNumber(args[0]) : 0;
 
     date.setDate(date.getDate() + days);
   }

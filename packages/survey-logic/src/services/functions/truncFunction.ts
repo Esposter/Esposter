@@ -1,15 +1,15 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { flattenSurveyLogicArguments } from "#src/services/shared/flattenSurveyLogicArguments";
-import { getSurveyLogicNumber } from "#src/services/shared/getSurveyLogicNumber";
+import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
+import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
 
 // The number cut to a number of decimal places, or to its whole part when the precision is empty
 export const truncFunction: SurveyLogicFunction = (args) => {
-  const values = flattenSurveyLogicArguments(args);
-  const number = getSurveyLogicNumber(values[0]);
-  const precision = getSurveyLogicNumber(values[1] || 0);
+  const values = flattenSurveyValues(args);
+  const number = getSurveyNumber(values[0]);
+  const precision = getSurveyNumber(values[1] || 0);
 
-  if (number === undefined || precision === undefined) return Number.NaN;
+  if (Number.isNaN(number) || Number.isNaN(precision)) return Number.NaN;
 
   // Only a whole, positive precision reads decimals, as in SurveyJS, where any other precision keeps the whole part.
   // The dot is unescaped as SurveyJS writes it, so a number in exponent form reads as it does there

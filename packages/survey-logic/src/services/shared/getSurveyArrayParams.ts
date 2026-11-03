@@ -2,7 +2,7 @@ import type { SurveyLogicArrayParams } from "#src/models/SurveyLogicArrayParams"
 import type { SurveyLogicArrayRow } from "#src/models/SurveyLogicArrayRow";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { checkIsSurveyValueEmpty } from "#src/services/shared/checkIsSurveyValueEmpty";
+import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyArrayItems } from "#src/services/shared/getSurveyArrayItems";
 
@@ -20,7 +20,7 @@ export const getSurveyArrayParams = (args: SurveyLogicValue[]): SurveyLogicArray
     if (typeof item !== "object" || item === null || Array.isArray(item)) continue;
 
     const field = getOwnValue(item, name);
-    if (!checkIsSurveyValueEmpty(field)) rows.push({ field, item });
+    if (!checkIsSurveyLogicValueEmpty(field)) rows.push({ field, item });
   }
 
   return {

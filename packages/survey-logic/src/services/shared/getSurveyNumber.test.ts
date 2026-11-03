@@ -7,6 +7,7 @@ describe(getSurveyNumber, () => {
     ["reads a comma as the decimal point", "1,5", 1.5],
     ["reads a number text with surrounding spaces", " 7 ", 7],
     ["reads a hexadecimal text", "0x1F", 31],
+    ["reads a binary text as zero, where its parse stops at the zero", "0b11", 0],
     ["reads a run of sixteen digits as not a number", "1234567890123456", Number.NaN],
     ["reads a text with letters in it as not a number", "12abc", Number.NaN],
     ["reads an empty text as not a number", "", Number.NaN],
