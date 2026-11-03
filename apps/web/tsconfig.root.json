@@ -4,8 +4,8 @@
     ".nuxt/nuxt.node.d.ts",
     "*.ts",
     "configuration/**/*.ts",
-    "content/**/*.ts",
     "scripts/**/*.ts",
+    "service-worker/**/*.ts",
     "shared/types"
   ]
 }

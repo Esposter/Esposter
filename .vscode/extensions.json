@@ -10,8 +10,8 @@
     "oxc.oxc-vscode",
     "PKief.material-icon-theme",
     "pulumi.pulumi-vscode-tools",
+    "ubugeeei.vize",
     "vitest.explorer",
-    "VoidZero.vite-plus-extension-pack",
-    "Vue.volar"
+    "VoidZero.vite-plus-extension-pack"
   ]
 }

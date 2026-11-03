@@ -1,6 +1,6 @@
 # The App's Scripts
 
-Read when running a script from `apps/web`, or reaching past `typecheck` (`nuxt prepare`, then `tsrs` over each project Nuxt generates, the app's through the vize mapper) or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
+Read when running a script from `apps/web`, or reaching past `typecheck` (`nuxt prepare`, then one `tsrs -b` over the projects Nuxt generates and the root one, the app's through the vize mapper) or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
 
 | Command          | When to use                                                        |
 | ---------------- | ------------------------------------------------------------------ |
@@ -15,7 +15,7 @@ Read when running a script from `apps/web`, or reaching past `typecheck` (`nuxt 
 **`apps/web`'s `pnpm typecheck` is the only typecheck, and `vp run lint` from the repo root is the only lint.** Reaching past
 either for the underlying binary — `tsrs -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
 strictly less than CI does and reports success while CI fails: the app's real project is the generated
-`.nuxt` tsconfig rather than the one in the package (the one that reads its `.vue` files is `tsconfig.vize.json`, which names the mapper), and a package's `lint` is ESLint alone. Which rules only
+`.nuxt` tsconfig rather than the one in the package (its app project reads the `.vue` files through the mapper `configuration/typescript.ts` names), and a package's `lint` is ESLint alone. Which rules only
 the root pass carries, and when a targeted `oxlint` is still worth running, is the `oxlint` skill's ("Running lint").
 
 **A root check is an aggregate over named leaves through `dependsOn`, never a `&&` chain.** `lint`, `lint:packages` and

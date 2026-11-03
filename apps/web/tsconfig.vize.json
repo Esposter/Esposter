@@ -1,5 +1,0 @@
-{
-  "extends": "./.nuxt/tsconfig.app.json",
-  "contentMappers": [{ "package": "vize", "extensions": [".vue"] }],
-  "vueCompilerOptions": { "composables": { "useTemplateRef": ["useTemplateRef"] } }
-}

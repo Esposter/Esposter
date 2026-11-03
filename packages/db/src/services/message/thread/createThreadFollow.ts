@@ -7,11 +7,12 @@ import { threadFollowsInMessage } from "@esposter/db-schema";
 // It may clear an existing unfollow: the bell and the member's own reply are their own decision and undo an
 // Earlier one, while the follow taken on the thread root author's behalf when somebody else replies is not —
 // Resurrecting their row there re-subscribes a member who turned the bell off, with no way to make it stick
+// The return type is spelled for the reason `upsertThreadFollow`'s is
 export const createThreadFollow = (
   db: Database,
   { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
   isSelfInitiated: boolean,
-) =>
+): PromiseLike<unknown> =>
   isSelfInitiated
     ? upsertThreadFollow(db, { roomId, threadRootRowKey, userId }, false)
     : db.insert(threadFollowsInMessage).values({ roomId, threadRootRowKey, userId }).onConflictDoNothing();

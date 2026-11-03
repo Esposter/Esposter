@@ -1,4 +1,0 @@
-{
-  "extends": "../../../packages/configuration/tsconfig.node.json",
-  "compilerOptions": { "lib": ["ESNext", "WebWorker"] }
-}

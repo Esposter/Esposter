@@ -37,7 +37,7 @@ Install these VS Code extensions, in alphabetical order:
 | UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
 | Vite Plus Extension Pack   | https://marketplace.visualstudio.com/items?itemName=VoidZero.vite-plus-extension-pack   |
 | Vitest                     | https://marketplace.visualstudio.com/items?itemName=vitest.explorer                     |
-| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                           |
+| Vize                       | https://marketplace.visualstudio.com/items?itemName=ubugeeei.vize                       |
 
 ## Monorepo Structure
 
@@ -49,7 +49,7 @@ All commands run from `apps/web/` unless noted.
 
 ```bash
 pnpm dev              # start dev server
-pnpm typecheck        # type check (vue-tsc)
+pnpm typecheck        # type check (tsrs)
 pnpm lint             # eslint only — see the root vp run lint below for oxlint
 vp run lint:fix         # auto-fix linting — always use this, never fix manually
 pnpm test             # vitest watch mode

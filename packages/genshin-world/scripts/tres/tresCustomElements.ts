@@ -9,7 +9,7 @@ export const tresCustomElements: string[] = [
   ...Object.entries(THREE)
     .filter(([, value]) => typeof value === "function")
     .map(([name]) => `Tres${name}`)
-    .filter(templateCompilerOptions.template.compilerOptions.isCustomElement),
+    .filter((tag) => templateCompilerOptions.template.compilerOptions.isCustomElement(tag)),
   "tres-*",
   "primitive",
 ];
