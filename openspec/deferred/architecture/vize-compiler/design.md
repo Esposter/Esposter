@@ -14,6 +14,8 @@ A trial of `@vizejs/nuxt` 0.657.0 in the app, beside the same app on `@vitejs/pl
 - `/about` server-renders a `<canvas data-tres>` where the baseline renders an empty element, because the explicit `TresCanvas` import of the migration below bypasses the client wrapper that `tresjs-nuxt` registers.
 - Nuxt warns `NUXT_B9003` that the module imports `nitropack/runtime` through a Nitro 2 layer that Nuxt 6 removes, and the module's own `@nuxt/kit` 3 sits beside the Nuxt 5 stack in the lockfile.
 
+The trial was run again on 0.662.0, the newest release on 3 November, in a fresh worktree over the same nine routes, and every point above reproduces. `/dungeons` logs the same three `_ctx.unref` errors, the server-rendered `/clicker` title is still "Esposter | 0.000" where the baseline's is "Esposter | 0.000 Piña Coladas" (the dev log prints `NUXT_E6002` for it, and the baseline log does not), `/anime` logs the hydration mismatch, `/about` still server-renders the `<canvas data-tres>`, and the install reports the unmet peer on Nuxt 5 and the dev log `NUXT_B9003`. All nine routes still answer 200 with no page error, and the console error counts match the 0.657.0 run on every route. None of the four page problems is in the tracker yet (a search for the symptoms finds only #11455), so each needs a reduction before it is filed. They are template and server-render problems and not CSS ones: the stylesheet gap of the library builds (#11483) is the compile-side CSS issue, and it does not reach the app.
+
 The production build was not run, so the production path is untested.
 
 ### The first blocker, fixed
