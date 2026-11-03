@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — replacing the Vue single-file compiler with Vize, a Rust-based Vue toolchain. Nuxt compiles the app through `@vitejs/plugin-vue`, and the library builds and Vitest compile through `unplugin-vue`. Vize's Nuxt module was tried in the app and taken back out. Its Vite plugin was read but never run in the repo.
+Deferred — compiling the app's Vue single-file components with Vize, a Rust-based Vue toolchain, through its Nuxt module. The library builds and Vitest compile through Vize already, and Nuxt compiles the app through `@vitejs/plugin-vue`. The Nuxt module was tried in the app and taken back out.
 
 ## What Changes
 

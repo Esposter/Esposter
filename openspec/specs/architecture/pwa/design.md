@@ -34,7 +34,6 @@ flowchart LR
 | `apps/web/configuration/pwa.test.ts`                                    | Every manifest icon exists in the public folder                                                    |
 | `apps/web/service-worker/sw.ts`                                         | The worker: precache, offline navigation, `SKIP_WAITING`, push and click                           |
 | `packages/unplugin-pwa-nuxt/`                                           | The module that builds the worker and registers it ([its page](../../unplugin-pwa-nuxt/README.md)) |
-| `apps/web/service-worker/tsconfig.json`                                 | The worker's typecheck, extending the shared Node base with the WebWorker lib                      |
 | `scripts/src/workspace/workerScope.test.ts`                             | Runs every worker, this one included, in a scope with no window or Node                            |
 | `apps/web/app/components/App/ToastStack.vue`                            | The Reload notice that shows a waiting update                                                      |
 | `apps/web/app/plugins/pushNotification.client.ts`                       | The tab's end of the worker's `postMessage`                                                        |
@@ -55,4 +54,4 @@ flowchart LR
 - **Orientation is unlocked.** The app has landscape surfaces, the Genshin world and the call stage, which a portrait lock would block on installed Android copies.
 - **Maskable icons are drawn, not padded.** The mark sits at 70% scale on the light background, inside the safe zone, so no launcher's mask crops it. The `any` icons keep the unpadded artwork.
 - **The offline home entry has no revision.** The `/` entry in the precache list carries `revision: null`, so each new worker fetches it at install rather than trusting a cached copy.
-- The worker extends `packages/configuration/tsconfig.node.json`, which loads the shared `global.d.ts` (its `Object.groupBy` overload). Replacing `include` in the worker's config drops that file and breaks the typecheck of the server-side packages the payload type reaches.
+- The worker is typechecked in the app's root project (`tsconfig.root.json`), whose `shared/types` include loads the shared `global.d.ts` (its `Object.groupBy` overload). Dropping that include breaks the typecheck of the server-side packages the payload type reaches.

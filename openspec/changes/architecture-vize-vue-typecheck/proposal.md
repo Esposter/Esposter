@@ -6,7 +6,7 @@
 
 ## Where it stands
 
-Every Vue check now runs on `tsrs` with the mapper: the three Vue packages and `apps/web`, whose `typecheck` no longer runs `nuxt typecheck`. On `vize` 0.661.0 the mapper reports no diagnostic that `vue-tsc` does not, and is 3.6 to 4.9 times faster on a quarter to under half of the memory (`design.md`, "Timings, cold and warm"). What is left is the declaration emit for `.vue` files, which still goes through `vue-tsc`, and the removal that follows it.
+Every Vue check now runs on `tsrs` with the mapper: the three Vue packages and `apps/web`, whose `typecheck` no longer runs `nuxt typecheck`. On `vize` 0.664.0 the mapper reports no diagnostic that `vue-tsc` does not, and is 3.4 to 4.7 times faster on 0.23 to 0.38 of the memory (`design.md`, "Timings, cold and warm"). The Vue packages' builds and Vitest compile through Vize too, with `unplugin-vue` gone ([build pipeline](../../specs/architecture/build-pipeline/design.md)). What is left is the declaration emit for `.vue` files, which still goes through `vue-tsc`, and the removal that follows it.
 
 ## What changes
 
@@ -20,10 +20,9 @@ The migration was gated, and nothing is removed until its gate passes.
 
 ## Out of scope
 
-- The `tsrs` declaration-portability gap (`TS2883`) on `packages/db`, which is tracked by the Rust toolchain change.
 - Dropping the `typescript-native-bridge` override. It is a speed choice across every classic-API reader and not only `vue-tsc`'s need, and moving it moves all of them at once (`design.md`, "What reads the classic `typescript` API").
 - Replacing `oxlint-tsgolint`, which runs its own native binaries and does not load the `typescript` package.
-- Editor diagnostics for `.vue` files. `tsrs`'s language server does not run content mappers, so the editor keeps its current path until that changes upstream.
+- Editor diagnostics for `.vue` files. They come from the vize extension (`ubugeeei.vize`), which runs its own TypeScript 7 session, because `tsrs`'s language server does not run content mappers. Its README calls it experimental.
 
 ## Settled questions
 

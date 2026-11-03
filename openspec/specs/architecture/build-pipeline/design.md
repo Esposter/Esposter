@@ -46,6 +46,44 @@ The only data JSON `genshin-world` imports is its lock and one save bound: every
 
 Which package calls which factory is a question the repo answers — read the `tsdown.config.ts` files rather than a table that goes stale.
 
+## Vue components compile through Vize
+
+One compiler reaches the build through two entries of the same release. `getTsdownConfigurationVue` adds `@vizejs/unplugin/rolldown` with `isProduction: true`, and `getVuePlugins` adds `@vizejs/vite-plugin` for the Vitest and Vite runs of a package whose tests import `.vue` files, which is opt-in per package. Both take their plugin's own options through the factory's argument. `vize`, `@vizejs/unplugin` and `@vizejs/vite-plugin` pin one another exactly, so Renovate bumps the three as one group.
+
+- **The TresJS elements are a list, not a function.** Vize takes element names and `*` patterns where Vue asks a predicate (#11457, closed as configuration), and a pattern cannot leave a name out (#11484, not planned). `genshin-world` passes `tresCustomElements` as `customElements`: every `Tres<Class>` that three exports and `@tresjs/core`'s own predicate takes, then `tres-*` and `primitive`. `TresCanvas` and the other components the predicate excludes stay components, and `tresCustomElements.test.ts` holds the list to the predicate.
+- **Styles go through the bundler's CSS pipeline.** Since 0.663.0 every style block, a `<style src>` with a package specifier included, is handed to the bundler (#11523), so tsdown with `@tsdown/css` writes `style.css` as before and no workaround plugin is needed. `deps.alwaysBundle` keeps a sibling package's stylesheet in the package's own CSS, so the built JavaScript never imports a `.css` file that Node cannot load.
+- **Declarations are still `vue-tsc`'s.** `dts.tsc.vue` generates the `.vue` declarations until the mapper path can ([the type-check change](../../../changes/architecture-vize-vue-typecheck/design.md)).
+
+Measured on an Apple M1 with 16 GiB, `tsdown` 0.23.2 with `rolldown` 1.2.16 and `@vizejs/unplugin` 0.664.0, against the `unplugin-vue` builds they replaced (the earlier set of runs, on the same machine). Every run is a fresh process; cold removes `dist` and the compilers' caches, warm discards two priming runs, and medians are over three cold and five warm runs. "JS only" runs `tsdown --no-dts --no-attw --no-publint`, and "full" is the package's own build, where `vue-tsc` writes the declarations. The runs, the scripts and the method are in [the benchmark comment on the maintainer's performance issue](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514).
+
+| Target              | Build          | JS only, cold | JS only, warm | Full build, cold | CPU, JS only, warm | Peak memory |
+| :------------------ | :------------- | ------------: | ------------: | ---------------: | -----------------: | ----------: |
+| `vue-phaserjs`      | `unplugin-vue` |        0.77 s |        0.76 s |           3.76 s |             0.97 s |     0.4 GiB |
+|                     | Vize           |        0.93 s |        0.89 s |           3.68 s |             0.55 s |     0.2 GiB |
+| `genshin-interface` | `unplugin-vue` |        0.85 s |        0.86 s |           2.73 s |             1.31 s |     0.4 GiB |
+|                     | Vize           |        0.99 s |        0.82 s |           2.52 s |             0.67 s |     0.3 GiB |
+| `genshin-world`     | `unplugin-vue` |        3.80 s |        3.81 s |          21.71 s |             5.53 s |     1.3 GiB |
+|                     | Vize           |        2.90 s |        2.90 s |          19.68 s |             3.85 s |     0.9 GiB |
+
+Vize uses 1.4x to 2.0x less CPU time and 0.85x to 1.31x the wall time on a warm JS-only build: slower on the two small packages by a tenth of a second, and 1.31 times as fast on the largest. The packages are small, so the declaration build takes most of a full build, which Vize shortens by 1.02x to 1.10x. The output is smaller everywhere, in raw bytes with gzip at level 9 in brackets:
+
+| Target              | `unplugin-vue`      | Vize                | Change        |
+| :------------------ | :------------------ | :------------------ | :------------ |
+| `vue-phaserjs`      | 72,469 (12,811)     | 71,697 (12,778)     | -1.1% (-0.3%) |
+| `genshin-interface` | 486,666 (103,931)   | 448,322 (94,299)    | -7.9% (-9.3%) |
+| `genshin-world`     | 3,706,226 (894,079) | 3,641,425 (875,676) | -1.7% (-2.1%) |
+
+The compile-side defects found on the way, each reduced and reported to Vize:
+
+| Issue  | What it was                                                                     | Outcome                                                                 |
+| :----- | :------------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| #11456 | the rolldown entry dropped every `<style src>` block without a warning          | an error in 0.656.0, inlined in 0.658.0, a package specifier in 0.661.0 |
+| #11481 | a production build kept the development output shape                            | fixed in 0.661.0 (#11488)                                               |
+| #11482 | a package specifier in `<style src>` failed the build                           | fixed in 0.661.0 (#11492)                                               |
+| #11483 | a plain `<style>` block was injected into the JavaScript and no CSS was written | fixed in 0.663.0 (#11523)                                               |
+| #11457 | the Vite plugin ignored `template.compilerOptions.isCustomElement`              | closed as configuration: `customElements`                               |
+| #11484 | `customElements` cannot exclude a tag                                           | closed as not planned: the list above names every tag                   |
+
 ## Bundled or externalized
 
 A library externalizes exactly what its consumer installs, and tsdown's defaults already say so: `dependencies`, `peerDependencies` (a demand rather than a delivery — the singleton case, `vue` and `pinia` above all), `optionalDependencies` (the one entry that may simply not be there) and anything `peerDependenciesMeta` names are external; `devDependencies` are bundled when the source imports them; a published workspace sibling is a normal dependency and stays external. Bundling a dependency instead is not a saving — it defeats the consumer's deduplication, strands the package on a vendored copy, and splits the types that dependency owns into two copies that no longer recognise each other.
