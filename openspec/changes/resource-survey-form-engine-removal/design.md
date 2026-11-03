@@ -26,10 +26,6 @@ flowchart TD
 | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `apps/functions/src/services/resource/purgeSurveyResources.ts`         | the one-time purge, run once per environment                   |
 | `apps/functions/src/services/resource/removeSurveyInviteReferences.ts` | removes the invites that name a deleted survey                 |
-| `apps/web/app/services/survey/registerSurveyPlugin.ts`                 | removed with SurveyJS's runner plugin                          |
-| `apps/web/app/services/survey/registerSurveyCreatorPlugin.ts`          | removed with SurveyJS's Creator plugin                         |
-| `apps/web/shared/services/survey/parseSurveyModel.ts`                  | removed: nothing parses a string once the content is an object |
-| `apps/web/app/services/survey/constants.ts`                            | the old theme key constant, removed with SurveyJS's theme      |
 | `apps/web/configuration/build.ts`                                      | the Creator's chunk entry, removed                             |
 | `apps/web/package.json`                                                | the four SurveyJS dependencies, removed                        |
 | `pnpm-workspace.yaml`                                                  | the four SurveyJS catalog entries, removed                     |
