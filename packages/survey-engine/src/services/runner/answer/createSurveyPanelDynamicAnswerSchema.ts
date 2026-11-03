@@ -13,6 +13,7 @@ export const createSurveyPanelDynamicAnswerSchema = (
 ): z.ZodType => {
   const panel = createSurveyNamedAnswerSchema(
     node.props.template.map((question) => ({
+      isRequired: "isRequired" in question.props && question.props.isRequired,
       name: question.props.name,
       schema: createTemplateAnswerSchema(question),
     })),

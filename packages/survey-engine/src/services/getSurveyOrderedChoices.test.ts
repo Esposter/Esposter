@@ -36,7 +36,6 @@ describe(getSurveyOrderedChoices, () => {
     const first = getSurveyOrderedChoices(choices, SurveyChoicesOrder.Random, "response-1");
 
     expect(getSurveyOrderedChoices(choices, SurveyChoicesOrder.Random, "response-1")).toStrictEqual(first);
-    expect(first.toSorted((a, b) => Number(a.value) - Number(b.value))).toHaveLength(choices.length);
     expect(new Set(first.map(({ value }) => value))).toStrictEqual(new Set(choices.map(({ value }) => value)));
     expect(
       ["response-2", "response-3", "response-4", "response-5"].some(

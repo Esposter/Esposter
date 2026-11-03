@@ -5,6 +5,7 @@ import { SurveyTextInputType } from "#src/models/SurveyTextInputType";
 import { createSurveyPanelDynamicAnswerSchema } from "#src/services/runner/answer/createSurveyPanelDynamicAnswerSchema";
 import {
   SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_REQUIRED_MESSAGE,
   SURVEY_TOO_LONG_MESSAGE,
   SURVEY_WRONG_COUNT_MESSAGE,
 } from "#src/services/runner/constants";
@@ -14,7 +15,7 @@ import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNode
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
 import { describe, expect, test } from "vitest";
 
-const createPanelDynamicNode = (): SurveyPanelDynamicNode => ({
+const createPanelDynamicNode = (isRequired = false): SurveyPanelDynamicNode => ({
   props: {
     ...surveyPanelDynamicNodeType.createDefaultProps(),
     id: crypto.randomUUID(),
@@ -26,6 +27,7 @@ const createPanelDynamicNode = (): SurveyPanelDynamicNode => ({
           ...surveyTextNodeType.createDefaultProps(),
           id: crypto.randomUUID(),
           inputType: SurveyTextInputType.Text,
+          isRequired,
           maxLength: 1,
           name: "a",
         },
@@ -52,6 +54,16 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
     const result = createSchema().safeParse([{ a: "bc" }]);
 
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_TOO_LONG_MESSAGE);
+  });
+
+  test("refuses a panel that leaves a required question of its template empty", () => {
+    expect.hasAssertions();
+    const result = createSurveyPanelDynamicAnswerSchema(
+      createPanelDynamicNode(true),
+      createSurveyAnswerSchema,
+    ).safeParse([{ a: "" }]);
+
+    expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
   });
 
   test("refuses fewer panels than its owner's minimum", () => {
