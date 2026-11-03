@@ -3,7 +3,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "#server/trpc";
 import { trpcRouter } from "#server/trpc/routers";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
@@ -15,6 +15,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { AzureContainer, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
+import { SurveyNodeType } from "survey-engine";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("webpageRouter", () => {
@@ -125,7 +126,7 @@ describe("webpageRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await createSurvey(surveyCaller, name, {
-      model: JSON.stringify({ pages: [{ elements: [{ name, type: "rating" }] }] }),
+      document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
     });
     const newResource = await caller.createResource({ name });
     await caller.saveResourceContent({

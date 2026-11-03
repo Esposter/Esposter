@@ -41,6 +41,7 @@ import {
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
+import { createSurveyDocument } from "survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -69,7 +70,7 @@ describe("programRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
-  const model = "{}";
+  const document = createSurveyDocument();
   const settings = surveySettingsSchema.parse({});
   const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   // Three participants is the smallest set exhibiting responded / not-responded / duplicate-key
@@ -83,7 +84,7 @@ describe("programRouter", () => {
   // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
   // Audience sheet — and varies only the audience it issues against, or the survey's settings
   const setupIdentifiedProgram = async (audienceKeyValues = keyValues, surveySettings = identifiedSettings) => {
-    const survey = await createSurvey(surveyCaller, name, { model, settings: surveySettings });
+    const survey = await createSurvey(surveyCaller, name, { document, settings: surveySettings });
     const program = await createBoundProgram({
       keyValues: audienceKeyValues,
       name,
@@ -447,7 +448,7 @@ describe("programRouter", () => {
 
   // A program bound to one email as its working copy holds it: a survey invite to the survey, or a button that links nowhere
   const createInviteProgram = async (linksSurvey = true, audienceKeyValues = ["a", "b"]) => {
-    const survey = await createSurvey(surveyCaller, name, { model, settings: identifiedSettings });
+    const survey = await createSurvey(surveyCaller, name, { document, settings: identifiedSettings });
     const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
     const email = await emailCaller.createResource({ name });
     const invite: MjmlFlowNode | MjmlLeafNode = linksSurvey

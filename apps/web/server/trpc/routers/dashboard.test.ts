@@ -2,7 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";
@@ -14,6 +14,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
+import { SurveyNodeType } from "survey-engine";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
@@ -36,7 +37,7 @@ describe("dashboardRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await createSurvey(surveyCaller, name, {
-      model: JSON.stringify({ pages: [{ elements: [{ name, type: "rating" }] }] }),
+      document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
     });
     await surveyCaller.createSurveyResponse({
       model: { [name]: 0 },
@@ -76,16 +77,10 @@ describe("dashboardRouter", () => {
 
     const unreadName = "unreadName";
     const newSurvey = await createSurvey(surveyCaller, name, {
-      model: JSON.stringify({
-        pages: [
-          {
-            elements: [
-              { name, type: "rating" },
-              { name: unreadName, type: "text" },
-            ],
-          },
-        ],
-      }),
+      document: createSurveyDocumentWith([
+        { name, type: SurveyNodeType.Rating },
+        { name: unreadName, type: SurveyNodeType.Text },
+      ]),
     });
     await surveyCaller.createSurveyResponse({
       model: { [name]: 0, [unreadName]: unreadName },

@@ -19,6 +19,7 @@ import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
+import { createSurveyDocument } from "survey-engine";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -50,7 +51,7 @@ describe("resourceProgramStatus", () => {
   const surveyId = crypto.randomUUID();
   const setSurveyMode = (responseMode: SurveyResponseMode) => {
     trpcMsw.survey.readResourceContent.query(() => ({
-      model: "",
+      document: createSurveyDocument(),
       settings: surveySettingsSchema.parse({ responseMode }),
     }));
   };

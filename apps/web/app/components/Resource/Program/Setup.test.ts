@@ -9,6 +9,7 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { createSurveyDocument } from "survey-engine";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe("resourceProgramSetup", () => {
@@ -25,7 +26,7 @@ describe("resourceProgramSetup", () => {
     trpcMsw.email.readResources.query(() => ({ hasMore: false, items: [] }));
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
     trpcMsw.survey.readResourceContent.query(() => ({
-      model: "",
+      document: createSurveyDocument(),
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Anonymous }),
     }));
     const resourceStore = useResourceStore();

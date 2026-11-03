@@ -7,7 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
@@ -23,6 +23,7 @@ import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
+import { SurveyNodeType } from "survey-engine";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("datasetRouter", () => {
@@ -34,18 +35,12 @@ describe("datasetRouter", () => {
   const name = "name";
   const columnName = "columnName";
   const value = "value";
-  // One element per column type the model derives, named the least a response key may be
-  const model = JSON.stringify({
-    pages: [
-      {
-        elements: [
-          { name: "a", type: "rating" },
-          { name: "b", type: "boolean" },
-          { name: "c", type: "text" },
-        ],
-      },
-    ],
-  });
+  // One question per column type the document derives, named the least a response key may be
+  const document = createSurveyDocumentWith([
+    { name: "a", type: SurveyNodeType.Rating },
+    { name: "b", type: SurveyNodeType.Boolean },
+    { name: "c", type: SurveyNodeType.Text },
+  ]);
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -59,7 +54,7 @@ describe("datasetRouter", () => {
     MockTableDatabase.clear();
   });
 
-  const setupSurvey = () => createSurvey(surveyCaller, name, { model });
+  const setupSurvey = () => createSurvey(surveyCaller, name, { document });
   // A survey response's submission time is its save time, so the clock is pinned to the epoch
   const submittedAt = new Date(0).toISOString();
   const submittedAtColumn = { name: "submittedAt", title: "Submitted", type: ColumnType.Date };
@@ -147,9 +142,9 @@ describe("datasetRouter", () => {
   test("reserves the submission column name a question takes", async () => {
     expect.hasAssertions();
 
-    const questionModel = JSON.stringify({ pages: [{ elements: [{ name: "submittedAt", type: "text" }] }] });
+    const questionDocument = createSurveyDocumentWith([{ name: "submittedAt", type: SurveyNodeType.Text }]);
     vi.useFakeTimers({ now: 0 });
-    const newSurvey = await createSurvey(surveyCaller, name, { model: questionModel });
+    const newSurvey = await createSurvey(surveyCaller, name, { document: questionDocument });
     await surveyCaller.createSurveyResponse({
       model: { submittedAt: "answer" },
       partitionKey: newSurvey.id,

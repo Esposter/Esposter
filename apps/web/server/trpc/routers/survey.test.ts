@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { SurveyDocument, SurveyTextNode } from "survey-engine";
 
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createCallerFactory } from "#server/trpc";
@@ -27,7 +28,14 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableClient, MockTableDatabase } from "azure-mock";
+import { createSurveyDocument, SurveyNodeType, surveyPageNodeType, surveyTextNodeType } from "survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+
+// A text question of the given name, the one kind a save with repeated question names needs
+const createQuestion = (questionName: string): SurveyTextNode => ({
+  props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name: questionName },
+  type: SurveyNodeType.Text,
+});
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
@@ -38,8 +46,11 @@ describe("surveyRouter", () => {
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
-  const model = "{}";
-  const updatedModel = '{"title":"updated"}';
+  const document = createSurveyDocument();
+  const updatedDocument: SurveyDocument = {
+    ...document,
+    root: { props: { ...document.root.props, title: "updated" } },
+  };
   const settings = surveySettingsSchema.parse({});
   const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   const closedMessage = "closedMessage";
@@ -78,7 +89,7 @@ describe("surveyRouter", () => {
     });
   // An Identified survey plus a program bound to it, returning the survey and its one valid token
   const setupIdentifiedSurvey = async () => {
-    const survey = await createSurvey(caller, name, { model, settings: identifiedSettings });
+    const survey = await createSurvey(caller, name, { document, settings: identifiedSettings });
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -110,16 +121,84 @@ describe("surveyRouter", () => {
 
     expect(newResource.type).toBe(ResourceType.Survey);
 
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { document, settings });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content).toStrictEqual({ model, settings });
+    expect(content).toStrictEqual({ document, settings });
+  });
+
+  test("refuses a save whose question names repeat, with the check's message", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const repeatedNameDocument: SurveyDocument = {
+      ...document,
+      content: [
+        {
+          props: {
+            ...surveyPageNodeType.createDefaultProps(),
+            children: [createQuestion("a"), createQuestion("a")],
+            id: crypto.randomUUID(),
+          },
+          type: SurveyNodeType.Page,
+        },
+      ],
+    };
+
+    await expect(
+      saveSurveyContent(newResource.id, newResource.contentVersion, { document: repeatedNameDocument, settings }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "message": "The name \\"a\\" is already used by an earlier question",
+          "path": [
+            "content",
+            "document",
+            "content",
+            "0",
+            "props",
+            "children",
+            "1",
+            "props",
+            "name"
+          ]
+        }
+      ]]
+    `);
+  });
+
+  // The retired string model is not converted: a save still holding it is refused, not saved as an empty survey
+  test("refuses a save in the retired model shape", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+
+    await expect(
+      saveSurveyContent(newResource.id, newResource.contentVersion, {
+        model: "{}",
+        settings,
+      } as unknown as SurveyResource),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "unrecognized_keys",
+          "keys": [
+            "model"
+          ],
+          "path": [
+            "content"
+          ],
+          "message": "Unrecognized key: \\"model\\""
+        }
+      ]]
+    `);
   });
 
   test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings });
+    const newResource = await createSurvey(caller, name, { document, settings });
     await createSurveyResponse(newResource.id, 0);
 
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
@@ -146,12 +225,12 @@ describe("surveyRouter", () => {
   test("serves the published snapshot to respondents, not later edits", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings });
+    const newResource = await createSurvey(caller, name, { document, settings });
     await caller.publishResource({ id: newResource.id });
-    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model: updatedModel, settings });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document: updatedDocument, settings });
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(content.model).toBe(model);
+    expect(content.document).toStrictEqual(document);
   });
 
   test("creates and reads survey response", async () => {
@@ -466,7 +545,7 @@ describe("surveyRouter", () => {
   test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const survey = await createSurvey(caller, name, { model, settings: identifiedSettings });
+    const survey = await createSurvey(caller, name, { document, settings: identifiedSettings });
     // Two recipients of the same program: both tokens are valid, but a response belongs to exactly one
     const program = await createBoundProgram({
       keyValues: [keyValue, `${keyValue} `],
@@ -492,7 +571,7 @@ describe("surveyRouter", () => {
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
     // Settings are live working state, so no re-publish is involved in the switch
-    await saveSurveyContent(survey.id, survey.contentVersion + 1, { model, settings });
+    await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
     const anonymousSurveyResponse = await createSurveyResponse(survey.id, 1);
     const existingSurveyResponse = await caller.readSurveyResponse({
       partitionKey: survey.id,
@@ -509,7 +588,7 @@ describe("surveyRouter", () => {
 
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
-    await saveSurveyContent(survey.id, survey.contentVersion + 1, { model, settings });
+    await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
     // The funnel joins participants × responses by token, so an Anonymous-mode edit must not erase who answered
@@ -519,7 +598,7 @@ describe("surveyRouter", () => {
   test("fails create with closed survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings: closedSettings });
+    const newResource = await createSurvey(caller, name, { document, settings: closedSettings });
 
     await expect(createSurveyResponse(newResource.id, 0)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${closedSurveyErrorMessage}]`,
@@ -543,7 +622,7 @@ describe("surveyRouter", () => {
     const newResource = await caller.createResource({ name });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     // An in-flight respondent — form open when the survey closed — gets the rejection on submit
-    await saveSurveyContent(newResource.id, newResource.contentVersion, { model, settings: closedSettings });
+    await saveSurveyContent(newResource.id, newResource.contentVersion, { document, settings: closedSettings });
 
     await expect(updateSurveyResponse(newSurveyResponse, 1)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${closedSurveyErrorMessage}]`,
@@ -553,16 +632,16 @@ describe("surveyRouter", () => {
   test("serves the live closed flag over the published snapshot", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings });
+    const newResource = await createSurvey(caller, name, { document, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
-      model: updatedModel,
+      document: updatedDocument,
       settings: closedSettings,
     });
     const { content } = await caller.readPublishedResourceContent(newResource.id);
 
-    // The model stays the immutable snapshot while the settings are the live ones
-    expect(content.model).toBe(model);
+    // The document stays the immutable snapshot while the settings are the live ones
+    expect(content.document).toStrictEqual(document);
     expect(content.settings).toStrictEqual(closedSettings);
   });
 
@@ -573,41 +652,41 @@ describe("surveyRouter", () => {
   test("keeps the live settings when a published version is restored over them", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings });
+    const newResource = await createSurvey(caller, name, { document, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
-      model: updatedModel,
+      document: updatedDocument,
       settings: closedSettings,
     });
     await resourceCaller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: newResource.id, version: 1 });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    // The model is the snapshot's, which is the whole point of restoring — the settings are still the owner's
-    expect(content?.model).toBe(model);
+    // The document is the snapshot's, which is the whole point of restoring — the settings are still the owner's
+    expect(content?.document).toStrictEqual(document);
     expect(content?.settings).toStrictEqual(closedSettings);
   });
 
   test("serves the live settings on the owner's version preview", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings });
+    const newResource = await createSurvey(caller, name, { document, settings });
     await caller.publishResource({ id: newResource.id });
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, {
-      model: updatedModel,
+      document: updatedDocument,
       settings: closedSettings,
     });
     const { content } = await caller.readPublishedVersionContent({ id: newResource.id, version: 1 });
 
-    expect(content.model).toBe(model);
+    expect(content.document).toStrictEqual(document);
     expect(content.settings).toStrictEqual(closedSettings);
   });
 
   test("reopening accepts responses again", async () => {
     expect.hasAssertions();
 
-    const newResource = await createSurvey(caller, name, { model, settings: closedSettings });
+    const newResource = await createSurvey(caller, name, { document, settings: closedSettings });
     // No re-publish involved — the toggle alone reopens collection
-    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model, settings });
+    await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings });
     await createSurveyResponse(newResource.id, 0);
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 

@@ -25,6 +25,7 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { AzureEntityType, resourcesInResource, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { createSurveyDocument } from "survey-engine";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one
@@ -40,7 +41,7 @@ describe("surveyFunnel", () => {
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const settings = surveySettingsSchema.parse({});
   const name = "name";
-  const model = "{}";
+  const document = createSurveyDocument();
   const customerKeyValue = "keyValue";
   // Three customers is the smallest audience exhibiting responded / not-responded / rejected, and a key value
   // Long enough that the "never leaks the participant list" assertions have a needle worth searching for
@@ -70,7 +71,7 @@ describe("surveyFunnel", () => {
 
     // 2. The survey — Identified mode, published
     const survey = await createSurvey(surveyCaller, name, {
-      model,
+      document,
       settings: { ...settings, responseMode: SurveyResponseMode.Identified },
     });
     await surveyCaller.publishResource({ id: survey.id });
@@ -155,7 +156,7 @@ describe("surveyFunnel", () => {
 
     await surveyCaller.saveResourceContent({
       content: {
-        model,
+        document,
         settings: { ...settings, isAcceptingResponses: false, responseMode: SurveyResponseMode.Identified },
       } satisfies SurveyResource,
       contentVersion: survey.contentVersion + 1,
