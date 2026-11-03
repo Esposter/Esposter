@@ -4,6 +4,8 @@ import { checkIsSurveyExpressionWordStart } from "#src/services/tokenizer/checkI
 
 // Below every operator's power, so parsing at this power takes the whole expression
 export const LOWEST_POWER = 0;
+// The most digits `toFixed` takes, so a sum's rounding stops at it
+export const TO_FIXED_MAX_DIGITS = 100;
 export const PUNCTUATION_CHARACTERS: readonly string[] = ["(", ")", "[", "]", ","];
 export const STRING_QUOTES: readonly string[] = ["'", '"'];
 // Derived from the operator maps, so the tokenizer reads no symbol the parser cannot place. Longest first, so `<=` is
