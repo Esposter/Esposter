@@ -20,8 +20,6 @@ The [webpage survey invite spec](../../specs/resource/webpage-survey-invite-bloc
 Build the picker as a schema-form renderer keyed on the resource-link declaration, and list published surveys through the resource list the explorer already reads.
 
 - The program setup already binds its survey through a select over the owner's surveys, so a second survey picker would be a copy. A component that knows the invite's field by name would also need a second one for each other link field, and the repo already has more than one such field. A renderer keyed on the declaration covers every link field the schema forms draw, so the next picker is written once.
-- Published is the filter because a survey that is not published answers its invite with a not-found page. The picker offers only what works for a visitor.
-- A bound survey that is later unpublished keeps its binding. Clearing it would make a toggle on the survey destroy the owner's page, so the page shows the survey as unpublished instead.
 
 **Against the survey form engine.** The picker is written against the [survey form engine](../resource-survey-form-engine-program/design.md)'s model, not against SurveyJS, which that change removes. The picker reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
 
@@ -35,5 +33,5 @@ Build the picker as a schema-form renderer keyed on the resource-link declaratio
 ## Impact
 
 - The invite and the email button keep their stored shape. A bound id is unchanged, so no page needs rewriting.
-- Every schema form that draws a resource-link field gains the picker. Today that is the invite; the change does not add a link field anywhere.
+- Every schema form that draws a resource-link field gains the picker. Those fields today are the invite's `surveyId`, the program's `emailId` and `surveyId`, and the dataset reference's `id`, so each one a schema form draws switches from a text field to the picker; the change does not add a link field anywhere.
 - The explorer's list read gains a publication filter, used only by the picker.
