@@ -43,7 +43,7 @@
 
 ## 6. `.vue` declarations without `vue-tsc`
 
-- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files from `vize` (`vize check --declaration`) inside the shared tsdown configuration, in place of `dts.tsc.vue`. Unblocked upstream: #11454, the reduction that failed, is closed as completed in 0.661.0 (#11477). What remains is the matrix of `design.md`, "`.vue` declarations from `vize check --declaration`", re-run on 0.661.0 for `genshin-interface` and `genshin-world`. The gate and its reasons are the decision in `design.md`, and a byte match is not the bar. Verified by a dependent package's typecheck passing through both `vue-tsc` and the mapper against a package built with the `vize` declarations, with that package's size snapshot read and accounted for, recorded before `vue-tsc` is removed.
+- [ ] 6.1 Generate the declarations of the Vue packages' `.vue` files through the mapper inside the shared tsdown configuration, in place of `dts.tsc.vue`, by setting the declaration plugin's `generator` to `tsrs` with `runExternalCode` (`design.md`, "`.vue` declarations from `vize check --declaration`"). Blocked on two upstream changes found on 3 November: `tsrs` runs no content mapper through its JS API yet (its "phase 2"; the first five mapped files fail with `TS18069`), and the `vize` declarations are refused by `vue-tsc` for `id` and `role` on 0.661.0 although #11454 is closed. A byte match is not the bar. Verified by a dependent package's typecheck passing through both `vue-tsc` and the mapper against a package built with the mapper's declarations, with that package's size snapshot read and accounted for, recorded before `vue-tsc` is removed.
 
 ## 7. Retire `vue-tsc` and the override
 
