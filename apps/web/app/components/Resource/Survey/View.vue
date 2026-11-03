@@ -1,29 +1,30 @@
 <script setup lang="ts">
-import { DEFAULT_CLOSED_MESSAGE } from "#shared/services/resource/survey/constants";
-import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
+import type { SurveyAnswers } from "survey-engine";
+
+import {
+  DEFAULT_CLOSED_MESSAGE,
+  DEFAULT_COMPLETED_MESSAGE,
+  INVITE_ONLY_MESSAGE,
+} from "#shared/services/resource/survey/constants";
+import { getSurveyDocumentQuestions } from "#shared/services/survey/getSurveyDocumentQuestions";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { THEME_KEY } from "@/services/survey/constants";
-import { registerSurveyPlugin } from "@/services/survey/registerSurveyPlugin";
-import { useThemeModeStore } from "@/store/ui/themeMode";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { checkIsServer, sanitizeHtml } from "@esposter/shared";
-import { Model } from "survey-core";
-import { DefaultDark, DefaultLight } from "survey-core/themes";
-import { SurveyComponent } from "survey-vue3-ui";
+import { sanitizeHtml } from "@esposter/shared";
 
 interface Props {
   id: string;
 }
 
 const { id } = defineProps<Props>();
-// The survey renders only once mounted, so its components register on the client alone
-if (!checkIsServer()) registerSurveyPlugin(useNuxtApp().vueApp);
 const { $trpc } = useNuxtApp();
 const { currentRoute } = useRouter();
 // Read once on load and threaded through every write — the URL carries an opaque token or nothing
 const participantToken = getRouteParamString(currentRoute.value.query.t);
-const { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse } = useSurveyResponse(id, participantToken);
+const { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse, seed } = useSurveyResponse(
+  id,
+  participantToken,
+);
 const { content, name } = await useReadPublishedResourceContent(
   ResourceType.Survey,
   id,
@@ -34,40 +35,47 @@ const { content, name } = await useReadPublishedResourceContent(
 // The URL stays alive — unlike unpublish, which 404s every participant link already sent
 const { closedMessage, isAcceptingResponses, responseMode } = content.settings;
 const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identified && !participantToken;
-const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
-const model = new Model(surveyModel);
-// An author's html questions and completion pages render into this page, in the app's own origin, for anonymous
-// Respondents — unlike a webpage, which is sandboxed — so the markup passes the sanitizer every other rendered
-// HTML does
-model.onProcessHtml.add((_survey, options) => {
-  options.html = sanitizeHtml(options.html);
-});
-const themeModeStore = useThemeModeStore();
-const { isDark } = storeToRefs(themeModeStore);
-// An author's theme is the survey's look everywhere; without one the survey follows the app's palette
-if (theme) model.applyTheme(theme);
-else
-  watchImmediate(isDark, (newIsDark) => {
-    model.applyTheme(newIsDark ? DefaultDark : DefaultLight);
-  });
-model.onValueChanged.add(saveSurveyResponse);
-model.onCurrentPageChanged.add(saveSurveyResponse);
-model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
-  showSaveInProgress();
-  survey.clearIncorrectValues(true);
-  // Only a save that actually persisted may clear the resume id and thank the respondent — the mutation
-  // Reports a rejection rather than throwing, so a failed submit would otherwise wipe the id their answers
-  // Are stored under and send them back to a blank survey
-  if (await saveSurveyResponse(survey)) {
-    clearSurveyResponseId();
-    showSaveSuccess();
-  } else showSaveError("We could not submit your answers. Please try again.");
-});
-
+// An author's completion markup renders into this page, in the app's own origin, for anonymous respondents
+const completedHtml = sanitizeHtml(content.document.root.props.completedHtml);
+// A republish between a draft and its resume can remove a question, so a resumed draft keeps only the answers
+// To the questions the published document still holds
+const questionNames = new Set(getSurveyDocumentQuestions(content.document).map(({ props }) => props.name));
+// The page the runner last reported. The runner reports every move, so this is the page a submit completes on
+let lastPageIndex = 0;
+const resumedDraft = ref<{ answers: SurveyAnswers; pageIndex: number; seed: string }>();
 const isLoading = ref(true);
+const isSubmitted = ref(false);
+const isSubmitFailed = ref(false);
+
+// Every answer and page move saves a draft, so a respondent who leaves resumes where they were
+const onChange = ({ answers, pageIndex }: { answers: SurveyAnswers; pageIndex: number }) => {
+  lastPageIndex = pageIndex;
+  return saveSurveyResponse({ answers, isSubmitting: false, pageIndex });
+};
+// Only a save that actually persisted may clear the resume id and thank the respondent — the mutation reports a
+// Rejection rather than throwing, so a failed submit would otherwise wipe the id their answers are stored under
+// And send them back to a blank survey
+const onComplete = async (answers: SurveyAnswers) => {
+  isSubmitFailed.value = false;
+  if (await saveSurveyResponse({ answers, isSubmitting: true, pageIndex: lastPageIndex })) {
+    clearSurveyResponseId();
+    isSubmitted.value = true;
+  } else isSubmitFailed.value = true;
+};
 
 onMounted(async () => {
-  if (isAcceptingResponses && !isParticipantTokenRequired) await resumeSurveyResponse(model);
+  if (isAcceptingResponses && !isParticipantTokenRequired) {
+    const draft = await resumeSurveyResponse();
+    if (draft) {
+      lastPageIndex = draft.pageIndex;
+      resumedDraft.value = {
+        ...draft,
+        answers: Object.fromEntries(
+          Object.entries(draft.answers).filter(([questionName]) => questionNames.has(questionName)),
+        ),
+      };
+    }
+  }
   isLoading.value = false;
 });
 </script>
@@ -81,7 +89,7 @@ onMounted(async () => {
   />
   <UiEmptyState
     v-else-if="isParticipantTokenRequired"
-    description="This survey is open to invited participants only. Please use the personal link you were sent."
+    :description="INVITE_ONLY_MESSAGE"
     :meaning="UiIconMeaning.Lock"
     :title="name"
   />
@@ -90,5 +98,19 @@ onMounted(async () => {
     <UiSkeleton h-8 w="1/2" />
     <UiSkeleton v-for="index of 3" :key="index" h-24 />
   </div>
-  <SurveyComponent v-else :model />
+  <div v-else-if="isSubmitted" flex flex-col gap-4 ui-body>
+    <div v-if="completedHtml" v-html="completedHtml" />
+    <p v-else>{{ DEFAULT_COMPLETED_MESSAGE }}</p>
+  </div>
+  <template v-else>
+    <UiAlert v-if="isSubmitFailed" status="error">We could not submit your answers. Please try again.</UiAlert>
+    <ResourceSurveyRunner
+      :document="content.document"
+      :initial-answers="resumedDraft?.answers"
+      :initial-page-index="resumedDraft?.pageIndex"
+      :seed="resumedDraft?.seed ?? seed"
+      @change="onChange"
+      @complete="onComplete"
+    />
+  </template>
 </template>

@@ -1,9 +1,11 @@
 // @vitest-environment nuxt
 import { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseEntity } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
+import { nextTick } from "vue";
 
 describe(useSurveyResponse, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -13,6 +15,11 @@ describe(useSurveyResponse, () => {
   const model = { a: "" };
   const submittedModel = { a: " " };
   const createSurveyResponse = () => new SurveyResponseEntity({ model, partitionKey: id, rowKey });
+
+  // A stored resume id outlives a test, and a composable reads it on creation, so each test starts with none
+  beforeEach(() => {
+    localStorage.clear();
+  });
 
   // A respondent who answers and immediately submits leaves the create in flight, so a submit dropped outright
   // As a duplicate call would still report the answers saved — the row then holds only what the earlier
@@ -27,8 +34,8 @@ describe(useSurveyResponse, () => {
       return Object.assign(createSurveyResponse(), { model: input.model, modelVersion: 1 });
     });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const autosave = saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
-    const submit = saveSurveyResponse({ currentPageNo: 0, data: submittedModel, state: "completed" });
+    const autosave = saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
+    const submit = saveSurveyResponse({ answers: submittedModel, isSubmitting: true, pageIndex: 0 });
     const [isAutosaved, isSubmitted] = await Promise.all([autosave, submit]);
 
     expect(isAutosaved).toBe(true);
@@ -45,7 +52,7 @@ describe(useSurveyResponse, () => {
       throw new TRPCError({ code: "CONFLICT" });
     });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    const isSaved = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
+    const isSaved = await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
 
     expect(isSaved).toBe(false);
   });
@@ -62,8 +69,8 @@ describe(useSurveyResponse, () => {
       throw new TRPCError({ code: "BAD_REQUEST" });
     });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
-    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });
+    await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
+    const isSubmitted = await saveSurveyResponse({ answers: model, isSubmitting: true, pageIndex: 0 });
 
     expect(isSubmitted).toBe(true);
     expect(updateCallCount).toBe(0);
@@ -81,10 +88,44 @@ describe(useSurveyResponse, () => {
       return Object.assign(createSurveyResponse(), { modelVersion: 1 });
     });
     const { saveSurveyResponse } = useSurveyResponse(id, participantToken);
-    await saveSurveyResponse({ currentPageNo: 0, data: model, state: "running" });
-    const isSubmitted = await saveSurveyResponse({ currentPageNo: 0, data: model, state: "completed" });
+    await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
+    const isSubmitted = await saveSurveyResponse({ answers: model, isSubmitting: true, pageIndex: 0 });
 
     expect(isSubmitted).toBe(true);
     expect(isUpdatedDraft).toBe(false);
+  });
+
+  // The row key is the seed a shuffled choice list is ordered by, so a resumed draft hands back the key it was stored under
+  test("resumes a stored draft's answers, page and seed", async () => {
+    expect.hasAssertions();
+
+    localStorage.setItem(LocalStorageKey.SurveyResponseId(id, participantToken), rowKey);
+    trpcMsw.survey.readSurveyResponse.query(() => Object.assign(createSurveyResponse(), { pageNo: 1 }));
+    const { resumeSurveyResponse } = useSurveyResponse(id, participantToken);
+    const draft = await resumeSurveyResponse();
+
+    expect(draft).toStrictEqual({ answers: model, pageIndex: 1, seed: rowKey });
+  });
+
+  // A shared device must not reopen a submitted response, so once the submit persisted and its id is cleared, a later
+  // Visit to the survey on that device finds nothing to resume
+  test("a later visit resumes nothing once a persisted submit clears the resume id", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.survey.createSurveyResponse.mutation(() => createSurveyResponse());
+    trpcMsw.survey.updateSurveyResponse.mutation(({ input }) =>
+      Object.assign(createSurveyResponse(), { model: input.model, modelVersion: 1 }),
+    );
+    trpcMsw.survey.readSurveyResponse.query(() => createSurveyResponse());
+    const { clearSurveyResponseId, saveSurveyResponse } = useSurveyResponse(id, participantToken);
+    await saveSurveyResponse({ answers: model, isSubmitting: false, pageIndex: 0 });
+    await saveSurveyResponse({ answers: submittedModel, isSubmitting: true, pageIndex: 0 });
+    clearSurveyResponseId();
+    // The id is written to storage on the next tick, which is when a later visit reads it
+    await nextTick();
+    const { resumeSurveyResponse } = useSurveyResponse(id, participantToken);
+    const draft = await resumeSurveyResponse();
+
+    expect(draft).toBeUndefined();
   });
 });

@@ -1,27 +1,37 @@
 import type { SurveyResponseEntity } from "@esposter/db-schema";
-import type { Model } from "survey-core";
+import type { SurveyAnswers } from "survey-engine";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
+import { surveyAnswerValueSchema } from "survey-engine";
+import { z } from "zod";
+
+// A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored
+const surveyAnswersSchema: z.ZodType<SurveyAnswers> = z.record(z.string(), surveyAnswerValueSchema);
 
 export const useSurveyResponse = (id: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   // Respondent progress is tracked per browser, and scoped by participant token so a shared device cannot
   // Resume someone else's answers — see openspec/specs/architecture/browser-execution/design.md
   const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(id, participantToken), "");
+  // A response's row key is its seed, so a shuffled choice list keeps one order across visits: the key of the stored
+  // Response when there is one, else a new key that the first save creates the row under
+  const seed = surveyResponseId.value || crypto.randomUUID();
   let surveyResponse: SurveyResponseEntity | undefined;
   const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
   // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
-  // Response the server never took. SurveyJS switches the model to completed before it fires onComplete, so the save
-  // That event makes is the one that submits
+  // Response the server never took. Only the save that completes the runner carries isSubmitting
   const saveSurveyResponse = async ({
-    currentPageNo,
-    data,
-    state,
-  }: Pick<Model, "currentPageNo" | "data" | "state">) => {
-    const isSubmitting = state === "completed";
+    answers,
+    isSubmitting,
+    pageIndex,
+  }: {
+    answers: SurveyAnswers;
+    isSubmitting: boolean;
+    pageIndex: number;
+  }) => {
     const { status } = await executeMutation(
       () => {
         // Which write to send is resolved when it is sent rather than when it was issued: a save that queued
@@ -30,27 +40,27 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         if (!storedSurveyResponse)
           return $trpc.survey.createSurveyResponse.mutate({
             isDraft: !isSubmitting,
-            model: data,
-            pageNo: currentPageNo,
+            model: answers,
+            pageNo: pageIndex,
             participantToken,
             partitionKey: id,
-            rowKey: crypto.randomUUID(),
+            rowKey: seed,
           });
         // The stored row already holds these answers at this position, which is the write the server itself
         // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
         // Rather than an error banner over answers that are already safe. The same answers still submit a draft
         else if (
-          JSON.stringify(data) === JSON.stringify(storedSurveyResponse.model) &&
-          currentPageNo <= storedSurveyResponse.pageNo &&
+          JSON.stringify(answers) === JSON.stringify(storedSurveyResponse.model) &&
+          pageIndex <= storedSurveyResponse.pageNo &&
           !(storedSurveyResponse.isDraft && isSubmitting)
         )
           return Promise.resolve(storedSurveyResponse);
         else
           return $trpc.survey.updateSurveyResponse.mutate({
             isDraft: !isSubmitting,
-            model: data,
+            model: answers,
             modelVersion: storedSurveyResponse.modelVersion,
-            pageNo: currentPageNo,
+            pageNo: pageIndex,
             participantToken,
             partitionKey: storedSurveyResponse.partitionKey,
             rowKey: storedSurveyResponse.rowKey,
@@ -70,25 +80,28 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
   };
   // An interrupted survey resumes where it left off. A failed resume falls back to a blank survey rather than
   // Stranding the respondent on the skeleton
-  const resumeSurveyResponse = (model: Model) =>
+  const resumeSurveyResponse = () =>
     getResultAsync(async () => {
-      if (!surveyResponseId.value) return;
+      if (!surveyResponseId.value) return undefined;
 
       surveyResponse = await $trpc.survey.readSurveyResponse.query({
         participantToken,
         partitionKey: id,
         rowKey: surveyResponseId.value,
       });
-      if (!surveyResponse) return;
+      if (!surveyResponse) return undefined;
 
-      model.data = surveyResponse.model;
-      if (!surveyResponse.pageNo) return;
-
-      model.currentPageNo = surveyResponse.pageNo;
-    }).match(noop, console.error);
+      return {
+        answers: surveyAnswersSchema.parse(surveyResponse.model),
+        pageIndex: surveyResponse.pageNo,
+        seed: surveyResponse.rowKey,
+      };
+    })
+      .orTee(console.error)
+      .unwrapOr(undefined);
   // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
   const clearSurveyResponseId = () => {
     surveyResponseId.value = "";
   };
-  return { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse };
+  return { clearSurveyResponseId, resumeSurveyResponse, saveSurveyResponse, seed };
 };
