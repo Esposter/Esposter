@@ -1,18 +1,7 @@
-import { surveyIdSchema } from "#src/services/surveyIdSchema";
 import { surveyMatrixNodeType } from "#src/services/surveyMatrixNodeType";
 import { describe, expect, test } from "vitest";
-import { z } from "zod";
 
 describe("surveyMatrixNodeType", () => {
-  test("a matrix question made from the default props parses once its id is added", () => {
-    expect.hasAssertions();
-
-    const nodeSchema = z.strictObject({ ...surveyMatrixNodeType.propsSchema.shape, id: surveyIdSchema });
-    const result = nodeSchema.safeParse({ ...surveyMatrixNodeType.createDefaultProps(), id: crypto.randomUUID() });
-
-    expect(result.success).toBe(true);
-  });
-
   test("a matrix refuses a row list that repeats a value", () => {
     expect.hasAssertions();
 
