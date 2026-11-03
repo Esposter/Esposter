@@ -1,4 +1,5 @@
 import type { SurveyQuestionNode } from "#src/models/SurveyQuestionNode";
+import type { SurveyLogicContext } from "survey-logic";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyBooleanAnswerSchema } from "#src/services/runner/answer/createSurveyBooleanAnswerSchema";
@@ -24,7 +25,12 @@ import { z } from "zod";
 
 // The schema of one answer a respondent gave to a question, switched on the question's type
 // An answer that is absent is not checked here, since whether a question must be answered is the flow's to say
-export const createSurveyAnswerSchema = (node: SurveyQuestionNode): z.ZodType => {
+// The survey's values and the clock are what a dynamic panel's template reads each of its rows against
+export const createSurveyAnswerSchema = (
+  node: SurveyQuestionNode,
+  values: SurveyLogicContext["values"],
+  now: Date,
+): z.ZodType => {
   switch (node.type) {
     case SurveyNodeType.Text:
       return createSurveyTextAnswerSchema(node);
@@ -51,7 +57,12 @@ export const createSurveyAnswerSchema = (node: SurveyQuestionNode): z.ZodType =>
     case SurveyNodeType.MatrixDynamic:
       return createSurveyMatrixDynamicAnswerSchema(node);
     case SurveyNodeType.PanelDynamic:
-      return createSurveyPanelDynamicAnswerSchema(node, createSurveyAnswerSchema);
+      return createSurveyPanelDynamicAnswerSchema(
+        node,
+        (question) => createSurveyAnswerSchema(question, values, now),
+        values,
+        now,
+      );
     case SurveyNodeType.MultipleText:
       return createSurveyMultipleTextAnswerSchema(node);
     case SurveyNodeType.Slider:

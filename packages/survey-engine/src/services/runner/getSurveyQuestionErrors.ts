@@ -33,7 +33,7 @@ export const getSurveyQuestionErrors = (
   }
 
   // The first refusal's message is the one the schema chose for the rule that failed, such as out of range or too short
-  const result = createSurveyAnswerSchema(node).safeParse(answer);
+  const result = createSurveyAnswerSchema(node, values, now).safeParse(answer);
   if (!result.success)
     return [{ message: result.error.issues[0]?.message ?? SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
 
