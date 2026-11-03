@@ -1,6 +1,6 @@
 ---
 name: page-builder
-description: Apply when working on the page builder — the editor shell the webpage and email resources mount. Esposter's one page builder for its document resources.
+description: Apply when working on the page builder — the editor shell the webpage and email resources mount. Esposter's one page builder for its webpage and email documents.
 ---
 
 # Page Builder
@@ -12,6 +12,8 @@ Rules every page-builder task needs, each owned by the page named in its line:
 - A merge field is the canonical `{{columnName}}` token from `toMergeField`, and substitution HTML-escapes the value (`openspec/specs/resource/email-personalization/design.md`).
 - The canvas and the editor take their keys from one table, read through one lookup (`openspec/specs/resource/page-builder/keyboard/design.md`).
 - Each open resource's undo and redo are JSON Patch operations, with the inverses that undo them kept beside them (`openspec/specs/resource/page-builder/undo-as-patches/design.md`).
+
+The survey Creator is a separate editor shell, not the page builder, but it has the same shape: a store of selection and history, one core edit per gesture applied as patches, and panes drawn with the UI library (`openspec/specs/resource/survey-creator/design.md`).
 
 ## Owner pages
 

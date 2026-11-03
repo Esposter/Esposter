@@ -67,6 +67,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey response modes](survey-response-modes/design.md) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response summary](survey-response-summary/design.md) — the Responses blade opens on one chart, range or answer list per question
 - [Survey response management](survey-response-management/design.md) — response detail, owner delete, response count on Overview
+- [Survey creator](survey-creator/design.md) — the owner's editor over the typed survey document: a layers tree, a palette, a canvas, undo and redo as patches, and a preview that is the runner
 - [Published view analytics](published-view-analytics/design.md) — best-effort view counts on public reads for every publishable type
 - [Dashboard data binding](dashboard-data-binding/design.md) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Dashboard duplicate visual](dashboard-duplicate-visual/design.md) — Duplicate on a tile's corner copies its chart settings and binding
