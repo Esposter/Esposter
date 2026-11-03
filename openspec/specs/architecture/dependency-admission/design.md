@@ -100,7 +100,7 @@ The rule that generalises: **keep the data and the hard algorithm, take back the
 
 These stay packages whatever their size or call-site count, so the initiative cannot talk itself into the expensive mistake later:
 
-- **Engines.** Anything implementing a large algorithm as its product — the game, 3D, diagram, page-builder, survey and editor runtimes. The plugins around an engine are a separate question from the engine.
+- **Engines.** Anything implementing a large algorithm as its product — the game, 3D, diagram, page-builder and editor runtimes. The survey runtime was SurveyJS until the [survey form engine program](../../../changes/resource-survey-form-engine-program/design.md) retired it; the typed survey document replaced it. The plugins around an engine are a separate question from the engine.
 - **SDKs and the framework.** The cloud SDKs, the framework and its modules: their surface follows a service or a release train that changes without us.
 - **Tooling.** The build, lint, test and type tooling the pipeline is built on, delegated to the tool rather than rebuilt (the `dependency-updates` skill owns its bumps).
 - **Accessibility-shaped.** Anything whose real surface is focus management, ARIA and keyboard semantics — the component framework, the rich text and code editors. Our own version reliably ships worse here, because the part we would reimplement is the part we would not think to test.
