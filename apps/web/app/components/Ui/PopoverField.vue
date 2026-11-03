@@ -5,8 +5,9 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 interface Props {
   // Whether a button beside the field empties it, shown while the field holds something
   isClearable: boolean;
-  // Whether the field holds nothing, so it reads its placeholder
+  // Whether the field is disabled, so it cannot be opened
   isDisabled?: true;
+  // Whether the field holds nothing, so it reads its placeholder
   isEmpty: boolean;
   // Named for assistive technology alone, where what surrounds the field already says what it is for
   isLabelHidden?: true;
