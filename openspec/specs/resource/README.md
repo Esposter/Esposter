@@ -49,7 +49,8 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Sheet resource](sheet-resource/design.md) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Create from file](create-from-file/design.md) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Sheet editor](sheet/README.md) — the grid editor behind the Sheet resource's Data blade: inline editing, data cleaning, computed columns, statistics, clipboard
-- [Survey resource](survey-resource/design.md) — SurveyJS authoring, public respondent page, responses dataset
+- [Survey resource](survey-resource/design.md) — authoring the typed survey document in the Creator, public respondent page, responses dataset
+- [Survey respondent](survey-respondent/design.md) — the public respondent page: the runner, a draft saved as the respondent moves, resume and submit, and the server's check of each answer
 - [Survey document](survey-document/design.md) — the survey as a typed document of pages, panels and questions, refused on save for a repeated name, an unknown kind or an expression that does not parse
 - [Survey logic](survey-logic/design.md) — the survey's expression language: conditions, calculated values and validators parsed to a tree and evaluated over the answers, a malformed one refused with its position
 - [Program resource](program-resource/design.md) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
