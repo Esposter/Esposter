@@ -161,15 +161,6 @@ export const SURVEY_PALETTE_GROUPS: readonly { category: string; types: SurveyNo
   { category: "Layout", types: [SurveyNodeType.Panel] },
 ];
 
-// The title and value of the creator's command group, and of each tab its panes are shown under
-export const SURVEY_CREATOR_COMMAND_GROUP = "Survey creator";
-export const SURVEY_CANVAS_TAB = "Canvas";
-export const SURVEY_STRUCTURE_TAB = "Structure";
-export const SURVEY_LAYERS_TAB = "Layers";
-export const SURVEY_PALETTE_TAB = "Palette";
-export const SURVEY_PROPERTIES_TAB = "Properties";
-export const SURVEY_LOGIC_TAB = "Logic";
-
 // The two views the toolbar switches between, titled and valued by the same name
 export const SURVEY_DESIGN_MODE = "Design";
 export const SURVEY_PREVIEW_MODE = "Preview";

@@ -2,7 +2,8 @@
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyImageChoice, SurveyImagePickerNode } from "survey-engine";
 
-import { getSurveyChoiceText, SurveyImageFit } from "survey-engine";
+import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
+import { getSurveyChoiceText } from "survey-engine";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -15,18 +16,9 @@ interface KeyedChoice {
   key: string;
 }
 
-// The class each fit draws a picture with, written whole so the utility generator sees every one
-const IMAGE_FIT_CLASSES: Record<SurveyImageFit, string> = {
-  [SurveyImageFit.Contain]: "object-contain",
-  [SurveyImageFit.Cover]: "object-cover",
-  [SurveyImageFit.Fill]: "object-fill",
-  [SurveyImageFit.None]: "object-none",
-};
-
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
-const imageFitClass = computed(() => IMAGE_FIT_CLASSES[node.props.imageFit]);
 // A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
 const keyedChoices = computed<KeyedChoice[]>(() =>
   node.props.choices.map((choice, index) => ({ choice, key: String(index) })),
@@ -74,7 +66,12 @@ const onSelect = (keys: string[] | undefined = []) => {
         @update:model-value="onSelect"
       >
         <template #mark="{ item }">
-          <NuxtImg :alt="item.title" :class="imageFitClass" :src="item.imageLink" size-full />
+          <NuxtImg
+            :alt="item.title"
+            :class="SURVEY_IMAGE_FIT_CLASSES[node.props.imageFit]"
+            :src="item.imageLink"
+            size-full
+          />
         </template>
         <template #title="{ item }">
           <span :class="{ 'sr-only': !node.props.showLabel }">{{ item.title }}</span>
