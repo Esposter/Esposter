@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
+import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
 import { useResourceStore } from "@/store/resource";
 

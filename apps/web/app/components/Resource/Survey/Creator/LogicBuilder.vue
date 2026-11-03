@@ -6,7 +6,6 @@ import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
 import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
 import {
   SURVEY_BOOLEAN_VALUE_ITEMS,
@@ -22,6 +21,7 @@ import { getSurveyConditionOperators } from "@/services/resource/survey/getSurve
 import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
 import { parseSurveyConditionRows } from "@/services/resource/survey/parseSurveyConditionRows";
 import { toSurveyConditionInputValue } from "@/services/resource/survey/toSurveyConditionInputValue";
+import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyNodeType } from "survey-engine";
 

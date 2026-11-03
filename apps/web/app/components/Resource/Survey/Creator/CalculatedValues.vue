@@ -3,7 +3,6 @@ import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
 import type { SurveyCalculatedValue } from "survey-engine";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
 import {
   SURVEY_CALCULATED_VALUE_EXPRESSION,
   SURVEY_CALCULATED_VALUE_NAME_REQUIRED_MESSAGE,
@@ -14,6 +13,7 @@ import { getNewCalculatedValueName } from "@/services/resource/survey/getNewCalc
 import { getSurveyCalculatedValueIssue } from "@/services/resource/survey/getSurveyCalculatedValueIssue";
 import { getSurveyConditionAnswers } from "@/services/resource/survey/getSurveyConditionAnswers";
 import { getSurveyExpressionFault } from "@/services/resource/survey/getSurveyExpressionFault";
+import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 
 const surveyCreatorStore = useSurveyCreatorStore();
