@@ -69,6 +69,10 @@ declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: { revision: null |
 precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
 // An API route or a file the server serves is the server's to answer, not the shell's
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/"), { denylist: navigationDenylist }));
+// `$pwa.updateServiceWorker()` sends this message, and a worker built from source is the one that must act on it
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") event.waitUntil(self.skipWaiting());
+});
 ```
 
 ```vue
