@@ -6,5 +6,5 @@ export const build: NuxtConfig["build"] = {
   ...(process.env.CLIENT_BUNDLE_REPORT_PATH && {
     analyze: { filename: process.env.CLIENT_BUNDLE_REPORT_PATH, template: "raw-data" },
   }),
-  transpile: ["@vuetify/v0", "survey-creator-vue"],
+  transpile: ["@vuetify/v0"],
 };
