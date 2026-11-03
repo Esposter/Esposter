@@ -27,7 +27,11 @@ If neither holds, the subpath is a duplicate or a leftover, and it goes.
 
 Every published package is experimental (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability), so a removed export is a changelog line in a minor release, not a breaking change. Check before removing: no repo consumer (`git grep` for the specifier across `apps`, `packages` and `scripts`), no README naming it, and the entry's own use (a bin or worker keeps its build entry even when the export goes).
 
-A Nuxt module's runtime arms are generated from its unbundled runtime glob, so a removed arm is excluded in the package's `tsdown.config.ts` through `exports.exclude`. Editing `package.json` by hand is undone by the next build. The factory's `exports.exclude` already carries `runtime/**/services/**` (`packages/configuration/src/services/getTsdownConfigurationNuxtModule.ts`), and each config passes only its own arms as the factory's argument, so no config repeats the services entry. A new runtime file gains an arm on the next build, so the manifest check of `build-packages` fails on the uncommitted field until the file is excluded here or a consumer names it; the generated field is never the thing to commit, since the subpath audit then finds no source that names the specifier. Every Nuxt module's `runtime/constants` holds its `MODULE_NAME`, so each excludes it unless a file outside the package imports a constant from it, as `apps/web` does for `trpc-nuxt-module`'s hook names.
+A Nuxt module's runtime arms are generated from its unbundled runtime glob, so a removed arm is excluded in the package's `tsdown.config.ts` through `exports.exclude`. Editing `package.json` by hand is undone by the next build. The factory's `exports.exclude` already carries `runtime/**/services/**` (`packages/configuration/src/services/getTsdownConfigurationNuxtModule.ts`), and each config passes only its own arms as the factory's argument, so no config repeats the services entry. Every Nuxt module's `runtime/constants` holds its `MODULE_NAME`, so each excludes it unless a file outside the package imports a constant from it, as `apps/web` does for `trpc-nuxt-module`'s hook names.
+
+## Adding a runtime file
+
+A Nuxt module's new runtime file gains an arm on the next build, so the manifest check of `build-packages` fails on the uncommitted field until the file is excluded in the package's `tsdown.config.ts` or a consumer names it. The generated field is never the thing to commit, since the subpath audit then finds no source that names the specifier.
 
 ## Worked decisions
 
