@@ -8,7 +8,7 @@ import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyEle
 import { getSurveyPageErrors } from "#src/services/runner/getSurveyPageErrors";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
-import { getSurveyVisiblePageIndexes } from "#src/services/runner/getSurveyVisiblePageIndexes";
+import { getSurveyVisiblePageIndexesFromValues } from "#src/services/runner/getSurveyVisiblePageIndexes";
 import { toSurveyAnswerValue } from "#src/services/runner/toSurveyAnswerValue";
 
 // Completes the survey once every visible page is valid. The first page with errors is returned and the state moves to it, unfinished
@@ -21,7 +21,7 @@ export const completeSurvey = (
   now: Date,
 ): SurveyRunnerCompletion => {
   const values = getSurveyRunnerValues(document, state.answers, now);
-  const pageIndexes = getSurveyVisiblePageIndexes(document, state.answers, now);
+  const pageIndexes = getSurveyVisiblePageIndexesFromValues(document, values, now);
   for (const pageIndex of pageIndexes) {
     const errors = getSurveyPageErrors(document, pageIndex, state.answers, values, now);
     if (errors.length > 0) return { answers: {}, errors, state: { ...state, isCompleted: false, pageIndex } };
