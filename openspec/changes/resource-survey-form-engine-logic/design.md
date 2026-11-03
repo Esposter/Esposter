@@ -35,10 +35,10 @@ flowchart LR
 
 ## Key files
 
-| File                                             | Role after the change                                     |
-| ------------------------------------------------ | --------------------------------------------------------- |
-| `packages/survey-logic/package.json`             | the private package's manifest                            |
-| `packages/math-expression-compiler/src/index.ts` | the sibling package's barrel, the layout this one follows |
+| File                                            | Role after the change                                                  |
+| ----------------------------------------------- | ---------------------------------------------------------------------- |
+| `packages/survey-logic/package.json`            | the private package's manifest                                         |
+| `packages/math-expression-compiler/src/models/` | the sibling package's models and services, the layout this one follows |
 
 New files land here:
 
