@@ -2,7 +2,7 @@
 
 ### Requirement: An expression evaluates to the value SurveyJS gives it
 
-An expression over a record of answers SHALL evaluate to the value SurveyJS's expression runner gives for the same expression and answers, for every operator and function the package implements.
+An expression over a record of answers SHALL evaluate to the value SurveyJS's expression runner gives for the same expression and answers, except for the deliberate deviations the design lists.
 
 #### Scenario: Comparison and logic over answers
 
@@ -43,7 +43,7 @@ An expression over a record of answers SHALL evaluate to the value SurveyJS's ex
 
 ### Requirement: A malformed expression is refused with the position of the fault
 
-Checking an expression that is not in the language, that calls a function the language lacks, or that calls an array function's filter form, which the package does not support, SHALL return an error holding a message and the character position of the fault, and SHALL return no tree.
+Checking an expression that is not in the language, that calls a function the language lacks, or that calls an array function's filter form, which the package does not support, SHALL refuse it with an error holding a message and the character position of the fault.
 
 #### Scenario: An unclosed parenthesis
 

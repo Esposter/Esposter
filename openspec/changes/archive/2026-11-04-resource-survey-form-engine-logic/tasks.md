@@ -4,7 +4,7 @@ Build order. The tokenizer and parser are the pilot unit; the rest wait on the t
 
 ## 1. Parse
 
-- [ ] 1.1 Write the models and the tokenizer and parser. Test-first, one case per scenario in the spec delta and one per operator and literal.
+- [x] 1.1 Write the models and the tokenizer and parser. Test-first, one case per scenario in the spec delta and one per operator and literal.
       Verify: the package's parser tests pass, a malformed expression returns a positioned error, and `pnpm build` regenerates the barrel.
 
 ## 2. Evaluate

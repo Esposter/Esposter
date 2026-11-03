@@ -50,6 +50,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Create from file](create-from-file/design.md) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
 - [Sheet editor](sheet/README.md) — the grid editor behind the Sheet resource's Data blade: inline editing, data cleaning, computed columns, statistics, clipboard
 - [Survey resource](survey-resource/design.md) — SurveyJS authoring, public respondent page, responses dataset
+- [Survey logic](survey-logic/design.md) — the survey's expression language: conditions, calculated values and validators parsed to a tree and evaluated over the answers, a malformed one refused with its position
 - [Program resource](program-resource/design.md) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
 - [Note resource](note-resource/design.md) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
 - [Note Markdown portability](note-markdown-portability/design.md) — a note exports to and imports from a `.md` file on its overflow menu, through a converter over the catalog's `marked`, saving an import only on confirm

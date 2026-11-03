@@ -4,7 +4,9 @@
 
 It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. Its answers match SurveyJS's recorded answers, except for the deliberate deviations its design lists.
 
-Design notes live in [the logic change](https://github.com/Esposter/Esposter/tree/main/openspec/changes/resource-survey-form-engine-logic/design.md).
+The package has no live SurveyJS. It does not depend on SurveyJS, and the values it is held to were recorded from SurveyJS's expression runner into fixtures that its tests replay.
+
+Design notes live in [the survey logic design](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-logic/design.md).
 
 ## Table of Contents
 
@@ -63,6 +65,8 @@ Each function is called by its name, written in any case. A call to a name no fu
 | `year`         | The year of a date, or of the clock's day when the date is empty                             |
 
 The `...InArray` functions take a field and, optionally, another field of the item to return. A filter, a condition over each item's fields as a last argument, is not supported: `checkSurveyExpression` refuses the call, and `runSurveyExpression` answers empty for it.
+
+The functions that read the live survey object, "displayValue", "isContainerReady", "isDisplayMode" and "propertyValue", are deliberately not implemented, since the package has no survey object to read. A call to one is refused by `checkSurveyExpression` as an unknown function, and `runSurveyExpression` answers empty for it.
 
 ## <a name="license">⚖️ License</a>
 
