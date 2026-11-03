@@ -11,7 +11,7 @@ import { readAchievements } from "#src/services/achievement/readAchievements";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
-import { defineStore, storeToRefs } from "pinia";
+import { defineStore } from "pinia";
 import { shallowRef, watch } from "vue";
 
 // The achievements, their categories and their words in the reader's language, read the first time the Achievements
@@ -20,9 +20,7 @@ import { shallowRef, watch } from "vue";
 // Stops it as it unmounts
 export const useWorldAchievementsStore = defineStore("world/achievements", () => {
   const worldScreenStore = useWorldScreenStore();
-  const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
-  const { wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setWallet } = worldSessionStore;
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(new Map());
   const achievementData = shallowRef<{
@@ -30,26 +28,32 @@ export const useWorldAchievementsStore = defineStore("world/achievements", () =>
     categories: AchievementCategory[];
     textMap: Readonly<Record<string, string>>;
   }>();
-  watch(screenKind, (newScreenKind) => {
-    if ((newScreenKind !== ScreenKind.Achievements && newScreenKind !== ScreenKind.PaimonMenu) || achievementData.value)
-      return;
-    getSynchronizedFunction(() =>
-      getResultAsync(async () => {
-        const [{ achievements, categories }, textMap] = await Promise.all([
-          readAchievements(worldSessionStore.gameDataBaseUrl),
-          AchievementTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl),
-        ]);
-        return { achievements, categories, textMap };
-      }).match(
-        (newAchievementData) => {
-          achievementData.value = newAchievementData;
-        },
-        (error) => {
-          console.error(error);
-        },
-      ),
-    )();
-  });
+  watch(
+    () => worldScreenStore.screenKind,
+    (newScreenKind) => {
+      if (
+        (newScreenKind !== ScreenKind.Achievements && newScreenKind !== ScreenKind.PaimonMenu) ||
+        achievementData.value
+      )
+        return;
+      getSynchronizedFunction(() =>
+        getResultAsync(async () => {
+          const [{ achievements, categories }, textMap] = await Promise.all([
+            readAchievements(worldSessionStore.gameDataBaseUrl),
+            AchievementTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl),
+          ]);
+          return { achievements, categories, textMap };
+        }).match(
+          (newAchievementData) => {
+            achievementData.value = newAchievementData;
+          },
+          (error) => {
+            console.error(error);
+          },
+        ),
+      )();
+    },
+  );
   const advanceAchievementsWith = (achievementEvents: AchievementEvent[]) => {
     if (achievementEvents.length === 0) return;
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
@@ -64,7 +68,10 @@ export const useWorldAchievementsStore = defineStore("world/achievements", () =>
           nextProgressMap = advance.progressMap;
         }
         achievementProgressMap.value = nextProgressMap;
-        setWallet({ ...wallet.value, [Currency.Primogem]: wallet.value[Currency.Primogem] + primogems });
+        setWallet({
+          ...worldSessionStore.wallet,
+          [Currency.Primogem]: worldSessionStore.wallet[Currency.Primogem] + primogems,
+        });
       },
       (error) => {
         console.error(error);
