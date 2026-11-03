@@ -322,8 +322,8 @@ catalogs:
       specifier: ^1.0.3
       version: 1.0.3
     '@pulumi/azure-native':
-      specifier: ^3.29.0
-      version: 3.29.0
+      specifier: ^3.30.0
+      version: 3.30.0
     '@pulumi/github':
       specifier: ^6.15.1
       version: 6.15.1
@@ -936,7 +936,7 @@ importers:
         version: link:../../packages/shared
       '@pulumi/azure-native':
         specifier: 'catalog:'
-        version: 3.29.0(supports-color@8.1.1)
+        version: 3.30.0(supports-color@8.1.1)
       '@pulumi/github':
         specifier: 'catalog:'
         version: 6.15.1(supports-color@8.1.1)
@@ -1349,7 +1349,7 @@ importers:
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -1989,7 +1989,7 @@ importers:
         version: 6.1.7
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -2233,7 +2233,7 @@ importers:
         version: 0.4.17(srvx@1.0.8)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
@@ -2300,7 +2300,7 @@ importers:
         version: 8.0.13
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -5505,8 +5505,8 @@ packages:
     resolution: {integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==}
     engines: {node: '>=18'}
 
-  '@pulumi/azure-native@3.29.0':
-    resolution: {integrity: sha512-J0j04PBBctR7e8/6cD3yxTUww3E1gv4xs3+8LEqem6DwOJtm3sNChEITJAZoSQAkV+SbAd3DgAUDILxqp851oQ==}
+  '@pulumi/azure-native@3.30.0':
+    resolution: {integrity: sha512-W4l1B4sku6DHFo7B4fJsez8FJzO8N7jQy3sJTPdI13H2igull2cNbeQSjk9pG7TkM0NArvAzp234YesVPFOjlA==}
 
   '@pulumi/github@6.15.1':
     resolution: {integrity: sha512-lXoLADTzeUvhOwxqnpt1Cz2loBm7B1ufsztBBvW4QiBkam6zbNOyq6WbOQVFMVEpoKpPhQxENTLTiJt1NKxLOQ==}
@@ -10180,8 +10180,8 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
-    resolution: {integrity: sha512-lWmbEVpk5LoLJ3NATrVeSLnsRu09e3aX+Dt8gZhKe7aQU8y/FKIMeSV8x8YnlZPv+KYRxm8I3FamT6GOV22VXQ==}
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
+    resolution: {integrity: sha512-45C9iKqLGYLlc5Ce6HxBc9VwBuUdVQbMm2aJgaKk6uJtG3wdmvoQBtGPN5IvjHJcU1S67vsT/syPv6lS12Ftgg==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -15273,7 +15273,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
       ofetch: 2.0.0-alpha.3
@@ -15335,7 +15335,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
       ofetch: 2.0.0-alpha.3
@@ -16799,7 +16799,7 @@ snapshots:
     dependencies:
       tinyexec: 1.3.1
 
-  '@pulumi/azure-native@3.29.0(supports-color@8.1.1)':
+  '@pulumi/azure-native@3.30.0(supports-color@8.1.1)':
     dependencies:
       '@pulumi/pulumi': 3.273.0(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -21774,7 +21774,7 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.67.4
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
     dependencies:
       crossws: 0.4.17(srvx@1.0.8)
       env-runner: 0.3.11
