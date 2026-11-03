@@ -32,7 +32,7 @@ Rejected: removing `vue-tsc` now. `vue-tsc` reads the classic API that the overr
 
 ### Phase 3 and 4: the override and the `typescript` package
 
-The override stays while `vue-tsc`, `@volar/typescript` and the editor read the classic API. The `typescript` package stays while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `scripts/` no longer imports it. `tsrs`'s `ast` subpaths export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text, so the in-process uses moved to `oxc-parser` instead: `scripts/src/services/shared/parseSource.ts` parses a source and throws when it does not parse, and every `scripts/` check reads the tree through it. The parser choice is recorded here because it is the dependency decision that unblocked phase 5 for `scripts/`.
+The override stays while `vue-tsc`, `@volar/typescript` and the editor read the classic API. The `typescript` package stays while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `scripts/` no longer imports it. `tsrs`'s `ast` subpaths export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text, so the in-process uses moved to `oxc-parser` instead: `scripts/src/services/shared/parseSource.ts` parses a source and throws when it does not parse, and every `scripts/` check reads the tree through it. The parser choice is recorded here because it is the dependency decision that unblocked the `scripts/` part of phase 4.
 
 ## Mechanism
 
