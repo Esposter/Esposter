@@ -64,9 +64,7 @@ const pwaModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
     // Bundler resolves a Vite config, which is when the engine asks for what is Nuxt's to say
     nuxt.hook("nitro:init", (nitro) => {
       context.configurePWAOptions = () =>
-        Promise.resolve(
-          configurePwaOptions(context, nuxt, nitro.options.output.publicDir, () => getNitroNavigationDenylist(nitro)),
-        );
+        configurePwaOptions(context, nuxt, nitro.options.output.publicDir, () => getNitroNavigationDenylist(nitro));
       nuxt.hook("nitro:build:public-assets", () => buildServiceWorker(context, nuxt, nitro));
     });
   },
