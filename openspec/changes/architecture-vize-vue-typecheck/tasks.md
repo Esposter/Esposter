@@ -2,29 +2,29 @@
 
 ## 1. Hold the mapper gap open
 
-- [x] 1.1 The `TS18069` gap needs no report from this repo: it was `tsrs`'s Windows launch of the mapper's bare `node`, already reported as `tsrs` `#820` and fixed by `#822`. Recorded in `design.md`, "The spike".
-- [x] 1.2 Re-run the spike when `tsrs` publishes a release past `0.20.0-ts7.1.0-beta`. Verified by `tsrs` 0.20.1 running the mapper over `packages/vue-phaserjs`, `packages/genshin-interface` and `packages/genshin-world` with no `TS18069`.
+- [x] 1.1 The `TS18069` gap needs no report from this repo: it was `tsrs`'s Windows launch of the mapper's bare `node`, already reported as `tsrs` `#820` and fixed by `#822`. Recorded in `design.md`, "Notes".
+- [x] 1.2 Re-run the mapper over the Vue packages when `tsrs` publishes a release past `0.20.0-ts7.1.0-beta`. Verified by `tsrs` 0.20.1 running the mapper over `packages/vue-phaserjs`, `packages/genshin-interface` and `packages/genshin-world` with no `TS18069`.
 
 ## 2. Decide the compiler the Vue checks run on
 
-- [x] 2.1 Choose between moving `typescript` to the 7.1 beta and aliasing a second copy for the Vue packages, against the `scripts/` in-process uses. Superseded: `tsrs` 0.20.1 runs the mapper on its own compiler, so the Vue checks need no `typescript` package and the choice was never made. Verified by the recorded outcome in `design.md`, "The compiler for the proven path".
-- [x] 2.2 Choose the pilot: one small package whose `typecheck` runs `vue-tsc` today and that has real `.vue` files, in place of `packages/vue-canvas-frame-headless`, which runs `tsrs` and has none. Verified by a recorded choice in `design.md`'s pilot paragraph: `packages/vue-phaserjs`.
+- [x] 2.1 Choose between moving `typescript` to the 7.1 beta and aliasing a second copy for the Vue packages, against the `scripts/` in-process uses. Superseded: `tsrs` 0.20.1 runs the mapper on its own compiler, so the Vue checks need no `typescript` package and the choice was never made. Verified by the recorded outcome in `design.md`, "The Vue checks run on `tsrs`, not on a second compiler".
+- [x] 2.2 Choose the first package: one small package whose `typecheck` runs `vue-tsc` today and that has real `.vue` files, in place of `packages/vue-canvas-frame-headless`, which runs `tsrs` and has none. Chosen: `packages/vue-phaserjs`, the smallest package that ran `vue-tsc` and has real `.vue` files (27).
 
-## 3. Pilot one small Vue package
+## 3. Compare on one small Vue package
 
-- [x] 3.1 Run `vize` through the chosen compiler on the pilot chosen in 2.2, and compare its diagnostics with `vue-tsc` on the same program. Verified by a diff of the two diagnostic lists recorded in `design.md`, empty on both the error set and the locations.
-- [x] 3.2 Record any mismatch in `design.md` before the next package starts, and report upstream any mismatch that is a `vize` or `tsrs` defect. Verified by each mismatch appearing in `design.md` with its outcome.
+- [x] 3.1 Run `vize` through the chosen compiler on the package chosen in 2.2, and compare its diagnostics with `vue-tsc` on the same program. Verified by a diff of the two diagnostic lists, empty on both the error set and the locations.
+- [x] 3.2 Record any mismatch in `design.md` before the next package starts, and report upstream any mismatch that is a `vize` or `tsrs` defect. Verified by each mismatch appearing in `design.md` with its outcome: the one found is TypeScript 7.1's DOM typings, in "Constraints that remain".
 
 ## 4. Extend to the remaining Vue packages
 
-- [x] 4.1 Run the same comparison on `packages/genshin-interface`, `packages/genshin-world` and `packages/vue-phaserjs`, each as its own commit. Verified by each package's diagnostic diff recorded in `design.md`.
+- [x] 4.1 Run the same comparison on `packages/genshin-interface`, `packages/genshin-world` and `packages/vue-phaserjs`, each as its own commit. Verified by each package's diagnostic diff, empty.
   - `genshin-interface` is compared and its result is recorded in `design.md`.
   - `vue-phaserjs` is compared and clean (`tsrs` and `vue-tsc` both 0 diagnostics, diff empty) after the canvas mock cast in `src/test/setupCanvas.ts`.
   - `genshin-world` is compared and clean at `9d1bb6fc19` (`tsrs` exit 0 with 0 diagnostics, `vue-tsc` 6.0.3 exit 0 with 0 diagnostics, diff empty).
 
 ## 5. The `apps/web` type check
 
-- [x] 5.1 Decide whether `vize` replaces `nuxt typecheck` or runs beside it, in `design.md`, after reading how Nuxt generates its check inputs. Verified by a recorded decision with the spike's `apps/web` diagnostic diff.
+- [x] 5.1 Decide whether `vize` replaces `nuxt typecheck` or runs beside it, in `design.md`, after reading how Nuxt generates its check inputs. Verified by a recorded decision with the `apps/web` diagnostic diff.
   - First decided to stay on `nuxt typecheck` while the mapper's diagnostics were mostly defects, with the per-file, per-location diff of the rerun on `vize` 0.637.0. Superseded by task 5.10: with every class fixed upstream, `apps/web` runs the mapper in place of `nuxt typecheck` (`design.md`, "`apps/web` on the mapper").
 
 - [x] 5.2 Triage the app's mapper diagnostics into mapper defects reported upstream and real findings fixed in the app. Done: the first pass's twelve classes (#11359 to #11368, #11390 and #11391) and the second batch of fourteen reports (#11444 to #11457, one issue per bug, each reduced to a standalone project) are closed. Every one that was a defect was fixed in a release (`design.md`, "Resolved upstream"), and #11444, #11457 and #11484 were closed as configuration. Two causes were fixed in the app: `inlineFontFace.ts`, with an unfiled `@TODO` for the TypeScript DOM typing, and the root manifest, which lists `vue` beside `vize` so the mapper does not fall back to its embedded helpers. The count fell from 103 diagnostics (0.638.0) to 21, then 15 (0.652.0), 11 (0.658.0), 6 (0.659.0) and 1 (0.661.0). The last is a `TS2590` that #11499 (open) covers, and `Input.test.ts` names its stub before the cast so the app reports none, with no ignore. Verified by `tsrs --runExternalCode` over the app project reporting 0 diagnostics, as `nuxt typecheck` does.

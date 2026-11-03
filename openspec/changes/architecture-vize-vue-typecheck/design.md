@@ -2,22 +2,9 @@
 
 ## Context
 
-Plain typecheck runs through `tsrs` ([Rust toolchain change](../architecture-rust-typescript-toolchain/design.md)). The Vue checks stayed on `vue-tsc` at first, because it reads the classic TypeScript API that the `typescript-native-bridge` override provides and `tsrs` ships no classic API. `vize` checks `.vue` files through a content mapper, a separate process that TypeScript spawns and asks for virtual TypeScript per file. `tsrs`'s CLI implements that protocol and its language server does not.
+Plain typecheck runs through `tsrs` ([Rust toolchain change](../architecture-rust-typescript-toolchain/design.md)). The Vue checks stayed on `vue-tsc` at first, because it reads the classic TypeScript API that the `typescript-native-bridge` override provides and `tsrs` ships no classic API. `vize` checks `.vue` files through a content mapper, a separate process that TypeScript spawns and asks for virtual TypeScript per file. `tsrs`'s CLI implements that protocol and its language server does not. The mapper is declared in `vize`'s `package.json` under `typescript.contentMapper`: `node ./bin/vize content-mapper`, `dynamicConfig: true` and the compiler options it reads.
 
 Every Vue check now runs through the mapper on `tsrs`: `vue-phaserjs`, `genshin-interface`, `genshin-world` and the app project of `apps/web`. What `vue-tsc` still does is generate the declarations of the Vue packages' `.vue` files, and that is what keeps it installed.
-
-## The spike
-
-A scratch project in the session's scratchpad, installed with `vize@0.587.0`, `typescript@beta` (the 7.1 beta) and `tsrs@0.20.0-ts7.1.0-beta`, with one SFC (`src/Hello.vue`) declaring a `number` ref as a `string`:
-
-| Command                                            | Result                                                                                        |
-| :------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
-| `tsc --runExternalCode --noEmit -p tsconfig.json`  | `Hello.vue(5,7): error TS2322: Type 'number' is not assignable to type 'string'.`             |
-| `tsrs --runExternalCode --noEmit -p tsconfig.json` | `Hello.vue(1,1): error TS18069`, the mapper process failed while handling the project request |
-| `tsrs --noEmit -p tsconfig.json`                   | `TS18068`: content mappers require `--runExternalCode`                                        |
-| `tsrs` with the mapper's declared options set      | the same `TS18069`, so `rootDir`, `checkJs` and `noUnusedLocals` are not the cause            |
-
-The mapper is declared in vize's `package.json` under `typescript.contentMapper`, with `exec` running `node ./bin/vize content-mapper`, `dynamicConfig: true`, and the compiler options it reads. The `tsc` run is the reference for what the mapper returns, and the `tsrs` run failed on the request that precedes any output. The failure was `tsrs`'s Windows launch of the mapper's bare `node`, reported as `tsrs` `#820` and fixed by `#822` (resolve Windows executables through `PATHEXT`), which 0.20.1 holds.
 
 ## Decisions
 
@@ -25,11 +12,7 @@ The mapper is declared in vize's `package.json` under `typescript.contentMapper`
 
 The goal is one compiler for every check. A permanent split, with `tsrs` for TypeScript and `tsc` for `.vue`, keeps the classic API alive and gives the Vue path a separate speed and memory profile to maintain. So the Vue packages stayed on `vue-tsc` until `tsrs` ran the mapper, and moved when 0.20.1 did.
 
-Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc`. It works in the spike, but it makes the Vue checks depend on a beta classic compiler that the rest of the repo does not use, and it is the same dependency the `tsrs` path removes.
-
-### The compiler for the proven path
-
-Not needed. The mapper conformance-tests against the TypeScript 7.1 beta, and `tsrs` runs the mapper on its own copy of that compiler. So the Vue checks neither move the `typescript` package to the beta nor alias a second one, and `scripts/` keeps no classic-API reader (it reads sources through `oxc-parser`).
+Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc`. It works, but it makes the Vue checks depend on a beta classic compiler that the rest of the repo does not use, and it is the same dependency the `tsrs` path removes. `tsrs` runs the mapper on its own copy of that compiler, which the mapper's conformance tests also run against, so the Vue checks neither move the `typescript` package to the beta nor alias a second one.
 
 ### What reads the classic `typescript` API
 
@@ -43,40 +26,24 @@ TypeScript 7.0.2 ships no classic API (its package exports a version file and no
 
 ### Formatter and linter stay on oxfmt and oxlint
 
-`vize fmt` formats the pilot's 258 files identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs sixteen repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
-
-### Pilot before scope
-
-`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot was `packages/vue-phaserjs`, the smallest package that ran `vue-tsc` and has real `.vue` files (27). The gate was that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded here before the next package starts, and one that is a `vize` or `tsrs` defect is reported upstream.
-
-The pilot matched after one change in the package: TypeScript 7.1's DOM typings require `lang` on `CanvasRenderingContext2D`, so the canvas mock in `src/test/setupCanvas.ts` gained it. That is a compiler-version difference and not a `vize` defect. `packages/genshin-interface` and `packages/genshin-world` matched with no change, and the app followed (below).
+`vize fmt` formats 258 files of `vue-phaserjs` identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs sixteen repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
 
 ### `.vue` declarations from `vize check --declaration`
 
 `vize check --declaration --declaration-dir` was run through `tsrs` on `packages/genshin-interface` and compared with `vue-tsc --declaration --emitDeclarationOnly` on the same build tsconfig. It is not a drop-in:
 
 - **No component declaration matches.** `vue-tsc` writes Vue's own `DefineComponent` with a slots wrapper. `vize` writes its own component model: exported `Props`, `Emits` and `Slots` types, a `__setup` function carrying the template slots and exposed members, and a `new <$AuthoredProps>()` constructor type, with every file importing a shared `__vize_helpers.d.ts` that the emit writes beside them. The props, slots and exposed members are all present, in a different type.
-- **A consumer checked by `vue-tsc` rejected that type on 0.638.0.** The consumer test pointed `packages/genshin-world`, through a scratch tsconfig `paths` entry, at a declaration tree for `genshin-interface`, once from `vue-tsc` and once from `vize` (the barrels and the non-`.vue` files from `vue-tsc` in both), and checked it with each checker. A dependent otherwise reaches a sibling through the `source` condition and never reads built declarations, so the redirect is what makes the test mean something. The result is a matrix:
-
-  | Dependent checked by   | `vue-tsc` declarations | `vize` declarations |
-  | :--------------------- | :--------------------- | :------------------ |
-  | `tsrs` with the mapper | clean                  | clean               |
-  | `vue-tsc`              | clean                  | tens of `TS2345`    |
-
-  Every `vue-tsc` error is the same shape: attributes passed to a component that its props do not declare (`role`, `aria-*`, `class`, a listener) are refused against `$AuthoredKeyWitness`, because the `vize` constructor type is written for the mapper's own virtual code and not for `vue-tsc`'s call. Rerun over the 57 components of `genshin-interface` with `genshin-world` as the consumer, the control gave 0 errors and the `vize` tree gave 51, 19 with the guard also allowing `import("vue").HTMLAttributes`, and 0 with it also allowing `Record<string, unknown>`. The guard measures extra keys against the props and emits alone, and Vue lets undeclared attributes fall through to the root element, so one edit in the helper cleared the pair.
-
 - **It does not read the build the way tsdown does.** With no file patterns it found only the config files, because the shared Vue tsconfig's `${configDir}` include is not expanded; with a `src` pattern it ignores the tsconfig's excludes and emits the fixtures and visual files too, and it reports every auto-imported name as missing until the package's `auto-imports.d.ts` and `vite-env.d.ts` are named on the command line as well.
-- **It is slower than `vue-tsc` on the native bridge**, by roughly an order of magnitude on this package (11 seconds for the 57 components, helpers file included).
 - **It emits per file, with no barrel.** The bundling into one `.d.ts` per entry stays with the declaration plugin, which would take the per-file output and inline the helper file.
 - **`vue-phaserjs` adds no gap.** Its only dependent is `apps/web`, and checking the app against a `vue-tsc` tree and a `vize` tree gave the same seven errors, all stale generated barrels of the local checkout. A probe assigning `Scene` to `number` showed the redirect took effect. The emit has one finding of its own: it exits 1 with `TS4094` and `TS5088` in `__vize_external__/…/shared/dist/index.js` while `tsconfig.vue.json` sets `allowJs`, and passes with `allowJs` off. Two standalone attempts with a JavaScript dependency did not reproduce it, so it is recorded here and not filed.
 
-**Decision: `vue-tsc` stays the declaration generator until a `vue-tsc`-checked consumer accepts the `vize` declarations.** A published package reaches projects outside this repository that check with `vue-tsc`, so narrowing the gate to the repo's own consumers does not help, and the declarations are judged by their consumers and not by the app's checker. Moving `apps/web` onto the mapper therefore did not settle it either. The one thing the gate waited on was the report that the declaration refuses undeclared attributes: #11364, then #11454 for the shape its reduction missed (a producer with an emit or two required props). #11454 is closed as completed in 0.661.0. Task 6.1 re-runs the matrix on 0.661.0, for `genshin-interface` and `genshin-world` with their size snapshots read, before `dts.tsc.vue` is replaced.
+**Decision: `vue-tsc` stays the declaration generator until a `vue-tsc`-checked consumer accepts the `vize` declarations.** A published package reaches projects outside this repository that check with `vue-tsc`, so narrowing the gate to the repo's own consumers does not help, and the declarations are judged by their consumers and not by the app's checker. Moving `apps/web` onto the mapper therefore did not settle it either. The one thing the gate waited on was the report that the declaration refuses undeclared attributes: #11364, then #11454 for the shape its reduction missed (a producer with an emit or two required props). #11454 is closed as completed in 0.661.0. Task 6.1 re-runs the matrix for `genshin-interface` and `genshin-world` with their size snapshots read, before `dts.tsc.vue` is replaced.
 
 **The declaration plugin can run the mapper itself, and the route was tried on 3 November.** `rolldown-plugin-dts` 0.29.0, which tsdown builds its `dts` option into (tsdown spreads the option into the plugin), has a `tsrs` generator that reads `contentMappers` from the build tsconfig and emits mapped files through `tsrs`'s API. The swap is then one option in `getTsdownConfigurationVue`, `dts: { generator: "tsrs", tsrs: { runExternalCode: true }, tsconfig: "tsconfig.build.json" }`, and no custom step runs `vize check --declaration`. It does not work yet, for a reason in `tsrs` and not in the repo:
 
 - **`tsrs` 0.20.1 does not run content mappers through its JS API.** Opened through the API, a project with `.vue` files reports `TS18069` ("The content mapper 'vize' failed to transform this file") on the first five mapped files, a different five on each run, and the CLI over the same project reports nothing. A project of twelve trivial components shows it. The cause, read in the `v0.20.1` source: the API project system has no content-mapper project (`content_mapper_project()` always returns `None` in `crates/tsrs_project/src/compilerhost.rs`, the "phase 2" of `notes/contentmappers.md`), so each mapped file fails, and the loader stops using a mapper after five failures (`MAX_CONTENT_MAPPER_FAILURES`). The plugin throws on those diagnostics when it opens the project, so the build stops. No issue is open on the `tsrs` tracker for the API path.
 - **The rest of the route was checked with the plugin's `tsgo` generator on TypeScript 7.1.0-beta, installed in a scratch folder outside the repo and not adopted**, since it would add a second compiler. `packages/vue-phaserjs` built in 2.6 s at 640 MB, `attw` and `publint` passed, and the declaration came out at 248,629 bytes against 569,370 bytes from `vue-tsc`. It carries the ambient helper block in a `declare global`, adds `vize` to the package's `inlinedDependencies`, and rolldown prints `IMPORT_IS_UNDEFINED` warnings for the type imports of the helper file.
-- **The consumer matrix, re-run** with a `Rectangle` of `vue-phaserjs` in a consumer `.vue` file: the mapper accepts both declaration trees, and `vue-tsc` accepts its own tree and refuses the tree the plugin route wrote for `id` and `role` (`TS2345` against `$AuthoredKeyWitness`) while it accepts `class`, `aria-label`, `data-x` and a listener. A deliberate prop error is reported by both checkers against both trees. A standalone reduction isolates the trigger to **a component that declares an emit**: a producer holding only `defineEmits<{ bar: [] }>()`, consumed as `<Foo id="r" />`, is refused, and with no emit, or one prop and no emit, `id` and `role` pass. The empty template, `@vue-ignore`, the optional prop and the function prop change nothing. It reproduces on the mapper path from 0.587.0 through 0.663.0, so it is not a regression, while `vize check --declaration` accepts the same input from 0.661.0, which is what #11454's fix (#11477) changed. The cause, read in `npm/cli/virtual-ts-globals.d.ts` at v0.663.0: the fallthrough guard allows `class`, `style`, `data-*`, `aria-*` and `on*`, and `$ComponentGlobalHtmlAttrs` is never added to the allowed set; adding it in a copy cleared `id`, `role` and `disabled`.
+- **The consumer matrix.** A dependent otherwise reaches a sibling through the `source` condition and never reads built declarations, so the test points a consumer, through a scratch tsconfig `paths` entry, at a declaration tree, once from `vue-tsc` and once from `vize`. With a `Rectangle` of `vue-phaserjs` in a consumer `.vue` file: the mapper accepts both declaration trees, and `vue-tsc` accepts its own tree and refuses the tree the plugin route wrote for `id` and `role` (`TS2345` against `$AuthoredKeyWitness`) while it accepts `class`, `aria-label`, `data-x` and a listener. A deliberate prop error is reported by both checkers against both trees. A standalone reduction isolates the trigger to **a component that declares an emit**: a producer holding only `defineEmits<{ bar: [] }>()`, consumed as `<Foo id="r" />`, is refused, and with no emit, or one prop and no emit, `id` and `role` pass. The empty template, `@vue-ignore`, the optional prop and the function prop change nothing. It reproduces on the mapper path from 0.587.0 through 0.663.0, so it is not a regression, while `vize check --declaration` accepts the same input from 0.661.0, which is what #11454's fix (#11477) changed. The cause, read in `npm/cli/virtual-ts-globals.d.ts` at v0.663.0: the fallthrough guard allows `class`, `style`, `data-*`, `aria-*` and `on*`, and `$ComponentGlobalHtmlAttrs` is never added to the allowed set; adding it in a copy cleared `id`, `role` and `disabled`.
 
 - **The command line emits them today**, so the gap is in the API path and not in `tsrs`'s declaration emit. `tsrs --runExternalCode --declaration --emitDeclarationOnly --outDir <dir> -p tsconfig.build.json` over `packages/vue-phaserjs` took about a quarter of a second and wrote 269 files: 242 plain declarations and 27 `<Name>.d.vue.ts`, one per component. It reports `TS5011` (the common source directory is `./src`, which asks for an explicit `rootDir`) and writes the files regardless. Each component file imports the helper types from `vize/virtual-ts`, where the plugin route inlined them in a global block, so a consumer of this shape would need `vize` installed. Bundling that tree into one `.d.ts` per entry through the plugin's `dtsInput` option was not tried; the emitted files keep their `#src/` specifiers, which the bundler would have to map onto the emitted tree.
 
@@ -173,8 +140,8 @@ flowchart TD
   MAP --> OK["diagnostics for every .vue file, 0 today"]
   BUILD["tsdown build of a Vue package"] --> DTS["dts.tsc.vue"]
   DTS --> VUETSC["vue-tsc emits the .vue declarations"]
-  VUETSC -->|"task 6.1: re-run the consumer matrix on vize 0.661.0"| VIZE["vize check --declaration"]
-  VIZE --> RETIRE["task 7.1: remove vue-tsc"]
+  VUETSC -->|"task 6.1: tsrs runs mappers in its API, and vize allows the global attributes"| TSRSDTS["dts generator tsrs"]
+  TSRSDTS --> RETIRE["task 7.1: remove vue-tsc"]
 ```
 
 ## Key files
@@ -193,6 +160,7 @@ flowchart TD
 
 ## Notes
 
+- An early `TS18069` on the command line was `tsrs`'s Windows launch of the mapper's bare `node`, reported as `tsrs` `#820` and fixed by `#822` in 0.20.1. The `TS18069` of the declaration plugin above is a different cause.
 - `tsrs --noEmit` on a config with `contentMappers` is refused without `--runExternalCode`, so the scripts that use the mapper pass it explicitly.
 - Removing `vue-tsc` from a package is not the same as switching its `typecheck` script. Every non-private Vue package builds its declarations through `dts.tsc.vue`, and `rolldown-plugin-dts` loads `vue-tsc` with `require.resolve("vue-tsc")` and runs it in a separate process. So `vue-tsc` stays a build dependency until declarations for `.vue` files come from somewhere else (task 6.1). `vite-plugin-checker` and `@volar/typescript` have no tracked references in the repo.
 - The 7.1 beta package does not replace the native bridge. It exports the CLI and the sync and async APIs, and `createSourceFile` and `createProgram` are undefined on its classic module, so it cannot host a classic-API consumer.
