@@ -79,7 +79,7 @@ packages/genshin-world/src/models/statue/StatueProgressSave.ts
 | `packages/genshin-world/src/services/statue/findOculus.ts`                 | Holds a found Oculus in its region's count                                                                      |
 | `packages/genshin-world/src/services/statue/advanceAutoRecoverDwell.ts`    | A stand by a statue's base, due once when it reaches the two seconds                                            |
 | `packages/genshin-world/src/services/statue/stepAutoRecoverThreshold.ts`   | The threshold one step up or down, held between one step and the maximum                                        |
-| `packages/genshin-world/src/composables/useWorldStatues.ts`                | Holds, resonates, offers and claims, saving each region's progress, and holds the Worship Statue screen's state |
+| `packages/genshin-world/src/store/statues.ts`                              | Holds, resonates, offers and claims, saving each region's progress, and holds the Worship Statue screen's state |
 
 ## Sources
 

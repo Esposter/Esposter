@@ -16,6 +16,7 @@ import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
@@ -29,12 +30,10 @@ export const useWorldFrame = ({
   characterBody,
   checkIsPaused,
   closeShortcutWheel,
-  collectOculus,
   dispatchInteraction,
   domainClaimOffers,
   drawDayOutcrops,
   elementalSight,
-  findTouchedOculus,
   getEquippedGadgetCooldown,
   getMemberMaxHealth,
   hudFrame,
@@ -60,6 +59,8 @@ export const useWorldFrame = ({
 }: WorldFrameOptions) => {
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { stepWorldPuzzles } = worldPuzzlesStore;
+  const worldStatuesStore = useWorldStatuesStore();
+  const { collectOculus, findTouchedOculus } = worldStatuesStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldMapStore = useWorldMapStore();

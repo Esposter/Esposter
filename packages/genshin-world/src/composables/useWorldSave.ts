@@ -7,19 +7,19 @@ import type { InventoryDestruction } from "#src/models/inventory/InventoryDestru
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
-import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldSessionStore } from "#src/store/session";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { ref, shallowRef, watch } from "vue";
 
 // The wish counters, the achievements' progress and the bench's crafting the player holds, beside the bag and the wallet
-// The session store holds and the Archive's progress and defeats its own store holds. A change to any of them is a grant the host saves: the
-// Changes made in one tick are one grant, so a pickup is one save, a wish is one save with its spend and its pity, and an
-// Achievement's progress is saved with the Primogems it paid
+// The session store holds and the progress and defeats the Archive's store, the chests' store and the statues' store hold.
+// A change to any of them is a grant the host saves: the changes made in one tick are one grant, so a pickup is one save, a
+// Wish is one save with its spend and its pity, and an achievement's progress is saved with the Primogems it paid
 export const useWorldSave = ({
   emitGrant,
   savedState,
@@ -35,12 +35,10 @@ export const useWorldSave = ({
     | "craftedCountMap"
     | "craftingProgress"
     | "enemyRespawnMap"
-    | "foundOculusIds"
     | "frostbearingTreeProgress"
     | "namecardItemId"
     | "processingJobs"
     | "queuedTipIds"
-    | "regionStatueProgressMap"
     | "shownTipIds"
     | "travelerBirthday"
     | "wishHistory"
@@ -50,6 +48,7 @@ export const useWorldSave = ({
   const worldArchiveStore = useWorldArchiveStore();
   const worldChestsStore = useWorldChestsStore();
   const worldSessionStore = useWorldSessionStore();
+  const worldStatuesStore = useWorldStatuesStore();
   const namecardItemId = ref(savedState.namecardItemId);
   // The Traveler's birthday, set once from the profile and kept with the save once it is set
   const travelerBirthday = shallowRef<TravelerBirthdaySave | undefined>(savedState.travelerBirthday);
@@ -70,11 +69,7 @@ export const useWorldSave = ({
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const bossDefeatMap = shallowRef<ReadonlyMap<string, string>>(savedState.bossDefeatMap);
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
-  const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
-  const regionStatueProgressMap = shallowRef<ReadonlyMap<string, StatueRegionProgressSave>>(
-    savedState.regionStatueProgressMap,
-  );
   watch(
     [
       () => worldSessionStore.inventory,
@@ -90,11 +85,11 @@ export const useWorldSave = ({
       craftedCountMap,
       craftingProgress,
       enemyRespawnMap,
-      foundOculusIds,
+      () => worldStatuesStore.foundOculusIds,
       frostbearingTreeProgress,
       () => worldChestsStore.openedChestIds,
       processingJobs,
-      regionStatueProgressMap,
+      () => worldStatuesStore.regionStatueProgressMap,
       travelerBirthday,
     ],
     () => {
@@ -142,12 +137,10 @@ export const useWorldSave = ({
     craftingProgress,
     enemyRespawnMap,
     forgetBossDefeat,
-    foundOculusIds,
     frostbearingTreeProgress,
     namecardItemId,
     processingJobs,
     queuedTipIds,
-    regionStatueProgressMap,
     setBossDefeatAt,
     setEnemyRespawnAt,
     setNamecardItemId,

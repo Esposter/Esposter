@@ -78,7 +78,6 @@ import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldHudVisibility } from "#src/composables/useWorldHudVisibility";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
-import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPointedLandmark } from "#src/composables/useWorldPointedLandmark";
@@ -94,7 +93,6 @@ import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviou
 import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
-import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
@@ -130,6 +128,7 @@ import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
 import {
@@ -266,6 +265,30 @@ const worldChestsStore = useWorldChestsStore();
 const { start: startChests, stop: stopChests } = worldChestsStore;
 startChests({ openedChestIds: savedState.openedChestIds, waterLevel: windriseData.water.level });
 onUnmounted(stopChests);
+// What the character on the field is drawn on, which the controller moves and the scene places among everything in the
+// World
+const characterBody = new Group();
+// The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats. They
+// Start before the save watches them, as the chests do
+const worldArchiveStore = useWorldArchiveStore();
+const { start: startArchive, stop: stopArchive } = worldArchiveStore;
+startArchive({
+  archiveKillsMap: savedState.archiveKillsMap,
+  archiveProgressMap: savedState.archiveProgressMap,
+  enemyKindMap: enemyTables.enemyKindMap,
+});
+onUnmounted(stopArchive);
+// The statues' Oculi and resonances, which pay their levels as the bag's offers do, with the Oculi of the region published. They start before
+// The save watches them, as the chests do
+const worldStatuesStore = useWorldStatuesStore();
+const { start: startStatues, stop: stopStatues } = worldStatuesStore;
+startStatues({
+  characterBody,
+  foundOculusIds: savedState.foundOculusIds,
+  getMapCamera: () => mapCamera.value,
+  regionStatueProgressMap: savedState.regionStatueProgressMap,
+});
+onUnmounted(stopStatues);
 const {
   achievementProgressMap,
   applyDestruction,
@@ -278,12 +301,10 @@ const {
   craftingProgress,
   enemyRespawnMap,
   forgetBossDefeat,
-  foundOculusIds,
   frostbearingTreeProgress,
   namecardItemId,
   processingJobs,
   queuedTipIds,
-  regionStatueProgressMap,
   setBossDefeatAt,
   setEnemyRespawnAt,
   setNamecardItemId,
@@ -368,16 +389,9 @@ const {
   savedEncounterPoints: savedState.encounterPoints,
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
 });
-// The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
-const worldArchiveStore = useWorldArchiveStore();
+// The Archive's entries and volume the screen shows
 const { archiveData, archiveKillsMap, archiveProgressMap, bookReading } = storeToRefs(worldArchiveStore);
-const { readBook, start: startArchive, stop: stopArchive } = worldArchiveStore;
-startArchive({
-  archiveKillsMap: savedState.archiveKillsMap,
-  archiveProgressMap: savedState.archiveProgressMap,
-  enemyKindMap: enemyTables.enemyKindMap,
-});
-onUnmounted(stopArchive);
+const { readBook } = worldArchiveStore;
 // The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
 const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input });
 // The world's root, which a menu's controls are walked within, so the pad's focus never leaves the menu over the world
@@ -401,9 +415,6 @@ startGround({
 onUnmounted(stopGround);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
-// What the character on the field is drawn on, which the controller moves and the scene places among everything in the
-// World
-const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
@@ -440,19 +451,17 @@ const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySourc
 const { campLockSources, openedChestIds } = storeToRefs(worldChestsStore);
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
-// The statues' Oculi and resonances, which pay their levels as the bag's offers do
+// The Oculi not found, those near the camera and the one the body touches, with the levels the statues have reached
 const {
-  claimWorship,
-  collectOculus,
-  getRegionProgress,
-  getWorshipItemName,
-  offerWorship,
-  openWorship,
-  resonateStatue,
+  foundOculusIds,
+  nearOculusPlaces,
+  regionStatueProgressMap,
   staminaMaximum,
+  unfoundOculusPlaces,
   worshipLevels,
   worshipRegionId,
-} = useWorldStatues({ characterBody, foundOculusIds, regionStatueProgressMap });
+} = storeToRefs(worldStatuesStore);
+const { claimWorship, getRegionProgress, getWorshipItemName, offerWorship } = worldStatuesStore;
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
@@ -630,20 +639,8 @@ const {
   savedProgressMap: savedState.spiralAbyssProgressMap,
 });
 const reputationLevel = shallowRef(reputation.value.level);
-// The Oculi of the region published: those not found, those near the camera and the one the body touches
-const { findTouchedOculus, nearOculusPlaces, oculusPlaces, unfoundOculusPlaces } = useWorldOculi({
-  characterBody,
-  foundOculusIds,
-  getMapCamera: () => mapCamera.value,
-});
 // The doings the world places and the ids the save records of them as done, which each area's exploration counts
-const { placedDoings, recordedDoingIds } = useWorldDoings({
-  clearedCamps,
-  foundOculusIds,
-  monumentPlaces,
-  oculusPlaces,
-  timeTrialPlaces,
-});
+const { placedDoings, recordedDoingIds } = useWorldDoings({ clearedCamps, monumentPlaces, timeTrialPlaces });
 // The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a jump
 // Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
 const worldMapStore = useWorldMapStore();
@@ -726,7 +723,6 @@ const {
   areaId: ref(OUTCROP_REGION_ID),
   enemyMap: kitContext.enemyMap,
   placements: outcropPlaces,
-  regionStatueProgressMap,
 });
 // The Trounce Blossoms a defeated normal boss leaves, claimed at its place by F for the Original Resin its claim costs
 const {
@@ -804,10 +800,8 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   openOutcropClaim,
   openShrineById,
   openTrounceBlossomClaim,
-  openWorship,
   random: () => kitContext.random(),
   reputationLevel,
-  resonateStatue,
   shopId,
   talk,
   talkDuelGameId,
@@ -881,12 +875,10 @@ const { stepFrame } = useWorldFrame({
   characterBody,
   checkIsPaused,
   closeShortcutWheel,
-  collectOculus,
   dispatchInteraction,
   domainClaimOffers,
   drawDayOutcrops,
   elementalSight,
-  findTouchedOculus,
   getEquippedGadgetCooldown,
   getMemberMaxHealth,
   hudFrame,

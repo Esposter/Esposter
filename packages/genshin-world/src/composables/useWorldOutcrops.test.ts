@@ -86,7 +86,6 @@ describe(useWorldOutcrops, () => {
       areaId: ref("mondstadt"),
       enemyMap: new Map(),
       placements: ref(PLACEMENTS),
-      regionStatueProgressMap: ref(new Map()),
     });
     outcrops.kindRules.value = KIND_RULES;
     outcrops.drawDayOutcrops(epoch, () => 0);

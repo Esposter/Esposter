@@ -1,5 +1,4 @@
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
-import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Ref } from "vue";
 
@@ -7,8 +6,6 @@ import type { Ref } from "vue";
 // The camps cleared, with the ids the save records of each as done
 export interface WorldDoingsOptions {
   clearedCamps: Readonly<Ref<readonly ClearedCamp[]>>;
-  foundOculusIds: Readonly<Ref<ReadonlySet<string>>>;
   monumentPlaces: readonly PuzzlePlace[];
-  oculusPlaces: Readonly<Ref<readonly OculusPlace[]>>;
   timeTrialPlaces: readonly PuzzlePlace[];
 }

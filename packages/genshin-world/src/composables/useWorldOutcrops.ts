@@ -8,7 +8,6 @@ import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
-import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { Ref } from "vue";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
@@ -38,6 +37,7 @@ import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
@@ -53,13 +53,11 @@ export const useWorldOutcrops = ({
   areaId,
   enemyMap,
   placements,
-  regionStatueProgressMap,
 }: {
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   placements: Readonly<Ref<OutcropPlacement[]>>;
-  regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters } = storeToRefs(worldPartyStore);
@@ -68,6 +66,8 @@ export const useWorldOutcrops = ({
   const { friendshipLevels } = storeToRefs(worldFriendshipStore);
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
+  const worldStatuesStore = useWorldStatuesStore();
+  const { regionStatueProgressMap } = storeToRefs(worldStatuesStore);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

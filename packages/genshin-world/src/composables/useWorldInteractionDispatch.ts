@@ -26,6 +26,7 @@ import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
 
@@ -57,10 +58,8 @@ export const useWorldInteractionDispatch = ({
   openOutcropClaim,
   openShrineById,
   openTrounceBlossomClaim,
-  openWorship,
   random,
   reputationLevel,
-  resonateStatue,
   shopId,
   talk,
   talkDuelGameId,
@@ -85,6 +84,8 @@ export const useWorldInteractionDispatch = ({
   const { viewViewpoint } = worldArchiveStore;
   const worldReputationStore = useWorldReputationStore();
   const { reputation } = storeToRefs(worldReputationStore);
+  const worldStatuesStore = useWorldStatuesStore();
+  const { openWorship, resonateStatue } = worldStatuesStore;
   const worldMapStore = useWorldMapStore();
   const { unlockedLandmarkIds } = storeToRefs(worldMapStore);
   const { activateLandmark, jumpTo } = worldMapStore;

@@ -179,7 +179,7 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 - **GIVEN** the guest has claimed a level of a statue region that the account has not claimed, its rewards paid into the guest's bag
 - **WHEN** the guest signs in
 - **THEN** the merge keeps the account's statue record as it was, so the level is not claimed on the account by the merge (`packages/genshin-world/src/services/save/mergeGenshinSave.ts`)
-- **AND** the account claims that level only when the player claims it there, and is paid for it once from its own bag (`packages/genshin-world/src/composables/useWorldStatues.ts`)
+- **AND** the account claims that level only when the player claims it there, and is paid for it once from its own bag (`packages/genshin-world/src/store/statues.ts`)
 - **AND** the rewards the guest's copy paid are lost with the guest's bag
 
 #### Scenario: A rank reward claimed only in the guest's copy is claimed again on the account

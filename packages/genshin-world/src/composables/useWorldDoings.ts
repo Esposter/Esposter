@@ -4,19 +4,16 @@ import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoin
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
+import { useWorldStatuesStore } from "#src/store/statues";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The doings the world places and the ids the save records of them as done, which the exploration of each area counts
-export const useWorldDoings = ({
-  clearedCamps,
-  foundOculusIds,
-  monumentPlaces,
-  oculusPlaces,
-  timeTrialPlaces,
-}: WorldDoingsOptions) => {
+export const useWorldDoings = ({ clearedCamps, monumentPlaces, timeTrialPlaces }: WorldDoingsOptions) => {
   const worldChestsStore = useWorldChestsStore();
   const { openedChestIds, worldChestPlaces } = storeToRefs(worldChestsStore);
+  const worldStatuesStore = useWorldStatuesStore();
+  const { foundOculusIds, oculusPlaces } = storeToRefs(worldStatuesStore);
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
   // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks

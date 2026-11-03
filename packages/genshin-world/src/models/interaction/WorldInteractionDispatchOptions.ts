@@ -39,10 +39,8 @@ export interface WorldInteractionDispatchOptions {
   openOutcropClaim: (placeId: number, now: Temporal.Instant) => void;
   openShrineById: (shrineId: string) => void;
   openTrounceBlossomClaim: (spawnKey: string, now: Temporal.Instant) => void;
-  openWorship: (landmarkId: string) => void;
   random: () => number;
   reputationLevel: Ref<number>;
-  resonateStatue: (landmarkId: string) => void;
   shopId: Ref<number>;
   talk: Ref<Talk | undefined>;
   talkDuelGameId: Ref<number | undefined>;

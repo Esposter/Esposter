@@ -1,8 +1,9 @@
+import type { MapCamera } from "#src/models/map/MapCamera";
+import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { Group } from "three";
-import type { ShallowRef } from "vue";
+import type { GroundPoint } from "genshin-engine";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
@@ -10,9 +11,12 @@ import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 import { claimStatueLevel } from "#src/services/statue/claimStatueLevel";
 import { computeMaximumStamina } from "#src/services/statue/computeMaximumStamina";
 import { computeStatueLevelEvents } from "#src/services/statue/computeStatueLevelEvents";
+import { OCULUS_MINIMAP_DISTANCE, OCULUS_REGION_ID, OCULUS_TOUCH_RADIUS } from "#src/services/statue/constants";
 import { findOculus } from "#src/services/statue/findOculus";
+import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
+import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
@@ -21,29 +25,41 @@ import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
-import { storeToRefs } from "pinia";
+import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
-// And the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
-// And the Worship Statue offers the Oculi held and pays each level's rewards as that level is claimed, one level an action.
-// What the bag has no room for drops where the claim was made
-export const useWorldStatues = ({
-  characterBody,
-  foundOculusIds,
-  regionStatueProgressMap,
-}: {
-  characterBody: Group;
-  foundOculusIds: ShallowRef<ReadonlySet<string>>;
-  regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
-}) => {
+// And the Oculi found, with the Oculi of the region published, read as the world starts. A touch within the touch radius
+// Collects an Oculus and holds it in its region, a resonance starts its region at level one, and the Worship Statue
+// Offers the Oculi held and pays each level's rewards as that level is claimed, one level an action. What the bag has no
+// Room for drops where the claim was made. The session starts it after the pickups and the adventure rank, and stops it as
+// It unmounts
+export const useWorldStatuesStore = defineStore("world/statues", () => {
+  const worldAdventureRankStore = useWorldAdventureRankStore();
   const worldPickupsStore = useWorldPickupsStore();
-  const { placeWorldDrops } = worldPickupsStore;
   const worldScreenStore = useWorldScreenStore();
-  const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
-  const { inventory, wallet } = storeToRefs(worldSessionStore);
-  const { events, setInventory, setWallet } = worldSessionStore;
+  const { events } = worldSessionStore;
+  const foundOculusIds = shallowRef<ReadonlySet<string>>(new Set());
+  const regionStatueProgressMap = shallowRef<ReadonlyMap<string, StatueRegionProgressSave>>(new Map());
+  const oculusPlaces = shallowRef<OculusPlace[]>([]);
+  // The body that touches an Oculus and the camera the minimap marks those near it from, which the scene owns
+  let characterBody: undefined | { position: GroundPoint };
+  let getMapCamera: (() => MapCamera) | undefined;
+  const unfoundOculusPlaces = computed(() => oculusPlaces.value.filter(({ id }) => !foundOculusIds.value.has(id)));
+  const nearOculusPlaces = computed(() =>
+    getMapCamera
+      ? getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, getMapCamera(), OCULUS_MINIMAP_DISTANCE)
+      : [],
+  );
+  // The unfound Oculus the body is touching, if it is touching one, which the frame collects
+  const findTouchedOculus = () =>
+    characterBody
+      ? getNearOculusPlaces(oculusPlaces.value, foundOculusIds.value, characterBody.position, OCULUS_TOUCH_RADIUS)[0]
+      : undefined;
+  // A region's progress as the save holds it, which a region no save holds yet starts from at none
+  const getRegionProgress = (regionId: string): StatueRegionProgressSave =>
+    regionStatueProgressMap.value.get(regionId) ?? { claimedLevel: 0, heldCount: 0, level: 0 };
   // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
   // Achievement event for its city, read against the level the region held before it
   const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
@@ -51,20 +67,17 @@ export const useWorldStatues = ({
     if (achievementEvents.length > 0) events.emit("achievementEvents", achievementEvents);
     regionStatueProgressMap.value = new Map([...regionStatueProgressMap.value, [regionId, progress]]);
   };
-  // A region's progress as the save holds it, which a region no save holds yet starts from at none
-  const getRegionProgress = (regionId: string): StatueRegionProgressSave =>
-    regionStatueProgressMap.value.get(regionId) ?? { claimedLevel: 0, heldCount: 0, level: 0 };
   const payLevels = (gainedLevels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const paid = payOfferingLevels(
       gainedLevels,
-      inventory.value,
-      wallet.value,
+      worldSessionStore.inventory,
+      worldSessionStore.wallet,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
     );
-    setInventory(paid.inventory);
-    setWallet(paid.wallet);
-    placeWorldDrops(source, paid.overflowItems);
+    worldSessionStore.setInventory(paid.inventory);
+    worldSessionStore.setWallet(paid.wallet);
+    worldPickupsStore.placeWorldDrops(source, paid.overflowItems);
     return paid.adventureExp;
   };
   // The levels each region's statues were last read to take, by region, which the maximum stamina rises with
@@ -92,16 +105,9 @@ export const useWorldStatues = ({
       ),
     ),
   );
-  // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start, not
-  // From the region's next read
-  for (const [regionId, { level }] of regionStatueProgressMap.value)
-    if (level > 0) readRegionLevels(regionId, () => undefined);
-
   // Touching an Oculus collects it once, holding it in its region, and gives its Adventure EXP
   // A touch that lands while an Oculus's levels are still arriving waits for them, rather than reading them again
   const collectingOculusIds = new Set<string>();
-  const worldAdventureRankStore = useWorldAdventureRankStore();
-  const { gainWorldAdventureExp } = worldAdventureRankStore;
   const collectOculus = getSynchronizedFunction(
     async (regionId: string, source: Pick<WorldDrop, "id" | "position">) => {
       if (collectingOculusIds.has(source.id)) return;
@@ -114,7 +120,7 @@ export const useWorldStatues = ({
           const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
           foundOculusIds.value = found.foundOculusIds;
           if (isNewlyFound && found.foundOculusIds.has(source.id)) events.emit("oculusFound");
-          gainWorldAdventureExp(found.adventureExp);
+          worldAdventureRankStore.gainWorldAdventureExp(found.adventureExp);
           setRegionProgress(regionId, toStatueRegionProgressSave(found.progress, progress.claimedLevel));
         },
         (error) => {
@@ -148,7 +154,7 @@ export const useWorldStatues = ({
     const offeringProgress = toStatueRegionProgress(progress, levels);
     const claim = claimStatueLevel(offeringProgress, progress.claimedLevel);
     if (!claim.claimed) return;
-    gainWorldAdventureExp(payLevels([claim.claimed], source));
+    worldAdventureRankStore.gainWorldAdventureExp(payLevels([claim.claimed], source));
     setRegionProgress(regionId, toStatueRegionProgressSave(offeringProgress, claim.claimedLevel));
   };
   // The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which
@@ -166,7 +172,7 @@ export const useWorldStatues = ({
     readRegionLevels(regionId, (levels) => {
       worshipLandmarkId.value = landmarkId;
       worshipLevels.value = levels;
-      screenKind.value = ScreenKind.Worship;
+      worldScreenStore.screenKind = ScreenKind.Worship;
     });
   };
   const offerWorship = () => {
@@ -175,7 +181,7 @@ export const useWorldStatues = ({
   // A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if
   // The bag has no room for them
   const claimWorship = () => {
-    if (worshipRegionId.value === undefined) return;
+    if (worshipRegionId.value === undefined || !characterBody) return;
     claimLevel(worshipRegionId.value, worshipLevels.value, {
       id: worshipLandmarkId.value,
       position: characterBody.position,
@@ -184,16 +190,58 @@ export const useWorldStatues = ({
   // The name of a reward's item in the reader's language, which a level pays by its material
   const getWorshipItemName = (itemId: number) =>
     worldSessionStore.nameText[worldSessionStore.materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
+  const start = (saved: {
+    characterBody: { position: GroundPoint };
+    foundOculusIds: ReadonlySet<string>;
+    getMapCamera: () => MapCamera;
+    regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
+  }) => {
+    ({ characterBody, getMapCamera } = saved);
+    foundOculusIds.value = saved.foundOculusIds;
+    regionStatueProgressMap.value = saved.regionStatueProgressMap;
+    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+    getResultAsync(() => readOculusPlaces(worldSessionStore.gameDataBaseUrl, `oculi/${OCULUS_REGION_ID}`)).match(
+      (places) => {
+        oculusPlaces.value = places;
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+    // A region the save has started reads its levels on load, so the maximum stamina it raised holds from the start, not
+    // From the region's next read
+    for (const [regionId, { level }] of saved.regionStatueProgressMap)
+      if (level > 0) readRegionLevels(regionId, () => undefined);
+  };
+  const stop = () => {
+    characterBody = undefined;
+    getMapCamera = undefined;
+    collectingOculusIds.clear();
+    foundOculusIds.value = new Set();
+    oculusPlaces.value = [];
+    regionLevelsMap.value = new Map();
+    regionStatueProgressMap.value = new Map();
+    worshipLandmarkId.value = "";
+    worshipLevels.value = [];
+  };
   return {
     claimWorship,
     collectOculus,
+    findTouchedOculus,
+    foundOculusIds,
     getRegionProgress,
     getWorshipItemName,
+    nearOculusPlaces,
+    oculusPlaces,
     offerWorship,
     openWorship,
+    regionStatueProgressMap,
     resonateStatue,
     staminaMaximum,
+    start,
+    stop,
+    unfoundOculusPlaces,
     worshipLevels,
     worshipRegionId,
   };
-};
+});
