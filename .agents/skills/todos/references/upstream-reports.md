@@ -49,7 +49,7 @@ Several gaps found by one migration are filed as one issue per bug, in one sitti
 
 - **Each issue is complete alone**: the reproduction, the output, the cause and the nearest issues are in the issue itself.
 - **The Context lists the migration as numbered steps**: one line per replaced tool ("`A` becomes `B`"), each with a short name, so a maintainer sees the whole migration in a few lines and not one tool of it. One line then says which step this issue is from, with at most two sentences specific to this bug, such as the count the "Keep out" rule allows. The versions and the result of the source of truth stay in Environment. The steps are the same in each issue and carry no number from this repository.
-- **The Context lists the whole batch** so the set is tracked from any one issue: a line ("This issue is one of N filed together from this attempt:") and a bullet list of every open issue by number, with `<-- you are here` after the issue's own entry. N counts the issues in the list. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
+- **The Context lists the whole batch** so the set is tracked from any one issue: a line ("This issue is one of N filed together from this attempt:") and a bullet list of every issue of the batch by number, with `<-- you are here` after the issue's own entry. A closed issue stays in the list, because GitHub shows each one's state and the list is the record of the batch. N counts the issues in the list. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
 
 ```md
 ## Context
@@ -62,7 +62,7 @@ I am moving the Vue tooling of a Nuxt monorepo to vize, in three steps:
 
 This issue is from step 1. A first run of `vize` 0.637.0 on the app reported 103 diagnostics that `vue-tsc` does not report. A run of `vize` 0.652.0 on the app reports 15. This issue explains some of them.
 
-This issue is one of 13 filed together from this attempt:
+This issue is one of 14 filed together from this attempt:
 
 - #11445 a cast to a `.vue` component type (TS2352 and TS2590) <-- you are here
 - #11446 a generic component with `inheritAttrs: false` (TS2353)

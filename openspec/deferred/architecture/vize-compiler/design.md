@@ -1,6 +1,6 @@
 # Vize compiler
 
-Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one was reduced to an issue on the Vize repository. The Nuxt blocker is open as #11455. The other two are open as #11456 and #11457, with a comment that the guides put them outside the documented scope and options. So the library builds and Vitest keep `unplugin-vue`.
+Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. A second look at the newest release ran its Nuxt module, its Vite plugin and its rolldown plugin on small standalone projects, and every blocker below still holds. Each one was reduced to an issue on the Vize repository. The Nuxt blocker is open as #11455. #11456 is open, with a comment that the guides put it outside the documented scope. #11457 was closed as configuration. So the library builds and Vitest keep `unplugin-vue`.
 
 ## Blockers
 
@@ -24,7 +24,14 @@ The library builds compile components through `unplugin-vue` in `getTsdownConfig
 
 The first is `<style src>`. The rolldown entry drops the CSS of every `<style src>` block and prints no warning. The Vite plugin keeps it, and `unplugin-vue` needs the workaround in `vueStyleSrcPlugin`, which tracks unplugin-vue issue 201. It was reported as #11456, with a comment that the guides call the rolldown entry experimental and out of scope. CSS is a limited area of the rolldown entry. It writes no CSS file for plain CSS and hands only preprocessor blocks and CSS modules to the bundler.
 
-The second is the TresJS elements. The TresJS packages pass the template compiler options that "@tresjs/core" ships, which hold an `isCustomElement` function. The rolldown entry has no "template" option. The Vite plugin accepts one and ignores the function, so `TresMesh` compiles as a component. The `customElements` option takes names and `*` patterns instead. The ignored function was reported as #11457, with a comment that the Vite plugin guide documents `customElements` for this and lists plugin-option parity as not complete yet. With `customRenderer` set, a pattern such as `Tres*` compiles `TresMesh` as the renderer expects and keeps an imported `TresCanvas` a component. It cannot keep a `TresCanvas` that the app registers globally, because a pattern cannot exclude a name. That limit matters for the app's Nuxt build and not for the library builds, which import it.
+The second is the TresJS elements, and it is a configuration change. The repo passes the template compiler options that "@tresjs/core" 5.10.1 ships. Its `isCustomElement` function accepts a `Tres*` or `tres-*` tag unless the tag is `TresCanvas`, `TresCanvasContext`, `TresLeches`, `TresScene` or `TresPortal`, and it accepts `primitive`. Four sites pass it: `getTsdownConfigurationVue` and `getVuePlugins` in the world package's build and Vitest configs, and the `tresjs-nuxt` module, which sets `vue.compilerOptions.isCustomElement` and restates the rule in `checkIsTresCustomElement`. Vize takes names and `*` patterns in `customElements`, not a function. The Vite plugin accepts `template.compilerOptions.isCustomElement` and ignores it. That was reported as #11457 and closed as configuration: the Vite plugin guide documents `customElements` with `customRenderer` for custom element tags, and it lists plugin-option parity with `@vitejs/plugin-vue` as not complete yet. The migration:
+
+1. Replace the function with `customRenderer: true` and `customElements: ["Tres*", "primitive"]`, the recipe in the Vite plugin guide. No world component uses a `tres-` tag, so `"tres-*"` is not needed.
+2. Keep `TresCanvas` and the other whitelist tags imported in each file. With `customRenderer` set, an imported tag stays a component. Compiled with both settings, the 24 world components that use a Tres tag give the same component or element for all 40 file and tag pairs, over 11 distinct tags. With `customRenderer` unset, `TresCanvas` in two files compiles as an element.
+3. Import `TresCanvas` in the two app components that rely on the global registration, `apps/web/app/components/AgentConsole/Theme/Genshin/FallingStar.vue` and `apps/web/app/components/Visual/Gem/Index.vue`, because a pattern cannot exclude a name.
+4. Move the Nuxt module off the function. `@vizejs/nuxt` keeps Nuxt's own compiler when it sees a predicate (#7107). This step is not run yet, and the module still fails with #11455.
+
+The rolldown entry gives the same results as the Vite plugin for the list and pattern forms, and it rejects a function in `customElements`.
 
 ## Revisit when
 
@@ -43,4 +50,4 @@ Each blocker has a fix that the repo's own setup passes: the Nuxt module renders
 ## Sources
 
 - [Vize repository](https://github.com/ubugeeei-prod/vize) — the repository of `@vizejs/nuxt`, from its npm metadata, which gives the peer range the blockers cite.
-- [Vize issue 11455](https://github.com/ubugeeei-prod/vize/issues/11455), [11456](https://github.com/ubugeeei-prod/vize/issues/11456) and [11457](https://github.com/ubugeeei-prod/vize/issues/11457) — the three compile-side reports, all open, with 11456 and 11457 marked as outside the documented scope.
+- [Vize issue 11455](https://github.com/ubugeeei-prod/vize/issues/11455), [11456](https://github.com/ubugeeei-prod/vize/issues/11456) and [11457](https://github.com/ubugeeei-prod/vize/issues/11457) — the three compile-side reports, of which 11455 and 11456 are open and 11457 is closed as configuration.
