@@ -89,7 +89,7 @@ The tools agree on the other targets throughout: the three Vue packages report 0
 
 ### Resolved upstream
 
-Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass) and #11444 to #11454 (second). The compile-side reports from the same runs are recorded with their status in the [build pipeline](../../specs/architecture/build-pipeline/design.md) (the library builds) and on the [deferred compiler page](../../deferred/architecture/vize-compiler/design.md) (the Nuxt module).
+Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass) and #11444 to #11454 (second). The compile-side reports from the same runs are recorded with their status on the [deferred compiler page](../../deferred/architecture/vize-compiler/design.md), for the library builds and the Nuxt module alike.
 
 | Issue  | What                                               | Closed as     | First release |
 | :----- | :------------------------------------------------- | :------------ | :------------ |
@@ -127,7 +127,7 @@ The whole app script against the command it replaced, on the same runs:
 | `nuxt typecheck`                                        | 62.73 s | 64.26 s |     9.5 GiB |           0 |
 | `pnpm typecheck` (`nuxt prepare`, then six `tsrs` runs) | 12.30 s | 12.20 s |     3.3 GiB |           0 |
 
-The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds are in the [build pipeline](../../specs/architecture/build-pipeline/design.md).
+The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds' timings are on the [deferred compiler page](../../deferred/architecture/vize-compiler/design.md).
 
 `nuxt typecheck` is not a like-for-like row against one `tsrs` run: it checks five projects with incremental build info. The corpus numbers in [that thread](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6507703018) (2,500 generated components, an M2 Max, no warmup) are not comparable in seconds, only in ratio.
 
