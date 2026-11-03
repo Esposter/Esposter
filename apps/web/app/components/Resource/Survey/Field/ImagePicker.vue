@@ -5,15 +5,15 @@ import type { SurveyAnswerValue, SurveyImageChoice, SurveyImagePickerNode } from
 import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
 import { getSurveyChoiceText } from "survey-engine";
 
+interface KeyedChoice {
+  choice: SurveyImageChoice;
+  key: string;
+}
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
   isDisabled: boolean;
   node: SurveyImagePickerNode;
-}
-interface KeyedChoice {
-  choice: SurveyImageChoice;
-  key: string;
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
@@ -63,7 +63,7 @@ const onSelect = (keys: string[] | undefined = []) => {
         :items
         :label
         :model-value="selectedKeys"
-        @update:model-value="onSelect"
+        @update:model-value="(keys) => onSelect(keys)"
       >
         <template #mark="{ item }">
           <NuxtImg
