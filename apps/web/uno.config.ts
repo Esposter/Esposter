@@ -278,9 +278,10 @@ export default defineConfig({
     // The title and whatever ends the row, on one line one control height tall
     "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
-    // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger
+    // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A header tab is also the chosen radio of a toggle
+    // Group drawn as one
     "ui-tab":
-      "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[variant=Header]:data-[selected]:text-text data-[variant=Header]:data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
+      "px-3 py-1 [@media(pointer:coarse)]:min-h-11 flex items-center text-muted text-nowrap cursor-pointer no-underline hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-[current=page]:text-accent aria-[current=page]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[selected]:text-accent data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-1)_0_0_var(--ui-accent)] data-[variant=Header]:data-[selected]:text-text data-[variant=Header]:data-[selected]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)] data-[variant=Header]:aria-[checked=true]:text-text data-[variant=Header]:aria-[checked=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     "ui-tab-list": "flex of-x-auto ui-bar",
   },
   theme: {

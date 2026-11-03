@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { EmailView } from "@/models/pageBuilder/EmailView";
+import { UiToggleGroupVariant } from "@/models/ui/UiToggleGroupVariant";
 import { authClient } from "@/services/auth/authClient";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -53,7 +54,7 @@ onUnmounted(() => {
         :model-value="datasetReference"
         @update:model-value="saveDatasetReference($event)"
       />
-      <UiToggleGroup v-model="view" :items="viewItems" label="View" />
+      <UiToggleGroup v-model="view" :items="viewItems" label="View" :variant="UiToggleGroupVariant.Header" />
     </div>
     <PageBuilderEditor v-show="view === EmailView.Design" :kind="emailKind" :resource-id />
     <div v-if="view === EmailView.Preview && emailDocument" p-4 flex flex-1 flex-col gap-2 min-h-0>
