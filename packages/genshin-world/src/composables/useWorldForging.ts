@@ -1,7 +1,6 @@
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
-import type { Ref } from "vue";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
@@ -10,20 +9,18 @@ import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS } from "#src/services/fo
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { readForgeRecipes } from "#src/services/forging/readForgeRecipes";
 import { readMondstadtBlacksmithPlace } from "#src/services/forging/readMondstadtBlacksmithPlace";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { useIntervalFn } from "@vueuse/core";
 import { ForgeTab } from "genshin-interface";
+import { storeToRefs } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 
 // The blacksmith's recipes and its place in Mondstadt as the world starts, each read from the hosted game data
-export const useWorldForging = ({
-  screenKind,
-  weaponDataMap,
-}: {
-  screenKind: Ref<ScreenKind>;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
-}) => {
+export const useWorldForging = ({ weaponDataMap }: { weaponDataMap: ReadonlyMap<number, WeaponData> }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
   const { getWorldNow } = worldSessionStore;
   const forgeRecipes = shallowRef<ForgeRecipe[]>([]);

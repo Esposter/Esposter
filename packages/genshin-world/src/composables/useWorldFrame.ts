@@ -13,6 +13,7 @@ import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
@@ -45,7 +46,6 @@ export const useWorldFrame = ({
   placeUsedGadget,
   readInteraction,
   refreshMiningOutcrops,
-  screenKind,
   showCursor,
   stepAbyss,
   stepAutoRecover,
@@ -58,6 +58,8 @@ export const useWorldFrame = ({
   stepWorldPuzzles,
   touchOutcropsNear,
 }: WorldFrameOptions) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const worldMapStore = useWorldMapStore();
   const { unlockedLandmarkIds } = storeToRefs(worldMapStore);
   const { jumpTo } = worldMapStore;

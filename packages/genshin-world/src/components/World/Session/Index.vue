@@ -95,7 +95,6 @@ import { useWorldReputationRequest } from "#src/composables/useWorldReputationRe
 import { useWorldRestorativePower } from "#src/composables/useWorldRestorativePower";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
-import { useWorldScreen } from "#src/composables/useWorldScreen";
 import { useWorldScreenBehaviour } from "#src/composables/useWorldScreenBehaviour";
 import { useWorldShortcutWheel } from "#src/composables/useWorldShortcutWheel";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
@@ -129,6 +128,7 @@ import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldReputationStore } from "#src/store/reputation";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
@@ -220,7 +220,11 @@ const witness = inject(SceneWitnessKey, null);
 const input = createInput(window);
 const inputState = input.readInput(0);
 // What is open over the world, one screen at a time, and what it does to the world under it
-const { closeScreen, screenKind } = useWorldScreen();
+const worldScreenStore = useWorldScreenStore();
+const { screenKind } = storeToRefs(worldScreenStore);
+const { closeScreen } = worldScreenStore;
+// The next session starts on the world, whatever screen this one ended on
+onUnmounted(closeScreen);
 // The systems the save holds, read once as the world is made, so the world starts where the player left it. A bag's
 // Names are the game's own in the reader's language, and its weapons and materials are read from the game's tables, so
 // All of them arrive first
@@ -355,13 +359,12 @@ const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap
   enemyKindMap: enemyTables.enemyKindMap,
   reliquaryPieceEntryMap,
   reliquarySets,
-  screenKind,
 });
 // The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
-const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input, screenKind });
+const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input });
 // The world's root, which a menu's controls are walked within, so the pad's focus never leaves the menu over the world
 const worldScreen = useTemplateRef("worldScreen");
-const { stepMenuNavigation } = useMenuNavigation({ inputState, root: worldScreen, screenKind });
+const { stepMenuNavigation } = useMenuNavigation({ inputState, root: worldScreen });
 onUnmounted(() => {
   input.dispose();
 });
@@ -384,7 +387,7 @@ const characterBody = new Group();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
 // The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
-const { achievementData } = useWorldAchievements({ achievementProgressMap, screenKind });
+const { achievementData } = useWorldAchievements({ achievementProgressMap });
 // The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
 // The Mail screen claims them into the bag and wallet
 const worldMailStore = useWorldMailStore();
@@ -461,7 +464,7 @@ const {
   staminaMaximum,
   worshipLevels,
   worshipRegionId,
-} = useWorldStatues({ characterBody, foundOculusIds, placeWorldDrops, regionStatueProgressMap, screenKind });
+} = useWorldStatues({ characterBody, foundOculusIds, placeWorldDrops, regionStatueProgressMap });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress, placeWorldDrops });
@@ -539,7 +542,6 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     characterIdKitMap,
     characters,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
-    closeScreen,
     getGroundHeight,
     party,
     weaponDataMap: statTables.weaponDataMap,
@@ -577,7 +579,7 @@ const {
   forgeRecipes,
   forgeTab,
   forgeWeapons,
-} = useWorldForging({ screenKind, weaponDataMap: statTables.weaponDataMap });
+} = useWorldForging({ weaponDataMap: statTables.weaponDataMap });
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
@@ -633,7 +635,6 @@ const {
   talkOffers,
   talkTextMap,
 } = useWorldTalks({
-  closeScreen,
   getCardGameExp: () => cardGameExp.value,
   getGroundHeight,
   getResidents,
@@ -817,7 +818,6 @@ const {
   artifactMainAffixPools,
   artifactRarityDataMap,
   clearedDomainIds,
-  closeScreen,
   domainChallengeLevels,
   kitEffectState: kitContext.kitEffectState,
   party,
@@ -871,7 +871,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   random: () => kitContext.random(),
   reputationLevel,
   resonateStatue,
-  screenKind,
   shopId,
   shrineMarkers,
   talk,
@@ -972,7 +971,6 @@ const { stepFrame } = useWorldFrame({
   placeUsedGadget,
   readInteraction,
   refreshMiningOutcrops,
-  screenKind,
   showCursor,
   stepAbyss,
   stepAutoRecover,

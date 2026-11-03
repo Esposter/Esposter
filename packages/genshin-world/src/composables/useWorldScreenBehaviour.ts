@@ -1,22 +1,17 @@
 import type { Input } from "genshin-engine";
-import type { Ref } from "vue";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useEventListener } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 import { computed, watch } from "vue";
 
 // The screen open over the world sets the pointer and the keys: a screen with a cursor of its own lets the pointer go,
 // A screen's change spends the press that closed it, and a lock lost in play opens the Paimon menu.
-export const useWorldScreenBehaviour = ({
-  closeFishing,
-  input,
-  screenKind,
-}: {
-  closeFishing: () => void;
-  input: Input;
-  screenKind: Ref<ScreenKind>;
-}) => {
+export const useWorldScreenBehaviour = ({ closeFishing, input }: { closeFishing: () => void; input: Input }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const screenBehaviour = computed(() => ScreenBehaviourMap[screenKind.value]);
   // A screen with a cursor of its own lets the pointer go, which a click on the world takes again once it closes
   watch(

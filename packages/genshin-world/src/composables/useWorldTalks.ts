@@ -16,6 +16,7 @@ import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldQuestsStore } from "#src/store/quests";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
@@ -26,13 +27,11 @@ import { computed, shallowRef } from "vue";
 // Yet started the talks offering them, and the residents their standing talks, read with their words as the world
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
-  closeScreen,
   getCardGameExp,
   getGroundHeight,
   getResidents,
   getResidentSpot,
 }: {
-  closeScreen: () => void;
   // The card game's EXP the player holds, which with the main quests they have finished sets their Player Level
   getCardGameExp: () => number;
   getGroundHeight: (x: number, z: number) => number;
@@ -40,6 +39,8 @@ export const useWorldTalks = ({
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   // The world's names by text id, which name a resident's row
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { closeScreen } = worldScreenStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldQuestsStore = useWorldQuestsStore();

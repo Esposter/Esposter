@@ -27,6 +27,7 @@ import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/c
 import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -43,7 +44,6 @@ export const useWorldTrials = ({
   characterIdKitMap,
   characters,
   claimedStageIds,
-  closeScreen,
   getGroundHeight,
   party,
   weaponDataMap,
@@ -54,11 +54,12 @@ export const useWorldTrials = ({
   characterIdKitMap: Ref<ReadonlyMap<number, Kit>>;
   characters: Ref<Character[]>;
   claimedStageIds: ReadonlySet<number>;
-  closeScreen: () => void;
   getGroundHeight: (x: number, z: number) => number;
   party: Party;
   weaponDataMap: ReadonlyMap<number, Pick<WeaponData, "ascensionPhases">>;
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { closeScreen } = worldScreenStore;
   const worldMapStore = useWorldMapStore();
   const { jumpTo } = worldMapStore;
   const worldSessionStore = useWorldSessionStore();

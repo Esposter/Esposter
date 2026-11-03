@@ -1,4 +1,3 @@
-import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { InputState } from "genshin-engine";
 import type { Ref } from "vue";
 
@@ -12,9 +11,11 @@ import {
 } from "#src/services/menu/constants";
 import { findMenuFocusTarget } from "#src/services/menu/findMenuFocusTarget";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useEventListener } from "@vueuse/core";
 import { InputAction } from "genshin-engine";
 import { INTERACTION_PRESS_MS } from "genshin-interface/constants";
+import { storeToRefs } from "pinia";
 import { watch } from "vue";
 
 // The direction the directional pad or the stick holds, the axis held further winning, or undefined when both rest
@@ -31,12 +32,12 @@ const getMenuDirection = ({ menuDown, menuRight }: InputState): MenuDirection | 
 export const useMenuNavigation = ({
   inputState,
   root,
-  screenKind,
 }: {
   inputState: InputState;
   root: Readonly<Ref<HTMLElement | null>>;
-  screenKind: Ref<ScreenKind>;
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   // Whether the last input was the pointer's, which a control focused for it draws no ring for
   let isPointerInput = false;
   // The direction the pad holds, the seconds it has been held and the time of its next repeat

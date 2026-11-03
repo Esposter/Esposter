@@ -9,6 +9,7 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { AchievementTextLoaderMap } from "#src/services/achievement/AchievementTextLoaderMap";
 import { advanceAchievements } from "#src/services/achievement/advanceAchievements";
 import { readAchievements } from "#src/services/achievement/readAchievements";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -18,11 +19,11 @@ import { storeToRefs } from "pinia";
 // The Primogems of those finished are paid into the wallet
 export const useWorldAchievements = ({
   achievementProgressMap,
-  screenKind,
 }: {
   achievementProgressMap: Ref<ReadonlyMap<number, AchievementProgress>>;
-  screenKind: Ref<ScreenKind>;
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
   const { wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setWallet } = worldSessionStore;

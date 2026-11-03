@@ -6,7 +6,6 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
-import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Resident } from "#src/models/world/Resident";
@@ -54,7 +53,6 @@ export interface WorldInteractionDispatchOptions {
   random: () => number;
   reputationLevel: Ref<number>;
   resonateStatue: (landmarkId: string) => void;
-  screenKind: Ref<ScreenKind>;
   shopId: Ref<number>;
   shrineMarkers: readonly { id: string }[];
   talk: Ref<Talk | undefined>;

@@ -3,7 +3,7 @@ import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgress
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
 import type { Group } from "three";
-import type { Ref, ShallowRef } from "vue";
+import type { ShallowRef } from "vue";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
@@ -18,6 +18,7 @@ import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -32,13 +33,13 @@ export const useWorldStatues = ({
   foundOculusIds,
   placeWorldDrops,
   regionStatueProgressMap,
-  screenKind,
 }: WorldOfferingDependencies & {
   characterBody: Group;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
-  screenKind: Ref<ScreenKind>;
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;

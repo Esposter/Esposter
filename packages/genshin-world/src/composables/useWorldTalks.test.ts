@@ -13,6 +13,7 @@ import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { jsonDateParse } from "@esposter/shared";
@@ -39,7 +40,6 @@ const useMondstadtTalks = async (adventureRank: number) => {
   startTestAdventureRank(adventureRank);
   finishTestMainQuests(Number(GCG_TUTORIAL_QUEST_ID));
   const talks = useWorldTalks({
-    closeScreen: vi.fn<() => void>(),
     getCardGameExp: () => 0,
     getGroundHeight: () => 0,
     getResidents: () => residents,
@@ -80,8 +80,9 @@ describe(useWorldTalks, () => {
     startTestWorldSession();
     startTestAdventureRank(GCG_OPEN_ADVENTURE_RANK);
     finishTestMainQuests(Number(GCG_TUTORIAL_QUEST_ID));
+    const worldScreenStore = useWorldScreenStore();
+    vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(closeScreen);
     return useWorldTalks({
-      closeScreen,
       getCardGameExp: () => cardGameExp,
       getGroundHeight: () => 0,
       getResidents: () => [RESIDENT],

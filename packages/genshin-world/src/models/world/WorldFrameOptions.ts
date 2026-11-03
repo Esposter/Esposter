@@ -5,7 +5,6 @@ import type { InteractionPrompts } from "#src/models/interaction/InteractionProm
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Party } from "#src/models/party/Party";
-import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -38,7 +37,6 @@ export interface WorldFrameOptions {
   placeUsedGadget: (usedGadget: GadgetRow | undefined, feet: { x: number; z: number }) => void;
   readInteraction: (inputState: InputState, frameSeconds: number) => Interactable | undefined;
   refreshMiningOutcrops: (now: Temporal.Instant, random: () => number) => void;
-  screenKind: Ref<ScreenKind>;
   showCursor: () => void;
   stepAbyss: (step: WorldChallengeStep) => void;
   stepAutoRecover: (step: {

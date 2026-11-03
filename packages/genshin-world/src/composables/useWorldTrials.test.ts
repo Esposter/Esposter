@@ -16,6 +16,7 @@ import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { Object3D } from "three";
@@ -71,7 +72,6 @@ describe(useWorldTrials, () => {
     characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
     characters: shallowRef<Character[]>([]),
     claimedStageIds: new Set<number>(),
-    closeScreen: vi.fn<() => void>(),
     getGroundHeight: () => 0,
     party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
     weaponDataMap: new Map([
@@ -86,7 +86,9 @@ describe(useWorldTrials, () => {
     const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
     const worldMapStore = useWorldMapStore();
     const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
-    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), jumpTo, worldSessionStore };
+    const worldScreenStore = useWorldScreenStore();
+    const closeScreen = vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(() => {});
+    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), closeScreen, jumpTo, worldSessionStore };
   };
 
   beforeEach(() => {
@@ -115,8 +117,7 @@ describe(useWorldTrials, () => {
 
   test("a trial opened from the Wish screen leaves the screen and lands on its stand-in arena", async () => {
     expect.hasAssertions();
-    const closeScreen = vi.fn<() => void>();
-    const { jumpTo, openTrial, trialArena, trials } = setUpTrials({ closeScreen });
+    const { closeScreen, jumpTo, openTrial, trialArena, trials } = setUpTrials();
     await flushReads();
 
     await openTrial(takeOne(trials.value));

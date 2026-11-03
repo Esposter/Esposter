@@ -16,7 +16,7 @@ Every slice is judged by the first change's definition of done: its count over t
 
 ## Out of scope
 
-- The save, the clock and the screen (`useWorldSave`, `useWorldClock`, `useWorldScreen`): the session's own, not features. They may follow in a change of their own once the stores here show what the save sync reads.
+- The save and the clock (`useWorldSave`, `useWorldClock`): the session's own, not features. The screen was one of the stores here (it is read by twelve calls and owns two lines), and the save follows once the stores here show what its sync reads.
 - The per-frame composables (`useWorldFrame`, `useWorldHudFrame`, `useWorldCamera`). They stay out of stores by the first change's guideline.
 - The genshin-interface screens, which stay presentational.
 

@@ -19,6 +19,7 @@ import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldReputationStore } from "#src/store/reputation";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
@@ -63,7 +64,6 @@ export const useWorldInteractionDispatch = ({
   random,
   reputationLevel,
   resonateStatue,
-  screenKind,
   shopId,
   shrineMarkers,
   talk,
@@ -75,6 +75,8 @@ export const useWorldInteractionDispatch = ({
   viewViewpoint,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   const worldReputationStore = useWorldReputationStore();
   const { reputation } = storeToRefs(worldReputationStore);
   const worldMapStore = useWorldMapStore();

@@ -57,6 +57,7 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -102,7 +103,6 @@ export const useWorldDomains = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
   clearedDomainIds,
-  closeScreen,
   domainChallengeLevels,
   kitEffectState,
   party,
@@ -115,7 +115,6 @@ export const useWorldDomains = ({
   artifactMainAffixPools: ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   clearedDomainIds: Ref<ReadonlySet<string>>;
-  closeScreen: () => void;
   domainChallengeLevels: DomainChallengeLevelMap;
   kitEffectState: KitEffectState;
   party: Party;
@@ -124,6 +123,8 @@ export const useWorldDomains = ({
   reliquarySets: readonly ReliquarySetData[];
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldScreenStore = useWorldScreenStore();
+  const { closeScreen } = worldScreenStore;
   const worldMapStore = useWorldMapStore();
   const { jumpLandmarks, unlockedLandmarks } = storeToRefs(worldMapStore);
   const { jumpTo } = worldMapStore;

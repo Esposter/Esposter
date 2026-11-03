@@ -23,6 +23,7 @@ import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -106,13 +107,13 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   worldMapStore.jumpLandmarks = [entrance];
   worldMapStore.unlockedLandmarkIds = new Set([entrance.id]);
   const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
-  const closeScreen = vi.fn<() => void>();
+  const worldScreenStore = useWorldScreenStore();
+  const closeScreen = vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(() => {});
   const domains = useWorldDomains({
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
     artifactMainAffixPools: [],
     artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
-    closeScreen,
     domainChallengeLevels,
     kitEffectState: { effects: [] },
     party: createParty([TRAVELER_CHARACTER_ID]),
