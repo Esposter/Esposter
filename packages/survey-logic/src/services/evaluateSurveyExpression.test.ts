@@ -71,6 +71,10 @@ describe(evaluateSurveyExpression, () => {
     ["a list does not equal a scalar", "{a} = 'x'", { a: ["x"] }, false],
     ["a list equals a list in any order", "[1, 2] = [2, 1]", {}, true],
     ["a list is not equal to a longer list", "{a} = [1, 2]", { a: [1, 2, 3] }, false],
+    ["two records with the same fields are equal", "{a} = {b}", { a: { x: 1 }, b: { x: 1 } }, true],
+    ["two records with different fields are not equal", "{a} = {b}", { a: { x: 1 }, b: { x: 2 } }, false],
+    ["a record with more fields is not equal", "{a} = {b}", { a: { x: 1, y: 2 }, b: { x: 1 } }, false],
+    ["a list of records compares field by field", "{a} = {b}", { a: [{ x: 1 }], b: [{ x: 1 }] }, true],
     ["lists compare their items without case", "{a} = ['a', 'b']", { a: ["A", "B"] }, true],
     // Lists sort before they compare, so an order that sorts differently under case compares unequal
     ["lists sort before they compare", "{a} = ['b', 'A']", { a: ["B", "a"] }, false],

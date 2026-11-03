@@ -3,11 +3,13 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 import { checkIsSurveyLogicPrimitiveEqual } from "#src/services/shared/checkIsSurveyLogicPrimitiveEqual";
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { compareSurveyLogicItems } from "#src/services/shared/compareSurveyLogicItems";
+import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { takeOne } from "@esposter/shared";
 
 // SurveyJS's equality. A text compares trimmed and in lower case.
 // A list compares item by item, each list sorted first when the order is ignored.
 // Two lists that sort differently under case are unequal in SurveyJS too, so the sort is kept.
+// A record compares field by field, and two records with a different set of fields are unequal.
 // A number-reading comparison needs no step of its own, since the loose equality of two primitives reads the same numbers
 export const checkIsSurveyLogicValueEqual = (
   left: SurveyLogicValue,
@@ -32,6 +34,13 @@ export const checkIsSurveyLogicValueEqual = (
     );
   }
   if (Array.isArray(left) || Array.isArray(right)) return false;
+  if (typeof left === "object" && left !== null && typeof right === "object" && right !== null) {
+    const leftKeys = Object.keys(left);
+    return (
+      leftKeys.length === Object.keys(right).length &&
+      leftKeys.every((key) => checkIsSurveyLogicValueEqual(left[key], getOwnValue(right, key), ignoreOrder))
+    );
+  }
 
   return checkIsSurveyLogicPrimitiveEqual(left, right);
 };
