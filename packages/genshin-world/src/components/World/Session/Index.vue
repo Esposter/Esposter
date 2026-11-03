@@ -73,7 +73,6 @@ import { useWorldExploration } from "#src/composables/useWorldExploration";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFrame } from "#src/composables/useWorldFrame";
-import { useWorldFriendship } from "#src/composables/useWorldFriendship";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
 import { useWorldHomeRealm } from "#src/composables/useWorldHomeRealm";
 import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
@@ -120,6 +119,7 @@ import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
@@ -558,7 +558,10 @@ const {
   forgeTab,
   forgeWeapons,
 } = useWorldForging();
-const { friendshipLevels, friendshipNamecards } = useWorldFriendship();
+const worldFriendshipStore = useWorldFriendshipStore();
+const { start: startFriendship, stop: stopFriendship } = worldFriendshipStore;
+startFriendship();
+onUnmounted(stopFriendship);
 // The claims a commission makes with the points held, from the handbook's Commissions tab
 const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
   useWorldCommissionClaims({
@@ -566,16 +569,10 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
     commissionDay,
     commissionSlice,
     encounterPoints,
-    friendshipLevels,
     longTermEncounterPoints,
   });
 // The namecards the profile holds, which the profile's screen lists
-const { profileNamecards } = useWorldProfileNamecards({
-  achievementData,
-  achievementProgressMap,
-  friendshipLevels,
-  friendshipNamecards,
-});
+const { profileNamecards } = useWorldProfileNamecards({ achievementData, achievementProgressMap });
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
   cookingProgress,
@@ -729,7 +726,6 @@ const {
   adventureRankTables,
   areaId: ref(OUTCROP_REGION_ID),
   enemyMap: kitContext.enemyMap,
-  friendshipLevels,
   placements: outcropPlaces,
   regionStatueProgressMap,
 });
@@ -747,7 +743,6 @@ const {
   catalogue,
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
-  friendshipLevels,
   savedState,
 });
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach

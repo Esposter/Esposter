@@ -4,7 +4,6 @@ import type { CommissionRouting } from "#src/models/commission/CommissionRouting
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { ComputedRef, Ref } from "vue";
 
 import { claimCommissionWithPoints } from "#src/services/commission/claimCommissionWithPoints";
@@ -14,6 +13,7 @@ import { convertLongTermEncounterPoint } from "#src/services/commission/convertL
 import { routeCommissionClaim } from "#src/services/commission/routeCommissionClaim";
 import { takeKatheryneBonus } from "#src/services/commission/takeKatheryneBonus";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
@@ -27,19 +27,19 @@ export const useWorldCommissionClaims = ({
   commissionDay,
   commissionSlice,
   encounterPoints,
-  friendshipLevels,
   longTermEncounterPoints,
 }: {
   adventureRankTables: AdventureRankTables;
   commissionDay: Ref<CommissionDay>;
   commissionSlice: ComputedRef<CommissionSlice | undefined>;
   encounterPoints: Ref<EncounterPoints>;
-  friendshipLevels: Ref<FriendshipLevels | undefined>;
   longTermEncounterPoints: Ref<LongTermEncounterPoints>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters } = storeToRefs(worldPartyStore);
   const { party } = worldPartyStore;
+  const worldFriendshipStore = useWorldFriendshipStore();
+  const { friendshipLevels } = storeToRefs(worldFriendshipStore);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

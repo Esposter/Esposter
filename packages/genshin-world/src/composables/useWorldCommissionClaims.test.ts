@@ -5,7 +5,6 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
@@ -21,6 +20,7 @@ import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/consta
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
@@ -130,7 +130,7 @@ describe(useWorldCommissionClaims, () => {
       party: createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]),
     });
     const startingCharacters = worldPartyStore.characters;
-    const friendshipLevels = shallowRef<FriendshipLevels | undefined>([
+    const worldFriendshipStore = startTestWorldFriendship([
       { exp: 0, level: 1 },
       { exp: 100, level: 2 },
     ]);
@@ -139,17 +139,16 @@ describe(useWorldCommissionClaims, () => {
       commissionDay,
       commissionSlice: computed(() => slice),
       encounterPoints,
-      friendshipLevels,
       longTermEncounterPoints,
     });
     return {
       claims,
       commissionDay,
       encounterPoints,
-      friendshipLevels,
       longTermEncounterPoints,
       startingCharacters,
       wallet,
+      worldFriendshipStore,
       worldPartyStore,
     };
   };
@@ -182,11 +181,11 @@ describe(useWorldCommissionClaims, () => {
   test("should refuse a claim while the friendship levels are unread, leaving the day and the wallet as they were", () => {
     expect.hasAssertions();
     const day = dayWith(FINISH_PROGRESS);
-    const { claims, commissionDay, friendshipLevels, startingCharacters, wallet, worldPartyStore } = createClaims({
+    const { claims, commissionDay, startingCharacters, wallet, worldFriendshipStore, worldPartyStore } = createClaims({
       ...baseClaims,
       day,
     });
-    friendshipLevels.value = undefined;
+    worldFriendshipStore.friendshipLevels = undefined;
 
     claims.claimCommission(commission.id);
 

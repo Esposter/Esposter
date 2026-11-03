@@ -1,6 +1,5 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WorldSessionContext } from "#src/models/world/WorldSessionContext";
@@ -37,6 +36,7 @@ import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -102,11 +102,11 @@ describe(useWorldTrounceBlossoms, () => {
     const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !checkIsEnemyKindId(id)));
     const { events } = startEpochSession();
     startTestWorldGround();
+    startTestWorldFriendship();
     useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
-      friendshipLevels: shallowRef<FriendshipLevels>(),
       savedState: createTrounceSave(),
     });
     const defeatListener = vi.fn<(enemy: Enemy) => void>();
@@ -127,11 +127,11 @@ describe(useWorldTrounceBlossoms, () => {
 
     const { events } = startEpochSession();
     startTestWorldGround();
+    startTestWorldFriendship();
     const { lastTeleportAts } = useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      friendshipLevels: ref<FriendshipLevels>(),
       savedState: createTrounceSave(),
     });
     // The map fixture's player stands in the Sea of Clouds, and the far point is past every outline
@@ -146,11 +146,11 @@ describe(useWorldTrounceBlossoms, () => {
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
     startTestWorldGround();
+    startTestWorldFriendship();
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      friendshipLevels: ref<FriendshipLevels>(),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([
@@ -177,11 +177,11 @@ describe(useWorldTrounceBlossoms, () => {
       adventureExp.value += amount;
     });
     startTestWorldGround();
+    startTestWorldFriendship([{ exp: 0, level: 1 }]);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
@@ -210,11 +210,11 @@ describe(useWorldTrounceBlossoms, () => {
       worldLevelAdjustment: savedState.worldLevelAdjustment,
     });
     startTestWorldGround();
+    startTestWorldFriendship([{ exp: 0, level: 1 }]);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
@@ -261,11 +261,11 @@ describe(useWorldTrounceBlossoms, () => {
     });
     const { inventory, wallet } = storeToRefs(worldSessionStore);
     startTestWorldGround();
+    startTestWorldFriendship([{ exp: 0, level: 1 }]);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       savedState: createTrounceSave(),
     });
     trounceBlossoms.value = new Map<string, TrounceBlossom>([

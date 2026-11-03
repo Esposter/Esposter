@@ -18,6 +18,7 @@ import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomC
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldParty } from "#src/store/party.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -72,7 +73,7 @@ describe(useWorldOutcrops, () => {
     const { inventory, wallet } = storeToRefs(worldSessionStore);
     const { adventureExp } = storeToRefs(startTestAdventureRank(30));
     const startingAdventureExp = adventureExp.value;
-    const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
+    const worldFriendshipStore = startTestWorldFriendship(FRIENDSHIP_LEVELS);
     const { characters } = storeToRefs(
       startTestWorldParty({
         characters: [createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)],
@@ -84,7 +85,6 @@ describe(useWorldOutcrops, () => {
       adventureRankTables,
       areaId: ref("mondstadt"),
       enemyMap: new Map(),
-      friendshipLevels,
       placements: ref(PLACEMENTS),
       regionStatueProgressMap: ref(new Map()),
     });
@@ -93,7 +93,16 @@ describe(useWorldOutcrops, () => {
     outcrops.touchOutcropsNear(0, 0, () => 0);
     // The defeat of the camp's only enemy, which reveals the blossom
     events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-    return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, startingAdventureExp, wallet };
+    return {
+      adventureExp,
+      characters,
+      events,
+      inventory,
+      outcrops,
+      startingAdventureExp,
+      wallet,
+      worldFriendshipStore,
+    };
   };
 
   test("a touch spawns the outcrop's camp, and the last enemy's defeat leaves it claimable", () => {
@@ -148,8 +157,8 @@ describe(useWorldOutcrops, () => {
   test("a claim waits until the friendship levels are loaded, and keeps its prompt and its resin", () => {
     expect.hasAssertions();
 
-    const { characters, friendshipLevels, outcrops, wallet } = createOutcrops();
-    friendshipLevels.value = undefined;
+    const { characters, outcrops, wallet, worldFriendshipStore } = createOutcrops();
+    worldFriendshipStore.friendshipLevels = undefined;
     outcrops.openOutcropClaim(1, epoch);
     assert.exists(outcrops.claimPrompt.value);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value.offers, 0), epoch, 0, () => 0);

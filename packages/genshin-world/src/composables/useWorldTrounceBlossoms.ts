@@ -5,7 +5,6 @@ import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Ref } from "vue";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
@@ -32,6 +31,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
@@ -47,13 +47,11 @@ export const useWorldTrounceBlossoms = ({
   catalogue,
   emitGrant,
   enemyKindMap,
-  friendshipLevels,
   savedState,
 }: {
   catalogue: Catalogue;
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
-  friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
 }) => {
   const worldAdventureRankStore = useWorldAdventureRankStore();
@@ -61,6 +59,8 @@ export const useWorldTrounceBlossoms = ({
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
+  const worldFriendshipStore = useWorldFriendshipStore();
+  const { friendshipLevels } = storeToRefs(worldFriendshipStore);
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldPartyStore = useWorldPartyStore();

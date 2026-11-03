@@ -1,7 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
-import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
@@ -35,6 +34,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
@@ -52,20 +52,20 @@ export const useWorldOutcrops = ({
   adventureRankTables,
   areaId,
   enemyMap,
-  friendshipLevels,
   placements,
   regionStatueProgressMap,
 }: {
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
   enemyMap: ReadonlyMap<string, Enemy>;
-  friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
   const worldPartyStore = useWorldPartyStore();
   const { characters } = storeToRefs(worldPartyStore);
   const { party } = worldPartyStore;
+  const worldFriendshipStore = useWorldFriendshipStore();
+  const { friendshipLevels } = storeToRefs(worldFriendshipStore);
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
