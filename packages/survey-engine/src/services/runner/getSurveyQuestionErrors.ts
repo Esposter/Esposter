@@ -38,8 +38,10 @@ export const getSurveyQuestionErrors = (
     return [{ message, name, pointer }];
   }
 
-  if (!createSurveyAnswerSchema(node).safeParse(answer).success)
-    return [{ message: SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
+  // The first refusal's message is the one the schema chose for the rule that failed, such as out of range or too short
+  const result = createSurveyAnswerSchema(node).safeParse(answer);
+  if (!result.success)
+    return [{ message: result.error.issues[0]?.message ?? SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
 
   // The validator reads the answer as `{value}`, the one name it may read beyond the survey's own
   const value = toSurveyLogicValue(answer);

@@ -1,7 +1,7 @@
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
-import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
+import { SURVEY_NOT_A_CHOICE_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { takeOne } from "@esposter/shared";
@@ -44,7 +44,7 @@ describe(getSurveyQuestionErrors, () => {
     expect(getSurveyQuestionErrors(view, {}, {}, now)).toStrictEqual([]);
   });
 
-  test("an answer its schema refuses reports the invalid-answer message", () => {
+  test("an answer its schema refuses reports the message of the rule it broke", () => {
     expect.hasAssertions();
 
     const view = getFirstView({
@@ -53,7 +53,7 @@ describe(getSurveyQuestionErrors, () => {
     });
 
     expect(getSurveyQuestionErrors(view, { a: "b" }, {}, now)).toStrictEqual([
-      { message: SURVEY_INVALID_ANSWER_MESSAGE, name: "a", pointer },
+      { message: SURVEY_NOT_A_CHOICE_MESSAGE, name: "a", pointer },
     ]);
   });
 

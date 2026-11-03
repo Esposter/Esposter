@@ -59,7 +59,7 @@ A choice question lists its choices through `getSurveyOrderedChoices`, whose `ra
 
 `createSurveyAnswerSchema(node)` returns the zod schema of one question's answer from its props: a text answer's length, pattern and input type; a choice answer that is one of the choices, or any string when the question has an other option; a list's minimum and maximum selected; a rating inside its scale; a slider inside its range and step; a matrix answer whose rows and columns are the question's; a dynamic matrix or panel inside its row or panel bounds with each cell checked by its column or template question. A pattern runs on the RE2 engine the app already uses, so a respondent's text cannot stall the check.
 
-`validateSurveyAnswers(document, answers, isSubmitting)` checks a whole record against the document, for the server's write: a draft checks each present answer, and a submit also checks required questions that are visible. It returns the same messages the runner shows.
+`validateSurveyAnswers(document, answers, mode, now)` checks a whole record against the document, for the server's write, and returns a `SurveyAnswerIssue` list of the question's name and message. A name the document holds no question for is refused. A draft checks each present answer of an enabled question, and a submit also refuses an answer to a question the survey does not show and checks required questions that are visible. A submit accepts the keys the runner adds for calculated values, which a draft refuses as unknown. The messages are the ones the runner shows, so a respondent reads the same refusal from the page and from the server.
 
 ## Decisions
 

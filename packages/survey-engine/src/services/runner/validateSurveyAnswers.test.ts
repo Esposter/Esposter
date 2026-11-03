@@ -2,6 +2,7 @@ import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMo
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import {
   SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_NOT_SHOWN_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
   SURVEY_UNKNOWN_QUESTION_MESSAGE,
@@ -116,10 +117,10 @@ describe(validateSurveyAnswers, () => {
     ]);
 
     expect(validateSurveyAnswers(document, { rating: 9 }, SurveyAnswerValidationMode.Draft, now)).toStrictEqual([
-      { message: SURVEY_INVALID_ANSWER_MESSAGE, name: "rating" },
+      { message: SURVEY_OUT_OF_RANGE_MESSAGE, name: "rating" },
     ]);
     expect(validateSurveyAnswers(document, { rating: 9 }, SurveyAnswerValidationMode.Submit, now)).toStrictEqual([
-      { message: SURVEY_INVALID_ANSWER_MESSAGE, name: "rating" },
+      { message: SURVEY_OUT_OF_RANGE_MESSAGE, name: "rating" },
     ]);
   });
 
