@@ -24,9 +24,9 @@ flowchart TD
 
 **Slots.** A page and a panel hold a `children` slot, and a dynamic panel holds a `template` slot. The root accepts pages only. A page accepts panels and every question kind. A panel accepts panels and every question kind. A template accepts every question kind except a dynamic panel, which bounds the recursion at one level.
 
-**The root's props.** `title`, `description`, `logo`, `accentColor` and `backgroundColor` are optional; `showProgressBar` is `off`, `top` or `bottom` and defaults to `off`; `showQuestionNumbers` defaults to false; `completedHtml`, `completeText`, `pageNextText` and `pagePrevText` are optional; `calculatedValues` is a list of `{ name, expression, includeIntoResult }`. The two colours are `#rrggbb` strings.
+**The root's props.** `title`, `description`, `logo`, `accentColor` and `backgroundColor` are strings whose absence is the empty string; `showProgressBar` is `off`, `top` or `bottom` and defaults to `off`; `showQuestionNumbers` defaults to false; `completedHtml`, `completeText`, `pageNextText` and `pagePrevText` are strings whose absence is the empty string; `calculatedValues` is a list of `{ name, expression, includeIntoResult }`. The two colours are `#rrggbb` strings.
 
-**Every question's props.** `id` as the core requires, `name` (1 to `MAX_SURVEY_QUESTION_NAME_LENGTH` characters, no braces), optional `title`, `description`, `requiredErrorText`, `visibleIf`, `enableIf` and `requiredIf`, `isRequired` defaulting to false, and `validators`, a list of `{ expression, text }`. A page and a panel hold `id`, optional `title`, `description` and `visibleIf` (a panel also `enableIf`), and their slot.
+**Every question's props.** `id` as the core requires, `name` (1 to `MAX_SURVEY_QUESTION_NAME_LENGTH` characters, no braces), `title`, `description`, `requiredErrorText`, `visibleIf`, `enableIf` and `requiredIf`, each a string whose absence is the empty string, `isRequired` defaulting to false, and `validators`, a list of `{ expression, text }`. A page and a panel hold `id`, optional `title`, `description` and `visibleIf` (a panel also `enableIf`), and their slot.
 
 **Each kind's props beyond those**, with the answer the kind holds:
 
@@ -53,6 +53,8 @@ flowchart TD
 | `image`         | `imageLink`, `altText` (empty means decorative), `imageHeight`, `imageWidth`, `imageFit`                                                                                                                                          | none                                      |
 
 A choice is `{ value, text }` with a string or number `value` and an optional `text`. Every list and string is bounded by a constant in the package's constants module, so no field is unbounded. The question name and count bounds the app keeps today move into that module, and their importers read them from the package.
+
+**Absence.** Following the repository's one absent form, a string a kind lacks is the empty string, a list it lacks is empty, and a number whose absence differs from zero (a length or selection bound) is optional. A kind's default props are its own props schema parsed from a name alone, so a default can never drift from the schema.
 
 **Cross-field rules are not in the schema.** A `min` above a `max`, or a `rateCount` below the answer given, is an owner's mistake that the runner shows and does not refuse. Rejected: refinements across fields, which the core's static node schema cannot take without a per-kind refine hook that the property grid would also have to know.
 
