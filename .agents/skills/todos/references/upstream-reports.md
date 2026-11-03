@@ -60,7 +60,7 @@ I am moving the Vue tooling of a Nuxt monorepo to vize, in three steps:
 2. Library builds: `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins.
 3. App build: Nuxt's Vue integration becomes `@vizejs/nuxt`.
 
-This issue is from step 1. A first run of `vize` on the app reported 103 diagnostics that `vue-tsc` does not report. A run of `vize` 0.652.0 on the app reports 15. This issue explains some of them.
+This issue is from step 1. A first run of `vize` 0.637.0 on the app reported 103 diagnostics that `vue-tsc` does not report. A run of `vize` 0.652.0 on the app reports 15. This issue explains some of them.
 
 This issue is one of 13 filed together from this attempt:
 
@@ -96,7 +96,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 
 ## Keep out
 
-- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a first run reported 103 diagnostics, and a run on `<tool>` 0.652.0 reports 15 diagnostics that `<source of truth>` does not"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
+- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a first run on `<tool>` 0.637.0 reported 103 diagnostics, and a run on `<tool>` 0.652.0 reports 15 diagnostics that `<source of truth>` does not"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
 - **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
 - **A date, a session or a link to a chat.**
 - **A request for more than the source of truth already does.** The ask is "no diagnostic, as with the source of truth".
