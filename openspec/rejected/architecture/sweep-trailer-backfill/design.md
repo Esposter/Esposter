@@ -8,3 +8,5 @@ The gap it was written to close does not exist. Every row of the ledger is dated
 
 - **The backfill commit** writes the backfill's date and model against rows a different pass read, which is a wrong date in the one column the ledger exists to keep right.
 - **Dating from history** makes a commit that touched a file count as a read of it, which is the inference the trailer rule exists to refuse (`.agents/skills/sweeps/references/one-pass.md`).
+
+A sweep that lands without its trailer in future needs no remedy either: its row stays open, and the next pass reads the unit again and dates it from its own trailer, which is how the twenty rows of the unmarked pass were dated. The cost is a second read of a small page, and no row ever carries a date nobody earned.
