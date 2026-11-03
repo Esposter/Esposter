@@ -26,6 +26,9 @@ export const checkIsSurveyLogicContaining = (
   if (typeof left !== "string") return checkIsSurveyLogicContaining(toSurveyLogicText(left), right, isContains);
   if (!right) return false;
 
-  const isFound = left.toLowerCase().includes(toSurveyLogicText(right).toLowerCase());
+  const needle = toSurveyLogicText(right).toLowerCase();
+  if (needle === "") return false;
+
+  const isFound = left.toLowerCase().includes(needle);
   return isContains ? isFound : !isFound;
 };
