@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-This package is a headless grid with no styling. `useGridLayout` returns the placement of items on a grid of cells, their tiles, and a `startGesture` handler that moves or resizes them.
+This package is a headless grid with no styling. `useGridLayout` returns the placement of items on a grid of cells, their tiles, a `startGesture` handler that moves an item, and a `startResize` handler that resizes it from its south-east corner.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/vue-grid-layout-headless).
 
@@ -29,15 +29,13 @@ pnpm i vue-grid-layout-headless
 
 ```vue
 <script setup lang="ts">
-import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
+import { useGridLayout } from "vue-grid-layout-headless";
 import { shallowRef, useTemplateRef } from "vue";
 
 const root = useTemplateRef<HTMLElement>("root");
 const items = shallowRef([{ h: 2, id: "a", w: 4, x: 0, y: 0 }]);
-const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
-  collision: CollisionMode.Push,
+const { gridHeight, startGesture, startResize, tiles } = useGridLayout(root, () => ({
   columnNumber: 12,
-  compactType: CompactType.Vertical,
   dragStartDistance: 4,
   isEditable: true,
   items: items.value,
@@ -77,18 +75,14 @@ Each tile supplies these values:
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Kind       | Purpose                                                                                                   |
-| ------------------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| `CollisionMode`     | enum       | What a dropped item does to the items it lands on: push, swap, or prevent the drop                        |
-| `CompactType`       | enum       | The direction a layout compacts in: vertical, horizontal, or none                                         |
-| `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed or added, and the ids it removed           |
-| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                   |
-| `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the drag placeholder, the height and the press handler |
-| `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter          |
-| `GridTile`          | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                          |
-| `ResizeEdge`        | enum       | The edge or corner that a resize pulls                                                                    |
-| `startExternalDrag` | function   | Drags an item from outside every grid, such as a palette entry. Lands it on the grid under the release.   |
-| `useGridLayout`     | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes.                  |
+| Export              | Kind       | Purpose                                                                                                    |
+| ------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed or added, and the ids it removed            |
+| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                    |
+| `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the drag placeholder, the height and the press handlers |
+| `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter           |
+| `GridTile`          | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                           |
+| `useGridLayout`     | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes.                   |
 
 ## <a name="license">⚖️ License</a>
 

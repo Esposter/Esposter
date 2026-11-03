@@ -7,18 +7,14 @@ import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
 import type { GridPoint } from "#src/models/GridPoint";
 import type { GridTile } from "#src/models/GridTile";
 import type { MountedGrid } from "#src/models/MountedGrid";
-import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
-import { CollisionMode } from "#src/models/CollisionMode";
-import { checkIsColliding } from "#src/placement/checkIsColliding";
 import { checkIsSameCell } from "#src/placement/checkIsSameCell";
 import { compactLayout } from "#src/placement/compactLayout";
 import { correctBounds } from "#src/placement/correctBounds";
 import { fitLayout } from "#src/placement/fitLayout";
 import { getCellPosition } from "#src/placement/getCellPosition";
 import { getCellSize } from "#src/placement/getCellSize";
-import { getCellSpan } from "#src/placement/getCellSpan";
 import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
@@ -30,8 +26,8 @@ import { checkIsNestedControl, takeOne } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
-// The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles and
-// Binds each item's press to startGesture, and the grid's element is the root the pointer is followed across
+// The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles, binds
+// Each item's press to startGesture and each handle's press to startResize, and the grid's element is the root the pointer is followed across
 export const useGridLayout = <T extends GridItem>(
   root: Readonly<ShallowRef<HTMLElement | null>>,
   options: MaybeRefOrGetter<GridLayoutOptions<T>>,
@@ -44,10 +40,12 @@ export const useGridLayout = <T extends GridItem>(
   const columnPitch = computed(() => getColumnPitch(width.value, getOptions().columnNumber, getOptions().spacing));
   const rowPitch = computed(() => getOptions().rowHeight + getOptions().spacing.gap);
   // Each item at its saved cell, kept within the columns and compacted, so a narrower screen never overlaps
-  const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber, getOptions().compactType));
+  const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber));
   const savedItemMap = computed(() => new Map(getOptions().items.map((item): [string, T] => [item.id, item])));
   const previewItemMap = computed(() => new Map((preview.value ?? []).map((item): [string, T] => [item.id, item])));
-  const draggedGesture = computed(() => (gesture.value?.isStarted && !gesture.value.edge ? gesture.value : undefined));
+  const draggedGesture = computed(() =>
+    gesture.value?.isStarted && !gesture.value.isResize ? gesture.value : undefined,
+  );
   const getGeometry = (cell: GridCell): GridGeometry => {
     const { gap, padding } = getOptions().spacing;
     return {
@@ -97,7 +95,7 @@ export const useGridLayout = <T extends GridItem>(
   });
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
-  const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {
+  const beginGesture = (event: PointerEvent, item: T, isResize: boolean) => {
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
     if (event.button !== 0) return;
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
@@ -108,14 +106,21 @@ export const useGridLayout = <T extends GridItem>(
     if (findGridRoot(event.target) !== root.value) return;
 
     gesture.value = {
-      edge,
       element: event.currentTarget,
+      isResize,
       isStarted: false,
       offset: { x: 0, y: 0 },
       origin: item,
       pointerId: event.pointerId,
       start: { x: event.clientX, y: event.clientY },
     };
+  };
+  const startGesture = (event: PointerEvent, item: T) => {
+    beginGesture(event, item, false);
+  };
+  // A press on the resize handle pulls the item's south-east corner, and keeps its origin where it is
+  const startResize = (event: PointerEvent, item: T) => {
+    beginGesture(event, item, true);
   };
   const handlePointerMove = (event: PointerEvent) => {
     const activeGesture = gesture.value;
@@ -134,14 +139,14 @@ export const useGridLayout = <T extends GridItem>(
     const cell = getGestureCell({
       columnNumber: getOptions().columnNumber,
       columnPitch: columnPitch.value,
-      edge: activeGesture.edge,
+      isResize: activeGesture.isResize,
       offset,
       origin: activeGesture.origin,
       rowPitch: rowPitch.value,
     });
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
     gesture.value = { ...activeGesture, cell, isStarted: true, offset };
-    if (isCellChanged) preview.value = placeMove(layout.value, cell, getOptions());
+    if (isCellChanged) preview.value = placeMove(layout.value, cell);
   };
   // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
   const getChangedCells = (changedLayout: GridItem[]): GridItem[] =>
@@ -151,8 +156,7 @@ export const useGridLayout = <T extends GridItem>(
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
-  // A dropped item lands with its top-left under the point, within the columns, and compacts and resolves its collisions as
-  // A move here does. Under prevent a drop that lands on another item is refused, so nothing is committed and it returns false
+  // A dropped item lands with its top-left under the point, within the columns, and pushes and compacts as a move here does
   const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint): boolean => {
     const element = root.value;
     if (!element || !getOptions().isEditable) return false;
@@ -166,11 +170,7 @@ export const useGridLayout = <T extends GridItem>(
     const cell = takeOne(
       correctBounds([{ h: item.h, id: item.id, w: item.w, x: columnIndex, y }], getOptions().columnNumber),
     );
-    const isRefused =
-      getOptions().collision === CollisionMode.Prevent && layout.value.some((other) => checkIsColliding(cell, other));
-    if (isRefused) return false;
-
-    const landedLayout = placeMove([...layout.value, cell], cell, getOptions());
+    const landedLayout = placeMove([...layout.value, cell], cell);
     const changes = getChangedCells(landedLayout);
     getOptions().onCommit({ changes, removed: [] });
     return true;
@@ -195,22 +195,8 @@ export const useGridLayout = <T extends GridItem>(
     if (!dropGrid.accept(activeGesture.origin, point)) return;
 
     const remainingItems = layout.value.filter((item) => item.id !== activeGesture.origin.id);
-    const remainingLayout = compactLayout(remainingItems, getOptions().columnNumber, getOptions().compactType);
+    const remainingLayout = compactLayout(remainingItems);
     getOptions().onCommit({ changes: getChangedCells(remainingLayout), removed: [activeGesture.origin.id] });
-  };
-  // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
-  const reportContentHeight = (id: string, contentHeight: number) => {
-    const savedItem = savedItemMap.value.get(id);
-    if (!savedItem?.isAutoHeight) return;
-
-    const h = getCellSpan(contentHeight, rowPitch.value, getOptions().spacing.gap);
-    if (h === savedItem.h) return;
-
-    const otherItems = getOptions().items.filter((item) => item.id !== id);
-    const changes = getChangedCells(
-      fitLayout([...otherItems, { ...savedItem, h }], getOptions().columnNumber, getOptions().compactType),
-    );
-    if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
   };
   const handlePointerCancel = (event: PointerEvent) => {
     if (event.pointerId === gesture.value?.pointerId) resetGesture();
@@ -243,5 +229,5 @@ export const useGridLayout = <T extends GridItem>(
     controller.abort();
   });
 
-  return { gridHeight, placeholder, reportContentHeight, startGesture, tiles };
+  return { gridHeight, placeholder, startGesture, startResize, tiles };
 };
