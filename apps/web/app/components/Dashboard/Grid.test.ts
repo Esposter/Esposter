@@ -3,7 +3,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import DashboardGrid from "@/components/Dashboard/Grid.vue";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("dashboardGrid", () => {
   // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px apart
@@ -46,11 +46,6 @@ describe("dashboardGrid", () => {
     const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { columnNumber, isEditable: true, rowHeight, visuals: [visual] },
-    });
-    // A DOM without layout has no hit test, so the release hits the grid it was pressed on, as a browser would
-    document.elementsFromPoint = () => [wrapper.element];
-    onTestFinished(() => {
-      Reflect.deleteProperty(document, "elementsFromPoint");
     });
     const tile = wrapper.get(".dashboard-grid-tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });

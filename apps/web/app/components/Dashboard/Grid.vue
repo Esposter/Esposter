@@ -25,7 +25,7 @@ const { gridHeight, placeholder, startGesture, startResize, tiles } = useGridLay
   dragStartDistance: DRAG_START_DISTANCE,
   isEditable: isEditable === true,
   items: items.value,
-  onCommit: ({ changes }) => emit("commit", changes),
+  onCommit: (changes) => emit("commit", changes),
   rowHeight,
   spacing: { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN },
 }));
