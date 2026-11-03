@@ -26,5 +26,5 @@ The migration was gated, and nothing is removed until its gate passes.
 
 ## Settled questions
 
-- Does the mapper need the `typescript-native-bridge` fork for speed? No. It runs on `tsrs` and is 3.6 to 4.9 times faster than `vue-tsc` on the bridge, on every target (`design.md`, "Timings, cold and warm").
+- Does the mapper need the `typescript-native-bridge` fork for speed? No. It runs on `tsrs` and is 3.4 to 4.7 times faster than `vue-tsc` on the bridge, on every target (`design.md`, "Timings, cold and warm").
 - What is the bar for "matches"? The mapper and `vue-tsc` report the same diagnostics on the same program, and each catches a deliberate error written into a `.vue` file. Both report none on all four targets. vize's own conformance runs against one pinned TypeScript commit and its parity check against `vue-tsc` is report-only, so neither is the bar.

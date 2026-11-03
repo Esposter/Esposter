@@ -106,23 +106,23 @@ Open: **#11499** (the `TS2590` above, with two further gaps in the generated hel
 
 ### Timings, cold and warm
 
-Every run is a fresh process. Cold clears the tools' own caches: the cache folder of `vize`, `node_modules/.vize` and the build info of `nuxt typecheck`. Warm discards two priming runs. The OS page cache was not dropped, because the machine had no passwordless `sudo` for `purge`, so cold is cold for the tools only. Wall time is the median of 3 cold and 5 warm runs, and peak memory is the largest resident set size of any run. Apple M1 with 8 cores and 16 GiB, `vize` 0.661.0, `tsrs` 0.20.1, `vue-tsc` 3.3.11 on `typescript-native-bridge`.
+Every run is a fresh process. Cold clears the tools' own caches: the cache folder of `vize`, `node_modules/.vize` and the build info of `nuxt typecheck`. Warm discards two priming runs. The OS page cache was not dropped, because the machine had no passwordless `sudo` for `purge`, so cold is cold for the tools only. Wall time is the median of 3 cold and 5 warm runs, and peak memory is the largest resident set size of any run. Apple M1 with 8 cores and 16 GiB, `tsrs` 0.20.1, `vue-tsc` 3.3.11 on `typescript-native-bridge`, and `vize` 0.664.0 for the mapper rows (the `vue-tsc` rows are the 0.661.0 set, not run again).
 
 | Target                 | `vue-tsc` cold | Mapper cold | `vue-tsc` warm | Mapper warm | Peak memory (`vue-tsc` / mapper) |
 | :--------------------- | -------------: | ----------: | -------------: | ----------: | -------------------------------: |
-| `vue-phaserjs`         |           1.08 |        0.30 |           1.09 |        0.29 |                    0.9 / 0.2 GiB |
-| `genshin-interface`    |           1.07 |        0.25 |           1.07 |        0.25 |                    0.7 / 0.2 GiB |
-| `genshin-world`        |           6.25 |        1.28 |           6.22 |        1.27 |                    3.7 / 1.0 GiB |
-| `apps/web` app project |          24.99 |        5.76 |          28.12 |        6.15 |                    7.4 / 3.4 GiB |
+| `vue-phaserjs`         |           1.08 |        0.30 |           1.09 |        0.30 |                    0.9 / 0.2 GiB |
+| `genshin-interface`    |           1.07 |        0.26 |           1.07 |        0.25 |                    0.7 / 0.2 GiB |
+| `genshin-world`        |           6.25 |        1.48 |           6.22 |        1.33 |                    3.7 / 1.0 GiB |
+| `apps/web` app project |          24.99 |        7.42 |          28.12 |        6.35 |                    7.4 / 2.8 GiB |
 
 The whole app script against the command it replaced, on the same runs:
 
-| Check                                                   |    Cold |    Warm | Peak memory | Diagnostics |
-| :------------------------------------------------------ | ------: | ------: | ----------: | ----------: |
-| `nuxt typecheck`                                        | 62.73 s | 64.26 s |     9.5 GiB |           0 |
-| `pnpm typecheck` (`nuxt prepare`, then six `tsrs` runs) | 12.30 s | 12.20 s |     3.3 GiB |           0 |
+| Check                                                 |    Cold |    Warm | Peak memory | Diagnostics |
+| :---------------------------------------------------- | ------: | ------: | ----------: | ----------: |
+| `nuxt typecheck`                                      | 62.73 s | 64.26 s |     9.5 GiB |           0 |
+| `pnpm typecheck` (`nuxt prepare`, then one `tsrs -b`) | 10.79 s |       — |     2.8 GiB |           0 |
 
-The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds are in the [build pipeline](../../specs/architecture/build-pipeline/design.md).
+The script is 5.8 times faster cold on 0.29 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Warm is not recorded for the single build, because another session kept the machine's load above the 2.0 the runs wait for. Before it became one build, the script was six `tsrs` runs and took 12.30 s cold and 12.20 s warm on 3.3 GiB. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds are in the [build pipeline](../../specs/architecture/build-pipeline/design.md).
 
 `nuxt typecheck` is not a like-for-like row against one `tsrs` run: it checks five projects with incremental build info. The corpus numbers in [that thread](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6507703018) (2,500 generated components, an M2 Max, no warmup) are not comparable in seconds, only in ratio.
 
