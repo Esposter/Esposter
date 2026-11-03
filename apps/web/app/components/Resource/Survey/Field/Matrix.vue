@@ -14,9 +14,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each row's value to the value of the column chosen in it, read as the empty record until one is given
-const answers = computed<Record<string, SurveyAnswerValue>>(() =>
-  typeof answer.value === "object" && !Array.isArray(answer.value) ? answer.value : {},
-);
+const answers = useSurveyRecordAnswer(answer);
 // Each column is keyed by its place in the question, since two values may read alike and a radio group keys its options by text
 const columnItems = computed(() =>
   node.props.columns.map((column, index) => ({ title: getSurveyChoiceText(column), value: String(index) })),

@@ -15,9 +15,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each item's name to its text, read as the empty record until one is given
-const answers = computed<Record<string, SurveyAnswerValue>>(() =>
-  typeof answer.value === "object" && !Array.isArray(answer.value) ? answer.value : {},
-);
+const answers = useSurveyRecordAnswer(answer);
 const getText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
 // An email is drawn as a text field, since the library's text field takes no email type
 const getTextFieldType = ({ inputType }: SurveyMultipleTextItem) =>
