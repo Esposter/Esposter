@@ -13,7 +13,7 @@ Every Vue check now runs on `tsrs` with the mapper: the three Vue packages and `
 The migration was gated, and nothing is removed until its gate passes.
 
 1. **Hold the `tsrs` gap open and recorded.** Done. The Vue packages kept `vue-tsc` until `tsrs` ran the vize mapper, which 0.20.1 does.
-2. **Decide the compiler the Vue checks run on.** Not needed. `tsrs` runs the mapper on its own compiler, so neither moving `typescript` to the 7.1 beta nor aliasing a second copy was taken.
+2. **Decide the compiler the Vue checks run on.** Not needed; the decision is recorded in `design.md`, "The Vue checks run on `tsrs`, not on a second compiler".
 3. **Compare on one small Vue package.** Done on `vue-phaserjs`, then `genshin-interface` and `genshin-world`. The gate was a match on every diagnostic the package produces.
 4. **Extend the comparison to the three `vue-tsc` packages and `apps/web`.** Done. `apps/web` runs the mapper over the app project Nuxt generates and `tsrs` over its other four generated projects, in place of `nuxt typecheck`.
 5. **Retire `vue-tsc` only after every Vue package passes.** Waiting on the declaration emit (`tasks.md`, 6.1). The `typescript-native-bridge` override stays, since `typescript-eslint`, the `attw` gate and the root `tsc` read the classic API through it.

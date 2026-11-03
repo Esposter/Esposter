@@ -7,7 +7,7 @@
 
 ## 2. Decide the compiler the Vue checks run on
 
-- [x] 2.1 Choose between moving `typescript` to the 7.1 beta and aliasing a second copy for the Vue packages, against the `scripts/` in-process uses. Superseded: `tsrs` 0.20.1 runs the mapper on its own compiler, so the Vue checks need no `typescript` package and the choice was never made. Verified by the recorded outcome in `design.md`, "The Vue checks run on `tsrs`, not on a second compiler".
+- [x] 2.1 Choose the compiler the Vue packages check on. Superseded: the choice was never made, since the Vue checks run on `tsrs`. Verified by the recorded outcome in `design.md`, "The Vue checks run on `tsrs`, not on a second compiler".
 - [x] 2.2 Choose the first package: one small package whose `typecheck` runs `vue-tsc` today and that has real `.vue` files, in place of `packages/vue-canvas-frame-headless`, which runs `tsrs` and has none. Chosen: `packages/vue-phaserjs`, the smallest package that ran `vue-tsc` and has real `.vue` files (27).
 
 ## 3. Compare on one small Vue package
