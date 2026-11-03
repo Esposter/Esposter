@@ -26,6 +26,8 @@ Build order of the parts. Each part carries its own tasks; this list is the orde
       Verify: the respondent part's scenarios pass against the new page.
 - [ ] 3.3 Decide whether the question union holds the markup and expression kinds. The union includes the html, image and expression kinds, so the non-question guard repeats in three places: the Panel, Html and Image exclusion in `getSurveyQuestionErrors`, the leaf check in `validateSurveyAnswers`, and the read-only set in `checkSurveyNodeEnabled`. If the union drops those kinds, one narrowing predicate can serve all three.
       Verify: the [document part](../../specs/resource/survey-document/design.md) states the decision, and the three checks read one predicate, with the survey-engine typecheck and runner suite green.
+- [ ] 3.4 Decide whether an empty text counts as zero in an average. `avg` totals through the sum's text join, so `avg("", 5, 5)` is 18.33 where the `avgFunction` comment promises 3.33: the empty text's leading zero joins the total as text. The oracle records nothing for `avg`, so a SurveyJS run over the average's empty-text cases decides it, and the package either reads an empty text as zero in the total or skips it, with the oracle fixtures and the known deviations updated to match.
+      Verify: the [logic](../../specs/resource/survey-logic/design.md) known deviations state the decision, and `avgFunction` answers the recorded value for `["", 5, 5]`.
 
 ## 4. Removal and close
 
