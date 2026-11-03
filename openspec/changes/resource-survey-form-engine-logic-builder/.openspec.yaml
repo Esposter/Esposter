@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches: ["apps/web/app/components/Resource/Survey/Creator/**", "apps/web/app/services/resource/survey/**"]

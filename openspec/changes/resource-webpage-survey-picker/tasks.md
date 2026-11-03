@@ -30,7 +30,7 @@ Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gi
 
 ## 5. Gate
 
-- [ ] 5.1 Hold the release until `resource-survey-form-engine` task 6.1, the one-time purge, has run in each environment.
+- [ ] 5.1 Hold the release until `resource-survey-form-engine-removal` task 1.1, the one-time purge, has run in each environment.
       Verify: the purge's log reports zero live survey rows and zero invite references in each environment before this change's release is cut.
 
 ## 6. Sweep and specs

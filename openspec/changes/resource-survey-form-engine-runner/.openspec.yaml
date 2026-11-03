@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches: ["packages/survey-engine/**", "apps/web/app/composables/survey/**"]

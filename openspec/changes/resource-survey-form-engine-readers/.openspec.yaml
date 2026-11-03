@@ -1,0 +1,10 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+skip_specs: true
+x-touches:
+  [
+    "apps/web/server/services/dataset/surveyResponses/**",
+    "apps/web/app/services/survey/summary/**",
+    "apps/web/app/services/resource/survey/**",
+  ]

@@ -23,7 +23,7 @@ Build the picker as a schema-form renderer keyed on the resource-link declaratio
 - Published is the filter because a survey that is not published answers its invite with a not-found page. The picker offers only what works for a visitor.
 - A bound survey that is later unpublished keeps its binding. Clearing it would make a toggle on the survey destroy the owner's page, so the page shows the survey as unpublished instead.
 
-**Against the survey form engine.** The picker is written against the [survey form engine](../resource-survey-form-engine/design.md)'s model, not against SurveyJS, which that change removes. The picker reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
+**Against the survey form engine.** The picker is written against the [survey form engine](../resource-survey-form-engine-program/design.md)'s model, not against SurveyJS, which that change removes. The picker reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
 
 **Ordering.** The engine's one-time purge deletes every stored survey and removes each invite that names one. If the picker shipped first, an owner could bind a survey the purge then deletes. So the picker waits for the purge to run in each environment.
 
