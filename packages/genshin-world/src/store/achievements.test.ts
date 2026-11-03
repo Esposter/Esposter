@@ -9,7 +9,6 @@ import { describe, expect, test, vi } from "vitest";
 const ACHIEVEMENT_ID = 1;
 const PRIMOGEMS = 5;
 const QUEST_ID = "11";
-const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
 const achievement: Achievement = {
   categoryId: 1,
   descriptionTextId: "",
@@ -28,6 +27,8 @@ vi.mock(import("#src/services/achievement/readAchievements"), () => ({
 }));
 
 describe(useWorldAchievementsStore, () => {
+  const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
+
   test("a finished quest its trigger names finishes the achievement and pays its Primogems into the wallet", async () => {
     expect.hasAssertions();
 

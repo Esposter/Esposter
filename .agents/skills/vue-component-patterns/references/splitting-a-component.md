@@ -26,11 +26,16 @@ So a cut is made in this order, and each step is judged by the lines it leaves b
    setters, the item data, the names, the text, the language, the data URL and the events emitter) are the session store's,
    which the composables that need them read themselves; a bundled object spread into every call only moved the list
    (the `genshin-session-store` change, which took the shared keys from 128 to 0 and the root by 139 lines).
-2. **Cut a group only when it has fewer inputs than statements.** A group with a short options list (a handful of values)
+2. **Read what another feature produces from that feature's store.** A feature whose results two or more other calls
+   took in as options is a store those calls read (`src/store/<feature>.ts`, one way, started by the root before the save
+   watches it), judged by its slice's count over the production code. A feature that one call reads, or whose count is
+   positive, stays a composable with its own options (the `genshin-world-feature-stores` change, which took the root's
+   option keys from 388 to 182 and its calls from 48 to 36, and records each refusal with its numbers).
+3. **Cut a group only when it has fewer inputs than statements.** A group with a short options list (a handful of values)
    and a name that says one feature is a composable; a group whose list runs to twenty values is the root's wiring under
    another name. The root that stays long because of its arguments is the integration root the form allows, and it is
    dated with that reading.
-3. **A root's size is not cut by moving a call**; a call is moved when its state and its handlers move with it.
+4. **A root's size is not cut by moving a call**; a call is moved when its state and its handlers move with it.
 
 ## A layer that forwards is not a cut
 

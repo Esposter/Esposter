@@ -31,6 +31,22 @@ The measurements are in [the first change's investigation](../genshin-session-st
 4. Count the slice (`git diff --shortstat` over the package files it touched), run the count script, run the package's typecheck, lint and touched tests, and record both numbers in the slice's task.
 5. Update the guides and the `Key files` tables of the specs that name the moved composable, and the ledger rows that list it.
 
+## Outcome
+
+Fifteen slices became stores, one was refused on its count and the rest were declined by the decision above, so the pattern stops where its table says it does.
+
+| Measure                                     | Before | After |
+| :------------------------------------------ | -----: | ----: |
+| Calls with an options object (count script) |     48 |    36 |
+| Option keys (count script)                  |    388 |   182 |
+| The session root's lines                    |  1,918 | 1,750 |
+| Production lines in the package, net        |      0 |   -71 |
+
+- **Became stores:** the quests, the adventure rank, the map with the reputation, the screen, the Archive, the ground, the pickups, the roster, the puzzles, the Friendship levels, the chests, the statues and the Oculi, the achievements and the cooking; the item tables went into the session's context.
+- **Refused on the count:** the Frostbearing Tree's offering (16 lines more over the production code, with six keys and one call fewer), because the tables it would hold are already the root's bindings.
+- **Declined by the decision:** the state `useWorldSave` still holds, and the combat, each read by one call or none through options. The frame step's baseline, which only the combat's slice would have needed, stays the first change's task.
+- **The save** stays one composable that reads the stores' refs and the few it holds, and the stores start before it watches them, so a load is not a change the save grants.
+
 ## Playtest
 
 None: nothing a player sees changes. The package's visual and browser suites that mount the session are the check, and they need the hosted data.
