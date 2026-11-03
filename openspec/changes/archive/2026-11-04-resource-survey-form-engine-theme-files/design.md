@@ -31,7 +31,7 @@ flowchart TD
 
 ## Not built
 
-- The progress bar is drawn by the runner from its root prop, at the position the setting names. The question numbering setting is not read: the runner numbers every question whatever it holds, so `showQuestionNumbers` has no effect. No control in the Creator edits either setting, and the properties panel leaves both out of the root form.
+- The progress bar is drawn by the runner from its root prop, at the position the setting names, and the runner numbers the questions only when `showQuestionNumbers` is on. No control in the Creator edits either setting, and the properties panel leaves both out of the root form.
 - The image question's picture and the image picker's choices have no editor in the Creator. `ImageUpload.vue` and `ImageChoicesEditor.vue` are built and tested, and `SurveyImageExtras` maps the two kinds to them, but the properties panel reads only `SurveyNodeExtrasComponentMap`, which has no entry for either kind. Mounting them is a change to the panel, which is why task 2.2 is not ticked.
 
 ## Notes

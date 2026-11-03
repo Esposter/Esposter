@@ -6,6 +6,7 @@ import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocu
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { SurveyProgressBarPlacement } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("runner", () => {
@@ -57,6 +58,36 @@ describe("runner", () => {
       });
 
       expect(component.findAll("[data-pointer]")).toHaveLength(1);
+    });
+
+    test("a progress bar set to the bottom is drawn after the page's questions", async () => {
+      expect.hasAssertions();
+
+      const surveyDocument = createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("first")])]);
+      surveyDocument.root.props.showProgressBar = SurveyProgressBarPlacement.Bottom;
+      const component = await mountSuspended(Runner, { props: { document: surveyDocument } });
+
+      expect(component.element.lastElementChild?.contains(component.get('[role="progressbar"]').element)).toBe(true);
+    });
+
+    test("a progress bar set to the top is drawn before the page", async () => {
+      expect.hasAssertions();
+
+      const surveyDocument = createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("first")])]);
+      surveyDocument.root.props.showProgressBar = SurveyProgressBarPlacement.Top;
+      const component = await mountSuspended(Runner, { props: { document: surveyDocument } });
+
+      expect(component.element.firstElementChild?.contains(component.get('[role="progressbar"]').element)).toBe(true);
+    });
+
+    test("a survey with its progress bar off shows none", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: { document: createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("first")])]) },
+      });
+
+      expect(component.find('[role="progressbar"]').exists()).toBe(false);
     });
   });
 });

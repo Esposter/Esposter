@@ -6,7 +6,7 @@ Build order. The theme and the files are independent.
 
 - [x] 1.1 Write `useSurveyTheme`, apply it in the page renderer, and build the Theme tab.
       Verify: a component test shows the accent applied in both design styles, and a survey with no theme follows the style's tokens.
-- [ ] 1.2 Apply the progress bar position and question numbering from the root props in the page renderer and the Creator's preview. Not done: the runner draws the progress bar from its root prop, but it numbers every question whatever the numbering setting holds, and no test holds either scenario.
+- [x] 1.2 Apply the progress bar position and question numbering from the root props in the page renderer and the Creator's preview.
       Verify: the two scenarios in the spec delta's progress requirement are tests, and a survey with both settings off shows neither.
 
 ## 2. Files
