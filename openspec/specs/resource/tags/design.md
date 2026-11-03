@@ -6,7 +6,7 @@ Every resource carries a flat `Record<string, string>` of tags: shown in Essenti
 
 Tags live on the resource row itself as a `jsonb` column defaulting to `{}`, not in a join table. They are read on every list query and written as a whole record, so normalizing them into rows would buy nothing but joins.
 
-Editing replaces the whole record rather than merging, which is Azure's own tag update semantics and the reason the editor can express "remove this tag" at all: the dialog always sends every tag it knows about, and whatever it omits is gone. It edits an ordered list of name/value rows rather than the record directly — a record cannot hold a half-typed duplicate or a blank name mid-edit, and rows keep their position while the user types. Rows with a blank name are dropped at save, which is what lets an empty row sit on screen as somewhere to type without ever being written.
+Editing replaces the whole record rather than merging. The dialog always sends every tag it knows about, and whatever it omits is gone. That makes a save one atomic write with no partial-merge ambiguity: a merge would have to tell an omitted key that was removed from one that was never touched, and the whole-record replace has no such case, which is also how the editor can express "remove this tag" at all. It edits an ordered list of name/value rows rather than the record directly — a record cannot hold a half-typed duplicate or a blank name mid-edit, and rows keep their position while the user types. Rows with a blank name are dropped at save, which is what lets an empty row sit on screen as somewhere to type without ever being written.
 
 Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is containment (`tags @> {"env":"prod"}`); a name alone is key-existence (`jsonb_exists(tags, 'env')`) — "tagged with this at all", which is the common case. Both go through `getResourcesWhere`, so `readResourcesCount` and `readResources` can never disagree about what matches, and both are served by the same GIN index.
 
@@ -24,7 +24,7 @@ flowchart LR
 
 `resources.tags` is `jsonb`, `notNull().default({})`, with a GIN index backing both containment and key-existence. `resourceTagsSchema` bounds it at `MAX_TAGS_COUNT` entries with `MAX_TAG_NAME_LENGTH` / `MAX_TAG_VALUE_LENGTH` per pair.
 
-Names are non-empty through the `normalizeString` pipe; values are not. An empty value is a meaningful Azure tag — `environment:` with nothing after it marks a resource as needing one — so only the name is required to exist.
+Names are non-empty through the `normalizeString` pipe; values are not. An empty value is meaningful — `environment:` with nothing after it marks a resource as needing one — so only the name is required to exist.
 
 ## Procedures
 
@@ -47,7 +47,7 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Notes
 
-- Flat name:value only, faithful to Azure — no hierarchies, no typed values.
+- Flat name:value only — no hierarchies, no typed values.
 - A tags-only update leaves no `Renamed` entry in the [activity log](../activity-log/design.md): changing a label is not renaming a resource.
 - [Global search](../global-search/design.md) matches a tag's name and value as a substring, so a label the owner remembers finds its resource. The `/all` filter pill and the `/resource-explorer/tags` list ([service menu](../resource-service-menu/design.md)) are the exact retrieval paths.
 - `readResourceTagCounts` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.

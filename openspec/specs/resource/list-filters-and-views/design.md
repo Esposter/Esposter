@@ -1,6 +1,6 @@
 # List Filters & Views
 
-Azure "All resources" parity for the resource list: a filter-pill row, checkbox multi-select with bulk commands, a column chooser, group-by-type, CSV export, and a refresh button.
+The resource list: a filter-pill row, checkbox multi-select with bulk commands, a column chooser, group-by-type, CSV export, and a refresh command.
 
 The workbench is one component, `ResourceListView`, and every list route renders it — `/all`, `/favorites` and `/recents` differ only by a `source` prop that supplies a filter preset and a default sort ([resource service menu](../resource-service-menu/design.md)). Everything below is therefore true of all three; `/all` is simply the source with no preset.
 

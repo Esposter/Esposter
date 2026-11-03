@@ -1,6 +1,6 @@
 # Global Search
 
-Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`.
+Search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens, as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`.
 
 ## How it works
 

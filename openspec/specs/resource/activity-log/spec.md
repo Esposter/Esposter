@@ -1,6 +1,6 @@
 ## Purpose
 
-Azure Activity-log parity — a per-resource audit trail in Azure Table Storage, rendered as a built-in blade on every resource type. The trail covers only the one resource it belongs to, and it is kept until that resource is purged.
+A per-resource audit trail in Azure Table Storage, rendered as a built-in blade on every resource type. The trail covers only the one resource it belongs to, and it is kept until that resource is purged.
 
 ## Requirements
 

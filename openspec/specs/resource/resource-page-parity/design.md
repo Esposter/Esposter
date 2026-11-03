@@ -1,6 +1,6 @@
-# Resource Page Parity
+# Resource Page Commands
 
-Azure's commands and destructive-operation parity on `/resource-explorer/[id]/[[blade]]`: every command the portal's bar has, Refresh, a Duplicate command and Delete, arranged as a page header rather than as the portal's bar.
+The commands on a resource's page, `/resource-explorer/[id]/[[blade]]`: one action shown beside the title, and the rest in the page's overflow menu, with Refresh, Duplicate and Delete among them.
 
 ## Commands
 

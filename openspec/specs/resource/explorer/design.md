@@ -1,17 +1,17 @@
 # Resource Explorer
 
-The single Azure-portal-like UI for every resource: one list, one resource page with capability-aware blades, one public view route. The shell is driven entirely by `ResourceDefinitionMap` ([resources](../../architecture/resource/design.md)). Azure Portal is the UX reference, deliberately literal: Home mirrors the portal landing, Create mirrors the marketplace.
+The single UI for every resource: one list, one resource page with capability-aware blades, one public view route. The shell is driven entirely by `ResourceDefinitionMap` ([resources](../../architecture/resource/design.md)). The table below names each part by the Azure portal's own term, so a reader who knows the portal finds each part under the same name.
 
-| Azure portal                    | Resource Explorer                                                                                  |
-| ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Home (search + recents)         | `/resource-explorer`                                                                               |
-| Service left menu               | `ResourceServiceMenu` ([resource service menu](../resource-service-menu/design.md))                |
-| All resources list              | `/resource-explorer/all`                                                                           |
-| Create a resource (marketplace) | `/resource-explorer/create` gallery → `/resource-explorer/create/[type]`                           |
-| Resource menu (left nav)        | blade tabs under the title on `/resource-explorer/[id]/[[blade]]`                                  |
-| Overview + Essentials           | Overview blade with Essentials and Related resources panels                                        |
-| Toolbar commands                | Publish or Share as the one shown action; the rest in the page's overflow menu                     |
-| Breadcrumbs                     | the click path only, current page as the title ([breadcrumb trail](../breadcrumb-trail/design.md)) |
+| Portal term              | Resource Explorer                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------- |
+| Home (search + recents)  | `/resource-explorer`                                                                               |
+| Service left menu        | `ResourceServiceMenu` ([resource service menu](../resource-service-menu/design.md))                |
+| All resources list       | `/resource-explorer/all`                                                                           |
+| Create a resource        | `/resource-explorer/create` gallery → `/resource-explorer/create/[type]`                           |
+| Resource menu (left nav) | blade tabs under the title on `/resource-explorer/[id]/[[blade]]`                                  |
+| Overview + Essentials    | Overview blade with Essentials and Related resources panels                                        |
+| Toolbar commands         | Publish or Share as the one shown action; the rest in the page's overflow menu                     |
+| Breadcrumbs              | the click path only, current page as the title ([breadcrumb trail](../breadcrumb-trail/design.md)) |
 
 ## Routes
 
@@ -76,7 +76,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points across the
 
 ## Create flow — `/resource-explorer/create` → `/resource-explorer/create/[type]`
 
-Create is a **page per resource type**, mirroring the Azure marketplace + create blade — never a modal. The gallery shows tiles for every `ResourceDefinitionMap` entry (icon, title, description); the per-type form collects the name (`createNameSchema`) plus any type-specific initial settings (most types are name-only), calls `createResource(type, …)`, and routes to the new resource's Overview blade.
+Create is a **page per resource type**, never a modal. A create flow is a gallery and a form, long enough to deserve a route of its own, and a page survives a refresh where a modal closes. The gallery shows tiles for every `ResourceDefinitionMap` entry (icon, title, description); the per-type form collects the name (`createNameSchema`) plus any type-specific initial settings (most types are name-only), calls `createResource(type, …)`, and routes to the new resource's Overview blade.
 
 ## Resource page — `/resource-explorer/[id]/[[blade]]`
 

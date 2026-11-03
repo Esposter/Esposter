@@ -1,6 +1,6 @@
 ## Purpose
 
-Azure's commands on the resource page — one action shown and the rest in the page's overflow menu, Refresh, Duplicate, a delete the Recycle bin undoes, and a save-conflict surface.
+The commands on the resource page — one action shown and the rest in the page's overflow menu, Refresh, Duplicate, a delete the Recycle bin undoes, and a save-conflict surface.
 
 ## Requirements
 

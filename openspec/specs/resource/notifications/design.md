@@ -1,6 +1,6 @@
 # Notifications Bell
 
-Azure-portal notifications parity: a notifications button on the dock with an unread count, one toast queue, and a panel of what has happened recently. It renders **two kinds of entry**, and the difference between them is the whole design:
+A notifications button on the dock with an unread count, one toast queue, and a panel of what has happened recently. It renders **two kinds of entry**, and the difference between them is the whole design:
 
 - **Delivered** — a row the server wrote for this user through the one notification pipeline ([notifications](../../architecture/notifications/design.md)). It reached every device that was subscribed, it survives the reload, and it is paged in like any other list.
 - **Local** — feedback about what this tab just did: a mutation error, a save conflict, an export that finished here. Nothing on another device could act on it and nothing needs it after the reload, so it is never written down.

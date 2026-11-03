@@ -1,6 +1,6 @@
 ## Purpose
 
-Azure tag parity — name:value pairs on every resource, shown in Essentials, editable in place, filterable on the list.
+Name:value pairs on every resource, shown in Essentials, editable in place and filterable on the list.
 
 ## Requirements
 

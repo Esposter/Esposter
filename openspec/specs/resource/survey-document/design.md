@@ -22,7 +22,7 @@ The survey resource's content schema runs the document schema, and only where it
 
 ## The contract
 
-**Node types.** `SurveyNodeType` is a string enum whose values are SurveyJS's type tags, so a survey written in SurveyJS's shape reads the same tags. The containers are `page` and `panel`. The question kinds are `text`, `comment`, `boolean`, `radiogroup`, `dropdown`, `checkbox`, `tagbox`, `rating`, `ranking`, `matrix`, `matrixdynamic`, `paneldynamic`, `multipletext`, `slider`, `buttongroup`, `imagepicker`, `expression`, `html` and `image`.
+**Node types.** `SurveyNodeType` is a string enum with one short lowercase tag per kind. A tag is the stored identity of its kind, since a saved document names each node by its tag, so a tag stays fixed once a survey holds it. The containers are `page` and `panel`. The question kinds are `text`, `comment`, `boolean`, `radiogroup`, `dropdown`, `checkbox`, `tagbox`, `rating`, `ranking`, `matrix`, `matrixdynamic`, `paneldynamic`, `multipletext`, `slider`, `buttongroup`, `imagepicker`, `expression`, `html` and `image`.
 
 **Slots.** A page and a panel hold a `children` slot, and a dynamic panel holds a `template` slot. The root accepts pages only. A page and a panel accept panels and every question kind. A template accepts every question kind except a dynamic panel, which bounds the recursion at one level.
 
