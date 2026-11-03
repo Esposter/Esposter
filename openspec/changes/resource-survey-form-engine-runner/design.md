@@ -48,6 +48,10 @@ Every function takes the document, the state and the current time as `now`, and 
 | `completeSurvey(document, state, now)`                  | a `SurveyRunnerCompletion`                                                          |
 | `getSurveyProgress(document, state, now)`               | a `SurveyProgress`                                                                  |
 | `isLastSurveyPage(document, state, now)`                | whether no later page has a visible element                                         |
+| `getSurveyOrderedChoices(choices, choicesOrder, seed)`  | the choices in the order a respondent sees them; a random order is seeded           |
+| `getSurveyChoiceText(choice)`                           | the text a respondent reads for a choice: its text, or its value when it has none   |
+
+A choice question lists its choices through `getSurveyOrderedChoices`, whose `random` order is a shuffle seeded by a string the page holds for the session (the response id, or one generated on load), so the order holds still across renders and across a reload that resumes the same response. Rejected: an unseeded shuffle, which reorders the choices under a respondent's cursor each time the page redraws.
 
 ## Answers
 
