@@ -15,8 +15,8 @@ export type SurveyChoiceOptions = Partial<SurveyNoneChoiceProps> &
 export const useSurveyChoiceAnswer = (
   answer: Ref<SurveyAnswerValue | undefined>,
   getOptions: () => SurveyChoiceOptions,
+  seed: string,
 ) => {
-  const seed = useSurveyChoiceSeed();
   const isOtherChosen = ref(false);
   // A choice's key is its place in the order the reader sees the choices in, so the list and the pick read one order
   const orderedChoices = computed(() => {

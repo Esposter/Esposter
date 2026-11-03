@@ -10,10 +10,12 @@ interface Props {
   error: string;
   isDisabled: boolean;
   node: SurveyPanelDynamicNode;
+  // What the panel's shuffled choices are ordered by, the session's seed, passed on to each question of the panel
+  seed: string;
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { error, isDisabled, node, seed } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const panels = computed(() => getSurveyAnswerRows(answer.value, node.props.panelCount));
 // A panel's record replaces the one at its place, so the answer stays a list in the order its panels are drawn
@@ -47,6 +49,7 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
             :is-disabled
             :model-value="panel[question.props.name]"
             :node="question"
+            :seed
             @update:model-value="(value) => setPanel(panelIndex, withSurveyAnswer(panel, question.props.name, value))"
           />
           <UiIconButton

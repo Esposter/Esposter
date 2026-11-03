@@ -76,7 +76,6 @@ Each gap is a change to the UI library, and each field works around it as the ta
 | `apps/web/app/components/Resource/Survey/Field/Shell.vue`          | the title, required mark, description and error of a field, and the ids the control is described by |
 | `apps/web/app/services/resource/survey/SurveyFieldComponentMap.ts` | the field each kind is drawn with, loaded on demand                                                 |
 | `apps/web/app/composables/survey/useSurveyChoiceAnswer.ts`         | a choice question's pick, its other text and its ordered options                                    |
-| `apps/web/app/composables/survey/useSurveyChoiceSeed.ts`           | the seed a shuffled choice list is ordered by                                                       |
 | `apps/web/app/composables/survey/useSurveyRecordAnswer.ts`         | a record answer read as an object                                                                   |
 | `apps/web/app/services/resource/survey/getSurveyAnswerRows.ts`     | a list answer's rows, with the question's initial count of empty rows before any answer             |
 | `apps/web/app/services/resource/survey/withSurveyAnswer.ts`        | a row's record with one answer set, or cleared                                                      |

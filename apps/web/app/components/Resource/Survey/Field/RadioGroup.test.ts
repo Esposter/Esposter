@@ -19,6 +19,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
     ];
     const error = "message";
     const title = "Favourite colour";
+    const seed = crypto.randomUUID();
     const createNode = (hasOther?: boolean, choicesOrder?: SurveyChoicesOrder): SurveyRadioGroupNode => ({
       props: {
         ...surveyRadioGroupNodePropsSchema.parse({ choices, choicesOrder, hasOther, name: "a", title }),
@@ -30,7 +31,9 @@ describe("resourceSurveyFieldRadioGroup", () => {
     test("is a radio group named by the question's title, with a radio for each choice", () => {
       expect.hasAssertions();
 
-      const component = mount(SurveyFieldRadioGroup, { props: { error: "", isDisabled: false, node: createNode() } });
+      const component = mount(SurveyFieldRadioGroup, {
+        props: { error: "", isDisabled: false, node: createNode(), seed },
+      });
 
       expect(component.get('[role="radiogroup"]').attributes("aria-label")).toBe(title);
       expect(component.findAll('[role="radio"]')).toHaveLength(choices.length);
@@ -40,7 +43,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
       expect.hasAssertions();
 
       const component = mount(SurveyFieldRadioGroup, {
-        props: { error: "", isDisabled: false, node: createNode(undefined, SurveyChoicesOrder.Descending) },
+        props: { error: "", isDisabled: false, node: createNode(undefined, SurveyChoicesOrder.Descending), seed },
       });
       const texts = component.findAll('[role="radio"]').map((radio) => radio.text());
 
@@ -50,7 +53,9 @@ describe("resourceSurveyFieldRadioGroup", () => {
     test("answers with the choice an arrow key moves to", async () => {
       expect.hasAssertions();
 
-      const component = mount(SurveyFieldRadioGroup, { props: { error: "", isDisabled: false, node: createNode() } });
+      const component = mount(SurveyFieldRadioGroup, {
+        props: { error: "", isDisabled: false, node: createNode(), seed },
+      });
       const [first] = component.findAll('[role="radio"]');
       await first?.trigger("keydown", { key: "ArrowDown" });
       await flushPromises();
@@ -62,7 +67,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
       expect.hasAssertions();
 
       const component = mount(SurveyFieldRadioGroup, {
-        props: { error: "", isDisabled: false, node: createNode(true) },
+        props: { error: "", isDisabled: false, node: createNode(true), seed },
       });
       const other = component.findAll('[role="radio"]')[choices.length];
       await other?.trigger("click");
@@ -75,7 +80,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
     test("shows its error beside it", () => {
       expect.hasAssertions();
 
-      const component = mount(SurveyFieldRadioGroup, { props: { error, isDisabled: false, node: createNode() } });
+      const component = mount(SurveyFieldRadioGroup, { props: { error, isDisabled: false, node: createNode(), seed } });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
     });

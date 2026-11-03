@@ -7,13 +7,14 @@ interface Props {
   error: string;
   isDisabled: boolean;
   node: SurveyCheckboxNode;
+  // What the shuffled choices are ordered by, the session's seed, so a respondent sees one order throughout
+  seed: string;
 }
 // The answer is one list: the values of the choices picked, none's own value on its own, and the typed other text, which
 // Is the one entry that is neither a choice's value nor none, so other needs no second key
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { error, isDisabled, node, seed } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
-const seed = useSurveyChoiceSeed();
 // The options in the order the reader sees them, which the list draws and a pick is read against
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));

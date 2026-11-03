@@ -40,7 +40,7 @@ const { select } = useSurveyCreatorCommands();
       />
     </div>
     <div v-else pointer-events-none>
-      <ResourceSurveyField error="" :node is-disabled />
+      <ResourceSurveyField error="" :node seed="" is-disabled />
     </div>
   </div>
 </template>

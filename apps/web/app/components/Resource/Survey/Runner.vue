@@ -38,7 +38,6 @@ const {
   setAnswer,
   state,
 } = useSurveyRunner(() => document, { answers: initialAnswers, pageIndex: initialPageIndex, seed: initialSeed });
-provideSurveyChoiceSeed(seed.value);
 const root = useTemplateRef("root");
 const progressLabel = computed(() => `Page ${progress.value.current} of ${progress.value.total}`);
 const progressValue = computed(() => (progress.value.current / Math.max(progress.value.total, 1)) * 100);
@@ -89,6 +88,7 @@ const submit = () => {
         :error-by-pointer
         :is-disabled
         :question-numbers
+        :seed
         :view
         @answer="
           (name, value) => {

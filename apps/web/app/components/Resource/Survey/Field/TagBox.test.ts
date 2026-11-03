@@ -17,6 +17,7 @@ describe("resourceSurveyFieldTagBox", () => {
       { text: "", value: 2 },
     ];
     const error = "error";
+    const seed = crypto.randomUUID();
     const title = "Favourite colour";
     const createNode = (props: Partial<SurveyTagBoxNodeProps>): SurveyTagBoxNode => ({
       props: {
@@ -30,7 +31,7 @@ describe("resourceSurveyFieldTagBox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldTagBox, {
-        props: { error: "", isDisabled: false, modelValue: [2], node: createNode({}) },
+        props: { error: "", isDisabled: false, modelValue: [2], node: createNode({}), seed },
       });
       const activator = component.get('[role="combobox"]');
 
@@ -43,7 +44,7 @@ describe("resourceSurveyFieldTagBox", () => {
 
       const component = mount(ResourceSurveyFieldTagBox, {
         attachTo: document.body,
-        props: { error: "", isDisabled: false, modelValue: [], node: createNode({}) },
+        props: { error: "", isDisabled: false, modelValue: [], node: createNode({}), seed },
       });
       const activator = component.get('[role="combobox"]');
       await activator.trigger("keydown", { key: "ArrowDown" });
@@ -58,7 +59,7 @@ describe("resourceSurveyFieldTagBox", () => {
 
       const component = mount(ResourceSurveyFieldTagBox, {
         attachTo: document.body,
-        props: { error: "", isDisabled: false, modelValue: [], node: createNode({ hasOther: true }) },
+        props: { error: "", isDisabled: false, modelValue: [], node: createNode({ hasOther: true }), seed },
       });
       const activator = component.get('[role="combobox"]');
       await activator.trigger("keydown", { key: "ArrowDown" });
@@ -84,6 +85,7 @@ describe("resourceSurveyFieldTagBox", () => {
             ],
             hasOther: true,
           }),
+          seed,
         },
       });
       await component.get('[role="combobox"]').trigger("keydown", { key: "ArrowDown" });
@@ -101,7 +103,7 @@ describe("resourceSurveyFieldTagBox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldTagBox, {
-        props: { error, isDisabled: false, modelValue: [], node: createNode({}) },
+        props: { error, isDisabled: false, modelValue: [], node: createNode({}), seed },
       });
       await flushPromises();
 

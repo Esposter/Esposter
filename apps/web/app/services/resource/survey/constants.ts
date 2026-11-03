@@ -103,6 +103,15 @@ export const SURVEY_UNNUMBERED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set
   SurveyNodeType.Panel,
 ]);
 
+// The kinds that order their choices by the session's seed, so each takes the seed the runner passes down
+export const SURVEY_SEEDED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set([
+  SurveyNodeType.Checkbox,
+  SurveyNodeType.Dropdown,
+  SurveyNodeType.PanelDynamic,
+  SurveyNodeType.RadioGroup,
+  SurveyNodeType.TagBox,
+]);
+
 export const SURVEY_FOCUSABLE_SELECTOR = "input, select, textarea, button";
 
 // The class each fit draws a picture with, written whole so the utility generator sees every one

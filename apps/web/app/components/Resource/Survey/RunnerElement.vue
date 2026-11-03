@@ -8,10 +8,12 @@ interface Props {
   errorByPointer: (pointer: string) => string;
   isDisabled: boolean;
   questionNumbers: Map<string, number>;
+  // What the shuffled choices are ordered by, the session's seed, passed down to every element of the page
+  seed: string;
   view: SurveyElementView;
 }
 
-const { answers, errorByPointer, isDisabled, questionNumbers, view } = defineProps<Props>();
+const { answers, errorByPointer, isDisabled, questionNumbers, seed, view } = defineProps<Props>();
 const emit = defineEmits<{ answer: [name: string, value: SurveyAnswerValue | undefined] }>();
 // Only a question answers under its name, so a page's html and image elements have no answer to hold
 const answer = computed(() => ("name" in view.node.props ? answers[view.node.props.name] : undefined));
@@ -32,6 +34,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
       :error-by-pointer
       :is-disabled="isDisabled || !view.isEnabled"
       :question-numbers
+      :seed
       :view="child"
       @answer="(name, value) => emit('answer', name, value)"
     />
@@ -44,6 +47,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
         :is-disabled="isDisabled || !view.isEnabled"
         :model-value="answer"
         :node="view.node"
+        :seed
         @update:model-value="(value) => updateAnswer(value)"
       />
     </div>

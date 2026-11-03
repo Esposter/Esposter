@@ -19,6 +19,7 @@ describe("resourceSurveyFieldDropdown", () => {
     ];
     const error = "message";
     const title = "Favourite colour";
+    const seed = crypto.randomUUID();
     const createNode = (): SurveyDropdownNode => ({
       props: { ...surveyDropdownNodePropsSchema.parse({ choices, name: "a", title }), id: crypto.randomUUID() },
       type: SurveyNodeType.Dropdown,
@@ -27,7 +28,9 @@ describe("resourceSurveyFieldDropdown", () => {
     test("is a select named by the question's title", () => {
       expect.hasAssertions();
 
-      const component = mount(SurveyFieldDropdown, { props: { error: "", isDisabled: false, node: createNode() } });
+      const component = mount(SurveyFieldDropdown, {
+        props: { error: "", isDisabled: false, node: createNode(), seed },
+      });
 
       expect(component.get('[role="combobox"]').attributes("aria-label")).toBe(title);
     });
@@ -37,7 +40,7 @@ describe("resourceSurveyFieldDropdown", () => {
 
       const component = mount(SurveyFieldDropdown, {
         attachTo: document.body,
-        props: { error: "", isDisabled: false, node: createNode() },
+        props: { error: "", isDisabled: false, node: createNode(), seed },
       });
       const activator = component.get('[role="combobox"]');
       await activator.trigger("keydown", { key: "ArrowDown" });
@@ -52,7 +55,7 @@ describe("resourceSurveyFieldDropdown", () => {
     test("shows its error beside it", () => {
       expect.hasAssertions();
 
-      const component = mount(SurveyFieldDropdown, { props: { error, isDisabled: false, node: createNode() } });
+      const component = mount(SurveyFieldDropdown, { props: { error, isDisabled: false, node: createNode(), seed } });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
     });

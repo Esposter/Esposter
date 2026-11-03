@@ -5,7 +5,13 @@ import ResourceSurveyFieldCheckbox from "@/components/Resource/Survey/Field/Chec
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { surveyCheckboxNodePropsSchema, SurveyNodeType } from "survey-engine";
+import {
+  getSurveyChoiceText,
+  getSurveyOrderedChoices,
+  surveyCheckboxNodePropsSchema,
+  SurveyChoicesOrder,
+  SurveyNodeType,
+} from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldCheckbox", () => {
@@ -18,6 +24,7 @@ describe("resourceSurveyFieldCheckbox", () => {
     ];
     const error = "error";
     const otherText = "a";
+    const seed = crypto.randomUUID();
     const title = "Favourite colour";
     const createNode = (props: Partial<SurveyCheckboxNodeProps>): SurveyCheckboxNode => ({
       props: {
@@ -31,7 +38,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({}) },
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({}), seed },
       });
       const [first, second] = component.findAll('[role="checkbox"]');
 
@@ -44,18 +51,45 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({}) },
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({}), seed },
       });
       await component.get('[aria-label="2"]').trigger("click");
 
       expect(component.emitted("update:modelValue")).toStrictEqual([[[1, 2]]]);
     });
 
+    test("draws a shuffled list in the order its seed draws, so one seed shows one order", () => {
+      expect.hasAssertions();
+
+      const shuffledChoices = [
+        { text: "a", value: "a" },
+        { text: "b", value: "b" },
+        { text: "c", value: "c" },
+        { text: "d", value: "d" },
+      ];
+      const component = mount(ResourceSurveyFieldCheckbox, {
+        props: {
+          error: "",
+          isDisabled: false,
+          modelValue: [],
+          node: createNode({ choices: shuffledChoices, choicesOrder: SurveyChoicesOrder.Random }),
+          seed,
+        },
+      });
+      const labels = component.findAll('[role="checkbox"]').map((checkbox) => checkbox.attributes("aria-label"));
+
+      expect(labels).toStrictEqual(
+        getSurveyOrderedChoices(shuffledChoices, SurveyChoicesOrder.Random, seed).map((choice) =>
+          getSurveyChoiceText(choice),
+        ),
+      );
+    });
+
     test("selects every choice with select all, which is mixed while only some are chosen", async () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasSelectAll: true }) },
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasSelectAll: true }), seed },
       });
 
       expect(component.get('[aria-label="Select all"]').attributes("aria-checked")).toBe("mixed");
@@ -69,14 +103,14 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasNone: true }) },
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasNone: true }), seed },
       });
       await component.get('[aria-label="None"]').trigger("click");
 
       expect(component.emitted("update:modelValue")).toStrictEqual([[["none"]]]);
 
       const noneChosen = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: ["none"], node: createNode({ hasNone: true }) },
+        props: { error: "", isDisabled: false, modelValue: ["none"], node: createNode({ hasNone: true }), seed },
       });
       await noneChosen.get('[aria-label="2"]').trigger("click");
 
@@ -87,7 +121,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasOther: true }) },
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ hasOther: true }), seed },
       });
 
       expect(component.find("input").exists()).toBe(false);
@@ -101,7 +135,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error: "", isDisabled: false, modelValue: [1, ""], node: createNode({ hasOther: true }) },
+        props: { error: "", isDisabled: false, modelValue: [1, ""], node: createNode({ hasOther: true }), seed },
       });
       await component.get("input").setValue(otherText);
       await flushPromises();
@@ -124,6 +158,7 @@ describe("resourceSurveyFieldCheckbox", () => {
             ],
             hasOther: true,
           }),
+          seed,
         },
       });
       await component.get('[aria-label="Other"]').trigger("click");
@@ -139,7 +174,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
-        props: { error, isDisabled: false, modelValue: [], node: createNode({}) },
+        props: { error, isDisabled: false, modelValue: [], node: createNode({}), seed },
       });
       await flushPromises();
 

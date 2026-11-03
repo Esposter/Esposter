@@ -15,6 +15,7 @@ const mountPanelDynamic = (node: SurveyPanelDynamicNode, error = "") => {
       isDisabled: false,
       node,
       "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
+      seed: crypto.randomUUID(),
     },
   });
   return component;

@@ -6,14 +6,17 @@ interface Props {
   error: string;
   isDisabled: boolean;
   node: SurveyRadioGroupNode;
+  // What the shuffled choices are ordered by, the session's seed, so a respondent sees one order throughout
+  seed: string;
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { error, isDisabled, node, seed } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
 const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherText } = useSurveyChoiceAnswer(
   answer,
   () => node.props,
+  seed,
 );
 </script>
 
