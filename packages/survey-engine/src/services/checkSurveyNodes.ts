@@ -2,6 +2,7 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 import type { SurveyNode } from "#src/models/SurveyNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkSurveyNoneChoice } from "#src/services/checkSurveyNoneChoice";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
 import { checkSurveyQuestion } from "#src/services/checkSurveyQuestion";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -17,6 +18,8 @@ export const checkSurveyNodes = (
 ): void => {
   for (const [index, node] of nodes.entries()) {
     const nodePointer = `${listPointer}/${index}`;
+    if (node.type === SurveyNodeType.RadioGroup || node.type === SurveyNodeType.Checkbox)
+      checkSurveyNoneChoice(node.props, nodePointer, issues);
     switch (node.type) {
       case SurveyNodeType.Page:
         checkSurveyOptionalExpression(

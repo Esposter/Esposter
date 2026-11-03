@@ -1,4 +1,5 @@
 import type { SurveyCalculatedValue } from "#src/models/SurveyCalculatedValue";
+import type { SurveyCheckboxNode } from "#src/models/SurveyCheckboxNode";
 import type { SurveyDocument } from "#src/models/SurveyDocument";
 import type { SurveyExpressionNode } from "#src/models/SurveyExpressionNode";
 import type { SurveyHtmlNode } from "#src/models/SurveyHtmlNode";
@@ -6,6 +7,7 @@ import type { SurveyPageNode } from "#src/models/SurveyPageNode";
 import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode";
 import type { SurveyPanelNode } from "#src/models/SurveyPanelNode";
 import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
+import type { SurveyRadioGroupNode } from "#src/models/SurveyRadioGroupNode";
 import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import type { SurveyTextNode } from "#src/models/SurveyTextNode";
 import type { SurveyTextNodeProps } from "#src/models/SurveyTextNodeProps";
@@ -13,11 +15,13 @@ import type { SurveyTextNodeProps } from "#src/models/SurveyTextNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyRootPropsSchema } from "#src/models/SurveyRootProps";
 import { checkSurveyDocument } from "#src/services/checkSurveyDocument";
+import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
 import { surveyExpressionNodeType } from "#src/services/surveyExpressionNodeType";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
 import { surveyPageNodeType } from "#src/services/surveyPageNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
 import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
+import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
 import { describe, expect, test } from "vitest";
 
@@ -58,6 +62,44 @@ const createDocument = (content: SurveyPageNode[], calculatedValues: SurveyCalcu
 });
 
 describe(checkSurveyDocument, () => {
+  test("a radio group offering none refuses a choice taking the none answer's value, at its choices", () => {
+    expect.hasAssertions();
+
+    const radioGroup: SurveyRadioGroupNode = {
+      props: {
+        ...surveyRadioGroupNodeType.createDefaultProps(),
+        choices: [{ text: "Nothing", value: "none" }],
+        hasNone: true,
+        id: crypto.randomUUID(),
+        name: "a",
+      },
+      type: SurveyNodeType.RadioGroup,
+    };
+
+    expect(checkSurveyDocument(createDocument([createPage([radioGroup])]))).toStrictEqual([
+      {
+        message: 'A choice may not take the value "none", since the question offers none under it',
+        pointer: "/content/0/props/children/0/props/choices",
+      },
+    ]);
+  });
+
+  test("a checkbox offering no none may give a choice the none answer's value, since no none answer is taken", () => {
+    expect.hasAssertions();
+
+    const checkbox: SurveyCheckboxNode = {
+      props: {
+        ...surveyCheckboxNodeType.createDefaultProps(),
+        choices: [{ text: "None of the above", value: "none" }],
+        id: crypto.randomUUID(),
+        name: "a",
+      },
+      type: SurveyNodeType.Checkbox,
+    };
+
+    expect(checkSurveyDocument(createDocument([createPage([checkbox])]))).toStrictEqual([]);
+  });
+
   test("two questions sharing a name are refused, naming the second", () => {
     expect.hasAssertions();
 
