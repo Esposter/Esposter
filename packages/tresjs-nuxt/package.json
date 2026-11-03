@@ -34,11 +34,16 @@
       "source": "./src/module.ts",
       "default": "./dist/index.js"
     },
+    "./runtime/constants": {
+      "source": "./src/runtime/constants.ts",
+      "default": "./dist/runtime/constants.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./runtime/constants": "./dist/runtime/constants.js",
       "./package.json": "./package.json"
     },
     "access": "public"
