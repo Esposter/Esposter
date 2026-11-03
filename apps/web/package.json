@@ -58,7 +58,7 @@
     "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "vpx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
-    "typecheck": "nuxt typecheck && tsrs --fast -p service-worker/tsconfig.json",
+    "typecheck": "nuxt prepare && tsrs --fast --runExternalCode -p tsconfig.vize.json && tsrs --fast -p .nuxt/tsconfig.server.json && tsrs --fast -p .nuxt/tsconfig.shared.json && tsrs --fast -p .nuxt/tsconfig.node.json && tsrs --fast -p tsconfig.root.json && tsrs --fast -p service-worker/tsconfig.json",
     "zstd:gen": "vpx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
