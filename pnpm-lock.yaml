@@ -285,9 +285,6 @@ catalogs:
     '@livekit/track-processors':
       specifier: ^0.8.2
       version: 0.8.2
-    '@maschwenk/tsrslint':
-      specifier: ^0.1.6
-      version: 0.1.6
     '@modelcontextprotocol/sdk':
       specifier: ^1.32.2
       version: 1.32.2
@@ -807,9 +804,6 @@ importers:
       '@lerna-lite/publish':
         specifier: 'catalog:'
         version: 5.6.4(@types/node@26.6.6)(conventional-commits-filter@6.0.1)(supports-color@8.1.1)
-      '@maschwenk/tsrslint':
-        specifier: 'catalog:'
-        version: 0.1.6
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -4207,28 +4201,6 @@ packages:
 
   '@marijn/find-cluster-break@1.0.4':
     resolution: {integrity: sha512-Wy0V7+SGUjnF9/TkiM1hKVDPj7jKXduPNboMVtHTA8dySMURWqfg/JZ9E2Sq8JgSJmkl7k7Qe9FLeMSrSraWmQ==}
-
-  '@maschwenk/tsrslint-darwin-arm64@0.1.6':
-    resolution: {integrity: sha512-4cd/YRhspvIUxfr6xx2oWv3+WTeKLxfOe4tW49zPdo80X6rp4mxkWQg3C9vkm+1ugeAakoQgtOHNP9SnH5raLA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@maschwenk/tsrslint-linux-arm64@0.1.6':
-    resolution: {integrity: sha512-f2G8zGWoXHTHGegUdrqiX5EjyYDGFtk/vq0JeEAHlcjl3LtDD2cIl8kkuCypA69CohAqxm49yf2gtVyMSF/EMg==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@maschwenk/tsrslint-linux-x64@0.1.6':
-    resolution: {integrity: sha512-e1XeesEMB+m3LocBzjzUxZ+F0CpSZodC/Cp8EynPGA6Buz4l0rDx1bPHHZAgcq2bcKN2Mgk+ep3KY75P8UuRFA==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@maschwenk/tsrslint@0.1.6':
-    resolution: {integrity: sha512-s/dMOF/F5gINLYMpcZpLAFVH5hWcSc4N/I8uaOkD8nMUWSFVSN/R+Jx7/rMbj5hX+ej4rthgfVhx0ZZb7/pNSg==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   '@mdream/js@2.0.3':
     resolution: {integrity: sha512-n35jmVwE663LBHr9iawaIbO+zpJ5EoCFD9UpG4XRYHs//YUqIX322d/F+QuF08Yi64dpFfzz4p4/joTnVZDvJA==}
@@ -16335,21 +16307,6 @@ snapshots:
   '@logdna/tail-file@2.2.0': {}
 
   '@marijn/find-cluster-break@1.0.4': {}
-
-  '@maschwenk/tsrslint-darwin-arm64@0.1.6':
-    optional: true
-
-  '@maschwenk/tsrslint-linux-arm64@0.1.6':
-    optional: true
-
-  '@maschwenk/tsrslint-linux-x64@0.1.6':
-    optional: true
-
-  '@maschwenk/tsrslint@0.1.6':
-    optionalDependencies:
-      '@maschwenk/tsrslint-darwin-arm64': 0.1.6
-      '@maschwenk/tsrslint-linux-arm64': 0.1.6
-      '@maschwenk/tsrslint-linux-x64': 0.1.6
 
   '@mdream/js@2.0.3':
     dependencies:

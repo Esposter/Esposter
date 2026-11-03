@@ -43,7 +43,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@lerna-lite/publish`                   | 2026-11-01 · Haiku 5.5  | Keep — tooling   | fixed-mode versioning and publishing, which pnpm does not do                                           |
 | `@lezer/highlight`                      | 2026-11-01 · Haiku 5.5  | Keep — engine    | the highlight tags the code viewer's theme maps, the engine's own vocabulary                           |
 | `@livekit/track-processors`             | 2026-11-01 · Haiku 5.5  | Keep — SDK       | the call SDK's video processing                                                                        |
-| `@maschwenk/tsrslint`                   | 2026-11-03 · Sonnet 5.5 | Keep — tooling   | oxlint's type-aware backend on Linux and macOS, in a fraction of tsgolint's time and memory            |
 | `@modelcontextprotocol/sdk`             | 2026-11-01 · Haiku 5.5  | Keep — spec      | the MCP protocol                                                                                       |
 | `@nuxt/eslint`                          | 2026-11-01 · Haiku 5.5  | Keep — framework | the framework's own module                                                                             |
 | `@nuxt/fonts`                           | 2026-11-01 · Haiku 5.5  | Keep — framework | the framework's own module                                                                             |

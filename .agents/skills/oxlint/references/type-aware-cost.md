@@ -4,8 +4,6 @@ Read when the oxlint pass slows down, its memory climbs, or one type-aware rule 
 
 Every root oxlint script runs with `--debug=timings`, so the table sits at the end of every lint log — read it before measuring anything else. `OXC_LOG=debug` adds tsgolint's own milestones: the program it builds for each tsconfig and its source-file count, which is where a stall shows up between one program and the next.
 
-**Which backend is timed depends on the platform.** Linux and macOS lint through `@maschwenk/tsrslint`, Windows through `oxlint-tsgolint` (`openspec/specs/architecture/lint-toolchain/design.md`), so a timing read on one is not a number for the other, and a slow file on a Windows machine is not evidence about CI.
-
 **The rule at the top of the table is the one that asked first, not necessarily the cause.** tsgolint's checker computes a type lazily and caches it, so whichever rule first forces an expensive type is billed for all of it. Turning that rule off only hands the bill to the next asker: `no-misused-promises` and `strict-void-return` traded the same cost when one of them was switched off. Before disabling a rule repo-wide, find the files that make it expensive.
 
 Bisect by tree, then by file: `oxlint <dir>` per package, then `oxlint <file>` per file in the slow package, each timed. Then compare against a plain `tsc --noEmit -p <tsconfig>` of the same program. If the compiler is fast, the types are fine, and the blow-up is in the rule's own queries over them.
