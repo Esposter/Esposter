@@ -6,11 +6,11 @@ import {
   DEFAULT_COMPLETED_MESSAGE,
   INVITE_ONLY_MESSAGE,
 } from "#shared/services/resource/survey/constants";
-import { getSurveyDocumentQuestions } from "#shared/services/survey/getSurveyDocumentQuestions";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { sanitizeHtml } from "@esposter/shared";
+import { flattenSurveyQuestions } from "survey-engine";
 
 interface Props {
   id: string;
@@ -39,7 +39,7 @@ const isParticipantTokenRequired = responseMode === SurveyResponseMode.Identifie
 const completedHtml = sanitizeHtml(content.document.root.props.completedHtml);
 // A republish between a draft and its resume can remove a question, so a resumed draft keeps only the answers
 // To the questions the published document still holds
-const questionNames = new Set(getSurveyDocumentQuestions(content.document).map(({ props }) => props.name));
+const questionNames = new Set(flattenSurveyQuestions(content.document.content).map(({ props }) => props.name));
 // The page the runner last reported. The runner reports every move, so this is the page a submit completes on
 let lastPageIndex = 0;
 const resumedDraft = ref<{ answers: SurveyAnswers; pageIndex: number; seed: string }>();

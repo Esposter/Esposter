@@ -4,9 +4,9 @@ import type { SurveyDocument } from "#src/models/SurveyDocument";
 
 import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { flattenSurveyQuestions } from "#src/services/flattenSurveyQuestions";
 import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
-import { collectSurveyLeafNodes } from "#src/services/runner/collectSurveyLeafNodes";
 import { SURVEY_NOT_SHOWN_MESSAGE, SURVEY_UNKNOWN_QUESTION_MESSAGE } from "#src/services/runner/constants";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
@@ -30,10 +30,9 @@ export const validateSurveyAnswers = (
   );
   // The questions a page holds, read through the panels that hold them. A dynamic panel's template is not among them, since its names are its own
   const questionNames = new Set(
-    collectSurveyLeafNodes(
-      document.content.flatMap((node) => (node.type === SurveyNodeType.Page ? node.props.children : [])),
-      checkIsSurveyAnsweringNode,
-    ).map((node) => node.props.name),
+    flattenSurveyQuestions(document.content)
+      .filter((node) => checkIsSurveyAnsweringNode(node))
+      .map((node) => node.props.name),
   );
   const shownNames = new Set(
     views.flatMap(({ node }) => (node.type === SurveyNodeType.Panel ? [] : [node.props.name])),

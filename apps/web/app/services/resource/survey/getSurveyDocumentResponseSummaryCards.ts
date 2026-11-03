@@ -2,8 +2,8 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 import type { SurveyDocument } from "survey-engine";
 
-import { getSurveyDocumentQuestions } from "#shared/services/survey/getSurveyDocumentQuestions";
 import { getSurveyDocumentSummaryCards } from "@/services/survey/summary/getSurveyDocumentSummaryCards";
+import { flattenSurveyQuestions } from "survey-engine";
 
 // The summary's cards for the questions the responses hold a column for, so a question with no column has no card
 export const getSurveyDocumentResponseSummaryCards = (
@@ -11,6 +11,6 @@ export const getSurveyDocumentResponseSummaryCards = (
   { columns, rows }: SurveyResponseRecords,
 ): SurveySummaryCard[] => {
   const columnNames = new Set(columns.map(({ name }) => name));
-  const questions = getSurveyDocumentQuestions(document).filter(({ props }) => columnNames.has(props.name));
+  const questions = flattenSurveyQuestions(document.content).filter(({ props }) => columnNames.has(props.name));
   return getSurveyDocumentSummaryCards(questions, rows);
 };
