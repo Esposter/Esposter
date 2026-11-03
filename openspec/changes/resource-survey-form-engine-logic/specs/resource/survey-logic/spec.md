@@ -25,18 +25,18 @@ An expression over a record of answers SHALL evaluate to the value SurveyJS's ex
 
 ### Requirement: A malformed expression is refused with the position of the fault
 
-Parsing an expression that is not in the language SHALL return an error holding a message and the character position of the fault, and SHALL return no tree.
+Checking an expression that is not in the language, or that calls a function the language lacks, SHALL return an error holding a message and the character position of the fault, and SHALL return no tree.
 
 #### Scenario: An unclosed parenthesis
 
 - **GIVEN** the text `({age} > 5`
-- **WHEN** the text is parsed
-- **THEN** the parse is refused
+- **WHEN** the text is checked
+- **THEN** the check is refused
 - **AND** the error names the position where the closing parenthesis was expected
 
 #### Scenario: An unknown function
 
 - **GIVEN** the text `nosuchfunction({age})`
-- **WHEN** the text is parsed
-- **THEN** the parse is refused
+- **WHEN** the text is checked
+- **THEN** the check is refused
 - **AND** the error names the function

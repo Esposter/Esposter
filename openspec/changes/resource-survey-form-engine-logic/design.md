@@ -27,6 +27,7 @@ flowchart LR
 
 ## Decisions
 
+- **The parser checks syntax; the check also checks function names.** `parseSurveyExpression` accepts a call to any identifier, and `checkSurveyExpression` parses and then refuses a call whose function is not in the registry, naming it. The parser needs no registry, so it is built before the functions. Rejected: the parser taking the registry, which would make the first unit wait on the last.
 - **Errors carry a position.** The parser returns a neverthrow result whose error holds a message and a character index, because the document's save check names the element and the Creator's builder shows the fault. Rejected: throwing, which loses the position at the first catch.
 - **The oracle is SurveyJS while it is in the tree.** A throwaway script outside the repository runs SurveyJS's expression runner over a table of expressions and answer records at a fixed clock, and writes the results as JSON fixtures that the package's tests keep. SurveyJS leaves the tree afterwards, the fixtures stay. Rejected: fixtures written by hand, which would record what the package does rather than what SurveyJS does.
 - **The package is private.** It is consumed by the app and the functions only, so it has no npm entry to keep alive. Rejected: publishing it, which adds a trusted-publisher entry for a package no one outside the repository has asked for.
