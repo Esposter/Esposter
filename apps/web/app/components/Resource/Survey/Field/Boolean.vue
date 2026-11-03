@@ -16,7 +16,12 @@ interface Props {
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
-const isChecked = computed(() => answer.value === true);
+const isChecked = computed({
+  get: () => answer.value === true,
+  set: (isOn) => {
+    answer.value = isOn;
+  },
+});
 // The label beside a switch or a box is the one the question gives its state, and empty until it gives one
 const stateLabel = computed(() => (isChecked.value ? node.props.labelTrue : node.props.labelFalse));
 // A radio group holds its answer as text, so each of its two options is read back as the boolean it stands for
@@ -30,9 +35,6 @@ const choice = computed({
     answer.value = value === undefined ? undefined : value === "true";
   },
 });
-const setChecked = (isOn: boolean) => {
-  answer.value = isOn;
-};
 </script>
 
 <template>
@@ -40,14 +42,13 @@ const setChecked = (isOn: boolean) => {
     <template #default="{ describedBy }">
       <UiSwitch
         v-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Switch"
+        v-model="isChecked"
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-label="title"
         :disabled="isDisabled"
         :label="stateLabel"
-        :model-value="isChecked"
         is-label-shown
-        @update:model-value="(isOn) => setChecked(isOn)"
       />
       <UiRadioGroup
         v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
@@ -58,14 +59,13 @@ const setChecked = (isOn: boolean) => {
       />
       <UiCheckbox
         v-else
+        v-model="isChecked"
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-label="title"
         :disabled="isDisabled"
         :label="stateLabel"
-        :model-value="isChecked"
         is-label-shown
-        @update:model-value="(isOn) => setChecked(isOn)"
       />
     </template>
   </ResourceSurveyFieldShell>
