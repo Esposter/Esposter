@@ -2,7 +2,7 @@
 
 ## 1. Hold the mapper gap open
 
-- [x] 1.1 The `TS18069` gap needs no report from this repo: it was `tsrs`'s Windows launch of the mapper's bare `node`, already reported as `tsrs` `#820` and fixed by `#822`. Recorded in `design.md`, "Notes" and "Landmines".
+- [x] 1.1 The `TS18069` gap needs no report from this repo: it was `tsrs`'s Windows launch of the mapper's bare `node`, already reported as `tsrs` `#820` and fixed by `#822`. Recorded in `design.md`, "The spike".
 - [x] 1.2 Re-run the spike when `tsrs` publishes a release past `0.20.0-ts7.1.0-beta`. Verified by `tsrs` 0.20.1 running the mapper over `packages/vue-phaserjs`, `packages/genshin-interface` and `packages/genshin-world` with no `TS18069`.
 
 ## 2. Decide the compiler the Vue checks run on
