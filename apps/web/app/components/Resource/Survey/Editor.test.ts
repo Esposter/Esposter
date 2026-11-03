@@ -6,7 +6,6 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceSurveyEditor from "@/components/Resource/Survey/Editor.vue";
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
-import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
@@ -15,11 +14,9 @@ import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
-import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
 import { checkSurveyDocument } from "survey-engine";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { sweepMock, trackMock } = vi.hoisted(() => ({
   sweepMock: vi.fn<(document: SurveyDocument) => Promise<void>>(),
@@ -64,10 +61,6 @@ describe("resourceSurveyEditor", () => {
     await readResource();
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   test("the loaded document is the one the creator holds, and its files are tracked", async () => {
     expect.hasAssertions();
 
@@ -85,7 +78,6 @@ describe("resourceSurveyEditor", () => {
 
     await mountSuspended(ResourceSurveyEditor);
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const surveyCreatorStore = useSurveyCreatorStore();
     const { document: creatorDocument } = storeToRefs(surveyCreatorStore);
     // Two questions sharing a name is a refusal the check reports, which no creator edit leaves in the document
@@ -93,16 +85,15 @@ describe("resourceSurveyEditor", () => {
       createSurveyTestPage([createSurveyTestQuestion("a"), createSurveyTestQuestion("a")]),
     ]);
     const [firstIssue] = checkSurveyDocument(duplicateDocument);
-    creatorDocument.value = duplicateDocument;
-    await nextTick();
-    vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    await waitForSynchronizedFunctions();
-    await flushPromises();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
+    creatorDocument.value = duplicateDocument;
+    // The autosave debounce runs on the real clock, so the wait is for the alert that the refusal raises. The alert store
+    // Pushes into its list, so the wait reads the length, which a push changes, rather than watching the ref
+    await until(() => alerts.value.length > 0).toBe(true);
 
-    expect(saveResourceContent).not.toHaveBeenCalled();
     expect(alerts.value.map(({ text }) => text)).toStrictEqual([`${firstIssue?.pointer}: ${firstIssue?.message}`]);
+    expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
   test("closing the editor sweeps the document as it stands, once", async () => {
