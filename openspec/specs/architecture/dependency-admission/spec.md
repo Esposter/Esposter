@@ -66,15 +66,22 @@ A security-shaped or data-tracking package SHALL be absorbed only when its upstr
 - **WHEN** its verdict is recorded
 - **THEN** it stays a package
 
-### Requirement: An absorbed adapter reaches parity with the package it replaces
+### Requirement: An absorption improves on the package it replaces
 
-An absorbed adapter SHALL reach feature parity with the package it replaces and close every issue within its scope.
+An absorbed package SHALL improve on the package it replaces in what a measurement shows, close every issue within its scope, and record each deliberate difference from it with its reason.
 
-#### Scenario: A feature the app does not call is still implemented
+#### Scenario: A feature no design of ours needs is not built
 
-- **GIVEN** the replaced package offers a feature the app does not call
-- **WHEN** the adapter is absorbed
-- **THEN** the replacement implements that feature as well
+- **GIVEN** the replaced package offers a feature that no design of ours calls for
+- **WHEN** the package is absorbed
+- **THEN** the replacement does not build that feature
+- **AND** its spec records that it was left out and why
+
+#### Scenario: An absorption that measures no better is reworked
+
+- **GIVEN** a replacement whose gzipped client bytes and runtime cost are measured against the package's
+- **WHEN** it is better on nothing it set out to improve
+- **THEN** it is reworked before the catalog entry is deleted
 
 #### Scenario: A deprecated shape is not carried over
 

@@ -1,6 +1,6 @@
 ---
 name: dependency-absorption
-description: Apply when replacing a third-party package with code of our own, removing an adapter or wrapper library, auditing a package's upstream issue tracker, turning an absorbed seam into a workspace package, or replacing a package whose output is an interface a person sees. Esposter's absorption flow — survey, gate, upstream audit, build behind the call site, swap, residue sweep, verify — run as the dependency-admission page decides, with every upstream issue given an evidenced verdict and an adapter rebuilt as its own package at parity or better.
+description: Apply when replacing a third-party package with code of our own, removing an adapter or wrapper library, auditing a package's upstream issue tracker, turning an absorbed seam into a workspace package, or replacing a package whose output is an interface a person sees. Esposter's absorption flow — survey, gate, upstream audit, build behind the call site, swap, residue sweep, verify — run as the dependency-admission page decides, with every upstream issue given an evidenced verdict and an adapter rebuilt as its own package that is measurably better than what it replaces.
 ---
 
 # Dependency Absorption
@@ -10,8 +10,8 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 ## Settled — do not re-propose
 
 - **Keeping a small, stable utility because owning it means maintaining it.** Maintenance is an agent's compute, and an absorbed utility is built as ESM by our own tsdown with every upstream issue fixed and tested; a utility stays a dependency only for a reason the admission test names (`openspec/specs/architecture/dependency-admission/design.md`, "The admission test").
-- **A parity gap left because our app does not call that half.** An adapter is absorbed as a package of its own, and a package missing the surface it replaced is a fork with gaps (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
-- **Porting a shape an engine has deprecated, for parity.** Parity is with the engines' current surface, and the replacement carries no debt the upstream package kept for its older users (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
+- **Parity with the replaced package as the goal.** An absorption is an upgrade, and the replaced package's surface is evidence of what its users needed, not a checklist (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
+- **Porting a shape an engine has deprecated.** The replacement follows the engines' current surface and carries no debt the upstream package kept for its older users (`openspec/specs/architecture/dependency-admission/design.md`, "The standard an absorption meets").
 - **Recording the triage in the commit body alone.** The next reader arrives from a stranded upstream link in our code or a search, not from `git log`; the verdicts live in the package's spec (`references/package-shape.md`).
 - **Skipping the closed issues.** A closed issue is where a fix the replacement must keep, or a workaround our code still carries, is explained (`references/upstream-audit.md`).
 - **Porting the upstream's code.** A port carries its structure, its dead branches and its per-request costs into our tree. The replacement is rewritten from the ground up against the upstream's behaviour and its audit.
@@ -20,9 +20,10 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 ## Rules
 
 - **A package or a hook is absent only after the scoped name and the installed dist are read.** An unscoped name that 404s proves nothing (`unplugin-pwa` is `@unplugin-pwa/core` and `@unplugin-pwa/vite`), and a hook the docs omit may still fire (`nitro:build:public-assets` is Nitro's `vite:compile:before`): search the registry for the scope and grep the installed package for the name before telling the user it does not exist.
+- **The upgrade is measured.** The design names what the absorption improves (the client's gzipped bytes, the runtime cost, the type safety, the size of the surface), the verify stage re-measures it with the absorb score's own measures, and the spec lists every deliberate difference from the replaced package with its reason.
 - **The upstream audit runs before any code is written** — every issue, open and closed, read with its comments (`references/upstream-audit.md`).
 - **The replacement is a rewrite from the ground up, never a port.**
-  - It is designed from the surface's behaviour on the current engines, in our conventions, and sheds whatever only served the upstream's older users or its own internals.
+  - It is designed from the surface's behaviour on the current engines, in our conventions, and sheds whatever only served the upstream's older users or its own internals, and whatever no design of ours needs.
   - It lands every in-scope defect fix, and every feature or pull request the audit judges worth having. A feature that is over-engineering or out of scope keeps its verdict and is not built.
   - Each fix and feature carries its regression test.
 - **Every verdict carries its evidence**: a reproduction for a defect, a test for a feature, the named owner for out of scope, the answering link for a false positive (`references/upstream-audit.md`).
