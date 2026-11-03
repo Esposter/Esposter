@@ -28,7 +28,7 @@ describe("trpcRouter", () => {
 
     expect([...unboundedProcedurePaths]).toStrictEqual([]);
     // An opaque value holds whatever strings and arrays it is sent, so these are the procedures that carry one: each
-    // Carries a document whose shape another library or resource owns (TipTap, SurveyJS answers, a blueprint's entries),
+    // Carries a document whose shape another library or resource owns (TipTap, a blueprint's entries),
     // Or a patch's values, which the resource's own schema parses once applied. A new one is bounded beside it or named
     expect([...opaqueProcedurePaths]).toStrictEqual([
       "blueprint.saveResourceContent",
@@ -36,8 +36,6 @@ describe("trpcRouter", () => {
       "email.compile",
       "note.saveResourceContent",
       "resource.updateResourceContent",
-      "survey.createSurveyResponse",
-      "survey.updateSurveyResponse",
       "webpage.saveResourceContent",
     ]);
   });

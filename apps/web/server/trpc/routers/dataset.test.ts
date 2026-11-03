@@ -7,7 +7,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
-import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import {
+  createPageDocument,
+  createPublishedSurvey,
+  createSurveyDocumentWith,
+} from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
@@ -54,18 +58,19 @@ describe("datasetRouter", () => {
     MockTableDatabase.clear();
   });
 
-  const setupSurvey = () => createSurvey(surveyCaller, name, { document });
-  // A survey response's submission time is its save time, so the clock is pinned to the epoch
+  const setupSurvey = () => createPublishedSurvey(surveyCaller, name, { document });
+  // A survey response's submission time is its save time, so the clock is pinned to the epoch once the survey is
+  // Published — a version published at the epoch is not newer than the epoch its snapshot is read back against
   const submittedAt = new Date(0).toISOString();
   const submittedAtColumn = { name: "submittedAt", title: "Submitted", type: ColumnType.Date };
 
   test("reads survey responses dataset", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0 });
     const newSurvey = await setupSurvey();
+    vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      model: { a: 0, b: true, c: "" },
+      model: { a: 1, b: true, c: "" },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -77,7 +82,7 @@ describe("datasetRouter", () => {
       { name: "b", type: ColumnType.Boolean },
       { name: "c", type: ColumnType.String },
     ]);
-    expect(dataset.rows).toStrictEqual([{ a: 0, b: true, c: "", submittedAt }]);
+    expect(dataset.rows).toStrictEqual([{ a: 1, b: true, c: "", submittedAt }]);
     expect(dataset.totalRows).toBe(1);
   });
 
@@ -87,7 +92,7 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     await Promise.all(
       Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
-        surveyCaller.createSurveyResponse({ model: { a: 0 }, partitionKey: newSurvey.id, rowKey: crypto.randomUUID() }),
+        surveyCaller.createSurveyResponse({ model: { a: 1 }, partitionKey: newSurvey.id, rowKey: crypto.randomUUID() }),
       ),
     );
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
@@ -95,7 +100,9 @@ describe("datasetRouter", () => {
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
     // The capped read reports the uncapped total so consumers can say what they are not showing
     expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
-  });
+    // One write per row past the page size, each checked against the published survey: 1.4s alone, but a full-suite
+    // Run loads the machine enough to pass the global 30s
+  }, 60_000);
 
   test("reads survey responses dataset with no responses", async () => {
     expect.hasAssertions();
@@ -110,41 +117,47 @@ describe("datasetRouter", () => {
   test("fills missing answers with null", async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ now: 0 });
     const newSurvey = await setupSurvey();
+    vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      model: { a: 0 },
+      model: { a: 1 },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([{ a: 0, b: null, c: null, submittedAt }]);
+    expect(dataset.rows).toStrictEqual([{ a: 1, b: null, c: null, submittedAt }]);
   });
 
   test("joins checkbox answers into one cell, with non-string items as json", async () => {
     expect.hasAssertions();
 
+    // A checkbox takes its choices' own values, which are text or a number, so the non-string item is a numeric choice
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, {
+      document: createPageDocument([
+        {
+          props: { choices: [{ value: "red" }, { value: 2 }], id: crypto.randomUUID(), name: "c" },
+          type: SurveyNodeType.Checkbox,
+        },
+      ]),
+    });
     vi.useFakeTimers({ now: 0 });
-    const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
-      model: { c: ["red", { other: "blue" }] },
+      model: { c: ["red", 2] },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toStrictEqual([
-      { a: null, b: null, c: `red; ${JSON.stringify({ other: "blue" })}`, submittedAt },
-    ]);
+    expect(dataset.rows).toStrictEqual([{ c: "red; 2", submittedAt }]);
   });
 
   test("reserves the submission column name a question takes", async () => {
     expect.hasAssertions();
 
     const questionDocument = createSurveyDocumentWith([{ name: "submittedAt", type: SurveyNodeType.Text }]);
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument });
     vi.useFakeTimers({ now: 0 });
-    const newSurvey = await createSurvey(surveyCaller, name, { document: questionDocument });
     await surveyCaller.createSurveyResponse({
       model: { submittedAt: "answer" },
       partitionKey: newSurvey.id,

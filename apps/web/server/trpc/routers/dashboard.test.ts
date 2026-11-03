@@ -2,7 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";
@@ -36,11 +36,11 @@ describe("dashboardRouter", () => {
   test("bakes dataset snapshot into published dashboard", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await createSurvey(surveyCaller, name, {
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, {
       document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
     });
     await surveyCaller.createSurveyResponse({
-      model: { [name]: 0 },
+      model: { [name]: 1 },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -65,7 +65,7 @@ describe("dashboardRouter", () => {
 
     expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
       columns: [{ name, type: ColumnType.Number }],
-      rows: [{ [name]: 0 }],
+      rows: [{ [name]: 1 }],
       totalRows: 1,
     });
   });
@@ -76,14 +76,14 @@ describe("dashboardRouter", () => {
     expect.hasAssertions();
 
     const unreadName = "unreadName";
-    const newSurvey = await createSurvey(surveyCaller, name, {
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, {
       document: createSurveyDocumentWith([
         { name, type: SurveyNodeType.Rating },
         { name: unreadName, type: SurveyNodeType.Text },
       ]),
     });
     await surveyCaller.createSurveyResponse({
-      model: { [name]: 0, [unreadName]: unreadName },
+      model: { [name]: 1, [unreadName]: unreadName },
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -104,7 +104,7 @@ describe("dashboardRouter", () => {
 
     expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
       columns: [{ name, type: ColumnType.Number }],
-      rows: [{ [name]: 0 }],
+      rows: [{ [name]: 1 }],
       totalRows: 1,
     });
   });

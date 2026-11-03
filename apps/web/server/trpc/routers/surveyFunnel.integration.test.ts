@@ -9,7 +9,7 @@ import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } fr
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
@@ -25,7 +25,7 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { AzureEntityType, resourcesInResource, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { createSurveyDocument } from "survey-engine";
+import { SurveyNodeType } from "survey-engine";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one
@@ -41,7 +41,7 @@ describe("surveyFunnel", () => {
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const settings = surveySettingsSchema.parse({});
   const name = "name";
-  const document = createSurveyDocument();
+  const document = createSurveyDocumentWith([{ name: "a", type: SurveyNodeType.Rating }]);
   const customerKeyValue = "keyValue";
   // Three customers is the smallest audience exhibiting responded / not-responded / rejected, and a key value
   // Long enough that the "never leaks the participant list" assertions have a needle worth searching for
@@ -70,11 +70,10 @@ describe("surveyFunnel", () => {
     const sheet = await createAudienceSheet(sheetCaller, name, customers);
 
     // 2. The survey — Identified mode, published
-    const survey = await createSurvey(surveyCaller, name, {
+    const survey = await createPublishedSurvey(surveyCaller, name, {
       document,
       settings: { ...settings, responseMode: SurveyResponseMode.Identified },
     });
-    await surveyCaller.publishResource({ id: survey.id });
 
     // 3 + 4. The email and the program binding audience + email + survey
     const email = await emailCaller.createResource({ name });
@@ -104,7 +103,7 @@ describe("surveyFunnel", () => {
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
-      model: { a: 0 },
+      model: { a: 1 },
       participantToken: firstParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),

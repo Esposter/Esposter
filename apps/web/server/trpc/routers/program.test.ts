@@ -14,7 +14,7 @@ import { mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createPublishedSurvey, createSurvey, createSurveyDocumentWith } from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
 import { programRouter } from "#server/trpc/routers/program";
@@ -41,7 +41,7 @@ import {
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
-import { createSurveyDocument } from "survey-engine";
+import { SurveyNodeType } from "survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -70,7 +70,7 @@ describe("programRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
-  const document = createSurveyDocument();
+  const document = createSurveyDocumentWith([{ name: "a", type: SurveyNodeType.Rating }]);
   const settings = surveySettingsSchema.parse({});
   const identifiedSettings = { ...settings, responseMode: SurveyResponseMode.Identified };
   // Three participants is the smallest set exhibiting responded / not-responded / duplicate-key
@@ -84,7 +84,7 @@ describe("programRouter", () => {
   // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
   // Audience sheet — and varies only the audience it issues against, or the survey's settings
   const setupIdentifiedProgram = async (audienceKeyValues = keyValues, surveySettings = identifiedSettings) => {
-    const survey = await createSurvey(surveyCaller, name, { document, settings: surveySettings });
+    const survey = await createPublishedSurvey(surveyCaller, name, { document, settings: surveySettings });
     const program = await createBoundProgram({
       keyValues: audienceKeyValues,
       name,
@@ -268,7 +268,7 @@ describe("programRouter", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
-      model: { a: 0 },
+      model: { a: 1 },
       participantToken: respondedParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -305,7 +305,7 @@ describe("programRouter", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
-      model: { a: 0 },
+      model: { a: 1 },
       participantToken: "",
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),

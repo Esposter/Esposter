@@ -10,14 +10,13 @@ import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
-import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { createPageDocument, createPublishedSurvey, createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import {
   AzureEntityType,
   AzureTable,
@@ -30,9 +29,9 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MockTableClient, MockTableDatabase } from "azure-mock";
 import {
   createSurveyDocument,
+  MAX_SURVEY_ANSWER_LENGTH,
   SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
-  surveyDocumentSchema,
   SurveyNodeType,
   surveyPageNodeType,
   SurveyTextInputType,
@@ -45,13 +44,6 @@ const createQuestion = (questionName: string): SurveyTextNode => ({
   props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name: questionName },
   type: SurveyNodeType.Text,
 });
-
-// A document whose one page holds the elements given, parsed so a fixture is a document a save would accept
-const createPageDocument = (children: unknown[]) =>
-  surveyDocumentSchema.parse({
-    content: [{ props: { children, id: crypto.randomUUID() }, type: SurveyNodeType.Page }],
-    root: { props: {} },
-  });
 
 // The survey-specific procedures.
 describe("surveyRouter", () => {
@@ -108,14 +100,11 @@ describe("surveyRouter", () => {
     { props: { id: "a", inputType: SurveyTextInputType.Number, name: "a" }, type: SurveyNodeType.Text },
   ]);
   // A response is checked against the document the survey published, so a survey takes responses once it is published
-  const createPublishedSurvey = async (surveySettings = settings, surveyDocument = numberDocument) => {
-    const survey = await createSurvey(caller, name, { document: surveyDocument, settings: surveySettings });
-    await caller.publishResource({ id: survey.id });
-    return survey;
-  };
+  const createResponseSurvey = (surveySettings = settings, surveyDocument = numberDocument) =>
+    createPublishedSurvey(caller, name, { document: surveyDocument, settings: surveySettings });
   // An Identified survey plus a program bound to it, returning the survey and its one valid token
   const setupIdentifiedSurvey = async () => {
-    const survey = await createPublishedSurvey(identifiedSettings);
+    const survey = await createResponseSurvey(identifiedSettings);
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -224,7 +213,7 @@ describe("surveyRouter", () => {
   test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     await createSurveyResponse(newResource.id, 0);
 
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
@@ -262,7 +251,7 @@ describe("surveyRouter", () => {
   test("creates and reads survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const surveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
@@ -275,7 +264,7 @@ describe("surveyRouter", () => {
   test("fails read of a response to a recycle-binned survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.deleteResource({ id: newResource.id });
 
@@ -287,15 +276,17 @@ describe("surveyRouter", () => {
   });
 
   // The one anonymous write path is bounded by the one property its answers are stored in, and refused before the
-  // Write rather than by the Table after it
+  // Write rather than by the Table after it. Each answer is at the most one answer may be, so four of them overrun
+  // The property and nothing but the record's own bound refuses them
   test("fails createSurveyResponse with answers larger than the stored property", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
+    const largeAnswer = " ".repeat(MAX_SURVEY_ANSWER_LENGTH);
 
     await expect(
       caller.createSurveyResponse({
-        model: { a: " ".repeat(AZURE_MAX_STRING_PROPERTY_LENGTH) },
+        model: { a: largeAnswer, b: largeAnswer, c: largeAnswer, d: largeAnswer },
         participantToken: "",
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
@@ -316,7 +307,7 @@ describe("surveyRouter", () => {
   test("updates survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
@@ -327,7 +318,7 @@ describe("surveyRouter", () => {
   test("fails update survey response with duplicate model", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
     await expect(
@@ -346,7 +337,7 @@ describe("surveyRouter", () => {
   test("persists a page-only advance for the same answers", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { a: 0 },
       pageNo: 0,
@@ -370,7 +361,7 @@ describe("surveyRouter", () => {
   test("rejects a same-answer resubmit that does not advance the page", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { a: 0 },
       pageNo: 2,
@@ -400,7 +391,7 @@ describe("surveyRouter", () => {
   test("rejects a save that a concurrent save overtook", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const { updateEntity } = MockTableClient.prototype;
     const { promise: isFirstWriting, resolve: resolveFirstWriting } = Promise.withResolvers<string>();
@@ -443,7 +434,7 @@ describe("surveyRouter", () => {
   test("fails update survey response with old model version", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await updateSurveyResponse(newSurveyResponse, 1);
 
@@ -461,7 +452,7 @@ describe("surveyRouter", () => {
   test("stores no token for an anonymous survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     // A stale participant link into an anonymous survey still works, it just carries nothing
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0, crypto.randomUUID());
 
@@ -571,7 +562,7 @@ describe("surveyRouter", () => {
   test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
     expect.hasAssertions();
 
-    const survey = await createPublishedSurvey(identifiedSettings);
+    const survey = await createResponseSurvey(identifiedSettings);
     // Two recipients of the same program: both tokens are valid, but a response belongs to exactly one
     const program = await createBoundProgram({
       keyValues: [keyValue, `${keyValue} `],
@@ -645,7 +636,7 @@ describe("surveyRouter", () => {
   test("fails update with closed survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     // An in-flight respondent — form open when the survey closed — gets the rejection on submit
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings: closedSettings });
@@ -710,7 +701,7 @@ describe("surveyRouter", () => {
   test("reopening accepts responses again", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey(closedSettings);
+    const newResource = await createResponseSurvey(closedSettings);
     // No re-publish involved — the toggle alone reopens collection
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { document, settings });
     await createSurveyResponse(newResource.id, 0);
@@ -722,7 +713,7 @@ describe("surveyRouter", () => {
   test("deletes survey response", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await createSurveyResponse(newResource.id, 1);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
@@ -737,7 +728,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response with non-existent row key", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
 
@@ -751,7 +742,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response for a user who does not own the survey", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await mockSessionOnce(mockContext.db);
 
@@ -763,7 +754,7 @@ describe("surveyRouter", () => {
   test("fails delete survey response across surveys", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const otherResource = await caller.createResource({ name });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
@@ -778,7 +769,7 @@ describe("surveyRouter", () => {
   test("counts survey responses", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const emptyCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(emptyCount).toStrictEqual({ count: 0, isCapped: false });
@@ -792,7 +783,7 @@ describe("surveyRouter", () => {
   test("counts a draft only once the same answers submit it", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const draftSurveyResponse = await caller.createSurveyResponse({
       isDraft: true,
       model: { a: 0 },
@@ -817,7 +808,7 @@ describe("surveyRouter", () => {
   test("keeps a submitted response submitted when a later save says draft", async () => {
     expect.hasAssertions();
 
-    const newResource = await createPublishedSurvey();
+    const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.updateSurveyResponse({
       isDraft: true,
@@ -831,60 +822,58 @@ describe("surveyRouter", () => {
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
 
-  describe("response validation", () => {
-    test("refuses a rating outside its scale, naming the question", async () => {
-      expect.hasAssertions();
+  test("response validation: refuses a rating outside its scale, naming the question", async () => {
+    expect.hasAssertions();
 
-      const survey = await createPublishedSurvey(
-        settings,
-        createPageDocument([{ props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating }]),
-      );
-      const ratingErrorMessage = new InvalidOperationError(
-        Operation.Create,
-        AzureEntityType.SurveyResponse,
-        `Answer to "rating": ${SURVEY_OUT_OF_RANGE_MESSAGE}`,
-      ).message;
+    const survey = await createResponseSurvey(
+      settings,
+      createPageDocument([{ props: { id: "rating", name: "rating", rateCount: 5 }, type: SurveyNodeType.Rating }]),
+    );
+    const ratingErrorMessage = new InvalidOperationError(
+      Operation.Create,
+      AzureEntityType.SurveyResponse,
+      `Answer to "rating": ${SURVEY_OUT_OF_RANGE_MESSAGE}`,
+    ).message;
 
-      await expect(
-        caller.createSurveyResponse({
-          model: { rating: 9 },
-          participantToken: "",
-          partitionKey: survey.id,
-          rowKey: crypto.randomUUID(),
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${ratingErrorMessage}]`);
-    });
+    await expect(
+      caller.createSurveyResponse({
+        model: { rating: 9 },
+        participantToken: "",
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${ratingErrorMessage}]`);
+  });
 
-    test("saves a draft with a required question unanswered, and refuses the submit for it", async () => {
-      expect.hasAssertions();
+  test("response validation: saves a draft with a required question unanswered, and refuses the submit for it", async () => {
+    expect.hasAssertions();
 
-      const survey = await createPublishedSurvey(
-        settings,
-        createPageDocument([{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }]),
-      );
-      const requiredErrorMessage = new InvalidOperationError(
-        Operation.Create,
-        AzureEntityType.SurveyResponse,
-        `Answer to "a": ${SURVEY_REQUIRED_MESSAGE}`,
-      ).message;
+    const survey = await createResponseSurvey(
+      settings,
+      createPageDocument([{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }]),
+    );
+    const requiredErrorMessage = new InvalidOperationError(
+      Operation.Create,
+      AzureEntityType.SurveyResponse,
+      `Answer to "a": ${SURVEY_REQUIRED_MESSAGE}`,
+    ).message;
 
-      await expect(
-        caller.createSurveyResponse({
-          isDraft: true,
-          model: {},
-          participantToken: "",
-          partitionKey: survey.id,
-          rowKey: crypto.randomUUID(),
-        }),
-      ).resolves.toHaveProperty("isDraft", true);
-      await expect(
-        caller.createSurveyResponse({
-          model: {},
-          participantToken: "",
-          partitionKey: survey.id,
-          rowKey: crypto.randomUUID(),
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${requiredErrorMessage}]`);
-    });
+    await expect(
+      caller.createSurveyResponse({
+        isDraft: true,
+        model: {},
+        participantToken: "",
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).resolves.toHaveProperty("isDraft", true);
+    await expect(
+      caller.createSurveyResponse({
+        model: {},
+        participantToken: "",
+        partitionKey: survey.id,
+        rowKey: crypto.randomUUID(),
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${requiredErrorMessage}]`);
   });
 });

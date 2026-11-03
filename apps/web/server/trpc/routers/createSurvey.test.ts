@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { SurveyDocument } from "survey-engine";
 import type { z } from "zod";
 
-import { SurveyNodeType, surveyDocumentSchema } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe } from "vitest";
 
 // A survey with its content written — the shape every suite that answers one or binds a program to it starts
@@ -20,20 +20,27 @@ export const createSurvey = async (
   return newResource;
 };
 
-// A survey document whose one page holds a question of each given name and kind. The schema parses it, so each
-// Question takes its kind's defaults and a fresh id the document requires to be unique
-export const createSurveyDocumentWith = (questions: { name: string; type: SurveyNodeType }[]): SurveyDocument =>
+// A survey published as it is created, the state a response write is checked against
+export const createPublishedSurvey = async (
+  surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>,
+  name: string,
+  content: z.input<typeof surveyResourceSchema>,
+): Promise<ResourceInResource> => {
+  const survey = await createSurvey(surveyCaller, name, content);
+  await surveyCaller.publishResource({ id: survey.id });
+  return survey;
+};
+
+// A survey document whose one page holds the elements given, parsed so a fixture is a document a save would accept
+export const createPageDocument = (children: unknown[]): SurveyDocument =>
   surveyDocumentSchema.parse({
-    content: [
-      {
-        props: {
-          children: questions.map(({ name, type }) => ({ props: { id: crypto.randomUUID(), name }, type })),
-          id: crypto.randomUUID(),
-        },
-        type: SurveyNodeType.Page,
-      },
-    ],
+    content: [{ props: { children, id: crypto.randomUUID() }, type: SurveyNodeType.Page }],
     root: { props: {} },
   });
+
+// A survey document whose one page holds a question of each given name and kind. Each question takes its kind's
+// Defaults and a fresh id the document requires to be unique
+export const createSurveyDocumentWith = (questions: { name: string; type: SurveyNodeType }[]): SurveyDocument =>
+  createPageDocument(questions.map(({ name, type }) => ({ props: { id: crypto.randomUUID(), name }, type })));
 
 describe.todo("createSurvey");
