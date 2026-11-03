@@ -24,6 +24,8 @@ Build order of the parts. Each part carries its own tasks; this list is the orde
       Verify: the typecheck and the touched suites are green.
 - [ ] 3.2 Swap the [respondent](../../specs/resource/survey-respondent/design.md) page and the Editor blade to the new code.
       Verify: the respondent part's scenarios pass against the new page.
+- [ ] 3.3 Decide whether the question union holds the markup and expression kinds. The union includes the html, image and expression kinds, so the non-question guard repeats in three places: the Panel, Html and Image exclusion in `getSurveyQuestionErrors`, the leaf check in `validateSurveyAnswers`, and the read-only set in `checkSurveyNodeEnabled`. If the union drops those kinds, one narrowing predicate can serve all three.
+      Verify: the [document part](../../specs/resource/survey-document/design.md) states the decision, and the three checks read one predicate, with the survey-engine typecheck and runner suite green.
 
 ## 4. Removal and close
 
