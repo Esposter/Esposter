@@ -82,7 +82,7 @@ flowchart LR
   Combat -->|defeatEnemy| Archive[useWorldArchiveStore]
   Combat -->|questEvent| Quests
   Save[useWorldSave] -->|bagChange| Archive
-  Quests -->|achievementEvents| Achievements[useWorldAchievements]
+  Quests -->|achievementEvents| Achievements[useWorldAchievementsStore]
   Quests -->|parentQuestFinish| Archive
   Map[useWorldMapStore] -->|questEvent| Quests
 ```

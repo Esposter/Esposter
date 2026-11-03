@@ -2,6 +2,7 @@ import { useWorldSave } from "#src/composables/useWorldSave";
 import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
+import { useWorldAchievementsStore } from "#src/store/achievements";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { assert, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick } from "vue";
@@ -35,7 +36,7 @@ describe(useWorldSave, () => {
     const worldSave = scope.run(() => useWorldSave({ emitGrant, savedState }));
     assert.exists(worldSave);
 
-    worldSave.achievementProgressMap.value = new Map();
+    useWorldAchievementsStore().achievementProgressMap = new Map();
     await nextTick();
 
     expect(emitGrant).toHaveBeenCalledExactlyOnceWith();

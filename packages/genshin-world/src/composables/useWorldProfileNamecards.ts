@@ -1,7 +1,6 @@
-import type { WorldProfileNamecardsOptions } from "#src/models/profile/WorldProfileNamecardsOptions";
-
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
+import { useWorldAchievementsStore } from "#src/store/achievements";
 import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
@@ -9,7 +8,9 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language
-export const useWorldProfileNamecards = ({ achievementData, achievementProgressMap }: WorldProfileNamecardsOptions) => {
+export const useWorldProfileNamecards = () => {
+  const worldAchievementsStore = useWorldAchievementsStore();
+  const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);
   const worldFriendshipStore = useWorldFriendshipStore();
   const { friendshipLevels, friendshipNamecards } = storeToRefs(worldFriendshipStore);
   const worldPartyStore = useWorldPartyStore();

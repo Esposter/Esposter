@@ -53,7 +53,6 @@ import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useMenuNavigation } from "#src/composables/useMenuNavigation";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
-import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldBagUse } from "#src/composables/useWorldBagUse";
 import { useWorldCamera } from "#src/composables/useWorldCamera";
 import { useWorldCardGame } from "#src/composables/useWorldCardGame";
@@ -114,6 +113,7 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
+import { useWorldAchievementsStore } from "#src/store/achievements";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldChestsStore } from "#src/store/chests";
@@ -289,8 +289,14 @@ startStatues({
   regionStatueProgressMap: savedState.regionStatueProgressMap,
 });
 onUnmounted(stopStatues);
+// The achievements the finished steps and quests move, and their data, read as the Achievements screen opens. They start
+// Before the save watches them, as the chests do
+const worldAchievementsStore = useWorldAchievementsStore();
+const { start: startAchievements, stop: stopAchievements } = worldAchievementsStore;
+const { achievementData, achievementProgressMap } = storeToRefs(worldAchievementsStore);
+startAchievements(savedState.achievementProgressMap);
+onUnmounted(stopAchievements);
 const {
-  achievementProgressMap,
   applyDestruction,
   bossDefeatMap,
   chooseTravelerBirthday,
@@ -417,8 +423,6 @@ onUnmounted(stopGround);
 const landmarkCollider = createLandmarkCollider();
 // Elemental Sight, which its binding turns on and off where the world is open, spreading from the place it was turned on
 const elementalSight: ElementalSight = { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 };
-// The achievements the finished steps and quests move, and their data, read as the Achievements screen opens
-const { achievementData } = useWorldAchievements({ achievementProgressMap });
 // The mailbox, read as the world starts with the Traveler's birthday mail due and the expired mails gone, and claimed as
 // The Mail screen claims them into the bag and wallet
 const worldMailStore = useWorldMailStore();
@@ -582,7 +586,7 @@ const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPo
     longTermEncounterPoints,
   });
 // The namecards the profile holds, which the profile's screen lists
-const { profileNamecards } = useWorldProfileNamecards({ achievementData, achievementProgressMap });
+const { profileNamecards } = useWorldProfileNamecards();
 // Using an entry of the bag, which the bag's screen offers
 const { useBagEntry } = useWorldBagUse({
   cookingProgress,
