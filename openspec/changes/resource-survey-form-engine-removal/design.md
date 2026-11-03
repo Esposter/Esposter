@@ -18,7 +18,7 @@ flowchart TD
 
 - **The purge is deletion only.** It runs the flowchart retirement's steps in their fixed order, the blob directory first and the row last, with the survey's response partition added before the storage ledger entries, and it converts nothing. A one-time job earns no test, so it carries guards inside it and its run output is the proof.
 - **The purge exists already and is run by the owner.** Starting it is publishing one event to the application topic in each environment, which only the owner can do.
-- **The removal waits for the purge.** The package removal and the picker's release both wait until each environment reports zero surveys, because a stored survey in the old shape is unreadable once the new schema is bound.
+- **The removal waits for the purge.** The package removal and the picker's release both wait until each environment reports zero surveys, zero response rows and zero invites, the check the flowchart's gate and task 1.1 run, because a stored survey in the old shape is unreadable once the new schema is bound.
 
 ## Key files
 
