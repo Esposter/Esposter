@@ -11,7 +11,9 @@ interface Props {
   node: SurveyBooleanNode;
 }
 
-const answer = defineModel<SurveyAnswerValue | undefined>();
+// The default is what keeps an unanswered question undefined: a boolean prop left out of a mount is cast to false, which
+// Would read as an answer of No and pre-select that option
+const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
 const isChecked = computed(() => answer.value === true);
@@ -45,12 +47,12 @@ const setChecked = (isOn: boolean) => {
         :label="stateLabel"
         :model-value="isChecked"
         is-label-shown
-        @update:model-value="setChecked"
+        @update:model-value="(isOn) => setChecked(isOn)"
       />
       <UiRadioGroup
         v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
         v-model="choice"
-        :is-disabled="isDisabled"
+        :is-disabled
         :items
         :label="title"
       />
@@ -63,7 +65,7 @@ const setChecked = (isOn: boolean) => {
         :label="stateLabel"
         :model-value="isChecked"
         is-label-shown
-        @update:model-value="setChecked"
+        @update:model-value="(isOn) => setChecked(isOn)"
       />
     </template>
   </ResourceSurveyFieldShell>
