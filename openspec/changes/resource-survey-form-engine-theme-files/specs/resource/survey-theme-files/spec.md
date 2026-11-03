@@ -10,6 +10,22 @@ The respondent page SHALL draw the survey's accent colour on its primary control
 - **WHEN** a respondent opens the survey
 - **THEN** the survey's primary controls are drawn in that green
 
+### Requirement: The survey's progress bar and question numbering apply to the respondent page
+
+The respondent page SHALL show the progress bar at the position the survey's progress bar setting names, and SHALL number its questions when the survey's question numbering setting is on; a survey with both settings off SHALL show neither.
+
+#### Scenario: Owner turns on question numbering
+
+- **GIVEN** a published survey with question numbering on
+- **WHEN** a respondent opens the survey
+- **THEN** each question shows its number
+
+#### Scenario: Owner moves the progress bar to the bottom
+
+- **GIVEN** a published survey whose progress bar is set to the bottom
+- **WHEN** a respondent opens the survey
+- **THEN** the progress bar is drawn below the page's questions
+
 ### Requirement: A file removed from the survey is deleted
 
 When the owner closes the editor, every file the survey uploaded and no longer references SHALL be deleted from the survey's file assets, and a file still referenced SHALL be kept.
