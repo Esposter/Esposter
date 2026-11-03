@@ -1,5 +1,3 @@
-import type { ArchiveData } from "#src/models/archive/ArchiveData";
-import type { ArchiveViewpoint } from "#src/models/archive/ArchiveViewpoint";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
 import type { FishingPointPlace } from "#src/models/fishing/FishingPointPlace";
 import type { HomeRealmVisit } from "#src/models/home/HomeRealmVisit";
@@ -14,7 +12,6 @@ import type { Ref } from "vue";
 // What the world's prompts are offered from: the prompts each source of the world already holds, and the places and
 // State of the rest, which the prompt list is joined from, and the body whose reach they are read in
 export interface WorldInteractablesOptions {
-  archiveData: Readonly<Ref<ArchiveData | undefined>>;
   blacksmithPlace: Readonly<Ref<SceneGroupPlace | undefined>>;
   characterBody: Object3D;
   chestInteractables: Readonly<Ref<Interactable[]>>;
@@ -29,12 +26,10 @@ export interface WorldInteractablesOptions {
   input: Input;
   isDomainTreeRaised: Readonly<Ref<boolean>>;
   isFishingOpen: Readonly<Ref<boolean>>;
-  offeredViewpoints: Readonly<Ref<readonly ArchiveViewpoint[]>>;
   outcropInteractables: Readonly<Ref<Interactable[]>>;
   pickUpInteractables: Readonly<Ref<Interactable[]>>;
   residentInteractables: Readonly<Ref<Interactable[]>>;
   shrineInteractables: Readonly<Ref<Interactable[]>>;
   trounceBlossomInteractables: Readonly<Ref<Interactable[]>>;
   unlockedDomainEntrances: Readonly<Ref<DomainEntranceLandmark[]>>;
-  viewpointPlaceMap: Readonly<Ref<ReadonlyMap<number, SceneGroupPlace>>>;
 }

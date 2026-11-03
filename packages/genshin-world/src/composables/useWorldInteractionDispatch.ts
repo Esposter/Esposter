@@ -17,6 +17,7 @@ import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -46,7 +47,6 @@ export const useWorldInteractionDispatch = ({
   getTalkDuelGameId,
   grantRewards,
   materialSources,
-  offeredViewpoints,
   offerFrostbearingTree,
   openAbyssEntrance,
   openChestById,
@@ -72,11 +72,13 @@ export const useWorldInteractionDispatch = ({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  viewViewpoint,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
+  const worldArchiveStore = useWorldArchiveStore();
+  const { offeredViewpoints } = storeToRefs(worldArchiveStore);
+  const { viewViewpoint } = worldArchiveStore;
   const worldReputationStore = useWorldReputationStore();
   const { reputation } = storeToRefs(worldReputationStore);
   const worldMapStore = useWorldMapStore();

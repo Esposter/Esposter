@@ -79,7 +79,7 @@ The world screen loads the names and the game's tables the save is read by and t
 flowchart LR
   Pick[useWorldPickups] -->|questEvent| Quests[useWorldQuestsStore]
   Pick -->|pickUpMora| Combat[useWorldCombat]
-  Combat -->|defeatEnemy| Archive[useWorldArchive]
+  Combat -->|defeatEnemy| Archive[useWorldArchiveStore]
   Combat -->|questEvent| Quests
   Save[useWorldSave] -->|bagChange| Archive
   Quests -->|achievementEvents| Achievements[useWorldAchievements]

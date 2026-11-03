@@ -1,5 +1,3 @@
-import type { ArchiveData } from "#src/models/archive/ArchiveData";
-import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
@@ -9,13 +7,10 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { ShallowRef } from "vue";
 
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
-import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
-import { openArchiveBook } from "#src/services/archive/openArchiveBook";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
 import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
@@ -31,6 +26,7 @@ import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { pickUpMaterialSource } from "#src/services/wildlife/pickUpMaterialSource";
 import { readMondstadtMaterialSourcePlaces } from "#src/services/wildlife/readMondstadtMaterialSourcePlaces";
+import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
@@ -41,18 +37,17 @@ import { storeToRefs } from "pinia";
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a point
 // Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once
 export const useWorldPickups = ({
-  archive,
   getGroundHeight,
   getServerClockOffsetMs,
   reliquaryPieceEntryMap,
   weaponDataMap,
 }: {
-  archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
   getGroundHeight: (x: number, z: number) => number;
   getServerClockOffsetMs: () => number;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldArchiveStore = useWorldArchiveStore();
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
@@ -137,9 +132,7 @@ export const useWorldPickups = ({
   // Ground as a smaller drop. Mora picked up is told to the team's kits, which an artifact set answers
   const pickUpWorldDrop = (worldDrop: WorldDrop) => {
     // A volume is taken straight into the Archive, which opens its entry, and never into the bag
-    const books = archive.archiveData.value?.sectionEntriesMap[ArchiveSection.Books] ?? [];
-    if (books.some(({ materialId }) => materialId === worldDrop.itemId)) {
-      archive.archiveProgressMap.value = openArchiveBook(archive.archiveProgressMap.value, books, worldDrop.itemId);
+    if (worldArchiveStore.takeBook(worldDrop.itemId)) {
       worldDrops.value = worldDrops.value.filter((drop) => drop !== worldDrop);
       return;
     }

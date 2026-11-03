@@ -54,7 +54,6 @@ import { useMenuNavigation } from "#src/composables/useMenuNavigation";
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSettings";
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
-import { useWorldArchive } from "#src/composables/useWorldArchive";
 import { useWorldBagUse } from "#src/composables/useWorldBagUse";
 import { useWorldCamera } from "#src/composables/useWorldCamera";
 import { useWorldCardGame } from "#src/composables/useWorldCardGame";
@@ -124,6 +123,7 @@ import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
@@ -250,8 +250,6 @@ onUnmounted(stop);
 const {
   achievementProgressMap,
   applyDestruction,
-  archiveKillsMap,
-  archiveProgressMap,
   bossDefeatMap,
   chooseTravelerBirthday,
   clearedCamps,
@@ -353,13 +351,17 @@ const {
   savedLongTermEncounterPoints: savedState.longTermEncounterPoints,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
-const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap, viewViewpoint } = useWorldArchive({
-  archiveKillsMap,
-  archiveProgressMap,
+const worldArchiveStore = useWorldArchiveStore();
+const { archiveData, archiveKillsMap, archiveProgressMap, bookReading } = storeToRefs(worldArchiveStore);
+const { readBook, start: startArchive, stop: stopArchive } = worldArchiveStore;
+startArchive({
+  archiveKillsMap: savedState.archiveKillsMap,
+  archiveProgressMap: savedState.archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
   reliquaryPieceEntryMap,
   reliquarySets,
 });
+onUnmounted(stopArchive);
 // The screen open over the world sets what the pointer and the keys do, and the cursor Left Alt shows over it
 const { screenBehaviour, showCursor } = useWorldScreenBehaviour({ closeFishing, input });
 // The world's root, which a menu's controls are walked within, so the pad's focus never leaves the menu over the world
@@ -408,7 +410,6 @@ const {
   strikeGatheringOres,
   worldDrops,
 } = useWorldPickups({
-  archive: { archiveData, archiveProgressMap },
   getGroundHeight,
   getServerClockOffsetMs: () => serverClockOffsetMs,
   reliquaryPieceEntryMap,
@@ -853,7 +854,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   getTalkDuelGameId,
   grantRewards,
   materialSources,
-  offeredViewpoints,
   offerFrostbearingTree,
   openAbyssEntrance,
   openChestById,
@@ -879,12 +879,10 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  viewViewpoint,
   worldDrops,
 });
 // The prompts beside the character, joined from every source that offers one
 const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
-  archiveData,
   blacksmithPlace,
   characterBody,
   chestInteractables,
@@ -899,14 +897,12 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   input,
   isDomainTreeRaised,
   isFishingOpen,
-  offeredViewpoints,
   outcropInteractables,
   pickUpInteractables,
   residentInteractables,
   shrineInteractables,
   trounceBlossomInteractables,
   unlockedDomainEntrances,
-  viewpointPlaceMap,
 });
 const character = useTemplateRef("character");
 // Entering combat returns the camera to its default distance, keeping the look it has

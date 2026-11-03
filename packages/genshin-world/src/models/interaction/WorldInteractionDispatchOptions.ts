@@ -35,7 +35,6 @@ export interface WorldInteractionDispatchOptions {
   getTalkDuelGameId: (talkId: string) => number | undefined;
   grantRewards: (rewards: QuestRewardItem[]) => void;
   materialSources: Readonly<Ref<readonly MaterialSourcePlace[]>>;
-  offeredViewpoints: Readonly<Ref<readonly { id: number }[]>>;
   offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
   openAbyssEntrance: () => void;
   openChestById: (chestId: string, random: () => number) => void;
@@ -61,6 +60,5 @@ export interface WorldInteractionDispatchOptions {
   toggleHomeRealm: (options: HomeRealmToggleOptions) => void;
   trounceBlossoms: Readonly<Ref<ReadonlyMap<string, unknown>>>;
   unlockedDomainEntrances: Readonly<Ref<readonly DomainEntranceLandmark[]>>;
-  viewViewpoint: (viewpointId: number) => void;
   worldDrops: Readonly<Ref<readonly WorldDrop[]>>;
 }

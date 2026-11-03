@@ -1,6 +1,4 @@
 import type { AchievementProgress } from "#src/models/achievement/AchievementProgress";
-import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
-import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
@@ -13,11 +11,12 @@ import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgress
 
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
+import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldSessionStore } from "#src/store/session";
 import { ref, shallowRef, watch } from "vue";
 
-// The wish counters, the achievements' progress, the bench's crafting and the Archive's entries and defeats the player
-// Holds, beside the bag and the wallet the session store holds. A change to any of them is a grant the host saves: the
+// The wish counters, the achievements' progress and the bench's crafting the player holds, beside the bag and the wallet
+// The session store holds and the Archive's progress and defeats its own store holds. A change to any of them is a grant the host saves: the
 // Changes made in one tick are one grant, so a pickup is one save, a wish is one save with its spend and its pity, and an
 // Achievement's progress is saved with the Primogems it paid
 export const useWorldSave = ({
@@ -28,8 +27,6 @@ export const useWorldSave = ({
   savedState: Pick<
     GenshinSaveState,
     | "achievementProgressMap"
-    | "archiveKillsMap"
-    | "archiveProgressMap"
     | "bossDefeatMap"
     | "clearedCamps"
     | "clearedDomainIds"
@@ -50,6 +47,7 @@ export const useWorldSave = ({
     | "wishPityMap"
   >;
 }) => {
+  const worldArchiveStore = useWorldArchiveStore();
   const worldSessionStore = useWorldSessionStore();
   const namecardItemId = ref(savedState.namecardItemId);
   // The Traveler's birthday, set once from the profile and kept with the save once it is set
@@ -59,8 +57,6 @@ export const useWorldSave = ({
   const achievementProgressMap = shallowRef<ReadonlyMap<number, AchievementProgress>>(
     savedState.achievementProgressMap,
   );
-  const archiveKillsMap = shallowRef<ArchiveKills>(savedState.archiveKillsMap);
-  const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
   // The tips the world has shown, each once by its id, kept with the save, and the tips it has triggered and not yet shown
   const shownTipIds = shallowRef<ReadonlySet<number>>(savedState.shownTipIds);
   const queuedTipIds = shallowRef<readonly number[]>(savedState.queuedTipIds);
@@ -85,8 +81,8 @@ export const useWorldSave = ({
       () => worldSessionStore.wallet,
       wishPityMap,
       achievementProgressMap,
-      archiveKillsMap,
-      archiveProgressMap,
+      () => worldArchiveStore.archiveKillsMap,
+      () => worldArchiveStore.archiveProgressMap,
       bossDefeatMap,
       clearedCamps,
       clearedDomainIds,
@@ -137,8 +133,6 @@ export const useWorldSave = ({
   return {
     achievementProgressMap,
     applyDestruction,
-    archiveKillsMap,
-    archiveProgressMap,
     bossDefeatMap,
     chooseTravelerBirthday,
     clearedCamps,

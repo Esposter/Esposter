@@ -20,6 +20,7 @@ import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmar
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
+import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
@@ -31,7 +32,6 @@ import { computed } from "vue";
 // Every prompt the world offers, joined from the sources that hold them and read beside the character's body: what is in
 // Reach is listed, selected and acted on as the key is pressed. Each prompt stands on the ground beneath its point
 export const useWorldInteractables = ({
-  archiveData,
   blacksmithPlace,
   characterBody,
   chestInteractables,
@@ -46,15 +46,15 @@ export const useWorldInteractables = ({
   input,
   isDomainTreeRaised,
   isFishingOpen,
-  offeredViewpoints,
   outcropInteractables,
   pickUpInteractables,
   residentInteractables,
   shrineInteractables,
   trounceBlossomInteractables,
   unlockedDomainEntrances,
-  viewpointPlaceMap,
 }: WorldInteractablesOptions) => {
+  const worldArchiveStore = useWorldArchiveStore();
+  const { archiveData, offeredViewpoints, viewpointPlaceMap } = storeToRefs(worldArchiveStore);
   const worldMapStore = useWorldMapStore();
   const { lockedJumpLandmarks, unlockedLandmarks } = storeToRefs(worldMapStore);
   const worldSessionStore = useWorldSessionStore();
