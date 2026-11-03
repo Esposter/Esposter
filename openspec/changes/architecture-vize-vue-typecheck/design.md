@@ -102,31 +102,25 @@ The tools agree on the other targets throughout: the three Vue packages report 0
 
 ### Resolved upstream
 
-Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass), #11444 to #11457 (second), and #11481 to #11484 (the library builds).
+Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass) and #11444 to #11454 (second). The compile-side reports from the same runs (the Nuxt module, the rolldown plugin and the Vite plugin's configuration) are recorded with their status on the deferred compiler page, [`openspec/deferred/architecture/vize-compiler/design.md`](../../deferred/architecture/vize-compiler/design.md), which owns them.
 
-| Issue  | What                                                  | Closed as                       | First release |
-| :----- | :---------------------------------------------------- | :------------------------------ | :------------ |
-| #11455 | the Nuxt module's `onPrehydrate` transform never ran  | completed                       | 0.657.0       |
-| #11456 | the rolldown plugin dropped `<style src>`             | completed (an error in 0.656.0) | 0.658.0       |
-| #11446 | `inheritAttrs: false` on a generic component          | completed                       | 0.659.0       |
-| #11447 | the payload of a generic library component            | completed                       | 0.659.0       |
-| #11451 | a destructured parameter of a nested callback         | completed                       | 0.659.0       |
-| #11452 | an assignment in an inline callback prop              | completed                       | 0.659.0       |
-| #11450 | a generic alias written at module scope               | completed                       | 0.660.0       |
-| #11445 | a cast to a `.vue` component type (`TS2352`)          | completed                       | 0.661.0       |
-| #11448 | a dynamic component with a generic key                | completed                       | 0.661.0       |
-| #11449 | a listener on a dynamic component in a slot           | completed                       | 0.661.0       |
-| #11453 | an event declared in camelCase and kebab-case         | completed                       | 0.661.0       |
-| #11454 | the declaration refuses undeclared attributes         | completed                       | 0.661.0       |
-| #11481 | a production build keeps the development output shape | completed                       | 0.661.0       |
-| #11482 | a package specifier in `<style src>` fails the build  | completed                       | 0.661.0       |
-| #11444 | the mapper's silent fallback on a mismatched `vue`    | configuration                   | none          |
-| #11457 | the Vite plugin ignores `isCustomElement`             | configuration                   | none          |
-| #11484 | `customElements` with a bound tag                     | configuration                   | none          |
+| Issue  | What                                               | Closed as     | First release |
+| :----- | :------------------------------------------------- | :------------ | :------------ |
+| #11446 | `inheritAttrs: false` on a generic component       | completed     | 0.659.0       |
+| #11447 | the payload of a generic library component         | completed     | 0.659.0       |
+| #11451 | a destructured parameter of a nested callback      | completed     | 0.659.0       |
+| #11452 | an assignment in an inline callback prop           | completed     | 0.659.0       |
+| #11450 | a generic alias written at module scope            | completed     | 0.660.0       |
+| #11445 | a cast to a `.vue` component type (`TS2352`)       | completed     | 0.661.0       |
+| #11448 | a dynamic component with a generic key             | completed     | 0.661.0       |
+| #11449 | a listener on a dynamic component in a slot        | completed     | 0.661.0       |
+| #11453 | an event declared in camelCase and kebab-case      | completed     | 0.661.0       |
+| #11454 | the declaration refuses undeclared attributes      | completed     | 0.661.0       |
+| #11444 | the mapper's silent fallback on a mismatched `vue` | configuration | none          |
 
 The twelve of the first pass (#11359 to #11368, #11390, #11391) are closed. Eleven were fixed in releases up to 0.650.0, which holds #11379, #11380, #11382, #11383 and #11395, and each reduction was re-run on 0.650.0 against the old release as its control: the control reproduced the diagnostic, 0.650.0 did not, and the same file with a deliberate real error still reported it. The twelfth, #11364, was closed with a reduction that already passed on every release (one required prop, no emits), which is why #11454 replaced it. Earlier landmines, also fixed: #11140 (dynamic event listeners wrote raw expressions into the virtual code, 1063 syntax errors across 15 `components/Dungeons` files), #11023 by #11074 in 0.606.0 (inline callback props typed from a child's prop got implicit `any`), #11257 in 0.628.0 (a `type: null` runtime prop, which `@nuxt/image` and `@nuxt/scripts` ship in about a dozen components), and #11365 (the declaration emit under `noUnusedLocals`).
 
-Open: **#11499** (the `TS2590` above, with two further gaps in the generated helper). **#11483** (plain `<style>` is injected at run time and no CSS file is written, a compile-side report on the deferred compiler page) is closed as completed on main by #11523 and is in no release yet.
+Open: **#11499** (the `TS2590` above, with two further gaps in the generated helper).
 
 ### Timings, cold and warm
 
