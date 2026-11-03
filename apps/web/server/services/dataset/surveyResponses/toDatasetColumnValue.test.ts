@@ -16,4 +16,16 @@ describe(toDatasetColumnValue, () => {
 
     expect(toDatasetColumnValue(date)).toBe(date.toISOString());
   });
+
+  test("writes a record, such as a matrix or multiple text answer, as compact JSON text", () => {
+    expect.hasAssertions();
+
+    expect(toDatasetColumnValue({ a: 0 })).toBe('{"a":0}');
+  });
+
+  test("writes a list of records, such as a dynamic matrix or panel answer, as one compact JSON text", () => {
+    expect.hasAssertions();
+
+    expect(toDatasetColumnValue([{ a: 0 }, { a: 1 }])).toBe('[{"a":0},{"a":1}]');
+  });
 });
