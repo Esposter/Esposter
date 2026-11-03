@@ -1,6 +1,6 @@
 # Survey Logic Builder
 
-The Logic tab of the [Creator](../resource-survey-form-engine-creator/design.md), over the [expression language](../resource-survey-form-engine-logic/design.md). It edits the three conditions an element holds and the survey's calculated values.
+The Logic tab of the [Creator](../resource-survey-form-engine-creator/design.md), over the [expression language](../../specs/resource/survey-logic/design.md). It edits the three conditions an element holds and the survey's calculated values.
 
 ## How it works
 

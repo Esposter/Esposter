@@ -19,9 +19,9 @@ interface BlockNode<TType extends string, TProps extends BlockNodeProps> {
   props: TProps;
   type: TType;
 }
-// A document: its content, and its root's props, typed by the registry's root schema once parsed
-interface BlockDocument<TNode extends BlockNode, TRootProps extends BlockRootProps> {
-  content: TNode[];
+// A document: its content, and its root's props, typed by the registry's root schema once parsed. The third parameter is the node type the root accepts
+interface BlockDocument<TNode extends BlockNode, TRootProps extends BlockRootProps, TRootNode extends TNode = TNode> {
+  content: TRootNode[];
   root: { props: TRootProps };
 }
 ```

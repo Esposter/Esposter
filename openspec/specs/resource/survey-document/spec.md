@@ -1,8 +1,12 @@
-## ADDED Requirements
+## Purpose
+
+Hold a survey as a typed document of pages, panels and questions, and refuse a save whose questions repeat a name, use a kind the survey does not offer or hold an expression that does not parse.
+
+## Requirements
 
 ### Requirement: A survey's questions are uniquely named and of a kind the survey offers
 
-A survey save SHALL be refused when two of its questions share a name, or when a question's kind is not one the survey offers, and the refusal SHALL name the question at fault. A survey whose questions satisfy both rules SHALL save.
+A survey save SHALL be refused, naming the question at fault, when two of its questions share a name or one of its questions has a kind the survey does not offer.
 
 #### Scenario: Two questions share a name
 

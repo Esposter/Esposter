@@ -1,6 +1,6 @@
 # Survey Readers
 
-The summary cards and the dataset columns, rewritten over the [typed document](../resource-survey-form-engine-document/design.md), whose types come from the `survey-engine` package. The response record stays a flat object keyed by question name, so only the reading of the questions changes.
+The summary cards and the dataset columns, rewritten over the [typed document](../../specs/resource/survey-document/design.md), whose types come from the `survey-engine` package. The response record stays a flat object keyed by question name, so only the reading of the questions changes.
 
 ## How it works
 

@@ -1,6 +1,6 @@
 # Survey Runner
 
-The state a respondent's session moves through, as plain functions in the `survey-engine` package with no DOM and no framework, over the [typed document](../resource-survey-form-engine-document/design.md) and the [expression language](../resource-survey-form-engine-logic/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so the three refuse the same answer for the same reason.
+The state a respondent's session moves through, as plain functions in the `survey-engine` package with no DOM and no framework, over the [typed document](../../specs/resource/survey-document/design.md) and the [expression language](../../specs/resource/survey-logic/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so the three refuse the same answer for the same reason.
 
 ## How it works
 

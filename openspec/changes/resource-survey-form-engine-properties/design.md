@@ -1,6 +1,6 @@
 # Survey Properties
 
-The right pane's Properties tab of the [Creator](../resource-survey-form-engine-creator/design.md): the selected element's settings, drawn from the same props schema the [document](../resource-survey-form-engine-document/design.md) checks.
+The right pane's Properties tab of the [Creator](../resource-survey-form-engine-creator/design.md): the selected element's settings, drawn from the same props schema the [document](../../specs/resource/survey-document/design.md) checks.
 
 ## How it works
 

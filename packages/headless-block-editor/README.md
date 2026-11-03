@@ -26,20 +26,20 @@ pnpm i headless-block-editor zod
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export                      | Kind      | Purpose                                                                                                                |
-| :-------------------------- | :-------- | :--------------------------------------------------------------------------------------------------------------------- |
-| `applyBlockEdit`            | function  | Applies an edit's operations and parses the result with the document's schema, refusing the whole edit if either fails |
-| `BlockChildren`             | type      | A consumer's children port, switched on a node's type so a slot the type lacks fails the typecheck                     |
-| `BlockDocument`             | interface | A document: its content, and its root's props                                                                          |
-| `BlockRegistry`             | interface | One definition per block type, and the root's definition                                                               |
-| `BlockTypeDefinition`       | interface | One block type's props schema, and the child types each of its slots allows                                            |
-| `createBlockDocumentSchema` | function  | The document's schema: content the root accepts, props, ids unique across every slot, and a node limit                 |
-| `getBlockLayerRows`         | function  | Every node in document order, with its depth and pointer                                                               |
-| `insertBlockNode`           | function  | Adds a node at an index of a slot, or no operations when the slot does not accept its type                             |
-| `moveBlockNode`             | function  | Moves a node to an index of another slot as a remove and an add, or no operations when refused                         |
-| `removeBlockNode`           | function  | Removes the node a pointer names, with its subtree                                                                     |
-| `renderBlockNodes`          | function  | Renders each node once its slots have rendered, skipping a node whose type the registry lacks                          |
-| `updateBlockNodeProps`      | function  | One JSON Patch add per prop, replacing a prop the node already has                                                     |
+| Export                      | Kind      | Purpose                                                                                                                                    |
+| :-------------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `applyBlockEdit`            | function  | Applies an edit's operations and parses the result with the document's schema, refusing the whole edit if either fails                     |
+| `BlockChildren`             | type      | A consumer's children port, switched on a node's type so a slot the type lacks fails the typecheck                                         |
+| `BlockDocument`             | interface | A document: its content and its root's props, with a third type parameter naming the node type the root accepts (default: every node type) |
+| `BlockRegistry`             | interface | One definition per block type, and the root's definition                                                                                   |
+| `BlockTypeDefinition`       | interface | One block type's props schema, and the child types each of its slots allows                                                                |
+| `createBlockDocumentSchema` | function  | The document's schema: content the root accepts, props, ids unique across every slot, and a node limit                                     |
+| `getBlockLayerRows`         | function  | Every node in document order, with its depth and pointer                                                                                   |
+| `insertBlockNode`           | function  | Adds a node at an index of a slot, or no operations when the slot does not accept its type                                                 |
+| `moveBlockNode`             | function  | Moves a node to an index of another slot as a remove and an add, or no operations when refused                                             |
+| `removeBlockNode`           | function  | Removes the node a pointer names, with its subtree                                                                                         |
+| `renderBlockNodes`          | function  | Renders each node once its slots have rendered, skipping a node whose type the registry lacks                                              |
+| `updateBlockNodeProps`      | function  | One JSON Patch add per prop, replacing a prop the node already has                                                                         |
 
 ## <a name="usage">📝 Usage</a>
 

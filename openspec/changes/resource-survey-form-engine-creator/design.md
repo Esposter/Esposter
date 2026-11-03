@@ -1,6 +1,6 @@
 # Survey Creator
 
-The owner's editor on the [typed document](../resource-survey-form-engine-document/design.md), the same shape as the page builder's webpage editor: a store of selection and history, composables that turn a gesture into an edit, and panes drawn with the UI library. It is built on the core's tree commands, which return JSON Patch operations, and on the bounded history in `@esposter/shared`.
+The owner's editor on the [typed document](../../specs/resource/survey-document/design.md), the same shape as the page builder's webpage editor: a store of selection and history, composables that turn a gesture into an edit, and panes drawn with the UI library. It is built on the core's tree commands, which return JSON Patch operations, and on the bounded history in `@esposter/shared`.
 
 ## How it works
 

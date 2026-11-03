@@ -1,6 +1,6 @@
 # Survey Theme And Files
 
-The identity a survey carries, over the [document](../resource-survey-form-engine-document/design.md)'s root props, and the files its images are. It reuses the resource's [file assets](../../specs/resource/resource-file-assets/design.md) rather than a store of its own.
+The identity a survey carries, over the [document](../../specs/resource/survey-document/design.md)'s root props, and the files its images are. It reuses the resource's [file assets](../../specs/resource/resource-file-assets/design.md) rather than a store of its own.
 
 ## How it works
 

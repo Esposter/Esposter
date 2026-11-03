@@ -1,6 +1,6 @@
 # Survey Fields
 
-One field component per question kind, and the renderer that draws a page of them, over the [runner](../resource-survey-form-engine-runner/design.md) and the [document](../resource-survey-form-engine-document/design.md), whose types it imports from the `survey-engine` package. Each field is built from the app's UI library, so it meets the library's keyboard and ARIA contracts rather than a contract of its own.
+One field component per question kind, and the renderer that draws a page of them, over the [runner](../resource-survey-form-engine-runner/design.md) and the [document](../../specs/resource/survey-document/design.md), whose types it imports from the `survey-engine` package. Each field is built from the app's UI library, so it meets the library's keyboard and ARIA contracts rather than a contract of its own.
 
 ## How it works
 
