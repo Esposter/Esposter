@@ -10,15 +10,11 @@ const knipConfiguration: KnipConfig = {
     ".": {
       // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
       // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
-      // `tsrs` loads `vize` by name from each package's `contentMappers`, and the mapper needs the `vue` the packages resolve
-      // To resolve from where `vize` is installed too, or it falls back to helpers that lack what a library component needs
       ignoreDependencies: [
         "@esposter/shared-node",
         "@fission-ai/openspec",
         "@kjanat/actionlint",
         "@lerna-lite/publish",
-        "vize",
-        "vue",
       ],
     },
     "apps/functions": { entry: ["src/**/*.ts"] },
@@ -88,7 +84,6 @@ const knipConfiguration: KnipConfig = {
     },
     "packages/genshin-world": {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
-      ignore: ["**/auto-imports.d.ts"],
       // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
       ignoreDependencies: ["vue-tsc"],
     },
@@ -112,6 +107,17 @@ const knipConfiguration: KnipConfig = {
       ignoreDependencies: ["vite-plugin-glsl"],
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
+    "packages/unplugin-pwa-nuxt": {
+      // The build test runs `nuxt build` over the fixture app, so its config, its server route and its worker are named by
+      // Path
+      entry: [
+        "test/fixture/nuxt.config.ts",
+        "test/fixture/server/api/hello.get.ts",
+        "test/fixture/service-worker/sw.ts",
+      ],
+      // The Vite plugin that resolves the client plugin's imports names the package as a string, so nothing imports it
+      ignoreDependencies: ["@vite-pwa/workbox-window"],
+    },
     // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
     "packages/vue-phaserjs": { ignoreDependencies: ["vue-tsc"] },
     scripts: {

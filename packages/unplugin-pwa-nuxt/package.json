@@ -65,10 +65,8 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@nuxt/nitro-server": "catalog:",
-    "@nuxt/test-utils": "catalog:",
     "@types/node": "catalog:",
     "@vite-pwa/workbox-swkit": "catalog:",
-    "happy-dom": "catalog:",
     "tsdown": "catalog:",
     "vite": "catalog:"
   },
