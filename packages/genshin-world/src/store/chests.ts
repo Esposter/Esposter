@@ -2,7 +2,6 @@ import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
@@ -18,8 +17,8 @@ import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldSessionStore } from "#src/store/session";
-import { getResultAsync } from "@esposter/shared";
-import { storeToRefs } from "pinia";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
+import { defineStore } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // Mondstadt's chests, fetched by their key as the world opens, and each one offered on the ground beneath its point: an
@@ -28,45 +27,31 @@ import { computed, shallowRef } from "vue";
 // Anemo Sigils into the wallet, pays its Adventure EXP to the Adventure Rank and pours its drops out where it stands, or
 // Sends them to the bag where a drop would fall away there, and the chest is kept as opened. The chests the puzzles
 // Spawn are offered and opened the same way. A load that fails is logged and left off, so no chest is offered rather
-// Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done
-export const useWorldChests = ({
-  openedChestIds,
-  waterLevel,
-}: {
-  openedChestIds: ShallowRef<ReadonlySet<string>>;
-  waterLevel: number;
-}) => {
+// Than a wrong one. A chest within reach of a camp or puzzle not yet done is offered nothing to open until it is done. The
+// Chests opened are the save's, and the session starts it with them and the water's level, and stops it as it unmounts
+export const useWorldChestsStore = defineStore("world/chests", () => {
   const worldPuzzlesStore = useWorldPuzzlesStore();
-  const { puzzleChestPlaces, solvedPuzzleIds, timeTrialMarkers } = storeToRefs(worldPuzzlesStore);
   const worldPickupsStore = useWorldPickupsStore();
   const { placeWorldDrops } = worldPickupsStore;
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldSessionStore = useWorldSessionStore();
-  const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;
   const chestPlaces = shallowRef<ChestPlace[]>([]);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtChestPlaces(worldSessionStore.gameDataBaseUrl)).match(
-    (places) => {
-      chestPlaces.value = places;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
+  const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
+  let waterLevel = 0;
   // The camps' chest locks as the Enemies component writes them, and each time trial's lock until it is solved
   const campLockSources = shallowRef<ChestLockSource[]>([]);
   const lockSources = computed<ChestLockSource[]>(() => [
     ...campLockSources.value,
-    ...timeTrialMarkers.value.map(({ id, position }) => ({
-      isDone: solvedPuzzleIds.value.has(id),
+    ...worldPuzzlesStore.timeTrialMarkers.map(({ id, position }) => ({
+      isDone: worldPuzzlesStore.solvedPuzzleIds.has(id),
       positions: [position],
     })),
   ]);
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());
-  const worldChestPlaces = computed(() => [...chestPlaces.value, ...puzzleChestPlaces.value]);
+  const worldChestPlaces = computed(() => [...chestPlaces.value, ...worldPuzzlesStore.puzzleChestPlaces]);
   const chestInteractables = computed<Interactable[]>(() =>
     computeChestInteractables(
       worldChestPlaces.value,
@@ -92,7 +77,7 @@ export const useWorldChests = ({
     const opening = openChest(
       chestPlace,
       previousOpenedChestIds,
-      wallet.value,
+      worldSessionStore.wallet,
       random,
       Currency.AnemoSigil,
       checkIsDropFallingAway(getGroundHeight(x, z), waterLevel),
@@ -105,7 +90,7 @@ export const useWorldChests = ({
     setWallet(opening.wallet);
     gainWorldAdventureExp(opening.adventureExp);
     openedChestIds.value = opening.openedChestIds;
-    let nextInventory = inventory.value;
+    let nextInventory = worldSessionStore.inventory;
     const overflowDrops: DroppedItem[] = [];
     for (const dropped of opening.bagDrops) {
       const { itemId } = dropped;
@@ -130,5 +115,34 @@ export const useWorldChests = ({
       events.emit("chestOpened");
     }
   };
-  return { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces };
-};
+  const start = (starting: { openedChestIds: ReadonlySet<string>; waterLevel: number }) => {
+    openedChestIds.value = starting.openedChestIds;
+    ({ waterLevel } = starting);
+    getSynchronizedFunction(() =>
+      getResultAsync(() => readMondstadtChestPlaces(worldSessionStore.gameDataBaseUrl)).match(
+        (places) => {
+          chestPlaces.value = places;
+        },
+        (error) => {
+          console.error(error);
+        },
+      ),
+    )();
+  };
+  const stop = () => {
+    campLockSources.value = [];
+    chestPlaces.value = [];
+    dugChestIds.value = new Set();
+    openedChestIds.value = new Set();
+  };
+  return {
+    campLockSources,
+    chestInteractables,
+    digChestById,
+    openChestById,
+    openedChestIds,
+    start,
+    stop,
+    worldChestPlaces,
+  };
+});

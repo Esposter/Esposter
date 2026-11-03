@@ -1,11 +1,11 @@
-import { useWorldChests } from "#src/composables/useWorldChests";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldChestsStore } from "#src/store/chests";
 import { startTestWorldGround } from "#src/store/ground.fixture";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
+import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { shallowRef } from "vue";
 
 vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
   readMondstadtChestPlaces: () => Promise.resolve([]),
@@ -18,11 +18,14 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
   worldPuzzlesStore.start(puzzleOptions);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
-  const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
-  return { openedChestIds, ...useWorldChests({ openedChestIds, waterLevel: -1 }) };
+  const worldChestsStore = useWorldChestsStore();
+  worldChestsStore.start({ openedChestIds: new Set(), waterLevel: -1 });
+  const { chestInteractables, openedChestIds } = storeToRefs(worldChestsStore);
+  const { openChestById } = worldChestsStore;
+  return { chestInteractables, openChestById, openedChestIds };
 };
 
-describe(useWorldChests, () => {
+describe(useWorldChestsStore, () => {
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
   const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {

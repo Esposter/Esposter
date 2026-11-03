@@ -18,6 +18,7 @@ import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/consta
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPickupsStore } from "#src/store/pickups";
@@ -38,7 +39,6 @@ export const useWorldInteractionDispatch = ({
   cookingProgress,
   cookingRecipe,
   cookingRecipes,
-  digChestById,
   drawReputationOffer,
   forgeNow,
   frostbearingTreeLevels,
@@ -50,7 +50,6 @@ export const useWorldInteractionDispatch = ({
   grantRewards,
   offerFrostbearingTree,
   openAbyssEntrance,
-  openChestById,
   openCookingRecipes,
   openDomain,
   openDomainTreeClaim,
@@ -74,6 +73,8 @@ export const useWorldInteractionDispatch = ({
   const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
+  const worldChestsStore = useWorldChestsStore();
+  const { digChestById, openChestById } = worldChestsStore;
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { shrineMarkers } = storeToRefs(worldPuzzlesStore);
   const worldPickupsStore = useWorldPickupsStore();

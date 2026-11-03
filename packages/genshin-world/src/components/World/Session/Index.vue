@@ -57,7 +57,6 @@ import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldBagUse } from "#src/composables/useWorldBagUse";
 import { useWorldCamera } from "#src/composables/useWorldCamera";
 import { useWorldCardGame } from "#src/composables/useWorldCardGame";
-import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldClock } from "#src/composables/useWorldClock";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
@@ -119,6 +118,7 @@ import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
@@ -275,7 +275,6 @@ const {
   foundOculusIds,
   frostbearingTreeProgress,
   namecardItemId,
-  openedChestIds,
   processingJobs,
   queuedTipIds,
   regionStatueProgressMap,
@@ -433,10 +432,11 @@ onUnmounted(stopPuzzles);
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
 const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
-const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
-  openedChestIds,
-  waterLevel: windriseData.water.level,
-});
+const worldChestsStore = useWorldChestsStore();
+const { campLockSources, openedChestIds } = storeToRefs(worldChestsStore);
+const { start: startChests, stop: stopChests } = worldChestsStore;
+startChests({ openedChestIds: savedState.openedChestIds, waterLevel: windriseData.water.level });
+onUnmounted(stopChests);
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets();
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
@@ -641,9 +641,7 @@ const { placedDoings, recordedDoingIds } = useWorldDoings({
   foundOculusIds,
   monumentPlaces,
   oculusPlaces,
-  openedChestIds,
   timeTrialPlaces,
-  worldChestPlaces,
 });
 // The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a jump
 // Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
@@ -787,7 +785,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   cookingProgress,
   cookingRecipe,
   cookingRecipes,
-  digChestById,
   drawReputationOffer,
   forgeNow,
   frostbearingTreeLevels,
@@ -799,7 +796,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   grantRewards,
   offerFrostbearingTree,
   openAbyssEntrance,
-  openChestById,
   openCookingRecipes,
   openDomain,
   openDomainTreeClaim,
@@ -823,7 +819,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
 const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
   blacksmithPlace,
   characterBody,
-  chestInteractables,
   cookingStovePlace,
   craftingBenchPlace,
   domainArena,

@@ -1,4 +1,3 @@
-import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
@@ -11,7 +10,5 @@ export interface WorldDoingsOptions {
   foundOculusIds: Readonly<Ref<ReadonlySet<string>>>;
   monumentPlaces: readonly PuzzlePlace[];
   oculusPlaces: Readonly<Ref<readonly OculusPlace[]>>;
-  openedChestIds: Readonly<Ref<ReadonlySet<string>>>;
   timeTrialPlaces: readonly PuzzlePlace[];
-  worldChestPlaces: Readonly<Ref<readonly ChestPlace[]>>;
 }

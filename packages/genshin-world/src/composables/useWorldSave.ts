@@ -12,6 +12,7 @@ import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgress
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldSessionStore } from "#src/store/session";
 import { ref, shallowRef, watch } from "vue";
 
@@ -37,7 +38,6 @@ export const useWorldSave = ({
     | "foundOculusIds"
     | "frostbearingTreeProgress"
     | "namecardItemId"
-    | "openedChestIds"
     | "processingJobs"
     | "queuedTipIds"
     | "regionStatueProgressMap"
@@ -48,6 +48,7 @@ export const useWorldSave = ({
   >;
 }) => {
   const worldArchiveStore = useWorldArchiveStore();
+  const worldChestsStore = useWorldChestsStore();
   const worldSessionStore = useWorldSessionStore();
   const namecardItemId = ref(savedState.namecardItemId);
   // The Traveler's birthday, set once from the profile and kept with the save once it is set
@@ -71,7 +72,6 @@ export const useWorldSave = ({
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
-  const openedChestIds = shallowRef<ReadonlySet<string>>(savedState.openedChestIds);
   const regionStatueProgressMap = shallowRef<ReadonlyMap<string, StatueRegionProgressSave>>(
     savedState.regionStatueProgressMap,
   );
@@ -92,7 +92,7 @@ export const useWorldSave = ({
       enemyRespawnMap,
       foundOculusIds,
       frostbearingTreeProgress,
-      openedChestIds,
+      () => worldChestsStore.openedChestIds,
       processingJobs,
       regionStatueProgressMap,
       travelerBirthday,
@@ -145,7 +145,6 @@ export const useWorldSave = ({
     foundOculusIds,
     frostbearingTreeProgress,
     namecardItemId,
-    openedChestIds,
     processingJobs,
     queuedTipIds,
     regionStatueProgressMap,

@@ -21,6 +21,7 @@ import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPickupsStore } from "#src/store/pickups";
@@ -36,7 +37,6 @@ import { computed } from "vue";
 export const useWorldInteractables = ({
   blacksmithPlace,
   characterBody,
-  chestInteractables,
   cookingStovePlace,
   craftingBenchPlace,
   domainArena,
@@ -55,6 +55,8 @@ export const useWorldInteractables = ({
 }: WorldInteractablesOptions) => {
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
+  const worldChestsStore = useWorldChestsStore();
+  const { chestInteractables } = storeToRefs(worldChestsStore);
   const worldPickupsStore = useWorldPickupsStore();
   const { pickUpInteractables } = storeToRefs(worldPickupsStore);
   const worldArchiveStore = useWorldArchiveStore();

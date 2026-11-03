@@ -2,6 +2,7 @@ import type { WorldDoingsOptions } from "#src/models/exploration/WorldDoingsOpti
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
+import { useWorldChestsStore } from "#src/store/chests";
 import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
@@ -12,10 +13,10 @@ export const useWorldDoings = ({
   foundOculusIds,
   monumentPlaces,
   oculusPlaces,
-  openedChestIds,
   timeTrialPlaces,
-  worldChestPlaces,
 }: WorldDoingsOptions) => {
+  const worldChestsStore = useWorldChestsStore();
+  const { openedChestIds, worldChestPlaces } = storeToRefs(worldChestsStore);
   const worldPuzzlesStore = useWorldPuzzlesStore();
   const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
   // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks

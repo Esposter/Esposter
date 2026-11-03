@@ -21,7 +21,6 @@ export interface WorldInteractionDispatchOptions {
   cookingProgress: Readonly<Ref<CookingProgress>>;
   cookingRecipe: Ref<CookingRecipe | undefined>;
   cookingRecipes: Readonly<Ref<readonly CookingRecipe[]>>;
-  digChestById: (chestId: string) => void;
   drawReputationOffer: () => void;
   forgeNow: Ref<Temporal.Instant>;
   frostbearingTreeLevels: readonly OfferingLevel[];
@@ -33,7 +32,6 @@ export interface WorldInteractionDispatchOptions {
   grantRewards: (rewards: QuestRewardItem[]) => void;
   offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
   openAbyssEntrance: () => void;
-  openChestById: (chestId: string, random: () => number) => void;
   openCookingRecipes: Ref<CookingRecipe[]>;
   openDomain: (landmark: DomainEntranceLandmark) => void;
   openDomainTreeClaim: (now: Temporal.Instant) => void;
