@@ -54,7 +54,6 @@ const hoveredNodeId = ref("");
 const selectionBox = ref<OverlayBox>();
 const { checkIsHorizontalOwner, getElement, getFrameGeometry, toolbarPosition } = usePageBuilderFrame(
   contentRoot,
-  hoveredNodeId,
   selectionBox,
 );
 const { selectAdjacentNode, selectParent } = usePageBuilderSelection(
@@ -158,7 +157,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
   <PageBuilderCanvasFrame v-if="pageDocument" :css :device tabindex="0" aria-label="Canvas of the page" title="Page">
     <div
       ref="contentRoot"
-      relative
+      :style="{ position: 'relative' }"
       @click="setSelectedNodeId(resourceId, getNodeIdFromElement($event.target) ?? '')"
       @pointerleave="hoveredNodeId = ''"
       @pointerover="hoveredNodeId = getNodeIdFromElement($event.target) ?? ''"

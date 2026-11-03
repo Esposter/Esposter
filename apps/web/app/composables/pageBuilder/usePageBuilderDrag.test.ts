@@ -38,7 +38,7 @@ describe(usePageBuilderDrag, () => {
     checkIsHorizontalOwner: () => false,
     frameRect: { height: 500, left: 0, top: 0, width: 500 },
     getChildRect: (nodeId) => RECTS[nodeId],
-    hoveredNodeId,
+    getNodeIdAt: () => hoveredNodeId,
     scale: 1,
   });
 

@@ -31,6 +31,26 @@ const pageOpen = computed(() => getHeldDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
+// The frame's document holds only the page's own sheet, so the utilities the rest of the editor is styled with do not
+// Reach the layer teleported into it: the layer and each box it draws carry their styles inline
+const LAYER_STYLE = { inset: "0", pointerEvents: "none", position: "absolute" } as const;
+const ACCENT = "var(--ui-accent, currentColor)";
+const HOVER_STYLE = { opacity: "0.5", outline: `1px solid ${ACCENT}`, position: "absolute" } as const;
+const DROP_LINE_STYLE = { background: ACCENT, position: "absolute" } as const;
+const DROP_OUTLINE_STYLE = { border: `2px dashed ${ACCENT}`, boxSizing: "border-box", position: "absolute" } as const;
+const SELECTION_STYLE = {
+  border: `2px solid ${ACCENT}`,
+  boxSizing: "border-box",
+  outline: "1px solid white",
+  position: "absolute",
+} as const;
+// The library's accent, read from the app's own document each time the theme or style that sets it changes, since the
+// Frame holds none of the app's tokens and the layer passes it on to the boxes it draws
+const accent = shallowRef("");
+const readAccent = () => {
+  accent.value = getComputedStyle(document.documentElement).getPropertyValue("--ui-accent").trim();
+};
+useMutationObserver(() => document.documentElement, readAccent, { attributeFilter: ["data-theme"], attributes: true });
 // The style that places a box over the layer, for every box the layer draws
 const toBoxStyle = ({ height, left, top, width }: OverlayBox) => ({
   height: `${height}px`,
@@ -39,7 +59,7 @@ const toBoxStyle = ({ height, left, top, width }: OverlayBox) => ({
   width: `${width}px`,
 });
 // The drop indicator's box as the style that places it over the layer, whichever of its two kinds draws it
-const dropIndicatorStyle = computed(() => (dropIndicator.value ? toBoxStyle(dropIndicator.value.box) : undefined));
+const dropIndicatorBoxStyle = computed(() => (dropIndicator.value ? toBoxStyle(dropIndicator.value.box) : undefined));
 let pendingFrame = 0;
 // The box of a node's element inside the layer, or none when the node has no element in the frame
 const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
@@ -92,50 +112,27 @@ const scheduleRedraw = () => {
 useEventListener(() => layer.value?.ownerDocument.defaultView, "scroll", scheduleRedraw, { passive: true });
 useResizeObserver(() => layer.value?.ownerDocument.body, scheduleRedraw);
 watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, pageOpen], scheduleRedraw, { flush: "post" });
-onMounted(scheduleRedraw);
+onMounted(() => {
+  readAccent();
+  scheduleRedraw();
+});
 onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 </script>
 
 <!-- The layer covers the content it outlines, so its own box is the box the outlines are placed in -->
 <template>
-  <div ref="layer" pointer-events-none inset-0 absolute>
-    <div
-      v-if="hoverBox"
-      data-outline="hover"
-      outline-1
-      outline-current
-      outline-solid
-      op-50
-      absolute
-      :style="toBoxStyle(hoverBox)"
-    />
+  <div ref="layer" :style="{ ...LAYER_STYLE, '--ui-accent': accent }">
+    <div v-if="hoverBox" data-outline="hover" :style="{ ...HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Line"
       data-drop-indicator="line"
-      bg-current
-      absolute
-      :style="dropIndicatorStyle"
+      :style="{ ...DROP_LINE_STYLE, ...dropIndicatorBoxStyle }"
     />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Outline"
       data-drop-indicator="outline"
-      b-2
-      b-current
-      b-dashed
-      absolute
-      :style="dropIndicatorStyle"
+      :style="{ ...DROP_OUTLINE_STYLE, ...dropIndicatorBoxStyle }"
     />
-    <div
-      v-if="selectionBox"
-      data-outline="selection"
-      outline-1
-      outline-white
-      outline-solid
-      b-2
-      b-current
-      b-solid
-      absolute
-      :style="toBoxStyle(selectionBox)"
-    />
+    <div v-if="selectionBox" data-outline="selection" :style="{ ...SELECTION_STYLE, ...toBoxStyle(selectionBox) }" />
   </div>
 </template>

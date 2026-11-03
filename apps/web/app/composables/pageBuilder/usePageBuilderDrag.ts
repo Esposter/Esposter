@@ -30,13 +30,14 @@ const getDropTargetAt = <
 ): DropTarget | undefined => {
   if (!document || !geometry || !checkIsInsideBox(point, geometry.frameRect)) return undefined;
 
+  const pointer = toFramePoint(point, geometry.frameRect, geometry.scale);
   return resolveDropTarget(kind, {
     checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
     document,
     draggedType: type,
     getChildRect: geometry.getChildRect,
-    hoveredNodeId: geometry.hoveredNodeId,
-    pointer: toFramePoint(point, geometry.frameRect, geometry.scale),
+    hoveredNodeId: geometry.getNodeIdAt(pointer),
+    pointer,
   });
 };
 

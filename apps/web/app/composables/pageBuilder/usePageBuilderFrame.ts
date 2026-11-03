@@ -3,6 +3,7 @@ import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
+import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { getToolbarPlacement } from "@/services/pageBuilder/getToolbarPlacement";
 import { getFrameScale } from "vue-canvas-frame-headless";
 
@@ -13,7 +14,6 @@ const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
 // Where the selection's toolbar sits in the app's viewport. The frame is the document the content root is drawn in
 export const usePageBuilderFrame = (
   contentRoot: Readonly<ShallowRef<HTMLElement | null>>,
-  hoveredNodeId: Readonly<Ref<string>>,
   selectionBox: Readonly<Ref<OverlayBox | undefined>>,
 ) => {
   const getElement = (nodeId: string) =>
@@ -70,7 +70,8 @@ export const usePageBuilderFrame = (
       checkIsHorizontalOwner,
       frameRect: { height: frameRect.height, left: frameRect.left, top: frameRect.top, width: frameRect.width },
       getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
-      hoveredNodeId: hoveredNodeId.value,
+      // Read from the frame's own document, since a drag lets the pointer pass through the frame and no hover reaches it
+      getNodeIdAt: ({ x, y }) => getNodeIdFromElement(contentRoot.value?.ownerDocument.elementFromPoint(x, y) ?? null),
       scale: getFrameScaleOf(frameElement),
     };
   };
