@@ -1,0 +1,60 @@
+{
+  "name": "unplugin-pwa-nuxt",
+  "version": "4.4.0",
+  "description": "Nuxt PWA module on unplugin-pwa — a service worker built by the app, its manifest and its client plugin, for Nuxt 5 and Nitro 3 only",
+  "keywords": [
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/unplugin-pwa-nuxt#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/module.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "@nuxt/kit": "catalog:",
+    "@nuxt/schema": "catalog:"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "nitro": "catalog:",
+    "nuxt": "catalog:"
+  }
+}

@@ -1,6 +1,16 @@
-# [Esposter](https://esposter.com)
+<p align="center">
+  <a href="https://esposter.com" target="_blank" rel="noopener noreferrer">
+    <img alt="Esposter" src="apps/web/public/pwa/manifest-icon-512.png" height="96">
+  </a>
+</p>
 
-_/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"_
+<h1 align="center">Esposter</h1>
+
+<p align="center"><em>/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"</em></p>
+
+<p align="center"><strong>A nice and casual place for posting random things.</strong></p>
+
+<div align="center">
 
 [![Build Status][badge-ci]][url-ci]
 [![Duplicate Code][badge-duplicates]][url-ci]
@@ -8,6 +18,8 @@ _/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"_
 [![OpenSSF Scorecard][badge-openssf]][url-openssf]
 [![skills.sh installs][badge-skills]][url-skills]
 [![Apache-2.0 licensed][badge-license]][url-license]
+
+</div>
 
 > **Experimental.** Every published package in this repository is experimental. Its exports, build entries and files may change or be removed in any release, including a minor release. See [Stability](openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
 
@@ -363,6 +375,7 @@ pnpm graph:gen
 | [`packages/tresjs-nuxt`](https://github.com/Esposter/Esposter/tree/main/packages/tresjs-nuxt)                             | TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.              |     ✓     |
 | [`packages/trpc-msw`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-msw)                                   | tRPC for Mock Service Worker — every transport answered by tRPC's own handlers                                                                                                                                                              |     ✓     |
 | [`packages/trpc-nuxt-module`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-nuxt-module)                   | tRPC for Nuxt — a module registering the router's HTTP and WebSocket handlers, with composables over `useAsyncData`                                                                                                                         |     ✓     |
+| [`packages/unplugin-pwa-nuxt`](https://github.com/Esposter/Esposter/tree/main/packages/unplugin-pwa-nuxt)                 | Nuxt PWA module on unplugin-pwa — a service worker built by the app, its manifest and its client plugin, for Nuxt 5 and Nitro 3 only                                                                                                        |     ✓     |
 | [`packages/vue-canvas-frame-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-canvas-frame-headless) | A headless canvas frame: an isolated document at a width, scaled down to fit a narrower pane, with its styles adopted into it, and no styling of its own.                                                                                   |     ✓     |
 | [`packages/vue-grid-layout-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-grid-layout-headless)   | A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.                                                                                                            |     ✓     |
 | [`packages/vue-pdfjs-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-pdfjs-headless)               | Headless Vue composables over pdfjs-dist: a document's loading, a page's drawing and the viewer's state, with no styling and no renderer of its own.                                                                                        |     ✓     |

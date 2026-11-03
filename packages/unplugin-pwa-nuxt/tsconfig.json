@@ -1,0 +1,1 @@
+{ "extends": "../configuration/tsconfig.nuxt-module.json" }

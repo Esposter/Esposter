@@ -32,7 +32,7 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
 
 Written for an agent reader in ASD-STE100 style (`references/content-rules.md`, rule 10): lead with what it does; one design-notes line linking the specs; Getting Started only where it is installed or run; Key Exports for what a reader calls; Commands only for an app, a plugin or a tool a person runs; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
 
-The root README carries the name's pronunciation as one italic IPA line under the title, ahead of the badges, as the Oxc and Vite READMEs do; a package README does not, since the sound is the repository's and a package name is read as its words.
+The root README opens with a centred header, as the Oxc, Rolldown and Vite+ READMEs do: the app's own mark (`apps/web/public/pwa/manifest-icon-512.png`, the largest unpadded artwork, drawn at a fixed height so a high-density screen stays sharp, and linked to the site), the title as an `<h1 align="center">`, the name's pronunciation as one italic IPA line, the site's one-sentence description in bold, then the badges in a `<div align="center">`. The mark is the repository's own file, so there is no copy under `.github/assets/`. A package README keeps its plain `# <npm-name>` title and carries neither the mark nor a pronunciation, since the sound and the mark are the repository's and a package name is read as its words.
 
 Package READMEs carry no experimental notice: the root README states it once (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability).
 
