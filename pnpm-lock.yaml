@@ -777,7 +777,7 @@ overrides:
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   oxc-parser: ^0.157.0
   vite: ^8.3.5
-  phaser4-rex-plugins>i18next-http-backend: ^4.0.9
+  phaser4-rex-plugins>i18next-http-backend: ^4.0.10
   vite-plus>@oxlint/plugins: ^1.90.0
   vite-plus>@vitest/browser: ^5.1.0
   vite-plus>@vitest/browser-preview: ^5.1.0
@@ -1349,7 +1349,7 @@ importers:
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -1989,7 +1989,7 @@ importers:
         version: 6.1.7
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -2233,7 +2233,7 @@ importers:
         version: 0.4.17(srvx@1.0.8)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
@@ -2300,7 +2300,7 @@ importers:
         version: 8.0.13
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -9110,8 +9110,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  i18next-http-backend@4.0.9:
-    resolution: {integrity: sha512-OrdH7wL9zNcmUwH3PatOCIa/NdL6NOGtlwjGqSHSS6fsh9sqm5BtHj6FRt+6coWSxro1LbM61ay+Jc2bbppGkw==}
+  i18next-http-backend@4.0.10:
+    resolution: {integrity: sha512-CfdQuwIVijbrS/fmiTAQYcYyje4nMbH9aIjKYhhm5bgVmWKWLOM1F7qrA1o63Jl1JxQcRjdtWhKlvDzyqV9aPg==}
     engines: {node: '>=18'}
 
   i18next@22.5.1:
@@ -10180,8 +10180,8 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
-    resolution: {integrity: sha512-lWmbEVpk5LoLJ3NATrVeSLnsRu09e3aX+Dt8gZhKe7aQU8y/FKIMeSV8x8YnlZPv+KYRxm8I3FamT6GOV22VXQ==}
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
+    resolution: {integrity: sha512-45C9iKqLGYLlc5Ce6HxBc9VwBuUdVQbMm2aJgaKk6uJtG3wdmvoQBtGPN5IvjHJcU1S67vsT/syPv6lS12Ftgg==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -15273,7 +15273,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
       ofetch: 2.0.0-alpha.3
@@ -15335,7 +15335,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
       ofetch: 2.0.0-alpha.3
@@ -20461,7 +20461,7 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  i18next-http-backend@4.0.9: {}
+  i18next-http-backend@4.0.10: {}
 
   i18next@22.5.1:
     dependencies:
@@ -21774,7 +21774,7 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.67.4
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
     dependencies:
       crossws: 0.4.17(srvx@1.0.8)
       env-runner: 0.3.11
@@ -22879,7 +22879,7 @@ snapshots:
       eventemitter3: 3.1.2
       graphology: 0.25.4(graphology-types@0.24.8)
       i18next: 22.5.1
-      i18next-http-backend: 4.0.9
+      i18next-http-backend: 4.0.10
       js-yaml: 4.3.2
       mustache: 4.2.0
       papaparse: 5.7.0
