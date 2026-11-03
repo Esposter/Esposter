@@ -20,22 +20,6 @@ describe("runner", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    test("a next button blocked by a required question shows the error", async () => {
-      expect.hasAssertions();
-
-      const component = await mountSuspended(Runner, {
-        props: {
-          document: createSurveyTestDocument([
-            createSurveyTestPage([createSurveyTestQuestion("first", { isRequired: true })]),
-            createSurveyTestPage([createSurveyTestQuestion("second")]),
-          ]),
-        },
-      });
-      await component.get("button").trigger("click");
-
-      expect(component.find('[role="alert"]').exists()).toBe(true);
-    });
-
     test("a failed next shows its message and moves focus to the page's first blocking question", async () => {
       expect.hasAssertions();
 

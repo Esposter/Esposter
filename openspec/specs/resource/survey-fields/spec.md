@@ -31,3 +31,21 @@ A question field SHALL show the message the runner gives its question beside the
 - **WHEN** the field is drawn with that error
 - **THEN** the message is shown as an alert beside the field
 - **AND** the input is marked invalid
+
+### Requirement: The page renderer walks a survey's pages and shows what blocks a move
+
+The page renderer SHALL move a respondent between a survey's visible pages and, when a move is refused, show the refusal as an alert and move focus to the first question that blocks it.
+
+#### Scenario: walks a two-page document forward and back, keeping the first page's answer, and offers Complete on the last page
+
+- **GIVEN** a survey of two pages
+- **WHEN** the respondent answers the first page, goes to the next page and then back
+- **THEN** the first page shows its answer again
+- **AND** the second page offers Complete in place of Next
+
+#### Scenario: a failed next shows its message and moves focus to the page's first blocking question
+
+- **GIVEN** a page of two required questions that are both unanswered
+- **WHEN** the respondent goes to the next page
+- **THEN** the refusal is shown as an alert
+- **AND** focus moves to the first of the two questions
