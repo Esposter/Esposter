@@ -1,9 +1,7 @@
 import { useSurveyRunner } from "@/composables/survey/useSurveyRunner";
-import {
-  createSurveyTestDocument,
-  createSurveyTestPage,
-  createSurveyTestQuestion,
-} from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { describe, expect, test } from "vitest";
 
 describe(useSurveyRunner, () => {

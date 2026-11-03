@@ -112,10 +112,7 @@ const rightTab = ref(PROPERTIES_TAB);
           <ResourceSurveyCreatorLayers />
         </div>
         <ResourceSurveyCreatorProperties v-else-if="value === PROPERTIES_TAB" />
-        <div v-else-if="value === LOGIC_TAB" flex flex-col gap-4>
-          <ResourceSurveyCreatorLogicBuilder />
-          <ResourceSurveyCreatorCalculatedValues />
-        </div>
+        <ResourceSurveyCreatorLogicPane v-else-if="value === LOGIC_TAB" />
         <ResourceSurveyCreatorTheme v-else />
       </template>
     </UiTabs>
@@ -159,10 +156,7 @@ const rightTab = ref(PROPERTIES_TAB);
       >
         <template #default="{ value }">
           <ResourceSurveyCreatorProperties v-if="value === PROPERTIES_TAB" />
-          <div v-else-if="value === LOGIC_TAB" flex flex-col gap-4>
-            <ResourceSurveyCreatorLogicBuilder />
-            <ResourceSurveyCreatorCalculatedValues />
-          </div>
+          <ResourceSurveyCreatorLogicPane v-else-if="value === LOGIC_TAB" />
           <ResourceSurveyCreatorTheme v-else />
         </template>
       </UiTabs>

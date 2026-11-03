@@ -2,11 +2,9 @@
 import Runner from "@/components/Resource/Survey/Runner.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
-import {
-  createSurveyTestDocument,
-  createSurveyTestPage,
-  createSurveyTestQuestion,
-} from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

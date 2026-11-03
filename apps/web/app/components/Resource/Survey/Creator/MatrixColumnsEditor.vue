@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { SurveyMatrixColumn } from "survey-engine";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { surveyMatrixColumnSchema, SurveyMatrixCellType } from "survey-engine";
 
 interface Props {
@@ -79,25 +77,11 @@ const isChoiceCellType = (cellType: SurveyMatrixCellType) =>
           :model-value="row.item.isRequired"
           @update:model-value="(isRequired) => updateItem(row.id, { isRequired })"
         />
-        <UiIconButton
-          :disabled="index === 0"
-          :label="`Move row ${index + 1} up`"
-          :meaning="UiIconMeaning.ArrowUp"
-          :variant="UiButtonVariant.Quiet"
-          @click="moveItem(row.id, index - 1)"
-        />
-        <UiIconButton
-          :disabled="index === rows.length - 1"
-          :label="`Move row ${index + 1} down`"
-          :meaning="UiIconMeaning.ArrowDown"
-          :variant="UiButtonVariant.Quiet"
-          @click="moveItem(row.id, index + 1)"
-        />
-        <UiIconButton
-          :label="`Remove row ${index + 1}`"
-          :meaning="UiIconMeaning.Remove"
-          :variant="UiButtonVariant.Quiet"
-          @click="removeItem(row.id)"
+        <ResourceSurveyCreatorRowActions
+          :index
+          :count="rows.length"
+          @move="(toIndex) => moveItem(row.id, toIndex)"
+          @remove="removeItem(row.id)"
         />
       </div>
       <ResourceSurveyCreatorChoiceListEditor
@@ -108,9 +92,11 @@ const isChoiceCellType = (cellType: SurveyMatrixCellType) =>
       />
     </div>
     <div aria-live="polite" sr-only>{{ announcement }}</div>
-    <UiForm flex gap-2 items-start @submit="addFromField()">
-      <UiTextField v-model="addText" is-label-hidden label="Add a column" placeholder="Column title" />
-      <UiButton :disabled="addText.trim() === ''" type="submit" :variant="UiButtonVariant.Quiet">Add</UiButton>
-    </UiForm>
+    <ResourceSurveyCreatorAddRowForm
+      v-model="addText"
+      label="Add a column"
+      placeholder="Column title"
+      @add="addFromField()"
+    />
   </div>
 </template>

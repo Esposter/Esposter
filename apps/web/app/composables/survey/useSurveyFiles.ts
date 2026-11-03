@@ -1,6 +1,7 @@
 import type { SurveyDocument } from "survey-engine";
 
 import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyFilesStore } from "@/store/survey/files";
 import { ResourceType } from "@esposter/db-schema";
@@ -26,6 +27,17 @@ export const useSurveyFiles = () => {
     addFileUrl(url);
     return url;
   };
+  // A picked file is uploaded as it is picked, and its url handed to write once the upload lands. A rejected or failed
+  // Upload writes nothing, and a failed one alerts
+  const uploadPicked = async (files: File[], write: (url: string) => void) => {
+    const [file] = files;
+    if (!file) return;
+
+    const uploadResult = await getResultAsync(() => upload(file));
+    uploadResult.match((url) => {
+      if (url) write(url);
+    }, createErrorAlert);
+  };
   // Called as the editor opens, with the document it opened on, so the files that document holds are candidates too
   const track = (document: SurveyDocument) => {
     setFileUrls(collectSurveyFileUrls(document));
@@ -38,5 +50,5 @@ export const useSurveyFiles = () => {
     await getResultAsync(() => Promise.all(orphanUrls.map((url) => deleteFile(url)))).match(noop, console.error);
   };
 
-  return { sweep, track, upload };
+  return { sweep, track, upload, uploadPicked };
 };

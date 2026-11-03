@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { SurveyChoice } from "survey-engine";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { parseChoiceLine } from "@/services/resource/survey/parseChoiceLine";
 import { surveyChoiceSchema } from "survey-engine";
 
@@ -76,37 +74,20 @@ const pasteLines = (event: ClipboardEvent) => {
         placeholder="Text"
         @update:model-value="(text) => updateItem(row.id, { text })"
       />
-      <UiIconButton
-        :disabled="index === 0"
-        :label="`Move row ${index + 1} up`"
-        :meaning="UiIconMeaning.ArrowUp"
-        :variant="UiButtonVariant.Quiet"
-        @click="moveItem(row.id, index - 1)"
-      />
-      <UiIconButton
-        :disabled="index === rows.length - 1"
-        :label="`Move row ${index + 1} down`"
-        :meaning="UiIconMeaning.ArrowDown"
-        :variant="UiButtonVariant.Quiet"
-        @click="moveItem(row.id, index + 1)"
-      />
-      <UiIconButton
-        :label="`Remove row ${index + 1}`"
-        :meaning="UiIconMeaning.Remove"
-        :variant="UiButtonVariant.Quiet"
-        @click="removeItem(row.id)"
+      <ResourceSurveyCreatorRowActions
+        :index
+        :count="rows.length"
+        @move="(toIndex) => moveItem(row.id, toIndex)"
+        @remove="removeItem(row.id)"
       />
     </div>
     <div aria-live="polite" sr-only>{{ announcement }}</div>
-    <UiForm flex gap-2 items-start @submit="addFromField()">
-      <UiTextField
-        v-model="addText"
-        is-label-hidden
-        label="Add a choice"
-        placeholder="Value or value|text"
-        @paste="(event: ClipboardEvent) => pasteLines(event)"
-      />
-      <UiButton :disabled="addText.trim() === ''" type="submit" :variant="UiButtonVariant.Quiet">Add</UiButton>
-    </UiForm>
+    <ResourceSurveyCreatorAddRowForm
+      v-model="addText"
+      label="Add a choice"
+      placeholder="Value or value|text"
+      @add="addFromField()"
+      @paste="pasteLines"
+    />
   </div>
 </template>

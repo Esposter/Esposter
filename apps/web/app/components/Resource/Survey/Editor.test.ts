@@ -7,11 +7,9 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import ResourceSurveyEditor from "@/components/Resource/Survey/Editor.vue";
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
-import {
-  createSurveyTestDocument,
-  createSurveyTestPage,
-  createSurveyTestQuestion,
-} from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
@@ -30,7 +28,12 @@ const { sweepMock, trackMock } = vi.hoisted(() => ({
 
 // The file sweep is covered by useSurveyFiles's own suite, so it is mocked at its seam here
 vi.mock(import("@/composables/survey/useSurveyFiles"), () => ({
-  useSurveyFiles: () => ({ sweep: sweepMock, track: trackMock, upload: vi.fn() }),
+  useSurveyFiles: () => ({
+    sweep: sweepMock,
+    track: trackMock,
+    upload: vi.fn<() => Promise<string | undefined>>(),
+    uploadPicked: vi.fn<() => Promise<void>>(),
+  }),
 }));
 
 describe("resourceSurveyEditor", () => {

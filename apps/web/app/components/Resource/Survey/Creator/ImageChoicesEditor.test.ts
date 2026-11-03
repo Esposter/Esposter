@@ -3,6 +3,7 @@ import type { SurveyDocument } from "survey-engine";
 
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import UiFileField from "@/components/Ui/FileField.vue";
+import UiTextField from "@/components/Ui/TextField.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -90,5 +91,24 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     await flushPromises();
 
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["b"]);
+  });
+
+  test("a value that repeats another choice's value is flagged and not written, and the field keeps what was typed", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument(["a", "b"]));
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+    const valueField = component
+      .findAllComponents(UiTextField)
+      .find((field) => field.props("label") === "Value of choice 2");
+    valueField?.vm.$emit("update:modelValue", "a");
+    await flushPromises();
+
+    expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a", "b"]);
+    expect(valueField?.props("modelValue")).toBe("a");
+    expect(valueField?.props("error")).toBe("Choice values must be unique");
   });
 });

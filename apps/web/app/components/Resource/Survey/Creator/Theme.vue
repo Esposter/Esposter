@@ -1,25 +1,15 @@
 <script setup lang="ts">
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { getResultAsync } from "@esposter/shared";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 const { updateRootProps } = useSurveyCreatorCommands();
-const { upload } = useSurveyFiles();
+const { uploadPicked } = useSurveyFiles();
 const rootProps = computed(() => surveyDocument.value.root.props);
 const themeStyle = useSurveyTheme(rootProps);
 // The logo is uploaded as it is picked, and its url written to the survey's root once the upload lands
-const onPickLogo = async (files: File[]) => {
-  const [file] = files;
-  if (!file) return;
-
-  const uploadResult = await getResultAsync(() => upload(file));
-  uploadResult.match((url) => {
-    if (url) updateRootProps({ logo: url });
-  }, createErrorAlert);
-};
+const onPickLogo = (files: File[]) => uploadPicked(files, (logo) => updateRootProps({ logo }));
 </script>
 
 <template>
