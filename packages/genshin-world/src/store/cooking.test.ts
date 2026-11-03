@@ -16,7 +16,7 @@ vi.mock(import("#src/services/cooking/readProcessingRecipes"), () => ({
   readProcessingRecipes: () => Promise.resolve([]),
 }));
 vi.mock(import("#src/services/cooking/readMondstadtCookingStovePlace"), () => ({
-  readMondstadtCookingStovePlace: () => Promise.resolve(),
+  readMondstadtCookingStovePlace: () => Promise.resolve(undefined),
 }));
 
 describe(useWorldCookingStore, () => {
