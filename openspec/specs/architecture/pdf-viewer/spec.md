@@ -69,13 +69,19 @@ The viewer SHALL find text in the PDF, with options to match case and whole word
 
 ### Requirement: The reader can download and print a PDF
 
-The viewer SHALL download the original file under its name, and SHALL print every page of it.
+The viewer SHALL download the file under the attachment's name, carrying the values the reader typed into its form fields, and SHALL print every page of it.
 
-#### Scenario: Downloading
+#### Scenario: Downloading an unedited PDF
 
-- **GIVEN** a PDF open in the viewer
+- **GIVEN** a PDF open in the viewer with no form field filled in
 - **WHEN** the reader downloads it
 - **THEN** the original file is saved under the attachment's file name
+
+#### Scenario: Downloading a PDF with a filled-in form
+
+- **GIVEN** a PDF open in the viewer with a value typed into one of its form fields
+- **WHEN** the reader downloads it
+- **THEN** the file saved under the attachment's file name carries that value
 
 #### Scenario: Printing
 

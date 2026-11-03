@@ -2,7 +2,7 @@
 
 The annotation editing the headless package carried before it was cut: the renderer's editor modes set and each drawing it reports, a document's comments listed, free texts exchanged as XFDF, and the page overlays a consumer places its own marks on.
 
-None of it is in the package now. The "usePdfAnnotations" composable, the "readXfdf" and "writeXfdf" functions and their models are gone, the viewer has no editor mode, and it publishes no page overlay. The renderer's save still writes the form values and the watermark, which are built and [described with the annotations](../../../specs/vue-pdfjs-headless/annotations/design.md).
+None of it is in the package now. The "usePdfAnnotations" composable, the "readXfdf" and "writeXfdf" functions and their models are gone, the viewer has no editor mode, and it publishes no page overlay. The renderer's save still writes the form values, which are built and [described with the annotations](../../../specs/vue-pdfjs-headless/annotations/design.md).
 
 ## Why deferred
 
@@ -28,7 +28,7 @@ A PDF annotation UI is designed: a surface in the app that edits or draws annota
 
 ## Not the same thing
 
-- [Form values and the watermark](../../../specs/vue-pdfjs-headless/annotations/design.md) are built and kept in the package: a typed form value and a watermark that a download carries. Neither is an editor.
+- [Form values](../../../specs/vue-pdfjs-headless/annotations/design.md) are built and kept in the package: a typed form value that a download carries, and not an editor. The stamp on a download is its own [watermark](../watermark/design.md) idea.
 - [Viewer chrome](../viewer-chrome/design.md) holds the outline, thumbnails, fullscreen, rotation and zoom readout that the viewer no longer returns.
 
 ## Sources
