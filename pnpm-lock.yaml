@@ -238,8 +238,8 @@ catalogs:
       specifier: ^0.1.2
       version: 0.1.2
     '@electric-sql/pglite':
-      specifier: ^0.5.14
-      version: 0.5.14
+      specifier: ^0.5.15
+      version: 0.5.15
     '@eslint/core':
       specifier: ^1.2.1
       version: 1.2.1
@@ -890,7 +890,7 @@ importers:
         version: link:../../packages/shared
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       fflate:
         specifier: 'catalog:'
         version: 0.8.3
@@ -982,10 +982,10 @@ importers:
         version: 1.1.0(supports-color@8.1.1)
       '@better-auth/api-key':
         specifier: 'catalog:'
-        version: 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(better-call@1.4.4(zod@4.6.7))
+        version: 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(better-call@1.4.4(zod@4.6.7))
       '@better-auth/drizzle-adapter':
         specifier: 'catalog:'
-        version: 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
+        version: 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
       '@codemirror/lang-vue':
         specifier: 'catalog:'
         version: 0.1.3
@@ -1096,7 +1096,7 @@ importers:
         version: 8.7.0
       better-auth:
         specifier: 'catalog:'
-        version: 1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
+        version: 1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
       bowser:
         specifier: 'catalog:'
         version: 2.15.0
@@ -1111,7 +1111,7 @@ importers:
         version: 9.0.0
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       emojilib:
         specifier: 'catalog:'
         version: 4.0.3
@@ -1292,7 +1292,7 @@ importers:
         version: 4.3.4(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(@vitest/ui@5.1.0)(@vue/test-utils@2.5.1(@vue/compiler-dom@3.5.44)(@vue/server-renderer@3.5.44)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(confbox@0.3.2)(dotenv@18.0.9)(h3@2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.1))(happy-dom@21.0.4)(jiti@2.7.0)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(playwright-core@1.64.1)(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3))
       '@nuxtjs/seo':
         specifier: 'catalog:'
-        version: 6.0.1(4a5c3ab9f4cd3992eaae1f773de61837)
+        version: 6.0.1(3de681392c9cedc7bd6d726451ce3444)
       '@pinia/nuxt':
         specifier: 'catalog:'
         version: 1.0.3(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.157.0)(pinia@4.1.0(@vue/devtools-api@8.2.1)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))
@@ -1349,7 +1349,7 @@ importers:
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -1614,7 +1614,7 @@ importers:
         version: link:../shared
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       link-preview-js:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1648,13 +1648,13 @@ importers:
     dependencies:
       '@electric-sql/pglite':
         specifier: 'catalog:'
-        version: 0.5.14
+        version: 0.5.15
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../db-schema
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1664,7 +1664,7 @@ importers:
         version: 26.6.6
       drizzle-kit:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
+        version: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
       tsdown:
         specifier: 'catalog:'
         version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.20.1-ts7.1.0-beta)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
@@ -1688,7 +1688,7 @@ importers:
         version: link:../shared
       drizzle-orm:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+        version: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -1698,7 +1698,7 @@ importers:
         version: link:../configuration
       drizzle-kit:
         specifier: 'catalog:'
-        version: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
+        version: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
       tsdown:
         specifier: 'catalog:'
         version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.20.1-ts7.1.0-beta)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
@@ -1989,7 +1989,7 @@ importers:
         version: 6.1.7
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -2233,7 +2233,7 @@ importers:
         version: 0.4.17(srvx@1.0.8)
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
@@ -2300,7 +2300,7 @@ importers:
         version: 8.0.13
       nitro:
         specifier: npm:nitro-nightly@latest
-        version: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+        version: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nuxt:
         specifier: 'catalog:'
         version: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
@@ -3075,8 +3075,8 @@ packages:
   '@dxup/unimport@0.1.2':
     resolution: {integrity: sha512-/B8YJGPzaYq1NbsQmwgP8EZqg40NpTw4ZB3suuI0TplbxKHeK94jeaawLmVhCv+YwUnOpiWEz9U6SeThku/8JQ==}
 
-  '@electric-sql/pglite@0.5.14':
-    resolution: {integrity: sha512-aAQe7iArcFB2w1xtx91l3l9trxhMzD6aZf+WnosSHNhwgp70EJz80Igw/bHnW14fUEFYWPBoQ1sGom8Xc0Jttg==}
+  '@electric-sql/pglite@0.5.15':
+    resolution: {integrity: sha512-ERZWgaRTxueGV4cvL1tfpAOzFCWTXoUtbCBqnf2FhHDVs/so9eAKaanvrwWF9Dntx7BYsmFQujVQ0/B4S8Mmiw==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -10180,8 +10180,8 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
-    resolution: {integrity: sha512-lWmbEVpk5LoLJ3NATrVeSLnsRu09e3aX+Dt8gZhKe7aQU8y/FKIMeSV8x8YnlZPv+KYRxm8I3FamT6GOV22VXQ==}
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
+    resolution: {integrity: sha512-45C9iKqLGYLlc5Ce6HxBc9VwBuUdVQbMm2aJgaKk6uJtG3wdmvoQBtGPN5IvjHJcU1S67vsT/syPv6lS12Ftgg==}
     engines: {node: '>=22.22.0'}
     hasBin: true
 
@@ -13418,11 +13418,11 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@better-auth/api-key@1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(better-call@1.4.4(zod@4.6.7))':
+  '@better-auth/api-key@1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(better-call@1.4.4(zod@4.6.7))':
     dependencies:
       '@better-auth/core': 1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5)
       '@better-auth/utils': 0.5.1
-      better-auth: 1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
+      better-auth: 1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
       better-call: 1.4.4(zod@4.6.7)
       zod: 4.6.7
 
@@ -13439,12 +13439,12 @@ snapshots:
     optionalDependencies:
       '@opentelemetry/api': 1.10.0
 
-  '@better-auth/drizzle-adapter@1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))':
+  '@better-auth/drizzle-adapter@1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))':
     dependencies:
       '@better-auth/core': 1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5)
       '@better-auth/utils': 0.5.1
     optionalDependencies:
-      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
 
   '@better-auth/kysely-adapter@1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(kysely@0.29.8)':
     dependencies:
@@ -13874,7 +13874,7 @@ snapshots:
 
   '@dxup/unimport@0.1.2': {}
 
-  '@electric-sql/pglite@0.5.14': {}
+  '@electric-sql/pglite@0.5.15': {}
 
   '@emnapi/core@1.11.2':
     dependencies:
@@ -15273,7 +15273,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
       ofetch: 2.0.0-alpha.3
@@ -15335,7 +15335,7 @@ snapshots:
       magic-string: 1.4.5
       mocked-exports: 0.1.1
       my-bad: 0.2.11(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
-      nitro: nitro-nightly@3.0.1-20261103-075028-2fd58b9f
+      nitro: nitro-nightly@3.0.1-20261103-164230-e02c7cf8
       nostics: 1.3.0
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(96c7d2a05589a45f9f489f3341bde850)
       ofetch: 2.0.0-alpha.3
@@ -15772,13 +15772,13 @@ snapshots:
       - unplugin
       - vue
 
-  '@nuxtjs/seo@6.0.1(4a5c3ab9f4cd3992eaae1f773de61837)':
+  '@nuxtjs/seo@6.0.1(3de681392c9cedc7bd6d726451ce3444)':
     dependencies:
       '@nuxt/kit': 4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.157.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))
       '@nuxtjs/robots': 7.0.2(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
       '@nuxtjs/sitemap': 9.1.0(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
       nuxt: nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2)
-      nuxt-ai-ready: 3.4.0(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(dotenv@18.0.9)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(postgres@4.0.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
+      nuxt-ai-ready: 3.4.0(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(dotenv@18.0.9)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(postgres@4.0.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
       nuxt-link-checker: 6.0.1(@azure/data-tables@13.3.2(supports-color@8.1.1))(@azure/identity@4.14.1(supports-color@8.1.1))(@azure/storage-blob@12.34.0(supports-color@8.1.1))(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
       nuxt-og-image: 7.0.7(9ede18da87c6b50511329372b3f62e2a)
       nuxt-schema-org: 7.0.1(4f9c7a03e0febbed5c592369c7d07bb8)
@@ -18762,10 +18762,10 @@ snapshots:
 
   before-after-hook@4.0.0: {}
 
-  better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)):
+  better-auth@1.7.15(@opentelemetry/api@1.10.0)(drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)))(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(mysql2@3.24.6(@types/node@26.6.6))(vitest@5.1.0)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)):
     dependencies:
       '@better-auth/core': 1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5)
-      '@better-auth/drizzle-adapter': 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
+      '@better-auth/drizzle-adapter': 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
       '@better-auth/kysely-adapter': 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)(kysely@0.29.8)
       '@better-auth/memory-adapter': 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)
       '@better-auth/mongo-adapter': 1.7.15(@better-auth/core@1.7.15(@better-auth/utils@0.5.1)(@better-fetch/fetch@1.3.3)(@opentelemetry/api@1.10.0)(better-call@1.4.4(zod@4.6.7))(jose@6.2.15)(kysely@0.29.8)(nanostores@1.5.5))(@better-auth/utils@0.5.1)
@@ -18782,8 +18782,8 @@ snapshots:
       nanostores: 1.5.5
       zod: 4.6.7
     optionalDependencies:
-      drizzle-kit: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
-      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+      drizzle-kit: 1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))
+      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       mysql2: 3.24.6(@types/node@26.6.6)
       vitest: 5.1.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/browser-preview@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(msw@3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
       vue: 3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -19489,13 +19489,13 @@ snapshots:
 
   draco3d@1.5.9: {}
 
-  drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)):
+  drizzle-kit@1.0.0-rc.5(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)):
     optionalDependencies:
-      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
 
-  drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7):
+  drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7):
     optionalDependencies:
-      '@electric-sql/pglite': 0.5.14
+      '@electric-sql/pglite': 0.5.15
       '@opentelemetry/api': 1.10.0
       '@types/pg': 8.15.6
       mysql2: 3.24.6(@types/node@26.6.6)
@@ -21774,7 +21774,7 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.67.4
 
-  nitro-nightly@3.0.1-20261103-075028-2fd58b9f:
+  nitro-nightly@3.0.1-20261103-164230-e02c7cf8:
     dependencies:
       crossws: 0.4.17(srvx@1.0.8)
       env-runner: 0.3.11
@@ -21898,7 +21898,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-ai-ready@3.4.0(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(dotenv@18.0.9)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(postgres@4.0.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7):
+  nuxt-ai-ready@3.4.0(@nuxt/schema@4.6.4)(@oxc-project/types@0.157.0)(dotenv@18.0.9)(drizzle-orm@1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7))(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611031025-9496b7e(6cc429f2b403636352b6ea5986a14ba2))(oxc-parser@0.157.0)(postgres@4.0.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7):
     dependencies:
       '@mdream/js': 2.0.3
       '@nuxt/kit': 4.6.4(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.157.0)(rolldown@1.2.16)(unplugin@3.7.0(rolldown@1.2.16)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))
@@ -21919,7 +21919,7 @@ snapshots:
       ufo: 1.6.4
       yaml: 2.9.1
     optionalDependencies:
-      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.14)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
+      drizzle-orm: 1.0.0-rc.5(@electric-sql/pglite@0.5.15)(@opentelemetry/api@1.10.0)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.0.0)(valibot@1.5.0)(zod@4.6.7)
       postgres: 4.0.0
     transitivePeerDependencies:
       - '@nuxt/schema'
