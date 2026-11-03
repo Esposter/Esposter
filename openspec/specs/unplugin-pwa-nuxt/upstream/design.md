@@ -28,13 +28,14 @@ The counts sum to the item count of each tracker and kind, and the verdict table
 
 ## What our configuration triggers
 
-The app's PWA configuration sets the client plugin's hourly update check, the prompt registration type, the worker's file name and manifest, and a TypeScript worker built with the buildSW strategy. Every other option is the absorbed module's default. Five facts about the app decide which upstream defects reach it:
+The app's PWA configuration sets the client plugin's hourly update check, the prompt registration type, the worker's file name and manifest, and a TypeScript worker built with the buildSW strategy. Every other option is the absorbed module's default. Six facts about the app decide which upstream defects reach it:
 
 - The worker answers navigations with the precached app shell, except those its denylist, derived from the route rules, hands to the server (R7).
 - Nuxt 5 turns on app manifests and payload extraction by default, and the app does not turn them off, so the payload branches run (R9).
 - Route rules turn server rendering off for several app routes, which the shell may answer by design. The denylist derives from the route rules, so the shell keeps answering those routes and server routes stay out of its reach (R7).
 - The app's icon head component mounts beside the repository's security module, which issues the CSP nonce, so head entries must carry keys (R14).
 - The app generates its icons with an external command-line generator rather than through the module, so the icon option is kept for parity, and the app's icons still come from its own command (R13).
+- One chunk is past the engine's 2 MiB precache limit: the Survey Creator's translations for all 76 locales, which the survey editor imports as one aggregate. The engine fails the build on an oversize file, so the app sets the top-level option `throwMaximumFileSizeToCacheInBytes` to false, leaves that lazy chunk out of the precache and lets the page fetch it. The engine copies the option onto `buildSW` and replaces a value placed there, so only the top level counts. Loading the active locale's file in place of the aggregate would remove the chunk.
 
 The Vitest allowlist keeps the module out, because loading it under Vitest crashes the Nuxt config on Windows (R16): the crash reproduced with `unplugin-pwa-nuxt`, so the allowlist stays.
 
@@ -50,6 +51,8 @@ flowchart TD
   hook --> worker["Engine builds the worker"]
   worker --> server["Server compile"]
 ```
+
+The engine reads the manifest's icons from Vite's `publicDir`, which is empty under Nuxt because Nitro serves the folder, so the engine would look in the working directory. The package hands it Nuxt's own public folder when it resolves the engine's options.
 
 ## Verdicts
 
