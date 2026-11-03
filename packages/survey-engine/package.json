@@ -32,6 +32,12 @@
     },
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
     "build": "tsdown",
     "lint": "eslint .",
