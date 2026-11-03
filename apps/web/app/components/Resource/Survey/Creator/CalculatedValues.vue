@@ -80,6 +80,13 @@ const removeValue = (index: number): void => {
   nameDrafts.clear();
   expressionDrafts.clear();
 };
+// A removal is asked for first: the index it asks about is held until its confirm answers
+const removingIndex = ref<number>();
+const isRemoveOpen = ref(false);
+const askRemove = (index: number): void => {
+  removingIndex.value = index;
+  isRemoveOpen.value = true;
+};
 </script>
 
 <template>
@@ -104,9 +111,21 @@ const removeValue = (index: number): void => {
           is-label-shown
           @update:model-value="(newIncludeIntoResult) => setIncludeIntoResult(index, newIncludeIntoResult)"
         />
-        <UiIconButton label="Remove calculated value" :meaning="UiIconMeaning.Remove" @click="removeValue(index)" />
+        <UiIconButton label="Remove calculated value" :meaning="UiIconMeaning.Remove" @click="askRemove(index)" />
       </div>
     </section>
     <UiButton @click="addValue()">Add a calculated value</UiButton>
+    <UiConfirmDialog
+      v-model="isRemoveOpen"
+      confirm-label="Remove"
+      :confirm="
+        () => {
+          if (removingIndex !== undefined) removeValue(removingIndex);
+        }
+      "
+      title="Remove calculated value"
+    >
+      <p>Remove this calculated value from the survey?</p>
+    </UiConfirmDialog>
   </div>
 </template>

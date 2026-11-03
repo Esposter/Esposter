@@ -5,6 +5,7 @@ import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
@@ -74,6 +75,44 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
 
     expect(component.get('[role="alert"]').text()).toBe("Expected an expression at character 6");
     expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} > 5");
+
+    component.unmount();
+  });
+
+  test("removing a condition asks first, and removes it once confirmed", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
+    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const component = await mountSuspended(LogicBuilder);
+
+    await component.get('[aria-label="Remove condition"]').trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
+
+    await getButtonByText(component, "Remove")?.trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("");
+
+    component.unmount();
+  });
+
+  test("cancelling the ask keeps the condition", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(createSurveyTestDocument([createQuestion("a", ""), createQuestion("b", "{a} = 'yes'")]));
+    surveyCreatorStore.selectedPointer = "/content/0/props/children/1";
+    const component = await mountSuspended(LogicBuilder);
+
+    await component.get('[aria-label="Remove condition"]').trigger("click");
+    await getButtonByText(component, "Cancel")?.trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
 
     component.unmount();
   });

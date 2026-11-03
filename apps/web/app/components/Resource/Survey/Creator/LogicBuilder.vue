@@ -89,6 +89,13 @@ const editJoin = (prop: SurveyConditionProp, join: SurveyConditionJoin): void =>
 
   writeCondition(prop, buildSurveyCondition(parsedRows.rows, join));
 };
+// A removal is asked for first: the condition it asks about is held until its confirm answers
+const removingRow = ref<{ index: number; prop: SurveyConditionProp }>();
+const isRemoveOpen = ref(false);
+const askRemoveRow = (prop: SurveyConditionProp, index: number): void => {
+  removingRow.value = { index, prop };
+  isRemoveOpen.value = true;
+};
 const getAnswerType = (questionName: string): SurveyNodeType | undefined =>
   answers.value.find(({ name }) => name === questionName)?.type;
 const checkIsBooleanAnswer = (questionName: string): boolean => getAnswerType(questionName) === SurveyNodeType.Boolean;
@@ -135,7 +142,7 @@ const getOperatorItems = (questionName: string) =>
               @update:model-value="(newValue) => editValue(prop, index, newValue)"
             />
           </template>
-          <UiIconButton label="Remove condition" :meaning="UiIconMeaning.Remove" @click="removeRow(prop, index)" />
+          <UiIconButton label="Remove condition" :meaning="UiIconMeaning.Remove" @click="askRemoveRow(prop, index)" />
         </div>
         <UiToggleGroup
           v-if="(getRows(prop)?.rows.length ?? 0) > 1"
@@ -154,5 +161,17 @@ const getOperatorItems = (questionName: string) =>
         @update:model-value="(newText) => writeCondition(prop, newText)"
       />
     </section>
+    <UiConfirmDialog
+      v-model="isRemoveOpen"
+      confirm-label="Remove"
+      :confirm="
+        () => {
+          if (removingRow !== undefined) removeRow(removingRow.prop, removingRow.index);
+        }
+      "
+      title="Remove condition"
+    >
+      <p>Remove this condition from the expression?</p>
+    </UiConfirmDialog>
   </div>
 </template>

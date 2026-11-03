@@ -5,6 +5,7 @@ import type { SurveyDocument, SurveyNode } from "survey-engine";
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { checkSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
@@ -80,6 +81,42 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
       "b",
       "value",
     ]);
+
+    component.unmount();
+  });
+
+  test("a removal asks first, and removes the value it asked about once confirmed", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(createSurveyTestDocument(["b", "c"]));
+    const component = await mountSuspended(CalculatedValues);
+
+    await component.findAll('[aria-label="Remove calculated value"]')[0]?.trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
+
+    await getButtonByText(component, "Remove")?.trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["c"]);
+
+    component.unmount();
+  });
+
+  test("cancelling the ask removes nothing", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(createSurveyTestDocument(["b", "c"]));
+    const component = await mountSuspended(CalculatedValues);
+
+    await component.findAll('[aria-label="Remove calculated value"]')[0]?.trigger("click");
+    await getButtonByText(component, "Cancel")?.trigger("click");
+    await flushPromises();
+
+    expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
 
     component.unmount();
   });
