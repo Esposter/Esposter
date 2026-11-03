@@ -70,7 +70,6 @@ These are where the look comes from: the palette's structure, the surfaces, the 
 
 - **[Mobbin](https://mobbin.com/)** — a library of real app and web screens and flows, for how several products arrange the same thing when no one reference product owns it.
 - **[GrapesJS](https://github.com/GrapesJS/grapesjs)** — the open-source web builder whose block manager lays each block out as a tile of one width with its name and icon, the palette the page builder follows.
-- **[SurveyJS Creator](https://github.com/surveyjs/survey-creator)** — a survey builder whose question types sit in a list rather than tiles, the contrast the palette's tiles were chosen against.
 - **[email-builder-js](https://github.com/usewaypoint/email-builder-js)** — an email template editor, one reference for how an email's block kinds are arranged.
 
 ## Absorptions that draw an interface

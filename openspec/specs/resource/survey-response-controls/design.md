@@ -11,7 +11,7 @@ flowchart LR
   OV["Overview Collection card<br/>Accepting responses toggle"] -->|saveResourceContent| BLOB[("{id}/content.json<br/>settings.isAcceptingResponses")]
   RESP["/view/Survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by reapplySurveyLiveContent"]
   MERGED -->|closed| MSG["closed state<br/>(closedMessage or the default)"]
-  MERGED -->|open| FORM["SurveyJS form"]
+  MERGED -->|open| FORM["the survey runner"]
   SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]
 ```
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-SurveyJS authoring as a resource — inline creator Editor blade, Responses dataset blade, and a public respondent page as the published view.
+Survey authoring as a resource — an inline Creator Editor blade over the survey's typed document, a Responses dataset blade, and a public respondent page as the published view.
 
 ## Requirements
 

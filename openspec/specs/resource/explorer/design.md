@@ -107,7 +107,7 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 | Type      | Blades after Overview                                                                                                                     |
 | --------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Sheet     | Data (grid editor), Settings (parse configuration form)                                                                                   |
-| Survey    | Editor (SurveyJS creator, inline), Responses (response table)                                                                             |
+| Survey    | Editor (the survey Creator, inline), Responses (response table)                                                                           |
 | TodoList  | Items ([task rows](../todolist-task-rows/design.md)), Calendar (the library's event calendar over this list, a todo moved by dragging it) |
 | Program   | Setup, Status — no canvas, so no Editor                                                                                                   |
 | Dashboard | Editor (canvas incl. bind-to-data, inline)                                                                                                |

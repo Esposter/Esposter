@@ -1,12 +1,12 @@
 # Resource save state
 
-Nothing in the product has a Save command for a resource's content. An edit becomes durable on its own: some types debounce a watched content ref, some persist on the command that made the change, and SurveyJS saves on a cadence its library owns. That is the right behaviour and the wrong silence — an owner who cannot see it happening looks for the button that makes it happen, and any button offered in that gap gets read as the thing that makes their work real.
+Nothing in the product has a Save command for a resource's content. An edit becomes durable on its own: some types debounce a watched content ref, some persist on the command that made the change, and the survey's Creator autosaves its document on the shared cadence. That is the right behaviour and the wrong silence — an owner who cannot see it happening looks for the button that makes it happen, and any button offered in that gap gets read as the thing that makes their work real.
 
 So the resource's title row carries a **save state** instead: one line beside the resource's commands saying whether what is on screen has reached the server, and when.
 
 ## Why there is no per-type registry
 
-The types differ in how an edit is _triggered_, and not at all in how it is _written_. `useResourceStore().saveContent` is the single door — the debounced watcher, the Sheet toolbar command, the TodoList dialog's Save and the SurveyJS storage hook all call it, and it owns the dirty check, the queue, the `contentVersion` guard and the conflict handling for every one of them.
+The types differ in how an edit is _triggered_, and not at all in how it is _written_. `useResourceStore().saveContent` is the single door — the debounced watcher, the Sheet toolbar command, the TodoList dialog's Save and the survey Creator's autosave all call it, and it owns the dirty check, the queue, the `contentVersion` guard and the conflict handling for every one of them.
 
 A map from `ResourceType` to a save mode would therefore describe a difference that stops at the trigger. It would also be the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids: a branch with indirection between it and its reader, added for a variation the mechanism below it has already erased. The state is derived from the door instead, once, for every type.
 
@@ -14,7 +14,7 @@ A map from `ResourceType` to a save mode would therefore describe a difference t
 flowchart TD
   AUTO["watchAutosave / useAutosaveFunction<br/>Autosaving editors"] --> DOOR
   CMD["command or dialog Save"] --> DOOR
-  LIB["a third-party editor's own cadence<br/>SurveyJS creator"] --> DOOR
+  LIB["the survey Creator's autosave<br/>useSurveyCreatorAutosave"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
 
   AUTO -.->|"arms"| ARMED(["unwrittenContentResourceId"])

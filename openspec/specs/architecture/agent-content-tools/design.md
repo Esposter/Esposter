@@ -24,7 +24,7 @@ One conversion, `getAgentJsonSchema`, turns a Zod schema into the JSON Schema an
 - **Undescribed parts are marked.** `z.unknown()` and `z.any()` are stamped `x-opaque`, the key `OPAQUE_KEY` names, so the agent sees where the schema stops describing.
 - **Read-only fields say so.** A schema given `.readonly()` or `.meta({ readOnly: true })` reaches the agent as JSON Schema's own `readOnly` keyword.
 - **Enums come through as `enum` lists**, so the legal values arrive in the same answer as the shape.
-- **The resource schema follows its editor.** Notes check documents against the shared writing kit; Survey models must be JSON objects; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
+- **The resource schema follows its editor.** Notes check documents against the shared writing kit; a Survey's content must be its `{ document, settings }` object, and its document must pass the survey check; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
 
 ## Reading
 
@@ -77,28 +77,28 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 
 ## Key files
 
-| File                                                                  | Role                                                                       |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/resource.ts`                            | the describe, read and update tools, and `readResources` opted in          |
-| `apps/web/server/services/mcp/getAgentJsonSchema.ts`                  | the one conversion the bridge and the describe tool share                  |
-| `apps/web/server/services/mcp/getAgentJsonSchema.test.ts`             | every content schema converts, its unwritable paths recorded per type      |
-| `apps/web/server/services/mcp/checkIsAgentWritablePath.ts`            | walks a pointer down the agent JSON Schema, refusing a marked node         |
-| `apps/web/server/services/mcp/getJsonSchemaBranches.ts`               | a node's union branches and the definitions its `$ref`s name               |
-| `apps/web/server/services/resource/requireAgentWritableOperations.ts` | refuses a patch reaching a read-only or undescribed path                   |
-| `apps/web/server/services/resource/applyResourceContentPatches.ts`    | applies a patch and parses the result, each failure the caller's mistake   |
-| `apps/web/server/services/resource/updateResourceContent.ts`          | read, change and save at the version read, retried when unpinned           |
-| `apps/web/server/services/resource/readStoredResourceContent.ts`      | the stored JSON a read selects from and a patch applies to                 |
-| `apps/web/server/services/resource/readContentAtPointer.ts`           | the value at a pointer, an array's page, and the member sizes past the cap |
-| `apps/web/server/services/resource/checkIsJsonSizeWithin.ts`          | a value's JSON size against a cap, without serializing it                  |
-| `packages/shared/src/models/jsonPatch/JsonPatchOperation.ts`          | the six operations' types                                                  |
-| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`            | the operations' wire schema, checked at the request                        |
-| `packages/shared/src/services/jsonPatch/applyPatches.ts`              | the one RFC 6902 applier                                                   |
-| `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the follow-ups' change, through the generic update                         |
-| `apps/web/shared/models/resource/note/NoteResource.ts`                | validates documents with the Note writing kit's schema                     |
-| `apps/web/shared/services/resource/note/getNoteExtensions.ts`         | the extension set shared by the Note editor, renderer and validator        |
-| `apps/web/shared/models/resource/survey/SurveyResource.ts`            | requires a serialized JSON object for a Survey model                       |
-| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | marks the baked HTML read-only                                             |
-| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`              | marks the baked HTML read-only                                             |
+| File                                                                  | Role                                                                               |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/resource.ts`                            | the describe, read and update tools, and `readResources` opted in                  |
+| `apps/web/server/services/mcp/getAgentJsonSchema.ts`                  | the one conversion the bridge and the describe tool share                          |
+| `apps/web/server/services/mcp/getAgentJsonSchema.test.ts`             | every content schema converts, its unwritable paths recorded per type              |
+| `apps/web/server/services/mcp/checkIsAgentWritablePath.ts`            | walks a pointer down the agent JSON Schema, refusing a marked node                 |
+| `apps/web/server/services/mcp/getJsonSchemaBranches.ts`               | a node's union branches and the definitions its `$ref`s name                       |
+| `apps/web/server/services/resource/requireAgentWritableOperations.ts` | refuses a patch reaching a read-only or undescribed path                           |
+| `apps/web/server/services/resource/applyResourceContentPatches.ts`    | applies a patch and parses the result, each failure the caller's mistake           |
+| `apps/web/server/services/resource/updateResourceContent.ts`          | read, change and save at the version read, retried when unpinned                   |
+| `apps/web/server/services/resource/readStoredResourceContent.ts`      | the stored JSON a read selects from and a patch applies to                         |
+| `apps/web/server/services/resource/readContentAtPointer.ts`           | the value at a pointer, an array's page, and the member sizes past the cap         |
+| `apps/web/server/services/resource/checkIsJsonSizeWithin.ts`          | a value's JSON size against a cap, without serializing it                          |
+| `packages/shared/src/models/jsonPatch/JsonPatchOperation.ts`          | the six operations' types                                                          |
+| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`            | the operations' wire schema, checked at the request                                |
+| `packages/shared/src/services/jsonPatch/applyPatches.ts`              | the one RFC 6902 applier                                                           |
+| `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the follow-ups' change, through the generic update                                 |
+| `apps/web/shared/models/resource/note/NoteResource.ts`                | validates documents with the Note writing kit's schema                             |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`         | the extension set shared by the Note editor, renderer and validator                |
+| `apps/web/shared/models/resource/survey/SurveyResource.ts`            | requires the `{ document, settings }` object, and the survey check on its document |
+| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | marks the baked HTML read-only                                                     |
+| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`              | marks the baked HTML read-only                                                     |
 
 ## Sources
 

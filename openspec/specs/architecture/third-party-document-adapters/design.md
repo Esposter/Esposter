@@ -1,6 +1,6 @@
 # Third-party document adapters
 
-Most of the app's editable state is a ref a store owns and a template renders, so replacing the ref is the whole of making a change visible. Two editors are not: Tiptap and SurveyJS each parse the document once and then hold it themselves, in a model the app cannot re-render from. The [page builder](../../resource/page-builder/README.md) is not one of them: its document sits in a store a template renders, so it needs the reload stage alone.
+Most of the app's editable state is a ref a store owns and a template renders, so replacing the ref is the whole of making a change visible. Two editors are not. Tiptap parses the document once and then holds it itself, in a model the app cannot re-render from. The survey's Creator is the app's own, but it keeps a copy of the document in its store, which a replaced content ref does not reach. The [page builder](../../resource/page-builder/README.md) is not one of them: its document sits in a store a template renders, so it needs the reload stage alone.
 
 That difference is invisible while the only writer is the editor, and it is the entire problem the moment anything else writes — which one thing does. A [restore](../../resource/resource-snapshots/design.md) replaces the working copy underneath an open blade, and the row it lands on is re-read immediately, so the blade's `contentVersion` is the restore's own. An editor still holding the pre-restore document therefore does not fail its next save: it wins it.
 
@@ -26,10 +26,10 @@ They are two registries rather than one because a registry runs its hooks togeth
 
 ## What each library's adopt is
 
-| Editor   | Where it registers     | What it does                                                                                      |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------------- |
-| Tiptap   | `Resource/Note/Editor` | `setContent` with `emitUpdate: false` — an update here is the restore echoing back out as an edit |
-| SurveyJS | `useSurveyCreator`     | re-splits the store's model string into JSON and theme, as construction does                      |
+| Editor | Where it registers       | What it does                                                                                      |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
+| Tiptap | `Resource/Note/Editor`   | `setContent` with `emitUpdate: false` — an update here is the restore echoing back out as an edit |
+| Survey | `Resource/Survey/Editor` | loads the stored document into the Creator's store, the copy the Creator edits                    |
 
 ## Adding one
 
@@ -39,14 +39,14 @@ Register before the first `await` in an async composable. Past it the caller's s
 
 ## Key files
 
-| File                                                           | Role                                                        |
-| -------------------------------------------------------------- | ----------------------------------------------------------- |
-| `apps/web/app/services/resource/ResourceContentHookMap.ts`     | the two stages                                              |
-| `apps/web/app/composables/resource/useAdoptResourceContent.ts` | what a blade registers, and its teardown                    |
-| `apps/web/app/store/resource/index.ts`                         | `reloadResourceContent` — the row re-read, then both stages |
-| `apps/web/app/services/resource/createContentData.ts`          | the reload stage every content store gets for free          |
-| `apps/web/app/composables/survey/useSurveyCreator.ts`          | the SurveyJS adopt                                          |
-| `apps/web/app/components/Resource/Note/Editor.vue`             | the Tiptap adopt                                            |
+| File                                                           | Role                                                           |
+| -------------------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/web/app/services/resource/ResourceContentHookMap.ts`     | the two stages                                                 |
+| `apps/web/app/composables/resource/useAdoptResourceContent.ts` | what a blade registers, and its teardown                       |
+| `apps/web/app/store/resource/index.ts`                         | `reloadResourceContent` — the row re-read, then both stages    |
+| `apps/web/app/services/resource/createContentData.ts`          | the reload stage every content store gets for free             |
+| `apps/web/app/components/Resource/Survey/Editor.vue`           | the survey adopt, loading the stored document into the Creator |
+| `apps/web/app/components/Resource/Note/Editor.vue`             | the Tiptap adopt                                               |
 
 ## Notes
 
