@@ -60,6 +60,7 @@ The tokenizer reads the source into tokens and stops at the first character it c
   - **Names are case-sensitive.** `{Name}` reads only an answer named `Name`, where SurveyJS ignores case. Question names are checked unique case-sensitively, so one name is one answer.
   - **Syntax SurveyJS refuses is accepted.** `not` and `!`, a unary minus before any operand (`-{a}`, `-(3)`, `- 3`) and a number with a leading dot (`.5`) all evaluate, where SurveyJS reports an invalid expression.
   - **Records hold no text and read as no number.** `{a} + 'x'` joins as `'x'` where SurveyJS joins `'[object Object]x'`, `{a} + 1` is not a number where SurveyJS joins the text, and `sum` skips a record where SurveyJS joins its text. Lists are not in this group: a list reads as its text, as `{a} + 1` on a list of one number gives `'31'` in both.
+  - **A date-time end with an hours, minutes or seconds unit is the real difference.** `dateDiff('1970-01-01', '1970-01-01 05:00:00', 'hours')` is 5, where SurveyJS gives NaN for the same end. The package keeps the time of a date-time end, so the difference is the real one.
   - **A date amount that is numeric text is a number.** `today('3')` and `dateAdd(date, '3')` add three days, where SurveyJS joins the text (January 2 plus `'3'` is day 23).
   - **An invalid date is empty.** `today('x')` and `dateAdd('x', 1)` are empty, where SurveyJS gives an invalid `Date`.
   - **The filter form of an array function is refused.** `checkSurveyExpression` refuses it and `runSurveyExpression` answers empty, where SurveyJS filters the items.
