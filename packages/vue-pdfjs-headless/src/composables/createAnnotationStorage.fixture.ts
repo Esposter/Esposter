@@ -6,7 +6,7 @@ export interface AnnotationStorage {
   readonly size: number;
 }
 
-// The renderer's annotation storage, which a drawn, imported or watermarked annotation is written into for a save to read
+// The renderer's annotation storage, which a filled-in form value is written into for a save to read
 export const createAnnotationStorage = (): AnnotationStorage => {
   const entries = new Map<string, unknown>();
 

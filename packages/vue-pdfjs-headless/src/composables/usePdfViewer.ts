@@ -24,32 +24,21 @@ import { computed, onScopeDispose, ref, toValue, watch } from "vue";
 
 interface FindTextOptions {
   isPrevious?: boolean;
-  query: string | string[];
+  query: string;
   type?: string;
 }
 
 interface UsePdfViewerOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
-  // The terms highlighted on load, every match of each one
-  highlightTerms?: MaybeRefOrGetter<string[]>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The renderer's viewer module, the components its viewer is built from
   viewerApi: MaybeRefOrGetter<PdfViewerApi | undefined>;
-  // The text stamped on every page of a download, which the document on screen does not carry
-  watermark?: MaybeRefOrGetter<string | undefined>;
 }
 
 // Builds the renderer's viewer for a loaded document on the consumer's container.
 // Its pages, zoom, rotation, search, download and print are state and actions, and it draws no chrome
-export const usePdfViewer = ({
-  container,
-  highlightTerms = [],
-  pdfDocument,
-  viewer,
-  viewerApi,
-  watermark,
-}: UsePdfViewerOptions): PdfViewerState => {
+export const usePdfViewer = ({ container, pdfDocument, viewer, viewerApi }: UsePdfViewerOptions): PdfViewerState => {
   const currentPageNumber = ref(0);
   const isMatchCase = ref(false);
   const isNotFound = ref(false);
@@ -142,10 +131,6 @@ export const usePdfViewer = ({
     currentPageNumber.value = 1;
     matchesCount.value = { current: 0, total: 0 };
     isNotFound.value = false;
-    if (!loaded) return;
-
-    const terms = toValue(highlightTerms);
-    if (terms.length > 0) findText({ query: terms });
   };
   // A new query is searched from its first match, and a step to the next or previous one again from where the search is
   const findText = ({ isPrevious = false, query, type = "" }: FindTextOptions) => {
@@ -204,7 +189,7 @@ export const usePdfViewer = ({
     if (!downloaded) return;
 
     await getResultAsync(async () => {
-      downloadFile(filename, await getDownloadBytes(downloaded, toValue(watermark)), PDF_MIME_TYPE);
+      downloadFile(filename, await getDownloadBytes(downloaded), PDF_MIME_TYPE);
     }).match(noop, console.error);
   });
   const print = getSynchronizedFunction(async () => {

@@ -6,14 +6,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
 import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfViewer } from "#src/composables/usePdfViewer";
-import { PdfEditorMode } from "#src/models/PdfEditorMode";
-import {
-  PDF_MAX_SCALE,
-  PDF_PRINT_CLASS,
-  PDF_ROTATION_STEP,
-  PDF_WATERMARK_COLOR,
-  PDF_WATERMARK_FONT_SIZE,
-} from "#src/services/constants";
+import { PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
@@ -60,13 +53,8 @@ describe(usePdfViewer, () => {
   const FIT_SCALE = 1.5;
   // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
   // The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
-  const stubs: {
-    abortSignal?: AbortSignal;
-    eventBus?: EventBusStub;
-    findEvents: unknown[];
-    scaleWrites: unknown[];
-    viewer?: PdfViewerStub;
-  } = { findEvents: [], scaleWrites: [] };
+  const stubs: { abortSignal?: AbortSignal; eventBus?: EventBusStub; scaleWrites: unknown[]; viewer?: PdfViewerStub } =
+    { scaleWrites: [] };
   // How many matches the stub document holds for any search
   let matches = 0;
 
@@ -92,8 +80,7 @@ describe(usePdfViewer, () => {
     };
   };
   const createFindController = ({ eventBus }: { eventBus: EventBusStub }) => {
-    eventBus.on("find", (event: unknown) => {
-      stubs.findEvents.push(event);
+    eventBus.on("find", () => {
       const matchesCount = { current: matches > 0 ? 1 : 0, total: matches };
       eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: matches > 0 ? 0 : FIND_STATE_NOT_FOUND });
       eventBus.dispatch("updatefindmatchescount", { matchesCount });
@@ -190,21 +177,15 @@ describe(usePdfViewer, () => {
       PDFLinkService,
       PDFViewer,
     }) as unknown as PdfViewerApi;
-  const mountViewer = (
-    pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
-    highlightTerms: string[] = [],
-    watermark?: string,
-  ) => {
+  const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>) => {
     const container = window.document.createElement("div");
     const scope = effectScope();
     const state = scope.run(() =>
       usePdfViewer({
         container,
-        highlightTerms,
         pdfDocument,
         viewer: window.document.createElement("div"),
         viewerApi: createViewerApi(),
-        watermark,
       }),
     );
     assert(state);
@@ -217,7 +198,6 @@ describe(usePdfViewer, () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     matches = 0;
-    stubs.findEvents = [];
     stubs.scaleWrites = [];
   });
   afterEach(() => {
@@ -394,51 +374,6 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("#37 A watermarked download", async () => {
-    expect.hasAssertions();
-
-    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
-    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
-    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    const pdfDocument = createDocument(3);
-    // The watermark is stored only while the renderer saves, so the entries it sees are read at the save
-    const storedAtSave: [string, unknown][] = [];
-    vi.mocked(pdfDocument.saveDocument).mockImplementation(() => {
-      storedAtSave.push(...pdfDocument.annotationStorage);
-
-      return Promise.resolve(new Uint8Array([4, 5, 6]));
-    });
-    const { scope, state } = mountViewer(pdfDocument, [], "DRAFT");
-    state.download("report.pdf");
-    await flushPromises();
-
-    // Each page's watermark is centred on the page's height, PAGE_WIDTH wide and the font size tall
-    const watermarkRect = [
-      0,
-      PAGE_HEIGHT / 2 - PDF_WATERMARK_FONT_SIZE / 2,
-      PAGE_WIDTH,
-      PAGE_HEIGHT / 2 + PDF_WATERMARK_FONT_SIZE / 2,
-    ];
-
-    expect(storedAtSave.map(([, entry]) => entry)).toStrictEqual(
-      [0, 1, 2].map((pageIndex) => ({
-        annotationElementId: `watermark${pageIndex}`,
-        annotationType: PdfEditorMode.FreeText,
-        color: PDF_WATERMARK_COLOR,
-        deleted: false,
-        fontSize: PDF_WATERMARK_FONT_SIZE,
-        id: `watermark${pageIndex}`,
-        pageIndex,
-        rect: watermarkRect,
-        rotation: 0,
-        value: "DRAFT",
-      })),
-    );
-    expect(pdfDocument.annotationStorage.size).toBe(0);
-    expect(createObjectURL).toHaveBeenCalledTimes(1);
-    scope.stop();
-  });
-
   test("printing a document", async () => {
     expect.hasAssertions();
 
@@ -483,25 +418,5 @@ describe(usePdfViewer, () => {
     assert(stubs.abortSignal);
     expect(stubs.abortSignal.aborted).toBe(true);
     expect(viewer.setDocument).toHaveBeenLastCalledWith(null);
-  });
-
-  test("#24 highlighting a list of terms on load", () => {
-    expect.hasAssertions();
-
-    const TERMS = ["word", "page"];
-    const { scope } = mountViewer(createDocument(3), TERMS);
-    const [find] = stubs.findEvents;
-
-    expect(stubs.findEvents).toHaveLength(1);
-    expect(find).toStrictEqual({
-      caseSensitive: false,
-      entireWord: false,
-      findPrevious: false,
-      highlightAll: true,
-      matchDiacritics: false,
-      query: TERMS,
-      type: "",
-    });
-    scope.stop();
   });
 });
