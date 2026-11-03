@@ -31,6 +31,24 @@ The state is `{ answers, pageIndex, isCompleted }`, answers keyed by question na
 - `completeSurvey`: validates every visible page, drops the answers of questions that are not visible, adds the included calculated values, and returns the answers or the errors.
 - `getSurveyProgress`: the position among the visible pages.
 
+## Signatures
+
+Every function takes the document, the state and the current time as `now`, and none mutates. The time is a parameter so a test or the preview fixes it.
+
+| Function                                                | Returns                                                                             |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `createSurveyRunnerState(document, answers, pageIndex)` | a `SurveyRunnerState`, the page index clamped to the document                       |
+| `getSurveyRunnerValues(document, answers, now)`         | the answers and the calculated values, as the record the expressions read           |
+| `getSurveyVisiblePageIndexes(document, answers, now)`   | the indexes of the pages with a visible element                                     |
+| `getSurveyPageElements(document, state, now)`           | the current page's `SurveyElementView` tree                                         |
+| `setSurveyAnswer(state, name, value)`                   | a new state; an empty value removes the answer                                      |
+| `validateSurveyPage(document, state, now)`              | the current page's `SurveyPageError` list, in document order                        |
+| `goToNextSurveyPage(document, state, now)`              | a `SurveyRunnerMove`                                                                |
+| `goToPreviousSurveyPage(document, state, now)`          | a state on the previous page with a visible element, or the same state on the first |
+| `completeSurvey(document, state, now)`                  | a `SurveyRunnerCompletion`                                                          |
+| `getSurveyProgress(document, state, now)`               | a `SurveyProgress`                                                                  |
+| `isLastSurveyPage(document, state, now)`                | whether no later page has a visible element                                         |
+
 ## Answers
 
 `SurveyAnswerValue` is a string, number, boolean, a list of those or a record from a name to one, bounded in depth and length. Each kind's answer is the value its row in the document's table states.
