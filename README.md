@@ -1,5 +1,7 @@
 # [Esposter](https://esposter.com)
 
+_/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"_
+
 [![Build Status][badge-ci]][url-ci]
 [![Duplicate Code][badge-duplicates]][url-ci]
 [![Repository Score][badge-score]][url-score]

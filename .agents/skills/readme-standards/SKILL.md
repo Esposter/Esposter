@@ -32,6 +32,8 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
 
 Written for an agent reader in ASD-STE100 style (`references/content-rules.md`, rule 10): lead with what it does; one design-notes line linking the specs; Getting Started only where it is installed or run; Key Exports for what a reader calls; Commands only for an app, a plugin or a tool a person runs; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
 
+The root README carries the name's pronunciation as one italic IPA line under the title, ahead of the badges, as the Oxc and Vite READMEs do; a package README does not, since the sound is the repository's and a package name is read as its words.
+
 Package READMEs carry no experimental notice: the root README states it once (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability).
 
 ## Reference pages
