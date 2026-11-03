@@ -288,7 +288,7 @@ pnpm i
 
 Check: `pnpm i` exits with code 0.
 
-4. **PostgreSQL.** Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, run `brew install postgresql@18`. Then run `brew services start postgresql@18`. It keeps the server running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`. That folder is not on `PATH` until you add it. Check: the server answers on `localhost:5432`. The `esposter` database holds no data worth keeping, and `pnpm dev` runs its migrations.
+4. **PostgreSQL.** Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, run `brew install postgresql@18` and `brew install --cask pgadmin4`, which are native Apple silicon builds. Then run `brew services start postgresql@18`. It keeps the server running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`. That folder is not on `PATH` until you add it. Check: the server answers on `localhost:5432`. The `esposter` database holds no data worth keeping, and `pnpm dev` runs its migrations.
 
 5. **Environment.** Create `apps/web/.env` from `apps/web/.env.example`.
 
