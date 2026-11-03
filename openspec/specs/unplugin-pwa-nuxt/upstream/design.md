@@ -28,12 +28,12 @@ The counts sum to the item count of each tracker and kind, and the verdict table
 
 ## What our configuration triggers
 
-The app's PWA configuration sets the client plugin's hourly update check, the prompt registration type, the worker's file name and manifest, and a TypeScript worker built with the buildSW strategy. Every other option is the absorbed module's default. Six facts about the app decide which upstream defects reach it:
+The app's PWA configuration sets the client plugin's hourly update check, the prompt registration type, the worker's file name and manifest, a TypeScript worker built with the buildSW strategy, and the option that leaves an oversize file out of the precache. Every other option is the absorbed module's default. Six facts about the app decide which upstream defects reach it:
 
-- The worker answers navigations with the precached app shell, except those its denylist, derived from the route rules, hands to the server (R7).
+- The worker answers navigations with the precached app shell, except those its denylist, built from the routes the server answers, hands to the server (R7).
 - Nuxt 5 turns on app manifests and payload extraction by default, and the app does not turn them off, so the payload branches run (R9).
-- Route rules turn server rendering off for several app routes, which the shell may answer by design. The denylist derives from the route rules, so the shell keeps answering those routes and server routes stay out of its reach (R7).
-- The app's icon head component mounts beside the repository's security module, which issues the CSP nonce, so head entries must carry keys (R14).
+- Route rules turn server rendering off for several app routes, which the shell may answer by design. The denylist holds the routes the server answers and not the route rules, so the shell keeps answering those routes and server routes stay out of its reach (R7).
+- The app's icon links in its head config sit beside the repository's security module, which issues the CSP nonce, so head entries must carry keys (R14).
 - The app generates its icons with an external command-line generator rather than through the module, so the icon option is kept for parity, and the app's icons still come from its own command (R13).
 - A lazy route chunk can pass the engine's 2 MiB precache limit, and the survey editor's translations did. The engine fails the build on an oversize file, so the app sets the top-level option `throwMaximumFileSizeToCacheInBytes` to false, leaves such a chunk out of the precache and lets the page fetch it. The engine's breaking-changes page moves this option to the root of the plugin options, and its types omit it from `buildSW`, so only the top level counts.
 
@@ -52,7 +52,7 @@ flowchart TD
   worker --> server["Server compile"]
 ```
 
-The engine reads the manifest's icons from Vite's `publicDir`, which is empty under Nuxt because Nitro serves the folder, so the engine would look in the working directory. The package hands it Nuxt's own public folder when it resolves the engine's options.
+The engine reads the manifest's icons from Vite's `publicDir`, which is empty under Nuxt, because the Nuxt schema sets `vite.publicDir` to `false` and Nitro serves the folder, so the engine would look in the working directory. The package hands it Nuxt's own public folder when it resolves the engine's options.
 
 ## Verdicts
 

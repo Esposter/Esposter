@@ -45,7 +45,7 @@ flowchart LR
 
 - **Rejected: `registerType: "autoUpdate"`.** It skips waiting and reloads every open tab on install, which would end a call or drop unsent text. The notice keeps the reader in charge of the moment.
 - **Rejected: `generateSW` with an `importScripts` push file.** The push handler was a separate JavaScript file the build could not check. The `buildSW` worker is typed and checked with the app.
-- **Rejected: `injectManifest` for the worker.** The engine reads a JavaScript worker from the public folder under that strategy and migrates a TypeScript one to `buildSW` with a deprecation warning, so the config names `buildSW`.
+- **Rejected: `injectManifest` for the worker.** The engine accepts only a JavaScript worker that is not in the public folder under that strategy. A TypeScript worker fails the build with a request to migrate to `buildSW`, and only the dev server warns instead, so the config names `buildSW`.
 - **Rejected: raising `maximumFileSizeToCacheInBytes` to fit every chunk.** A chunk past the 2 MiB limit is a lazy route chunk, such as the survey editor's translations, so a higher limit makes every install download megabytes for a page most readers never open. The chunk is left out of the precache instead, and the page fetches it when it needs it.
 - **Rejected: `globIgnores` naming that chunk.** Its file name carries a content hash that changes with the build, so the pattern goes stale on the next one, while the size limit keeps holding.
 - **Declined: screenshots and shortcuts in the manifest.** Screenshots need captures of the real app, which this repo does not produce. Shortcuts add icons and an install surface nobody asked for.
