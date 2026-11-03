@@ -2,6 +2,7 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
+import { checkIsPrivateKind } from "#src/services/package/new/checkIsPrivateKind";
 import { GITHUB_REPOSITORY_URL, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { getEntryPath } from "#src/services/package/new/getEntryPath";
 import { getPackageName } from "#src/services/package/new/getPackageName";
@@ -23,7 +24,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
     type: "module",
     version,
   };
-  if (kind === PackageKind.Plugin)
+  if (checkIsPrivateKind(kind))
     return {
       ...manifest,
       private: true,

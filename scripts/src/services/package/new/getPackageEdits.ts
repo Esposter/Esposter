@@ -1,6 +1,7 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
 import { PackageKind } from "#src/models/package/PackageKind";
+import { checkIsPrivateKind } from "#src/services/package/new/checkIsPrivateKind";
 import {
   AGENTS_FILE,
   APP_MODULES_FILE,
@@ -22,8 +23,8 @@ export const getPackageEdits = (options: CreatePackageOptions): Map<string, (tex
   const packageName = getPackageName(options);
   const packagePath = `${PACKAGES_DIRECTORY}/${name}`;
   const moduleConstant = `${name.replaceAll("-", "_").toUpperCase()}_MODULE_PATH`;
-  // A plugin is private, so its manifest and its README's published column agree that it is not published
-  const publishedMark = kind === PackageKind.Plugin ? "—" : "✓";
+  // A private kind's README published column reads a dash, the mark its manifest's `private` flag earns
+  const publishedMark = checkIsPrivateKind(kind) ? "—" : "✓";
   const edits = new Map<string, (text: string) => string>([
     // `packageInventories` holds the agent guide to every member, paired with its npm name
     [

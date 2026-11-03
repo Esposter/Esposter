@@ -1,6 +1,6 @@
 import type { CreatePackageOptions } from "#src/models/package/CreatePackageOptions";
 
-import { PackageKind } from "#src/models/package/PackageKind";
+import { checkIsPrivateKind } from "#src/services/package/new/checkIsPrivateKind";
 import { SPECS_URL } from "#src/services/package/new/constants";
 import { getPackageName } from "#src/services/package/new/getPackageName";
 
@@ -9,7 +9,7 @@ import { getPackageName } from "#src/services/package/new/getPackageName";
 export const getReadme = (options: CreatePackageOptions): string => {
   const { description, kind } = options;
   const packageName = getPackageName(options);
-  const isPublished = kind !== PackageKind.Plugin;
+  const isPublished = !checkIsPrivateKind(kind);
   const badges = isPublished
     ? [
         "[![Apache-2.0 licensed][badge-license]][url-license]",
