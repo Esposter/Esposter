@@ -16,8 +16,6 @@ const PAYLOAD_PATTERN = "**/_payload.json";
  * back to are settled here too, since they depend on what Nitro prerendered and which routes the server answers.
  */
 export const buildServiceWorker = async (context: PwaContext, nuxt: Nuxt, nitro: Nitro): Promise<void> => {
-  const pwaAssetsGenerator = await context.pwaAssetsGenerator;
-  await pwaAssetsGenerator?.generate();
   if (context.resolvedOptions.disable) return;
 
   const { baseURL } = nuxt.options.app;

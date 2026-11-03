@@ -18,10 +18,9 @@ export const configurePwaOptions = (
   outDir: string,
   getNavigationDenylist: () => readonly RegExp[],
 ): ConfigurePWAOptions | undefined => {
-  const { buildSW, pwaAssets } = context.resolvedOptions;
+  const { buildSW } = context.resolvedOptions;
   const publicDir = resolve(nuxt.options.rootDir, nuxt.options.dir.public);
   context.publicDir = publicDir;
-  if (pwaAssets) pwaAssets.integration = { baseUrl: nuxt.options.app.baseURL, outDir, publicDir };
   if (buildSW) {
     const { plugins } = buildSW;
     buildSW.plugins = (swType) => [plugins?.(swType), createNavigationDenylistPlugin(getNavigationDenylist)];
