@@ -175,16 +175,13 @@ const configuration: UserConfig = defineConfig({
         cache: false,
         command: "vp run lint:fix:packages:oxlint && vp run lint:fix:packages:workspace",
       },
-      "lint:oxlint": createTask("vp lint --debug=timings --format=default --disable-nested-config", []),
+      "lint:oxlint": createTask("pnpm crossOS lint:oxlint", []),
       "lint:packages": {
         cache: false,
         command: 'echo "every packages lint check ran"',
         dependsOn: ["lint:packages:oxlint", "lint:packages:workspace"],
       },
-      "lint:packages:oxlint": createTask(
-        "vp lint --debug=timings --format=default --disable-nested-config packages",
-        [],
-      ),
+      "lint:packages:oxlint": createTask("pnpm crossOS lint:packages:oxlint", []),
       "lint:packages:workspace": createTask('pnpm -r --filter "./packages/*" --parallel lint', []),
       "lint:unused": createTask("knip", []),
       "lint:workflows": createTask("actionlint -shellcheck= -pyflakes=", []),

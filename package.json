@@ -83,8 +83,8 @@
     "format": "vp fmt",
     "graph:gen": "pnpm -C scripts graph:gen",
     "lint:fix:eslint": "eslint --fix .",
-    "lint:fix:oxlint": "vp lint --debug=timings --format=default --fix --disable-nested-config",
-    "lint:fix:packages:oxlint": "vp lint --debug=timings --format=default --fix --disable-nested-config packages",
+    "lint:fix:oxlint": "pnpm crossOS lint:fix:oxlint",
+    "lint:fix:packages:oxlint": "pnpm crossOS lint:fix:packages:oxlint",
     "lint:fix:packages:workspace": "pnpm -r --filter \"./packages/*\" --parallel lint:fix",
     "lint:fix:workspace": "pnpm -r --parallel lint:fix",
     "outdated:dependencies": "pnpm -C scripts outdated:dependencies",
@@ -107,6 +107,7 @@
     "@kjanat/actionlint": "catalog:",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
+    "@maschwenk/tsrslint": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
@@ -123,10 +124,34 @@
   },
   "packageManager": "pnpm@12.16.1+sha512.091d1dee7927575661b25dab3c2ae31cafc1c54d6b71ed6a6600cf0c1cb10434a447eae14015f1b23e2e6bedeed79df94a932e2164d2832280dce3fb32f656d1",
   "crossOS": {
+    "lint:fix:oxlint": {
+      "darwin": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --fix --disable-nested-config",
+      "linux": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --fix --disable-nested-config",
+      "win32": "vp lint --debug=timings --format=default --fix --disable-nested-config"
+    },
+    "lint:fix:packages:oxlint": {
+      "darwin": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --fix --disable-nested-config packages",
+      "linux": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --fix --disable-nested-config packages",
+      "win32": "vp lint --debug=timings --format=default --fix --disable-nested-config packages"
+    },
+    "lint:oxlint": {
+      "darwin": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --disable-nested-config",
+      "linux": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --disable-nested-config",
+      "win32": "vp lint --debug=timings --format=default --disable-nested-config"
+    },
+    "lint:packages:oxlint": {
+      "darwin": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --disable-nested-config packages",
+      "linux": "OXLINT_TSGOLINT_PATH=\"$(pnpm exec tsrslint-path)\" vp lint --debug=timings --format=default --disable-nested-config packages",
+      "win32": "vp lint --debug=timings --format=default --disable-nested-config packages"
+    },
     "refresh:lockfile": {
       "darwin": "sh ./scripts/src/refreshLockfile/index.sh",
       "linux": "./scripts/src/refreshLockfile/index.sh",
       "win32": "pnpm pwsh scripts/src/refreshLockfile/index.ps1"
     }
+  },
+  "scriptsComments": {
+    "lint:fix:oxlint": "@TODO: https://github.com/oxc-project/tsrs/issues/378 — run `vp lint` directly again once oxlint ships tsrs as its type-aware backend, deleting the four `crossOS` lint entries and the Windows tsgolint fallback",
+    "lint:fix:packages:oxlint": "@TODO: https://github.com/oxc-project/tsrs/issues/378 — run `vp lint` directly again once oxlint ships tsrs as its type-aware backend, deleting the four `crossOS` lint entries and the Windows tsgolint fallback"
   }
 }
