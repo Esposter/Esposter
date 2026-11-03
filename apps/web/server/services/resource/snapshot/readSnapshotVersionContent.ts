@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
-import type { ResourceInResource, ResourceVersionInResource } from "@esposter/db-schema";
+import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ResourceInResource, ResourceType, ResourceVersionInResource } from "@esposter/db-schema";
 
 import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
@@ -13,11 +14,11 @@ import { ObjectNotStoredError } from "keyframe-store";
 // Row still standing over swept bytes is the same absent version wearing a different mask, so it answers the same way.
 // Every other read failure is corruption — a truncated object, one that no longer hashes to its key — and that stays an
 // Internal error rather than being dressed up as a page that was never there.
-export const readSnapshotVersionContent = async (
+export const readSnapshotVersionContent = async <TType extends ResourceType>(
   db: Context["db"],
-  resource: Pick<ResourceInResource, "id" | "type">,
+  resource: Pick<ResourceInResource, "id"> & { type: TType },
   { channel, version }: Pick<ResourceVersionInResource, "channel" | "version">,
-): Promise<unknown> => {
+): Promise<ResourceContent<TType> | undefined> => {
   const resourceVersion = await db.query.resourceVersionsInResource.findFirst({
     columns: { hash: true },
     where: {
@@ -37,8 +38,9 @@ export const readSnapshotVersionContent = async (
       throw error;
     },
   );
-  if (plaintext)
+  if (plaintext) {
     // oxlint-disable-next-line no-restricted-properties -- the content schema owns date coercion, exactly as readResourceContent relies on
-    return ResourceDefinitionMap[resource.type].contentSchema.parse(JSON.parse(Buffer.from(plaintext).toString()));
-  else return undefined;
+    const json = JSON.parse(Buffer.from(plaintext).toString());
+    return ResourceDefinitionMap[resource.type].contentSchema.parse(json) as ResourceContent<TType>;
+  } else return undefined;
 };

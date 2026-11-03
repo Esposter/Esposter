@@ -9,8 +9,7 @@ import { readSurveySettings } from "#server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyResponseModeValidatorMap";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
-import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
-import { AzureEntityType, DatabaseEntityType, SnapshotChannel } from "@esposter/db-schema";
+import { AzureEntityType, DatabaseEntityType, ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { SurveyAnswerValidationMode, validateSurveyAnswers } from "survey-engine";
 
@@ -37,14 +36,15 @@ export const resolveSurveyResponseWrite = async (
   const resolvedParticipantToken = await SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);
   // The write is checked against the publication a respondent is served now, not the working copy the owner may have edited since
   if (!survey.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, surveyId);
-  const publishedContent = await readSnapshotVersionContent(db, survey, {
-    channel: SnapshotChannel.Published,
-    version: survey.publication.publishVersion,
-  });
+  const publishedContent = await readSnapshotVersionContent(
+    db,
+    { id: survey.id, type: ResourceType.Survey },
+    { channel: SnapshotChannel.Published, version: survey.publication.publishVersion },
+  );
   if (publishedContent === undefined) throw getNotFoundError(DatabaseEntityType.Resource, surveyId);
 
   const [issue] = validateSurveyAnswers(
-    surveyResourceSchema.parse(publishedContent).document,
+    publishedContent.document,
     model,
     isDraft ? SurveyAnswerValidationMode.Draft : SurveyAnswerValidationMode.Submit,
     new Date(),
