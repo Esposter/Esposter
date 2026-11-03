@@ -31,6 +31,16 @@ Rejected: switching the Vue packages to the TypeScript 7.1 beta's `tsc`. It work
 
 Not needed. The mapper conformance-tests against the TypeScript 7.1 beta, and `tsrs` runs the mapper on its own copy of that compiler. So the Vue checks neither move the `typescript` package to the beta nor alias a second one, and `scripts/` keeps no classic-API reader (it reads sources through `oxc-parser`).
 
+### What reads the classic `typescript` API
+
+The override has more readers than `vue-tsc`, so removing `vue-tsc` leaves it in place. A read of the lockfile and the tools' source on 3 November found these readers (read, not run with the override removed):
+
+- **`typescript-estree`, behind `@typescript-eslint/parser`**, calls `createSourceFile` for every `.ts` and `.vue` file linted. It needs the parser only, and its peer range is `>=4.8.4 <6.1.0`. `@typescript-eslint/eslint-plugin`, `type-utils` and `ts-api-utils` require the module when they load. ESLint's type-aware rules are off in the app.
+- **A full program** is built by the `attw` gate of every published build (`createProgram`, `resolveModuleName`) and by the root project's `tsc` (`typecheck:root`). `rolldown-plugin-dts` loads the classic API on its `tsc` fallback and its Vue path, and throws for TypeScript 7. `@pulumi/pulumi` loads it at config time and falls back to a vendored copy.
+- **Nothing is read by** `oxlint` with type-aware rules (a Go binary), `knip`, `tsrs`, `vize`, `vitest`, Nuxt and `scripts/`.
+
+TypeScript 7.0.2 ships no classic API (its package exports a version file and nothing else), so the override cannot move to 7.x. Stable 6.0.3 also exposes the classic API, so no reader strictly needs the bridge: it is a speed choice across all of them, and dropping it is a separate decision that moves them together.
+
 ### Formatter and linter stay on oxfmt and oxlint
 
 `vize fmt` formats the pilot's 258 files identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs sixteen repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
@@ -66,11 +76,11 @@ The pilot matched after one change in the package: TypeScript 7.1's DOM typings 
 
 - **`tsrs` 0.20.1 does not run content mappers through its JS API.** Opened through the API, a project with `.vue` files reports `TS18069` ("The content mapper 'vize' failed to transform this file") on the first five mapped files, a different five on each run, and the CLI over the same project reports nothing. A project of twelve trivial components shows it. The cause, read in the `v0.20.1` source: the API project system has no content-mapper project (`content_mapper_project()` always returns `None` in `crates/tsrs_project/src/compilerhost.rs`, the "phase 2" of `notes/contentmappers.md`), so each mapped file fails, and the loader stops using a mapper after five failures (`MAX_CONTENT_MAPPER_FAILURES`). The plugin throws on those diagnostics when it opens the project, so the build stops. No issue is open on the `tsrs` tracker for the API path.
 - **The rest of the route was checked with the plugin's `tsgo` generator on TypeScript 7.1.0-beta, installed in a scratch folder outside the repo and not adopted**, since it would add a second compiler. `packages/vue-phaserjs` built in 2.6 s at 640 MB, `attw` and `publint` passed, and the declaration came out at 248,629 bytes against 569,370 bytes from `vue-tsc`. It carries the ambient helper block in a `declare global`, adds `vize` to the package's `inlinedDependencies`, and rolldown prints `IMPORT_IS_UNDEFINED` warnings for the type imports of the helper file.
-- **The consumer matrix, re-run on `vize` 0.661.0** with a `Rectangle` of `vue-phaserjs` (an empty template) in a consumer `.vue` file: the mapper accepts both declaration trees, and `vue-tsc` accepts its own tree and refuses the `vize` one for `id` and `role` (`TS2345` against `$AuthoredKeyWitness`) while it accepts `class`, `aria-label`, `data-x` and a listener. A deliberate prop error is reported by both checkers against both trees. #11454 is closed as completed in 0.661.0 and does not cover this input.
+- **The consumer matrix, re-run** with a `Rectangle` of `vue-phaserjs` in a consumer `.vue` file: the mapper accepts both declaration trees, and `vue-tsc` accepts its own tree and refuses the tree the plugin route wrote for `id` and `role` (`TS2345` against `$AuthoredKeyWitness`) while it accepts `class`, `aria-label`, `data-x` and a listener. A deliberate prop error is reported by both checkers against both trees. A standalone reduction isolates the trigger to **a component that declares an emit**: a producer holding only `defineEmits<{ bar: [] }>()`, consumed as `<Foo id="r" />`, is refused, and with no emit, or one prop and no emit, `id` and `role` pass. The empty template, `@vue-ignore`, the optional prop and the function prop change nothing. It reproduces on the mapper path from 0.587.0 through 0.663.0, so it is not a regression, while `vize check --declaration` accepts the same input from 0.661.0, which is what #11454's fix (#11477) changed. The cause, read in `npm/cli/virtual-ts-globals.d.ts` at v0.663.0: the fallthrough guard allows `class`, `style`, `data-*`, `aria-*` and `on*`, and `$ComponentGlobalHtmlAttrs` is never added to the allowed set; adding it in a copy cleared `id`, `role` and `disabled`.
 
 - **The command line emits them today**, so the gap is in the API path and not in `tsrs`'s declaration emit. `tsrs --runExternalCode --declaration --emitDeclarationOnly --outDir <dir> -p tsconfig.build.json` over `packages/vue-phaserjs` took about a quarter of a second and wrote 269 files: 242 plain declarations and 27 `<Name>.d.vue.ts`, one per component. It reports `TS5011` (the common source directory is `./src`, which asks for an explicit `rootDir`) and writes the files regardless. Each component file imports the helper types from `vize/virtual-ts`, where the plugin route inlined them in a global block, so a consumer of this shape would need `vize` installed. Bundling that tree into one `.d.ts` per entry through the plugin's `dtsInput` option was not tried; the emitted files keep their `#src/` specifiers, which the bundler would have to map onto the emitted tree.
 
-Task 6.1 therefore waits on two upstream changes: `tsrs` running content mappers in its API project system, and `vize` declarations that `vue-tsc` accepts for `id` and `role`.
+Task 6.1 therefore waits on two upstream changes: `tsrs` running content mappers in its API project system, and the mapper path's declaration helper allowing the global HTML attributes, which `vize check --declaration` already does.
 
 **The compile plugin is a separate job.** Compiling a component and checking its types do not depend on each other, so the compile side (the Nuxt module and the rolldown plugin) is the deferred compiler page's and does not gate this change.
 
@@ -164,7 +174,7 @@ flowchart TD
   BUILD["tsdown build of a Vue package"] --> DTS["dts.tsc.vue"]
   DTS --> VUETSC["vue-tsc emits the .vue declarations"]
   VUETSC -->|"task 6.1: re-run the consumer matrix on vize 0.661.0"| VIZE["vize check --declaration"]
-  VIZE --> RETIRE["task 7.1: remove vue-tsc and the native-bridge override"]
+  VIZE --> RETIRE["task 7.1: remove vue-tsc"]
 ```
 
 ## Key files
@@ -178,7 +188,7 @@ flowchart TD
 | `apps/web/tsconfig.vize.json`                                      | the app project: extends Nuxt's generated app config, names `vize` as the `.vue` content mapper                            |
 | `packages/configuration/tsconfig.vue.json`                         | the shared Vue tsconfig: names `vize` as the `.vue` content mapper and `useTemplateRef` as Vue's composable                |
 | `packages/configuration/src/services/getTsdownConfigurationVue.ts` | `dts.tsc.vue` loads `vue-tsc` for the `.vue` declarations, the last reader of it                                           |
-| `pnpm-workspace.yaml`                                              | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                           |
+| `pnpm-workspace.yaml`                                              | the `typescript` override onto `typescript-native-bridge` (stays), and the `vue-tsc` pin (task 7.1 removes it)             |
 | `openspec/changes/architecture-rust-typescript-toolchain/`         | the change this one depends on, for every plain `tsc` path                                                                 |
 
 ## Notes
