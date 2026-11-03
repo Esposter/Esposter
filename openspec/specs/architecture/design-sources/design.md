@@ -1,6 +1,6 @@
 # Design Sources
 
-Nothing in the app's interface is designed from memory. A surface is laid out after looking at how the best shipped product arranges the same screen, drawn in tokens whose values come from a design system that explains why they work, and given the keyboard contract a published accessibility pattern describes. This page is the one list of those sources, with what each one gave the app, so an idea that shaped a surface is never lost when the surface is rewritten.
+Nothing in the app's interface is designed from memory. A surface is laid out after looking at how a shipped product arranges the same screen, drawn in tokens whose values come from a design system that explains why they work, and given the keyboard contract a published accessibility pattern describes. This page is the one list of those sources, with what each one gave the app, so an idea that shaped a surface is never lost when the surface is rewritten.
 
 The rules that use these sources live elsewhere: where an action goes is the `ux` skill's, the design pass every unit of the UI library walks is the `ui-library` skill's, and the look itself is the [design language](../design-language/design.md)'s. This page only says where to look, and in what order.
 
@@ -9,23 +9,23 @@ The rules that use these sources live elsewhere: where an action goes is the `ux
 ```mermaid
 flowchart TD
   N[A surface to design or judge] --> R{Does a reference product do this screen?}
-  R -->|yes| RP[Match its hierarchy, wording and interaction]
+  R -->|yes| RP[Read its hierarchy, wording and interaction as evidence]
   R -->|no| G[A gallery of shipped screens: how several products arrange it]
   RP --> D[The design systems: what the look should be, drawn in our tokens]
   G --> D
   D --> B["Usability references<br/>the rules a control is held to"]
   B --> A[Accessibility patterns: the keyboard and ARIA contract]
   A --> P[Platform documents: the browser feature that implements it]
-  P --> C{Better than the reference, or only like it?}
-  C -->|only like it| D
-  C -->|better, and every flow kept| U[Handed to the user to check by eye]
+  P --> C{A leaner or better design, following our conventions?}
+  C -->|no, only a copy of the reference| D
+  C -->|yes, and every flow kept| U[Handed to the user to check by eye]
 ```
 
-The last gate is the design pass's own question. Matching the reference product is the floor; a departure from it has to say how it is better, and it is argued in the commit body with the source it came from.
+The last gate is the design pass's own question. A reference product is evidence and inspiration, not the goal: a design departs from it wherever a leaner or better design follows our conventions, and each departure is argued in the area's design, with the commit body saying how it is better and citing the source it came from.
 
-## Reference products
+## References each area studies
 
-Each product area follows one product that already solved its domain, so its arrangement, its copy and its behaviour are taken rather than reinvented. How a screenshot of the reference product is used is the `ux` skill's.
+Each product area studies one product that already solved its domain. The product is evidence for the arrangement, the copy and the behaviour the area takes, and the area departs from it where a leaner design follows our conventions. How a screenshot of the reference product is used is the `ux` skill's.
 
 | Area                                                                  | Reference product                                                                                                      | What it gave                                                                                                                                                                                                                                   |
 | :-------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -33,7 +33,7 @@ Each product area follows one product that already solved its domain, so its arr
 | [Calls](../../esbabbler/calls/README.md)                              | [Google Meet](https://meet.google.com/)                                                                                | Share-link calls, fullscreen of the whole call view during a screen share, picture in picture                                                                                                                                                  |
 | [Clicker](../../clicker/README.md)                                    | [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/)                                                            | The store's rows: a price green while affordable and red while not, the count owned beside it                                                                                                                                                  |
 | [Webpage](../../resource/webpage-social-preview/design.md)            | [Webflow](https://webflow.com/)                                                                                        | The page settings' meta description and Open Graph image, over the site's own                                                                                                                                                                  |
-| [Resource explorer](../../resource/explorer/design.md)                | [The Azure portal](https://portal.azure.com/)                                                                          | The explorer's blades, the breadcrumb trail as "where did I come from", the guarded delete that asks for the resource's name                                                                                                                   |
+| [Resource explorer](../../resource/explorer/design.md)                | [The Azure portal](https://portal.azure.com/)                                                                          | The explorer's blades, and the breadcrumb trail as "where did I come from"                                                                                                                                                                     |
 | [Calendar](../calendar/design.md)                                     | [Outlook](https://outlook.live.com/calendar/), then [Google Calendar](https://calendar.google.com/)                    | Outlook's four views in its order and its view shortcuts, the month navigator, the shaded working day, the current-time line, a double click to create and a drag to move; Google Calendar's single keys for today, next and previous          |
 | [Sheets](../../resource/sheet/README.md)                              | Excel and Google Sheets                                                                                                | Clipboard semantics: a copy lands as a table wherever it is pasted                                                                                                                                                                             |
 | [Note](../../resource/note-resource/design.md)                        | [Notion](https://www.notion.com/)                                                                                      | A to-do list inside a document, started by typing `[ ]` and a space at the start of a line                                                                                                                                                     |

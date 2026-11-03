@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — a read-only whiteboard for anyone with its link: the canvas as the owner left it, with pan and zoom and no minimap. The whiteboard dropped the minimap by the owner's decision, and this view leaves it out too.
+Deferred — a read-only view of a whiteboard for anyone with its published link: the document as its owner left it, with pan and zoom to move around it and no editing.
 
 ## What Changes
 

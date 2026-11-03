@@ -1,6 +1,6 @@
 ## Purpose
 
-Where the app's look and behaviour are looked up rather than improvised — the reference products each area follows, the design systems the tokens and surfaces draw on, the usability and accessibility references every control is held to, and the platform documents the implementation follows — with the order they are consulted in.
+Where the app's look and behaviour are looked up rather than improvised — the reference products each area studies, the design systems the tokens and surfaces draw on, the usability and accessibility references every control is held to, and the platform documents the implementation follows — with the order they are consulted in.
 
 ## Requirements
 
@@ -8,11 +8,11 @@ Where the app's look and behaviour are looked up rather than improvised — the 
 
 Every surface SHALL be designed by consulting its sources in order, from its reference product through to the platform's own documents.
 
-#### Scenario: A surface with a reference product matches its hierarchy and wording
+#### Scenario: A surface with a reference product reads that product first
 
 - **GIVEN** a surface has a reference product that does the same screen
 - **WHEN** the surface is designed
-- **THEN** its hierarchy, wording and interaction match that product
+- **THEN** that product's hierarchy, wording and interaction are read before any other source
 
 #### Scenario: A screen with no reference product draws on shipped screens
 
@@ -24,24 +24,26 @@ Every surface SHALL be designed by consulting its sources in order, from its ref
 
 - **GIVEN** a surface departs from its reference product
 - **WHEN** the change is committed
-- **THEN** the commit body says how the departure is better
+- **THEN** the commit body says how the departure is leaner or better
 - **AND** cites the source it came from
 
-### Requirement: Each product area follows one reference product
+### Requirement: A reference product is evidence, not the goal
 
-Each product area SHALL follow one reference product that already solved its domain.
+Each product area SHALL treat its reference product as evidence and inspiration, with a leaner or better design that follows the app's conventions as the goal.
 
-#### Scenario: A screenshot handed over is the specification for its surface
+#### Scenario: A screenshot handed over is evidence for its surface
 
 - **GIVEN** the reader hands over a screenshot of a reference product for a surface
 - **WHEN** the surface is designed
-- **THEN** the screenshot is the specification the surface follows
+- **THEN** the screenshot is read as evidence of how that product arranges the surface
+- **AND** the surface departs from it wherever a leaner design follows the app's conventions
 
-#### Scenario: The calendar follows the reference calendar's views
+#### Scenario: A departure from the reference is argued in the area's design
 
-- **GIVEN** the reader opens the calendar
-- **WHEN** the reader looks at its views
-- **THEN** the views appear in the reference calendar's order
+- **GIVEN** an area's design departs from its reference product
+- **WHEN** the design is written
+- **THEN** the design says how the departure is leaner or better
+- **AND** names the reference product it departs from
 
 ### Requirement: Every design token value is chosen against a named design system
 

@@ -1,6 +1,6 @@
 # Whiteboard published view
 
-A read-only whiteboard for anyone with its published link: the canvas drawn as the owner left it, with pan and zoom, and no editing, no palette, no toolbar and no minimap.
+A read-only view of a whiteboard for anyone with its published link: the document drawn as its owner left it, every element in its stacking order, with pan and zoom to move around it, and no editing, palette or toolbar.
 
 ## Why deferred
 
