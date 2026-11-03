@@ -11,6 +11,7 @@ import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecia
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
+import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
@@ -39,7 +40,6 @@ export const useWorldFrame = ({
   inputState,
   interactionPrompts,
   isHudHidden,
-  jumpTo,
   kitContext,
   party,
   placeUsedGadget,
@@ -57,8 +57,10 @@ export const useWorldFrame = ({
   stepTrial,
   stepWorldPuzzles,
   touchOutcropsNear,
-  unlockedLandmarkIds,
 }: WorldFrameOptions) => {
+  const worldMapStore = useWorldMapStore();
+  const { unlockedLandmarkIds } = storeToRefs(worldMapStore);
+  const { jumpTo } = worldMapStore;
   const worldQuestsStore = useWorldQuestsStore();
   const { questProgressMap, questsInProgress, trackedQuestId, trackerQuest } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();

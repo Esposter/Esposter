@@ -1,7 +1,5 @@
 import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
 import type { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
-import type { ReputationCity } from "#src/models/reputation/ReputationCity";
-import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { Ref } from "vue";
 
 // What the keeper's request offer reaches the world through: the quest it accepts into, the quests and their words its title
@@ -10,9 +8,6 @@ import type { Ref } from "vue";
 export interface ReputationRequestOptions {
   bountyHunt: Readonly<Ref<ReputationBountyHunt | undefined>>;
   claimBounty: () => void;
-  reputation: Readonly<Ref<ReputationProgress>>;
   reputationBountyOffer: Readonly<Ref<ReputationBountyOffer | undefined>>;
-  reputationCity: Readonly<Ref<ReputationCity | undefined>>;
-  requestClaimedAts: Readonly<Ref<readonly Temporal.Instant[]>>;
   takeBounty: () => void;
 }

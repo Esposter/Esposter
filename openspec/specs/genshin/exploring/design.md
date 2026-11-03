@@ -32,7 +32,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 - **Three kinds jump.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven, the Teleport Waypoint and the domain entrance (`packages/genshin-world/src/services/map/constants.ts`). A tree or a building is never a jump target.
 - **A waypoint always has an arrival.** `WaypointLandmark` requires its `arrival` in its schema (`packages/genshin-world/src/models/world/WaypointLandmark.ts`). Every landmark's base allows one, and `computeJumpPose` treats a jump to a landmark without one as an error, since there is nowhere to land (`packages/genshin-world/src/services/map/computeJumpPose.ts`).
 - **The landing is the arrival.** `computeJumpPose` puts the character at the arrival's place, at its height offset and facing its rotation (`packages/genshin-world/src/services/map/computeJumpPose.ts`).
-- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues, waypoints or domain entrances (`packages/genshin-world/src/composables/useWorldMap.ts`). A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`; `packages/genshin-text/src/generated/text/English.json`), and activating it unlocks it.
+- **Only unlocked landmarks are offered.** `useWorldMapStore` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues, waypoints or domain entrances (`packages/genshin-world/src/store/map.ts`). A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`; `packages/genshin-text/src/generated/text/English.json`), and activating it unlocks it.
 - **The jump list names by area.** It groups the jumps by region, and each is named by its area's name, so a waypoint and a statue in one area read alike (`packages/genshin-world/src/components/Map/JumpList/Index.vue`).
 
 ## Data and measures
@@ -44,25 +44,24 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Key files
 
-| File                                                                       | Role                                                                      |
-| :------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | A landmark's scene point: a statue's by its map, a waypoint's by its id   |
-| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`            | Pairs each ground waypoint with a transport point and builds its landmark |
-| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`             | Writes each fitted region's waypoints into its region file                |
-| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`          | The `waypoints` command of `genshin:assets`                               |
-| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`           | A transport point as a landmark's arrival                                 |
-| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`             | Gives each statue its arrival from its scene point                        |
-| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`     | Reads every transport point of the scene                                  |
-| `scripts/src/services/genshinAssets/shared/constants.ts`                   | `WAYPOINT_REGIONS`, the regions whose waypoints are written               |
-| `scripts/src/services/genshinAssets/points/constants.ts`                   | `INTERACTIVE_MAP_FIT_BAR` and the waypoint's label on the official map    |
-| `packages/genshin-world/src/models/world/WaypointLandmark.ts`              | The Teleport Waypoint landmark, its arrival required                      |
-| `packages/genshin-world/src/models/world/LandmarkArrival.ts`               | A landmark's arrival: place, turn and height                              |
-| `packages/genshin-world/src/models/world/BaseLandmark.ts`                  | The fields every landmark has, and the optional arrival                   |
-| `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS`, the kinds a jump lands at                          |
-| `packages/genshin-world/src/services/map/computeJumpPose.ts`               | Where a jump lands and which way it faces                                 |
-| `packages/genshin-world/src/composables/useWorldMap.ts`                    | Unlocks landmarks and offers the unlocked jump landmarks                  |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts`               | Every region's jump landmarks, read once                                  |
-| `packages/genshin-world/src/data/regions/mondstadt.json`                   | Mondstadt's landmarks, its waypoints among them                           |
+| File                                                                       | Role                                                                                      |
+| :------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | A landmark's scene point: a statue's by its map, a waypoint's by its id                   |
+| `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`            | Pairs each ground waypoint with a transport point and builds its landmark                 |
+| `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`             | Writes each fitted region's waypoints into its region file                                |
+| `scripts/src/services/genshinAssets/commands/waypointsCommand.ts`          | The `waypoints` command of `genshin:assets`                                               |
+| `scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`           | A transport point as a landmark's arrival                                                 |
+| `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`             | Gives each statue its arrival from its scene point                                        |
+| `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`     | Reads every transport point of the scene                                                  |
+| `scripts/src/services/genshinAssets/shared/constants.ts`                   | `WAYPOINT_REGIONS`, the regions whose waypoints are written                               |
+| `scripts/src/services/genshinAssets/points/constants.ts`                   | `INTERACTIVE_MAP_FIT_BAR` and the waypoint's label on the official map                    |
+| `packages/genshin-world/src/models/world/WaypointLandmark.ts`              | The Teleport Waypoint landmark, its arrival required                                      |
+| `packages/genshin-world/src/models/world/LandmarkArrival.ts`               | A landmark's arrival: place, turn and height                                              |
+| `packages/genshin-world/src/models/world/BaseLandmark.ts`                  | The fields every landmark has, and the optional arrival                                   |
+| `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS`, the kinds a jump lands at                                          |
+| `packages/genshin-world/src/services/map/computeJumpPose.ts`               | Where a jump lands and which way it faces                                                 |
+| `packages/genshin-world/src/store/map.ts`                                  | Unlocks landmarks, reads every region's jump landmarks once, and offers the unlocked ones |
+| `packages/genshin-world/src/data/regions/mondstadt.json`                   | Mondstadt's landmarks, its waypoints among them                                           |
 
 ## Notes
 

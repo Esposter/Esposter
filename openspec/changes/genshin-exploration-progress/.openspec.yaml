@@ -4,6 +4,6 @@ x-model: claude-haiku-5-5
 x-touches:
   [
     "packages/genshin-world/src/services/exploration/**",
-    "packages/genshin-world/src/composables/useWorldMap.ts",
+    "packages/genshin-world/src/composables/useWorldExploration.ts",
     "packages/genshin-world/src/components/World/Session/**",
   ]

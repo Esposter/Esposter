@@ -36,10 +36,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                    | Role after the change                                             |
-| :------------------------------------------------------ | :---------------------------------------------------------------- |
-| `packages/genshin-world/src/composables/useWorldMap.ts` | Splits the unlocked jump landmarks off the ones the pointer reads |
-| `packages/genshin-world/src/services/map/constants.ts`  | `JUMP_LANDMARK_KINDS` takes statues, waypoints, domain entrances  |
+| File                                                   | Role after the change                                             |
+| :----------------------------------------------------- | :---------------------------------------------------------------- |
+| `packages/genshin-world/src/store/map.ts`              | Splits the unlocked jump landmarks off the ones the pointer reads |
+| `packages/genshin-world/src/services/map/constants.ts` | `JUMP_LANDMARK_KINDS` takes statues, waypoints, domain entrances  |
 
 ## Sources
 

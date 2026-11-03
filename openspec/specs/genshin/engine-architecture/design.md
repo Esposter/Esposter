@@ -84,10 +84,10 @@ flowchart LR
   Save[useWorldSave] -->|bagChange| Archive
   Quests -->|achievementEvents| Achievements[useWorldAchievements]
   Quests -->|parentQuestFinish| Archive
-  Map[useWorldMap] -->|questEvent| Quests
+  Map[useWorldMapStore] -->|questEvent| Quests
 ```
 
-The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts` and `useWorldMap.ts`, `packages/genshin-world/src/store/quests.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
+The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `packages/genshin-world/src/store/map.ts` and `packages/genshin-world/src/store/quests.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
 
 ## Key files
 

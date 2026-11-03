@@ -17,9 +17,7 @@ import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
-import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
@@ -58,6 +56,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldMapStore } from "#src/store/map";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -105,14 +104,11 @@ export const useWorldDomains = ({
   clearedDomainIds,
   closeScreen,
   domainChallengeLevels,
-  jumpLandmarks,
-  jumpTo,
   kitEffectState,
   party,
   random,
   reliquaryPieceEntryMap,
   reliquarySets,
-  unlockedLandmarks,
   weaponDataMap,
 }: {
   adventureRankTables: AdventureRankTables;
@@ -121,16 +117,16 @@ export const useWorldDomains = ({
   clearedDomainIds: Ref<ReadonlySet<string>>;
   closeScreen: () => void;
   domainChallengeLevels: DomainChallengeLevelMap;
-  jumpLandmarks: Readonly<Ref<Landmark[]>>;
-  jumpTo: (pose: WorldJumpPose) => void;
   kitEffectState: KitEffectState;
   party: Party;
   random: () => number;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
-  unlockedLandmarks: Ref<Landmark[]>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldMapStore = useWorldMapStore();
+  const { jumpLandmarks, unlockedLandmarks } = storeToRefs(worldMapStore);
+  const { jumpTo } = worldMapStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

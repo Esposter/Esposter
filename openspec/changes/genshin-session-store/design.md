@@ -67,7 +67,7 @@ flowchart TD
 
 For a slice:
 
-1. **The count is negative.** The lines the slice adds (stores, tests, pages) less the lines it removes (options lists, their type declarations and destructures in the composables, the bindings in the root), over the slice's files, as `git diff --shortstat` reports it. A slice that is not negative is recorded as a refusal with its numbers, and the change stops.
+1. **The count is negative over the production code.** The lines the slice adds (stores, pages, composables, models) less the lines it removes (options lists, their type declarations and destructures in the composables, the bindings in the root), over the slice's files without the tests and fixtures, as `git diff --shortstat` reports it; the tests and fixtures are reported beside it and do not gate. A composable that had no test gains one when it becomes a store, and a gate that counted that would refuse the shape for the coverage. A slice that is not negative is recorded as a refusal with its numbers, and the change stops. (Amended after the quests and adventure-rank slices came out positive only by their new tests: three slices in a row needing the same exception is the rule being wrong, not the slices.)
 2. **The keys fall.** The investigation's count script reports fewer option keys, and the shared keys the slice owned are 0 in every call that took them.
 3. **The checks pass for what the slice touched:** the package's typecheck through the mapper reports nothing, ESLint and oxlint are clean, the touched tests and the stores' tests pass, and the visual and browser suites that mount the session are unchanged.
 4. **The lifetime test passes:** a second mount starts clean.

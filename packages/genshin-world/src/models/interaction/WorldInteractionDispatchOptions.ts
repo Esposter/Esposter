@@ -6,7 +6,6 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
-import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
@@ -19,7 +18,6 @@ import type { Ref } from "vue";
 // Interactable is looked up in, the screen it opens and what it opens that screen on, and the action each feature takes
 // Its interactable by
 export interface WorldInteractionDispatchOptions {
-  activateLandmark: (landmarkId: string) => void;
   characterBody: Object3D;
   checkIsFishingPoint: (id: string) => boolean;
   claimKatheryneBonus: () => void;
@@ -37,7 +35,6 @@ export interface WorldInteractionDispatchOptions {
   getResidents: () => Resident[];
   getTalkDuelGameId: (talkId: string) => number | undefined;
   grantRewards: (rewards: QuestRewardItem[]) => void;
-  jumpTo: HomeRealmToggleOptions["jumpTo"];
   materialSources: Readonly<Ref<readonly MaterialSourcePlace[]>>;
   offeredViewpoints: Readonly<Ref<readonly { id: number }[]>>;
   offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
@@ -55,7 +52,6 @@ export interface WorldInteractionDispatchOptions {
   pickUpMaterialSourcePlace: (placeId: string) => void;
   pickUpWorldDrop: (worldDrop: WorldDrop) => void;
   random: () => number;
-  reputation: Readonly<Ref<ReputationProgress>>;
   reputationLevel: Ref<number>;
   resonateStatue: (landmarkId: string) => void;
   screenKind: Ref<ScreenKind>;
@@ -67,7 +63,6 @@ export interface WorldInteractionDispatchOptions {
   toggleHomeRealm: (options: HomeRealmToggleOptions) => void;
   trounceBlossoms: Readonly<Ref<ReadonlyMap<string, unknown>>>;
   unlockedDomainEntrances: Readonly<Ref<readonly DomainEntranceLandmark[]>>;
-  unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
   viewViewpoint: (viewpointId: number) => void;
   worldDrops: Readonly<Ref<readonly WorldDrop[]>>;
 }

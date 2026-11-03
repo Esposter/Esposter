@@ -2,8 +2,6 @@ import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChalleng
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
-import type { Landmark } from "#src/models/world/Landmark";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 
 import { useWorldDomains } from "#src/composables/useWorldDomains";
@@ -24,10 +22,11 @@ import { createParty } from "#src/services/party/createParty";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { useWorldMapStore } from "#src/store/map";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
-import { ref, shallowRef } from "vue";
+import { shallowRef } from "vue";
 
 vi.mock(import("#src/services/data/readGameDataEntry"));
 vi.mock(import("#src/services/domains/readWeeklyBossDomains"), () => ({
@@ -102,7 +101,11 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
   };
   const { events } = startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
   startTestAdventureRank(40);
-  const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
+  const worldMapStore = useWorldMapStore();
+  const entrance = createDomainEntrance();
+  worldMapStore.jumpLandmarks = [entrance];
+  worldMapStore.unlockedLandmarkIds = new Set([entrance.id]);
+  const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
   const closeScreen = vi.fn<() => void>();
   const domains = useWorldDomains({
     adventureRankTables: { levels: [], locks: [], worldLevelRows: [] },
@@ -111,14 +114,11 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     clearedDomainIds: shallowRef(new Set<string>()),
     closeScreen,
     domainChallengeLevels,
-    jumpLandmarks: ref<Landmark[]>([createDomainEntrance()]),
-    jumpTo,
     kitEffectState: { effects: [] },
     party: createParty([TRAVELER_CHARACTER_ID]),
     random: () => 0.5,
     reliquaryPieceEntryMap: new Map(),
     reliquarySets: [],
-    unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),
     weaponDataMap: new Map(),
   });
   return { closeScreen, domains, events, jumpTo };

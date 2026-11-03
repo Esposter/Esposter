@@ -15,6 +15,7 @@ import { createWorldParty } from "#src/services/party/createWorldParty";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
+import { useWorldMapStore } from "#src/store/map";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { Object3D } from "three";
@@ -72,7 +73,6 @@ describe(useWorldTrials, () => {
     claimedStageIds: new Set<number>(),
     closeScreen: vi.fn<() => void>(),
     getGroundHeight: () => 0,
-    jumpTo: vi.fn<(pose: WorldJumpPose) => void>(),
     party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
     weaponDataMap: new Map([
       [
@@ -84,7 +84,9 @@ describe(useWorldTrials, () => {
 
   const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
     const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
-    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), worldSessionStore };
+    const worldMapStore = useWorldMapStore();
+    const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
+    return { ...useWorldTrials({ ...createDependencies(), ...overrides }), jumpTo, worldSessionStore };
   };
 
   beforeEach(() => {
@@ -114,8 +116,7 @@ describe(useWorldTrials, () => {
   test("a trial opened from the Wish screen leaves the screen and lands on its stand-in arena", async () => {
     expect.hasAssertions();
     const closeScreen = vi.fn<() => void>();
-    const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
-    const { openTrial, trialArena, trials } = setUpTrials({ closeScreen, jumpTo });
+    const { jumpTo, openTrial, trialArena, trials } = setUpTrials({ closeScreen });
     await flushReads();
 
     await openTrial(takeOne(trials.value));

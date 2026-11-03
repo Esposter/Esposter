@@ -33,7 +33,6 @@ export interface WorldFrameOptions {
   inputState: InputState;
   interactionPrompts: Readonly<Ref<InteractionPrompts>>;
   isHudHidden: Ref<boolean>;
-  jumpTo: (pose: WorldJumpPose) => void;
   kitContext: KitContext;
   party: Party;
   placeUsedGadget: (usedGadget: GadgetRow | undefined, feet: { x: number; z: number }) => void;
@@ -61,5 +60,4 @@ export interface WorldFrameOptions {
   stepTrial: (step: WorldChallengeStep) => undefined | WorldJumpPose;
   stepWorldPuzzles: (deltaSeconds: number, position: GroundPoint) => void;
   touchOutcropsNear: (x: number, z: number, random: () => number) => void;
-  unlockedLandmarkIds: Readonly<Ref<ReadonlySet<string>>>;
 }

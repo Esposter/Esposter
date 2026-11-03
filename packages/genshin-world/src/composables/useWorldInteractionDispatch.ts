@@ -17,14 +17,16 @@ import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldMapStore } from "#src/store/map";
+import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldSessionStore } from "#src/store/session";
 import { InteractionKind } from "genshin-interface";
+import { storeToRefs } from "pinia";
 
 // What using the interactable the player is prompted on does: the open world's pickups, chests, claims and landmarks run
 // Their feature's action, and a stove, a forge, a domain, the Abyss, a shop, a fishing point or a talk opens its screen.
 // The branches are tried in order, so a kind's more specific cases come before its general one
 export const useWorldInteractionDispatch = ({
-  activateLandmark,
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
@@ -42,7 +44,6 @@ export const useWorldInteractionDispatch = ({
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  jumpTo,
   materialSources,
   offeredViewpoints,
   offerFrostbearingTree,
@@ -60,7 +61,6 @@ export const useWorldInteractionDispatch = ({
   pickUpMaterialSourcePlace,
   pickUpWorldDrop,
   random,
-  reputation,
   reputationLevel,
   resonateStatue,
   screenKind,
@@ -72,10 +72,14 @@ export const useWorldInteractionDispatch = ({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  unlockedLandmarkIds,
   viewViewpoint,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
+  const worldReputationStore = useWorldReputationStore();
+  const { reputation } = storeToRefs(worldReputationStore);
+  const worldMapStore = useWorldMapStore();
+  const { unlockedLandmarkIds } = storeToRefs(worldMapStore);
+  const { activateLandmark, jumpTo } = worldMapStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { claimKatheryneRewards } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();

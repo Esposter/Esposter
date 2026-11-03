@@ -1,9 +1,5 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
-import type { ReputationCity } from "#src/models/reputation/ReputationCity";
-import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
-import type { ReputationReward } from "#src/models/reputation/ReputationReward";
-import type { Ref } from "vue";
 
 import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { computeBountyTrailEnds } from "#src/services/elementalSight/computeBountyTrailEnds";
@@ -13,16 +9,14 @@ import { createReputationBountyCamp } from "#src/services/reputation/createReput
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
 import { takeReputationBounty } from "#src/services/reputation/takeReputationBounty";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldSessionStore } from "#src/store/session";
 import { takeRandom } from "@esposter/shared";
 import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 interface Props {
-  payReputationReward: (reward: ReputationReward) => void;
   random: () => number;
-  reputation: Readonly<Ref<ReputationProgress>>;
-  reputationCity: Readonly<Ref<ReputationCity | undefined>>;
   // The moments of the bounty claims the save holds, those before the week's reset no longer counted
   savedBountyClaimedAts: readonly Temporal.Instant[];
   // The bounty taken and not yet claimed, as the save holds it
@@ -31,14 +25,10 @@ interface Props {
 
 // The Mondstadt bounty the player has taken, in progress until its claim pays, and the moments of the bounty claims made.
 // Both are the save's, so a reload finds the hunt and the week's count where they were left
-export const useWorldReputationBounty = ({
-  payReputationReward,
-  random,
-  reputation,
-  reputationCity,
-  savedBountyClaimedAts,
-  savedBountyHunt,
-}: Props) => {
+export const useWorldReputationBounty = ({ random, savedBountyClaimedAts, savedBountyHunt }: Props) => {
+  const worldReputationStore = useWorldReputationStore();
+  const { reputation, reputationCity } = storeToRefs(worldReputationStore);
+  const { payReputationReward } = worldReputationStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { worldLevel } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

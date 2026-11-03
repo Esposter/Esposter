@@ -20,10 +20,12 @@ import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmar
 import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
+import { useWorldMapStore } from "#src/store/map";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // Every prompt the world offers, joined from the sources that hold them and read beside the character's body: what is in
@@ -44,7 +46,6 @@ export const useWorldInteractables = ({
   input,
   isDomainTreeRaised,
   isFishingOpen,
-  lockedJumpLandmarks,
   offeredViewpoints,
   outcropInteractables,
   pickUpInteractables,
@@ -52,9 +53,10 @@ export const useWorldInteractables = ({
   shrineInteractables,
   trounceBlossomInteractables,
   unlockedDomainEntrances,
-  unlockedLandmarks,
   viewpointPlaceMap,
 }: WorldInteractablesOptions) => {
+  const worldMapStore = useWorldMapStore();
+  const { lockedJumpLandmarks, unlockedLandmarks } = storeToRefs(worldMapStore);
   const worldSessionStore = useWorldSessionStore();
   // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
   const domainArenaInteractables = computed<Interactable[]>(() => {

@@ -9,7 +9,7 @@ import type { StatueLandmark } from "#src/models/world/StatueLandmark";
 import type { WaypointLandmark } from "#src/models/world/WaypointLandmark";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 
-import { useWorldMap } from "#src/composables/useWorldMap";
+import { useWorldExploration } from "#src/composables/useWorldExploration";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { Currency } from "#src/models/inventory/Currency";
@@ -28,8 +28,10 @@ import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpe
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { readRegionData } from "#src/services/world/readRegionData";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { createInteractQuest } from "#src/store/quests.fixture";
+import { useWorldReputationStore } from "#src/store/reputation";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
@@ -61,7 +63,7 @@ const createQuest = (questId: number): Quest => ({
   titleTextId: "title",
 });
 
-describe(useWorldMap, () => {
+describe(useWorldMapStore, () => {
   // The composables under test read Vue's API as the build auto-imports it, which the node environment does not, so
   // Its two globals are stubbed in as the build would provide them
   beforeEach(() => {
@@ -200,10 +202,9 @@ describe(useWorldMap, () => {
   };
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
   const createWorldMap = (
-    unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
+    savedUnlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
     savedRequestClaimedAts: readonly Temporal.Instant[] = [],
   ) => {
-    const reputation = shallowRef({ exp: 0, level: 1 });
     const placedDoings = shallowRef<PlacedDoing[]>([]);
     const recordedDoingIds = shallowRef<ReadonlySet<string>>(new Set<string>());
     const worldSessionStore = startTestWorldSession(
@@ -216,23 +217,24 @@ describe(useWorldMap, () => {
     const gainWorldAdventureExp = vi
       .spyOn(worldAdventureRankStore, "gainWorldAdventureExp")
       .mockImplementation(() => {});
+    const catalogue = { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] };
+    const worldReputationStore = useWorldReputationStore();
+    const worldMapStore = useWorldMapStore();
+    worldReputationStore.start({ reputation: { exp: 0, level: 1 }, requestClaimedAts: savedRequestClaimedAts });
+    worldMapStore.start(catalogue, "region-data", savedUnlockedLandmarkIds);
+    useWorldExploration({ catalogue, placedDoings, recordedDoingIds, savedUnlockedLandmarkIds });
+    const { jumpLandmarks, lockedJumpLandmarks, unlockedLandmarkIds, unlockedLandmarks } = storeToRefs(worldMapStore);
+    const { reputation } = storeToRefs(worldReputationStore);
     return {
+      activateLandmark: worldMapStore.activateLandmark,
       events,
       gainWorldAdventureExp,
+      jumpLandmarks,
+      lockedJumpLandmarks,
       reputation,
+      unlockedLandmarkIds,
+      unlockedLandmarks,
       wallet,
-      ...useWorldMap({
-        catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
-        placedDoings,
-        recordedDoingIds,
-        regionDataBaseUrl: "region-data",
-        reputation,
-        savedRequestClaimedAts,
-        setReputation: (nextReputation) => {
-          reputation.value = nextReputation;
-        },
-        unlockedLandmarkIds,
-      }),
     };
   };
 

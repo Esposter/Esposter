@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
@@ -71,6 +70,7 @@ import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldDoings } from "#src/composables/useWorldDoings";
 import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { useWorldExpeditionRoster } from "#src/composables/useWorldExpeditionRoster";
+import { useWorldExploration } from "#src/composables/useWorldExploration";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFrame } from "#src/composables/useWorldFrame";
@@ -81,7 +81,6 @@ import { useWorldHudFrame } from "#src/composables/useWorldHudFrame";
 import { useWorldHudVisibility } from "#src/composables/useWorldHudVisibility";
 import { useWorldInteractables } from "#src/composables/useWorldInteractables";
 import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractionDispatch";
-import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
@@ -127,7 +126,9 @@ import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionId
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldMailStore } from "#src/store/mail";
+import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
+import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldSessionStore } from "#src/store/session";
 import { TresCanvas } from "@tresjs/core";
 import { useMediaQuery } from "@vueuse/core";
@@ -325,6 +326,11 @@ startAdventureRank(adventureRankTables, {
   worldLevelAdjustment: savedState.worldLevelAdjustment,
 });
 onUnmounted(stopAdventureRank);
+const worldReputationStore = useWorldReputationStore();
+const { reputation, reputationCity, requestClaimedAts } = storeToRefs(worldReputationStore);
+const { start: startReputation, stop: stopReputation } = worldReputationStore;
+startReputation({ reputation: savedState.reputation, requestClaimedAts: savedState.reputationRequestClaimedAts });
+onUnmounted(stopReputation);
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
 const {
@@ -535,7 +541,6 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     claimedStageIds: savedState.characterTrialClaimedStageIds,
     closeScreen,
     getGroundHeight,
-    jumpTo: (pose) => jumpTo(pose),
     party,
     weaponDataMap: statTables.weaponDataMap,
   });
@@ -635,7 +640,6 @@ const {
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
 });
 // The Mondstadt Reputation the player holds, which the exploration thresholds a statue's unlock crosses raise
-const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 const shopId = shallowRef(0);
 const shopPurchases = shallowRef<ShopPurchase[]>(savedState.shopPurchases);
 // The Spiral Abyss on the world: its entry, its chambers in the arena beside the entrance, and the Benediction a Corridor chamber offers
@@ -677,50 +681,32 @@ const { placedDoings, recordedDoingIds } = useWorldDoings({
   timeTrialPlaces,
   worldChestPlaces,
 });
-// The landmarks the world holds and the ones the player has unlocked, which a jump lands at and the first unlock pays
-const {
-  activateLandmark,
-  explorationAreas,
-  jumpLandmarks,
-  jumpPose,
-  jumpTo,
-  lockedJumpLandmarks,
-  payReputationReward,
-  reputationCity,
-  requestClaimedAts,
-  subareaLabels,
-  unlockedLandmarkIds,
-  unlockedLandmarks,
-} = useWorldMap({
+// The landmarks the world holds and the ones the player has unlocked, with the first unlock of each paid and the pose a jump
+// Lands at, and Mondstadt's Reputation with the rewards the exploration and the finished requests pay into it
+const worldMapStore = useWorldMapStore();
+const { jumpLandmarks, jumpPose, subareaLabels, unlockedLandmarkIds, unlockedLandmarks } = storeToRefs(worldMapStore);
+const { jumpTo, start: startMap, stop: stopMap } = worldMapStore;
+startMap(catalogue, regionDataBaseUrl, savedState.unlockedLandmarkIds);
+onUnmounted(stopMap);
+// The areas the map counts the exploration of, with the doings the save records counted toward them
+const { explorationAreas } = useWorldExploration({
   catalogue,
   placedDoings,
   recordedDoingIds,
-  regionDataBaseUrl,
-  reputation,
-  savedRequestClaimedAts: savedState.reputationRequestClaimedAts,
-  setReputation: (nextReputation) => {
-    reputation.value = nextReputation;
-  },
-  unlockedLandmarkIds: savedState.unlockedLandmarkIds,
+  savedUnlockedLandmarkIds: savedState.unlockedLandmarkIds,
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
 // Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
 const { bountyCamps, bountyClaimedAts, bountyHunt, bountyTrailEnds, claimBounty, reputationBountyOffer, takeBounty } =
   useWorldReputationBounty({
-    payReputationReward,
     random: () => kitContext.random(),
-    reputation,
-    reputationCity,
     savedBountyClaimedAts: savedState.reputationBountyClaimedAts,
     savedBountyHunt: savedState.reputationBountyHunt,
   });
 const { acceptReputationOffer, drawReputationOffer, reputationOfferTitle } = useWorldReputationRequest({
   bountyHunt,
   claimBounty,
-  reputation,
   reputationBountyOffer,
-  reputationCity,
-  requestClaimedAts,
   takeBounty,
 });
 watch(unlockedLandmarkIds, (landmarkIds) => {
@@ -833,14 +819,11 @@ const {
   clearedDomainIds,
   closeScreen,
   domainChallengeLevels,
-  jumpLandmarks,
-  jumpTo,
   kitEffectState: kitContext.kitEffectState,
   party,
   random: () => kitContext.random(),
   reliquaryPieceEntryMap,
   reliquarySets,
-  unlockedLandmarks,
   weaponDataMap: statTables.weaponDataMap,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
@@ -852,7 +835,6 @@ const fightingCamps = computed(() => [
 ]);
 // What using the interactable the player is prompted on does, joined from the features that act on it
 const { dispatchInteraction } = useWorldInteractionDispatch({
-  activateLandmark,
   characterBody,
   checkIsFishingPoint,
   claimKatheryneBonus,
@@ -870,7 +852,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  jumpTo,
   materialSources,
   offeredViewpoints,
   offerFrostbearingTree,
@@ -888,7 +869,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   pickUpMaterialSourcePlace,
   pickUpWorldDrop,
   random: () => kitContext.random(),
-  reputation,
   reputationLevel,
   resonateStatue,
   screenKind,
@@ -900,7 +880,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  unlockedLandmarkIds,
   viewViewpoint,
   worldDrops,
 });
@@ -921,7 +900,6 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   input,
   isDomainTreeRaised,
   isFishingOpen,
-  lockedJumpLandmarks,
   offeredViewpoints,
   outcropInteractables,
   pickUpInteractables,
@@ -929,7 +907,6 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   shrineInteractables,
   trounceBlossomInteractables,
   unlockedDomainEntrances,
-  unlockedLandmarks,
   viewpointPlaceMap,
 });
 const character = useTemplateRef("character");
@@ -990,7 +967,6 @@ const { stepFrame } = useWorldFrame({
   inputState,
   interactionPrompts,
   isHudHidden,
-  jumpTo,
   kitContext,
   party,
   placeUsedGadget,
@@ -1008,10 +984,9 @@ const { stepFrame } = useWorldFrame({
   stepTrial,
   stepWorldPuzzles,
   touchOutcropsNear,
-  unlockedLandmarkIds,
 });
 // The locked jump landmark the HUD points to
-const { pointedLandmark } = useWorldPointedLandmark({ lockedJumpLandmarks, mapCamera });
+const { pointedLandmark } = useWorldPointedLandmark({ mapCamera });
 // The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
 // The character on the field's locomotion and max HP, which the sheer cold gauge reads each frame
 const getCharacter = () => {

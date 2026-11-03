@@ -38,7 +38,7 @@ flowchart TD
 
 ## Notes
 
-- **Thresholds paid.** Mondstadt's Reputation is kept in the [save](../save-data/design.md), and each exploration threshold the nation's percentage passes pays its Reputation EXP and wallet items once (`packages/genshin-world/src/composables/useWorldMap.ts`, `payReputationReward`).
+- **Thresholds paid.** Mondstadt's Reputation is kept in the [save](../save-data/design.md), and each exploration threshold the nation's percentage passes pays its Reputation EXP and wallet items once (`packages/genshin-world/src/composables/useWorldExploration.ts`, `payReputationReward` of `packages/genshin-world/src/store/reputation.ts`).
 - **The label's measures are the game's, its face is not.** The name's and the line's sizes and the line's place below the name are read off the English map over Galesong Hill at 4.6 seconds (in the [map page](../compute/map/design.md)'s recording): white with no outline. Signika stands in for the game's face, spaced out toward each line's width, and its strokes are the difference left: the label's score over its glyphs' silhouettes waits on the [map compute page](../compute/map/design.md)'s task.
 
 ## Sources

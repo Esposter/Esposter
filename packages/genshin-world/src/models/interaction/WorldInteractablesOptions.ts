@@ -7,7 +7,6 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
-import type { Landmark } from "#src/models/world/Landmark";
 import type { Input } from "genshin-engine";
 import type { Object3D } from "three";
 import type { Ref } from "vue";
@@ -30,7 +29,6 @@ export interface WorldInteractablesOptions {
   input: Input;
   isDomainTreeRaised: Readonly<Ref<boolean>>;
   isFishingOpen: Readonly<Ref<boolean>>;
-  lockedJumpLandmarks: Readonly<Ref<Landmark[]>>;
   offeredViewpoints: Readonly<Ref<readonly ArchiveViewpoint[]>>;
   outcropInteractables: Readonly<Ref<Interactable[]>>;
   pickUpInteractables: Readonly<Ref<Interactable[]>>;
@@ -38,6 +36,5 @@ export interface WorldInteractablesOptions {
   shrineInteractables: Readonly<Ref<Interactable[]>>;
   trounceBlossomInteractables: Readonly<Ref<Interactable[]>>;
   unlockedDomainEntrances: Readonly<Ref<DomainEntranceLandmark[]>>;
-  unlockedLandmarks: Readonly<Ref<Landmark[]>>;
   viewpointPlaceMap: Readonly<Ref<ReadonlyMap<number, SceneGroupPlace>>>;
 }
