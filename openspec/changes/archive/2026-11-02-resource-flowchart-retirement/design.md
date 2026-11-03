@@ -15,9 +15,9 @@ A blob is deleted only inside the purge of its own resource, together with that 
 
 ## The whiteboard covers the feature list
 
-Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [gap analysis](../../../specs/resource/whiteboard/design.md#gap-analysis), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
+Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [features table](../../../specs/resource/whiteboard/design.md#features), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
 
-| Flowchart feature                                 | Whiteboard row, in its gap analysis                              | Status                                                     |
+| Flowchart feature                                 | Whiteboard row, in its features table                            | Status                                                     |
 | ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
 | Labelled step nodes                               | Node label                                                       | Covered                                                    |
 | Node colour                                       | Node colour                                                      | Covered                                                    |
@@ -89,4 +89,4 @@ This change writes no spec delta now. Its removal is recorded as REMOVED require
 ## Sources
 
 - [Flowchart on the editor core](../../../deferred/resource/flowchart-on-editor-core/design.md): the removal future, and the rule that a resource type leaves PostgreSQL only once no row holds it.
-- [Whiteboard](../../../specs/resource/whiteboard/design.md#gap-analysis): the gap analysis the feature check reads.
+- [Whiteboard](../../../specs/resource/whiteboard/design.md#features): the features table the feature check reads.

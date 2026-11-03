@@ -1,7 +1,7 @@
 ## 1. Before the release
 
 - [x] 1.1 Wait for the whiteboard change to ship and archive. Verify: its proposal sits under `openspec/changes/archive` and its whiteboard is in the app.
-- [x] 1.2 Check each row of the feature check in the design against the whiteboard's gap analysis, and confirm the built whiteboard covers each row it marks covered. Verify: every row reads covered, or is one of the drops the design names.
+- [x] 1.2 Check each row of the feature check in the design against the whiteboard's features table, and confirm the built whiteboard covers each row it marks covered. Verify: every row reads covered, or is one of the drops the design names.
 
 ## 2. The one-time purge
 
