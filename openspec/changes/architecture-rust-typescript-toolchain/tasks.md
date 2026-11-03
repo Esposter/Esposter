@@ -2,7 +2,7 @@
 
 ## 1. Plain typecheck on `tsrs`
 
-- [x] 1.1 Every package's plain `typecheck` script runs `tsrs --fast`, with `noEmit` read from the shared `tsconfig` chain. Verified by the package scripts and the workspace typecheck passing.
+- [x] 1.1 Every package's plain `typecheck` script, and the root project's `typecheck:root` task in `vite.config.ts`, runs `tsrs --fast`, with `noEmit` read from the shared `tsconfig` chain. Verified by the package scripts and the workspace typecheck passing.
 
 ## 2. Vue checks
 

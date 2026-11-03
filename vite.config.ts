@@ -199,7 +199,7 @@ const configuration: UserConfig = defineConfig({
         ...createTask('pnpm -r --filter "./packages/*" --parallel typecheck', []),
         dependsOn: ["build:packages"],
       },
-      "typecheck:root": createTask("tsc", []),
+      "typecheck:root": createTask("tsrs --fast", []),
       // Uncached: the check writes across the app's `.nuxt`, and excluding that directory would replay a stale verdict
       "typecheck:workspace": { cache: false, command: "pnpm -r --parallel typecheck" },
     },
