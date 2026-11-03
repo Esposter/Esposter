@@ -16,6 +16,15 @@ import { computed, shallowRef } from "vue";
 
 const createCookingProgress = (): CookingProgress => ({ learnedRecipeIds: [], proficiencies: {} });
 
+// A read that fails is logged and left unset
+const read = <T>(readTable: () => Promise<T>, setTable: (table: T) => void) => {
+  getSynchronizedFunction(() =>
+    getResultAsync(readTable).match(setTable, (error) => {
+      console.error(error);
+    }),
+  )();
+};
+
 // The cooking recipes, the processing recipes, the cooks' talents by character id and the stove's place in Mondstadt, each
 // Read from the hosted game data as the world starts, with the progress the save holds: the recipes learned and the
 // Proficiency in each, and the processing jobs running. The bag's use of an instruction item and the stove's prompt read
@@ -40,14 +49,6 @@ export const useWorldCookingStore = defineStore("world/cooking", () => {
         ),
       ),
   );
-  // A read that fails is logged and left unset
-  const read = <T>(readTable: () => Promise<T>, setTable: (table: T) => void) => {
-    getSynchronizedFunction(() =>
-      getResultAsync(readTable).match(setTable, (error) => {
-        console.error(error);
-      }),
-    )();
-  };
   const start = (saved: { cookingProgress: CookingProgress; processingJobs: Record<number, ProcessingJob> }) => {
     ({ cookingProgress: cookingProgress.value, processingJobs: processingJobs.value } = saved);
     const { gameDataBaseUrl } = worldSessionStore;

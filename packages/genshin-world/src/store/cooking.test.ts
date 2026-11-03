@@ -1,15 +1,31 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
+
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { useWorldCookingStore } from "#src/store/cooking";
 import { startTestWorldSession } from "#src/store/session.fixture";
-import { assert, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+const ITEM_ID = 100;
+const recipe = { unlockItemIds: [ITEM_ID] } as CookingRecipe;
+
+vi.mock(import("#src/services/cooking/readCookingRecipes"), () => ({
+  readCookingRecipes: () => Promise.resolve([recipe]),
+}));
+vi.mock(import("#src/services/cooking/readCookingTalents"), () => ({ readCookingTalents: () => Promise.resolve({}) }));
+vi.mock(import("#src/services/cooking/readProcessingRecipes"), () => ({
+  readProcessingRecipes: () => Promise.resolve([]),
+}));
+vi.mock(import("#src/services/cooking/readMondstadtCookingStovePlace"), () => ({
+  readMondstadtCookingStovePlace: () => Promise.resolve(),
+}));
 
 describe(useWorldCookingStore, () => {
   const savedProgress = { learnedRecipeIds: [1], proficiencies: { 1: 2 } };
 
-  const startCooking = (saved = { cookingProgress: savedProgress, processingJobs: {} }) => {
-    startTestWorldSession({ gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL });
+  const startCooking = () => {
+    startTestWorldSession();
     const worldCookingStore = useWorldCookingStore();
-    worldCookingStore.start(saved);
+    worldCookingStore.start({ cookingProgress: savedProgress, processingJobs: {} });
     return worldCookingStore;
   };
 
@@ -29,15 +45,8 @@ describe(useWorldCookingStore, () => {
     expect.hasAssertions();
 
     const worldCookingStore = startCooking();
+    await flushReads();
 
-    await vi.waitFor(() => {
-      expect(worldCookingStore.cookingRecipes).not.toHaveLength(0);
-    });
-    const taught = worldCookingStore.cookingRecipes.find(({ unlockItemIds }) => unlockItemIds.length > 0);
-    assert.exists(taught);
-    const [itemId] = taught.unlockItemIds;
-    assert.exists(itemId);
-
-    expect(worldCookingStore.instructionRecipeMap.get(itemId)?.unlockItemIds).toContain(itemId);
+    expect(worldCookingStore.instructionRecipeMap.get(ITEM_ID)).toBe(recipe);
   });
 });

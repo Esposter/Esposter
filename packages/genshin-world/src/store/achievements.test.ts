@@ -2,6 +2,7 @@ import type { Achievement } from "#src/models/achievement/Achievement";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { useWorldAchievementsStore } from "#src/store/achievements";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
@@ -39,11 +40,11 @@ describe(useWorldAchievementsStore, () => {
       { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: QUEST_ID },
     ]);
 
-    await vi.waitFor(() => {
-      expect(worldAchievementsStore.achievementProgressMap).toStrictEqual(
-        new Map([[ACHIEVEMENT_ID, { count: 1, finishedAt: EPOCH }]]),
-      );
-    });
+    await flushReads();
+
+    expect(worldAchievementsStore.achievementProgressMap).toStrictEqual(
+      new Map([[ACHIEVEMENT_ID, { count: 1, finishedAt: EPOCH }]]),
+    );
     expect(worldSessionStore.wallet[Currency.Primogem]).toBe(PRIMOGEMS);
   });
 

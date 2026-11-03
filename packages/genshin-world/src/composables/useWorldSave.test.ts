@@ -36,7 +36,8 @@ describe(useWorldSave, () => {
     const worldSave = scope.run(() => useWorldSave({ emitGrant, savedState }));
     assert.exists(worldSave);
 
-    useWorldAchievementsStore().achievementProgressMap = new Map();
+    const worldAchievementsStore = useWorldAchievementsStore();
+    worldAchievementsStore.achievementProgressMap = new Map();
     await nextTick();
 
     expect(emitGrant).toHaveBeenCalledExactlyOnceWith();
