@@ -26,7 +26,6 @@ export interface WorldInteractablesOptions {
   isDomainTreeRaised: Readonly<Ref<boolean>>;
   isFishingOpen: Readonly<Ref<boolean>>;
   outcropInteractables: Readonly<Ref<Interactable[]>>;
-  pickUpInteractables: Readonly<Ref<Interactable[]>>;
   residentInteractables: Readonly<Ref<Interactable[]>>;
   shrineInteractables: Readonly<Ref<Interactable[]>>;
   trounceBlossomInteractables: Readonly<Ref<Interactable[]>>;

@@ -179,7 +179,7 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the game's m
 - [Mineral](https://genshin-impact.fandom.com/wiki/Mineral), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Mineral.json`: an ore needs Poise Damage from melee or Blunt attacks to break (line 29), and a broken regular ore drops one for certain and one more for each of two draws at 10 per cent (line 20; the Chasm's special ores drop two for certain, line 21).
 - [Blunt Attack](https://genshin-impact.fandom.com/wiki/Blunt_Attack), Genshin Impact Wiki, cached at `{data-root}/cache/genshin-wiki/Page_Blunt_Attack.json`: plunges by sword, claymore and polearm users are blunt, and catalyst plunges are not listed (line 6); Ningguang's plunge is excepted from the Geo rule (line 8), and her Sparkling Scatter's Normal and Charged Attacks, which deal Geo, are blunt (`{data-root}/cache/genshin-wiki/Category_Ningguang_Talents.json`, lines 46 and 54).
 - `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json`: the row of Magical Crystal Chunk, item 101004 (line 68), saves nothing (`GATHER_SAVE_TYPE_NONE`, line 74), so the mining outcrop's drop is no gathering point.
-- `packages/genshin-world/src/composables/useWorldPickups.ts`: the pick ups leave an ore out (line 113, `kind in OreItemIdBreakPoiseMap`), and a point is kept as picked only once the bag has taken its item (line 181, `addition.overflow === 0`).
+- `packages/genshin-world/src/store/pickups.ts`: the pick ups leave an ore out (line 88, `kind in OreItemIdBreakPoiseMap`), and a point is kept as picked only once the bag has taken its item (line 158, `addition.overflow === 0`).
 
 ## Open
 

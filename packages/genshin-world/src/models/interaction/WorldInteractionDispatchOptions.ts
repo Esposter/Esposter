@@ -6,10 +6,8 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestRewardItem } from "#src/models/quest/QuestRewardItem";
-import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Resident } from "#src/models/world/Resident";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Object3D } from "three";
 import type { Ref } from "vue";
 
@@ -33,7 +31,6 @@ export interface WorldInteractionDispatchOptions {
   getResidents: () => Resident[];
   getTalkDuelGameId: (talkId: string) => number | undefined;
   grantRewards: (rewards: QuestRewardItem[]) => void;
-  materialSources: Readonly<Ref<readonly MaterialSourcePlace[]>>;
   offerFrostbearingTree: (frostbearingTreePlace: FrostbearingTreePlace) => void;
   openAbyssEntrance: () => void;
   openChestById: (chestId: string, random: () => number) => void;
@@ -45,9 +42,6 @@ export interface WorldInteractionDispatchOptions {
   openShrineById: (shrineId: string) => void;
   openTrounceBlossomClaim: (spawnKey: string, now: Temporal.Instant) => void;
   openWorship: (landmarkId: string) => void;
-  pickUpGatheringPlace: (placeId: string) => void;
-  pickUpMaterialSourcePlace: (placeId: string) => void;
-  pickUpWorldDrop: (worldDrop: WorldDrop) => void;
   random: () => number;
   reputationLevel: Ref<number>;
   resonateStatue: (landmarkId: string) => void;
@@ -59,5 +53,4 @@ export interface WorldInteractionDispatchOptions {
   toggleHomeRealm: (options: HomeRealmToggleOptions) => void;
   trounceBlossoms: Readonly<Ref<ReadonlyMap<string, unknown>>>;
   unlockedDomainEntrances: Readonly<Ref<readonly DomainEntranceLandmark[]>>;
-  worldDrops: Readonly<Ref<readonly WorldDrop[]>>;
 }

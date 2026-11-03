@@ -83,7 +83,6 @@ import { useWorldInteractionDispatch } from "#src/composables/useWorldInteractio
 import { useWorldOculi } from "#src/composables/useWorldOculi";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
-import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPointedLandmark } from "#src/composables/useWorldPointedLandmark";
 import { useWorldProfileNamecards } from "#src/composables/useWorldProfileNamecards";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
@@ -125,6 +124,7 @@ import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -399,22 +399,11 @@ const { start: startMail, stop: stopMail } = worldMailStore;
 startMail(savedState.mails, savedState.travelerBirthday);
 onUnmounted(stopMail);
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
-const {
-  bagFullHint,
-  breakOre,
-  materialSources,
-  pickUpGatheringPlace,
-  pickUpInteractables,
-  pickUpMaterialSourcePlace,
-  pickUpWorldDrop,
-  placeWorldDrops,
-  strikeGatheringOres,
-  worldDrops,
-} = useWorldPickups({
-  getServerClockOffsetMs: () => serverClockOffsetMs,
-  reliquaryPieceEntryMap,
-  weaponDataMap: statTables.weaponDataMap,
-});
+const worldPickupsStore = useWorldPickupsStore();
+const { bagFullHint } = storeToRefs(worldPickupsStore);
+const { start: startPickups, stop: stopPickups, strikeGatheringOres } = worldPickupsStore;
+startPickups({ reliquaryPieceEntryMap, weaponDataMap: statTables.weaponDataMap });
+onUnmounted(stopPickups);
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
 // Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
 const {
@@ -441,7 +430,6 @@ const { campLockSources, chestInteractables, digChestById, openChestById, worldC
   artifactMainAffixPools,
   artifactRarityDataMap,
   openedChestIds,
-  placeWorldDrops,
   puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
@@ -464,10 +452,10 @@ const {
   staminaMaximum,
   worshipLevels,
   worshipRegionId,
-} = useWorldStatues({ characterBody, foundOculusIds, placeWorldDrops, regionStatueProgressMap });
+} = useWorldStatues({ characterBody, foundOculusIds, regionStatueProgressMap });
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
 // Whose rewards the bag has no room for drop at the tree
-const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress, placeWorldDrops });
+const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
 // The Traveler's resonated regions, Restorative Power and auto-recover, and the element and bonuses they give it
 const {
   autoRecoverSetting,
@@ -523,7 +511,6 @@ const {
     if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
   },
   partyBonusLines: abyssBonusLines,
-  placeWorldDrops,
   savedCharacters: savedState.characters,
   savedParty: savedState.party,
   staminaMaximum,
@@ -746,7 +733,6 @@ const crafting = computed(() =>
 const outcropPlaces = computed(() => windrise.value?.regionDataMap.get(OUTCROP_REGION_ID)?.outcropPlaces ?? []);
 // The mining outcrops of each region the world has loaded, drawn at the daily reset and struck as the ores are
 const { minedOutcrops, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops } = useMiningOutcrops({
-  breakOre,
   regionIds: computed(() => [...(windrise.value?.regionDataMap.keys() ?? [])]),
   savedMinedOutcrops: savedState.minedOutcrops,
 });
@@ -847,7 +833,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  materialSources,
   offerFrostbearingTree,
   openAbyssEntrance,
   openChestById,
@@ -859,9 +844,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   openShrineById,
   openTrounceBlossomClaim,
   openWorship,
-  pickUpGatheringPlace,
-  pickUpMaterialSourcePlace,
-  pickUpWorldDrop,
   random: () => kitContext.random(),
   reputationLevel,
   resonateStatue,
@@ -873,7 +855,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  worldDrops,
 });
 // The prompts beside the character, joined from every source that offers one
 const { interactables, interactionPrompts, pressInteractable, readInteraction } = useWorldInteractables({
@@ -891,7 +872,6 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   isDomainTreeRaised,
   isFishingOpen,
   outcropInteractables,
-  pickUpInteractables,
   residentInteractables,
   shrineInteractables,
   trounceBlossomInteractables,

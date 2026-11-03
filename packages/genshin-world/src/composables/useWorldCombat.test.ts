@@ -30,7 +30,6 @@ const createCombat = (overrides: Partial<Parameters<typeof useWorldCombat>[0]> =
     onPartyDown: () => {},
     onPartyRevived: () => {},
     partyBonusLines: shallowRef([]),
-    placeWorldDrops: () => {},
     savedCharacters: [],
     savedParty: createParty([TRAVELER_CHARACTER_ID]),
     staminaMaximum: shallowRef(STAMINA_MAX),

@@ -3,7 +3,6 @@ import type { Character } from "#src/models/character/Character";
 import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Element } from "#src/models/Element";
-import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
@@ -15,7 +14,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { Party } from "#src/models/party/Party";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Ref } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -48,6 +46,7 @@ import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
@@ -63,7 +62,6 @@ export const useWorldCombat = ({
   onPartyDown,
   onPartyRevived,
   partyBonusLines,
-  placeWorldDrops,
   savedCharacters,
   savedParty,
   staminaMaximum,
@@ -79,7 +77,6 @@ export const useWorldCombat = ({
   onPartyRevived: () => void;
   // The bonuses the whole party holds from the Spiral Abyss's chamber, which every character of the party takes
   partyBonusLines: Readonly<Ref<AttributeLine[]>>;
-  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   savedCharacters: Character[];
   savedParty: Party;
   // The most the party's stamina holds, which the statues raise as their levels are reached
@@ -92,6 +89,8 @@ export const useWorldCombat = ({
   travelerElement: Readonly<Ref<Element | undefined>>;
   wildlifePlaces: readonly WildlifePlace[];
 }) => {
+  const worldPickupsStore = useWorldPickupsStore();
+  const { placeWorldDrops } = worldPickupsStore;
   const worldSessionStore = useWorldSessionStore();
   const { events } = worldSessionStore;
   // The player's characters as the save holds them, the Traveler alone as a new player's, on the field, and their party

@@ -5,6 +5,7 @@ import type { KitBody } from "#src/models/kit/KitBody";
 
 import { useMiningOutcrops } from "#src/composables/useMiningOutcrops";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { ref } from "vue";
@@ -31,10 +32,11 @@ describe(useMiningOutcrops, () => {
   // The region is placed directly rather than read, so the composable requests none of the game data
   const setup = (savedMinedOutcrops: MinedOutcrop[] = []) => {
     const now = { value: drawDay1.add({ hours: 6 }) };
-    const breakOre = vi.fn<(place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void>();
     startTestWorldSession({ gameDataBaseUrl: "https://example.test", getWorldNow: () => now.value });
     startTestAdventureRank(30);
-    const mining = useMiningOutcrops({ breakOre, regionIds: ref<string[]>([]), savedMinedOutcrops });
+    const worldPickupsStore = useWorldPickupsStore();
+    const breakOre = vi.spyOn(worldPickupsStore, "breakOre").mockImplementation(() => {});
+    const mining = useMiningOutcrops({ regionIds: ref<string[]>([]), savedMinedOutcrops });
     mining.placesMap.value = new Map([["mondstadt", places]]);
     return { breakOre, mining, now };
   };

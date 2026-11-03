@@ -60,31 +60,30 @@ Each kind of attack takes the hits below to break an ore, its kit's poise run th
 
 ## The pick
 
-F on a gathering point's row picks one of its item into the bag, through the same `addInventoryItem` a drop uses (`packages/genshin-world/src/composables/useWorldPickups.ts`, `pickUpGatheringPlace`). The point is kept as picked only when the bag takes the item, so a full bag leaves it standing. The picked points are kept for the page's life only, as the drops are. An ore's point is never offered here: it is struck, not picked.
+F on a gathering point's row picks one of its item into the bag, through the same `addInventoryItem` a drop uses (`packages/genshin-world/src/store/pickups.ts`, `pickUpGatheringPlace`). The point is kept as picked only when the bag takes the item, so a full bag leaves it standing. The picked points are kept for the page's life only, as the drops are. An ore's point is never offered here: it is struck, not picked.
 
 ## Key files
 
-| File                                                                             | Role                                                                                                 |
-| :------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/gathering/readGatheringItems.ts`             | The items the gather table picks, matched to their map labels                                        |
-| `scripts/src/services/genshinAssets/gathering/buildGatheringPlaces.ts`           | Each region's points built as a slice, and the items table                                           |
-| `scripts/src/services/genshinAssets/gathering/constants.ts`                      | The categories, their respawns and the ground items left out by name                                 |
-| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`       | The instant a picked point is back                                                                   |
-| `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`        | Each ore's poise to break from blunt and from melee hits                                             |
-| `packages/genshin-world/src/services/gathering/strikeOre.ts`                     | An ore's broken share after one hit                                                                  |
-| `packages/genshin-world/src/services/gathering/readOreHit.ts`                    | The hit an ore takes from a step's landed hit, melee by weapon, blunt by the wiki's Blunt Attacks    |
-| `packages/genshin-world/src/services/kit/checkIsBluntHit.ts`                     | The one blunt rule the ores, Shatter and the Rock seal share: the hit's own flag, else its Geo       |
-| `scripts/src/services/genshinAssets/kits/candidates/getBluntKitCandidates.ts`    | Each hit's blunt flag from the wiki's table and the rules, and the Geo element an excepted hit names |
-| `scripts/src/services/genshinAssets/kits/wiki/CharacterIdBluntOverrideMap.ts`    | The wiki's Blunt Attack exceptions by character, by action or by one hit's path                      |
-| `packages/genshin-world/src/services/gathering/readReactionOreHit.ts`            | The hit an ore takes from a reaction's explosion, Overloaded's alone                                 |
-| `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`              | The pieces an ore drops                                                                              |
-| `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                                                                 |
-| `packages/genshin-world/src/composables/useGatheringPoints.ts`                   | Mondstadt's points and items, read as the world opens                                                |
-| `packages/genshin-world/src/composables/useWorldPickups.ts`                      | Each ore's broken share, and the pieces a broken ore drops                                           |
-| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits and an Overloaded's explosion, fed to the ores                           |
-| `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops                                       |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag                                                |
-| `packages/genshin-world/src/services/gathering/readMondstadtGatheringPlaces.ts`  | Mondstadt's points, fetched by their `gathering/mondstadt` key                                       |
+| File                                                                             | Role                                                                                                             |
+| :------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/gathering/readGatheringItems.ts`             | The items the gather table picks, matched to their map labels                                                    |
+| `scripts/src/services/genshinAssets/gathering/buildGatheringPlaces.ts`           | Each region's points built as a slice, and the items table                                                       |
+| `scripts/src/services/genshinAssets/gathering/constants.ts`                      | The categories, their respawns and the ground items left out by name                                             |
+| `packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`       | The instant a picked point is back                                                                               |
+| `packages/genshin-world/src/services/gathering/OreItemIdBreakPoiseMap.ts`        | Each ore's poise to break from blunt and from melee hits                                                         |
+| `packages/genshin-world/src/services/gathering/strikeOre.ts`                     | An ore's broken share after one hit                                                                              |
+| `packages/genshin-world/src/services/gathering/readOreHit.ts`                    | The hit an ore takes from a step's landed hit, melee by weapon, blunt by the wiki's Blunt Attacks                |
+| `packages/genshin-world/src/services/kit/checkIsBluntHit.ts`                     | The one blunt rule the ores, Shatter and the Rock seal share: the hit's own flag, else its Geo                   |
+| `scripts/src/services/genshinAssets/kits/candidates/getBluntKitCandidates.ts`    | Each hit's blunt flag from the wiki's table and the rules, and the Geo element an excepted hit names             |
+| `scripts/src/services/genshinAssets/kits/wiki/CharacterIdBluntOverrideMap.ts`    | The wiki's Blunt Attack exceptions by character, by action or by one hit's path                                  |
+| `packages/genshin-world/src/services/gathering/readReactionOreHit.ts`            | The hit an ore takes from a reaction's explosion, Overloaded's alone                                             |
+| `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`              | The pieces an ore drops                                                                                          |
+| `packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts` | Whether a point stands at an instant                                                                             |
+| `packages/genshin-world/src/store/pickups.ts`                                    | Mondstadt's points and items read as the world opens, each ore's broken share, and the pieces a broken ore drops |
+| `packages/genshin-world/src/services/kit/stepActiveKit.ts`                       | The character's landed hits and an Overloaded's explosion, fed to the ores                                       |
+| `packages/genshin-world/src/services/inventory/toItemDefinition.ts`              | An item's definition from its materials row, shared with drops                                                   |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                  | Rows for the standing points, and a pick into the bag                                                            |
+| `packages/genshin-world/src/services/gathering/readMondstadtGatheringPlaces.ts`  | Mondstadt's points, fetched by their `gathering/mondstadt` key                                                   |
 
 ## Notes
 

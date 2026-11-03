@@ -20,6 +20,7 @@ import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
@@ -46,7 +47,6 @@ export const useWorldInteractionDispatch = ({
   getResidents,
   getTalkDuelGameId,
   grantRewards,
-  materialSources,
   offerFrostbearingTree,
   openAbyssEntrance,
   openChestById,
@@ -58,9 +58,6 @@ export const useWorldInteractionDispatch = ({
   openShrineById,
   openTrounceBlossomClaim,
   openWorship,
-  pickUpGatheringPlace,
-  pickUpMaterialSourcePlace,
-  pickUpWorldDrop,
   random,
   reputationLevel,
   resonateStatue,
@@ -72,12 +69,14 @@ export const useWorldInteractionDispatch = ({
   toggleHomeRealm,
   trounceBlossoms,
   unlockedDomainEntrances,
-  worldDrops,
 }: WorldInteractionDispatchOptions) => {
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
+  const worldPickupsStore = useWorldPickupsStore();
+  const { materialSources, worldDrops } = storeToRefs(worldPickupsStore);
+  const { pickUpGatheringPlace, pickUpMaterialSourcePlace, pickUpWorldDrop } = worldPickupsStore;
   const worldArchiveStore = useWorldArchiveStore();
   const { offeredViewpoints } = storeToRefs(worldArchiveStore);
   const { viewViewpoint } = worldArchiveStore;

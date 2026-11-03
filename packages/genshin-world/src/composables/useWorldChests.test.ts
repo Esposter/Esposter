@@ -23,7 +23,6 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
       artifactMainAffixPools: [],
       artifactRarityDataMap: new Map(),
       openedChestIds,
-      placeWorldDrops: vi.fn<() => void>(),
       puzzleChestPlaces,
       reliquaryPieceEntryMap: new Map(),
       reliquarySets: [],

@@ -14,6 +14,7 @@ import { checkIsMiningOutcropStanding } from "#src/services/leyLine/checkIsMinin
 import { computeLastMiningOutcropDraw } from "#src/services/leyLine/computeLastMiningOutcropDraw";
 import { computeNextMiningOutcropRespawn } from "#src/services/leyLine/computeNextMiningOutcropRespawn";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { watchImmediate } from "@vueuse/core";
@@ -24,14 +25,14 @@ import { computed, shallowRef } from "vue";
 // Sets its outcrops to stand at them until the next draw. A strike breaks one like an ore, dropping its Magical Crystal
 // Chunks and leaving it gone until its respawn. The mined ones are the save's, held until then
 export const useMiningOutcrops = ({
-  breakOre,
   regionIds,
   savedMinedOutcrops,
 }: {
-  breakOre: (place: Pick<GatheringPlace, "id" | "kind" | "position">, random: () => number) => void;
   regionIds: Readonly<Ref<string[]>>;
   savedMinedOutcrops: readonly MinedOutcrop[];
 }) => {
+  const worldPickupsStore = useWorldPickupsStore();
+  const { breakOre } = worldPickupsStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

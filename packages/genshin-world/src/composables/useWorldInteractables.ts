@@ -23,6 +23,7 @@ import { computeStatueInteractables } from "#src/services/statue/computeStatueIn
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
@@ -47,7 +48,6 @@ export const useWorldInteractables = ({
   isDomainTreeRaised,
   isFishingOpen,
   outcropInteractables,
-  pickUpInteractables,
   residentInteractables,
   shrineInteractables,
   trounceBlossomInteractables,
@@ -55,6 +55,8 @@ export const useWorldInteractables = ({
 }: WorldInteractablesOptions) => {
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
+  const worldPickupsStore = useWorldPickupsStore();
+  const { pickUpInteractables } = storeToRefs(worldPickupsStore);
   const worldArchiveStore = useWorldArchiveStore();
   const { archiveData, offeredViewpoints, viewpointPlaceMap } = storeToRefs(worldArchiveStore);
   const worldMapStore = useWorldMapStore();

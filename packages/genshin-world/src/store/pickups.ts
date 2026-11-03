@@ -1,4 +1,5 @@
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
+import type { GatheringItem } from "#src/models/gathering/GatheringItem";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -8,12 +9,12 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 
-import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { checkIsGatheringPlaceStanding } from "#src/services/gathering/checkIsGatheringPlaceStanding";
-import { GATHERING_CLOCK_INTERVAL_MS } from "#src/services/gathering/constants";
 import { OreItemIdBreakPoiseMap } from "#src/services/gathering/OreItemIdBreakPoiseMap";
+import { readGatheringItems } from "#src/services/gathering/readGatheringItems";
+import { readMondstadtGatheringPlaces } from "#src/services/gathering/readMondstadtGatheringPlaces";
 import { rollOreDropCount } from "#src/services/gathering/rollOreDropCount";
 import { strikeOre } from "#src/services/gathering/strikeOre";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
@@ -29,53 +30,37 @@ import { readMondstadtMaterialSourcePlaces } from "#src/services/wildlife/readMo
 import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldSessionStore } from "#src/store/session";
-import { getResultAsync } from "@esposter/shared";
-import { useIntervalFn, useNow } from "@vueuse/core";
+import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
-import { storeToRefs } from "pinia";
+import { defineStore } from "pinia";
+import { computed, ref, shallowRef } from "vue";
 
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a point
-// Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once
-export const useWorldPickups = ({
-  getServerClockOffsetMs,
-  reliquaryPieceEntryMap,
-  weaponDataMap,
-}: {
-  getServerClockOffsetMs: () => number;
-  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
-}) => {
-  const worldGroundStore = useWorldGroundStore();
-  const { getGroundHeight } = worldGroundStore;
+// Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once.
+// The session starts it with the tables a drop is named from, and stops it as it unmounts
+export const useWorldPickupsStore = defineStore("world/pickups", () => {
   const worldArchiveStore = useWorldArchiveStore();
+  const worldGroundStore = useWorldGroundStore();
   const worldSessionStore = useWorldSessionStore();
-  const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, getWorldNow, setInventory, setWallet } = worldSessionStore;
+  let reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry> = new Map();
+  let weaponDataMap: ReadonlyMap<number, WeaponData> = new Map();
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
   // Which numbers the next ones
   const worldDrops = shallowRef<WorldDrop[]>([]);
   let placedDropCount = 0;
   // Mondstadt's gathering points and the items they give, read as the world opens. A point picked is kept with the instant
-  // It was picked, and stands again once its respawn has come, read each time the clock is looked at
-  const { gatheringItems, gatheringPlaces } = useGatheringPoints(worldSessionStore.gameDataBaseUrl);
+  // It was picked, and stands again once its respawn has come, read each time the clock is looked at. A load that fails is
+  // Logged and left off, so no point is offered rather than a wrong one
+  const gatheringItems = shallowRef<GatheringItem[]>([]);
+  const gatheringPlaces = shallowRef<GatheringPlace[]>([]);
   const idGatheringItemMap = computed(() => new Map(gatheringItems.value.map((item) => [item.id, item] as const)));
   const gatheringPlaceIdPickedAtMap = shallowRef<ReadonlyMap<string, Temporal.Instant>>(new Map());
-  // Mondstadt's material sources, the crystalflies picked up whole, fetched as the world opens. A load that fails is logged
-  // And left off, so no source is offered rather than a wrong one
+  // Mondstadt's material sources, the crystalflies picked up whole, fetched as the world opens, left off the same way
   const materialSources = shallowRef<MaterialSourcePlace[]>([]);
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => readMondstadtMaterialSourcePlaces(worldSessionStore.gameDataBaseUrl)).match(
-    (places) => {
-      materialSources.value = places;
-    },
-    (error) => {
-      console.error(error);
-    },
-  );
   // The broken share of each ore struck and not yet broken, by its point, which the ore breaking takes out
   const oreIdBrokenShareMap = shallowRef<ReadonlyMap<string, number>>(new Map());
-  const gatheringClock = useNow({ scheduler: (callback) => useIntervalFn(callback, GATHERING_CLOCK_INTERVAL_MS) });
   // Each drop, named by its item, and each gathering point that stands now, named by its item, each standing on the ground
   // Beneath its point
   const pickUpInteractables = computed<Interactable[]>(() => {
@@ -92,9 +77,9 @@ export const useWorldPickups = ({
               worldSessionStore.materialDataMap,
               reliquaryPieceEntryMap,
             ).name,
-      position: { x, y: getGroundHeight(x, z), z },
+      position: { x, y: worldGroundStore.getGroundHeight(x, z), z },
     }));
-    const now = Temporal.Instant.fromEpochMilliseconds(gatheringClock.value.getTime() + getServerClockOffsetMs());
+    const now = worldSessionStore.worldNow;
     // An ore is struck until it breaks rather than picked up, so its points are left out of the pick ups
     const gatherings = gatheringPlaces.value.flatMap(({ id, kind, position: { x, z } }) => {
       const item = idGatheringItemMap.value.get(kind);
@@ -109,7 +94,7 @@ export const useWorldPickups = ({
           id,
           kind: InteractionKind.PickUp,
           name: toItemDefinition(item, worldSessionStore.nameText).name,
-          position: { x, y: getGroundHeight(x, z), z },
+          position: { x, y: worldGroundStore.getGroundHeight(x, z), z },
         },
       ];
     });
@@ -117,7 +102,7 @@ export const useWorldPickups = ({
       id,
       kind: InteractionKind.PickUp,
       name: getItemDefinition(kind, worldSessionStore.nameText, worldSessionStore.materialDataMap).name,
-      position: { x, y: getGroundHeight(x, z), z },
+      position: { x, y: worldGroundStore.getGroundHeight(x, z), z },
     }));
     return [...drops, ...gatherings, ...sources];
   });
@@ -139,8 +124,8 @@ export const useWorldPickups = ({
     }
     const pickUp = pickUpDroppedItem(
       worldDrop,
-      inventory.value,
-      wallet.value,
+      worldSessionStore.inventory,
+      worldSessionStore.wallet,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
       reliquaryPieceEntryMap,
@@ -162,7 +147,11 @@ export const useWorldPickups = ({
     if (!place) return;
     const item = idGatheringItemMap.value.get(place.kind);
     if (!item) return;
-    const addition = addInventoryItem(inventory.value, toItemDefinition(item, worldSessionStore.nameText), 1);
+    const addition = addInventoryItem(
+      worldSessionStore.inventory,
+      toItemDefinition(item, worldSessionStore.nameText),
+      1,
+    );
     setInventory(addition.inventory);
     bagFullHint.value = addition.overflow > 0 ? worldSessionStore.gameText[GameTextKey.BagFull] : "";
     events.emit("questEvent", { kind: QuestObjectiveKind.Collect, targetId: String(item.id) });
@@ -177,7 +166,7 @@ export const useWorldPickups = ({
     const pickUp = pickUpMaterialSource(
       materialSources.value,
       placeId,
-      inventory.value,
+      worldSessionStore.inventory,
       worldSessionStore.nameText,
       worldSessionStore.materialDataMap,
     );
@@ -221,6 +210,48 @@ export const useWorldPickups = ({
       oreIdBrokenShareMap.value = new Map([...oreIdBrokenShareMap.value].filter(([oreId]) => oreId !== id));
     }
   };
+  const start = (tables: {
+    reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+    weaponDataMap: ReadonlyMap<number, WeaponData>;
+  }) => {
+    ({ reliquaryPieceEntryMap, weaponDataMap } = tables);
+    getSynchronizedFunction(() =>
+      getResultAsync(() =>
+        Promise.all([
+          readMondstadtGatheringPlaces(worldSessionStore.gameDataBaseUrl),
+          readGatheringItems(worldSessionStore.gameDataBaseUrl),
+        ]),
+      ).match(
+        ([places, items]) => {
+          gatheringItems.value = items;
+          gatheringPlaces.value = places;
+        },
+        (error) => {
+          console.error(error);
+        },
+      ),
+    )();
+    getSynchronizedFunction(() =>
+      getResultAsync(() => readMondstadtMaterialSourcePlaces(worldSessionStore.gameDataBaseUrl)).match(
+        (places) => {
+          materialSources.value = places;
+        },
+        (error) => {
+          console.error(error);
+        },
+      ),
+    )();
+  };
+  const stop = () => {
+    bagFullHint.value = "";
+    gatheringItems.value = [];
+    gatheringPlaceIdPickedAtMap.value = new Map();
+    gatheringPlaces.value = [];
+    materialSources.value = [];
+    oreIdBrokenShareMap.value = new Map();
+    placedDropCount = 0;
+    worldDrops.value = [];
+  };
   return {
     bagFullHint,
     breakOre,
@@ -230,7 +261,9 @@ export const useWorldPickups = ({
     pickUpMaterialSourcePlace,
     pickUpWorldDrop,
     placeWorldDrops,
+    start,
+    stop,
     strikeGatheringOres,
     worldDrops,
   };
-};
+});

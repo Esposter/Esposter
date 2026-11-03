@@ -1,7 +1,6 @@
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
-import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
 import type { Group } from "three";
 import type { ShallowRef } from "vue";
 
@@ -18,6 +17,7 @@ import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
 import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
@@ -31,13 +31,14 @@ import { computed, ref, shallowRef } from "vue";
 export const useWorldStatues = ({
   characterBody,
   foundOculusIds,
-  placeWorldDrops,
   regionStatueProgressMap,
-}: WorldOfferingDependencies & {
+}: {
   characterBody: Group;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
   regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
 }) => {
+  const worldPickupsStore = useWorldPickupsStore();
+  const { placeWorldDrops } = worldPickupsStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldSessionStore = useWorldSessionStore();

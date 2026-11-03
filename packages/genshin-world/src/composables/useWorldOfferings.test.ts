@@ -14,6 +14,7 @@ import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants"
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { storeToRefs } from "pinia";
 import { assert, describe, expect, test, vi } from "vitest";
@@ -49,12 +50,11 @@ describe(useWorldOfferings, () => {
     vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation((amount) => {
       gainedAdventureExps.push(amount);
     });
-    const { offerFrostbearingTree } = useWorldOfferings({
-      frostbearingTreeProgress,
-      placeWorldDrops: (source, droppedItems) => {
-        placedDrops.push([source, droppedItems]);
-      },
+    const worldPickupsStore = useWorldPickupsStore();
+    vi.spyOn(worldPickupsStore, "placeWorldDrops").mockImplementation((source, droppedItems) => {
+      placedDrops.push([source, droppedItems]);
     });
+    const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
     const offer = offerFrostbearingTree(frostbearingTreePlace);
     inventory.value = {
       items: [{ definition, id: 0, quantity: offeringItem.itemCount }],

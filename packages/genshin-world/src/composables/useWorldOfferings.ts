@@ -1,6 +1,5 @@
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
-import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
 import type { ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -8,6 +7,7 @@ import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants"
 import { offerBagItems } from "#src/services/offering/offerBagItems";
 import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -20,8 +20,11 @@ import { storeToRefs } from "pinia";
 // That one left
 export const useWorldOfferings = ({
   frostbearingTreeProgress,
-  placeWorldDrops,
-}: WorldOfferingDependencies & { frostbearingTreeProgress: ShallowRef<OfferingProgressSave> }) => {
+}: {
+  frostbearingTreeProgress: ShallowRef<OfferingProgressSave>;
+}) => {
+  const worldPickupsStore = useWorldPickupsStore();
+  const { placeWorldDrops } = worldPickupsStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();

@@ -8,7 +8,6 @@ import type { TimeTrialMarker } from "#src/models/puzzle/TimeTrialMarker";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Ref, ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -22,6 +21,7 @@ import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldGroundStore } from "#src/store/ground";
+import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -38,7 +38,6 @@ export const useWorldChests = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
   openedChestIds,
-  placeWorldDrops,
   puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
@@ -50,7 +49,6 @@ export const useWorldChests = ({
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
-  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
@@ -59,6 +57,8 @@ export const useWorldChests = ({
   waterLevel: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldPickupsStore = useWorldPickupsStore();
+  const { placeWorldDrops } = worldPickupsStore;
   const worldGroundStore = useWorldGroundStore();
   const { getGroundHeight } = worldGroundStore;
   const worldSessionStore = useWorldSessionStore();
