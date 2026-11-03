@@ -25,10 +25,7 @@ const IMAGE_FIT_CLASSES: Record<SurveyImageFit, string> = {
 
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const id = useId();
 const label = computed(() => node.props.title || node.props.name);
-const descriptionId = `${id}-description`;
-const errorId = `${id}-error`;
 const imageFitClass = computed(() => IMAGE_FIT_CLASSES[node.props.imageFit]);
 // A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
 const keyedChoices = computed<KeyedChoice[]>(() =>
@@ -50,9 +47,6 @@ const selectedValues = computed<SurveyAnswerValue[]>(() => {
 const selectedKeys = computed(() =>
   keyedChoices.value.filter(({ choice }) => selectedValues.value.includes(choice.value)).map(({ key }) => key),
 );
-const describedBy = computed(
-  () => [node.props.description && descriptionId, error && errorId].filter(Boolean).join(" ") || undefined,
-);
 // The list hands back the picked keys, each read back to the value its choice holds
 const onSelect = (keys: string[]) => {
   if (isDisabled) return;
@@ -62,28 +56,30 @@ const onSelect = (keys: string[]) => {
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <span text-sm text-muted
-      >{{ label }}<span v-if="node.props.isRequired" aria-hidden="true" text-error> *</span></span
-    >
-    <span v-if="node.props.description" :id="descriptionId" text-sm text-muted>{{ node.props.description }}</span>
-    <!-- Each picture is a row of the list, so the arrows and Enter or Space pick it as they pick any listbox option -->
-    <UiList
-      :aria-describedby="describedBy"
-      :aria-invalid="error ? true : undefined"
-      :is-multiple="node.props.multiSelect || undefined"
-      :items
-      :label
-      :model-value="selectedKeys"
-      @update:model-value="onSelect"
-    >
-      <template #mark="{ item }">
-        <NuxtImg :alt="item.title" :class="imageFitClass" :src="item.imageLink" size-full />
-      </template>
-      <template #title="{ item }">
-        <span :class="{ 'sr-only': !node.props.showLabel }">{{ item.title }}</span>
-      </template>
-    </UiList>
-    <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+  <ResourceSurveyFieldShell
+    :description="node.props.description"
+    :error
+    :is-required="node.props.isRequired"
+    :title="label"
+  >
+    <template #default="{ describedBy }">
+      <!-- Each picture is a row of the list, so the arrows and Enter or Space pick it as they pick any listbox option -->
+      <UiList
+        :aria-describedby="describedBy"
+        :aria-invalid="error ? true : undefined"
+        :is-multiple="node.props.multiSelect || undefined"
+        :items
+        :label
+        :model-value="selectedKeys"
+        @update:model-value="onSelect"
+      >
+        <template #mark="{ item }">
+          <NuxtImg :alt="item.title" :class="imageFitClass" :src="item.imageLink" size-full />
+        </template>
+        <template #title="{ item }">
+          <span :class="{ 'sr-only': !node.props.showLabel }">{{ item.title }}</span>
+        </template>
+      </UiList>
+    </template>
+  </ResourceSurveyFieldShell>
 </template>

@@ -13,11 +13,7 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const REQUIRED_HINT = "Required";
 const title = computed(() => node.props.title || node.props.name);
-const hint = computed(() =>
-  node.props.isRequired ? [node.props.description, REQUIRED_HINT].filter(Boolean).join(" ") : node.props.description,
-);
 const isChecked = computed(() => answer.value === true);
 // The label beside a switch or a box is the one the question gives its state, and empty until it gives one
 const stateLabel = computed(() => (isChecked.value ? node.props.labelTrue : node.props.labelFalse));
@@ -38,36 +34,37 @@ const setChecked = (isOn: boolean) => {
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span text-sm text-muted>{{ title }}</span>
-    <UiSwitch
-      v-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Switch"
-      :aria-invalid="error ? true : undefined"
-      :aria-label="title"
-      :disabled="isDisabled"
-      :label="stateLabel"
-      :model-value="isChecked"
-      is-label-shown
-      @update:model-value="setChecked"
-    />
-    <UiRadioGroup
-      v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
-      v-model="choice"
-      :is-disabled="isDisabled"
-      :items
-      :label="title"
-    />
-    <UiCheckbox
-      v-else
-      :aria-invalid="error ? true : undefined"
-      :aria-label="title"
-      :disabled="isDisabled"
-      :label="stateLabel"
-      :model-value="isChecked"
-      is-label-shown
-      @update:model-value="setChecked"
-    />
-    <span v-if="hint" text-sm text-muted>{{ hint }}</span>
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+  <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
+    <template #default="{ describedBy }">
+      <UiSwitch
+        v-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Switch"
+        :aria-describedby="describedBy"
+        :aria-invalid="error ? true : undefined"
+        :aria-label="title"
+        :disabled="isDisabled"
+        :label="stateLabel"
+        :model-value="isChecked"
+        is-label-shown
+        @update:model-value="setChecked"
+      />
+      <UiRadioGroup
+        v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
+        v-model="choice"
+        :is-disabled="isDisabled"
+        :items
+        :label="title"
+      />
+      <UiCheckbox
+        v-else
+        :aria-describedby="describedBy"
+        :aria-invalid="error ? true : undefined"
+        :aria-label="title"
+        :disabled="isDisabled"
+        :label="stateLabel"
+        :model-value="isChecked"
+        is-label-shown
+        @update:model-value="setChecked"
+      />
+    </template>
+  </ResourceSurveyFieldShell>
 </template>

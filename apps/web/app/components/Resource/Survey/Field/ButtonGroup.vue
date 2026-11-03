@@ -11,7 +11,6 @@ interface Props {
 // as a select's absent value is, because the group's model cannot be undefined
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const id = useId();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number | string>[]>(() =>
   node.props.choices.map(({ text, value }) => ({ isDisabled, title: text || String(value), value })),
@@ -25,22 +24,21 @@ const choice = computed<number | string>({
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span text-sm text-muted>
-      {{ label }}
-      <span v-if="node.props.isRequired" aria-hidden="true" text-error>*</span>
-    </span>
-    <span v-if="node.props.description" :id="`${id}-description`" text-sm text-muted>
-      {{ node.props.description }}
-    </span>
-    <UiToggleGroup
-      v-model="choice"
-      :aria-describedby="node.props.description ? `${id}-description` : undefined"
-      :aria-invalid="error ? true : undefined"
-      :aria-required="node.props.isRequired ? true : undefined"
-      :items
-      :label
-    />
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+  <ResourceSurveyFieldShell
+    :description="node.props.description"
+    :error
+    :is-required="node.props.isRequired"
+    :title="label"
+  >
+    <template #default="{ describedBy }">
+      <UiToggleGroup
+        v-model="choice"
+        :aria-describedby="describedBy"
+        :aria-invalid="error ? true : undefined"
+        :aria-required="node.props.isRequired ? true : undefined"
+        :items
+        :label
+      />
+    </template>
+  </ResourceSurveyFieldShell>
 </template>

@@ -10,11 +10,7 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const REQUIRED_HINT = "Required";
 const title = computed(() => node.props.title || node.props.name);
-const hint = computed(() =>
-  node.props.isRequired ? [node.props.description, REQUIRED_HINT].filter(Boolean).join(" ") : node.props.description,
-);
 const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherText } = useSurveyChoiceAnswer(
   answer,
   () => node.props,
@@ -22,8 +18,7 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span text-sm text-muted>{{ title }}</span>
+  <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
     <UiRadioGroup
       :is-disabled="isDisabled"
       :items
@@ -38,7 +33,5 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
       :model-value="otherText"
       @update:model-value="updateOtherText"
     />
-    <span v-if="hint" text-sm text-muted>{{ hint }}</span>
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+  </ResourceSurveyFieldShell>
 </template>

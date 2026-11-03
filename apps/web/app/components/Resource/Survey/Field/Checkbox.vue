@@ -11,7 +11,6 @@ interface Props {
 const NONE_VALUE = "none";
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const id = useId();
 const label = computed(() => node.props.title || node.props.name);
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
 const chosen = computed<SurveyAnswerValue[]>(() => (Array.isArray(answer.value) ? answer.value : []));
@@ -45,70 +44,62 @@ const setOtherText = (text: string) => {
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span text-sm text-muted>
-      {{ label }}
-      <span v-if="node.props.isRequired" aria-hidden="true" text-error>*</span>
-    </span>
-    <span v-if="node.props.description" :id="`${id}-description`" text-sm text-muted>
-      {{ node.props.description }}
-    </span>
-    <div
-      :aria-describedby="node.props.description ? `${id}-description` : undefined"
-      :aria-label="label"
-      role="group"
-      flex
-      flex-col
-      gap-2
-    >
-      <UiCheckbox
-        v-if="node.props.hasSelectAll && choiceValues.length > 0"
-        is-label-shown
-        :aria-invalid="error ? true : undefined"
-        :disabled="isDisabled"
-        :is-mixed="isSomeChosen && !isAllChosen ? true : undefined"
-        :label="node.props.selectAllText || 'Select all'"
-        :model-value="isAllChosen"
-        @update:model-value="toggleAll"
-      />
-      <UiCheckbox
-        v-for="{ text, value } of node.props.choices"
-        :key="value"
-        is-label-shown
-        :aria-invalid="error ? true : undefined"
-        :disabled="isDisabled"
-        :label="text || String(value)"
-        :model-value="isChosen(value)"
-        @update:model-value="(isPicked: boolean) => toggleChoice(value, isPicked)"
-      />
-      <UiCheckbox
-        v-if="node.props.hasNone"
-        is-label-shown
-        :aria-invalid="error ? true : undefined"
-        :disabled="isDisabled"
-        :label="node.props.noneText || 'None'"
-        :model-value="isNoneChosen"
-        @update:model-value="toggleNone"
-      />
-      <template v-if="node.props.hasOther">
+  <ResourceSurveyFieldShell
+    :description="node.props.description"
+    :error
+    :is-required="node.props.isRequired"
+    :title="label"
+  >
+    <template #default="{ describedBy }">
+      <div :aria-describedby="describedBy" :aria-label="label" role="group" flex flex-col gap-2>
         <UiCheckbox
+          v-if="node.props.hasSelectAll && choiceValues.length > 0"
           is-label-shown
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
-          :label="node.props.otherText || 'Other'"
-          :model-value="isOtherChosen"
-          @update:model-value="toggleOther"
+          :is-mixed="isSomeChosen && !isAllChosen ? true : undefined"
+          :label="node.props.selectAllText || 'Select all'"
+          :model-value="isAllChosen"
+          @update:model-value="toggleAll"
         />
-        <UiTextField
-          v-if="isOtherChosen"
-          :is-disabled="isDisabled ? true : undefined"
-          is-label-hidden
-          :label="node.props.otherText || 'Other'"
-          :model-value="otherText"
-          @update:model-value="setOtherText"
+        <UiCheckbox
+          v-for="{ text, value } of node.props.choices"
+          :key="value"
+          is-label-shown
+          :aria-invalid="error ? true : undefined"
+          :disabled="isDisabled"
+          :label="text || String(value)"
+          :model-value="isChosen(value)"
+          @update:model-value="(isPicked: boolean) => toggleChoice(value, isPicked)"
         />
-      </template>
-    </div>
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+        <UiCheckbox
+          v-if="node.props.hasNone"
+          is-label-shown
+          :aria-invalid="error ? true : undefined"
+          :disabled="isDisabled"
+          :label="node.props.noneText || 'None'"
+          :model-value="isNoneChosen"
+          @update:model-value="toggleNone"
+        />
+        <template v-if="node.props.hasOther">
+          <UiCheckbox
+            is-label-shown
+            :aria-invalid="error ? true : undefined"
+            :disabled="isDisabled"
+            :label="node.props.otherText || 'Other'"
+            :model-value="isOtherChosen"
+            @update:model-value="toggleOther"
+          />
+          <UiTextField
+            v-if="isOtherChosen"
+            :is-disabled="isDisabled ? true : undefined"
+            is-label-hidden
+            :label="node.props.otherText || 'Other'"
+            :model-value="otherText"
+            @update:model-value="setOtherText"
+          />
+        </template>
+      </div>
+    </template>
+  </ResourceSurveyFieldShell>
 </template>

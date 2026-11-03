@@ -46,12 +46,12 @@ const setOtherText = (text: string) => {
 </script>
 
 <template>
-  <div flex flex-col gap-1>
-    <span text-sm text-muted>
-      {{ label }}
-      <span v-if="node.props.isRequired" aria-hidden="true" text-error>*</span>
-    </span>
-    <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
+  <ResourceSurveyFieldShell
+    :description="node.props.description"
+    :error
+    :is-required="node.props.isRequired"
+    :title="label"
+  >
     <UiSelect :is-disabled="isDisabled" :items :label :model-value="selectedKeys" @update:model-value="choose" />
     <UiTextField
       v-if="isOtherChosen"
@@ -61,6 +61,5 @@ const setOtherText = (text: string) => {
       :model-value="otherText"
       @update:model-value="setOtherText"
     />
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
-  </div>
+  </ResourceSurveyFieldShell>
 </template>
