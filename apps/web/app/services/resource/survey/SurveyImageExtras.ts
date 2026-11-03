@@ -1,5 +1,3 @@
-import type { Component } from "vue";
-
 import ImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import ImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
 import { SurveyNodeType } from "survey-engine";

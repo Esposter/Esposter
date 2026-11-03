@@ -26,7 +26,7 @@ export const SurveyNodeExtrasComponentMap: Partial<Record<SurveyNodeType, Survey
   [SurveyNodeType.MultipleText]: [
     { component: ResourceSurveyCreatorMultipleTextItemsEditor, key: "items", label: "Items" },
   ],
-  [SurveyNodeType.Ranking]: [choicesEditor],
   [SurveyNodeType.RadioGroup]: [choicesEditor],
+  [SurveyNodeType.Ranking]: [choicesEditor],
   [SurveyNodeType.TagBox]: [choicesEditor],
 };

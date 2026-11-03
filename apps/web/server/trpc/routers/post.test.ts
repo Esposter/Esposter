@@ -390,9 +390,11 @@ describe("postRouter", () => {
     const firstPage = await postCaller.readPosts({ limit: 2, sortBy });
     const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy });
 
-    expect([...firstPage.items, ...secondPage.items].map(({ id }) => id).toSorted()).toStrictEqual(
-      newPostIds.toSorted(),
-    );
+    expect(
+      [...firstPage.items, ...secondPage.items]
+        .map(({ id }) => id)
+        .toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
+    ).toStrictEqual(newPostIds.toSorted((firstId, secondId) => firstId.localeCompare(secondId)));
   });
 
   // Replies are created together and then given the columns each sort reads, so every sort reads a different

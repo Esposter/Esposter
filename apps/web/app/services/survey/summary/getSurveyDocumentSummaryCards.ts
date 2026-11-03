@@ -6,7 +6,7 @@ import type { SurveyChoice, SurveyQuestionNode } from "survey-engine";
 
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
-import { isAnsweringSurveyQuestion } from "#shared/services/survey/isAnsweringSurveyQuestion";
+import { checkIsAnsweringSurveyQuestion } from "#shared/services/survey/checkIsAnsweringSurveyQuestion";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
 import { getSurveyChoiceText, SurveyExpressionDisplayFormat, SurveyNodeType, SurveyTextInputType } from "survey-engine";
@@ -19,7 +19,7 @@ interface ChoiceOption {
 }
 
 // What a choice card counts: its options, whether an answer lists several of them, and the label of its other option
-// when it offers one
+// The label is set only when the question offers one
 interface ChoiceSource {
   isMultiple: boolean;
   options: ChoiceOption[];
@@ -56,34 +56,34 @@ const getChoiceSource = (question: SurveyQuestionNode): ChoiceSource | undefined
           { label: question.props.labelFalse || "No", value: false },
         ],
       };
-    case SurveyNodeType.Rating:
-      return { isMultiple: false, options: toRatingOptions(question.props.rateCount) };
     case SurveyNodeType.ButtonGroup:
       return { isMultiple: false, options: toChoiceOptions(question.props.choices) };
-    case SurveyNodeType.Dropdown:
-    case SurveyNodeType.RadioGroup:
-      return { isMultiple: false, options: toChoiceOptions(question.props.choices), ...toOtherSource(question.props) };
     case SurveyNodeType.Checkbox:
     case SurveyNodeType.TagBox:
       return { isMultiple: true, options: toChoiceOptions(question.props.choices), ...toOtherSource(question.props) };
-    case SurveyNodeType.Ranking:
-      return { isMultiple: true, options: toChoiceOptions(question.props.choices) };
+    case SurveyNodeType.Dropdown:
+    case SurveyNodeType.RadioGroup:
+      return { isMultiple: false, options: toChoiceOptions(question.props.choices), ...toOtherSource(question.props) };
     case SurveyNodeType.ImagePicker:
       return { isMultiple: question.props.multiSelect, options: toChoiceOptions(question.props.choices) };
+    case SurveyNodeType.Ranking:
+      return { isMultiple: true, options: toChoiceOptions(question.props.choices) };
+    case SurveyNodeType.Rating:
+      return { isMultiple: false, options: toRatingOptions(question.props.rateCount) };
     default:
       return undefined;
   }
 };
 
 // A question whose answers are numbers is summarised by their range and average rather than listed
-const isNumberQuestion = (question: SurveyQuestionNode): boolean => {
+const checkIsNumberQuestion = (question: SurveyQuestionNode): boolean => {
   switch (question.type) {
+    case SurveyNodeType.Expression:
+      return question.props.displayFormat !== SurveyExpressionDisplayFormat.None;
     case SurveyNodeType.Slider:
       return true;
     case SurveyNodeType.Text:
       return question.props.inputType === SurveyTextInputType.Number;
-    case SurveyNodeType.Expression:
-      return question.props.displayFormat !== SurveyExpressionDisplayFormat.None;
     default:
       return false;
   }
@@ -93,8 +93,8 @@ const isNumberQuestion = (question: SurveyQuestionNode): boolean => {
 const getLeadingChoiceValue = (rest: string, longestFirst: string[]): string | undefined =>
   longestFirst.find((value) => rest === value || rest.startsWith(`${value}${CHECKBOX_ANSWER_SEPARATOR}`));
 
-// A choice's value may hold the separator, so a multiple answer is read against the choice values rather than split on
-// it. A segment that starts no choice value is an other answer, read up to the next separator
+// A choice's value may hold the separator, so a multiple answer is read against the choice values, not split on it.
+// A segment that starts no choice value is an other answer, read up to the next separator
 const getMultipleAnswerValues = (answer: string, longestFirst: string[]): string[] => {
   const answeredValues: string[] = [];
   let rest = answer;
@@ -154,7 +154,7 @@ const getQuestionCard = (
       question.type === SurveyNodeType.Rating && answers.length > 0 ? getAverage(answers.map(Number)) : undefined;
     return getChoiceCard(base, choiceSource, answers, average);
   }
-  if (isNumberQuestion(question) && answers.length > 0) {
+  if (checkIsNumberQuestion(question) && answers.length > 0) {
     const numbers = answers.map(Number);
     return {
       ...base,
@@ -177,15 +177,17 @@ export const getSurveyDocumentSummaryCards = (
   questions: SurveyQuestionNode[],
   rows: SurveyResponseRecord[],
 ): SurveySummaryCard[] =>
-  questions.filter(isAnsweringSurveyQuestion).map((question) => {
-    const { name } = question.props;
-    const answers = rows.flatMap((row) => {
-      const value = row[name];
-      return value === null || value === undefined || value === "" ? [] : [value];
+  questions
+    .filter((question) => checkIsAnsweringSurveyQuestion(question))
+    .map((question) => {
+      const { name } = question.props;
+      const answers = rows.flatMap((row) => {
+        const value = row[name];
+        return value === null || value === undefined || value === "" ? [] : [value];
+      });
+      return getQuestionCard(
+        question,
+        { answeredCount: answers.length, name, title: question.props.title || name },
+        answers,
+      );
     });
-    return getQuestionCard(
-      question,
-      { answeredCount: answers.length, name, title: question.props.title || name },
-      answers,
-    );
-  });

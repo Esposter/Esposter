@@ -619,7 +619,7 @@ describe("roomRouter", () => {
 
     expect(matches.items.map(({ displayName }) => displayName)).toStrictEqual(["Ally", "Ally"]);
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual(
-      [newRoom.id, directMessage.id].toSorted(),
+      [newRoom.id, directMessage.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
     );
   });
 

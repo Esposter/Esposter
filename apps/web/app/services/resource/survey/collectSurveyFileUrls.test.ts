@@ -1,5 +1,5 @@
 import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
-import { SurveyNodeType, surveyDocumentSchema } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 // Each node takes a fresh id, which the document schema requires to be unique

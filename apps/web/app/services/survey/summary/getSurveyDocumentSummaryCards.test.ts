@@ -4,19 +4,19 @@ import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/cons
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { getSurveyDocumentSummaryCards } from "@/services/survey/summary/getSurveyDocumentSummaryCards";
 import {
-  SurveyExpressionDisplayFormat,
-  SurveyNodeType,
-  SurveyTextInputType,
   surveyBooleanNodeType,
   surveyCheckboxNodeType,
+  SurveyExpressionDisplayFormat,
   surveyExpressionNodeType,
   surveyHtmlNodeType,
   surveyImageNodeType,
   surveyImagePickerNodeType,
+  SurveyNodeType,
   surveyRadioGroupNodeType,
   surveyRankingNodeType,
   surveyRatingNodeType,
   surveySliderNodeType,
+  SurveyTextInputType,
   surveyTextNodeType,
 } from "survey-engine";
 import { describe, expect, test } from "vitest";
