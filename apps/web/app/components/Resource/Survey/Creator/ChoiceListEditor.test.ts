@@ -6,7 +6,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorChoiceListEditor", () => {
-  test("an added choice is written, and moving it to the top is a second write", async () => {
+  test("an added choice is written, and moving it up one place is a second write", async () => {
     expect.hasAssertions();
     const red = { text: "Red", value: "red" };
     const blue = { text: "Blue", value: "blue" };
@@ -22,7 +22,7 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
 
     expect(wrapper.emitted("update:modelValue")).toHaveLength(2);
     expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[red, blue, green]]);
-    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([[green, red, blue]]);
+    expect(wrapper.emitted("update:modelValue")?.[1]).toStrictEqual([[red, green, blue]]);
   });
 
   test("a repeated value is flagged on its row and the list is not written", async () => {

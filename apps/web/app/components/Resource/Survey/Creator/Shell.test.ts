@@ -3,32 +3,32 @@ import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Ca
 import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/Shell.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyDocumentSchema } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
-describe("resourceSurveyCreatorShell", () => {
-  const loadSurvey = () => {
-    const surveyCreatorStore = useSurveyCreatorStore();
-    surveyCreatorStore.load(
-      surveyDocumentSchema.parse({
-        content: [
-          {
-            props: {
-              children: [
-                { props: { id: "first", name: "first" }, type: SurveyNodeType.Text },
-                { props: { id: "second", name: "second" }, type: SurveyNodeType.Text },
-              ],
-              id: "page",
-            },
-            type: SurveyNodeType.Page,
+const loadSurvey = () => {
+  const surveyCreatorStore = useSurveyCreatorStore();
+  surveyCreatorStore.load(
+    surveyDocumentSchema.parse({
+      content: [
+        {
+          props: {
+            children: [
+              { props: { id: "first", name: "first" }, type: SurveyNodeType.Text },
+              { props: { id: "second", name: "second" }, type: SurveyNodeType.Text },
+            ],
+            id: "page",
           },
-        ],
-        root: { props: {} },
-      }),
-    );
-    return surveyCreatorStore;
-  };
+          type: SurveyNodeType.Page,
+        },
+      ],
+      root: { props: {} },
+    }),
+  );
+  return surveyCreatorStore;
+};
 
+describe("resourceSurveyCreatorShell", () => {
   test("choosing an element in the canvas selects the same row of the layers tree", async () => {
     expect.hasAssertions();
 
@@ -42,7 +42,7 @@ describe("resourceSurveyCreatorShell", () => {
     component.unmount();
   });
 
-  test("Alt+ArrowUp moves the selected question above the one before it", async () => {
+  test("moves the selected question above the one before it on Alt+ArrowUp", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = loadSurvey();
@@ -50,7 +50,8 @@ describe("resourceSurveyCreatorShell", () => {
     select("/content/0/props/children/1");
     const component = await mountSuspended(ResourceSurveyCreatorShell);
 
-    document.body.dispatchEvent(new KeyboardEvent("keydown", { altKey: true, key: "ArrowUp" }));
+    // A key press bubbles to the window, where the commands bind their shortcuts
+    document.body.dispatchEvent(new KeyboardEvent("keydown", { altKey: true, bubbles: true, key: "ArrowUp" }));
 
     expect(surveyCreatorStore.document.content[0]?.props.children.map(({ props }) => props.id)).toStrictEqual([
       "second",
