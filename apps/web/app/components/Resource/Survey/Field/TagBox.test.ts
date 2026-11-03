@@ -68,6 +68,35 @@ describe("resourceSurveyFieldTagBox", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[[""]]]);
     });
 
+    test("keeps the other field while its text equals a choice's value, as the answer holds both alike", async () => {
+      expect.hasAssertions();
+
+      const component = mount(ResourceSurveyFieldTagBox, {
+        attachTo: document.body,
+        props: {
+          error: "",
+          isDisabled: false,
+          modelValue: [],
+          node: createNode({
+            choices: [
+              { text: "", value: "a" },
+              { text: "", value: "b" },
+            ],
+            hasOther: true,
+          }),
+        },
+      });
+      await component.get('[role="combobox"]').trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+      await component.findAll('[role="option"]')[2]?.trigger("click");
+      await component.setProps({ modelValue: [""] });
+      await component.get('input[type="text"]').setValue("a");
+      await component.setProps({ modelValue: ["a"] });
+
+      expect(component.get('input[type="text"]').element.value).toBe("a");
+      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([["a"]]);
+    });
+
     test("shows its error beside the select", async () => {
       expect.hasAssertions();
 

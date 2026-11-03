@@ -109,6 +109,32 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[[1, otherText]]]);
     });
 
+    test("keeps the other field while its text equals a choice's value, as the answer holds both alike", async () => {
+      expect.hasAssertions();
+
+      const component = mount(ResourceSurveyFieldCheckbox, {
+        props: {
+          error: "",
+          isDisabled: false,
+          modelValue: [],
+          node: createNode({
+            choices: [
+              { text: "", value: "a" },
+              { text: "", value: "b" },
+            ],
+            hasOther: true,
+          }),
+        },
+      });
+      await component.get('[aria-label="Other"]').trigger("click");
+      await component.setProps({ modelValue: [""] });
+      await component.get("input").setValue("a");
+      await component.setProps({ modelValue: ["a"] });
+
+      expect(component.get("input").element.value).toBe("a");
+      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([["a"]]);
+    });
+
     test("shows its error beside the group and marks each checkbox invalid", async () => {
       expect.hasAssertions();
 

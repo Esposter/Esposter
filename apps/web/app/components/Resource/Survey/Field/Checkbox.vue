@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCheckboxNode } from "survey-engine";
 
-import { getSurveyChoiceText, getSurveyOrderedChoices } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "survey-engine";
 
 interface Props {
   error: string;
@@ -10,7 +10,6 @@ interface Props {
 }
 // The answer is one list: the values of the choices picked, none's own value on its own, and the typed other text, which
 // Is the one entry that is neither a choice's value nor none, so other needs no second key
-const NONE_VALUE = "none";
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
@@ -18,33 +17,49 @@ const seed = useSurveyChoiceSeed();
 // The options in the order the reader sees them, which the list draws and a pick is read against
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
-const chosen = computed<SurveyAnswerValue[]>(() => (Array.isArray(answer.value) ? answer.value : []));
 const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
-  typeof entry === "string" && entry !== NONE_VALUE && !choiceValues.value.includes(entry);
-const isChosen = (value: number | string) => chosen.value.includes(value);
+  typeof entry === "string" && entry !== SURVEY_NONE_ANSWER && !choiceValues.value.includes(entry);
+// The picks, none and the other text are held here as the reader makes them. The answer holds other text as itself, so
+// A text equal to a choice's value cannot be read back from it: it would tick that choice and hide the other field
+const initial = Array.isArray(answer.value) ? answer.value : [];
+const pickedValues = ref(choiceValues.value.filter((value) => initial.includes(value)));
+const isNoneChosen = ref(initial.includes(SURVEY_NONE_ANSWER));
+const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => isOtherEntry(entry)));
+const otherText = ref(initial.find((entry): entry is string => isOtherEntry(entry)) ?? "");
+const isChosen = (value: number | string) => pickedValues.value.includes(value);
 const isAllChosen = computed(() => choiceValues.value.length > 0 && choiceValues.value.every(isChosen));
 const isSomeChosen = computed(() => choiceValues.value.some(isChosen));
-const isNoneChosen = computed(() => chosen.value.includes(NONE_VALUE));
-const isOtherChosen = computed(() => node.props.hasOther && chosen.value.some(isOtherEntry));
-const otherText = computed(() => chosen.value.find(isOtherEntry) ?? "");
+const emitAnswer = () => {
+  answer.value = isNoneChosen.value
+    ? [SURVEY_NONE_ANSWER]
+    : [...pickedValues.value, ...(isOtherChosen.value ? [otherText.value] : [])];
+};
 // None is exclusive, so picking any other option gives it up, and the other text is kept through every pick
-const withoutNone = () => chosen.value.filter((entry) => entry !== NONE_VALUE);
 const toggleChoice = (value: number | string, isPicked: boolean) => {
-  const rest = withoutNone().filter((entry) => entry !== value);
-  answer.value = isPicked ? [...rest, value] : rest;
+  isNoneChosen.value = false;
+  pickedValues.value = [...pickedValues.value.filter((entry) => entry !== value), ...(isPicked ? [value] : [])];
+  emitAnswer();
 };
 const toggleAll = (isPicked: boolean) => {
-  const others = chosen.value.filter(isOtherEntry);
-  answer.value = isPicked ? [...choiceValues.value, ...others] : others;
+  isNoneChosen.value = false;
+  pickedValues.value = isPicked ? [...choiceValues.value] : [];
+  emitAnswer();
 };
 const toggleNone = (isPicked: boolean) => {
-  answer.value = isPicked ? [NONE_VALUE] : [];
+  isNoneChosen.value = isPicked;
+  pickedValues.value = [];
+  isOtherChosen.value = false;
+  emitAnswer();
 };
 const toggleOther = (isPicked: boolean) => {
-  answer.value = isPicked ? [...withoutNone(), ""] : withoutNone().filter((entry) => !isOtherEntry(entry));
+  isNoneChosen.value = false;
+  if (isPicked) otherText.value = "";
+  isOtherChosen.value = isPicked;
+  emitAnswer();
 };
 const setOtherText = (text: string) => {
-  answer.value = chosen.value.map((entry) => (isOtherEntry(entry) ? text : entry));
+  otherText.value = text;
+  emitAnswer();
 };
 </script>
 
