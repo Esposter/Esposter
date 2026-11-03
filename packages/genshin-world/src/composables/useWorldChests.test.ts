@@ -1,19 +1,21 @@
 import { useWorldChests } from "#src/composables/useWorldChests";
-import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { startTestWorldGround } from "#src/store/ground.fixture";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
-import { ref, shallowRef } from "vue";
+import { shallowRef } from "vue";
 
 vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
   readMondstadtChestPlaces: () => Promise.resolve([]),
 }));
 
-const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["puzzleChestPlaces"]) => {
+const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0]) => {
   startTestWorldSession();
   startTestWorldGround();
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  worldPuzzlesStore.start(puzzleOptions);
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
@@ -23,11 +25,8 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
       artifactMainAffixPools: [],
       artifactRarityDataMap: new Map(),
       openedChestIds,
-      puzzleChestPlaces,
       reliquaryPieceEntryMap: new Map(),
       reliquarySets: [],
-      solvedPuzzleIds: ref<ReadonlySet<string>>(new Set()),
-      timeTrialMarkers: [],
       waterLevel: -1,
       weaponDataMap: new Map(),
     }),
@@ -37,7 +36,7 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
 describe(useWorldChests, () => {
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
-  const puzzleOptions: Parameters<typeof useWorldPuzzles>[0] = {
+  const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {
     monumentPlaces: [],
     savedSettledSeelieIds: new Set([SEELIE_ID]),
     savedSolvedPuzzleIds: new Set(),
@@ -58,8 +57,7 @@ describe(useWorldChests, () => {
   test("a Seelie's chest is offered once it settles", () => {
     expect.hasAssertions();
 
-    const { puzzleChestPlaces } = useWorldPuzzles(puzzleOptions);
-    const { chestInteractables } = createChests(puzzleChestPlaces);
+    const { chestInteractables } = createChests(puzzleOptions);
 
     expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([SEELIE_CHEST_ID]);
   });
@@ -67,8 +65,7 @@ describe(useWorldChests, () => {
   test("a Seelie's chest is kept opened by its own id", () => {
     expect.hasAssertions();
 
-    const { puzzleChestPlaces } = useWorldPuzzles(puzzleOptions);
-    const { chestInteractables, openChestById, openedChestIds } = createChests(puzzleChestPlaces);
+    const { chestInteractables, openChestById, openedChestIds } = createChests(puzzleOptions);
     openChestById(SEELIE_CHEST_ID, () => 0);
 
     expect({ chestInteractables: chestInteractables.value, openedChestIds: [...openedChestIds.value] }).toStrictEqual({

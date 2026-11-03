@@ -2,6 +2,8 @@ import type { WorldDoingsOptions } from "#src/models/exploration/WorldDoingsOpti
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The doings the world places and the ids the save records of them as done, which the exploration of each area counts
@@ -11,12 +13,11 @@ export const useWorldDoings = ({
   monumentPlaces,
   oculusPlaces,
   openedChestIds,
-  puzzleSeelies,
-  settledSeelieIds,
-  solvedPuzzleIds,
   timeTrialPlaces,
   worldChestPlaces,
 }: WorldDoingsOptions) => {
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
   // The doings the world places, each counted toward the area its point stands in: the chests, the Oculi, the puzzles' marks
   // And Seelies at their courts, and the camps the save records as cleared
   const placedDoings = computed<PlacedDoing[]>(() => [
@@ -25,7 +26,7 @@ export const useWorldDoings = ({
     ...[...monumentPlaces.filter(({ monument }) => monument !== undefined), ...timeTrialPlaces].map(
       ({ id, position }) => ({ id, kind: ExplorationKind.Puzzle, position }),
     ),
-    ...puzzleSeelies.map(({ court, id }) => ({ id, kind: ExplorationKind.Puzzle, position: court })),
+    ...puzzleSeelies.value.map(({ court, id }) => ({ id, kind: ExplorationKind.Puzzle, position: court })),
     ...clearedCamps.value.map(({ id, position }) => ({ id, kind: ExplorationKind.Camp, position })),
   ]);
   // The doings the save records as done, by id: the chests opened, the Oculi found, the puzzles and Seelies settled, and

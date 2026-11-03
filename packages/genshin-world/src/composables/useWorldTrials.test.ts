@@ -52,6 +52,20 @@ vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
   readCharacterKits: vi.fn<() => Promise<Map<number, Kit>>>(),
 }));
 
+// The world's inputs the trials read and write, each a fresh one a test can keep a hold of
+const createDependencies = () => ({
+  artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
+  characterBody: new Object3D(),
+  characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
+  claimedStageIds: new Set<number>(),
+  weaponDataMap: new Map([
+    [
+      2001,
+      { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
+    ],
+  ]),
+});
+
 describe(useWorldTrials, () => {
   const OWNED_CHARACTER_ID = 1002;
   const OWNED_KIT = {} as Kit;
@@ -62,20 +76,6 @@ describe(useWorldTrials, () => {
     isPartyDown: false,
     isPlaying: true,
   };
-
-  // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
-  const createDependencies = () => ({
-    artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
-    characterBody: new Object3D(),
-    characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
-    claimedStageIds: new Set<number>(),
-    weaponDataMap: new Map([
-      [
-        2001,
-        { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
-      ],
-    ]),
-  });
 
   const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
     const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });

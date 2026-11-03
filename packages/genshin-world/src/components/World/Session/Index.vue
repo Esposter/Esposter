@@ -85,7 +85,6 @@ import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPointedLandmark } from "#src/composables/useWorldPointedLandmark";
 import { useWorldProfileNamecards } from "#src/composables/useWorldProfileNamecards";
-import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuestTargets } from "#src/composables/useWorldQuestTargets";
 import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
@@ -126,6 +125,7 @@ import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldPickupsStore } from "#src/store/pickups";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -407,16 +407,10 @@ startPickups({ reliquaryPieceEntryMap, weaponDataMap: statTables.weaponDataMap }
 onUnmounted(stopPickups);
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
 // Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
-const {
-  puzzleChestPlaces,
-  puzzleSeelies,
-  settledSeelieIds,
-  shrineMarkers,
-  solvedPuzzleIds,
-  stepWorldPuzzles,
-  strikeWorldPuzzles,
-  timeTrialMarkers,
-} = useWorldPuzzles({
+const worldPuzzlesStore = useWorldPuzzlesStore();
+const { puzzleSeelies, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
+const { start: startPuzzles, stop: stopPuzzles, strikeWorldPuzzles } = worldPuzzlesStore;
+startPuzzles({
   monumentPlaces,
   savedSettledSeelieIds: savedState.settledSeelieIds,
   savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
@@ -424,18 +418,16 @@ const {
   shrinePlaces,
   timeTrialPlaces,
 });
+onUnmounted(stopPuzzles);
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
-const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources, shrineMarkers });
+const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   artifactMainAffixPools,
   artifactRarityDataMap,
   openedChestIds,
-  puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
-  solvedPuzzleIds,
-  timeTrialMarkers,
   waterLevel: windriseData.water.level,
   weaponDataMap: statTables.weaponDataMap,
 });
@@ -649,9 +641,6 @@ const { placedDoings, recordedDoingIds } = useWorldDoings({
   monumentPlaces,
   oculusPlaces,
   openedChestIds,
-  puzzleSeelies,
-  settledSeelieIds,
-  solvedPuzzleIds,
   timeTrialPlaces,
   worldChestPlaces,
 });
@@ -829,7 +818,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   reputationLevel,
   resonateStatue,
   shopId,
-  shrineMarkers,
   talk,
   talkDuelGameId,
   talkMap,
@@ -930,7 +918,6 @@ const { stepFrame } = useWorldFrame({
   stepQuickUse,
   stepShortcutWheel,
   stepTrial,
-  stepWorldPuzzles,
   touchOutcropsNear,
 });
 // The locked jump landmark the HUD points to

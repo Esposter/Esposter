@@ -21,6 +21,7 @@ import { useWorldArchiveStore } from "#src/store/archive";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPickupsStore } from "#src/store/pickups";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
@@ -62,7 +63,6 @@ export const useWorldInteractionDispatch = ({
   reputationLevel,
   resonateStatue,
   shopId,
-  shrineMarkers,
   talk,
   talkDuelGameId,
   talkMap,
@@ -74,6 +74,8 @@ export const useWorldInteractionDispatch = ({
   const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  const { shrineMarkers } = storeToRefs(worldPuzzlesStore);
   const worldPickupsStore = useWorldPickupsStore();
   const { materialSources, worldDrops } = storeToRefs(worldPickupsStore);
   const { pickUpGatheringPlace, pickUpMaterialSourcePlace, pickUpWorldDrop } = worldPickupsStore;
@@ -126,7 +128,10 @@ export const useWorldInteractionDispatch = ({
     else if (interactable?.kind === InteractionKind.PickUp && materialSource)
       pickUpMaterialSourcePlace(materialSource.id);
     else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
-    else if (interactable?.kind === InteractionKind.Open && shrineMarkers.some(({ id }) => id === interactable.id))
+    else if (
+      interactable?.kind === InteractionKind.Open &&
+      shrineMarkers.value.some(({ id }) => id === interactable.id)
+    )
       openShrineById(interactable.id);
     else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, random);
     else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.value.has(interactable.id))

@@ -3,13 +3,15 @@ import type { PuzzleHit } from "#src/models/puzzle/PuzzleHit";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 
-import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { Element } from "#src/models/Element";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { TimeTrialChallengeState } from "#src/models/puzzle/TimeTrialChallengeState";
 import { SEELIE_FOLLOW_DISTANCE, TIME_TRIAL_MARKER_REACH_DISTANCE } from "#src/services/puzzle/constants";
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
+import { startTestWorldSession } from "#src/store/session.fixture";
+import { storeToRefs } from "pinia";
 import { describe, expect, test } from "vitest";
 
 const createSeelie = (id: string): Seelie => ({
@@ -21,8 +23,10 @@ const createSeelie = (id: string): Seelie => ({
   unfollowedSeconds: 0,
 });
 
-const createPuzzles = (overrides: Partial<Parameters<typeof useWorldPuzzles>[0]> = {}) =>
-  useWorldPuzzles({
+const createPuzzles = (overrides: Partial<Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0]> = {}) => {
+  startTestWorldSession();
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  worldPuzzlesStore.start({
     monumentPlaces: [],
     savedSettledSeelieIds: new Set(),
     savedSolvedPuzzleIds: new Set(),
@@ -31,8 +35,24 @@ const createPuzzles = (overrides: Partial<Parameters<typeof useWorldPuzzles>[0]>
     timeTrialPlaces: [],
     ...overrides,
   });
+  const { stepWorldPuzzles, strikeWorldPuzzles } = worldPuzzlesStore;
+  const { puzzleChestPlaces, settledSeelieIds, solvedPuzzleIds } = storeToRefs(worldPuzzlesStore);
+  // The markers are the store's reactive arrays, which stay the same ones until it starts again, and the sets read off them
+  // Are refs, since each read is a new set
+  return {
+    monumentMarkers: worldPuzzlesStore.monumentMarkers,
+    puzzleChestPlaces,
+    puzzleSeelies: worldPuzzlesStore.puzzleSeelies,
+    settledSeelieIds,
+    shrineMarkers: worldPuzzlesStore.shrineMarkers,
+    solvedPuzzleIds,
+    stepWorldPuzzles,
+    strikeWorldPuzzles,
+    timeTrialMarkers: worldPuzzlesStore.timeTrialMarkers,
+  };
+};
 
-describe(useWorldPuzzles, () => {
+describe(useWorldPuzzlesStore, () => {
   const MONUMENT_ID = "monument";
   const MONUMENT_PLACE: PuzzlePlace = {
     id: MONUMENT_ID,

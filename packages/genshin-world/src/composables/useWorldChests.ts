@@ -4,11 +4,10 @@ import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { TimeTrialMarker } from "#src/models/puzzle/TimeTrialMarker";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
-import type { Ref, ShallowRef } from "vue";
+import type { ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
@@ -22,6 +21,7 @@ import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItem
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldPickupsStore } from "#src/store/pickups";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -38,25 +38,21 @@ export const useWorldChests = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
   openedChestIds,
-  puzzleChestPlaces,
   reliquaryPieceEntryMap,
   reliquarySets,
-  solvedPuzzleIds,
-  timeTrialMarkers,
   waterLevel,
   weaponDataMap,
 }: {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
-  puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
-  solvedPuzzleIds: Readonly<Ref<ReadonlySet<string>>>;
-  timeTrialMarkers: readonly Pick<TimeTrialMarker, "id" | "position">[];
   waterLevel: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  const { puzzleChestPlaces, solvedPuzzleIds, timeTrialMarkers } = storeToRefs(worldPuzzlesStore);
   const worldPickupsStore = useWorldPickupsStore();
   const { placeWorldDrops } = worldPickupsStore;
   const worldGroundStore = useWorldGroundStore();
@@ -78,7 +74,10 @@ export const useWorldChests = ({
   const campLockSources = shallowRef<ChestLockSource[]>([]);
   const lockSources = computed<ChestLockSource[]>(() => [
     ...campLockSources.value,
-    ...timeTrialMarkers.map(({ id, position }) => ({ isDone: solvedPuzzleIds.value.has(id), positions: [position] })),
+    ...timeTrialMarkers.value.map(({ id, position }) => ({
+      isDone: solvedPuzzleIds.value.has(id),
+      positions: [position],
+    })),
   ]);
   // The buried chests dug up this session, which the save does not hold yet, so a reload buries them again
   const dugChestIds = shallowRef<ReadonlySet<string>>(new Set());

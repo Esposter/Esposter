@@ -12,6 +12,7 @@ import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
 import { OCULUS_REGION_ID } from "#src/services/statue/constants";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldMapStore } from "#src/store/map";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
@@ -55,9 +56,10 @@ export const useWorldFrame = ({
   stepQuickUse,
   stepShortcutWheel,
   stepTrial,
-  stepWorldPuzzles,
   touchOutcropsNear,
 }: WorldFrameOptions) => {
+  const worldPuzzlesStore = useWorldPuzzlesStore();
+  const { stepWorldPuzzles } = worldPuzzlesStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldMapStore = useWorldMapStore();

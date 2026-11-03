@@ -8,7 +8,7 @@ import type { Party } from "#src/models/party/Party";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { WorldChallengeStep } from "#src/models/world/WorldChallengeStep";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
-import type { GroundPoint, Input, InputState } from "genshin-engine";
+import type { Input, InputState } from "genshin-engine";
 import type { Object3D } from "three";
 import type { Ref } from "vue";
 
@@ -56,6 +56,5 @@ export interface WorldFrameOptions {
   }) => GadgetRow | undefined;
   stepShortcutWheel: (isHeld: boolean, x: number, y: number) => void;
   stepTrial: (step: WorldChallengeStep) => undefined | WorldJumpPose;
-  stepWorldPuzzles: (deltaSeconds: number, position: GroundPoint) => void;
   touchOutcropsNear: (x: number, z: number, random: () => number) => void;
 }

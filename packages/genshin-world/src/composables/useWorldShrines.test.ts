@@ -1,22 +1,22 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
-import type { ShrineMarker } from "#src/models/puzzle/ShrineMarker";
 import type { GameText } from "genshin-text";
 
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { MaterialType } from "#src/models/inventory/MaterialType";
+import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
 import { startTestWorldGround } from "#src/store/ground.fixture";
+import { useWorldPuzzlesStore } from "#src/store/puzzles";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { InteractionKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { reactive } from "vue";
 
 const createMaterialData = (id: number): MaterialData => ({
   id,
@@ -69,11 +69,18 @@ describe(useWorldShrines, () => {
     );
     const setInventory = vi.spyOn(worldSessionStore, "setInventory");
     const { inventory } = storeToRefs(worldSessionStore);
-    const shrineMarkers = reactive<ShrineMarker[]>([
-      { id: SHRINE_ID, position: SHRINE_POSITION, shrine: { isOpen: false, region: SHRINE_REGION_ID } },
-    ]);
+    const worldPuzzlesStore = useWorldPuzzlesStore();
+    worldPuzzlesStore.start({
+      monumentPlaces: [],
+      savedSettledSeelieIds: new Set(),
+      savedSolvedPuzzleIds: new Set(),
+      seelies: [],
+      shrinePlaces: [{ id: SHRINE_ID, kind: PuzzleKind.ShrineOfDepths, position: SHRINE_POSITION }],
+      timeTrialPlaces: [],
+    });
+    const { shrineMarkers } = worldPuzzlesStore;
     startTestWorldGround(GROUND_HEIGHT);
-    const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources: keySources, shrineMarkers });
+    const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources: keySources });
     return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
   };
 

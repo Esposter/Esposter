@@ -46,7 +46,6 @@ export interface WorldInteractionDispatchOptions {
   reputationLevel: Ref<number>;
   resonateStatue: (landmarkId: string) => void;
   shopId: Ref<number>;
-  shrineMarkers: readonly { id: string }[];
   talk: Ref<Talk | undefined>;
   talkDuelGameId: Ref<number | undefined>;
   talkMap: Readonly<Ref<ReadonlyMap<string, Talk>>>;
