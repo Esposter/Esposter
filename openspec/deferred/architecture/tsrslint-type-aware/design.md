@@ -17,6 +17,6 @@ tsrslint accepts the flag that lets tsrs read a content mapper, **or** oxlint sh
 | File                                                   | Role                                                                |
 | :----------------------------------------------------- | :------------------------------------------------------------------ |
 | `oxlint.config.ts`                                     | sets `typeAware: true`, the setting the type-aware backend serves   |
-| `package.json`                                         | the four root oxlint lint scripts, each run with `--debug=timings`  |
+| `package.json`                                         | the two root oxlint lint scripts, each run with `--debug=timings`   |
 | `packages/configuration/tsconfig.vue.json`             | declares the `vize` content mapper that tsrslint cannot read        |
 | `openspec/specs/architecture/lint-toolchain/design.md` | the spec that states the decision and points here for the rationale |
