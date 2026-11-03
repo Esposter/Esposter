@@ -105,7 +105,7 @@ describe(renderEmailCanvasVNodes, () => {
       ),
     );
 
-    expect(styleOf(hero)).toMatchObject({ minHeight: "400px" });
+    expect(styleOf(hero).minHeight).toBe("400px");
     expect(styleOf(hero)).not.toHaveProperty("height");
   });
 

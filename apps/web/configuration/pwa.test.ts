@@ -8,7 +8,8 @@ import { pwa } from "./pwa.ts";
 // Icon the manifest lists is checked against the public folder it is served from
 describe("pwa", () => {
   const publicDirectory = join(import.meta.dirname, "../public");
-  const icons = pwa && pwa.manifest ? (pwa.manifest.icons ?? []) : [];
+  const manifest = pwa?.manifest;
+  const icons = manifest ? (manifest.icons ?? []) : [];
 
   test.each(icons)("serves the manifest icon $src", ({ src }) => {
     expect.hasAssertions();
