@@ -4,7 +4,7 @@
 
 It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. Its answers match SurveyJS's recorded answers for every expression the survey uses.
 
-Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-logic).
+Design notes live in [the logic change](https://github.com/Esposter/Esposter/tree/main/openspec/changes/resource-survey-form-engine-logic/design.md).
 
 ## Table of Contents
 
