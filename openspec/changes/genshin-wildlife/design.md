@@ -47,7 +47,7 @@ packages/genshin-world/src/services/wildlife/
    - `WildlifeState` gains `Struck`, and `strikeWildlife.ts` sets an animal not yet struck to it and returns its drop, or nothing for one already struck; `stepWildlife` leaves a struck animal where it fell.
    - Tests: `strikeWildlife.test.ts` (a Crimson Fox gives two Raw Meat once, and nothing when struck again) and a case in `stepWildlife.test.ts` (a struck animal in reach does not flee).
 2. **The strike reaching the animals.** Built: the strike loop calls `strikeKitWildlife` (`services/kit/strikeKitEnemies.ts`). The animals move from `components/World/Wildlife/Index.vue`'s own list into the session's combat, beside `useWorldCombat`'s `enemyMap`, so the strike loop in `services/kit/strikeKitEnemies.ts` tests each against `checkIsInAttackArea` as it does an enemy and calls `strikeWildlife`, dropping what it gives as an enemy's drops are; the Wildlife component steps and draws the list it is given, as the Enemies component does, and skips a struck one.
-3. **Material sources, picked up.** Built: `pickUpMaterialSource` is called from `useWorldPickups`.
+3. **Material sources, picked up.** Built: `pickUpMaterialSource` is called from `useWorldPickupsStore`, in `packages/genshin-world/src/store/pickups.ts`.
 4. **Boars, and the wildlife that fights back.** Boars are built (`chargePartyMember`, called from `useWorldCombat`); the fighting back waits on Sumeru's region.
 5. **Pets**, deferred until the map carries their labels (see the Decisions), and each region's own animals when its region lands.
 
