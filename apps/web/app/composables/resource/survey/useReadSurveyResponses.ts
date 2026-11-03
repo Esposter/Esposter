@@ -1,7 +1,7 @@
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
 
-import { getSurveyResponseSummaryCards } from "@/services/resource/survey/getSurveyResponseSummaryCards";
+import { getSurveyDocumentResponseSummaryCards } from "@/services/resource/survey/getSurveyDocumentResponseSummaryCards";
 import { getResultAsync } from "@esposter/shared";
 
 // The responses of one survey, read beside the survey itself. The summary is drawn from both reads, so its failure is
@@ -25,7 +25,7 @@ export const useReadSurveyResponses = (id: string) => {
         error.value = "";
         contentResult.match(
           (content) => {
-            summaryCards.value = getSurveyResponseSummaryCards(content?.model ?? "", newRecords);
+            summaryCards.value = content ? getSurveyDocumentResponseSummaryCards(content.document, newRecords) : [];
             summaryError.value = "";
           },
           (newError) => {

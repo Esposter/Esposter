@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { SurveyDocument } from "survey-engine";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -8,6 +9,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { createSurveyDocument } from "survey-engine";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
@@ -20,10 +22,10 @@ const setupStore = async () => {
 describe(useSurveyStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const model = JSON.stringify({ pages: [] });
-  const newModel = JSON.stringify({ pages: [{ name: "" }] });
-  const identifiedNewModelContent = {
-    model: newModel,
+  const document = createSurveyDocument();
+  const newDocument: SurveyDocument = { ...document, root: { props: { ...document.root.props, title: "edited" } } };
+  const identifiedNewDocumentContent = {
+    document: newDocument,
     settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
   };
   const createResource = (contentVersion = 0) =>
@@ -34,7 +36,7 @@ describe(useSurveyStore, () => {
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    content = { model, settings: surveySettingsSchema.parse({}) };
+    content = { document, settings: surveySettingsSchema.parse({}) };
     saveResourceContent = vi.fn<(options: { input: { content: unknown } }) => ResourceInResource>(() =>
       createResource(1),
     );
@@ -53,33 +55,33 @@ describe(useSurveyStore, () => {
   test("skips a save that changed nothing since the load", async () => {
     expect.hasAssertions();
 
-    const { saveModel } = await setupStore();
-    const isSuccessful = await saveModel(model);
+    const { saveDocument } = await setupStore();
+    const isSuccessful = await saveDocument(document);
 
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  test("writes an edited model once", async () => {
+  test("writes an edited document once", async () => {
     expect.hasAssertions();
 
     const surveyStore = await setupStore();
-    const { saveModel } = surveyStore;
-    const { model: storedModel } = storeToRefs(surveyStore);
-    await saveModel(newModel);
-    await saveModel(newModel);
+    const { saveDocument } = surveyStore;
+    const { document: storedDocument } = storeToRefs(surveyStore);
+    await saveDocument(newDocument);
+    await saveDocument(newDocument);
 
-    expect(storedModel.value).toBe(newModel);
+    expect(storedDocument.value).toStrictEqual(newDocument);
     expect(saveResourceContent).toHaveBeenCalledTimes(1);
   });
 
   // The save is keyed by the survey it writes, so it can land after the blade opened another survey — taken as the
-  // Content then, that survey would show this one's model and its next settings save would write it back
+  // Content then, that survey would show this one's document and its next settings save would write it back
   test("leaves the survey opened since alone when a save lands late", async () => {
     expect.hasAssertions();
 
     const otherResourceId = crypto.randomUUID();
-    const otherContent = { model: "", settings: surveySettingsSchema.parse({}) };
+    const otherContent = { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) };
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
     trpcMsw.survey.readResourceContent.query(({ input }) => (input.id === resourceId ? content : otherContent));
@@ -88,9 +90,9 @@ describe(useSurveyStore, () => {
       return createResource(1);
     });
     const surveyStore = await setupStore();
-    const { loadContent, saveModel } = surveyStore;
-    const { model: storedModel } = storeToRefs(surveyStore);
-    const save = saveModel(newModel);
+    const { loadContent, saveDocument } = surveyStore;
+    const { document: storedDocument } = storeToRefs(surveyStore);
+    const save = saveDocument(newDocument);
     Object.assign(useRouter().currentRoute.value.params, { id: otherResourceId });
     const resourceStore = useResourceStore();
     const { readResource } = resourceStore;
@@ -99,42 +101,42 @@ describe(useSurveyStore, () => {
     releaseSave();
     await save;
 
-    expect(storedModel.value).toBe(otherContent.model);
+    expect(storedDocument.value).toStrictEqual(otherContent.document);
   });
 
-  // Collection settings share the survey's single content blob, so a settings save has to carry the model
+  // Collection settings share the survey's single content blob, so a settings save has to carry the document
   // The editor is holding rather than dropping it back to what was last loaded
-  test("writes the settings alongside the current model", async () => {
+  test("writes the settings alongside the current document", async () => {
     expect.hasAssertions();
 
     const surveyStore = await setupStore();
-    const { saveModel, saveSettings } = surveyStore;
+    const { saveDocument, saveSettings } = surveyStore;
     const { settings } = storeToRefs(surveyStore);
-    await saveModel(newModel);
+    await saveDocument(newDocument);
     await saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
 
     expect(settings.value.responseMode).toBe(SurveyResponseMode.Identified);
     expect(saveResourceContent).toHaveBeenCalledTimes(2);
-    // The count alone passes on a settings save that wrote the model back as it was loaded, which is the
-    // Regression this test is named for — so the payload itself has to say newModel
-    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewModelContent);
+    // The count alone passes on a settings save that wrote the document back as it was loaded, which is the
+    // Regression this test is named for — so the payload itself has to carry newDocument
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewDocumentContent);
   });
 
-  // Saves of one resource queue, so a settings save issued while the model's write is in flight is sent after it —
-  // Built from the model as last landed, it would write the old model back over the edit just saved
-  test("keeps an in-flight model edit when the settings save overlaps it", async () => {
+  // Saves of one resource queue, so a settings save issued while the document's write is in flight is sent after it —
+  // Built from the document as last landed, it would write the old document back over the edit just saved
+  test("keeps an in-flight document edit when the settings save overlaps it", async () => {
     expect.hasAssertions();
 
     const surveyStore = await setupStore();
-    const { saveModel, saveSettings } = surveyStore;
-    const { model: storedModel, settings } = storeToRefs(surveyStore);
+    const { saveDocument, saveSettings } = surveyStore;
+    const { document: storedDocument, settings } = storeToRefs(surveyStore);
     await Promise.all([
-      saveModel(newModel),
+      saveDocument(newDocument),
       saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified }),
     ]);
 
-    expect(storedModel.value).toBe(newModel);
-    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewModelContent);
+    expect(storedDocument.value).toStrictEqual(newDocument);
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewDocumentContent);
   });
 
   // A read issued for one resource can land after the blade opened another, and adopted it would show the first
@@ -147,14 +149,14 @@ describe(useSurveyStore, () => {
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
     trpcMsw.survey.readResourceContent.query(async ({ input }) => {
-      if (input.id !== resourceId) return { ...content, model: newModel };
+      if (input.id !== resourceId) return { ...content, document: newDocument };
       onReadReached();
       await readGate;
       return content;
     });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
-    const { model: storedModel } = storeToRefs(surveyStore);
+    const { document: storedDocument } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
@@ -166,7 +168,7 @@ describe(useSurveyStore, () => {
     releaseRead();
     await pendingLoad;
 
-    expect(storedModel.value).toBe(newModel);
+    expect(storedDocument.value).toStrictEqual(newDocument);
   });
 
   // Closing a survey and reopening it loads the same id, so a read the first opening issued would land on the
@@ -179,14 +181,14 @@ describe(useSurveyStore, () => {
     let readCount = 0;
     trpcMsw.survey.readResourceContent.query(async () => {
       readCount++;
-      if (readCount > 1) return { ...content, model: newModel };
+      if (readCount > 1) return { ...content, document: newDocument };
       onReadReached();
       await readGate;
       return content;
     });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
-    const { model: storedModel } = storeToRefs(surveyStore);
+    const { document: storedDocument } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
@@ -198,7 +200,7 @@ describe(useSurveyStore, () => {
     releaseRead();
     await pendingLoad;
 
-    expect(storedModel.value).toBe(newModel);
+    expect(storedDocument.value).toStrictEqual(newDocument);
   });
 
   // A restore re-reads the content within the one opening, so a read issued before it that lands after its re-read
@@ -211,14 +213,14 @@ describe(useSurveyStore, () => {
     let readCount = 0;
     trpcMsw.survey.readResourceContent.query(async () => {
       readCount++;
-      if (readCount > 1) return { ...content, model: newModel };
+      if (readCount > 1) return { ...content, document: newDocument };
       onReadReached();
       await readGate;
       return content;
     });
     const surveyStore = useSurveyStore();
     const { loadContent } = surveyStore;
-    const { model: storedModel } = storeToRefs(surveyStore);
+    const { document: storedDocument } = storeToRefs(surveyStore);
     const pendingLoad = loadContent();
     // A read issued in the same tick would share the held one's batch and settle with it
     await isReadReached;
@@ -228,7 +230,7 @@ describe(useSurveyStore, () => {
     releaseRead();
     await pendingLoad;
 
-    expect(storedModel.value).toBe(newModel);
+    expect(storedDocument.value).toStrictEqual(newDocument);
   });
 
   // A reopening reads its own content, so a save the first opening left in flight is not what the reopened blade's
@@ -242,9 +244,9 @@ describe(useSurveyStore, () => {
       return saveResourceContent(options);
     });
     const surveyStore = await setupStore();
-    const { loadContent, saveModel, saveSettings } = surveyStore;
+    const { loadContent, saveDocument, saveSettings } = surveyStore;
     const { settings } = storeToRefs(surveyStore);
-    const pendingModelSave = saveModel(newModel);
+    const pendingDocumentSave = saveDocument(newDocument);
     const resourceStore = useResourceStore();
     const { clearResource, readResource } = resourceStore;
     clearResource(resourceId);
@@ -252,10 +254,10 @@ describe(useSurveyStore, () => {
     await loadContent();
     const pendingSettingsSave = saveSettings({ ...settings.value, responseMode: SurveyResponseMode.Identified });
     releaseSave();
-    await Promise.all([pendingModelSave, pendingSettingsSave]);
+    await Promise.all([pendingDocumentSave, pendingSettingsSave]);
 
     expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
-      model,
+      document,
       settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
     });
   });

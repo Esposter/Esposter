@@ -1,20 +1,22 @@
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
+import type { SurveyDocument } from "survey-engine";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createContentData } from "@/services/resource/createContentData";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
+import { createSurveyDocument } from "survey-engine";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();
   const { getOpening, saveContent } = resourceStore;
   const { content, getContentWriter, loadContent } = createContentData(
     ResourceType.Survey,
-    (data) => data ?? { model: "", settings: surveySettingsSchema.parse({}) },
+    (data) => data ?? { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) },
   );
-  // The SurveyJS creator owns editor/preview state; the resource layer only sees model JSON in/out
-  const model = computed(() => content.value.model);
+  // The creator owns its editing state; the resource layer only sees the document in and out
+  const document = computed(() => content.value.document);
   // Collection settings share the survey's single content blob, so the Overview toggle and the editor
   // Save through the same path and the same contentVersion
   const settings = computed(() => content.value.settings);
@@ -38,7 +40,7 @@ export const useSurveyStore = defineStore("survey", () => {
     if (isSuccessful) writeContent(newContent);
     return isSuccessful;
   };
-  const saveModel = (newModel: string) => saveSurvey({ ...getLatestContent(), model: newModel });
+  const saveDocument = (newDocument: SurveyDocument) => saveSurvey({ ...getLatestContent(), document: newDocument });
   const saveSettings = (newSettings: SurveySettings) => saveSurvey({ ...getLatestContent(), settings: newSettings });
-  return { loadContent, model, saveModel, saveSettings, settings };
+  return { document, loadContent, saveDocument, saveSettings, settings };
 });

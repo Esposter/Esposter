@@ -5,7 +5,7 @@ import { reapplySurveyLiveContent } from "#server/services/survey/reapplySurveyL
 import { ResourceType } from "@esposter/db-schema";
 
 // Which parts of a type's content are live state rather than snapshot state. A snapshot freezes content, but
-// Not every field in it is meant to be frozen: Survey's `model` is what a respondent renders and must never
+// Not every field in it is meant to be frozen: Survey's `document` is what a respondent renders and must never
 // Change under an already-published link, while its `settings` decide whether the survey is still collecting and
 // Under which response mode, so those take effect on the next read rather than the next publish. Declared here,
 // It applies on every path that reconstitutes content from a snapshot: the public read, the owner's version
