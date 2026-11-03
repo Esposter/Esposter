@@ -115,7 +115,7 @@ const knipConfiguration: KnipConfig = {
         "test/fixture/server/api/hello.get.ts",
         "test/fixture/service-worker/sw.ts",
       ],
-      // The Vite plugin that resolves the client plugin's imports names the package as a string, so nothing imports it
+      // `createWorkboxWindowPlugin` resolves the package from a set of specifier strings, so nothing imports it
       ignoreDependencies: ["@vite-pwa/workbox-window"],
     },
     // The declaration build hands `.vue` declarations to vue-tsc by name (`dts.tsc.vue`), so nothing imports it
