@@ -1,12 +1,12 @@
 import { terrainWorkerAlias } from "#parity/terrainWorkerAlias";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
+import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import {
   dynamicJsonImportPlugin,
   getVitestBrowserConfiguration,
   getVuePlugins,
   SOURCE_CONDITION,
 } from "@esposter/configuration";
-import { templateCompilerOptions } from "@tresjs/core";
 import { APPROVE_ENVIRONMENT_VARIABLE } from "genshin-interface/constants";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
@@ -21,7 +21,7 @@ const { browser, define } = getVitestBrowserConfiguration(
 // Of what only a browser runs
 export default defineConfig({
   define,
-  plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
+  plugins: [...getVuePlugins({ customElements: tresCustomElements }), dynamicJsonImportPlugin, gameDataMirrorPlugin],
   // Its siblings from their source, as the page reads them
   resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {

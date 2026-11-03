@@ -49,7 +49,7 @@ TypeScript 7.0.2 ships no classic API (its package exports a version file and no
 
 Task 6.1 therefore waits on two upstream changes: `tsrs` running content mappers in its API project system, and the mapper path's declaration helper allowing the global HTML attributes, which `vize check --declaration` already does.
 
-**The compile plugin is a separate job.** Compiling a component and checking its types do not depend on each other, so the compile side (the Nuxt module and the rolldown plugin) is the deferred compiler page's and does not gate this change.
+**The compile plugin is a separate job.** Compiling a component and checking its types do not depend on each other, so it does not gate this change. The library builds and Vitest compile through Vize since 3 November ([build pipeline](../../specs/architecture/build-pipeline/design.md)); the Nuxt module stays deferred ([deferred compiler page](../../deferred/architecture/vize-compiler/design.md)).
 
 ### `apps/web` on the mapper
 
@@ -89,7 +89,7 @@ The tools agree on the other targets throughout: the three Vue packages report 0
 
 ### Resolved upstream
 
-Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass) and #11444 to #11454 (second). The compile-side reports from the same runs (the Nuxt module, the rolldown plugin and the Vite plugin's configuration) are recorded with their status on the deferred compiler page, [`openspec/deferred/architecture/vize-compiler/design.md`](../../deferred/architecture/vize-compiler/design.md), which owns them.
+Every report below was reduced to a standalone project, filed on `ubugeeei-prod/vize` and closed. The batches were #11359 to #11368 with #11390 and #11391 (first pass) and #11444 to #11454 (second). The compile-side reports from the same runs are recorded with their status in the [build pipeline](../../specs/architecture/build-pipeline/design.md) (the library builds) and on the [deferred compiler page](../../deferred/architecture/vize-compiler/design.md) (the Nuxt module).
 
 | Issue  | What                                               | Closed as     | First release |
 | :----- | :------------------------------------------------- | :------------ | :------------ |
@@ -127,7 +127,7 @@ The whole app script against the command it replaced, on the same runs:
 | `nuxt typecheck`                                        | 62.73 s | 64.26 s |     9.5 GiB |           0 |
 | `pnpm typecheck` (`nuxt prepare`, then six `tsrs` runs) | 12.30 s | 12.20 s |     3.3 GiB |           0 |
 
-The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds on the same release, with the Rolldown plugin in place of `unplugin-vue`, are on the deferred compiler page.
+The script is 5.1 times faster cold and 5.3 times warm on 0.35 of the memory, and it also checks the service worker, which `nuxt typecheck` did not. Alone, the other five `tsrs` projects take 1.35 s (server), 1.25 s (shared), 0.21 s (node), 1.07 s (root) and 0.24 s (service worker) in one run each. Every run and the scripts that made them are in [the comment on the maintainer's performance issue, #10936](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6592116514). The library builds are in the [build pipeline](../../specs/architecture/build-pipeline/design.md).
 
 `nuxt typecheck` is not a like-for-like row against one `tsrs` run: it checks five projects with incremental build info. The corpus numbers in [that thread](https://github.com/ubugeeei-prod/vize/issues/10936#issuecomment-6507703018) (2,500 generated components, an M2 Max, no warmup) are not comparable in seconds, only in ratio.
 

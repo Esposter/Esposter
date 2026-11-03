@@ -37,8 +37,8 @@ The only data JSON `genshin-world` imports is its lock and one save bound: every
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `getTsdownConfiguration`           | The base — `platform: "neutral"`                                                                                                        |
 | `getTsdownConfigurationNode`       | The base plus `platform: "node"`                                                                                                        |
-| `getTsdownConfigurationVue`        | The base plus SFC compilation and `dts.vue`                                                                                             |
-| `getVuePlugins`                    | The SFC plugin pair, shared with the Vitest run                                                                                         |
+| `getTsdownConfigurationVue`        | The base plus SFC compilation through Vize's rolldown plugin, and `dts.vue`                                                             |
+| `getVuePlugins`                    | The same pair through Vize's Vite plugin, for the Vitest run                                                                            |
 | `getVitestConfiguration`           | The Vitest config every member's tests run on; the app takes its `test` options alone                                                   |
 | `getBenchmarkTestConfiguration`    | Just the bench wiring, spread by `getVitestConfiguration` over the member's own test options                                            |
 | `getVueTestConfiguration`          | Every worker's Vue with the Options API compiled out, as the app ships it; spread by `getVitestConfiguration`                           |

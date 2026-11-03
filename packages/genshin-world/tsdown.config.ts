@@ -2,8 +2,8 @@ import type { UserConfig } from "tsdown";
 
 import { KIT_MODULE_DIRECTORY } from "#scripts/kit/constants";
 import { generateCharacterKitMap } from "#scripts/kit/generateCharacterKitMap";
+import { tresCustomElements } from "#scripts/tres/tresCustomElements";
 import { generateExports, getTsdownConfigurationVue } from "@esposter/configuration";
-import { templateCompilerOptions } from "@tresjs/core";
 import { mergeConfig } from "tsdown";
 
 // `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
@@ -15,7 +15,7 @@ import { mergeConfig } from "tsdown";
 // The kit map loads each through an `import()` of its own as its character joins the party
 // The Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a chunk
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
-const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(templateCompilerOptions), {
+const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ customElements: tresCustomElements }), {
   entry: {
     index: "src/index.ts",
     save: "src/save.ts",
