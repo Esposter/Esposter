@@ -94,6 +94,21 @@ describe(renderEmailCanvasVNodes, () => {
     expect(button.children).toBe("a");
   });
 
+  test("a hero keeps its height as the least its band is tall, so its words stay inside the band", () => {
+    expect.hasAssertions();
+
+    const hero = takeOne(
+      renderEmailCanvasVNodes(
+        emailKind,
+        parseEmail(`<mjml><mj-body><mj-hero height="400px"><mj-text>a</mj-text></mj-hero></mj-body></mjml>`),
+        1024,
+      ),
+    );
+
+    expect(styleOf(hero)).toMatchObject({ minHeight: "400px" });
+    expect(styleOf(hero)).not.toHaveProperty("height");
+  });
+
   test("a navbar draws each link as its own words, in a row", () => {
     expect.hasAssertions();
 

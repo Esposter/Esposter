@@ -12,6 +12,7 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 - a section as a full-width band around a centred body-width container;
 - its columns side by side, as MJML lays them on a desktop client, and stacked below MJML's 480-pixel breakpoint in the mobile width;
+- a hero as a band around its content, whose height is the least the band is tall, as the table cell MJML writes makes it, so its words stay inside the band;
 - each part with its own content: a button and an accordion title as their words, a text as its formatted note, a navbar's links as their words in a row, a raw block and a table as the HTML they hold, and a spacer as the gap it names. A social row and a picture keep a labelled box, since the canvas does not load their pictures, so the starter email's social row is the one part drawn that way;
 - each leaf with what the MJML blocks' cascade resolves for it. The cascade is the node's own attributes, then the root's `mj-attributes`, then MJML's defaults, which the package holds equal to the installed release. A new text therefore shows in Ubuntu, Helvetica, Arial at 13 pixels with 10 by 25 of padding, and a button in #414141 with a 3-pixel radius, as `mjText.ts` and `mjButton.ts` declare them, until the author or the root says otherwise.
 

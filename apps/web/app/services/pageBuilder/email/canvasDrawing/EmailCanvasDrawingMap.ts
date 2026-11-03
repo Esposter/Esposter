@@ -3,6 +3,7 @@ import type { EmailCanvasDrawing, EmailCanvasType } from "@/models/pageBuilder/E
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { drawContainer } from "@/services/pageBuilder/email/canvasDrawing/drawContainer";
 import { drawDivider } from "@/services/pageBuilder/email/canvasDrawing/drawDivider";
+import { drawHero } from "@/services/pageBuilder/email/canvasDrawing/drawHero";
 import { drawLabel } from "@/services/pageBuilder/email/canvasDrawing/drawLabel";
 import { drawLeaf } from "@/services/pageBuilder/email/canvasDrawing/drawLeaf";
 import { drawNavbarLink } from "@/services/pageBuilder/email/canvasDrawing/drawNavbarLink";
@@ -28,7 +29,7 @@ export const EmailCanvasDrawingMap = {
   [MjmlNodeType.Column]: drawContainer,
   [MjmlNodeType.Divider]: drawDivider,
   [MjmlNodeType.Group]: drawContainer,
-  [MjmlNodeType.Hero]: drawContainer,
+  [MjmlNodeType.Hero]: drawHero,
   [MjmlNodeType.Image]: drawLeaf,
   [MjmlNodeType.Navbar]: drawContainer,
   [MjmlNodeType.NavbarLink]: drawNavbarLink,
