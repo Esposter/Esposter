@@ -19,8 +19,10 @@ const { sweep, track } = useSurveyFiles();
 useAdoptResourceContent(ResourceType.Survey, () => {
   load(storedDocument.value);
 });
-// Deletion waits for the close: until then a removal can still be undone, so an unreferenced file must not go sooner
-onUnmounted(() => {
+// Deletion waits for the close: until then a removal can still be undone, so an unreferenced file must not go sooner.
+// It runs before the unmount rather than after it, so a blade swapped for another survey's sweeps its own document before the
+// Next one loads into the same stores
+onBeforeUnmount(() => {
   sweep(editedDocument.value);
 });
 await loadContent();
