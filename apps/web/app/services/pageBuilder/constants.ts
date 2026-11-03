@@ -175,3 +175,27 @@ export const STYLE_SECTORS = [
   { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
   { properties: ["opacity", "box-shadow"], title: "Effects" },
 ] satisfies { properties: StyleProperty[]; title: string }[];
+// The accent every box the overlay draws is coloured by, read from the layer's own custom property
+const OVERLAY_ACCENT = "var(--ui-accent, currentColor)";
+const OVERLAY_HAIRLINE_WIDTH = "0.0625rem";
+const OVERLAY_LINE_WIDTH = "0.125rem";
+// The frame's document holds only the page's own sheet, so the utilities the rest of the editor is styled with do not
+// Reach the layer teleported into it: the layer and each box it draws carry their styles inline
+export const OVERLAY_LAYER_STYLE = { inset: "0", pointerEvents: "none", position: "absolute" } as const;
+export const OVERLAY_HOVER_STYLE = {
+  opacity: "0.5",
+  outline: `${OVERLAY_HAIRLINE_WIDTH} solid ${OVERLAY_ACCENT}`,
+  position: "absolute",
+} as const;
+export const OVERLAY_DROP_LINE_STYLE = { background: OVERLAY_ACCENT, position: "absolute" } as const;
+export const OVERLAY_DROP_OUTLINE_STYLE = {
+  border: `${OVERLAY_LINE_WIDTH} dashed ${OVERLAY_ACCENT}`,
+  boxSizing: "border-box",
+  position: "absolute",
+} as const;
+export const OVERLAY_SELECTION_STYLE = {
+  border: `${OVERLAY_LINE_WIDTH} solid ${OVERLAY_ACCENT}`,
+  boxSizing: "border-box",
+  outline: `${OVERLAY_HAIRLINE_WIDTH} solid white`,
+  position: "absolute",
+} as const;

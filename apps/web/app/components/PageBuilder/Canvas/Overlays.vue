@@ -6,6 +6,14 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
+import {
+  OVERLAY_DROP_LINE_STYLE,
+  OVERLAY_DROP_OUTLINE_STYLE,
+  OVERLAY_HOVER_STYLE,
+  OVERLAY_LAYER_STYLE,
+  OVERLAY_SELECTION_STYLE,
+} from "@/services/pageBuilder/constants";
+import { getAccent } from "@/services/pageBuilder/getAccent";
 import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
 import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
@@ -31,32 +39,16 @@ const pageOpen = computed(() => getHeldDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
-// The frame's document holds only the page's own sheet, so the utilities the rest of the editor is styled with do not
-// Reach the layer teleported into it: the layer and each box it draws carry their styles inline
-const LAYER_STYLE = { inset: "0", pointerEvents: "none", position: "absolute" } as const;
-const ACCENT = "var(--ui-accent, currentColor)";
-const HAIRLINE_WIDTH = "0.0625rem";
-const LINE_WIDTH = "0.125rem";
-const HOVER_STYLE = { opacity: "0.5", outline: `${HAIRLINE_WIDTH} solid ${ACCENT}`, position: "absolute" } as const;
-const DROP_LINE_STYLE = { background: ACCENT, position: "absolute" } as const;
-const DROP_OUTLINE_STYLE = {
-  border: `${LINE_WIDTH} dashed ${ACCENT}`,
-  boxSizing: "border-box",
-  position: "absolute",
-} as const;
-const SELECTION_STYLE = {
-  border: `${LINE_WIDTH} solid ${ACCENT}`,
-  boxSizing: "border-box",
-  outline: `${HAIRLINE_WIDTH} solid white`,
-  position: "absolute",
-} as const;
 // The library's accent, read from the app's own document each time the theme or style that sets it changes, since the
 // Frame holds none of the app's tokens and the layer passes it on to the boxes it draws
 const accent = shallowRef("");
 const readAccent = () => {
-  accent.value = getComputedStyle(document.documentElement).getPropertyValue("--ui-accent").trim();
+  accent.value = getAccent();
 };
-useMutationObserver(() => document.documentElement, readAccent, { attributeFilter: ["data-theme"], attributes: true });
+useMutationObserver(() => window.document.documentElement, readAccent, {
+  attributeFilter: ["data-theme"],
+  attributes: true,
+});
 // The style that places a box over the layer, for every box the layer draws
 const toBoxStyle = ({ height, left, top, width }: OverlayBox) => ({
   height: `${height}px`,
@@ -127,18 +119,22 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 
 <!-- The layer covers the content it outlines, so its own box is the box the outlines are placed in -->
 <template>
-  <div ref="layer" :style="{ ...LAYER_STYLE, '--ui-accent': accent }">
-    <div v-if="hoverBox" data-outline="hover" :style="{ ...HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
+  <div ref="layer" :style="{ ...OVERLAY_LAYER_STYLE, '--ui-accent': accent }">
+    <div v-if="hoverBox" data-outline="hover" :style="{ ...OVERLAY_HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Line"
       data-drop-indicator="line"
-      :style="{ ...DROP_LINE_STYLE, ...dropIndicatorBoxStyle }"
+      :style="{ ...OVERLAY_DROP_LINE_STYLE, ...dropIndicatorBoxStyle }"
     />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Outline"
       data-drop-indicator="outline"
-      :style="{ ...DROP_OUTLINE_STYLE, ...dropIndicatorBoxStyle }"
+      :style="{ ...OVERLAY_DROP_OUTLINE_STYLE, ...dropIndicatorBoxStyle }"
     />
-    <div v-if="selectionBox" data-outline="selection" :style="{ ...SELECTION_STYLE, ...toBoxStyle(selectionBox) }" />
+    <div
+      v-if="selectionBox"
+      data-outline="selection"
+      :style="{ ...OVERLAY_SELECTION_STYLE, ...toBoxStyle(selectionBox) }"
+    />
   </div>
 </template>
