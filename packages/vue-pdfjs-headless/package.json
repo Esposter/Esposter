@@ -53,8 +53,7 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "neverthrow": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

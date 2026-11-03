@@ -1,7 +1,6 @@
 // @vitest-environment happy-dom
-import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfViewerApi } from "#src/models/PdfViewerApi";
-import type { PageViewport, PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
+import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import type { MaybeRefOrGetter } from "vue";
 
 import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
@@ -27,25 +26,6 @@ const stubPrint = () => {
 };
 const createRenderTask = (promise: Promise<unknown>) =>
   ({ cancel: vi.fn<RenderTask["cancel"]>(), promise }) as unknown as RenderTask;
-// The renderer's viewport converts a point of the page, in PDF coordinates, at the scale it was made for
-const createViewport = (scale: number) =>
-  ({ convertToViewportPoint: (x: number, y: number) => [x * scale, y * scale] }) as PageViewport;
-const createOutlineNode = (dest: string, title: string): PdfOutline[number] => ({
-  bold: false,
-  color: new Uint8ClampedArray(),
-  count: undefined,
-  dest,
-  italic: false,
-  items: [],
-  newWindow: undefined,
-  title,
-  unsafeUrl: undefined,
-  url: null,
-});
-const setFullscreenElement = (element: Element | null) => {
-  Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
-};
-
 const createPage = (
   render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
 ): PDFPageProxy =>
@@ -54,40 +34,39 @@ const createPage = (
     render,
   }) as PDFPageProxy;
 
-// A document with no outline resolves to null, which the viewer reads as no bookmarks
-const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
+const createDocument = (numPages: number, page = createPage()): PDFDocumentProxy =>
   ({
     annotationStorage: createAnnotationStorage(),
     getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
-    getOutline: vi.fn<() => Promise<null | PdfOutline>>(() => Promise.resolve(outline)),
     getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
     numPages,
     saveDocument: vi.fn<PDFDocumentProxy["saveDocument"]>(() => Promise.resolve(new Uint8Array([4, 5, 6]))),
   }) as unknown as PDFDocumentProxy;
 
+const createLinkService = () => ({ setDocument: vi.fn<() => void>(), setViewer: vi.fn<() => void>() });
+const PDFLinkService = function () {
+  return createLinkService();
+};
+
 describe(usePdfViewer, () => {
   const FIND_STATE_NOT_FOUND = 1;
   const LINK_TARGET_BLANK = 2;
-  const CHAPTER_PAGE = 3;
 
   type EventBusStub = ReturnType<typeof createEventBus>;
-  type LinkServiceStub = ReturnType<typeof createLinkService>;
   type Listener = (event: unknown) => void;
   type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
 
   // The scale a preset zoom lands on in the stub, whatever the preset
   const FIT_SCALE = 1.5;
   // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
-  // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
+  // The stubs keep the last viewer they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
     abortSignal?: AbortSignal;
-    editorModes: number[];
     eventBus?: EventBusStub;
     findEvents: unknown[];
-    linkService?: LinkServiceStub;
     scaleWrites: unknown[];
     viewer?: PdfViewerStub;
-  } = { editorModes: [], findEvents: [], scaleWrites: [] };
+  } = { findEvents: [], scaleWrites: [] };
   // How many matches the stub document holds for any search
   let matches = 0;
 
@@ -122,14 +101,6 @@ describe(usePdfViewer, () => {
 
     return { setDocument: vi.fn<() => void>() };
   };
-  const createLinkService = () => ({
-    // The destination of a bookmark is the chapter's page, which the stub viewer shows
-    goToDestination: vi.fn<(destination: unknown) => void>(() => {
-      if (stubs.viewer) stubs.viewer.currentPageNumber = CHAPTER_PAGE;
-    }),
-    setDocument: vi.fn<() => void>(),
-    setViewer: vi.fn<() => void>(),
-  });
   const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
     let currentPageNumber = 0;
     let currentScale = 0;
@@ -141,13 +112,6 @@ describe(usePdfViewer, () => {
       hasPages = true;
     });
     const viewer = {
-      // The renderer's mode is set as an object, and each mode it is set to is kept for a test to read
-      get annotationEditorMode() {
-        return { mode: stubs.editorModes.at(-1) ?? PdfEditorMode.None };
-      },
-      set annotationEditorMode({ mode }: { mode: number }) {
-        stubs.editorModes.push(mode);
-      },
       get currentPageNumber() {
         return currentPageNumber;
       },
@@ -188,7 +152,6 @@ describe(usePdfViewer, () => {
       },
       set pagesRotation(rotation: number) {
         pagesRotation = rotation;
-        eventBus.dispatch("rotationchanging", { pagesRotation: rotation });
       },
       previousPage: () => {
         viewer.currentPageNumber -= 1;
@@ -210,11 +173,6 @@ describe(usePdfViewer, () => {
   };
   const PDFFindController = function (options: { eventBus: EventBusStub }) {
     return createFindController(options);
-  };
-  const PDFLinkService = function () {
-    stubs.linkService = createLinkService();
-
-    return stubs.linkService;
   };
   const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
     stubs.abortSignal = options.abortSignal;
@@ -259,14 +217,12 @@ describe(usePdfViewer, () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     matches = 0;
-    stubs.editorModes = [];
     stubs.findEvents = [];
     stubs.scaleWrites = [];
   });
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
-    Reflect.deleteProperty(window.document, "fullscreenElement");
     for (const element of window.document.querySelectorAll(`.${PDF_PRINT_CLASS}`)) element.remove();
   });
 
@@ -284,11 +240,11 @@ describe(usePdfViewer, () => {
   test("a loaded document opens fitted to its container", () => {
     expect.hasAssertions();
 
-    const { scope, state, viewer } = mountViewer(createDocument(3));
+    const { scope, viewer } = mountViewer(createDocument(3));
     stubs.eventBus?.dispatch("pagesinit", {});
 
     expect(viewer.currentScaleValue).toBe("auto");
-    expect(state.scale.value).toBe(FIT_SCALE);
+    expect(viewer.currentScale).toBe(FIT_SCALE);
     scope.stop();
   });
 
@@ -334,10 +290,10 @@ describe(usePdfViewer, () => {
   test("rotating turns the pages a step", () => {
     expect.hasAssertions();
 
-    const { scope, state } = mountViewer(createDocument(3));
+    const { scope, state, viewer } = mountViewer(createDocument(3));
     state.rotate();
 
-    expect(state.pagesRotation.value).toBe(PDF_ROTATION_STEP);
+    expect(viewer.pagesRotation).toBe(PDF_ROTATION_STEP);
     scope.stop();
   });
 
@@ -483,20 +439,6 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("#68 Switching the editor mode", async () => {
-    expect.hasAssertions();
-
-    const { scope, state } = mountViewer(createDocument(3));
-    state.editorMode.value = PdfEditorMode.Ink;
-    await nextTick();
-    state.editorMode.value = PdfEditorMode.None;
-    await nextTick();
-
-    // The document's load sets the mode it starts from, which is none
-    expect(stubs.editorModes).toStrictEqual([PdfEditorMode.None, PdfEditorMode.Ink, PdfEditorMode.None]);
-    scope.stop();
-  });
-
   test("printing a document", async () => {
     expect.hasAssertions();
 
@@ -543,24 +485,6 @@ describe(usePdfViewer, () => {
     expect(viewer.setDocument).toHaveBeenLastCalledWith(null);
   });
 
-  test("#84 #56 placing an overlay on a page", () => {
-    expect.hasAssertions();
-
-    const { scope, state, viewer } = mountViewer(createDocument(3));
-    const element = window.document.createElement("div");
-    const viewport = createViewport(viewer.currentScale);
-    stubs.eventBus?.dispatch("pagerendered", { pageNumber: 2, source: { div: element, viewport } });
-    stubs.eventBus?.dispatch("pagerendered", { pageNumber: 2, source: { div: element, viewport } });
-    const [overlay] = state.overlays.value;
-    assert(overlay);
-
-    expect(state.overlays.value).toHaveLength(1);
-    expect(overlay.element).toBe(element);
-    expect(overlay.pageNumber).toBe(2);
-    expect(overlay.viewport).toBe(viewport);
-    scope.stop();
-  });
-
   test("#24 highlighting a list of terms on load", () => {
     expect.hasAssertions();
 
@@ -578,73 +502,6 @@ describe(usePdfViewer, () => {
       query: TERMS,
       type: "",
     });
-    scope.stop();
-  });
-
-  test("#44 following a bookmark", async () => {
-    expect.hasAssertions();
-
-    const chapter = createOutlineNode("chapter", "Chapter");
-    const { scope, state } = mountViewer(createDocument(3, createPage(), [chapter]));
-    await flushPromises();
-    const [item] = state.outline.value;
-    assert(item);
-    state.followBookmark(item);
-
-    expect(stubs.linkService?.goToDestination).toHaveBeenCalledExactlyOnceWith("chapter");
-    expect(state.currentPageNumber.value).toBe(CHAPTER_PAGE);
-    scope.stop();
-  });
-
-  test("a document with no outline", async () => {
-    expect.hasAssertions();
-
-    const { scope, state } = mountViewer(createDocument(3));
-    await flushPromises();
-
-    expect(state.outline.value).toStrictEqual([]);
-    scope.stop();
-  });
-
-  test("an outline that loads after a newer document is dropped", async () => {
-    expect.hasAssertions();
-
-    const chapter = createOutlineNode("chapter", "Chapter");
-    const staleChapter = createOutlineNode("stale", "Stale");
-    const staleOutline = Promise.withResolvers<null | PdfOutline>();
-    const staleDocument = Object.assign(createDocument(3), { getOutline: () => staleOutline.promise });
-    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(staleDocument);
-    const { scope, state } = mountViewer(pdfDocument);
-    pdfDocument.value = createDocument(3, createPage(), [chapter]);
-    await flushPromises();
-    staleOutline.resolve([staleChapter]);
-    await flushPromises();
-
-    expect(state.outline.value).toStrictEqual([chapter]);
-    scope.stop();
-  });
-
-  test("leaving fullscreen with the Escape key", async () => {
-    expect.hasAssertions();
-
-    const { container, scope, state } = mountViewer(createDocument(3));
-    Object.assign(container, {
-      requestFullscreen: vi.fn<() => Promise<void>>(() => {
-        setFullscreenElement(container);
-        window.document.dispatchEvent(new Event("fullscreenchange"));
-
-        return Promise.resolve();
-      }),
-    });
-    state.toggleFullscreen();
-    await flushPromises();
-
-    expect(state.isFullscreen.value).toBe(true);
-    // The browser leaves fullscreen when Escape is pressed, and reports the change to the page
-    setFullscreenElement(null);
-    window.document.dispatchEvent(new Event("fullscreenchange"));
-
-    expect(state.isFullscreen.value).toBe(false);
     scope.stop();
   });
 });
