@@ -74,7 +74,9 @@ describe("resourceSurveyCreatorProperties", () => {
     select("/content/0/props/children/0");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
 
-    expect(JSON.stringify(wrapper.getComponent(UiSchemaForm).props("schema"))).not.toContain('"choices"');
+    expect(JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"))).not.toContain(
+      '"choices"',
+    );
     expect(wrapper.findComponent(ResourceSurveyCreatorChoiceListEditor).exists()).toBe(true);
   });
 
@@ -87,7 +89,7 @@ describe("resourceSurveyCreatorProperties", () => {
     const { select } = useSurveyCreatorCommands();
     select("");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
-    const rootSchema = JSON.stringify(wrapper.getComponent(UiSchemaForm).props("schema"));
+    const rootSchema = JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"));
     wrapper
       .getComponent(UiSchemaForm)
       .vm.$emit("update:modelValue", { ...surveyDocument.value.root.props, title: "Renamed survey" });

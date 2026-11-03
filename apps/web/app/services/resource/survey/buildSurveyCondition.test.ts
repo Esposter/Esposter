@@ -3,7 +3,6 @@ import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditio
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
-import { ok } from "neverthrow";
 import { runSurveyExpression } from "survey-logic";
 import { describe, expect, test } from "vitest";
 
@@ -84,11 +83,11 @@ describe(buildSurveyCondition, () => {
       SurveyConditionJoin.And,
     );
 
-    expect(runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "a", b: "b" } })).toStrictEqual(
-      ok(true),
-    );
-    expect(runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "b", b: "b" } })).toStrictEqual(
-      ok(false),
-    );
+    expect(
+      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "a", b: "b" } }).unwrapOr(undefined),
+    ).toBe(true);
+    expect(
+      runSurveyExpression(condition, { now: new Date(0), scopes: {}, values: { a: "b", b: "b" } }).unwrapOr(undefined),
+    ).toBe(false);
   });
 });

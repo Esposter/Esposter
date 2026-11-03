@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { SurveyButtonGroupNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyButtonGroupNode } from "survey-engine";
 
 import ResourceSurveyFieldButtonGroup from "@/components/Resource/Survey/Field/ButtonGroup.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -49,7 +49,7 @@ describe("resourceSurveyFieldButtonGroup", () => {
           isDisabled: false,
           modelValue: 1,
           node,
-          "onUpdate:modelValue": (modelValue: number) => component.setProps({ modelValue }),
+          "onUpdate:modelValue": (modelValue: SurveyAnswerValue | undefined) => component.setProps({ modelValue }),
         },
       });
       await flushPromises();

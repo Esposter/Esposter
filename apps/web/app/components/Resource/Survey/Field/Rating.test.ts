@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { SurveyRatingNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyRatingNode } from "survey-engine";
 
 import ResourceSurveyFieldRating from "@/components/Resource/Survey/Field/Rating.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -42,7 +42,7 @@ describe("resourceSurveyFieldRating", () => {
           isDisabled: false,
           modelValue: 1,
           node,
-          "onUpdate:modelValue": (modelValue: number) => component.setProps({ modelValue }),
+          "onUpdate:modelValue": (modelValue: SurveyAnswerValue | undefined) => component.setProps({ modelValue }),
         },
       });
       await flushPromises();

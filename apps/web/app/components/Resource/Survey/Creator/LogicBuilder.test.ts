@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument, SurveyNode } from "survey-engine";
+import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
 
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
@@ -9,7 +9,7 @@ import { surveyNodeTypeDefinitionMap, surveyRootPropsSchema, SurveyNodeType } fr
 import { describe, expect, test } from "vitest";
 
 // A survey of one page holding the given text questions, each with the condition it shows under
-const createSurveyTestDocument = (questions: SurveyNode[]): SurveyDocument => ({
+const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocument => ({
   content: [
     {
       props: {
@@ -23,7 +23,7 @@ const createSurveyTestDocument = (questions: SurveyNode[]): SurveyDocument => ({
   root: { props: surveyRootPropsSchema.parse({}) },
 });
 
-const createQuestion = (name: string, visibleIf: string): SurveyNode => ({
+const createQuestion = (name: string, visibleIf: string): SurveyPlaceableNode => ({
   props: {
     ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(),
     id: crypto.randomUUID(),

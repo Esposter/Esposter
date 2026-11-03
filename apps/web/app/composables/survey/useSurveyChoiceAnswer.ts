@@ -52,7 +52,7 @@ export const useSurveyChoiceAnswer = (
       ...(hasNone ? [{ title: noneText || NONE_TITLE, value: NONE }] : []),
     ];
   });
-  const pick = (key: string) => {
+  const pick = (key: string | undefined) => {
     isOtherChosen.value = key === OTHER;
     if (key === OTHER) answer.value = otherText.value === "" ? undefined : otherText.value;
     else if (key === NONE) answer.value = NONE;

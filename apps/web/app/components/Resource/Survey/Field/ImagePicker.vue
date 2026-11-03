@@ -48,7 +48,7 @@ const selectedKeys = computed(() =>
   keyedChoices.value.filter(({ choice }) => selectedValues.value.includes(choice.value)).map(({ key }) => key),
 );
 // The list hands back the picked keys, each read back to the value its choice holds
-const onSelect = (keys: string[]) => {
+const onSelect = (keys: string[] | undefined = []) => {
   if (isDisabled) return;
   const values = keyedChoices.value.filter(({ key }) => keys.includes(key)).map(({ choice }) => choice.value);
   answer.value = node.props.multiSelect ? values : values[0];

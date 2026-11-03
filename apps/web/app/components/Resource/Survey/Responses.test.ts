@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
+import type { SurveyDocument } from "survey-engine";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
@@ -11,6 +12,7 @@ import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "survey-engine";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -19,7 +21,31 @@ describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();
   const surveyId = crypto.randomUUID();
   const question = "Favourite colour";
-  const model = JSON.stringify({ elements: [{ name: "colour", title: question, type: "text" }] });
+  const surveyDocument = createSurveyDocument();
+  const [page] = surveyDocument.content;
+  assert(page);
+  const document: SurveyDocument = {
+    ...surveyDocument,
+    content: [
+      {
+        ...page,
+        props: {
+          ...page.props,
+          children: [
+            {
+              props: {
+                ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(),
+                id: crypto.randomUUID(),
+                name: "colour",
+                title: question,
+              },
+              type: SurveyNodeType.Text,
+            },
+          ],
+        },
+      },
+    ],
+  };
   const records: SurveyResponseRecords = {
     columns: [{ name: "colour", type: ColumnType.String }],
     rows: [{ colour: "Teal", rowKey: "response-1" }],
@@ -32,7 +58,7 @@ describe("resourceSurveyResponses", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: surveyId });
     trpcMsw.survey.readSurveyResponseRecords.query(() => records);
     trpcMsw.survey.readResourceContent.query(() => ({
-      model,
+      document,
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Identified }),
     }));
   });

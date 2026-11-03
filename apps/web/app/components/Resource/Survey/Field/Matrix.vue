@@ -23,7 +23,8 @@ const getColumnKey = (row: SurveyChoice) => {
   const index = node.props.columns.findIndex(({ value }) => value === answers.value[String(row.value)]);
   return index === -1 ? undefined : String(index);
 };
-const updateRow = (row: SurveyChoice, columnKey: string) => {
+const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
+  if (columnKey === undefined) return;
   const column = node.props.columns[Number(columnKey)];
   if (column === undefined) return;
   answer.value = { ...answers.value, [String(row.value)]: column.value };

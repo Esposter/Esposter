@@ -93,7 +93,7 @@ describe("resourceSurveyFieldTagBox", () => {
       await component.get('input[type="text"]').setValue("a");
       await component.setProps({ modelValue: ["a"] });
 
-      expect(component.get('input[type="text"]').element.value).toBe("a");
+      expect(component.get<HTMLInputElement>('input[type="text"]').element.value).toBe("a");
       expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([["a"]]);
     });
 
