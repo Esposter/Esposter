@@ -10,7 +10,7 @@ import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 export const readLiveSurvey = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-): Promise<ResourceInResource & { publication?: ResourcePublicationInResource | null }> => {
+): Promise<ResourceInResource & { publication: null | ResourcePublicationInResource }> => {
   const survey = await db.query.resourcesInResource.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: surveyId }, type: { eq: ResourceType.Survey } },
     with: { publication: true },
