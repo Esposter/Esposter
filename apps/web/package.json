@@ -146,6 +146,8 @@
     "survey-core": "catalog:",
     "survey-creator-core": "catalog:",
     "survey-creator-vue": "catalog:",
+    "survey-engine": "workspace:*",
+    "survey-logic": "workspace:*",
     "survey-vue3-ui": "catalog:",
     "temporal-polyfill": "catalog:",
     "three": "catalog:",

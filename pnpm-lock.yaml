@@ -1211,6 +1211,12 @@ importers:
       survey-creator-vue:
         specifier: 'catalog:'
         version: 3.2.4(survey-core@3.2.4)(survey-creator-core@3.2.4(survey-core@3.2.4))(survey-vue3-ui@3.2.4(survey-core@3.2.4)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)))(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
+      survey-engine:
+        specifier: workspace:*
+        version: link:../../packages/survey-engine
+      survey-logic:
+        specifier: workspace:*
+        version: link:../../packages/survey-logic
       survey-vue3-ui:
         specifier: 'catalog:'
         version: 3.2.4(survey-core@3.2.4)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
@@ -2127,6 +2133,50 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.20.1-ts7.1.0-beta)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
+
+  packages/survey-engine:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      headless-block-editor:
+        specifier: workspace:*
+        version: link:../headless-block-editor
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
+      re2js:
+        specifier: 'catalog:'
+        version: 2.9.1
+      survey-logic:
+        specifier: workspace:*
+        version: link:../survey-logic
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.20.1-ts7.1.0-beta)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
+
+  packages/survey-logic:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       tsdown:
         specifier: 'catalog:'
         version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.20.1-ts7.1.0-beta)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
