@@ -915,7 +915,7 @@ const {
   shortcutWheelDirectionCount,
   shortcutWheelPickedIndex,
   stepShortcutWheel,
-} = useWorldShortcutWheel({ screenKind });
+} = useWorldShortcutWheel();
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
 // The camera the world is drawn through, where it stands and the rotation a reference holds it at

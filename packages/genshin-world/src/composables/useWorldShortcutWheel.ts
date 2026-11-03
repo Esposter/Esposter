@@ -1,12 +1,14 @@
-import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
-import type { Ref } from "vue";
 
 import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
 import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
+import { useWorldScreenStore } from "#src/store/screen";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-export const useWorldShortcutWheel = ({ screenKind }: { screenKind: Ref<ScreenKind> }) => {
+export const useWorldShortcutWheel = () => {
+  const worldScreenStore = useWorldScreenStore();
+  const { screenKind } = storeToRefs(worldScreenStore);
   // The shortcut wheel is open while its key is held in the world: the move points at an entry, and letting the key go
   // Opens that entry's screen
   const shortcutWheelDirectionCount = ShortcutWheelDirectionCount.Eight;
