@@ -33,27 +33,28 @@ The session's state is a `SurveyRunnerState`: the answers keyed by question name
 
 Each function that reads the document takes it first, and each whose result depends on the time takes `now`, the clock a test or the preview fixes. None mutates.
 
-| Function                                                | Returns                                                                                             |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `createSurveyRunnerState(document, answers, pageIndex)` | a `SurveyRunnerState`, the page index clamped into the document's pages                             |
-| `getSurveyRunnerValues(document, answers, now)`         | the answers and calculated values as the record the expressions read                                |
-| `getSurveyVisiblePageIndexes(document, answers, now)`   | the indexes of the pages with a shown element                                                       |
-| `getSurveyPageElements(document, state, now)`           | the current page's `SurveyElementView` tree                                                         |
-| `getSurveyProgress(document, state, now)`               | a `SurveyProgress`: the shown pages up to the current one, and the total shown                      |
-| `isLastSurveyPage(document, state, now)`                | whether no later page has a shown element                                                           |
-| `setSurveyAnswer(state, name, value)`                   | a new state; an empty or undefined value removes the answer                                         |
-| `validateSurveyPage(document, state, now)`              | the current page's `SurveyPageError` list, in document order                                        |
-| `goToNextSurveyPage(document, state, now)`              | a `SurveyRunnerMove`: the blocking errors, or the state on the next shown page                      |
-| `goToPreviousSurveyPage(document, state, now)`          | the state on the previous shown page, or unchanged on the first                                     |
-| `completeSurvey(document, state, now)`                  | a `SurveyRunnerCompletion`: the answers to store, the errors, and the state                         |
-| `checkSurveyNodeVisible(node, values, now)`             | whether a node's `visibleIf` holds, or it has none                                                  |
-| `checkSurveyNodeEnabled(node, values, now)`             | whether a node takes an answer: not read-only, and its `enableIf` holds or it has none              |
-| `checkSurveyNodeRequired(node, values, now)`            | whether a node is required by its flag or its `requiredIf`                                          |
-| `createSurveyAnswerSchema(node)`                        | the zod schema of one question's answer, switched on the question's kind                            |
-| `validateSurveyAnswers(document, answers, mode, now)`   | the `SurveyAnswerIssue` list a written response's answers hold against the document                 |
-| `surveyAnswerValueSchema`                               | the zod schema of a stored answer's shape: text, a number, a yes or no, or nested lists and records |
-| `getSurveyOrderedChoices(choices, choicesOrder, seed)`  | the choices in the order a respondent sees them; a random order is seeded                           |
-| `getSurveyChoiceText(choice)`                           | the text a respondent reads for a choice: its text, or its value when it has none                   |
+| Function                                                | Returns                                                                                                                      |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `createSurveyRunnerState(document, answers, pageIndex)` | a `SurveyRunnerState`, the page index clamped into the document's pages                                                      |
+| `getSurveyRunnerValues(document, answers, now)`         | the answers and calculated values as the record the expressions read                                                         |
+| `getSurveyVisiblePageIndexes(document, answers, now)`   | the indexes of the pages with a shown element                                                                                |
+| `getSurveyPageElements(document, state, now)`           | the current page's `SurveyElementView` tree                                                                                  |
+| `getSurveyProgress(document, state, now)`               | a `SurveyProgress`: the shown pages up to the current one, and the total shown                                               |
+| `isLastSurveyPage(document, state, now)`                | whether no later page has a shown element                                                                                    |
+| `setSurveyAnswer(state, name, value)`                   | a new state; an empty or undefined value removes the answer                                                                  |
+| `validateSurveyPage(document, state, now)`              | the current page's `SurveyPageError` list, in document order                                                                 |
+| `goToNextSurveyPage(document, state, now)`              | a `SurveyRunnerMove`: the blocking errors, or the state on the next shown page                                               |
+| `goToPreviousSurveyPage(document, state, now)`          | the state on the previous shown page, or unchanged on the first                                                              |
+| `completeSurvey(document, state, now)`                  | a `SurveyRunnerCompletion`: the answers to store, the errors, and the state                                                  |
+| `checkIsSurveyAnsweringNode(node)`                      | whether a node holds a response value: a question, a calculated value included, but not a page, a panel, markup or a picture |
+| `checkSurveyNodeVisible(node, values, now)`             | whether a node's `visibleIf` holds, or it has none                                                                           |
+| `checkSurveyNodeEnabled(node, values, now)`             | whether a node takes an answer: not read-only, and its `enableIf` holds or it has none                                       |
+| `checkSurveyNodeRequired(node, values, now)`            | whether a node is required by its flag or its `requiredIf`                                                                   |
+| `createSurveyAnswerSchema(node)`                        | the zod schema of one question's answer, switched on the question's kind                                                     |
+| `validateSurveyAnswers(document, answers, mode, now)`   | the `SurveyAnswerIssue` list a written response's answers hold against the document                                          |
+| `surveyAnswerValueSchema`                               | the zod schema of a stored answer's shape: text, a number, a yes or no, or nested lists and records                          |
+| `getSurveyOrderedChoices(choices, choicesOrder, seed)`  | the choices in the order a respondent sees them; a random order is seeded                                                    |
+| `getSurveyChoiceText(choice)`                           | the text a respondent reads for a choice: its text, or its value when it has none                                            |
 
 The other exports of the runner's folder are the helpers these call: the page and element views, the question errors, the value conversions between answers and the expression language, the per-kind answer schemas under `answer/`, and the messages in `constants.ts`. The choice functions live beside the package's other services rather than in the runner's folder.
 

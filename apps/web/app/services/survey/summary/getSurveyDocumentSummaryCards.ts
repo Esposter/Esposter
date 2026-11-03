@@ -6,10 +6,15 @@ import type { SurveyChoice, SurveyQuestionNode } from "survey-engine";
 
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
-import { checkIsAnsweringSurveyQuestion } from "#shared/services/survey/checkIsAnsweringSurveyQuestion";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
-import { getSurveyChoiceText, SurveyExpressionDisplayFormat, SurveyNodeType, SurveyTextInputType } from "survey-engine";
+import {
+  checkIsSurveyAnsweringNode,
+  getSurveyChoiceText,
+  SurveyExpressionDisplayFormat,
+  SurveyNodeType,
+  SurveyTextInputType,
+} from "survey-engine";
 
 type Answer = NonNullable<ColumnValue>;
 
@@ -178,7 +183,7 @@ export const getSurveyDocumentSummaryCards = (
   rows: SurveyResponseRecord[],
 ): SurveySummaryCard[] =>
   questions
-    .filter((question) => checkIsAnsweringSurveyQuestion(question))
+    .filter((question) => checkIsSurveyAnsweringNode(question))
     .map((question) => {
       const { name } = question.props;
       const answers = rows.flatMap((row) => {

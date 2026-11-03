@@ -68,6 +68,7 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 
 - **The document is the survey resource's content.** The survey resource's content is `{ document, settings }`, and its schema is the document schema with the save check as a refinement, so a save the check refuses is refused at the field it names. A document that is absent parses to the empty survey.
 - **One answer for "other".** A respondent's typed other text is the answer itself, not a second key beside the choice. Rejected: SurveyJS's pair of keys, which makes a response record's columns depend on what a respondent chose.
+- **One predicate for a node a response holds a value for.** `checkIsSurveyAnsweringNode` is true of a question, a calculated value included, and false of a page, a panel, a block of markup and a picture. The runner's leaf check, its question errors and its enabled check read it, and so do the app's response columns and summary cards. A calculated value answers because a completed response carries its value, though no respondent gives it, so the enabled check disables it on its own. Rejected: narrowing `SurveyQuestionNode` to the answering kinds, which drops the markup, picture and calculated kinds from the union and forces a second type for every placeable leaf.
 - **A dynamic panel's template does not nest.** A template accepts no dynamic panel. Rejected: unbounded nesting, which the Creator's canvas and the runner's scopes would each have to bound for themselves.
 
 ## Key files

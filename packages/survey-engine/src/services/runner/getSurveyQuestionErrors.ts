@@ -3,8 +3,8 @@ import type { SurveyElementView } from "#src/models/SurveyElementView";
 import type { SurveyPageError } from "#src/models/SurveyPageError";
 import type { SurveyLogicContext } from "survey-logic";
 
-import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
+import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
@@ -12,7 +12,7 @@ import { toSurveyLogicValue } from "#src/services/runner/toSurveyLogicValue";
 
 // The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that does not hold
 // Only an enabled question is checked, since a disabled one takes no answer
-// The type checks narrow the node to a question holding a validator list, which an includes call over the types would not do
+// The predicate narrows the node to an answering question, which holds a validator list
 export const getSurveyQuestionErrors = (
   view: SurveyElementView,
   answers: SurveyAnswers,
@@ -20,13 +20,7 @@ export const getSurveyQuestionErrors = (
   now: Date,
 ): SurveyPageError[] => {
   const { node, pointer } = view;
-  if (
-    !view.isEnabled ||
-    node.type === SurveyNodeType.Panel ||
-    node.type === SurveyNodeType.Html ||
-    node.type === SurveyNodeType.Image
-  )
-    return [];
+  if (!view.isEnabled || !checkIsSurveyAnsweringNode(node)) return [];
 
   const { name } = node.props;
   const answer = answers[name];

@@ -2,18 +2,15 @@ import type { SurveyNode } from "#src/models/SurveyNode";
 import type { SurveyLogicContext } from "survey-logic";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 
-// A calculated value, a block of markup and a picture hold no answer the respondent gives, so none of them is ever enabled
-const READ_ONLY_NODE_TYPES = new Set<SurveyNodeType>([
-  SurveyNodeType.Expression,
-  SurveyNodeType.Html,
-  SurveyNodeType.Image,
-]);
-
-// A node is enabled unless it is read-only or its enabling condition does not hold, and a node with no condition is enabled
+// A node is enabled unless it is a calculated value, or it holds no answer and is not a container, or its enabling condition does not hold
+// A calculated value holds a value no respondent gives, so it is never enabled. A page or a panel is a container, enabled by its own condition
 export const checkSurveyNodeEnabled = (node: SurveyNode, values: SurveyLogicContext["values"], now: Date): boolean => {
-  if (READ_ONLY_NODE_TYPES.has(node.type)) return false;
+  if (node.type === SurveyNodeType.Expression) return false;
+  if (node.type !== SurveyNodeType.Page && node.type !== SurveyNodeType.Panel && !checkIsSurveyAnsweringNode(node))
+    return false;
 
   const enableIf = "enableIf" in node.props ? node.props.enableIf : "";
   return enableIf === "" || checkSurveyExpressionHolds(enableIf, values, now);

@@ -3,9 +3,13 @@ import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType
 import type { SurveyDocument, SurveyQuestionNode } from "survey-engine";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { checkIsAnsweringSurveyQuestion } from "#shared/services/survey/checkIsAnsweringSurveyQuestion";
 import { getSurveyDocumentQuestions } from "#shared/services/survey/getSurveyDocumentQuestions";
-import { SurveyExpressionDisplayFormat, SurveyNodeType, SurveyTextInputType } from "survey-engine";
+import {
+  checkIsSurveyAnsweringNode,
+  SurveyExpressionDisplayFormat,
+  SurveyNodeType,
+  SurveyTextInputType,
+} from "survey-engine";
 
 const DATE_INPUT_TYPES: ReadonlySet<SurveyTextInputType> = new Set([
   SurveyTextInputType.Date,
@@ -35,7 +39,7 @@ const getColumnType = (question: SurveyQuestionNode): DatasetColumnType => {
 // A dynamic panel is one question, so its one column is the answer of the whole panel rather than one per template question
 export const getSurveyDocumentDatasetColumns = (document: SurveyDocument): DatasetColumn[] =>
   getSurveyDocumentQuestions(document)
-    .filter((question) => checkIsAnsweringSurveyQuestion(question))
+    .filter((question) => checkIsSurveyAnsweringNode(question))
     .map((question) => {
       const { name, title } = question.props;
       return { name, type: getColumnType(question), ...(title && { title }) };

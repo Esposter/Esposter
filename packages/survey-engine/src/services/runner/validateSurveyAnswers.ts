@@ -1,23 +1,17 @@
 import type { SurveyAnswerIssue } from "#src/models/SurveyAnswerIssue";
 import type { SurveyAnswers } from "#src/models/SurveyAnswers";
 import type { SurveyDocument } from "#src/models/SurveyDocument";
-import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
-import type { SurveyQuestionNode } from "#src/models/SurveyQuestionNode";
 
 import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
+import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { collectSurveyLeafNodes } from "#src/services/runner/collectSurveyLeafNodes";
 import { SURVEY_NOT_SHOWN_MESSAGE, SURVEY_UNKNOWN_QUESTION_MESSAGE } from "#src/services/runner/constants";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
-
-// The questions a list of nodes holds, read through the panels that hold them. A dynamic panel's template is left out
-// Its questions are named among themselves, so a name in it is no top-level answer
-const checkIsQuestionNode = (node: SurveyPlaceableNode): node is SurveyQuestionNode =>
-  node.type !== SurveyNodeType.Html && node.type !== SurveyNodeType.Image;
 
 // The issues a response's answers hold against the document: a name no question holds, an answer to a question that is not shown
 // Each answer a shown question refuses, by the runner's own check of a question
@@ -34,10 +28,11 @@ export const validateSurveyAnswers = (
   const views = flattenSurveyElementViews(
     document.content.flatMap((_node, pageIndex) => getSurveyPageViews(document, pageIndex, values, now)),
   );
+  // The questions a page holds, read through the panels that hold them. A dynamic panel's template is not among them, since its names are its own
   const questionNames = new Set(
     collectSurveyLeafNodes(
       document.content.flatMap((node) => (node.type === SurveyNodeType.Page ? node.props.children : [])),
-      checkIsQuestionNode,
+      checkIsSurveyAnsweringNode,
     ).map((node) => node.props.name),
   );
   const shownNames = new Set(
