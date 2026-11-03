@@ -42,6 +42,7 @@ import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
@@ -161,7 +162,12 @@ describe(useWorldTrounceBlossoms, () => {
     clock.moveTo(nextWeek);
 
     expect(trounceBlossomInteractables.value).toStrictEqual([
-      { id: SPAWN_KEY, kind: InteractionKind.Claim, name: "", position: { x: 1, y: 0, z: 2 } },
+      {
+        id: SPAWN_KEY,
+        kind: InteractionKind.Claim,
+        name: ENGLISH_GAME_TEXT[GameTextKey.TrounceBlossom],
+        position: { x: 1, y: 0, z: 2 },
+      },
     ]);
   });
 

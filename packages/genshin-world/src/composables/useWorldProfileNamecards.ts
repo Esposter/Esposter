@@ -5,6 +5,7 @@ import { computeProfileNamecardItemIds } from "#src/services/profile/computeProf
 import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 // The namecards the profile holds, read from the Friendship and the achievements each time, each named in the reader's language

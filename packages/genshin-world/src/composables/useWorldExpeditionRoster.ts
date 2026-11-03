@@ -3,6 +3,7 @@ import type { WorldExpeditionRosterOptions } from "#src/models/expedition/WorldE
 
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { useWorldPartyStore } from "#src/store/party";
+import { storeToRefs } from "pinia";
 import { computed, shallowRef } from "vue";
 
 // The expeditions out from the Adventurers' Guild, held for the session so a reload empties them, and the roster their

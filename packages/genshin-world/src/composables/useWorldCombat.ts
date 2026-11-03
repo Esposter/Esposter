@@ -40,6 +40,7 @@ import { useWorldPickupsStore } from "#src/store/pickups";
 import { useWorldSessionStore } from "#src/store/session";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createSeededRandom, createStamina, LocomotionState } from "genshin-engine";
+import { storeToRefs } from "pinia";
 import { computed, shallowReactive, watch } from "vue";
 
 // The combat of the party the player fields, and the world's combat state the kit on the

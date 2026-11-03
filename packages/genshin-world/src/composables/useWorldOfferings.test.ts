@@ -7,6 +7,7 @@ import { englishNameText } from "#parity/englishNameText";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
+import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
@@ -56,11 +57,12 @@ describe(useWorldOfferings, () => {
     });
     const { offerFrostbearingTree } = useWorldOfferings({ frostbearingTreeProgress });
     const offer = offerFrostbearingTree(frostbearingTreePlace);
-    inventory.value = {
+    const offeredBag = {
       items: [{ definition, id: 0, quantity: offeringItem.itemCount }],
       nextId: 1,
       quickSwapItemIds: [],
     };
+    inventory.value = offeredBag;
     const {
       adventureExp,
       inventory: offeredInventory,
@@ -82,6 +84,7 @@ describe(useWorldOfferings, () => {
     expect(placedDrops).toStrictEqual([[frostbearingTreePlace, overflowItems]]);
     expect(frostbearingTreeProgress.value).toStrictEqual({ heldCounts: progress.heldCounts, level: progress.level });
     expect(achievementEvents).toStrictEqual([
+      computeBagObtainEvents(offeredBag.items, offeredInventory.items),
       [
         {
           kind: AchievementEventKind.OfferingLevelReached,

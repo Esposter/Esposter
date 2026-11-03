@@ -81,6 +81,8 @@ describe(useWorldAdventureRankStore, () => {
       maxAdventureExp,
       noFinishedMainQuestIds,
     );
+    // The first World Level the store reaches as it starts is the watch's own to take in, a tick before the quests change
+    await nextTick();
     worldSessionStore.events.on("worldLevelUp", worldLevelUps);
     const startingWorldLevel = adventureRank.worldLevel;
     setFinishedMainQuestIds(ascensionQuestIds);
