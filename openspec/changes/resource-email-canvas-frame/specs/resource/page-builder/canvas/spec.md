@@ -10,13 +10,13 @@ The canvas SHALL draw its content without running a script inside its frame, and
 - **WHEN** the owner edits a text and views the console
 - **THEN** no blocked-script message is logged for the canvas frame
 
-### Requirement: The canvas holds its scroll position while an email is edited
+### Requirement: The canvas's outlines do not change the size of the page it draws
 
-The canvas SHALL keep its scroll position steady while the owner edits the email, and SHALL NOT toggle its scrollbars as the content changes size.
+The canvas SHALL draw its hover, selection and drop outlines without changing the size of the page in its frame, so its scrollbars do not appear, disappear or move as a node is hovered or selected.
 
 #### Scenario: the scroll position holds while an email is edited
 
-- **GIVEN** an email longer than the canvas pane, scrolled to its middle
-- **WHEN** the owner edits a text in the middle of the email
-- **THEN** the canvas keeps the same scroll position
+- **GIVEN** an email longer than the canvas pane
+- **WHEN** the owner hovers a node and selects it
+- **THEN** the frame's scroll height is what it was before
 - **AND** the scrollbars do not appear, disappear or move
