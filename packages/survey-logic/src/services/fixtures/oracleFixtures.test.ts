@@ -76,6 +76,8 @@ describe("the oracle fixtures", () => {
   const CASE_SENSITIVE_REASON = "Names are case-sensitive here, where SurveyJS ignores case";
   const DATE_TEXT_AMOUNT_REASON =
     "A date amount that is numeric text is read as a number, where SurveyJS joins it as text";
+  const DATE_TIME_END_REASON =
+    "SurveyJS answers NaN for a date-time end with an hours, minutes or seconds unit; this package answers the real difference";
   const EMPTY_NULL_REASON = "An unanswered reference or an empty result is undefined, where SurveyJS gives null";
   const INVALID_DATE_REASON = "A date SurveyJS cannot read is invalid, which the package answers as empty";
   const RECORD_REASON = "A record holds no text and reads as no number, where SurveyJS joins its default text";
@@ -312,6 +314,48 @@ describe("the oracle fixtures", () => {
       ours: "1970-01-04",
       reason: DATE_TEXT_AMOUNT_REASON,
       surveyJs: '"1970-01-13"',
+    },
+    {
+      answers: ARRAY_ANSWERS,
+      expression: "dateDiff('1970-01-01', '1970-01-01 05:00:00', 'hours')",
+      ours: 5,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
+    },
+    {
+      answers: {},
+      expression: "dateDiff('1970-01-01', '1970-01-01 05:00:00', 'hours')",
+      ours: 5,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
+    },
+    {
+      answers: ARRAY_ANSWERS,
+      expression: "dateDiff('1970-01-01', '1970-01-01 00:05:00', 'minutes')",
+      ours: 5,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
+    },
+    {
+      answers: {},
+      expression: "dateDiff('1970-01-01', '1970-01-01 00:05:00', 'minutes')",
+      ours: 5,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
+    },
+    {
+      answers: ARRAY_ANSWERS,
+      expression: "dateDiff('1970-01-01', '1970-01-01 00:00:09', 'seconds')",
+      ours: 9,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
+    },
+    {
+      answers: {},
+      expression: "dateDiff('1970-01-01', '1970-01-01 00:00:09', 'seconds')",
+      ours: 9,
+      reason: DATE_TIME_END_REASON,
+      surveyJs: "NaN",
     },
     {
       answers: ARRAY_ANSWERS,
