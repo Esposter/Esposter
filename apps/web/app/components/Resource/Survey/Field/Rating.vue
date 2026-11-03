@@ -7,13 +7,13 @@ interface Props {
   isDisabled: boolean;
   node: SurveyRatingNode;
 }
-// A number from one up to the scale's count, drawn as a toggle group of its numbers with the text at either end. No icon
-// names a star or a smiley, so every rate type draws its numbers, and the scale's type waits for one that does
+// A number from one up to the scale's count, drawn as a toggle group of its numbers with the text at either end.
+// No icon names a star or a smiley, so every rate type draws its numbers, and the scale's type waits for one that does
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number>[]>(() =>
-  Array.from({ length: node.props.rateCount }, (_, index) => ({
+  Array.from({ length: node.props.rateCount }, (_value, index) => ({
     isDisabled,
     title: String(index + 1),
     value: index + 1,
@@ -46,11 +46,11 @@ const rating = computed<number | string>({
       />
       <div
         v-if="node.props.minRateDescription || node.props.maxRateDescription"
-        flex
-        justify-between
-        gap-2
         text-sm
         text-muted
+        flex
+        gap-2
+        justify-between
       >
         <span>{{ node.props.minRateDescription }}</span>
         <span>{{ node.props.maxRateDescription }}</span>
