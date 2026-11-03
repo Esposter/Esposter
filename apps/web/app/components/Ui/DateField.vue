@@ -6,6 +6,8 @@ import { getZonedDateTime } from "@esposter/shared";
 interface Props {
   // A field that may be left empty, which draws a button that empties it
   isClearable?: true;
+  // A field that cannot be changed, so it cannot be opened and offers no button that empties it
+  isDisabled?: true;
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a cell being
   // Edited in its row
   isLabelHidden?: true;
@@ -21,7 +23,16 @@ interface Props {
 // Is an instant, read and written in the reader's own time zone, so the day a reader picks is the day they see. A day
 // Is chosen and the panel closes; with a time the panel stays open for it, and Done closes it
 const modelValue = defineModel<TModel>({ required: true });
-const { isClearable, isLabelHidden, isTime, label, max, min, placeholder = "Pick a date" } = defineProps<Props>();
+const {
+  isClearable,
+  isDisabled,
+  isLabelHidden,
+  isTime,
+  label,
+  max,
+  min,
+  placeholder = "Pick a date",
+} = defineProps<Props>();
 const isOpen = ref(false);
 const field = useTemplateRef("field");
 // The trigger, which what opens the field in place of something else focuses
@@ -64,7 +75,8 @@ defineExpose({ element });
   <UiPopoverField
     ref="field"
     v-model:is-open="isOpen"
-    :is-clearable="Boolean(isClearable && modelValue)"
+    :is-clearable="Boolean(isClearable && modelValue && !isDisabled)"
+    :is-disabled="isDisabled"
     :is-empty="!modelValue"
     :is-label-hidden
     :label
@@ -93,7 +105,7 @@ defineExpose({ element });
     <UiTextField
       v-if="isTime"
       v-model="time"
-      :is-disabled="!modelValue || undefined"
+      :is-disabled="isDisabled || !modelValue || undefined"
       label="Time"
       :type="UiTextFieldType.Time"
     />

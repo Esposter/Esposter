@@ -32,6 +32,17 @@ describe("uiDateField", () => {
       expect(component.get('[role="grid"]').attributes("aria-label")).toBe(label);
     });
 
+    test("cannot be opened or emptied while it is disabled", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiDateField, {
+        props: { isClearable: true, isDisabled: true, label, modelValue: epoch },
+      });
+
+      expect(component.get("button[aria-describedby]").attributes("disabled")).toBeDefined();
+      expect(component.find(`button[aria-label="Clear ${label}"]`).exists()).toBe(false);
+    });
+
     test("moves to the day chosen and keeps the time it held", async () => {
       expect.hasAssertions();
 

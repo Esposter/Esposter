@@ -2,6 +2,7 @@
 import type { SurveyAnswerValue, SurveyTextNode } from "survey-engine";
 
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { getSurveyFieldHint } from "@/services/survey/getSurveyFieldHint";
 import { SurveyTextInputType } from "survey-engine";
 
 interface Props {
@@ -13,7 +14,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
-const REQUIRED_HINT = "Required";
 // The input types the library's text field draws as its own control; the rest are typed as plain text
 const TEXT_FIELD_TYPES: Partial<Record<SurveyTextInputType, UiTextFieldType>> = {
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
@@ -21,9 +21,7 @@ const TEXT_FIELD_TYPES: Partial<Record<SurveyTextInputType, UiTextFieldType>> = 
   [SurveyTextInputType.Time]: UiTextFieldType.Time,
 };
 const title = computed(() => node.props.title || node.props.name);
-const hint = computed(() =>
-  node.props.isRequired ? [node.props.description, REQUIRED_HINT].filter(Boolean).join(" ") : node.props.description,
-);
+const hint = computed(() => getSurveyFieldHint(node.props.description, node.props.isRequired));
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
@@ -51,7 +49,14 @@ const date = computed<Date | undefined>({
 
 <template>
   <div flex flex-col gap-1>
-    <UiDateField v-if="isDate" v-model="date" is-clearable :is-time="isDateTime || undefined" :label="title" />
+    <UiDateField
+      v-if="isDate"
+      v-model="date"
+      is-clearable
+      :is-disabled="isDisabled || undefined"
+      :is-time="isDateTime || undefined"
+      :label="title"
+    />
     <UiTextField
       v-else
       :error
