@@ -4,7 +4,7 @@ import type { GridGeometry, GridItem } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
-import { CollisionMode, CompactType, ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
+import { useGridLayout } from "vue-grid-layout-headless";
 
 interface Props {
   columnNumber: number;
@@ -20,10 +20,8 @@ const grid = useTemplateRef("grid");
 const items = computed(() =>
   visuals.map((visual) => ({ h: visual.h, id: visual.id, visual, w: visual.w, x: visual.x, y: visual.y })),
 );
-const { gridHeight, placeholder, startGesture, tiles } = useGridLayout(grid, () => ({
-  collision: CollisionMode.Push,
+const { gridHeight, placeholder, startGesture, startResize, tiles } = useGridLayout(grid, () => ({
   columnNumber,
-  compactType: CompactType.Vertical,
   dragStartDistance: DRAG_START_DISTANCE,
   isEditable: isEditable === true,
   items: items.value,
@@ -63,7 +61,7 @@ const getBoxStyle = (geometry: GridGeometry) => ({
         right-0
         absolute
         cursor="nwse-resize"
-        @pointerdown.stop="(event) => startGesture(event, item, ResizeEdge.SouthEast)"
+        @pointerdown.stop="(event) => startResize(event, item)"
       />
     </div>
     <div v-if="placeholder" class="dashboard-grid-placeholder" absolute :style="getBoxStyle(placeholder)" />
