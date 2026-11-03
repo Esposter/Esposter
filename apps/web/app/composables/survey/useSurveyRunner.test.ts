@@ -65,8 +65,21 @@ describe(useSurveyRunner, () => {
       createSurveyTestPage([createSurveyTestQuestion("first")]),
       createSurveyTestPage([createSurveyTestQuestion("second")]),
     ]);
+    surveyDocument.root.props.showQuestionNumbers = true;
     const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
 
     expect(Array.from(runner.questionNumbers.value.values())).toStrictEqual([1, 2]);
+  });
+
+  test("numbers no question when the survey's question numbering is off", () => {
+    expect.hasAssertions();
+
+    const surveyDocument = createSurveyTestDocument([
+      createSurveyTestPage([createSurveyTestQuestion("first")]),
+      createSurveyTestPage([createSurveyTestQuestion("second")]),
+    ]);
+    const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
+
+    expect(runner.questionNumbers.value.size).toBe(0);
   });
 });

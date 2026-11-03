@@ -64,6 +64,8 @@ export const useSurveyRunner = (
   // The numbers of the questions on the pages up to the current one, so the current page's numbering carries on from them
   const questionNumbers = computed(() => {
     const numbers = new Map<string, number>();
+    if (!getDocument().root.props.showQuestionNumbers) return numbers;
+
     for (const visiblePageIndex of visiblePageIndexes.value) {
       if (visiblePageIndex > state.value.pageIndex) break;
 
