@@ -4,7 +4,7 @@ The Responses blade's Individual view is a table of raw responses, one column pe
 
 ## How it works
 
-The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, which is the table and detail dialog. Summary is a column of cards, one per question in the survey's own order, each drawn by `getSurveySummaryCards` from what kind of question it is:
+The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, which is the table and detail dialog. Summary is a column of cards, one per question in the survey's own order, each drawn by `getSurveyDocumentSummaryCards` from what kind of question it is:
 
 | Question kind (SurveyJS)               | Card                                                                               |
 | -------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -25,7 +25,7 @@ Each card is headed by the question's title and "_n_ responses", counting the re
 flowchart LR
   READ["survey.readSurveyResponseRecords"] --> REC[records]
   CONTENT["survey.readResourceContent"] -->|"survey-core Model"| Q[question model]
-  REC --> AGG{getSurveySummaryCards}
+  REC --> AGG{getSurveyDocumentSummaryCards}
   Q --> AGG
   AGG -->|choice, rating| BAR[count per choice → bar chart]
   AGG -->|number| STAT["number range and average"]
@@ -41,13 +41,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                                     | Role                                                                             |
-| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Survey/Responses.vue`                  | The Summary and Individual views, and the empty state both share                 |
-| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`        | One question's card                                                              |
-| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`          | The cards, from the questions and the rows                                       |
-| `apps/web/app/composables/resource/survey/useReadSurveyResponses.ts`     | the records and the summary's reads; a failed survey read fails only the Summary |
-| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts` | the survey's questions from its model, without the theme, for the cards          |
+| File                                                                             | Role                                                                             |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Responses.vue`                          | The Summary and Individual views, and the empty state both share                 |
+| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`                | One question's card                                                              |
+| `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.ts`          | The cards, from the questions and the rows                                       |
+| `apps/web/app/composables/resource/survey/useReadSurveyResponses.ts`             | the records and the summary's reads; a failed survey read fails only the Summary |
+| `apps/web/app/services/resource/survey/getSurveyDocumentResponseSummaryCards.ts` | the survey's questions from its document, for the cards                          |
 
 ## Sources
 
