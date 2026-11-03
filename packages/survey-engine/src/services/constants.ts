@@ -6,6 +6,12 @@ export const MAX_SURVEY_QUESTION_COUNT = 1000;
 export const MAX_SURVEY_NODE_COUNT = 1500;
 // The most choices a question's list may hold, so a list cannot outgrow what a respondent reads
 export const MAX_SURVEY_CHOICE_COUNT = 200;
+// The most inputs one multiple text question holds, so the question stays a form a respondent fills in one pass
+export const MAX_SURVEY_MULTIPLE_TEXT_ITEM_COUNT = 50;
+// The most columns a dynamic matrix may hold, so each row a respondent adds stays readable across the screen
+export const MAX_SURVEY_MATRIX_COLUMN_COUNT = 50;
+// The most rows a dynamic matrix may hold, the bound every row count is held to
+export const MAX_SURVEY_MATRIX_ROW_COUNT = 100;
 // The most characters a text field may hold: a title, a description, a label, a choice's text or an error message
 export const MAX_SURVEY_TEXT_LENGTH = 1000;
 // The most characters a block of HTML or a completion page's markup may hold

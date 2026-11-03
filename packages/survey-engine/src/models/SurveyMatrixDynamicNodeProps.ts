@@ -4,14 +4,13 @@ import type { OwnProps } from "headless-block-editor";
 
 import { surveyMatrixColumnSchema } from "#src/models/SurveyMatrixColumn";
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";
-import { MAX_SURVEY_TEXT_LENGTH } from "#src/services/constants";
+import {
+  MAX_SURVEY_MATRIX_COLUMN_COUNT,
+  MAX_SURVEY_MATRIX_ROW_COUNT,
+  MAX_SURVEY_TEXT_LENGTH,
+} from "#src/services/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-
-// The most columns a dynamic matrix may hold, so each row a respondent adds stays readable across the screen
-const MAX_SURVEY_MATRIX_COLUMN_COUNT = 50;
-// The most rows a dynamic matrix may hold, the bound every row count is held to
-const MAX_SURVEY_MATRIX_ROW_COUNT = 100;
 
 // The props of a dynamic matrix question: a set of columns, and a list of rows a respondent adds and removes, each row answered in every column
 export interface SurveyMatrixDynamicNodeProps extends SurveyQuestionBaseProps {
