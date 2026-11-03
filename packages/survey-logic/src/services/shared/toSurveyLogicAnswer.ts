@@ -19,8 +19,9 @@ export const toSurveyLogicAnswer = (value: SurveyLogicValue): SurveyLogicValue =
     return value.slice(1, -1);
   if (!checkIsSurveyLogicNumber(value)) return value;
 
-  const isLeadingZero = value.startsWith("0") && !value.startsWith("0x");
-  if (isLeadingZero && value.length > 1 && ![".", ","].some((point) => value.startsWith(point, 1))) return value;
+  const text = value.trim();
+  const isLeadingZero = text.startsWith("0") && !text.startsWith("0x");
+  if (isLeadingZero && text.length > 1 && ![".", ","].some((point) => text.startsWith(point, 1))) return value;
 
   return toSurveyLogicNumber(value);
 };
