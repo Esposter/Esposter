@@ -222,10 +222,6 @@ catalog:
   sharp: ^0.35.5
   sirv: ^3.0.2
   superjson: ^2.2.6
-  survey-core: ^3.2.4
-  survey-creator-core: ^3.2.4
-  survey-creator-vue: ^3.2.4
-  survey-vue3-ui: ^3.2.4
   temporal-polyfill: ^1.0.6
   three: ^0.187.0
   three-globe: ^2.45.6
