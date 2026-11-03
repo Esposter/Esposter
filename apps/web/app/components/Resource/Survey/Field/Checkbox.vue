@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCheckboxNode } from "survey-engine";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 interface Props {
   error: string;
   isDisabled: boolean;
@@ -68,7 +70,7 @@ const setOtherText = (text: string) => {
           is-label-shown
           :aria-invalid="error ? true : undefined"
           :disabled="isDisabled"
-          :label="text || String(value)"
+          :label="getSurveyChoiceText({ text, value })"
           :model-value="isChosen(value)"
           @update:model-value="(isPicked: boolean) => toggleChoice(value, isPicked)"
         />

@@ -2,6 +2,8 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyButtonGroupNode } from "survey-engine";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 interface Props {
   error: string;
   isDisabled: boolean;
@@ -13,7 +15,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>();
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number | string>[]>(() =>
-  node.props.choices.map(({ text, value }) => ({ isDisabled, title: text || String(value), value })),
+  node.props.choices.map((choice) => ({ isDisabled, title: getSurveyChoiceText(choice), value: choice.value })),
 );
 const choice = computed<number | string>({
   get: () => (typeof answer.value === "number" || typeof answer.value === "string" ? answer.value : ""),

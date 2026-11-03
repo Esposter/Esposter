@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyChoice, SurveyMatrixNode } from "survey-engine";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
@@ -15,10 +17,9 @@ const label = computed(() => node.props.title || node.props.name);
 const answers = computed<Record<string, SurveyAnswerValue>>(() =>
   typeof answer.value === "object" && !Array.isArray(answer.value) ? answer.value : {},
 );
-const getChoiceText = ({ text, value }: SurveyChoice) => text || String(value);
 // Each column is keyed by its place in the question, since two values may read alike and a radio group keys its options by text
 const columnItems = computed(() =>
-  node.props.columns.map((column, index) => ({ title: getChoiceText(column), value: String(index) })),
+  node.props.columns.map((column, index) => ({ title: getSurveyChoiceText(column), value: String(index) })),
 );
 const getColumnKey = (row: SurveyChoice) => {
   const index = node.props.columns.findIndex(({ value }) => value === answers.value[String(row.value)]);
@@ -44,12 +45,12 @@ const updateRow = (row: SurveyChoice, columnKey: string) => {
         <table w-full>
           <tbody>
             <tr v-for="row of node.props.rows" :key="row.value">
-              <th scope="row" text-start font-normal align-top pr-4>{{ getChoiceText(row) }}</th>
+              <th scope="row" text-start font-normal align-top pr-4>{{ getSurveyChoiceText(row) }}</th>
               <td>
                 <UiRadioGroup
                   :is-disabled="isDisabled"
                   :items="columnItems"
-                  :label="getChoiceText(row)"
+                  :label="getSurveyChoiceText(row)"
                   :model-value="getColumnKey(row)"
                   @update:model-value="(columnKey) => updateRow(row, columnKey)"
                 />

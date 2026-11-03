@@ -7,7 +7,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
-import { SurveyMatrixCellType } from "survey-engine";
+import { getSurveyChoiceText, SurveyMatrixCellType } from "survey-engine";
 
 interface Props {
   error: string;
@@ -20,7 +20,7 @@ const { error, isDisabled, node } = defineProps<Props>();
 const rows = computed(() => getSurveyAnswerRows(answer.value, node.props.rowCount));
 // A choice is keyed by its value as text, which is how a select and a toggle group key their options
 const getChoiceItems = (choices: SurveyChoice[]): UiMenuItem<string>[] =>
-  choices.map(({ text, value }) => ({ title: text || String(value), value: String(value) }));
+  choices.map((choice) => ({ title: getSurveyChoiceText(choice), value: String(choice.value) }));
 // Each column's choices as the options its select and toggle group list, built once rather than for every row
 const choiceItemsMap = computed(() =>
   Object.fromEntries(
@@ -100,7 +100,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
                   :key="String(choice.value)"
                   is-label-shown
                   :disabled="isDisabled"
-                  :label="choice.text || String(choice.value)"
+                  :label="getSurveyChoiceText(choice)"
                   :model-value="isChosen(row[column.name], choice.value)"
                   @update:model-value="
                     (isChecked) =>

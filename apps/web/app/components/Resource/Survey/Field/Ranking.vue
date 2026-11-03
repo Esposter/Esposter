@@ -2,6 +2,8 @@
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "survey-engine";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
@@ -28,11 +30,7 @@ const rankedChoices = computed<KeyedChoice[]>(() => {
   return [...ranked, ...keyedChoices.value.filter((keyed) => !ranked.includes(keyed))];
 });
 const items = computed<UiListItem<string>[]>(() =>
-  rankedChoices.value.map(({ choice, key }) => ({
-    hasMarkSlot: true,
-    title: choice.text || String(choice.value),
-    value: key,
-  })),
+  rankedChoices.value.map(({ choice, key }) => ({ hasMarkSlot: true, title: getSurveyChoiceText(choice), value: key })),
 );
 // The list hands back its keys in their new order, each read back to the value its choice holds
 const onReorder = (keys: string[]) => {

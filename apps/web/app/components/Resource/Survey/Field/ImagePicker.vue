@@ -2,7 +2,7 @@
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyImageChoice, SurveyImagePickerNode } from "survey-engine";
 
-import { SurveyImageFit } from "survey-engine";
+import { getSurveyChoiceText, SurveyImageFit } from "survey-engine";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -35,7 +35,7 @@ const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
   keyedChoices.value.map(({ choice, key }) => ({
     hasMarkSlot: true,
     imageLink: choice.imageLink,
-    title: choice.text || String(choice.value),
+    title: getSurveyChoiceText(choice),
     value: key,
   })),
 );

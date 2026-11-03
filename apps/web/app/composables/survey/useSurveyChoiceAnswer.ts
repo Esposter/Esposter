@@ -2,6 +2,8 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyChoice } from "survey-engine";
 import type { Ref } from "vue";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
 // Option a radio group may add. A dropdown has no none option, so its node leaves both out
 export interface SurveyChoiceOptions {
@@ -42,7 +44,7 @@ export const useSurveyChoiceAnswer = (
   const items = computed<UiMenuItem<string>[]>(() => {
     const { choices, hasNone, hasOther, noneText } = getOptions();
     return [
-      ...choices.map(({ text, value }, index) => ({ title: text || String(value), value: String(index) })),
+      ...choices.map((choice, index) => ({ title: getSurveyChoiceText(choice), value: String(index) })),
       ...(hasOther ? [{ title: otherTitle.value, value: OTHER }] : []),
       ...(hasNone ? [{ title: noneText || NONE_TITLE, value: NONE }] : []),
     ];

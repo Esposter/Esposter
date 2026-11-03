@@ -2,6 +2,8 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyTagBoxNode } from "survey-engine";
 
+import { getSurveyChoiceText } from "survey-engine";
+
 interface Props {
   error: string;
   isDisabled: boolean;
@@ -23,8 +25,8 @@ const isOtherEntry = (entry: SurveyAnswerValue): entry is string =>
 const isOtherChosen = computed(() => node.props.hasOther && chosen.value.some(isOtherEntry));
 const otherText = computed(() => chosen.value.find(isOtherEntry) ?? "");
 const items = computed<UiMenuItem<string>[]>(() => {
-  const choices = node.props.choices.map(({ text, value }, index) => ({
-    title: text || String(value),
+  const choices = node.props.choices.map((choice, index) => ({
+    title: getSurveyChoiceText(choice),
     value: choiceKey(index),
   }));
   return node.props.hasOther ? [...choices, { title: node.props.otherText || "Other", value: otherKey }] : choices;
