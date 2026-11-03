@@ -15,6 +15,7 @@ import { createWorldParty } from "#src/services/party/createWorldParty";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldScreenStore } from "#src/store/screen";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -72,7 +73,6 @@ describe(useWorldTrials, () => {
     characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
     characters: shallowRef<Character[]>([]),
     claimedStageIds: new Set<number>(),
-    getGroundHeight: () => 0,
     party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
     weaponDataMap: new Map([
       [
@@ -84,6 +84,7 @@ describe(useWorldTrials, () => {
 
   const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) => {
     const worldSessionStore = startTestWorldSession({ gameDataBaseUrl: "https://example.test/game-data/" });
+    startTestWorldGround();
     const worldMapStore = useWorldMapStore();
     const jumpTo = vi.spyOn(worldMapStore, "jumpTo").mockImplementation(() => {});
     const worldScreenStore = useWorldScreenStore();

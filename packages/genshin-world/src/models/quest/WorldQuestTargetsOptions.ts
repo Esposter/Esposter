@@ -6,7 +6,6 @@ import type { Ref } from "vue";
 // What the quests' targets are placed from: the regions in reach and the spots their residents stand at, the camera whose
 // Ground point the character stands at, the one ground the heights are read off, and the quests and the target navigated to
 export interface WorldQuestTargetsOptions {
-  getGroundHeight: (x: number, z: number) => number;
   mapCamera: Readonly<Ref<MapCamera>>;
   windrise: Readonly<
     Ref<

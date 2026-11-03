@@ -18,6 +18,7 @@ import { BlossomCompanionshipExpMap } from "#src/services/originalResin/BlossomC
 import { ADVENTURE_EXP_PER_RESIN, FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
 import { ItemCategory } from "genshin-interface";
@@ -72,13 +73,13 @@ describe(useWorldOutcrops, () => {
     const startingAdventureExp = adventureExp.value;
     const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
     const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
+    startTestWorldGround();
     const outcrops = useWorldOutcrops({
       adventureRankTables,
       areaId: ref("mondstadt"),
       characters,
       enemyMap: new Map(),
       friendshipLevels,
-      getGroundHeight: () => 0,
       party: createParty([CHARACTER_ID]),
       placements: ref(PLACEMENTS),
       regionStatueProgressMap: ref(new Map()),

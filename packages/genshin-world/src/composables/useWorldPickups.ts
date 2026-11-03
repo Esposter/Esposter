@@ -27,6 +27,7 @@ import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { pickUpMaterialSource } from "#src/services/wildlife/pickUpMaterialSource";
 import { readMondstadtMaterialSourcePlaces } from "#src/services/wildlife/readMondstadtMaterialSourcePlaces";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { useIntervalFn, useNow } from "@vueuse/core";
@@ -37,16 +38,16 @@ import { storeToRefs } from "pinia";
 // The drops lying in the world and the gathering points, each drawn as a row the character can pick up. A drop or a point
 // Taken goes into the bag or the wallet, and what the bag has no room for stays on the ground, so a grant is saved at once
 export const useWorldPickups = ({
-  getGroundHeight,
   getServerClockOffsetMs,
   reliquaryPieceEntryMap,
   weaponDataMap,
 }: {
-  getGroundHeight: (x: number, z: number) => number;
   getServerClockOffsetMs: () => number;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldArchiveStore = useWorldArchiveStore();
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);

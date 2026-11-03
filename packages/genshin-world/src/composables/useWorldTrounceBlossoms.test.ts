@@ -40,6 +40,7 @@ import { flushReads } from "#src/services/shared/flushReads.test";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
@@ -103,13 +104,13 @@ describe(useWorldTrounceBlossoms, () => {
 
     const abyssOnlyKind = takeOne([...enemyTables.enemyKindMap.values()].filter(({ id }) => !checkIsEnemyKindId(id)));
     const { events } = startEpochSession();
+    startTestWorldGround();
     useWorldTrounceBlossoms({
       catalogue,
       characters: shallowRef<Character[]>([]),
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
       friendshipLevels: shallowRef<FriendshipLevels>(),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
@@ -130,13 +131,13 @@ describe(useWorldTrounceBlossoms, () => {
     expect.hasAssertions();
 
     const { events } = startEpochSession();
+    startTestWorldGround();
     const { lastTeleportAts } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
@@ -151,13 +152,13 @@ describe(useWorldTrounceBlossoms, () => {
     expect.hasAssertions();
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     startTestWorldSession({ getWorldNow: clock.getWorldNow, worldNow: clock.worldNow });
+    startTestWorldGround();
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>(),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
@@ -184,13 +185,13 @@ describe(useWorldTrounceBlossoms, () => {
     vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation((amount) => {
       adventureExp.value += amount;
     });
+    startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
@@ -219,13 +220,13 @@ describe(useWorldTrounceBlossoms, () => {
       adventureRankRewardsClaimed: [],
       worldLevelAdjustment: savedState.worldLevelAdjustment,
     });
+    startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });
@@ -272,13 +273,13 @@ describe(useWorldTrounceBlossoms, () => {
       adventureExp.value += amount;
     });
     const { inventory, wallet } = storeToRefs(worldSessionStore);
+    startTestWorldGround();
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       catalogue,
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
-      getGroundHeight: () => 0,
       party: createParty([TRAVELER_CHARACTER_ID]),
       savedState: createTrounceSave(),
     });

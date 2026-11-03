@@ -30,7 +30,6 @@ export interface WorldInteractionDispatchOptions {
   frostbearingTreePlaces: readonly FrostbearingTreePlace[];
   frostbearingTreeProgress: Readonly<Ref<OfferingProgressSave>>;
   getGameClockMinutes: () => number | undefined;
-  getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getTalkDuelGameId: (talkId: string) => number | undefined;
   grantRewards: (rewards: QuestRewardItem[]) => void;

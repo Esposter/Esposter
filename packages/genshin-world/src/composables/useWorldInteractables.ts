@@ -21,6 +21,7 @@ import { tapActionKey } from "#src/services/shared/tapActionKey";
 import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldSessionStore } from "#src/store/session";
 import { InputAction } from "genshin-engine";
@@ -40,7 +41,6 @@ export const useWorldInteractables = ({
   domainArena,
   fishingPointPlaces,
   frostbearingTreePlaces,
-  getGroundHeight,
   homePotPoint,
   homeRealmVisit,
   input,
@@ -53,6 +53,8 @@ export const useWorldInteractables = ({
   trounceBlossomInteractables,
   unlockedDomainEntrances,
 }: WorldInteractablesOptions) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldArchiveStore = useWorldArchiveStore();
   const { archiveData, offeredViewpoints, viewpointPlaceMap } = storeToRefs(worldArchiveStore);
   const worldMapStore = useWorldMapStore();

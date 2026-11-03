@@ -21,6 +21,7 @@ import { checkIsDropFallingAway } from "#src/services/interaction/checkIsDropFal
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -36,7 +37,6 @@ import { computed, shallowRef } from "vue";
 export const useWorldChests = ({
   artifactMainAffixPools,
   artifactRarityDataMap,
-  getGroundHeight,
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
@@ -49,7 +49,6 @@ export const useWorldChests = ({
 }: {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
-  getGroundHeight: (x: number, z: number) => number;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
@@ -60,6 +59,8 @@ export const useWorldChests = ({
   waterLevel: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldSessionStore = useWorldSessionStore();
   const { inventory, wallet } = storeToRefs(worldSessionStore);
   const { events, setInventory, setWallet } = worldSessionStore;

@@ -15,6 +15,7 @@ import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
@@ -28,17 +29,17 @@ import { computed, shallowRef } from "vue";
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   getCardGameExp,
-  getGroundHeight,
   getResidents,
   getResidentSpot,
 }: {
   // The card game's EXP the player holds, which with the main quests they have finished sets their Player Level
   getCardGameExp: () => number;
-  getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
   // The world's names by text id, which name a resident's row
 }) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();
   const { closeScreen } = worldScreenStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();

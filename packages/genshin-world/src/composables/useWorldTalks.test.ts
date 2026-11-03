@@ -12,6 +12,7 @@ import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { startTestAdventureRank } from "#src/store/adventureRank.fixture";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
@@ -39,9 +40,9 @@ const useMondstadtTalks = async (adventureRank: number) => {
   startTestWorldSession({ gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL });
   startTestAdventureRank(adventureRank);
   finishTestMainQuests(Number(GCG_TUTORIAL_QUEST_ID));
+  startTestWorldGround();
   const talks = useWorldTalks({
     getCardGameExp: () => 0,
-    getGroundHeight: () => 0,
     getResidents: () => residents,
     getResidentSpot: () => undefined,
   });
@@ -82,9 +83,9 @@ describe(useWorldTalks, () => {
     finishTestMainQuests(Number(GCG_TUTORIAL_QUEST_ID));
     const worldScreenStore = useWorldScreenStore();
     vi.spyOn(worldScreenStore, "closeScreen").mockImplementation(closeScreen);
+    startTestWorldGround();
     return useWorldTalks({
       getCardGameExp: () => cardGameExp,
-      getGroundHeight: () => 0,
       getResidents: () => [RESIDENT],
       getResidentSpot: () => undefined,
     });

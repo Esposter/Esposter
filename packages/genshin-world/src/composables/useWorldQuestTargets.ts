@@ -4,6 +4,7 @@ import type { WorldQuestTargetsOptions } from "#src/models/quest/WorldQuestTarge
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldSessionStore } from "#src/store/session";
 import { storeToRefs } from "pinia";
@@ -11,7 +12,9 @@ import { computed, watch } from "vue";
 
 // Where the quests' targets stand from the character: each go-to place the character steps into is a go-to event, and
 // The quests' distances and the navigated objective's mark are read off the regions in reach
-export const useWorldQuestTargets = ({ getGroundHeight, mapCamera, windrise }: WorldQuestTargetsOptions) => {
+export const useWorldQuestTargets = ({ mapCamera, windrise }: WorldQuestTargetsOptions) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldQuestsStore = useWorldQuestsStore();
   const { questProgressMap, questsInProgress, questTargetId } = storeToRefs(worldQuestsStore);
   const worldSessionStore = useWorldSessionStore();

@@ -20,7 +20,6 @@ export interface WorldInteractablesOptions {
   domainArena: Readonly<Ref<undefined | { center: { x: number; z: number } }>>;
   fishingPointPlaces: Readonly<Ref<FishingPointPlace[]>>;
   frostbearingTreePlaces: readonly FrostbearingTreePlace[];
-  getGroundHeight: (x: number, z: number) => number;
   homePotPoint: Readonly<Ref<undefined | { x: number; z: number }>>;
   homeRealmVisit: Readonly<Ref<HomeRealmVisit | undefined>>;
   input: Input;

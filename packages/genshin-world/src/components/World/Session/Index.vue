@@ -105,7 +105,6 @@ import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { HOME_REALM_GROUND_HEIGHT } from "#src/services/home/constants";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { MAP_REFERENCE_ZOOM_METRES, TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -121,9 +120,9 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
-import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMailStore } from "#src/store/mail";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldQuestsStore } from "#src/store/quests";
@@ -374,13 +373,15 @@ onUnmounted(() => {
 const origin = new Vector3();
 // The Serenitea Pot on the open world and the realm the player goes into from it
 const { homePotPoint, homeRealmVisit, placeUsedGadget, toggleHomeRealm } = useWorldHomeRealm();
-// The world's one ground, Windrise's with each region's laid over it from the moment the region first comes within
-// Reach, which everything in the world stands on. It is built again only as a region's ground arrives
-const worldHeight = computed(() =>
-  createWorldHeight(windriseData.baseGrounds, [...(windrise.value?.regionGroundMap.values() ?? [])]),
-);
-const getGroundHeight = (x: number, z: number): number =>
-  homeRealmVisit.value ? HOME_REALM_GROUND_HEIGHT : worldHeight.value(x, z);
+// The world's one ground, which everything in the world stands on
+const worldGroundStore = useWorldGroundStore();
+const { getGroundHeight, start: startGround, stop: stopGround } = worldGroundStore;
+startGround({
+  baseGrounds: windriseData.baseGrounds,
+  getIsInHomeRealm: () => homeRealmVisit.value !== undefined,
+  getRegionGrounds: () => [...(windrise.value?.regionGroundMap.values() ?? [])],
+});
+onUnmounted(stopGround);
 // What the character's body and the camera collide with, given the landmarks as they arrive
 const landmarkCollider = createLandmarkCollider();
 // What the character on the field is drawn on, which the controller moves and the scene places among everything in the
@@ -410,7 +411,6 @@ const {
   strikeGatheringOres,
   worldDrops,
 } = useWorldPickups({
-  getGroundHeight,
   getServerClockOffsetMs: () => serverClockOffsetMs,
   reliquaryPieceEntryMap,
   weaponDataMap: statTables.weaponDataMap,
@@ -435,12 +435,11 @@ const {
   timeTrialPlaces,
 });
 // Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
-const { openShrineById, shrineInteractables } = useWorldShrines({ getGroundHeight, shrineKeySources, shrineMarkers });
+const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources, shrineMarkers });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { campLockSources, chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   artifactMainAffixPools,
   artifactRarityDataMap,
-  getGroundHeight,
   openedChestIds,
   placeWorldDrops,
   puzzleChestPlaces,
@@ -543,7 +542,6 @@ const { openTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, tr
     characterIdKitMap,
     characters,
     claimedStageIds: savedState.characterTrialClaimedStageIds,
-    getGroundHeight,
     party,
     weaponDataMap: statTables.weaponDataMap,
   });
@@ -637,7 +635,6 @@ const {
   talkTextMap,
 } = useWorldTalks({
   getCardGameExp: () => cardGameExp.value,
-  getGroundHeight,
   getResidents,
   getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
 });
@@ -769,7 +766,6 @@ const {
   characters,
   enemyMap: kitContext.enemyMap,
   friendshipLevels,
-  getGroundHeight,
   party,
   placements: outcropPlaces,
   regionStatueProgressMap,
@@ -790,7 +786,6 @@ const {
   emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
   friendshipLevels,
-  getGroundHeight,
   party,
   savedState,
 });
@@ -849,7 +844,6 @@ const { dispatchInteraction } = useWorldInteractionDispatch({
   frostbearingTreePlaces,
   frostbearingTreeProgress,
   getGameClockMinutes: () => windrise.value?.gameClock.minutes,
-  getGroundHeight,
   getResidents,
   getTalkDuelGameId,
   grantRewards,
@@ -891,7 +885,6 @@ const { interactables, interactionPrompts, pressInteractable, readInteraction } 
   domainArena,
   fishingPointPlaces,
   frostbearingTreePlaces,
-  getGroundHeight,
   homePotPoint,
   homeRealmVisit,
   input,
@@ -990,7 +983,7 @@ const getCharacter = () => {
 };
 const getAntiColdRatio = () => getTeamAntiColdRatio(kitContext.kitEffectState.effects);
 // Where the quests' targets stand from the character, which the quest screen and the tracker read
-const { questDistanceMap, questMark } = useWorldQuestTargets({ getGroundHeight, mapCamera, windrise });
+const { questDistanceMap, questMark } = useWorldQuestTargets({ mapCamera, windrise });
 defineExpose({ jumpTo, readCameraPosition });
 // The Companionship EXP, the day's commissions, the statues, the solved puzzles, the realm's placements and the
 // Traveler's name no source changes yet, so they are carried as they were saved

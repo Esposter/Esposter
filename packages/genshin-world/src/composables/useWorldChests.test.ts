@@ -2,6 +2,7 @@ import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
@@ -12,6 +13,7 @@ vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
 
 const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["puzzleChestPlaces"]) => {
   startTestWorldSession();
+  startTestWorldGround();
   const worldAdventureRankStore = useWorldAdventureRankStore();
   vi.spyOn(worldAdventureRankStore, "gainWorldAdventureExp").mockImplementation(() => {});
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
@@ -20,7 +22,6 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
     ...useWorldChests({
       artifactMainAffixPools: [],
       artifactRarityDataMap: new Map(),
-      getGroundHeight: () => 0,
       openedChestIds,
       placeWorldDrops: vi.fn<() => void>(),
       puzzleChestPlaces,

@@ -18,6 +18,7 @@ import { ABYSS_ENTRANCE_INTERACTABLE_ID } from "#src/services/spiralAbyss/consta
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldArchiveStore } from "#src/store/archive";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldReputationStore } from "#src/store/reputation";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -42,7 +43,6 @@ export const useWorldInteractionDispatch = ({
   frostbearingTreePlaces,
   frostbearingTreeProgress,
   getGameClockMinutes,
-  getGroundHeight,
   getResidents,
   getTalkDuelGameId,
   grantRewards,
@@ -74,6 +74,8 @@ export const useWorldInteractionDispatch = ({
   unlockedDomainEntrances,
   worldDrops,
 }: WorldInteractionDispatchOptions) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldScreenStore = useWorldScreenStore();
   const { screenKind } = storeToRefs(worldScreenStore);
   const worldArchiveStore = useWorldArchiveStore();

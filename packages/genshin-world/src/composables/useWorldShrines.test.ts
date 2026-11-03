@@ -10,6 +10,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { SHRINE_REGION_ID } from "#src/services/puzzle/constants";
+import { startTestWorldGround } from "#src/store/ground.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { InteractionKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
@@ -71,11 +72,8 @@ describe(useWorldShrines, () => {
     const shrineMarkers = reactive<ShrineMarker[]>([
       { id: SHRINE_ID, position: SHRINE_POSITION, shrine: { isOpen: false, region: SHRINE_REGION_ID } },
     ]);
-    const { openShrineById, shrineInteractables } = useWorldShrines({
-      getGroundHeight: () => GROUND_HEIGHT,
-      shrineKeySources: keySources,
-      shrineMarkers,
-    });
+    startTestWorldGround(GROUND_HEIGHT);
+    const { openShrineById, shrineInteractables } = useWorldShrines({ shrineKeySources: keySources, shrineMarkers });
     return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
   };
 

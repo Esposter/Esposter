@@ -37,6 +37,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyResetDayCurrent";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldSessionStore } from "#src/store/session";
 import { getResultAsync, getSynchronizedFunction } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -54,7 +55,6 @@ export const useWorldOutcrops = ({
   characters,
   enemyMap,
   friendshipLevels,
-  getGroundHeight,
   party,
   placements,
   regionStatueProgressMap,
@@ -64,11 +64,12 @@ export const useWorldOutcrops = ({
   characters: Ref<Character[]>;
   enemyMap: ReadonlyMap<string, Enemy>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  getGroundHeight: (x: number, z: number) => number;
   party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
 }) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { adventureExp, completedMainQuestIds, rank } = storeToRefs(worldAdventureRankStore);
   const worldSessionStore = useWorldSessionStore();

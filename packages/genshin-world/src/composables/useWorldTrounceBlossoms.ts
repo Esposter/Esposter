@@ -34,6 +34,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldGroundStore } from "#src/store/ground";
 import { useWorldSessionStore } from "#src/store/session";
 import { takeOne } from "@esposter/shared";
 import { storeToRefs } from "pinia";
@@ -49,7 +50,6 @@ export const useWorldTrounceBlossoms = ({
   emitGrant,
   enemyKindMap,
   friendshipLevels,
-  getGroundHeight,
   party,
   savedState,
 }: {
@@ -58,10 +58,11 @@ export const useWorldTrounceBlossoms = ({
   emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
-  getGroundHeight: (x: number, z: number) => number;
   party: Party;
   savedState: Pick<GenshinSaveState, "lastTeleportAts" | "trounceBlossoms">;
 }) => {
+  const worldGroundStore = useWorldGroundStore();
+  const { getGroundHeight } = worldGroundStore;
   const worldAdventureRankStore = useWorldAdventureRankStore();
   const { gainWorldAdventureExp } = worldAdventureRankStore;
   const worldSessionStore = useWorldSessionStore();
