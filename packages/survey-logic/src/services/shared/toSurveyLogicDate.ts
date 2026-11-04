@@ -1,4 +1,4 @@
-const pad = (value: number, length: number): string => String(value).padStart(length, "0");
+import { padWithZeros } from "#src/services/shared/padWithZeros";
 
 // A wall-clock midnight is written as its date alone, the form a date answer takes, so a result compares with an answer.
 // Any other moment keeps its time, which parseSurveyLogicDate reads back to the same wall clock. A year past the four digits a
@@ -9,7 +9,7 @@ export const toSurveyLogicDate = (wallClock: Date): string | undefined => {
   const year = wallClock.getUTCFullYear();
   if (year < 0 || year > 9999) return undefined;
 
-  const datePart = `${pad(year, 4)}-${pad(wallClock.getUTCMonth() + 1, 2)}-${pad(wallClock.getUTCDate(), 2)}`;
+  const datePart = `${padWithZeros(year, 4)}-${padWithZeros(wallClock.getUTCMonth() + 1, 2)}-${padWithZeros(wallClock.getUTCDate(), 2)}`;
   if (
     wallClock.getUTCHours() === 0 &&
     wallClock.getUTCMinutes() === 0 &&
@@ -18,5 +18,5 @@ export const toSurveyLogicDate = (wallClock: Date): string | undefined => {
   )
     return datePart;
 
-  return `${datePart}T${pad(wallClock.getUTCHours(), 2)}:${pad(wallClock.getUTCMinutes(), 2)}:${pad(wallClock.getUTCSeconds(), 2)}.${pad(wallClock.getUTCMilliseconds(), 3)}`;
+  return `${datePart}T${padWithZeros(wallClock.getUTCHours(), 2)}:${padWithZeros(wallClock.getUTCMinutes(), 2)}:${padWithZeros(wallClock.getUTCSeconds(), 2)}.${padWithZeros(wallClock.getUTCMilliseconds(), 3)}`;
 };

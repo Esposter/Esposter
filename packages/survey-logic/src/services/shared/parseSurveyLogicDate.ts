@@ -1,6 +1,8 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
+import { checkIsCalendarDay } from "#src/services/shared/checkIsCalendarDay";
 import { createSurveyLogicWallClock } from "#src/services/shared/createSurveyLogicWallClock";
+import { padWithZeros } from "#src/services/shared/padWithZeros";
 import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
 
 // An ISO date, with an optional time of day: the separator is a T or the space RFC 3339 allows, the seconds and the fraction are
@@ -37,16 +39,10 @@ export const parseSurveyLogicDate = (value: SurveyLogicValue): Date | undefined 
   const millisecond = Number(`${fractionText}00`.slice(0, 3));
   if (zone !== undefined) {
     const instant = new Date(
-      `${yearText}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}.${millisecond.toString().padStart(3, "0")}${zone}`,
+      `${yearText}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}.${padWithZeros(millisecond, 3)}${zone}`,
     );
     return Number.isNaN(instant.getTime()) ? undefined : toSurveyLogicWallClock(instant);
   }
 
   return createSurveyLogicWallClock(year, month - 1, day, { hour, millisecond, minute, second });
-};
-
-// Whether a month and a day name a day that exists in the year, so the thirty-first of April is not one
-const checkIsCalendarDay = (year: number, month: number, day: number): boolean => {
-  const date = createSurveyLogicWallClock(year, month - 1, day);
-  return date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 };
