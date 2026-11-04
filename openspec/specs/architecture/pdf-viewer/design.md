@@ -66,8 +66,6 @@ The viewer draws a primary bar, a search row, the password form when the documen
 
 These were on the surface before and are not drawn now, for the reason the second column gives.
 
-These were on the surface before and are not now, for the reason the second column gives.
-
 | Removed control                      | Why it is gone                                                                                                                      |
 | :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | Go                                   | The page field commits on Enter, so a button repeating Enter is a second control for one job                                        |
