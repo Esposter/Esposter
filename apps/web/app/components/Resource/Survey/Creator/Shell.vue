@@ -5,19 +5,21 @@ import type { UiTabItem } from "@/models/ui/UiTabItem";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
+import {
+  CANVAS_TAB,
+  LAYERS_TAB,
+  LOGIC_TAB,
+  PALETTE_TAB,
+  PROPERTIES_TAB,
+  STRUCTURE_TAB,
+  SURVEY_CREATOR_COMMAND_GROUP,
+  THEME_TAB,
+} from "@/services/resource/survey/constants";
 import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { noop } from "@esposter/shared";
 
-const SURVEY_CREATOR_COMMAND_GROUP = "Survey creator";
-const CANVAS_TAB = "Canvas";
-const STRUCTURE_TAB = "Structure";
-const LAYERS_TAB = "Layers";
-const PALETTE_TAB = "Palette";
-const PROPERTIES_TAB = "Properties";
-const LOGIC_TAB = "Logic";
-const THEME_TAB = "Theme";
 // The tabs a narrow screen stacks the three panes into, one pane at a time: the structure pane's two tabs as one tab
 const narrowTabItems: UiTabItem<string>[] = [
   { title: CANVAS_TAB, value: CANVAS_TAB },

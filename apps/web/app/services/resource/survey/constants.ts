@@ -185,3 +185,13 @@ export const SURVEY_PREVIEW_MODE = "Preview";
 export const SURVEY_OTHER_KEY = "other";
 export const SURVEY_OTHER_TITLE = "Other";
 export const SURVEY_NONE_TITLE = "None";
+
+// The shell's command group, and the name of each pane it opens as a tab
+export const SURVEY_CREATOR_COMMAND_GROUP = "Survey creator";
+export const CANVAS_TAB = "Canvas";
+export const STRUCTURE_TAB = "Structure";
+export const LAYERS_TAB = "Layers";
+export const PALETTE_TAB = "Palette";
+export const PROPERTIES_TAB = "Properties";
+export const LOGIC_TAB = "Logic";
+export const THEME_TAB = "Theme";
