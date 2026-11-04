@@ -5962,7 +5962,7 @@
     "expression": "{list.Length}",
     "answers": { "list": [1, 2, 3] },
     "value": { "type": "null" },
-    "deviation": { "ours": { "type": "undefined" }, "rule": "case-sensitive" }
+    "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
   },
   {
     "expression": "{length}",
