@@ -1,12 +1,15 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-// The loose equality JavaScript gives two values that are not lists or both texts.
-// An unanswered value equals only another unanswered one, values of one type compare directly.
-// A number and a boolean meet as numbers
-export const checkIsSurveyLogicPrimitiveEqual = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
-  if (left === undefined) return right === undefined;
-  if (right === undefined) return false;
-  if (typeof left === typeof right) return left === right;
+import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
-  return Number(left) === Number(right);
+// Two primitives are equal when both are the same boolean, when both read as the same number, or when both are the same
+// Text. A boolean equals nothing else, and a number equals a value only when that value reads as the same number
+export const checkIsSurveyLogicPrimitiveEqual = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
+  if (typeof left === "boolean" || typeof right === "boolean") return left === right;
+
+  const leftNumber = toSurveyLogicNumber(left);
+  const rightNumber = toSurveyLogicNumber(right);
+  if (leftNumber !== undefined || rightNumber !== undefined) return leftNumber === rightNumber;
+
+  return left === right;
 };

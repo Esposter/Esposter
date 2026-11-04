@@ -73,6 +73,20 @@ describe("the oracle fixtures", () => {
       "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
     "unary-minus":
       "A unary minus binds looser than `^`, so `-2 ^ 2` is the negation of a square, where SurveyJS squares a negation",
+    "numbers-compare":
+      "Two values that read as numbers compare as numbers, so `'10' < '9'` is false and `'5.0' = '5'` is true, where SurveyJS compares the texts",
+    "text-identity":
+      "Texts are equal only when they are identical, with no trimming and no change of case, where SurveyJS trims and ignores case",
+    "empty-equality":
+      "Empty values equal each other, so an empty list or record equals an unanswered value and an empty text, where SurveyJS does not",
+    "boolean-equality":
+      "A boolean equals only the same boolean, so `false` is not zero, a text spelling `true` is not `true`, and a list holding a number does not hold `true`, where SurveyJS equates them",
+    "unordered-values":
+      "An empty value, or a number against a text that is not a number, is never ordered, where SurveyJS orders them as zero or as text",
+    "falsy-needle": "A needle of zero or false matches like any other value, where SurveyJS treats it as empty",
+    "negated-containment":
+      "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",
+    "empty-needle-list": "`anyof` of an empty list is false, where SurveyJS gives true for any answer",
     "numeric-arithmetic":
       "Arithmetic is numeric: an empty, boolean, list or record operand has no result, `+` joins only two texts that are not numbers, and a division or remainder by zero has none",
     "one-absent-value":

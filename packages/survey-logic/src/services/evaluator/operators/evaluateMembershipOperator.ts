@@ -4,12 +4,9 @@ import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBina
 import { checkIsSurveyLogicAllOf } from "#src/services/shared/checkIsSurveyLogicAllOf";
 import { checkIsSurveyLogicAnyOf } from "#src/services/shared/checkIsSurveyLogicAnyOf";
 import { checkIsSurveyLogicContaining } from "#src/services/shared/checkIsSurveyLogicContaining";
-import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Membership is boolean.
-// `notcontains` is also true for an unanswered left side against a right side with something in it.
-// The containment check alone would not say so
+// Membership is boolean, and `notcontains` is the negation of `contains`
 export const evaluateMembershipOperator = (
   operator:
     | SurveyExpressionBinaryOperator.AllOf
@@ -25,9 +22,9 @@ export const evaluateMembershipOperator = (
     case SurveyExpressionBinaryOperator.AnyOf:
       return checkIsSurveyLogicAnyOf(left, right);
     case SurveyExpressionBinaryOperator.Contains:
-      return checkIsSurveyLogicContaining(left, right, true);
+      return checkIsSurveyLogicContaining(left, right);
     case SurveyExpressionBinaryOperator.NotContains:
-      return (!left && !checkIsSurveyLogicValueEmpty(right)) || checkIsSurveyLogicContaining(left, right, false);
+      return !checkIsSurveyLogicContaining(left, right);
     default:
       return exhaustiveGuard(operator);
   }

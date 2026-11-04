@@ -6,24 +6,17 @@ import { compareSurveyLogicItems } from "#src/services/shared/compareSurveyLogic
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { takeOne } from "@esposter/shared";
 
-// SurveyJS's equality. A text compares trimmed and in lower case.
-// A list compares item by item, each list sorted first when the order is ignored.
-// Two lists that sort differently under case are unequal in SurveyJS too, so the sort is kept.
-// A record compares field by field, and two records with a different set of fields are unequal.
-// A number-reading comparison needs no step of its own, since the loose equality of two primitives reads the same numbers
+// The equality of two values (R7). Empty values equal each other and nothing else. A list compares item by item, each
+// List sorted first when the order is ignored, so two lists that sort differently under case are unequal. A record
+// Compares field by field, and two records with a different set of fields are unequal. Primitives compare as they do in
+// `checkIsSurveyLogicPrimitiveEqual`
 export const checkIsSurveyLogicValueEqual = (
   left: SurveyLogicValue,
   right: SurveyLogicValue,
   ignoreOrder = true,
 ): boolean => {
-  if (left === right) return true;
-  if (left === undefined && right === "") return true;
-  if (right === undefined && left === "") return true;
-  if (typeof left === "string" && typeof right === "string")
-    return left.trim().toLowerCase() === right.trim().toLowerCase();
-  if (checkIsSurveyLogicValueEmpty(left) !== checkIsSurveyLogicValueEmpty(right)) return false;
-  if (typeof left === "boolean" && typeof right === "string") return String(left) === right.toLowerCase();
-  if (typeof right === "boolean" && typeof left === "string") return String(right) === left.toLowerCase();
+  const isLeftEmpty = checkIsSurveyLogicValueEmpty(left);
+  if (isLeftEmpty || checkIsSurveyLogicValueEmpty(right)) return isLeftEmpty && checkIsSurveyLogicValueEmpty(right);
   if (Array.isArray(left) && Array.isArray(right)) {
     if (left.length !== right.length) return false;
 
@@ -34,13 +27,14 @@ export const checkIsSurveyLogicValueEqual = (
     );
   }
   if (Array.isArray(left) || Array.isArray(right)) return false;
-  if (typeof left === "object" && left !== null && typeof right === "object" && right !== null) {
+  if (typeof left === "object" && typeof right === "object") {
     const leftKeys = Object.keys(left);
     return (
       leftKeys.length === Object.keys(right).length &&
       leftKeys.every((key) => checkIsSurveyLogicValueEqual(left[key], getOwnValue(right, key), ignoreOrder))
     );
   }
+  if (typeof left === "object" || typeof right === "object") return false;
 
   return checkIsSurveyLogicPrimitiveEqual(left, right);
 };

@@ -146,12 +146,7 @@
   { "expression": "{a} < {b}", "answers": { "a": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": false } },
-  {
-    "expression": "{a} < {b}",
-    "answers": { "a": "5", "b": "abc" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
-  },
+  { "expression": "{a} < {b}", "answers": { "a": "5", "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": false } },
@@ -168,19 +163,34 @@
   { "expression": "{a} < {b}", "answers": { "a": "abc", "b": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "", "b": 0 }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < {b}", "answers": { "a": "", "b": "5" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} < {b}", "answers": { "a": "", "b": "abc" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} < {b}", "answers": { "a": "", "b": "" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < {b}", "answers": { "a": "", "b": [1, "x"] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} < {b}", "answers": { "a": "", "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} < {b}", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < {b}", "answers": { "a": [1, "x"], "b": 0 }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} < {b}",
-    "answers": { "a": [1, "x"], "b": "5" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "answers": { "a": "", "b": "5" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
   },
+  {
+    "expression": "{a} < {b}",
+    "answers": { "a": "", "b": "abc" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
+  { "expression": "{a} < {b}", "answers": { "a": "", "b": "" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} < {b}",
+    "answers": { "a": "", "b": [1, "x"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
+  {
+    "expression": "{a} < {b}",
+    "answers": { "a": "", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
+  { "expression": "{a} < {b}", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} < {b}", "answers": { "a": [1, "x"], "b": 0 }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} < {b}", "answers": { "a": [1, "x"], "b": "5" }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} < {b}",
     "answers": { "a": [1, "x"], "b": "abc" },
@@ -225,12 +235,7 @@
   { "expression": "{a} <= {b}", "answers": { "a": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": true } },
-  {
-    "expression": "{a} <= {b}",
-    "answers": { "a": "5", "b": "abc" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
-  },
+  { "expression": "{a} <= {b}", "answers": { "a": "5", "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "5", "b": "" }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} <= {b}",
@@ -251,18 +256,37 @@
   { "expression": "{a} <= {b}", "answers": { "a": "abc", "b": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "", "b": 0 }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} <= {b}", "answers": { "a": "", "b": "5" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} <= {b}", "answers": { "a": "", "b": "abc" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": "", "b": "5" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": "", "b": "abc" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} <= {b}", "answers": { "a": "", "b": "" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} <= {b}", "answers": { "a": "", "b": [1, "x"] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} <= {b}", "answers": { "a": "", "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": "", "b": [1, "x"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": "", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} <= {b}", "answers": { "a": "" }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} <= {b}", "answers": { "a": [1, "x"], "b": 0 }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} <= {b}",
     "answers": { "a": [1, "x"], "b": "5" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "value": { "type": "boolean", "value": false }
   },
   {
     "expression": "{a} <= {b}",
@@ -309,24 +333,24 @@
   { "expression": "{a} > {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} > {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": "5", "b": "abc" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} > {b}", "answers": { "a": "5", "b": "" }, "value": { "type": "boolean", "value": true } },
   {
     "expression": "{a} > {b}",
-    "answers": { "a": "5", "b": [1, "x"] },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "answers": { "a": "5", "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
   },
+  { "expression": "{a} > {b}", "answers": { "a": "5", "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} > {b}", "answers": { "a": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} > {b}", "answers": { "a": "abc", "b": "5" }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} > {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} > {b}",
-    "answers": { "a": "abc", "b": "5" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "answers": { "a": "abc", "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
   },
-  { "expression": "{a} > {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} > {b}", "answers": { "a": "abc", "b": "" }, "value": { "type": "boolean", "value": true } },
   {
     "expression": "{a} > {b}",
     "answers": { "a": "abc", "b": [1, "x"] },
@@ -348,7 +372,12 @@
     "answers": { "a": [1, "x"], "b": "abc" },
     "value": { "type": "boolean", "value": false }
   },
-  { "expression": "{a} > {b}", "answers": { "a": [1, "x"], "b": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} > {b}",
+    "answers": { "a": [1, "x"], "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   {
     "expression": "{a} > {b}",
     "answers": { "a": [1, "x"], "b": [1, "x"] },
@@ -363,7 +392,12 @@
   { "expression": "{a} > {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} > {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} > {b}", "answers": { "a": true, "b": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} > {b}",
+    "answers": { "a": true, "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   {
     "expression": "{a} > {b}",
     "answers": { "a": true, "b": [1, "x"] },
@@ -388,24 +422,28 @@
   { "expression": "{a} >= {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} >= {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} >= {b}", "answers": { "a": "5", "b": "abc" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} >= {b}", "answers": { "a": "5", "b": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} >= {b}",
+    "answers": { "a": "5", "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   {
     "expression": "{a} >= {b}",
     "answers": { "a": "5", "b": [1, "x"] },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "value": { "type": "boolean", "value": false }
   },
   { "expression": "{a} >= {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} >= {b}", "answers": { "a": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": "5" }, "value": { "type": "boolean", "value": false } },
+  { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "boolean", "value": true } },
   {
     "expression": "{a} >= {b}",
-    "answers": { "a": "abc", "b": "5" },
-    "value": { "type": "boolean", "value": false },
-    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "one-number-reading" }
+    "answers": { "a": "abc", "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
   },
-  { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": "" }, "value": { "type": "boolean", "value": true } },
   {
     "expression": "{a} >= {b}",
     "answers": { "a": "abc", "b": [1, "x"] },
@@ -431,7 +469,12 @@
     "answers": { "a": [1, "x"], "b": "abc" },
     "value": { "type": "boolean", "value": false }
   },
-  { "expression": "{a} >= {b}", "answers": { "a": [1, "x"], "b": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} >= {b}",
+    "answers": { "a": [1, "x"], "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   {
     "expression": "{a} >= {b}",
     "answers": { "a": [1, "x"], "b": [1, "x"] },
@@ -446,7 +489,12 @@
   { "expression": "{a} >= {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} >= {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} >= {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} >= {b}", "answers": { "a": true, "b": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} >= {b}",
+    "answers": { "a": true, "b": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   {
     "expression": "{a} >= {b}",
     "answers": { "a": true, "b": [1, "x"] },
@@ -2488,7 +2536,12 @@
   { "expression": "{a} or {b}", "answers": { "b": [1, "x"] }, "value": { "type": "list", "items": [] } },
   { "expression": "{a} or {b}", "answers": { "b": true }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} or {b}", "answers": {}, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} contains {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} contains {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
+  },
   { "expression": "{a} contains {b}", "answers": { "a": 0, "b": "5" }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} contains {b}",
@@ -2616,7 +2669,8 @@
   {
     "expression": "{a} contains {b}",
     "answers": { "a": [1, "x"], "b": true },
-    "value": { "type": "boolean", "value": true }
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
   },
   { "expression": "{a} contains {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   {
@@ -2657,7 +2711,12 @@
   { "expression": "{a} contains {b}", "answers": { "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} contains {b}", "answers": { "b": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} contains {b}", "answers": {}, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} notcontains {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "falsy-needle" }
+  },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": 0, "b": "5" },
@@ -2671,7 +2730,8 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": 0, "b": "" },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2683,11 +2743,17 @@
     "answers": { "a": 0, "b": true },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} notcontains {b}", "answers": { "a": 0 }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": 0 },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "5", "b": 0 },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2702,7 +2768,8 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "5", "b": "" },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2714,11 +2781,17 @@
     "answers": { "a": "5", "b": true },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} notcontains {b}", "answers": { "a": "5" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": "5" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "abc", "b": 0 },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2733,7 +2806,8 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "abc", "b": "" },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2745,7 +2819,12 @@
     "answers": { "a": "abc", "b": true },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} notcontains {b}", "answers": { "a": "abc" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": "abc" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "", "b": 0 },
@@ -2764,7 +2843,8 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": "", "b": "" },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2776,7 +2856,12 @@
     "answers": { "a": "", "b": true },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} notcontains {b}", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": "" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": [1, "x"], "b": 0 },
@@ -2805,13 +2890,15 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": [1, "x"], "b": true },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "boolean-equality" }
   },
   { "expression": "{a} notcontains {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": true } },
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": true, "b": 0 },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2826,7 +2913,8 @@
   {
     "expression": "{a} notcontains {b}",
     "answers": { "a": true, "b": "" },
-    "value": { "type": "boolean", "value": false }
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
   },
   {
     "expression": "{a} notcontains {b}",
@@ -2838,15 +2926,35 @@
     "answers": { "a": true, "b": true },
     "value": { "type": "boolean", "value": false }
   },
-  { "expression": "{a} notcontains {b}", "answers": { "a": true }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "a": true },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   { "expression": "{a} notcontains {b}", "answers": { "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} notcontains {b}", "answers": { "b": "5" }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} notcontains {b}", "answers": { "b": "abc" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} notcontains {b}", "answers": { "b": "" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": { "b": "" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   { "expression": "{a} notcontains {b}", "answers": { "b": [1, "x"] }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} notcontains {b}", "answers": { "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} notcontains {b}", "answers": {}, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} anyof {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains {b}",
+    "answers": {},
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
+  {
+    "expression": "{a} anyof {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
+  },
   { "expression": "{a} anyof {b}", "answers": { "a": 0, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} anyof {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} anyof {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "boolean", "value": true } },
@@ -2934,7 +3042,8 @@
   {
     "expression": "{a} anyof {b}",
     "answers": { "a": [1, "x"], "b": true },
-    "value": { "type": "boolean", "value": true }
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
   },
   { "expression": "{a} anyof {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} anyof {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": false } },
@@ -2948,7 +3057,8 @@
   {
     "expression": "{a} anyof {b}",
     "answers": { "a": true, "b": [1, "x"] },
-    "value": { "type": "boolean", "value": true }
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
   },
   { "expression": "{a} anyof {b}", "answers": { "a": true, "b": true }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} anyof {b}", "answers": { "a": true }, "value": { "type": "boolean", "value": true } },
@@ -2959,7 +3069,12 @@
   { "expression": "{a} anyof {b}", "answers": { "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} anyof {b}", "answers": { "b": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} anyof {b}", "answers": {}, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} allof {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} allof {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
+  },
   { "expression": "{a} allof {b}", "answers": { "a": 0, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} allof {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} allof {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "boolean", "value": false } },
@@ -3047,7 +3162,8 @@
   {
     "expression": "{a} allof {b}",
     "answers": { "a": [1, "x"], "b": true },
-    "value": { "type": "boolean", "value": true }
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
   },
   { "expression": "{a} allof {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} allof {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": false } },
@@ -3307,11 +3423,26 @@
     "value": { "type": "string", "value": "0x101" },
     "deviation": { "ours": { "type": "undefined" }, "rule": "one-number-reading" }
   },
-  { "expression": "'10' < '9'", "answers": {}, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "'10' < '9'",
+    "answers": {},
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "numbers-compare" }
+  },
   { "expression": "'10' < 9", "answers": {}, "value": { "type": "boolean", "value": false } },
   { "expression": "'5' > 3", "answers": {}, "value": { "type": "boolean", "value": true } },
-  { "expression": "'5.0' = '5'", "answers": {}, "value": { "type": "boolean", "value": false } },
-  { "expression": "'  x ' = 'x'", "answers": {}, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "'5.0' = '5'",
+    "answers": {},
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "numbers-compare" }
+  },
+  {
+    "expression": "'  x ' = 'x'",
+    "answers": {},
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "text-identity" }
+  },
   { "expression": "'a' < 'B'", "answers": {}, "value": { "type": "boolean", "value": false } },
   { "expression": "'B' < 'a'", "answers": {}, "value": { "type": "boolean", "value": true } },
   { "expression": "true > false", "answers": {}, "value": { "type": "boolean", "value": true } },
@@ -3342,7 +3473,12 @@
     "value": { "type": "number", "value": 0 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "one-number-reading" }
   },
-  { "expression": "{a} < 5", "answers": { "a": "0b1" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": "0b1" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} = 5", "answers": { "a": "0b1" }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} = 0",
@@ -3790,7 +3926,12 @@
   { "expression": "{a} < 5", "answers": { "a": { "b": "" } }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 5", "answers": { "a": { "b": "" } }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 0", "answers": { "a": { "b": "" } }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} = ''", "answers": { "a": { "b": "" } }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} = ''",
+    "answers": { "a": { "b": "" } },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "empty-equality" }
+  },
   {
     "expression": "{a} + 1",
     "answers": { "a": "" },
@@ -3809,7 +3950,12 @@
     "value": { "type": "number", "value": -1 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} < 5", "answers": { "a": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} = 5", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 0", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = ''", "answers": { "a": "" }, "value": { "type": "boolean", "value": true } },
@@ -3831,7 +3977,12 @@
     "value": { "type": "number", "value": -1 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} < 5", "answers": { "a": [null] }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": [null] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} = 5", "answers": { "a": [null] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 0", "answers": { "a": [null] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = ''", "answers": { "a": [null] }, "value": { "type": "boolean", "value": false } },
@@ -3877,7 +4028,12 @@
   },
   { "expression": "{a} < 5", "answers": { "a": false }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} = 5", "answers": { "a": false }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} = 0", "answers": { "a": false }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} = 0",
+    "answers": { "a": false },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
+  },
   { "expression": "{a} = ''", "answers": { "a": false }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} + 1",
@@ -3933,10 +4089,25 @@
     "value": { "type": "number", "value": -1 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} < 5", "answers": { "a": "  " }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": "  " },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} = 5", "answers": { "a": "  " }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} = 0", "answers": { "a": "  " }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} = ''", "answers": { "a": "  " }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} = 0",
+    "answers": { "a": "  " },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "one-number-reading" }
+  },
+  {
+    "expression": "{a} = ''",
+    "answers": { "a": "  " },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "text-identity" }
+  },
   {
     "expression": "{a} + 1",
     "answers": { "a": "x" },
@@ -4036,18 +4207,48 @@
   { "expression": "{a} = {b}", "answers": { "a": "", "b": null }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} < 5", "answers": {}, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= 0", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < 'x'", "answers": { "a": "" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 'x'",
+    "answers": { "a": "" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
+  },
   { "expression": "{a} > 'x'", "answers": { "a": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = ['b', 'A']", "answers": { "a": ["B", "a"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = [1, 2]", "answers": { "a": [2, 1] }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} = [1, 2]", "answers": { "a": [1, 2, 3] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} = ['a', 'b']", "answers": { "a": ["A", "B"] }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} = ['a', 'b']",
+    "answers": { "a": ["A", "B"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "text-identity" }
+  },
   { "expression": "{a} = []", "answers": { "a": [] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} = []", "answers": {}, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} != []", "answers": {}, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} = ''", "answers": { "a": [] }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} = []",
+    "answers": {},
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "empty-equality" }
+  },
+  {
+    "expression": "{a} != []",
+    "answers": {},
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "empty-equality" }
+  },
+  {
+    "expression": "{a} = ''",
+    "answers": { "a": [] },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "empty-equality" }
+  },
   { "expression": "{a} = ''", "answers": { "a": null }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} = ''", "answers": { "a": " " }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} = ''",
+    "answers": { "a": " " },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "text-identity" }
+  },
   { "expression": "{a} = 0", "answers": { "a": null }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 0", "answers": { "a": [] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 1", "answers": { "a": "1.0" }, "value": { "type": "boolean", "value": true } },
@@ -4068,7 +4269,12 @@
     "answers": { "a": ["red", "blue"] },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} contains 'RED'", "answers": { "a": ["red"] }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} contains 'RED'",
+    "answers": { "a": ["red"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "text-identity" }
+  },
   { "expression": "{a} contains 2", "answers": { "a": [1, 2, 3] }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} contains '2'", "answers": { "a": [1, 2, 3] }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} contains 1", "answers": { "a": 12 }, "value": { "type": "boolean", "value": true } },
@@ -4090,11 +4296,26 @@
     "answers": { "a": { "b": 1 } },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "{a} notcontains ''", "answers": { "a": "abc" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} notcontains ''",
+    "answers": { "a": "abc" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "negated-containment" }
+  },
   { "expression": "{a} contains ''", "answers": { "a": "axb" }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} contains 0", "answers": { "a": "a0b" }, "value": { "type": "boolean", "value": false } },
+  {
+    "expression": "{a} contains 0",
+    "answers": { "a": "a0b" },
+    "value": { "type": "boolean", "value": false },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "falsy-needle" }
+  },
   { "expression": "{a} contains true", "answers": { "a": [true] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} contains true", "answers": { "a": ["true"] }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} contains true",
+    "answers": { "a": ["true"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "boolean-equality" }
+  },
   {
     "expression": "{a} notcontains ['x', 'y']",
     "answers": { "a": ["red", "blue"] },
@@ -4106,8 +4327,18 @@
     "value": { "type": "boolean", "value": true }
   },
   { "expression": "{a} anyof 2", "answers": { "a": [1, 2] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} anyof []", "answers": { "a": [] }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} anyof []", "answers": { "a": ["red"] }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} anyof []",
+    "answers": { "a": [] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "empty-needle-list" }
+  },
+  {
+    "expression": "{a} anyof []",
+    "answers": { "a": ["red"] },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "empty-needle-list" }
+  },
   { "expression": "'re' anyof 'red'", "answers": {}, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} anyof ['red']", "answers": { "a": "red" }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} allof ['b', 'c']", "answers": { "a": "abc" }, "value": { "type": "boolean", "value": true } },

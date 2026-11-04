@@ -4,15 +4,16 @@ import { checkIsSurveyLogicContaining } from "#src/services/shared/checkIsSurvey
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSurveyLogicContaining, () => {
-  test.each<[string, SurveyLogicValue, SurveyLogicValue, boolean, boolean]>([
-    ["finds a text inside a text", "abc", "b", true, true],
-    ["finds nothing in a text for a record needle", "abc", { a: "b" }, true, false],
-    ["finds nothing in a text for an unanswered record needle", "abc", { a: undefined }, true, false],
-    ["finds nothing in a text for an empty needle", "abc", "", true, false],
-    ["finds nothing in a text for an empty needle, not contains either", "abc", "", false, false],
-  ])("%s", (_title, left, right, isContains, expected) => {
+  test.each<[string, SurveyLogicValue, SurveyLogicValue, boolean]>([
+    ["finds a text inside a text", "abc", "b", true],
+    ["finds a zero needle inside a text", "a0b", 0, true],
+    ["finds nothing in a text for a record needle", "abc", { a: "b" }, false],
+    ["finds nothing in a text for an unanswered record needle", "abc", { a: undefined }, false],
+    ["finds nothing in a text for an empty needle", "abc", "", false],
+    ["finds nothing in an unanswered haystack", undefined, "x", false],
+  ])("%s", (_title, left, right, expected) => {
     expect.hasAssertions();
 
-    expect(checkIsSurveyLogicContaining(left, right, isContains)).toBe(expected);
+    expect(checkIsSurveyLogicContaining(left, right)).toBe(expected);
   });
 });
