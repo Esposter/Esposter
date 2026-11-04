@@ -1,7 +1,6 @@
 {
   "name": "survey-engine",
   "version": "4.4.0",
-  "private": true,
   "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save and a runner whose state is plain functions, with no framework or DOM",
   "keywords": [
     "typescript"
@@ -36,7 +35,8 @@
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",

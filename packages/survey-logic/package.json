@@ -1,7 +1,6 @@
 {
   "name": "survey-logic",
   "version": "4.4.0",
-  "private": true,
   "description": "The survey's expression language — conditions, calculated values and validators over a survey's answers, checked against SurveyJS's recorded answers with every deliberate difference listed",
   "keywords": [
     "typescript"
@@ -37,7 +36,8 @@
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",
