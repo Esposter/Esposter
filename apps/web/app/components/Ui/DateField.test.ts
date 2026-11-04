@@ -32,6 +32,14 @@ describe("uiDateField", () => {
       expect(component.get('[role="grid"]').attributes("aria-label")).toBe(label);
     });
 
+    test("passes what a call site sets, such as an invalid mark, on its trigger", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiDateField, { attrs: { "aria-invalid": "true" }, props: { label } });
+
+      expect(component.get("button").attributes("aria-invalid")).toBe("true");
+    });
+
     test("cannot be opened or emptied while it is disabled", async () => {
       expect.hasAssertions();
 

@@ -31,6 +31,17 @@ describe("uiPopoverField", () => {
       expect(filledComponent.get(`[id="${filledValueId}"]`).text()).toBe(value);
     });
 
+    test("passes what a call site sets, such as an invalid mark, on its trigger", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiPopoverField, {
+        attrs: { "aria-invalid": "true" },
+        props: { isClearable: false, isEmpty: true, label, placeholder },
+      });
+
+      expect(component.get("button").attributes("aria-invalid")).toBe("true");
+    });
+
     test("offers a clear button that emits clear only while the field is clearable", async () => {
       expect.hasAssertions();
 

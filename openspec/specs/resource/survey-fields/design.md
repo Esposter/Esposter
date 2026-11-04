@@ -50,7 +50,7 @@ An image picker draws each picture at the pixels its author set, and at the defa
 
 An email, telephone or URL answer is the same line field as a text answer, typed as its kind, so the browser gives it that kind's keyboard and autofill and draws nothing else for it.
 
-An invalid radio group, select or tag box is marked invalid and tinted in the error colour, with the shell's alert beneath it and nothing else drawn for it.
+An invalid radio group, select, tag box, date or datetime field is marked invalid and tinted in the error colour, with the shell's alert or the field's message beneath it and nothing else drawn for it.
 
 A dropdown and a tag box with a placeholder show it in the trigger while nothing is picked, in the same muted text a text field's placeholder takes, in place of the question's title that the shell already draws above. The list never offers it, so it cannot be picked.
 
@@ -70,7 +70,6 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 
 Each gap is a change to the UI library, and each field works around it as the table says.
 
-- The date field has no invalid state and no error prop, so the date and datetime fields draw their error beneath the control and do not mark it invalid.
 - The library has no required prop, so the shell draws the required mark, and the matrix dynamic caption draws its own.
 - There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
 

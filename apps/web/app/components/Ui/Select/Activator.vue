@@ -74,10 +74,3 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
     </UiItemContent>
   </Select.Activator>
 </template>
-
-<style scoped>
-/* An invalid trigger is tinted in the error colour, as an invalid text field is tinted */
-[aria-invalid="true"] {
-  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
-}
-</style>

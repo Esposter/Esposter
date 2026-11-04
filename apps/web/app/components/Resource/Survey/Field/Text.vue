@@ -46,6 +46,7 @@ const date = computed<Date | undefined>({
     <UiDateField
       v-if="isDate"
       v-model="date"
+      :aria-invalid="error ? true : undefined"
       is-clearable
       :is-disabled="isDisabled || undefined"
       :is-time="isDateTime || undefined"

@@ -252,6 +252,8 @@ export default defineConfig({
       // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's
       // Fill, which reads too heavy for a count many of them sit beside
       "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text",
+      // An invalid field is tinted in the error colour, as an invalid text field is, whichever field it is drawn as
+      "data-[variant=Field]:aria-[invalid=true]:bg-[color-mix(in_srgb,var(--ui-error)_12%,var(--ui-field-background))]",
       "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a

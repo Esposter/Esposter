@@ -15,6 +15,8 @@ interface Props {
   // What the field reads while it holds nothing
   placeholder: string;
 }
+// What a call site passes, such as an invalid mark, goes to the trigger the field's button is
+defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode; value: () => VNode }>();
 // A field drawn as a select's trigger, whose value opens a panel of its own, with its label above it. The value is the
 // Value slot and the panel is the default slot; the caller answers the clear button through its clear event
@@ -36,6 +38,7 @@ defineExpose({ element });
       <UiPopover
         ref="popover"
         v-model:is-open="isOpen"
+        :="$attrs"
         :aria-describedby="valueId"
         :disabled="isDisabled"
         is-label-shown
