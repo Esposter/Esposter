@@ -5,7 +5,7 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import UiForm from "@/components/Ui/Form.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorChoiceListEditor", () => {
   test("an added choice is written, and moving it up one place is a second write", async () => {
@@ -86,9 +86,15 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
       props: { label: "Choices", modelValue: [red, blue] },
     });
     await wrapper.find('button[aria-label="Remove choice 1"]').trigger("click");
-    await getButtonByText(wrapper, "Cancel")?.trigger("click");
+
+    expect(wrapper.findComponent(UiConfirmDialog).props("title")).toBe("Remove choice 1?");
+
+    const cancelButton = getButtonByText(wrapper, "Cancel");
+    assert.exists(cancelButton);
+    await cancelButton.trigger("click");
     await wrapper.vm.$nextTick();
 
+    expect(wrapper.find('button[aria-label="Remove choice 1"]').exists()).toBe(true);
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 

@@ -219,6 +219,7 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       props: {
         error: "",
         isDisabled: true,
+        modelValue: [{ a: 1 }],
         node: {
           props: {
             ...surveyMatrixDynamicNodePropsSchema.parse({
@@ -244,8 +245,11 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       },
     });
     await flushPromises();
-    await component.findAll('[role="radio"]')[1]?.trigger("click");
+    const step = component.findAll('[role="radio"]')[1];
+    assert.exists(step);
+    await step.trigger("click");
 
+    expect(component.props("modelValue")).toStrictEqual([{ a: 1 }]);
     expect(component.emitted("update:modelValue")).toBeUndefined();
   });
 });

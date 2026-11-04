@@ -2,12 +2,13 @@
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import ResourceSurveyCreatorMatrixColumnsEditor from "@/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import UiForm from "@/components/Ui/Form.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { SurveyMatrixCellType } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
   test("owner adds, renames and removes a matrix column", async () => {
@@ -77,9 +78,15 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
       props: { label: "Columns", modelValue: [often] },
     });
     await wrapper.find('button[aria-label="Remove column 1"]').trigger("click");
-    await getButtonByText(wrapper, "Cancel")?.trigger("click");
+
+    expect(wrapper.findComponent(UiConfirmDialog).props("title")).toBe("Remove column 1?");
+
+    const cancelButton = getButtonByText(wrapper, "Cancel");
+    assert.exists(cancelButton);
+    await cancelButton.trigger("click");
     await wrapper.vm.$nextTick();
 
+    expect(wrapper.find('button[aria-label="Remove column 1"]').exists()).toBe(true);
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 

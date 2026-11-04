@@ -3,6 +3,7 @@ import type { SurveyDocument } from "survey-engine";
 
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import UiFileField from "@/components/Ui/FileField.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
@@ -13,7 +14,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getBlockNode } from "headless-block-editor";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
   deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),
@@ -133,7 +134,12 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
 
     const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
     await component.get('[aria-label="Remove choice 1"]').trigger("click");
-    await getButtonByText(component, "Cancel")?.trigger("click");
+
+    expect(component.findComponent(UiConfirmDialog).props("title")).toBe("Remove choice 1?");
+
+    const cancelButton = getButtonByText(component, "Cancel");
+    assert.exists(cancelButton);
+    await cancelButton.trigger("click");
     await flushPromises();
 
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a", "b"]);

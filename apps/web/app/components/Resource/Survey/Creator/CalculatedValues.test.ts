@@ -4,11 +4,12 @@ import type { SurveyDocument, SurveyNode } from "survey-engine";
 
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { checkSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding a question named "a", and the calculated values given by name
 const createSurveyTestDocument = (calculatedNames: string[]): SurveyDocument => {
@@ -110,8 +111,13 @@ describe("resourceSurveyCreatorCalculatedValues", () => {
     surveyCreatorStore.load(createSurveyTestDocument(["b", "c"]));
     const component = await mountSuspended(CalculatedValues);
 
-    await component.findAll('[aria-label="Remove calculated value"]')[0]?.trigger("click");
-    await getButtonByText(component, "Cancel")?.trigger("click");
+    await component.get('[aria-label="Remove calculated value"]').trigger("click");
+
+    expect(component.findComponent(UiConfirmDialog).props("modelValue")).toBe(true);
+
+    const cancelButton = getButtonByText(component, "Cancel");
+    assert.exists(cancelButton);
+    await cancelButton.trigger("click");
     await flushPromises();
 
     expect(surveyCreatorStore.document.root.props.calculatedValues.map(({ name }) => name)).toStrictEqual(["b", "c"]);
