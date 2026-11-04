@@ -17,7 +17,7 @@ interface Props {
 }
 
 // A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
-// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. Their paint is an open roadmap item
+// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. They stay unpainted by decision: the outline and the cursor show them
 defineSlots<{ default: () => VNode }>();
 const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
 const emit = defineEmits<{
