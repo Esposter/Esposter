@@ -28,7 +28,7 @@ flowchart TD
 
 ## Surface
 
-The viewer draws a primary bar, a search row, the password form when the document asks for one, the sidebar when it is open, and the pages. The occasional commands sit in one More menu. Each visible control below has a task, a frequency and a reason it is where it is. A control that could not say how often it is used and why it is visible is not drawn, and the removals are the last table.
+The viewer draws a primary bar, a search row, the password form when the document asks for one, the sidebar when it is open, and the pages. The occasional commands sit in one More menu. Each visible control below has a task, a frequency and a reason it is where it is. A control that could not say how often it is used and why it is visible is not drawn.
 
 ### The controls
 
@@ -60,19 +60,6 @@ The viewer draws a primary bar, a search row, the password form when the documen
 | Outline entries                                               | Goes to a section of the document                               | Sometimes                             | Sidebar, Outline tab                    | The document's own table of contents; each entry is a row that goes somewhere, so it is a row of the list                                                                           |
 | Thumbnail cards                                               | Goes to a page by sight                                         | Sometimes                             | Sidebar, Thumbnails tab                 | Each card is a whole page the reader chooses, so it is a card and not a row, and the page in view is marked                                                                         |
 | Password field and Open                                       | Unlocks a protected document                                    | When the document asks                | Between the search row and the pages    | It must come before any page, so it stands above them while it is asked                                                                                                             |
-
-### Removed from the surface
-
-These were on the surface before and are not drawn now, for the reason the second column gives.
-
-| Removed control                      | Why it is gone                                                                                                                                        |
-| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Go                                   | The page field commits on Enter, so a button repeating Enter is a second control for one job                                                          |
-| Fit width                            | The zoom readout returns to the scale a document opens in, which fits the page, so one control does both                                              |
-| Full screen (More menu item)         | The viewer is hosted only by a dialog that expands over the screen, so the dialog's expand is the full-screen control and the menu does not repeat it |
-| Rotate, Print, Download (icon)       | Occasional commands; they moved into the More menu so the bar holds only what every session uses                                                      |
-| Match case and Whole word checkboxes | Sometimes used; a checkbox pair beside the field took a row's width at a phone's width, so they moved into the menu as marked items                   |
-| Text zoom buttons "−" and "+"        | Replaced by the icon pair with the readout between them, so the zoom reads as one control and not as three text buttons                               |
 
 ### Layout at desktop width
 
@@ -132,6 +119,8 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 - **An outline entry with no destination is text.** A URI entry has nothing in the document for the reader to follow, and its address is never followed, since an outline address can be a script. Its entries are drawn as text rows in the order of the outline, so the outline is cut into one list per run of entries with a destination and text rows between them; arrow keys stop at each run, and the lists share the label "Outline".
 - **The thumbnail rail is the app's to draw.** The sidebar's card list is a component of the app, so its look follows the app's surfaces, while the package's composable supplies which cards are drawn at a time.
 - **Thumbnails turn with the pages.** A rail that stayed upright under a rotated page would show a different document from the one on screen.
+- **The bar holds only what every session uses.** Rotate, Print and Download sit in the More menu, so the bar draws no icon for them. Rejected: an icon on the bar for each occasional command, which spends the bar's width on commands most sessions never use.
+- **Search settings are marked menu items, not checkboxes beside the field.** Match case and Whole word are the menu's first group, and each is marked while on. Rejected: a checkbox pair in the search row, which takes a row's width at a phone's width.
 
 ## Key files
 
@@ -164,5 +153,5 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 
 ## Sources
 
-- [pdf.js viewer](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): its sidebar's Outline and Thumbnails tabs and its find bar's options menu are the reference for the surface above, departed from in the places the removed table names.
+- [pdf.js viewer](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): its sidebar's Outline and Thumbnails tabs and its find bar's options menu are the reference for the surface above, departed from where the controls table and the Decisions say so.
 - [@vue-pdf-viewer](https://www.npmjs.com/package/@vue-pdf-viewer/viewer), read from its tracker and its documentation only.
