@@ -16,7 +16,7 @@ describe("vue-pdfjs-headless", () => {
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 8 KB"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 16 KB"`);
   });
 
   test("#32 the package's build holds no renderer", () => {

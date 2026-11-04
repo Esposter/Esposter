@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A loaded PDF's drawing and the viewer's state as the headless package `vue-pdfjs-headless` states them: sharp pages, zoom within bounds, search, download and print, with no styling and no controls of its own.
+A loaded PDF's drawing and the viewer's state as the headless package `vue-pdfjs-headless` states them: sharp pages, zoom within bounds, search, the outline and thumbnails, fullscreen, download and print, with no styling and no controls of its own.
 
 ## Requirements
 
@@ -32,6 +32,22 @@ The package SHALL draw a page again when its canvas changes width, cancelling an
 - **WHEN** its canvas changes width
 - **THEN** the running draw is cancelled
 - **AND** the page shows only the draw at the new width
+
+### Requirement: Each rendered page is given for overlays
+
+The package SHALL give the consumer each rendered page's element and its viewport, which converts a rectangle on the page to the screen.
+
+#### Scenario: Placing an overlay on a page
+
+- **GIVEN** a document open in the viewer
+- **WHEN** its second page is rendered
+- **THEN** the consumer receives that page's element and viewport
+
+#### Scenario: Highlighting an area of a page
+
+- **GIVEN** a rectangle in a page's own coordinates
+- **WHEN** it is converted with that page's viewport
+- **THEN** the rectangle lands over the same area on screen at every zoom
 
 ### Requirement: Zoom stays within the renderer's bounds
 
@@ -78,6 +94,45 @@ The package SHALL search the document's text, reporting the number of matches an
 - **GIVEN** a document that does not hold a word
 - **WHEN** the reader searches for it
 - **THEN** no matches are reported
+
+#### Scenario: Highlighting a list of terms on load
+
+- **GIVEN** a list of two terms passed with the document
+- **WHEN** the document loads
+- **THEN** every match of both terms is highlighted
+
+### Requirement: The outline and thumbnails navigate
+
+The package SHALL give the document's outline as bookmarks and draw a page's thumbnail once its row is in view, marking the current page.
+
+#### Scenario: Following a bookmark
+
+- **GIVEN** a document whose outline points at its third page
+- **WHEN** the reader follows that entry
+- **THEN** the viewer shows the third page
+
+#### Scenario: A document with no outline
+
+- **GIVEN** a document with no outline
+- **WHEN** it loads
+- **THEN** the bookmarks are empty
+
+#### Scenario: The thumbnail sidebar marks the current page
+
+- **GIVEN** a sidebar of thumbnails beside the viewer
+- **WHEN** the reader scrolls to the second page
+- **THEN** the second thumbnail is marked as current
+- **AND** a thumbnail out of view is not drawn
+
+### Requirement: Fullscreen follows the browser
+
+The package SHALL enter fullscreen on the consumer's container and report whether it is fullscreen as the browser changes it.
+
+#### Scenario: Leaving fullscreen with the Escape key
+
+- **GIVEN** the viewer in fullscreen
+- **WHEN** the reader presses Escape
+- **THEN** the viewer reports that it is no longer fullscreen
 
 ### Requirement: A document downloads and prints
 

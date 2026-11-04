@@ -1,3 +1,4 @@
+import { CompactType } from "#src/models/CompactType";
 import { fitLayout } from "#src/placement/fitLayout";
 import { describe, expect, test } from "vitest";
 
@@ -13,6 +14,7 @@ describe(fitLayout, () => {
           { h: 2, id: "b", w: 6, x: 0, y: 0 },
         ],
         6,
+        CompactType.Vertical,
       ),
     ).toStrictEqual([
       { h: 2, id: "b", w: 6, x: 0, y: 0 },

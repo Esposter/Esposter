@@ -7,6 +7,7 @@ import { onScopeDispose, toValue, watch } from "vue";
 
 interface UsePdfPageOptions {
   canvas: MaybeRefOrGetter<HTMLCanvasElement | undefined>;
+  isVisible?: MaybeRefOrGetter<boolean>;
   pageNumber: MaybeRefOrGetter<number>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
 }
@@ -14,7 +15,7 @@ interface UsePdfPageOptions {
 // Draws one page of a loaded document into a canvas the consumer renders.
 // The page is drawn at the canvas's width times the device's pixel ratio.
 // A width change starts a fresh draw, which supersedes the one still running
-export const usePdfPage = ({ canvas, pageNumber, pdfDocument }: UsePdfPageOptions): void => {
+export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }: UsePdfPageOptions): void => {
   // Zero until the observer reports a width, so a page is never drawn at no width
   let cssWidth = 0;
   // Bumped by every new page or document, so a page still loading is dropped rather than drawn over the newer one
@@ -34,7 +35,7 @@ export const usePdfPage = ({ canvas, pageNumber, pdfDocument }: UsePdfPageOption
   };
   const drawPage = () => {
     const currentCanvas = toValue(canvas);
-    if (!page || !currentCanvas || cssWidth === 0) return;
+    if (!page || !currentCanvas || cssWidth === 0 || !toValue(isVisible)) return;
 
     // A newer draw replaces the one in flight, since pdf.js drawing two renders onto one canvas leaves it half drawn
     cancelRender();
@@ -94,6 +95,12 @@ export const usePdfPage = ({ canvas, pageNumber, pdfDocument }: UsePdfPageOption
       });
     },
     { immediate: true },
+  );
+  watch(
+    () => toValue(isVisible),
+    (visible) => {
+      if (visible) drawPage();
+    },
   );
   onScopeDispose(() => {
     loadGeneration++;

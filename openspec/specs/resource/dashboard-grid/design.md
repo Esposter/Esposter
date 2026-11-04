@@ -10,7 +10,7 @@ A press on a tile starts a gesture in the package, and a move past the start dis
 
 ```mermaid
 flowchart TD
-  A["Grid.vue binds useGridLayout to the saved cells and the column count"] --> B["Tiles bind startGesture, and the corner handle binds startResize"]
+  A["Grid.vue binds useGridLayout to the saved cells and the column count"] --> B["Tiles and the corner handle bind startGesture"]
   B -->|"pointerup, one commit of the changed cells"| C["Content.vue writes each change to the visual store"]
   B -->|"a gesture held while the pointer moves"| D["The package previews the layout and Grid.vue draws the placeholder"]
   D -->|"pointerup"| C
@@ -26,7 +26,7 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 ## Decisions
 
 - **The library is replaced, not patched.** `grid-layout-plus` carried the drag library, its layout shape and its own resize rules, and keeping it would keep the defects its [upstream verdicts](../../vue-grid-layout-headless/README.md) judge. The placement and gestures live in the package, which the dashboard consumes like any other.
-- **Resize has one corner handle.** A dashboard resizes from its bottom-right corner, so that is the one handle the editor draws, and the package builds only that corner's resize. Per-edge handles were rejected for this component, since each edge's resize would need the placement logic on its own side; [every-edge resize](../../../deferred/vue-grid-layout-headless/every-edge-resize/design.md) is deferred for that reason.
+- **Resize has one corner handle.** A dashboard resizes from its bottom-right corner, so that is the one handle the editor draws. Per-edge handles were rejected for this component, since each edge's resize would need the placement logic on its own side. The grid package builds them once, for every consumer.
 - **The grid emits changes, not a whole layout.** Emitting a new layout array on each move, which a parent would copy back, was rejected. The commit carries only the changed visuals and fires once on release. The store applies it one visual at a time, and its autosave flushes once for the gesture rather than once per pointer move.
 - **Rendering compacts; it does not write back.** A saved layout can overlap: a new visual is placed at a fixed cell without checking its neighbours, so rendering a fitted layout can draw a visual above or below its saved row while the store keeps the saved cell. Writing the compacted layout back to the store on render was rejected: it would write on every open.
 - **A drag previews in the grid until release.** Writing each intermediate position to the store during a drag was rejected. The preview lives in the package's state until release, so a cancelled drag leaves no trace.
