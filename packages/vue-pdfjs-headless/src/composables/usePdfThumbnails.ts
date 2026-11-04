@@ -15,7 +15,8 @@ interface UsePdfThumbnailsOptions {
   root: MaybeRefOrGetter<HTMLElement | undefined>;
 }
 
-// One thumbnail per page of a loaded document, drawn only while its row is in view of the sidebar and marked current
+// One thumbnail per page of a loaded document, its page loaded and drawn only while its row is in view of the sidebar,
+// And marked current
 export const usePdfThumbnails = ({
   currentPageNumber,
   pagesRotation,
@@ -39,6 +40,8 @@ export const usePdfThumbnails = ({
     };
     usePdfPage({
       canvas: () => canvas.value,
+      // The row's visibility is the one signal, so a page loads once its row is first in view and is drawn while it is
+      isActive: () => isVisible.value,
       isVisible: () => isVisible.value,
       pageNumber,
       pagesRotation: () => toValue(pagesRotation),

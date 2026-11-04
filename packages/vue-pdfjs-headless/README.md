@@ -59,7 +59,7 @@ usePdfPage({ canvas, pageNumber: 1, pdfDocument });
 | `usePdfAnnotations` | composable | Exports the reader's comments and free-text annotations to XFDF, and imports them from XFDF                    |
 | `usePdfDocument`    | composable | Loads a document from a source through the consumer's renderer. Its password prompt and its failure are state. |
 | `usePdfPage`        | composable | Draws one page of a loaded document into a canvas, at the canvas's width and the device's pixel ratio          |
-| `usePdfThumbnails`  | composable | One thumbnail per page. A thumbnail is drawn only while its row is in view of the sidebar.                     |
+| `usePdfThumbnails`  | composable | One thumbnail per page. A thumbnail's page is loaded and drawn only while its row is in view of the sidebar.   |
 | `usePdfViewer`      | composable | Builds the renderer's viewer for a loaded document. Its pages, zoom and search are state.                      |
 | `usePdfZoomGesture` | composable | Zooms the viewer about the pointer on a pinch or a Ctrl-wheel. The content under the pointer stays in place.   |
 | `writeXfdf`         | function   | Writes free-text annotations as XFDF                                                                           |

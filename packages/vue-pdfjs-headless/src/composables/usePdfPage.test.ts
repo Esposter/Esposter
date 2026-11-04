@@ -260,6 +260,48 @@ describe(usePdfPage, () => {
     scope.stop();
   });
 
+  test("a page is not loaded until it is active", async () => {
+    expect.hasAssertions();
+
+    const isActive = shallowRef(false);
+    const pdfDocument = createDocument(
+      createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
+    );
+    const scope = effectScope();
+    scope.run(() => {
+      usePdfPage({ canvas: window.document.createElement("canvas"), isActive, pageNumber: 1, pdfDocument });
+    });
+    await flushPromises();
+
+    expect(pdfDocument.getPage).not.toHaveBeenCalled();
+    isActive.value = true;
+    await flushPromises();
+
+    expect(pdfDocument.getPage).toHaveBeenCalledExactlyOnceWith(1);
+    scope.stop();
+  });
+
+  test("a page loaded while active is kept when it is no longer active", async () => {
+    expect.hasAssertions();
+
+    const isActive = shallowRef(true);
+    const pdfDocument = createDocument(
+      createPage(vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {})))),
+    );
+    const scope = effectScope();
+    scope.run(() => {
+      usePdfPage({ canvas: window.document.createElement("canvas"), isActive, pageNumber: 1, pdfDocument });
+    });
+    await flushPromises();
+    isActive.value = false;
+    await flushPromises();
+    isActive.value = true;
+    await flushPromises();
+
+    expect(pdfDocument.getPage).toHaveBeenCalledExactlyOnceWith(1);
+    scope.stop();
+  });
+
   test("a canvas removed mid-draw cancels the draw", async () => {
     expect.hasAssertions();
 

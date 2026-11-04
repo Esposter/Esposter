@@ -3,10 +3,13 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { getCanvasScale } from "#src/services/getCanvasScale";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
-import { onScopeDispose, toValue, watch } from "vue";
+import { onScopeDispose, ref, toValue, watch } from "vue";
 
 interface UsePdfPageOptions {
   canvas: MaybeRefOrGetter<HTMLCanvasElement | undefined>;
+  // Whether the page is wanted. It loads the first time it is, and once loaded it stays loaded, so a row that leaves
+  // View keeps its page
+  isActive?: MaybeRefOrGetter<boolean>;
   isVisible?: MaybeRefOrGetter<boolean>;
   pageNumber: MaybeRefOrGetter<number>;
   pagesRotation?: MaybeRefOrGetter<number>;
@@ -18,6 +21,7 @@ interface UsePdfPageOptions {
 // A width change starts a fresh draw, which supersedes the one still running
 export const usePdfPage = ({
   canvas,
+  isActive = true,
   isVisible = true,
   pageNumber,
   pagesRotation = 0,
@@ -60,13 +64,22 @@ export const usePdfPage = ({
     awaitRender(task);
   };
 
+  // Latched by the first report that the page is wanted, so loading starts then and the page leaving view never undoes it
+  const isWanted = ref(false);
   watch(
-    [() => toValue(pdfDocument), () => toValue(pageNumber)],
-    getSynchronizedFunction(async ([currentDocument, currentPageNumber]) => {
+    () => toValue(isActive),
+    (active) => {
+      if (active) isWanted.value = true;
+    },
+    { immediate: true },
+  );
+  watch(
+    [() => toValue(pdfDocument), () => toValue(pageNumber), isWanted],
+    getSynchronizedFunction(async ([currentDocument, currentPageNumber, currentIsWanted]) => {
       const generation = ++loadGeneration;
       cancelRender();
       page = undefined;
-      if (!currentDocument) return;
+      if (!currentDocument || !currentIsWanted) return;
 
       await getResultAsync(async () => {
         const loadedPage = await currentDocument.getPage(currentPageNumber);

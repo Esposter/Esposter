@@ -159,7 +159,7 @@ The package SHALL search the document's text, reporting the number of matches an
 
 ### Requirement: The outline and thumbnails navigate
 
-The package SHALL give the document's outline as bookmarks and draw a page's thumbnail once its row is in view, marking the current page.
+The package SHALL give the document's outline as bookmarks and load and draw a page's thumbnail once its row is in view, marking the current page.
 
 #### Scenario: Following a bookmark
 
@@ -197,7 +197,7 @@ The package SHALL give the document's outline as bookmarks and draw a page's thu
 - **GIVEN** a sidebar of thumbnails beside the viewer
 - **WHEN** the reader scrolls to the second page
 - **THEN** the second thumbnail is marked as current
-- **AND** a thumbnail out of view is not drawn
+- **AND** a thumbnail out of view is neither loaded nor drawn
 
 #### Scenario: A drawn thumbnail turns with the pages
 

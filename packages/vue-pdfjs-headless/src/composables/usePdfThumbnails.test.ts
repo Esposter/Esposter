@@ -69,10 +69,8 @@ describe(usePdfThumbnails, () => {
       render,
       rotate: 0,
     } as unknown as PDFPageProxy;
-    const pdfDocument = {
-      getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
-      numPages: PAGE_COUNT,
-    } as unknown as PDFDocumentProxy;
+    const getPage = vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page));
+    const pdfDocument = { getPage, numPages: PAGE_COUNT } as unknown as PDFDocumentProxy;
     const currentPageNumber = ref(1);
     const scope = effectScope();
     const thumbnails = scope.run(() => usePdfThumbnails({ currentPageNumber, pagesRotation, pdfDocument, root }));
@@ -80,7 +78,7 @@ describe(usePdfThumbnails, () => {
     for (const row of thumbnails.value) row.canvas.value = window.document.createElement("canvas");
     await flushPromises();
 
-    return { currentPageNumber, getViewport, render, scope, thumbnails };
+    return { currentPageNumber, getPage, getViewport, render, scope, thumbnails };
   };
 
   test("the thumbnail sidebar marks the current page", async () => {
@@ -110,10 +108,10 @@ describe(usePdfThumbnails, () => {
     scope.stop();
   });
 
-  test("only a thumbnail in view of the sidebar is drawn", async () => {
+  test("only a thumbnail in view of the sidebar is loaded and drawn", async () => {
     expect.hasAssertions();
 
-    const { render, scope, thumbnails } = await mountSidebar();
+    const { getPage, render, scope, thumbnails } = await mountSidebar();
     // Only the second row is in view, so only its page is drawn
     const secondCanvas = thumbnails.value[SECOND_PAGE - 1]?.canvas.value;
     const thirdCanvas = thumbnails.value[PAGE_COUNT - 1]?.canvas.value;
@@ -123,6 +121,7 @@ describe(usePdfThumbnails, () => {
     reportVisibility(thirdCanvas, false);
     await flushPromises();
 
+    expect(getPage).toHaveBeenCalledExactlyOnceWith(SECOND_PAGE);
     expect(render).toHaveBeenCalledTimes(1);
     scope.stop();
   });
