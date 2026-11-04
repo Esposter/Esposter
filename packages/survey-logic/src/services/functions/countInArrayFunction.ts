@@ -6,7 +6,6 @@ import { getSurveyArrayParams } from "#src/services/shared/getSurveyArrayParams"
 export const countInArrayFunction: SurveyLogicFunction = (args) => {
   const params = getSurveyArrayParams(args);
   if (params === undefined) return undefined;
-  if (params.isFiltered) return undefined;
 
   return params.rows.length;
 };

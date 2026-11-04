@@ -7,7 +7,7 @@ import { getSurveyArrayParams } from "#src/services/shared/getSurveyArrayParams"
 // Or the returned field of the item that holds it. A filter is empty, as it is for sumInArray
 export const maxInArrayFunction: SurveyLogicFunction = (args) => {
   const params = getSurveyArrayParams(args);
-  if (params === undefined || params.isFiltered) return undefined;
+  if (params === undefined) return undefined;
 
   return getSurveyArrayExtreme(params, (best, candidate) => candidate > best);
 };

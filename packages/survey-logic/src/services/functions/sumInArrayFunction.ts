@@ -8,7 +8,6 @@ import { sumSurveyNumbers } from "#src/services/shared/sumSurveyNumbers";
 export const sumInArrayFunction: SurveyLogicFunction = (args) => {
   const params = getSurveyArrayParams(args);
   if (params === undefined) return undefined;
-  if (params.isFiltered) return undefined;
 
   return sumSurveyNumbers(params.rows.map((row) => row.field));
 };

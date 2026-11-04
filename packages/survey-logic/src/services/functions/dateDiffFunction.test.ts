@@ -3,6 +3,7 @@ import {
   TEST_CONTEXT,
   TEST_DAYLIGHT_GAP_DATE,
   TEST_EPOCH_DATE,
+  TEST_EPOCH_MORNING,
   TEST_YEAR_ONE_DATE,
   TEST_YEAR_ZERO_DATE,
   TEST_YEAR_ZERO_MARCH_DATE,
@@ -12,15 +13,14 @@ import { describe, expect, test } from "vitest";
 
 describe(dateDiffFunction, () => {
   const epochEarlyMorning = `${TEST_EPOCH_DATE}T08:15`;
-  const epochMorning = `${TEST_EPOCH_DATE}T10:00`;
 
   test.each([
     ["the days between two dates", [TEST_EPOCH_DATE, "1970-01-11"], 10],
     ["the days between two dates are the same in either order", ["1970-01-11", TEST_EPOCH_DATE], 10],
     ["an empty interval counts days", [TEST_EPOCH_DATE, "1970-01-11", ""], 10],
     ["the days across a daylight saving change are whole days", ["1970-04-25", "1970-04-27"], 2],
-    ["the hours between two times round up to a whole hour", [epochEarlyMorning, epochMorning, "hours"], 2],
-    ["the minutes between two times", [epochEarlyMorning, epochMorning, "minutes"], 105],
+    ["the hours between two times round up to a whole hour", [epochEarlyMorning, TEST_EPOCH_MORNING, "hours"], 2],
+    ["the minutes between two times", [epochEarlyMorning, TEST_EPOCH_MORNING, "minutes"], 105],
     [
       "the hours across a daylight saving change are the hours on the clock",
       ["1970-10-25T00:00", "1970-10-25T12:00", "hours"],

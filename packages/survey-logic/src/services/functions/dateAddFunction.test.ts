@@ -2,6 +2,7 @@ import {
   TEST_CONTEXT,
   TEST_DAYLIGHT_GAP_DATE,
   TEST_EPOCH_DATE,
+  TEST_EPOCH_MORNING,
   TEST_NEXT_YEAR_DATE,
   TEST_YEAR_ONE_DATE,
   TEST_YEAR_ZERO_DATE,
@@ -10,16 +11,14 @@ import { dateAddFunction } from "#src/services/functions/dateAddFunction";
 import { describe, expect, test } from "vitest";
 
 describe(dateAddFunction, () => {
-  const epochMorning = `${TEST_EPOCH_DATE}T10:00`;
-
   test.each([
     ["days are added to a date", [TEST_EPOCH_DATE, 10], "1970-01-11"],
     ["months are added to a date", [TEST_EPOCH_DATE, 2, "months"], "1970-03-01"],
     ["years are added to a date", [TEST_EPOCH_DATE, 1, "years"], TEST_NEXT_YEAR_DATE],
     ["a month that runs out of days ends on its last day", ["1970-01-31", 1, "months"], "1970-02-28"],
-    ["hours are added to a date and time", [epochMorning, 3, "hours"], "1970-01-01T13:00:00.000"],
-    ["minutes are added to a date and time", [epochMorning, 90, "minutes"], "1970-01-01T11:30:00.000"],
-    ["seconds are added to a date and time", [epochMorning, 30, "seconds"], "1970-01-01T10:00:30.000"],
+    ["hours are added to a date and time", [TEST_EPOCH_MORNING, 3, "hours"], "1970-01-01T13:00:00.000"],
+    ["minutes are added to a date and time", [TEST_EPOCH_MORNING, 90, "minutes"], "1970-01-01T11:30:00.000"],
+    ["seconds are added to a date and time", [TEST_EPOCH_MORNING, 30, "seconds"], "1970-01-01T10:00:30.000"],
     ["an empty interval adds days", [TEST_EPOCH_DATE, 1, ""], "1970-01-02"],
     ["an interval the language does not know has no result", [TEST_EPOCH_DATE, 1, "weeks"], undefined],
     ["a numeric string amount is read as its number, not joined onto the day", [TEST_EPOCH_DATE, "5"], "1970-01-06"],

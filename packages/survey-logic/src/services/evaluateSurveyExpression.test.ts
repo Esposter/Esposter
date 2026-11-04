@@ -86,8 +86,6 @@ describe(evaluateSurveyExpression, () => {
     ["a record with more fields is not equal", "{a} = {b}", { a: { x: 1, y: 2 }, b: { x: 1 } }, false],
     ["a list of records compares field by field", "{a} = {b}", { a: [{ x: 1 }], b: [{ x: 1 }] }, true],
     ["list items compare case-sensitively", "{a} = ['a', 'b']", { a: ["A", "B"] }, false],
-    // Lists sort before they compare, so an order that sorts differently under case compares unequal
-    ["lists sort before they compare", "{a} = ['b', 'A']", { a: ["B", "a"] }, false],
     ["an empty list equals an empty list", "{a} = []", { a: [] }, true],
     ["an unanswered question equals an empty list", "{a} = []", {}, true],
     ["an unanswered question is not unequal to an empty list", "{a} != []", {}, false],

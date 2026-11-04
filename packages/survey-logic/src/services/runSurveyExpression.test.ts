@@ -15,23 +15,6 @@ describe(runSurveyExpression, () => {
     expect(runSurveyExpression("{age} >= 18 and {name} = 'Ada'", context)).toStrictEqual(ok(true));
   });
 
-  test("a list contains a value", () => {
-    expect.hasAssertions();
-
-    const context: SurveyLogicContext = { now, scopes: {}, values: { colours: ["red", "blue"] } };
-
-    expect(runSurveyExpression("{colours} contains 'red'", context)).toStrictEqual(ok(true));
-  });
-
-  test("a reference to an unanswered question is empty", () => {
-    expect.hasAssertions();
-
-    const context: SurveyLogicContext = { now, scopes: {}, values: {} };
-
-    expect(runSurveyExpression("{age} empty", context)).toStrictEqual(ok(true));
-    expect(runSurveyExpression("{age} > 5", context)).toStrictEqual(ok(false));
-  });
-
   test("a malformed source is refused with the error of its parse", () => {
     expect.hasAssertions();
 

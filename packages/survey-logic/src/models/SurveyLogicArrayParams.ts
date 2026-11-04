@@ -1,9 +1,8 @@
 import type { SurveyLogicArrayRow } from "#src/models/SurveyLogicArrayRow";
 
-// An array function's arguments. A filter is a condition over each item's fields, which these arguments cannot carry, so a
-// Call that passes one is flagged rather than answered without it
+// An array function's arguments, read as its answer needs them: the items whose field reads as a number, and the field the
+// Function returns when the arguments name one
 export interface SurveyLogicArrayParams {
-  isFiltered: boolean;
   returnField?: string;
   rows: SurveyLogicArrayRow[];
 }

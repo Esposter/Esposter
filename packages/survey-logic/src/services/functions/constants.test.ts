@@ -11,6 +11,7 @@ export const TEST_CONTEXT: SurveyLogicContext = { now: TEST_NOW, scopes: {}, val
 // The epoch's calendar day, the one date a test writes; every other date a test needs is this day moved by a duration
 const epochDate: Temporal.PlainDate = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
 export const TEST_EPOCH_DATE: string = epochDate.toString();
+export const TEST_EPOCH_MORNING: string = epochDate.toPlainDateTime({ hour: 10 }).toString();
 // Thirty-six years before the epoch, so its age at the test clock is thirty-six years
 export const TEST_BIRTHDATE: string = epochDate.subtract({ years: 36 }).toString();
 // Two days after the test birthdate, so at the test clock its birthday is still to come and its age is one year short
