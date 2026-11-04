@@ -10,6 +10,7 @@ import type {
 
 import { SURVEY_UNNUMBERED_NODE_TYPES } from "@/services/resource/survey/constants";
 import {
+  checkIsLastSurveyPage,
   completeSurvey,
   createSurveyRunnerState,
   getSurveyPageElements,
@@ -19,7 +20,6 @@ import {
   getSurveyVisiblePageIndexes,
   goToNextSurveyPage,
   goToPreviousSurveyPage,
-  isLastSurveyPage,
   setSurveyAnswer,
   SurveyNodeType,
 } from "survey-engine";
@@ -65,7 +65,7 @@ export const useSurveyRunner = (
     getSurveyPanelRowViews(node, row, values.value, now.value);
   const visiblePageIndexes = computed(() => getSurveyVisiblePageIndexes(getDocument(), state.value.answers, now.value));
   const isFirstPage = computed(() => visiblePageIndexes.value[0] === state.value.pageIndex);
-  const isLastPage = computed(() => isLastSurveyPage(getDocument(), state.value, now.value));
+  const isLastPage = computed(() => checkIsLastSurveyPage(getDocument(), state.value, now.value));
   const isCompleted = computed(() => state.value.isCompleted);
   // The numbers of the questions on the pages up to the current one, so the current page's numbering carries on from them
   const questionNumbers = computed(() => {
