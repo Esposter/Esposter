@@ -65,7 +65,7 @@ const pasteLines = (event: ClipboardEvent) => {
         label="Add a choice"
         placeholder="Value or value|text"
         @add="addFromField()"
-        @paste="pasteLines"
+        @paste="(event) => pasteLines(event)"
       />
     </template>
   </ResourceSurveyCreatorListEditor>
