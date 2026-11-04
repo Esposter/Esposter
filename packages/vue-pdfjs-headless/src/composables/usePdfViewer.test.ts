@@ -635,6 +635,24 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
+  test("a document is editable only once the renderer reports its editor manager", async () => {
+    expect.hasAssertions();
+
+    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(createDocument(3));
+    const { scope, state } = mountViewer(pdfDocument);
+
+    // A document whose permissions withhold changes never gets a manager, so it is not editable
+    expect(state.isEditable.value).toBe(false);
+    reportEditorManager();
+    expect(state.isEditable.value).toBe(true);
+    pdfDocument.value = createDocument(3);
+    await nextTick();
+
+    // A new document has its own manager, which it has not reported yet
+    expect(state.isEditable.value).toBe(false);
+    scope.stop();
+  });
+
   test("stored free texts are drawn on each page the renderer has rendered", async () => {
     expect.hasAssertions();
 

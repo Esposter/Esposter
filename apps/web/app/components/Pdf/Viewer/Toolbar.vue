@@ -24,6 +24,7 @@ const emit = defineEmits<{ watermark: [] }>();
 const {
   currentPageNumber,
   editorMode,
+  isEditable,
   isMatchCase,
   isWholeWord,
   isZoomInDisabled,
@@ -106,7 +107,8 @@ const items = computed<Item[]>(() => [
     title: "Actual size",
   },
   {
-    disabled: isDisabled.value,
+    // A document the renderer cannot edit has no editor for a free text to be drawn with
+    disabled: isDisabled.value || !isEditable.value,
     isChecked: editorMode.value === PdfEditorMode.FreeText,
     isGroupStart: true,
     meaning: UiIconMeaning.Edit,
@@ -118,7 +120,7 @@ const items = computed<Item[]>(() => [
     title: "Add text",
   },
   {
-    disabled: isDisabled.value,
+    disabled: isDisabled.value || !isEditable.value,
     meaning: UiIconMeaning.Upload,
     onClick: async () => {
       await importFile(MimeType.Xfdf, ".xfdf", importAnnotations);

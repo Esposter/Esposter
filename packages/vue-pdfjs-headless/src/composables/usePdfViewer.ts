@@ -84,9 +84,11 @@ export const usePdfViewer = ({
   // The renderer makes its editor manager once a document's first page is read, and a new document replaces it.
   // A mode set while there is no manager throws, and a throw in a watcher freezes this viewer's rendering.
   // So the mode is set only once the renderer reports its manager, which is also what the stored editors are drawn through.
-  let editorManager: AnnotationEditorUIManager | undefined;
+  // A document whose permissions withhold changes is never given one, so it is not editable.
+  const editorManager = shallowRef<AnnotationEditorUIManager>();
+  const isEditable = computed(() => editorManager.value !== undefined);
   const applyEditorMode = () => {
-    if (pdfViewer && editorManager) pdfViewer.annotationEditorMode = { mode: editorMode.value };
+    if (pdfViewer && editorManager.value) pdfViewer.annotationEditorMode = { mode: editorMode.value };
   };
 
   const createViewer = (
@@ -125,7 +127,7 @@ export const usePdfViewer = ({
     // The renderer reports each editor manager it makes, which is the first point its mode can be set.
     // A new manager starts in none, so the mode the reader chose is set again on each document.
     bus.on("annotationeditoruimanager", (event: { uiManager: AnnotationEditorUIManager }) => {
-      editorManager = event.uiManager;
+      editorManager.value = event.uiManager;
       applyEditorMode();
     });
     bus.on("pagechanging", (event: { pageNumber: number }) => {
@@ -188,7 +190,7 @@ export const usePdfViewer = ({
     overlays.value = [];
     outline.value = undefined;
     // Setting the document replaces the renderer's editor manager, so its mode waits for the next one's report
-    editorManager = undefined;
+    editorManager.value = undefined;
     pdfViewer.setDocument(loaded ?? null);
     linkService.setDocument(loaded ?? null);
     // The renderer resets its page and rotation without an event, and the find controller reports nothing on reset.
@@ -305,7 +307,7 @@ export const usePdfViewer = ({
 
   // The renderer restores a stored editor onto its page when the page renders, so each rendered page is restored now
   const drawStoredEditors = getSynchronizedFunction(async () => {
-    const manager = editorManager;
+    const manager = editorManager.value;
     if (!manager) return;
 
     await getResultAsync(async () => {
@@ -363,6 +365,7 @@ export const usePdfViewer = ({
     fitWidth,
     followBookmark,
     goToPage,
+    isEditable,
     isMatchCase,
     isNotFound,
     isWholeWord,

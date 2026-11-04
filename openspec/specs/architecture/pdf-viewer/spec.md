@@ -343,7 +343,7 @@ The viewer SHALL read a document's comments once its Comments tab is opened, so 
 
 ### Requirement: The reader adds text, and imports or exports annotations, from the More menu
 
-The viewer SHALL offer Add text, Import annotations and Export annotations in the More menu. Add text SHALL switch the free-text mode on and off, marked while it is on. Import and Export SHALL read and write the document's free texts as XFDF. All three SHALL be unavailable until a document is open.
+The viewer SHALL offer Add text, Import annotations and Export annotations in the More menu. Add text SHALL switch the free-text mode on and off, marked while it is on. Import and Export SHALL read and write the document's free texts as XFDF. All three SHALL be unavailable until a document is open, and Add text and Import annotations SHALL also be unavailable on a document the renderer cannot edit.
 
 #### Scenario: Adding text is marked while it is on, and choosing it turns it off
 
@@ -381,3 +381,10 @@ The viewer SHALL offer Add text, Import annotations and Export annotations in th
 - **GIVEN** no document open
 - **WHEN** the reader opens the More menu
 - **THEN** Add text, Import annotations and Export annotations are disabled
+
+#### Scenario: A document the renderer cannot edit leaves Add text and Import annotations unavailable
+
+- **GIVEN** a document open in the viewer whose permissions withhold changes
+- **WHEN** the reader opens the More menu
+- **THEN** Add text and Import annotations are disabled
+- **AND** Export annotations is enabled
