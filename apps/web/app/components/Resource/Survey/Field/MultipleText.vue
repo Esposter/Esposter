@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyMultipleTextNode } from "survey-engine";
 
-import { SURVEY_MULTIPLE_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
+import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -38,7 +38,7 @@ const updateItem = (name: string, text: string) => {
           :is-required="node.props.isRequired || undefined"
           :label="item.title || item.name"
           :model-value="getText(answers[item.name])"
-          :type="SURVEY_MULTIPLE_TEXT_FIELD_TYPES[item.inputType]"
+          :type="SURVEY_TEXT_FIELD_TYPES[item.inputType]"
           @update:model-value="(text) => updateItem(item.name, text)"
         />
       </div>

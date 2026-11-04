@@ -132,8 +132,11 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
   UiIconMeaning.SmileyVeryHappy,
 ];
 
-// The input types the library's text field draws as its own control; the rest are typed as plain text
-export const SURVEY_TEXT_FIELD_TYPES: Readonly<Partial<Record<SurveyTextInputType, UiTextFieldType>>> = {
+// The input types the library's text field draws as its own control, for a text question and for each item of a multiple
+// text question, which takes a narrower list of them; the rest are typed as plain text
+export const SURVEY_TEXT_FIELD_TYPES: Readonly<
+  Partial<Record<SurveyMultipleTextItemInputType | SurveyTextInputType, UiTextFieldType>>
+> = {
   [SurveyTextInputType.Email]: UiTextFieldType.Email,
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
   [SurveyTextInputType.Password]: UiTextFieldType.Password,
@@ -141,14 +144,6 @@ export const SURVEY_TEXT_FIELD_TYPES: Readonly<Partial<Record<SurveyTextInputTyp
   [SurveyTextInputType.Time]: UiTextFieldType.Time,
   [SurveyTextInputType.Url]: UiTextFieldType.Url,
 };
-// The input type each item of a multiple text question is drawn with, where an item of another kind is plain text
-export const SURVEY_MULTIPLE_TEXT_FIELD_TYPES: Readonly<
-  Partial<Record<SurveyMultipleTextItemInputType, UiTextFieldType>>
-> = {
-  [SurveyMultipleTextItemInputType.Email]: UiTextFieldType.Email,
-  [SurveyMultipleTextItemInputType.Number]: UiTextFieldType.Number,
-};
-
 // The kinds the palette offers, in the groups it draws them under. The page is the toolbar's to add
 export const SURVEY_PALETTE_GROUPS: readonly { category: string; types: SurveyNodeType[] }[] = [
   {
