@@ -144,8 +144,19 @@ describe("uiSlider", () => {
         props: { isLabelHidden: true, label, max: 100, min: 0, modelValue: 0, step: 1, valueText },
       });
 
-      expect(component.text()).toBe(valueText);
+      expect(component.get(".sr-only").text()).toBe(label);
       expect(component.get('[role="slider"]').attributes("aria-label")).toBe(label);
+    });
+
+    test("names a required thumb with its label hidden by the label and the required word", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSlider, {
+        props: { isLabelHidden: true, isRequired: true, label, max: 100, min: 0, modelValue: 0, step: 1, valueText },
+      });
+      const labelledBy = component.get('[role="slider"]').attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${label} * required`);
     });
 
     test("draws a live level along its track, held to it and named apart from the value", () => {

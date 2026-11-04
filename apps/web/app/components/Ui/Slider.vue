@@ -6,7 +6,7 @@ interface Props {
   isDisabled?: boolean;
   // Marks the thumb invalid for assistive technology and tints the track in the error colour, as an invalid text field is
   isInvalid?: true;
-  // Hides the label from sight, where the thumb's aria-label still names what it sets
+  // Hides the label from sight, where it still names the thumb for speech
   isLabelHidden?: true;
   // Marks the label with the required mark, which speech announces as required once
   isRequired?: true;
@@ -63,7 +63,9 @@ useEventListener(["pointerup", "pointercancel"], () => {
   >
     <div :="attrs" :class="{ 'op-disabled': isDisabled }" flex flex-col gap-1>
       <div flex gap-2>
-        <span v-if="!isLabelHidden" :id="labelId" flex-1>{{ label }} <UiRequiredMark v-if="isRequired" /></span>
+        <span :id="labelId" :class="{ 'sr-only': isLabelHidden }" flex-1
+          >{{ label }} <UiRequiredMark v-if="isRequired"
+        /></span>
         <span text-muted>{{ valueText }}</span>
       </div>
       <div
