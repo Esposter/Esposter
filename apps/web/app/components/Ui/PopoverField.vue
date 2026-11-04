@@ -17,7 +17,7 @@ interface Props {
   // What the field reads while it holds nothing
   placeholder: string;
 }
-// What a call site passes, such as an invalid mark, goes to the trigger the field's button is
+// What a call site passes, such as an invalid mark, goes to the trigger, which is the field's button
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode; value: () => VNode }>();
 // A field drawn as a select's trigger, whose value opens a panel of its own, with its label above it. The value is the
