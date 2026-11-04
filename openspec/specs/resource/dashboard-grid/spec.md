@@ -53,6 +53,16 @@ Moving a visual in the editor SHALL push every visual it lands on below it and c
 - **WHEN** the owner drags one onto the other
 - **THEN** the two visuals trade their cells
 
+### Requirement: A group is never pushed by another visual's drag
+
+A group SHALL keep its cell while another visual is dragged in the editor, whatever the owner's collision setting. A visual dragged over a group's footprint SHALL be refused by the grid the group sits in, so the group is never pushed, and a visual released over the group's frame or header, outside its body, SHALL return to where it was, while one released over its body SHALL join the group.
+
+#### Scenario: a group is solid to its grid and no other visual type is
+
+- **GIVEN** a dashboard grid in the editor
+- **WHEN** it lays out its visuals
+- **THEN** a group is solid to the grid and every other visual type is not
+
 ### Requirement: A resized visual stays within its bounds
 
 Resizing a visual SHALL keep it at least one cell wide and tall and within the grid's columns.

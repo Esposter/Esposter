@@ -3,6 +3,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
 import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
@@ -29,6 +30,9 @@ const { visuals: dashboardVisuals } = storeToRefs(visualStore);
 const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, tiles } = useGridLayout(grid, () => ({
   // A body drag is refused by the group it is dropped on when the move would put the visual in itself or nest it past the cap
   checkIsRefused: (item, target) => checkIsMoveRefused(dashboardVisuals.value, item.id, target.dataset.groupId),
+  // A group is solid in the grid it sits in, so no other visual's drag pushes it: a landing over it is refused, and a visual
+  // Joins the group by its body alone
+  checkIsSolid: (visual) => visual.type === VisualType.Group,
   collision,
   columnNumber,
   compactType,
@@ -65,6 +69,7 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
     <div
       v-if="placeholder"
       class="dashboard-grid-placeholder"
+      pointer-events-none
       absolute
       :data-refused="placeholder.isRefused || undefined"
       :style="getGeometryStyle(placeholder.geometry, false)"
@@ -74,7 +79,7 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
 
 <style scoped>
 /* The grid is the page's background; a placeholder is a tinted cell where a visual will land, and an error-tinted one where
-  the grid would refuse the drop */
+  the grid would refuse the drop. It takes no pointer, so the grid and group under it are the ones a drag targets */
 .dashboard-grid-placeholder {
   background-color: color-mix(in srgb, var(--ui-accent) 20%, transparent);
   border-radius: var(--ui-container-radius);

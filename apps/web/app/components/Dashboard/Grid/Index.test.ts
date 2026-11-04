@@ -11,7 +11,17 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
-import { CollisionMode, CompactType } from "vue-grid-layout-headless";
+import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
+
+// The package's grid is kept as it is and only watched, so a test reads the options each grid is laid out with
+vi.mock(import("vue-grid-layout-headless"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    useGridLayout: vi.fn<typeof actual.useGridLayout>(actual.useGridLayout) as typeof actual.useGridLayout,
+  };
+});
 
 // A DOM without layout has no hit test, so the element under a release is the one the test names, as a browser would
 const stubElementAtPoint = (element: Element) => {
@@ -448,5 +458,19 @@ describe("dashboardGrid", () => {
       "East",
       "West",
     ]);
+  });
+
+  // A nested grid is this same component, so a group's own grid is given the check as the dashboard's grid is
+  test("a group is solid to its grid and no other visual type is", async () => {
+    expect.hasAssertions();
+
+    await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [] },
+    });
+    const [, getOptions] = takeOne(vi.mocked(useGridLayout).mock.calls);
+    const { checkIsSolid } = toValue(getOptions);
+    const solidTypes = Object.values(VisualType).filter((type) => checkIsSolid?.(new Visual({ type })));
+
+    expect(solidTypes).toStrictEqual([VisualType.Group]);
   });
 });
