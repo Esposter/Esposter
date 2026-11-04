@@ -3,6 +3,7 @@ import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 
 import { PAGE_HEIGHT, PAGE_WIDTH } from "#src/composables/constants.test";
 import { usePdfPage } from "#src/composables/usePdfPage";
+import { PDF_ROTATION_STEP } from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
@@ -113,6 +114,35 @@ describe(usePdfPage, () => {
     reportWidth(400);
 
     expect(replacement.width).toBe(400);
+    scope.stop();
+  });
+
+  test("a quarter turn draws the page turned", async () => {
+    expect.hasAssertions();
+
+    const getViewport = vi.fn<(parameters: { rotation?: number; scale: number }) => { height: number; width: number }>(
+      ({ scale }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+    );
+    const page = {
+      getViewport,
+      render: vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))),
+    } as unknown as PDFPageProxy;
+    const pagesRotation = shallowRef(0);
+    const scope = effectScope();
+    scope.run(() => {
+      usePdfPage({
+        canvas: window.document.createElement("canvas"),
+        pageNumber: 1,
+        pagesRotation,
+        pdfDocument: createDocument(page),
+      });
+    });
+    await flushPromises();
+    reportWidth(400);
+    pagesRotation.value = PDF_ROTATION_STEP;
+    await nextTick();
+
+    expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP);
     scope.stop();
   });
 

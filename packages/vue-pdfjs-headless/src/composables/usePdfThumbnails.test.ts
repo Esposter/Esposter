@@ -11,6 +11,7 @@ describe(usePdfThumbnails, () => {
   const PAGE_COUNT = 3;
   const SECOND_PAGE = 2;
   const ROW_WIDTH = 120;
+  const QUARTER_TURN = 90;
 
   // The sidebar's rows are reported in and out of view by the observer the composable made
   let reportVisibility: (element: Element, isIntersecting: boolean) => void = noop;
@@ -40,26 +41,28 @@ describe(usePdfThumbnails, () => {
   });
 
   // Mounts a sidebar of one row per page, each row's canvas attached, and returns the render the rows share
-  const mountSidebar = async () => {
+  const mountSidebar = async (pagesRotation = ref(0)) => {
     const render = vi.fn<PDFPageProxy["render"]>(
       () => ({ cancel: () => {}, promise: Promise.resolve() }) as RenderTask,
     );
-    const page = {
-      getViewport: ({ scale }: { scale: number }) => ({ height: scale, width: scale }),
-      render,
-    } as unknown as PDFPageProxy;
+    const getViewport = vi.fn<(parameters: { rotation?: number; scale: number }) => { height: number; width: number }>(
+      ({ scale }) => ({ height: scale, width: scale }),
+    );
+    const page = { getViewport, render } as unknown as PDFPageProxy;
     const pdfDocument = {
       getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
       numPages: PAGE_COUNT,
     } as unknown as PDFDocumentProxy;
     const currentPageNumber = ref(1);
     const scope = effectScope();
-    const thumbnails = scope.run(() => usePdfThumbnails({ currentPageNumber, pdfDocument, root: undefined }));
+    const thumbnails = scope.run(() =>
+      usePdfThumbnails({ currentPageNumber, pagesRotation, pdfDocument, root: undefined }),
+    );
     assert(thumbnails);
     for (const row of thumbnails.value) row.canvas.value = window.document.createElement("canvas");
     await flushPromises();
 
-    return { currentPageNumber, render, scope, thumbnails };
+    return { currentPageNumber, getViewport, render, scope, thumbnails };
   };
 
   test("the thumbnail sidebar marks the current page", async () => {
@@ -70,6 +73,22 @@ describe(usePdfThumbnails, () => {
     await nextTick();
 
     expect(thumbnails.value.map(({ isCurrent }) => isCurrent.value)).toStrictEqual([false, true, false]);
+    scope.stop();
+  });
+
+  test("a thumbnail drawn turns with the pages", async () => {
+    expect.hasAssertions();
+
+    const pagesRotation = ref(0);
+    const { getViewport, scope, thumbnails } = await mountSidebar(pagesRotation);
+    const secondCanvas = thumbnails.value[SECOND_PAGE - 1]?.canvas.value;
+    assert(secondCanvas);
+    reportVisibility(secondCanvas, true);
+    await flushPromises();
+    pagesRotation.value = QUARTER_TURN;
+    await flushPromises();
+
+    expect(getViewport.mock.lastCall?.[0].rotation).toBe(QUARTER_TURN);
     scope.stop();
   });
 

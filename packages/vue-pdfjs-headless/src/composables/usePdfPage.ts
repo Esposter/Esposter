@@ -9,13 +9,20 @@ interface UsePdfPageOptions {
   canvas: MaybeRefOrGetter<HTMLCanvasElement | undefined>;
   isVisible?: MaybeRefOrGetter<boolean>;
   pageNumber: MaybeRefOrGetter<number>;
+  pagesRotation?: MaybeRefOrGetter<number>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
 }
 
 // Draws one page of a loaded document into a canvas the consumer renders.
 // The page is drawn at the canvas's width times the device's pixel ratio.
 // A width change starts a fresh draw, which supersedes the one still running
-export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }: UsePdfPageOptions): void => {
+export const usePdfPage = ({
+  canvas,
+  isVisible = true,
+  pageNumber,
+  pagesRotation = 0,
+  pdfDocument,
+}: UsePdfPageOptions): void => {
   // Zero until the observer reports a width, so a page is never drawn at no width
   let cssWidth = 0;
   // Bumped by every new page or document, so a page still loading is dropped rather than drawn over the newer one
@@ -39,8 +46,11 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
 
     // A newer draw replaces the one in flight, since pdf.js drawing two renders onto one canvas leaves it half drawn
     cancelRender();
-    const { height, width } = page.getViewport({ scale: 1 });
+    // The page's size as it is turned, so a quarter turn draws the page at its turned width
+    const rotation = toValue(pagesRotation);
+    const { height, width } = page.getViewport({ rotation, scale: 1 });
     const viewport = page.getViewport({
+      rotation,
       scale: getCanvasScale({ cssWidth, pageHeight: height, pageWidth: width, pixelRatio: window.devicePixelRatio }),
     });
     currentCanvas.width = viewport.width;
@@ -100,6 +110,12 @@ export const usePdfPage = ({ canvas, isVisible = true, pageNumber, pdfDocument }
     () => toValue(isVisible),
     (visible) => {
       if (visible) drawPage();
+    },
+  );
+  watch(
+    () => toValue(pagesRotation),
+    () => {
+      drawPage();
     },
   );
   onScopeDispose(() => {

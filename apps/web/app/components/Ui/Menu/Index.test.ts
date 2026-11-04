@@ -3,7 +3,9 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import UiMenu from "@/components/Ui/Menu/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
@@ -25,6 +27,29 @@ describe("uiMenu", () => {
       await flushPromises();
       return { component, trigger };
     };
+
+    test("a setting is a checkbox, marked at its end while it is on", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiMenu, {
+        attachTo: document.body,
+        props: {
+          items: [
+            { isChecked: true, title: "Match case", value: "matchCase" },
+            { isChecked: false, title: "Whole word", value: "wholeWord" },
+          ],
+          label,
+        },
+      });
+      await component.get("button").trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+      const [matchCase, wholeWord] = component.findAll('[role="menuitemcheckbox"]');
+
+      expect(matchCase?.attributes("aria-checked")).toBe("true");
+      expect(matchCase?.find(`[class~="${UiIconMap[uiStyle][UiIconMeaning.Selected]}"]`).exists()).toBe(true);
+      expect(wholeWord?.attributes("aria-checked")).toBe("false");
+      expect(wholeWord?.find(`[class~="${UiIconMap[uiStyle][UiIconMeaning.Selected]}"]`).exists()).toBe(false);
+    });
 
     test("names its trigger and ties it to the menu it opens", () => {
       expect.hasAssertions();

@@ -8,6 +8,8 @@ export type Item = {
   active?: boolean;
   badges?: { count: number; icon: string }[];
   disabled?: boolean;
+  // A setting that is on or off, drawn with its mark while on, as a checkbox is: an item of its own, not a choice in a group
+  isChecked?: boolean;
   // Drawn in the error colour, for an action that destroys what it acts on
   isDanger?: boolean;
   // Opens a divider-separated group in renderings that draw them; a flat menu ignores it

@@ -18,7 +18,7 @@ import {
   PDF_MAX_CANVAS_AREA,
   PDF_MAX_SCALE,
   PDF_MIME_TYPE,
-  PDF_ROTATION_STEP,
+  PDF_MIN_SCALE,
 } from "#src/services/constants";
 import { getDownloadBytes } from "#src/services/getDownloadBytes";
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
@@ -39,8 +39,6 @@ interface UsePdfViewerOptions {
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The renderer's viewer module, the components its viewer is built from
   viewerApi: MaybeRefOrGetter<PdfViewerApi | undefined>;
-  // The text stamped on every page of a download, which the document on screen does not carry
-  watermark?: MaybeRefOrGetter<string | undefined>;
 }
 
 // Builds the renderer's viewer for a loaded document on the consumer's container.
@@ -51,24 +49,23 @@ export const usePdfViewer = ({
   pdfDocument,
   viewer,
   viewerApi,
-  watermark,
 }: UsePdfViewerOptions): PdfViewerState => {
   const currentPageNumber = ref(0);
   const editorMode = ref(PdfEditorMode.None);
-  const isFullscreen = ref(false);
   const isMatchCase = ref(false);
   const isNotFound = ref(false);
   const isWholeWord = ref(false);
   const matchesCount = ref<PdfMatchesCount>({ current: 0, total: 0 });
-  const outline = shallowRef<PdfOutline>([]);
+  // Undefined until the document's outline has been read, so a tab shows loading rather than an empty outline
+  const outline = shallowRef<PdfOutline>();
   const overlays = shallowRef<PdfPageOverlay[]>([]);
   const pagesCount = ref(0);
   const pagesRotation = ref(0);
   const scale = ref(0);
   const searchQuery = ref("");
   const isZoomInDisabled = computed(() => scale.value >= PDF_MAX_SCALE);
+  const isZoomOutDisabled = computed(() => scale.value <= PDF_MIN_SCALE);
   let abortController: AbortController | undefined;
-  let containerElement: HTMLDivElement | undefined;
   let eventBus: PdfJsEventBus | undefined;
   let linkService: PdfJsLinkService | undefined;
   let pdfViewer: PdfJsViewer | undefined;
@@ -77,9 +74,6 @@ export const usePdfViewer = ({
   // Bumped by every print and by the scope's end, so a print still drawing stops before it reaches the page
   let printGeneration = 0;
 
-  const onFullscreenChange = () => {
-    isFullscreen.value = window.document.fullscreenElement === containerElement;
-  };
   const createViewer = (
     currentViewerApi: PdfViewerApi,
     containerValue: HTMLDivElement,
@@ -105,7 +99,6 @@ export const usePdfViewer = ({
     const instance = new PDFViewer(viewerOptions);
     links.setViewer(instance);
     abortController = viewerAbortController;
-    containerElement = containerValue;
     eventBus = bus;
     linkService = links;
     pdfViewer = instance;
@@ -146,13 +139,6 @@ export const usePdfViewer = ({
       if (currentScaleValue) pdfViewer.currentScaleValue = currentScaleValue;
     });
     resizeObserver.observe(containerValue);
-    window.document.addEventListener(
-      "fullscreenchange",
-      () => {
-        onFullscreenChange();
-      },
-      { signal },
-    );
     window.addEventListener(
       "afterprint",
       () => {
@@ -167,14 +153,18 @@ export const usePdfViewer = ({
       const items = await loaded.getOutline();
       // An outline still loading when another document replaces this one is dropped, as the newer document's stands
       if (loaded === toValue(pdfDocument)) outline.value = items ?? [];
-    }).match(noop, console.error);
+    }).match(noop, (error) => {
+      console.error(error);
+      // An outline that cannot be read is an empty one, so its tab says so rather than loading for ever
+      if (loaded === toValue(pdfDocument)) outline.value = [];
+    });
   });
   const applyDocument = (loaded: PDFDocumentProxy | undefined) => {
     if (!pdfViewer || !linkService) return;
 
     pagesCount.value = loaded?.numPages ?? 0;
     overlays.value = [];
-    outline.value = [];
+    outline.value = undefined;
     pdfViewer.setDocument(loaded ?? null);
     linkService.setDocument(loaded ?? null);
     // The renderer resets its page and rotation without an event, and the find controller reports nothing on reset.
@@ -239,8 +229,10 @@ export const usePdfViewer = ({
   const actualSize = () => {
     if (pdfViewer) pdfViewer.currentScaleValue = "page-actual";
   };
-  const rotate = () => {
-    if (pdfViewer) pdfViewer.pagesRotation = (pdfViewer.pagesRotation + PDF_ROTATION_STEP) % PDF_FULL_TURN;
+  // A turn of any number of degrees from the current rotation, wrapping after a full turn in either direction
+  const rotate = (degrees: number) => {
+    if (pdfViewer)
+      pdfViewer.pagesRotation = (((pdfViewer.pagesRotation + degrees) % PDF_FULL_TURN) + PDF_FULL_TURN) % PDF_FULL_TURN;
   };
   const findNext = () => {
     findText({ query: searchQuery.value, type: "again" });
@@ -248,21 +240,13 @@ export const usePdfViewer = ({
   const findPrevious = () => {
     findText({ isPrevious: true, query: searchQuery.value, type: "again" });
   };
-  const toggleFullscreen = getSynchronizedFunction(async () => {
-    const element = containerElement;
-    if (!element) return;
-
-    await getResultAsync(async () => {
-      if (window.document.fullscreenElement) await window.document.exitFullscreen();
-      else await element.requestFullscreen();
-    }).match(noop, console.error);
-  });
-  const download = getSynchronizedFunction(async (filename: string) => {
+  // The watermark is the text stamped on every page of this one download, which the pages on screen never carry
+  const download = getSynchronizedFunction(async (filename: string, watermark?: string) => {
     const downloaded = toValue(pdfDocument);
     if (!downloaded) return;
 
     await getResultAsync(async () => {
-      downloadFile(filename, await getDownloadBytes(downloaded, toValue(watermark)), PDF_MIME_TYPE);
+      downloadFile(filename, await getDownloadBytes(downloaded, watermark), PDF_MIME_TYPE);
     }).match(noop, console.error);
   });
   const print = getSynchronizedFunction(async () => {
@@ -326,11 +310,11 @@ export const usePdfViewer = ({
     fitWidth,
     followBookmark,
     goToPage,
-    isFullscreen,
     isMatchCase,
     isNotFound,
     isWholeWord,
     isZoomInDisabled,
+    isZoomOutDisabled,
     matchesCount,
     nextPage,
     outline,
@@ -342,7 +326,6 @@ export const usePdfViewer = ({
     rotate,
     scale,
     searchQuery,
-    toggleFullscreen,
     zoomIn,
     zoomOut,
   };

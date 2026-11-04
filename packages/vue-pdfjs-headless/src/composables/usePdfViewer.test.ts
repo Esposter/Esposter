@@ -9,7 +9,9 @@ import { createAnnotationStorage } from "#src/composables/createAnnotationStorag
 import { usePdfViewer } from "#src/composables/usePdfViewer";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import {
+  PDF_FULL_TURN,
   PDF_MAX_SCALE,
+  PDF_MIN_SCALE,
   PDF_PRINT_CLASS,
   PDF_ROTATION_STEP,
   PDF_WATERMARK_COLOR,
@@ -42,9 +44,6 @@ const createOutlineNode = (dest: string, title: string): PdfOutline[number] => (
   unsafeUrl: undefined,
   url: null,
 });
-const setFullscreenElement = (element: Element | null) => {
-  Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
-};
 
 const createPage = (
   render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
@@ -232,11 +231,7 @@ describe(usePdfViewer, () => {
       PDFLinkService,
       PDFViewer,
     }) as unknown as PdfViewerApi;
-  const mountViewer = (
-    pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
-    highlightTerms: string[] = [],
-    watermark?: string,
-  ) => {
+  const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
     const container = window.document.createElement("div");
     const scope = effectScope();
     const state = scope.run(() =>
@@ -246,7 +241,6 @@ describe(usePdfViewer, () => {
         pdfDocument,
         viewer: window.document.createElement("div"),
         viewerApi: createViewerApi(),
-        watermark,
       }),
     );
     assert(state);
@@ -266,7 +260,6 @@ describe(usePdfViewer, () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
-    Reflect.deleteProperty(window.document, "fullscreenElement");
     for (const element of window.document.querySelectorAll(`.${PDF_PRINT_CLASS}`)) element.remove();
   });
 
@@ -335,9 +328,29 @@ describe(usePdfViewer, () => {
     expect.hasAssertions();
 
     const { scope, state } = mountViewer(createDocument(3));
-    state.rotate();
+    state.rotate(PDF_ROTATION_STEP);
 
     expect(state.pagesRotation.value).toBe(PDF_ROTATION_STEP);
+    scope.stop();
+  });
+
+  test("rotating left from upright turns the pages back a step, past the upright", () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    state.rotate(-PDF_ROTATION_STEP);
+
+    expect(state.pagesRotation.value).toBe(PDF_FULL_TURN - PDF_ROTATION_STEP);
+    scope.stop();
+  });
+
+  test("zooming out at the smallest scale", () => {
+    expect.hasAssertions();
+
+    const { scope, state, viewer } = mountViewer(createDocument(3));
+    viewer.currentScale = PDF_MIN_SCALE;
+
+    expect(state.isZoomOutDisabled.value).toBe(true);
     scope.stop();
   });
 
@@ -452,8 +465,8 @@ describe(usePdfViewer, () => {
 
       return Promise.resolve(new Uint8Array([4, 5, 6]));
     });
-    const { scope, state } = mountViewer(pdfDocument, [], "DRAFT");
-    state.download("report.pdf");
+    const { scope, state } = mountViewer(pdfDocument);
+    state.download("report.pdf", "DRAFT");
     await flushPromises();
 
     // Each page's watermark is centred on the page's height, PAGE_WIDTH wide and the font size tall
@@ -587,6 +600,7 @@ describe(usePdfViewer, () => {
     const chapter = createOutlineNode("chapter", "Chapter");
     const { scope, state } = mountViewer(createDocument(3, createPage(), [chapter]));
     await flushPromises();
+    assert(state.outline.value);
     const [item] = state.outline.value;
     assert(item);
     state.followBookmark(item);
@@ -606,6 +620,31 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
+  test("an outline still being read is undefined, not empty", () => {
+    expect.hasAssertions();
+
+    const outline = Promise.withResolvers<null | PdfOutline>();
+    const pending = Object.assign(createDocument(3), { getOutline: () => outline.promise });
+    const { scope, state } = mountViewer(pending);
+
+    expect(state.outline.value).toBeUndefined();
+    scope.stop();
+  });
+
+  test("an outline that cannot be read is empty and logged", async () => {
+    expect.hasAssertions();
+
+    const error = new Error("a");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    const failing = Object.assign(createDocument(3), { getOutline: () => Promise.reject(error) });
+    const { scope, state } = mountViewer(failing);
+    await flushPromises();
+
+    expect(state.outline.value).toStrictEqual([]);
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
+    scope.stop();
+  });
+
   test("an outline that loads after a newer document is dropped", async () => {
     expect.hasAssertions();
 
@@ -621,30 +660,6 @@ describe(usePdfViewer, () => {
     await flushPromises();
 
     expect(state.outline.value).toStrictEqual([chapter]);
-    scope.stop();
-  });
-
-  test("leaving fullscreen with the Escape key", async () => {
-    expect.hasAssertions();
-
-    const { container, scope, state } = mountViewer(createDocument(3));
-    Object.assign(container, {
-      requestFullscreen: vi.fn<() => Promise<void>>(() => {
-        setFullscreenElement(container);
-        window.document.dispatchEvent(new Event("fullscreenchange"));
-
-        return Promise.resolve();
-      }),
-    });
-    state.toggleFullscreen();
-    await flushPromises();
-
-    expect(state.isFullscreen.value).toBe(true);
-    // The browser leaves fullscreen when Escape is pressed, and reports the change to the page
-    setFullscreenElement(null);
-    window.document.dispatchEvent(new Event("fullscreenchange"));
-
-    expect(state.isFullscreen.value).toBe(false);
     scope.stop();
   });
 });

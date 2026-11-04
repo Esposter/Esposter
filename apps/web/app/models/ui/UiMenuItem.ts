@@ -8,6 +8,8 @@ export interface UiMenuItem<T extends number | string> {
   icon?: string;
   // A picture drawn in the icon's place, or the title's first letter when it is empty: a room's
   image?: string;
+  // A setting that is on or off, marked at its end while on, so the menu says which settings are set
+  isChecked?: boolean;
   // Drawn in the error colour, for an item that destroys what it acts on
   isDanger?: boolean;
   // Still reached by the arrows, as the menu pattern keeps a disabled item, but never picked: an act already under way

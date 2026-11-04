@@ -7,6 +7,8 @@ import { computed, effectScope, onScopeDispose, ref, shallowRef, toValue, watch 
 
 interface UsePdfThumbnailsOptions {
   currentPageNumber: MaybeRefOrGetter<number>;
+  // The viewer's rotation, which every thumbnail turns with so the rail shows the pages as the viewer does
+  pagesRotation: MaybeRefOrGetter<number>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   // The sidebar's own scrolling element, whose view decides which rows are in view, read when a document loads
   root: MaybeRefOrGetter<HTMLElement | undefined>;
@@ -15,6 +17,7 @@ interface UsePdfThumbnailsOptions {
 // One thumbnail per page of a loaded document, drawn only while its row is in view of the sidebar and marked current
 export const usePdfThumbnails = ({
   currentPageNumber,
+  pagesRotation,
   pdfDocument,
   root,
 }: UsePdfThumbnailsOptions): ShallowRef<PdfThumbnail[]> => {
@@ -41,6 +44,7 @@ export const usePdfThumbnails = ({
       canvas: () => canvas.value,
       isVisible: () => isVisible.value,
       pageNumber,
+      pagesRotation: () => toValue(pagesRotation),
       pdfDocument: currentDocument,
     });
     watch(canvas, (element, _previousElement, onCleanup) => {

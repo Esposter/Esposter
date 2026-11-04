@@ -7,7 +7,7 @@ import type { ComputedRef, Ref, ShallowRef } from "vue";
 export interface PdfViewerState {
   actualSize: () => void;
   currentPageNumber: Ref<number>;
-  download: (filename: string) => void;
+  download: (filename: string, watermark?: string) => void;
   editorMode: Ref<PdfEditorMode>;
   findNext: () => void;
   findPrevious: () => void;
@@ -15,23 +15,22 @@ export interface PdfViewerState {
   fitWidth: () => void;
   followBookmark: (item: PdfOutline[number]) => void;
   goToPage: (pageNumber: number) => void;
-  isFullscreen: Ref<boolean>;
   isMatchCase: Ref<boolean>;
   isNotFound: Ref<boolean>;
   isWholeWord: Ref<boolean>;
   isZoomInDisabled: ComputedRef<boolean>;
+  isZoomOutDisabled: ComputedRef<boolean>;
   matchesCount: Ref<PdfMatchesCount>;
   nextPage: () => void;
-  outline: ShallowRef<PdfOutline>;
+  outline: ShallowRef<PdfOutline | undefined>;
   overlays: ShallowRef<PdfPageOverlay[]>;
   pagesCount: Ref<number>;
   pagesRotation: Ref<number>;
   previousPage: () => void;
   print: () => void;
-  rotate: () => void;
+  rotate: (degrees: number) => void;
   scale: Ref<number>;
   searchQuery: Ref<string>;
-  toggleFullscreen: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
 }

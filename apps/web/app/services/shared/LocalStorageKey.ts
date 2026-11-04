@@ -36,6 +36,10 @@ export const LocalStorageKey = {
   MessageRightSideBarWidth: "message-right-side-bar-width",
   MessageSidebarDirectMessagesCollapsed: "message-sidebar-direct-messages-collapsed",
   MessageSidebarRoomsCollapsed: "message-sidebar-rooms-collapsed",
+  // Whether a PDF viewer's sidebar is open: a viewer's choice, kept with the browser, and unset until one is made
+  PdfSidebarOpen: "pdf-sidebar-open",
+  // The tab a PDF viewer's sidebar shows: a viewer's choice, kept with the browser
+  PdfSidebarTab: "pdf-sidebar-tab",
   RecentEmojiSlugs: "recent-emoji-slugs",
   // The dock's recent pages: a convenience of the device, not data worth a server round trip
   RecentPages: "recent-pages",
