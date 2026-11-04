@@ -3,6 +3,7 @@ import type { SurveyLogicStoredValue } from "#src/models/SurveyLogicStoredValue"
 import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
 import { runSurveyExpression } from "#src/services/runSurveyExpression";
+import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswer";
 import { describe, expect, test } from "vitest";
 
 // Every expected value below follows this package's rules, not SurveyJS's: undefined is the one absent value, and a storage null reads as undefined.
@@ -11,7 +12,7 @@ describe(evaluateSurveyExpression, () => {
   const now = new Date(0);
 
   const evaluate = (source: string, values: Record<string, SurveyLogicStoredValue>) =>
-    runSurveyExpression(source, { now, scopes: {}, values }).match(
+    runSurveyExpression(source, { now, scopes: {}, values: toSurveyLogicAnswers(values) }).match(
       (value) => value,
       (error) => error,
     );
@@ -46,7 +47,7 @@ describe(evaluateSurveyExpression, () => {
     ["a number is not greater or equal to an unanswered question", "{a} >= {b}", { a: 1 }, false],
     ["a number equals a string holding the same number", "{a} = {b}", { a: 1, b: "1" }, true],
     ["an empty string is not equal to zero", "{a} = {b}", { a: "", b: 0 }, false],
-    ["an empty string equals an unanswered answer", "{a} = {b}", { a: "", b: null }, true],
+    ["an empty string equals an unanswered answer", "{a} = {b}", { a: "" }, true],
     ["an empty string is never less than a number", "{a} < 5", { a: "" }, false],
     ["an empty string never compares greater", "{a} > 5", { a: "" }, false],
     ["an unanswered question is greater or equal to the empty string", "{a} >= ''", {}, true],
@@ -184,7 +185,7 @@ describe(evaluateSurveyExpression, () => {
     ["a list is false for or", "[0] or 0", {}, false],
     ["and binds tighter than or", "{a} and {b} or {c}", { a: false, b: true, c: true }, true],
     ["comparisons bind tighter than and and or", "{a} = 1 and {b} = 2 or {c} = 3", { a: 1, b: 2, c: 9 }, true],
-    ["an empty answer is true under not", "not {a}", { a: null }, true],
+    ["an empty answer is true under not", "not {a}", {}, true],
     ["not of a text is true", "not 'x'", {}, true],
     ["not of true is false", "not true", {}, false],
   ])("%s gives %s", (_title, source, values, expected) => {
@@ -279,7 +280,7 @@ describe(evaluateSurveyExpression, () => {
   });
 
   // The emptiness of an answer is decided by its value.
-  // An empty text, an empty list, an unanswered question and a null are empty, and zero, false and a space are not
+  // An empty text, an empty list and an unanswered question are empty, and zero, false and a space are not
   test.each([
     ["zero is not empty", "{a} empty", { a: 0 }, false],
     ["false is not empty", "{a} empty", { a: false }, false],
@@ -288,7 +289,6 @@ describe(evaluateSurveyExpression, () => {
     ["an empty list is empty", "{a} empty", { a: [] }, true],
     ["a list holding an empty text is not empty", "{a} empty", { a: [""] }, false],
     ["a list holding zero is not empty", "{a} empty", { a: [0] }, false],
-    ["an answer stored as nothing is empty", "{a} empty", { a: null }, true],
     ["an unanswered question is empty", "{a} empty", {}, true],
     ["a word is not empty", "{a} empty", { a: "x" }, false],
     ["a zero text is not empty", "{a} empty", { a: "0" }, false],

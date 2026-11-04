@@ -6,6 +6,7 @@ import type { Result } from "neverthrow";
 import oracleFixtures from "#src/services/fixtures/oracleFixtures.json" with { type: "json" };
 import { TEST_CONTEXT } from "#src/services/functions/constants.test";
 import { runSurveyExpression } from "#src/services/runSurveyExpression";
+import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswer";
 import { describe, expect, test } from "vitest";
 
 // Each row is an expression, the answers it reads and the value SurveyJS's expression runner gives for them.
@@ -54,7 +55,7 @@ const encodeResult = (result: Result<SurveyLogicValue, SurveyLogicError>): Encod
   result.match(encodeSurveyLogicValue, (error) => ({ message: error.message, type: "error" }));
 
 const replay = (expression: string, answers: Record<string, SurveyLogicStoredValue>): EncodedValue =>
-  encodeResult(runSurveyExpression(expression, { ...TEST_CONTEXT, values: answers }));
+  encodeResult(runSurveyExpression(expression, { ...TEST_CONTEXT, values: toSurveyLogicAnswers(answers) }));
 
 describe("the oracle fixtures", () => {
   // The reason each rule of the language gives for its deviations, named by the rule's key in the fixtures
