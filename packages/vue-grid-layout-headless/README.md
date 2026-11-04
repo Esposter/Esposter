@@ -33,7 +33,7 @@ import { CollisionMode, CompactType, ResizeEdge, useGridLayout } from "vue-grid-
 import { shallowRef, useTemplateRef } from "vue";
 
 const root = useTemplateRef<HTMLElement>("root");
-const items = shallowRef([{ h: 2, id: "a", w: 4, x: 0, y: 0 }]);
+const items = shallowRef([{ h: 2, id: "a", isAutoHeight: false, w: 4, x: 0, y: 0 }]);
 const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
   collision: CollisionMode.Push,
   columnNumber: 12,
@@ -43,10 +43,9 @@ const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
   items: items.value,
   rowHeight: 40,
   spacing: { gap: 10, padding: 10 },
-  // A release replaces the cells it changed
+  // A release replaces the cells it changed, and keeps each item's other fields
   onCommit: ({ changes }) => {
-    const changedIds = new Set(changes.map(({ id }) => id));
-    items.value = [...items.value.filter(({ id }) => !changedIds.has(id)), ...changes];
+    items.value = items.value.map((item) => ({ ...item, ...changes.find(({ id }) => id === item.id) }));
   },
 }));
 </script>
@@ -87,7 +86,7 @@ Each tile supplies these values:
 | `getFirstFreeCell`   | function   | The first cell a new item of a given span fits in, scanning rows from the top and columns from the left                                                      |
 | `GridBlock`          | interface  | A cell the grid places, named by its id: what a move, a commit or a placement carries                                                                        |
 | `GridCommit`         | interface  | What a release writes back: the cells that one gesture changed                                                                                               |
-| `GridItem`           | interface  | A block the grid places, named by the entity it lays out, and whether that entity takes its height from its content                                          |
+| `GridItem`           | interface  | A block the grid places, named by the entity it lays out, with `isAutoHeight` for whether that entity takes its height from its content                      |
 | `GridLayout`         | interface  | What a grid hands its consumer: the tiles to draw, the placeholder, the height, the press and the step                                                       |
 | `GridLayoutOptions`  | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter                                                             |
 | `GridPlaceholder`    | interface  | The box a drag draws where its item would land, marked when the grid would refuse the landing                                                                |
