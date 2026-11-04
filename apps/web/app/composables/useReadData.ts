@@ -1,5 +1,7 @@
 import type { Promisable } from "type-fest";
 
+import { getResultAsync, noop } from "@esposter/shared";
+
 // The signed-in reader is handed the account's id from the session read here, so it never reads a session of its own
 export const useReadData = async (
   unauthedReader: () => Promisable<void>,
@@ -8,12 +10,14 @@ export const useReadData = async (
   // https://antfu.me/posts/async-with-composition-api
   const currentInstance = getCurrentInstance();
   const { data: session } = await useAuthSession();
+  // The watch runs after the await above, so Vue has no component to hand a failed read to, and it is logged here instead
   const stop = watch(
     () => session.value,
-    async (newSessionData) => {
-      if (newSessionData) await authedReader(newSessionData.user.id);
-      else await unauthedReader();
-    },
+    (newSessionData) =>
+      getResultAsync(async () => {
+        if (newSessionData) await authedReader(newSessionData.user.id);
+        else await unauthedReader();
+      }).match(noop, console.error),
   );
   onUnmounted(() => {
     stop();

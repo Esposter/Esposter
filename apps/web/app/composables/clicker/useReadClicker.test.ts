@@ -22,6 +22,10 @@ const writeGuestSave = (clicker: Clicker) => {
   localStorage.setItem(LocalStorageKey.ClickerStore, JSON.stringify(toClickerSave(clicker)));
 };
 
+const rejectSavedGameRead = () => {
+  throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The saved game could not be read" });
+};
+
 describe(useReadClicker, () => {
   const { trpcMsw } = setupMswTrpc();
   let wrapper: undefined | VueWrapper;
@@ -94,9 +98,7 @@ describe(useReadClicker, () => {
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } }, isPending: false }),
     );
     let isSaved = false;
-    trpcMsw.clicker.readClicker.query(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The saved game could not be read" });
-    });
+    trpcMsw.clicker.readClicker.query(rejectSavedGameRead);
     trpcMsw.clicker.saveClicker.mutation(() => {
       isSaved = true;
       return { etag: "etag" };
@@ -115,6 +117,41 @@ describe(useReadClicker, () => {
     });
     await flushPromises();
 
+    expect(isSaved).toBe(false);
+  });
+
+  // A guest reads its save first, then signs in and the server's read fails: the flag is cleared before that read starts,
+  // So a change made in its place is not saved over the copy the read could not reach
+  test("does not save a change made after a signed-in read fails following a guest's read", async () => {
+    expect.hasAssertions();
+
+    const session = ref<null | { user: { id: string } }>(null);
+    useSession.mockImplementation((fetcher?: unknown) =>
+      fetcher ? { data: session } : computed(() => ({ data: session.value, isPending: false })),
+    );
+    let isSaved = false;
+    const readClicker = vi.fn<() => never>(rejectSavedGameRead);
+    trpcMsw.clicker.readClicker.query(readClicker);
+    trpcMsw.clicker.saveClicker.mutation(() => {
+      isSaved = true;
+      return { etag: "etag" };
+    });
+    await mountReadClicker();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    session.value = { user: { id: crypto.randomUUID() } };
+    await flushPromises();
+    const clickerStore = useClickerStore();
+    const { clicker } = storeToRefs(clickerStore);
+    clicker.value.boughtBuildings.push({
+      ...BuildingMap[BuildingId.Cursor],
+      amount: 1,
+      id: BuildingId.Cursor,
+      producedValue: 0,
+    });
+    await flushPromises();
+
+    expect(readClicker).toHaveBeenCalledTimes(1);
     expect(isSaved).toBe(false);
   });
 
