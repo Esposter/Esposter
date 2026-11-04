@@ -194,13 +194,14 @@ export const useGridLayout = <T extends GridItem>(
     });
     const point = { x: event.clientX, y: event.clientY };
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
-    // A body drag over another grid is previewed on that grid and not on its own. Over its own grid or over no grid it is
-    // Previewed on its own, so a release over no grid commits the cells its placeholder shows
+    // A body drag over another grid that previews it is shown on that grid and not on its own, so this grid's other items stay
+    // Where they were. Over its own grid, over no grid, or over a grid that refuses it, it previews its own layout, so a
+    // Release over no grid commits the cells its placeholder shows
     const transfer = findTransfer(activeGesture, point);
     if (activeGesture.transfer !== transfer) activeGesture.transfer?.clearPreview();
     gesture.value = { ...activeGesture, cell, isStarted: true, offset, transfer };
-    transfer?.preview(activeGesture.origin, point);
-    if (transfer) gesturePreview.value = undefined;
+    const isPreviewedElsewhere = Boolean(transfer?.preview(activeGesture.origin, point));
+    if (isPreviewedElsewhere) gesturePreview.value = undefined;
     else if (isCellChanged || !gesturePreview.value) gesturePreview.value = getPreview(cell, layout.value);
   };
   // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
@@ -290,13 +291,16 @@ export const useGridLayout = <T extends GridItem>(
 
   // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount attached
   const attached = shallowRef<{ controller: AbortController; element: HTMLElement; observer: ResizeObserver }>();
-  const previewDrop = (item: GridItem, point: GridPoint) => {
+  // Returns whether the grid previews the item at all, which is false where the grid refuses it, so a body drag knows
+  // Whether to hold its own layout
+  const previewDrop = (item: GridItem, point: GridPoint): boolean => {
     const preview = getDropPreview(item, point);
     // A pointer moving within the cell it is over previews the same layout, so the held preview is kept, not redrawn
     const current = externalPreview.value;
-    if (preview && current?.cell.id === preview.cell.id && checkIsSameCell(preview.cell, current.cell)) return;
+    if (preview && current?.cell.id === preview.cell.id && checkIsSameCell(preview.cell, current.cell)) return true;
 
     externalPreview.value = preview;
+    return preview !== undefined;
   };
   onMounted(() => {
     const element = root.value;

@@ -1125,6 +1125,100 @@ describe(useGridLayout, () => {
     expect(source.wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
   });
 
+  // A body drag over another grid that takes it leaves the source's other items where they were.
+  // Item b sits in the second column, where a landing on the source's own grid would push it down a row
+  test("#21 a body drag over another grid leaves the source's other items where they were under push", async () => {
+    expect.hasAssertions();
+
+    const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
+    const source = mountGrid({
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 2, y: 0 },
+      ],
+      onTransfer,
+    });
+    const target = mountGrid({ items: [] });
+    await flushPromises();
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([target.wrapper.element]);
+    const tile = source.wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", {
+      buttons: 1,
+      clientX: cellPitch * 2 + spacing.padding,
+      clientY: spacing.padding,
+      pointerId,
+    });
+
+    expect(target.wrapper.get(".placeholder").attributes("style")).toBe(
+      "height: 90px; left: 170px; top: 10px; width: 150px;",
+    );
+    expect(source.wrapper.findAll(".tile")[1]?.attributes("style")).toBe(
+      "height: 90px; left: 170px; top: 10px; width: 150px;",
+    );
+  });
+
+  test("#21 a body drag moved back over its own grid resumes the source's preview", async () => {
+    expect.hasAssertions();
+
+    const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
+    const source = mountGrid({
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 2, y: 0 },
+      ],
+      onTransfer,
+    });
+    const target = mountGrid({ items: [] });
+    await flushPromises();
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    const tile = source.wrapper.get(".tile");
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([target.wrapper.element]);
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, ...point, pointerId });
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([source.wrapper.element]);
+    await tile.trigger("pointermove", { buttons: 1, ...point, pointerId });
+
+    expect(target.wrapper.find(".placeholder").exists()).toBe(false);
+    expect(source.wrapper.findAll(".tile")[1]?.attributes("style")).toBe(
+      "height: 90px; left: 170px; top: 110px; width: 150px;",
+    );
+  });
+
+  test("#21 a grid that refuses a body drag does not freeze the source's preview", async () => {
+    expect.hasAssertions();
+
+    const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
+    const source = mountGrid({
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 2, y: 0 },
+      ],
+      onTransfer,
+    });
+    // The target refuses the item before anything is laid out, so it previews nothing and gives no cell back
+    const target = mountGrid({ checkIsRefused: () => true, items: [] });
+    await flushPromises();
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([target.wrapper.element]);
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    const tile = source.wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, ...point, pointerId });
+
+    expect(target.wrapper.find(".placeholder").exists()).toBe(false);
+    expect(source.wrapper.findAll(".tile")[1]?.attributes("style")).toBe(
+      "height: 90px; left: 170px; top: 110px; width: 150px;",
+    );
+
+    await tile.trigger("pointerup", { ...point, pointerId });
+
+    expect(onTransfer).not.toHaveBeenCalled();
+    expect(source.onCommit).not.toHaveBeenCalled();
+    expect(source.wrapper.findAll(".tile")[1]?.attributes("style")).toBe(
+      "height: 90px; left: 170px; top: 10px; width: 150px;",
+    );
+  });
+
   test("#21 unmounting the source grid mid-drag clears the placeholder it drew on another grid", async () => {
     expect.hasAssertions();
 
