@@ -43,6 +43,19 @@ describe("pdfViewerOutline", () => {
       expect(viewer.followBookmark).toHaveBeenCalledExactlyOnceWith(chapter);
     });
 
+    test("an outline entry with no destination is plain text, not a button", async () => {
+      expect.hasAssertions();
+
+      const link: PdfOutline[number] = { ...createNode("Link"), dest: null, url: "https://example.com" };
+      const viewer = createPdfViewerState({ outline: shallowRef<PdfOutline | undefined>([link]) });
+      const component = mount(PdfViewerOutline, { props: { viewer } });
+      await component.get("span[style]").trigger("click");
+
+      expect(component.findAll("button")).toHaveLength(0);
+      expect(component.text()).toContain("Link");
+      expect(viewer.followBookmark).not.toHaveBeenCalled();
+    });
+
     test("a nested entry sits under its parent", () => {
       expect.hasAssertions();
 

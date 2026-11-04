@@ -27,7 +27,6 @@ const {
   pdfDocument,
 } = defineProps<Props>();
 const emit = defineEmits<{ submitPassword: [password: string] }>();
-const root = useTemplateRef("root");
 const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
 const passwordInput = ref("");
@@ -40,7 +39,6 @@ const state = usePdfViewer({
   viewer: () => viewer.value ?? undefined,
   viewerApi: () => viewerApi.value,
 });
-const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root);
 // The sidebar is open on a screen wide enough to hold it beside the pages, and a phone keeps it shut until the reader
 // Opens it. The reader's own choice is kept with the browser once made
 const { mdAndDown } = useUiDisplay();
@@ -53,16 +51,18 @@ const isLoading = computed(() => !isUnavailable.value && !isPasswordRequested &&
 const submitPassword = () => {
   emit("submitPassword", passwordInput.value);
 };
+// A page chosen from the sidebar is shown across the whole width of a phone, so the overlay that held the choice closes
+const closeSidebarOnPhone = () => {
+  if (mdAndDown.value) isSidebarOpen.value = false;
+};
 </script>
 
 <template>
-  <div ref="root" bg-background flex flex-col gap-2 min-h-0>
+  <div bg-background flex flex-col gap-2 min-h-0>
     <PdfViewerToolbar
       v-model:is-sidebar-open="isSidebarOpen"
       :filename
-      :is-fullscreen
       :viewer="state"
-      @toggle-fullscreen="() => toggleFullscreen()"
       @watermark="isWatermarkOpen = true"
     />
     <PdfViewerSearchBar :viewer="state" />
@@ -78,7 +78,12 @@ const submitPassword = () => {
     <!-- The document's failure or the viewer's own, since a viewer whose module never came draws no page either -->
     <p v-if="isUnavailable" text-muted p-3>The PDF could not be loaded.</p>
     <div flex flex-1 min-h-0 relative>
-      <PdfViewerSidebar v-if="isSidebarOpen && !isUnavailable" :pdf-document :viewer="state" />
+      <PdfViewerSidebar
+        v-if="isSidebarOpen && !isUnavailable"
+        :pdf-document
+        :viewer="state"
+        @chose-page="() => closeSidebarOnPhone()"
+      />
       <div ref="container" flex-1 min-h-0 min-w-0 of-auto>
         <div ref="viewer" class="pdfViewer" />
       </div>

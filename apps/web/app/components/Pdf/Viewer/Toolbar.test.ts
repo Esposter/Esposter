@@ -10,14 +10,12 @@ import { describe, expect, test, vi } from "vitest";
 import { PDF_ROTATION_STEP } from "vue-pdfjs-headless";
 
 const mountToolbar = ({
-  isFullscreen = false,
   isSidebarOpen = true,
   viewer = createPdfViewerState(),
-}: { isFullscreen?: boolean; isSidebarOpen?: boolean; viewer?: PdfViewerState } = {}) =>
+}: { isSidebarOpen?: boolean; viewer?: PdfViewerState } = {}) =>
   mount(PdfViewerToolbar, {
     props: {
       filename: "report.pdf",
-      isFullscreen,
       isSidebarOpen,
       "onUpdate:isSidebarOpen": vi.fn<(isOpen: boolean) => void>(),
       viewer,
@@ -65,15 +63,6 @@ describe("pdfViewerToolbar", () => {
       await getMenuItem(component, "Rotate left")?.trigger("click");
 
       expect(viewer.rotate).toHaveBeenCalledExactlyOnceWith(-PDF_ROTATION_STEP);
-    });
-
-    test("the full screen item reads Exit full screen while the viewer is full screen", async () => {
-      expect.hasAssertions();
-
-      const component = await openMenu(mountToolbar({ isFullscreen: true }));
-
-      expect(getMenuItem(component, "Exit full screen")).toBeDefined();
-      expect(getMenuItem(component, "Full screen")).toBeUndefined();
     });
 
     test("download with watermark asks for the text rather than saving", async () => {
@@ -139,7 +128,15 @@ describe("pdfViewerToolbar", () => {
       await component.get('[aria-label="Zoom 125%, reset"]').trigger("click");
 
       expect(component.get('[aria-label="Zoom 125%, reset"]').text()).toBe("125%");
-      expect(viewer.fitWidth).toHaveBeenCalledExactlyOnceWith();
+      expect(viewer.resetZoom).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    test("the zoom readout is named before a document sets a scale", () => {
+      expect.hasAssertions();
+
+      const component = mountToolbar({ viewer: createPdfViewerState({ scale: ref(0) }) });
+
+      expect(component.get('[aria-label="Reset zoom"]').text()).toBe("");
     });
 
     test("zooming out at the smallest scale", () => {

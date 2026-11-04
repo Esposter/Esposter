@@ -1,5 +1,8 @@
 // @vitest-environment nuxt
+import type { PDFDocumentProxy } from "pdfjs-dist";
+
 import PdfViewer from "@/components/Pdf/Viewer/Index.vue";
+import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiSpinner from "@/components/Ui/Spinner.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
@@ -10,7 +13,7 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { usePdfViewer } from "vue-pdfjs-headless";
 
-// The viewer's module never loads here unless a test rejects it, so each test sees the dialog at the state its props give
+// The viewer's module never loads here unless a test settles it, so each test sees the dialog at the state its props give
 vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
   loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
 }));
@@ -28,56 +31,59 @@ vi.mock(import("vue-pdfjs-headless"), async (importOriginal) => {
   return { ...actual, usePdfViewer: vi.fn<typeof actual.usePdfViewer>(actual.usePdfViewer) };
 });
 
+// The renderer's constructors are called with `new`, and each returns the part of the renderer the viewer calls.
+// The find controller reports two matches for any search, and none for an empty query
+const EventBus = function () {
+  const listeners = new Map<string, ((event: unknown) => void)[]>();
+
+  return {
+    dispatch: (name: string, event: unknown) => {
+      for (const listener of listeners.get(name) ?? []) listener(event);
+    },
+    on: (name: string, listener: (event: unknown) => void) => {
+      listeners.set(name, [...(listeners.get(name) ?? []), listener]);
+    },
+  };
+};
+const PDFFindController = function ({ eventBus }: { eventBus: ReturnType<typeof EventBus> }) {
+  eventBus.on("find", (event: unknown) => {
+    const total = (event as { query: string }).query === "" ? 0 : 2;
+
+    eventBus.dispatch("updatefindmatchescount", { matchesCount: { current: total > 0 ? 1 : 0, total } });
+  });
+};
+const PDFLinkService = function () {
+  return { setDocument: noop, setViewer: noop };
+};
+const PDFViewer = function () {
+  return { setDocument: noop };
+};
+type ViewerModule = Awaited<ReturnType<typeof loadPdfViewer>>;
+// The renderer's viewer module, with the four constructors the viewer is built from and the target its links open in
+const createViewerModule = () =>
+  ({ EventBus, LinkTarget: { BLANK: 2 }, PDFFindController, PDFLinkService, PDFViewer }) as unknown as ViewerModule;
+// The document the viewer reads as it loads: six pages, and no outline
+const createDocument = () => ({ getOutline: () => Promise.resolve(null), numPages: 6 }) as unknown as PDFDocumentProxy;
+
 // The viewer's state is the package's, so this file asserts the dialog's own part: the failure, the password prompt
-// The password is handed back to the document, and no document is passed, so no page is ever shown
+// The password is handed back to the document, and a document is passed only by a test that shows its pages
 const mountViewer = (props: {
   highlightTerms?: string[];
   isFailed?: boolean;
   isPasswordRequested?: boolean;
   isPasswordWrong?: boolean;
+  pdfDocument?: PDFDocumentProxy;
 }) =>
   mountSuspended(PdfViewer, {
     props: { filename: "report.pdf", isFailed: false, isPasswordRequested: false, isPasswordWrong: false, ...props },
   });
-type Viewer = Awaited<ReturnType<typeof mountViewer>>;
-
-// The test environment has no full screen, so the document gets the flag VueUse reads, and a request sets it as a browser does
-const setFullscreen = (isOn: boolean) => {
-  Object.defineProperty(document, "fullScreen", { configurable: true, value: isOn });
-  document.dispatchEvent(new Event("fullscreenchange"));
-};
-// The More menu opens from its trigger's arrow key, as a reader's does, and reads its items from the menu
-const openMenu = async (component: Viewer) => {
-  await component.get('[aria-label="PDF actions"]').trigger("keydown", { key: "ArrowDown" });
-  await flushPromises();
-
-  return component.findAll('[role^="menuitem"]');
-};
-const chooseMenuItem = async (component: Viewer, title: string) => {
-  const items = await openMenu(component);
-  await items.find((item) => item.text() === title)?.trigger("click");
-  await flushPromises();
-};
 
 describe("pdfViewer", () => {
   beforeEach(() => {
     device.isPhone = false;
-    setFullscreen(false);
-    Object.defineProperty(document, "exitFullscreen", { configurable: true, value: () => Promise.resolve() });
-    Object.defineProperty(Element.prototype, "requestFullscreen", {
-      configurable: true,
-      value: vi.fn<() => Promise<void>>(() => {
-        setFullscreen(true);
-
-        return Promise.resolve();
-      }),
-    });
   });
   afterEach(() => {
     localStorage.clear();
-    Reflect.deleteProperty(document, "fullScreen");
-    Reflect.deleteProperty(document, "exitFullscreen");
-    Reflect.deleteProperty(Element.prototype, "requestFullscreen");
   });
 
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -130,12 +136,15 @@ describe("pdfViewer", () => {
       expect(component.text()).toContain("The password is wrong.");
     });
 
-    test("opening a PDF with search terms", async () => {
+    test("opening a PDF with search terms shows them in the search bar with the match count", async () => {
       expect.hasAssertions();
 
-      await mountViewer({ highlightTerms: ["invoice", "total"] });
+      vi.mocked(loadPdfViewer).mockResolvedValueOnce(createViewerModule());
+      const component = await mountViewer({ highlightTerms: ["invoice", "total"], pdfDocument: createDocument() });
+      await flushPromises();
 
-      expect(toValue(vi.mocked(usePdfViewer).mock.lastCall?.[0].highlightTerms)).toStrictEqual(["invoice", "total"]);
+      expect(component.get<HTMLInputElement>('[role="search"] input').element.value).toBe("invoice total");
+      expect(component.get('[role="search"] [aria-live="polite"]').text()).toBe("1 of 2");
     });
 
     test("opening a PDF without search terms", async () => {
@@ -217,29 +226,27 @@ describe("pdfViewer", () => {
       expect(component.get(".pdfViewer").element.parentElement?.hasAttribute("flex-1")).toBe(true);
     });
 
-    test("entering full screen", async () => {
+    test("choosing a page closes the sidebar on a phone", async () => {
       expect.hasAssertions();
 
+      device.isPhone = true;
       const component = await mountViewer({});
-      await chooseMenuItem(component, "Full screen");
-      const items = await openMenu(component);
+      await component.get('[aria-label="Sidebar"]').trigger("click");
+      // The outline and the thumbnails report a page chosen through the sidebar, which the dialog answers by closing it
+      component.findComponent(PdfViewerSidebar).vm.$emit("chosePage");
+      await flushPromises();
 
-      expect(vi.mocked(Element.prototype.requestFullscreen).mock.contexts).toStrictEqual([component.element]);
-      expect(items.map((item) => item.text())).toContain("Exit full screen");
+      expect(component.find('[role="tablist"]').exists()).toBe(false);
     });
 
-    test("leaving full screen with Escape", async () => {
+    test("choosing a page keeps the sidebar open on a wide screen", async () => {
       expect.hasAssertions();
 
       const component = await mountViewer({});
-      await chooseMenuItem(component, "Full screen");
-      // The browser leaves full screen on Escape and reports it, which is the viewer's change to follow
-      setFullscreen(false);
+      component.findComponent(PdfViewerSidebar).vm.$emit("chosePage");
       await flushPromises();
-      const items = await openMenu(component);
 
-      expect(items.map((item) => item.text())).toContain("Full screen");
-      expect(items.map((item) => item.text())).not.toContain("Exit full screen");
+      expect(component.find('[role="tablist"]').exists()).toBe(true);
     });
   });
 });

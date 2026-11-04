@@ -29,6 +29,7 @@ export const createPdfViewerState = (overrides: Partial<PdfViewerState> = {}): P
   pagesRotation: ref(0),
   previousPage: vi.fn<() => void>(),
   print: vi.fn<() => void>(),
+  resetZoom: vi.fn<() => void>(),
   rotate: vi.fn<PdfViewerState["rotate"]>(),
   scale: ref(1.25),
   searchQuery: ref(""),

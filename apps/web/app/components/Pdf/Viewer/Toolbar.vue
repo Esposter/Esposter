@@ -9,13 +9,12 @@ import { PDF_ROTATION_STEP } from "vue-pdfjs-headless";
 
 interface Props {
   filename: string;
-  isFullscreen: boolean;
   viewer: PdfViewerState;
 }
 
 const isSidebarOpen = defineModel<boolean>("isSidebarOpen", { required: true });
-const { filename, isFullscreen, viewer } = defineProps<Props>();
-const emit = defineEmits<{ toggleFullscreen: []; watermark: [] }>();
+const { filename, viewer } = defineProps<Props>();
+const emit = defineEmits<{ watermark: [] }>();
 const { currentPageNumber, isMatchCase, isWholeWord, isZoomInDisabled, isZoomOutDisabled, pagesCount, scale } = viewer;
 // Every control that acts on the document is unavailable until one is open, as the bar draws it
 const isDisabled = computed(() => pagesCount.value === 0);
@@ -73,13 +72,6 @@ const items = computed<Item[]>(() => [
       viewer.actualSize();
     },
     title: "Actual size",
-  },
-  {
-    meaning: isFullscreen ? UiIconMeaning.Collapse : UiIconMeaning.Expand,
-    onClick: () => {
-      emit("toggleFullscreen");
-    },
-    title: isFullscreen ? "Exit full screen" : "Full screen",
   },
   {
     disabled: isDisabled.value,
@@ -154,10 +146,10 @@ const items = computed<Item[]>(() => [
         @click="() => viewer.zoomOut()"
       />
       <UiButton
-        :aria-label="`Zoom ${zoomPercent}, reset`"
+        :aria-label="zoomPercent ? `Zoom ${zoomPercent}, reset` : 'Reset zoom'"
         :disabled="isDisabled"
         :variant="UiButtonVariant.Quiet"
-        @click="() => viewer.fitWidth()"
+        @click="() => viewer.resetZoom()"
       >
         {{ zoomPercent }}
       </UiButton>

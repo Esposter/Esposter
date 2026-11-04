@@ -14,10 +14,23 @@ interface Props {
 }
 
 const { pdfDocument, viewer } = defineProps<Props>();
+const emit = defineEmits<{ chosePage: [] }>();
 // The tab the reader last chose stays chosen in this browser, so the sidebar opens on it again
 const tab = useLocalStorage<PdfSidebarTab>(LocalStorageKey.PdfSidebarTab, PdfSidebarTab.Outline, {
   writeDefaults: false,
 });
+// The outline and the thumbnails take their pages through this viewer, which also tells the dialog a page was chosen
+const pageViewer: PdfViewerState = {
+  ...viewer,
+  followBookmark: (item) => {
+    viewer.followBookmark(item);
+    emit("chosePage");
+  },
+  goToPage: (pageNumber) => {
+    viewer.goToPage(pageNumber);
+    emit("chosePage");
+  },
+};
 const items: UiTabItem<PdfSidebarTab>[] = [
   { meaning: UiIconMeaning.Bookmark, title: "Outline", value: PdfSidebarTab.Outline },
   { meaning: UiIconMeaning.Image, title: "Thumbnails", value: PdfSidebarTab.Thumbnails },
@@ -46,8 +59,8 @@ const items: UiTabItem<PdfSidebarTab>[] = [
   >
     <UiTabs v-model="tab" :items label="Sidebar" :variant="UiTabsVariant.Header" is-filling>
       <template #default="{ value }">
-        <PdfViewerOutline v-if="value === PdfSidebarTab.Outline" :viewer />
-        <PdfViewerThumbnailRail v-else :pdf-document :viewer />
+        <PdfViewerOutline v-if="value === PdfSidebarTab.Outline" :viewer="pageViewer" />
+        <PdfViewerThumbnailRail v-else :pdf-document :viewer="pageViewer" />
       </template>
     </UiTabs>
   </div>
