@@ -462,7 +462,7 @@ A group SHALL show its title in a header over a grid of the visuals it holds, ea
 
 ### Requirement: A visual released over a group's grid joins that group
 
-A palette tile or a visual released over a group's grid SHALL be placed inside that group, and a visual released over the dashboard's own grid SHALL leave the group it was in.
+A palette tile or a visual released over a group's grid SHALL be placed inside that group, and a visual released over the dashboard's own grid SHALL leave the group it was in. A group released over its own body, or over a group it holds, SHALL be an ordinary move within the grid it sits in, neither refused nor alerted, since the grid never offers a group itself or a group it holds as a target.
 
 #### Scenario: a tile dropped on a group's grid adds a visual inside that group
 

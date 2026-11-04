@@ -345,7 +345,7 @@ The package SHALL take an item dragged in from outside every grid, return an ite
 
 ### Requirement: An item dragged by its body moves to the grid it is released over
 
-The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when that grid refuses it, previewing nothing over a grid that refuses it before the release.
+The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, SHALL leave the item's own grid's other items where they were while another grid previews the drag, and SHALL return the item to its cell when that grid refuses it, its own grid previewing its layout again over that grid.
 
 #### Scenario: Hovering another grid previews the landing cell there
 
@@ -381,6 +381,27 @@ The package SHALL hand a body drag released over another grid to that grid when 
 - **WHEN** the pointer is over that grid and the item is released there
 - **THEN** that grid draws no placeholder and commits nothing
 - **AND** no transfer is made and the item returns to its cell
+
+#### Scenario: #21 a body drag over another grid leaves the source's other items where they were under push
+
+- **GIVEN** an item dragged by its body from a grid that takes a transfer, with another item in that grid a landing on its own grid would push down a row
+- **WHEN** the pointer is over another grid that takes the item
+- **THEN** the other grid draws the placeholder at the cell under the pointer
+- **AND** the item's own grid keeps its other items at their cells
+
+#### Scenario: #21 a body drag moved back over its own grid resumes the source's preview
+
+- **GIVEN** an item dragged by its body over another grid that takes it
+- **WHEN** the pointer moves back over the item's own grid
+- **THEN** the item's own grid previews its layout again, pushing the item it would push
+- **AND** the other grid draws no placeholder
+
+#### Scenario: #21 a grid that refuses a body drag does not freeze the source's preview
+
+- **GIVEN** an item dragged by its body over a grid the consumer refuses for it
+- **WHEN** the pointer is over that grid
+- **THEN** the item's own grid previews its layout again, and the refusing grid draws no placeholder
+- **AND** releasing there commits nothing and the item returns to its cell
 
 #### Scenario: #21 unmounting the source grid mid-drag clears the placeholder it drew on another grid
 

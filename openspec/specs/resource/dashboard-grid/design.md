@@ -41,7 +41,7 @@ A group's grid keeps the editor's `DASHBOARD_NO_COLUMNS` columns, and its header
 ### States
 
 - **Empty dashboard.** The empty state names both ways to add a visual: the header's Add visual, and dropping a palette tile on the grid.
-- **Drag in progress.** The pressed visual lifts above the others with a lifted shadow and follows the pointer; the other visuals move aside as the push or swap setting says.
+- **Drag in progress.** The pressed visual lifts above the others with a lifted shadow and follows the pointer; the other visuals move aside as the push or swap setting says, and hold still while the pointer is over another grid that takes the visual.
 - **Drop target.** The placeholder is drawn in the accent tint over the cell the visual would land on, the cell after any compaction.
 - **Invalid drop.** Under block overlap the placeholder is drawn in the error tint at the attempted cell, and the release changes nothing, so the refusal is visible before the release.
 - **Resize.** The visual resizes live with its edge; the placeholder outlines the cell it would take, and a visual is never smaller than one cell.
@@ -50,7 +50,8 @@ A group's grid keeps the editor's `DASHBOARD_NO_COLUMNS` columns, and its header
 - **Loading and error.** A bound visual's skeleton and error state are the visual's own, unchanged.
 - **Empty group.** Its grid holds no visual, and its drop area names the two ways to fill it.
 - **Group at the depth cap.** A group at the cap holds plain visuals only, and its menu's Move to offers no group that would take it past the cap.
-- **Refused move.** A move or an add the store would refuse previews nothing and changes nothing, and the refusal alerts the owner.
+- **Refused move.** A move or an add the store would refuse changes nothing, and the refusal alerts the owner. A body released over a group the grid refuses, one past the depth cap, changes nothing and alerts nothing: that group draws no placeholder, and the visual's own grid previews its layout while the pointer is over it, so a release there returns the visual.
+- **A group released over itself.** A group is never a target for its own body or for the groups it holds: the grid does not hit them while the group is dragged, so a release over them is an ordinary move within the grid the group sits in, and nothing is refused or alerted.
 
 ### Keyboard model
 

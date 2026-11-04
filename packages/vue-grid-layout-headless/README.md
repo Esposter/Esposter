@@ -96,7 +96,7 @@ Each tile supplies these values:
 | `GridTransfer`       | interface  | The hand-over of a body drag released over another grid: the item, the cell it lands in there and that grid's root element                                                                                                              |
 | `ResizeEdge`         | enum       | The edge or corner that a resize pulls                                                                                                                                                                                                  |
 | `startExternalDrag`  | function   | Drags an item from outside every grid, such as a palette entry. Previews it on the grid under the pointer, passes over a grid a refusal names for it, and passes the cell it lands on, and that grid's root element, to a drop callback |
-| `useGridLayout`      | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes, and steps an item from the keyboard                                                                                                            |
+| `useGridLayout`      | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes, keeps a body drag's other items in place while another grid previews it, and steps an item from the keyboard                                   |
 
 ## <a name="license">⚖️ License</a>
 
