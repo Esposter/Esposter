@@ -3,8 +3,8 @@ import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 import { countSurveyLogicDecimals } from "#src/services/shared/countSurveyLogicDecimals";
 import { getSurveyNumberWithPrecision } from "#src/services/shared/getSurveyNumberWithPrecision";
 
-// The product is rounded to this many digits before it is cut, since the noise of a float product can put a digit below the cut:
-// -4.89 times 100 is -488.99999999999994, and cut as it is it would read -4.88
+// The product is rounded to this many digits before it is cut. Float noise can put a digit below the cut:
+// For example, -4.89 times 100 is -488.99999999999994, and cut as it is it would read -4.88
 const PRODUCT_DIGITS = 15;
 
 // The number cut to a number of decimal places, or to its whole part when the precision is not a positive whole number
