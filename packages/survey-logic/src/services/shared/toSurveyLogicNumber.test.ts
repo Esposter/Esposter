@@ -19,11 +19,7 @@ describe(toSurveyLogicNumber, () => {
     ["reads empty text as no number", "", undefined],
     ["reads words as no number", "abc", undefined],
     ["reads leading zeros as the number without them", "007", 7],
-    [
-      "reads a 17-digit text as the nearest double to it, with no length limit",
-      "12345678901234567",
-      Number("12345678901234567"),
-    ],
+    ["reads a 17-digit text as the nearest double to it, with no length limit", "12345678901234567", 12345678901234568],
   ])("%s", (_title, value, expected) => {
     expect.hasAssertions();
 
