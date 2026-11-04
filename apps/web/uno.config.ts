@@ -186,7 +186,8 @@ export default defineConfig({
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
   // Reads a colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep
   // Dawn's edge. The inset focus ring is derived from the style's width on the same scope, so a field's and a row's ring
-  // Is drawn inside its edge by one token rather than each spelling the calculation. The base `:focus-visible` ring stays outside
+  // Is drawn inside its edge by one token rather than each spelling the calculation. The base `:focus-visible` ring
+  // Stays outside its edge
   preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
     getCSS: () =>
       `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
