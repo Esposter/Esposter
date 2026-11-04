@@ -87,6 +87,10 @@ describe("the oracle fixtures", () => {
     "negated-containment":
       "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",
     "empty-needle-list": "`anyof` of an empty list is false, where SurveyJS gives true for any answer",
+    "logic-boolean":
+      "`and` and `or` are boolean: an operand counts only when it is `true`, so the result is `true` or `false`, where SurveyJS gives the operand that decides the result",
+    "condition-true":
+      "`iif` takes its second value only when its condition is `true`, so a number or text condition takes the third value, where SurveyJS takes any truthy condition",
     "numeric-arithmetic":
       "Arithmetic is numeric: an empty, boolean, list or record operand has no result, `+` joins only two texts that are not numbers, and a division or remainder by zero has none",
     "one-absent-value":

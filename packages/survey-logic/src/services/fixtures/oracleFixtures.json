@@ -2192,26 +2192,71 @@
     "value": { "type": "number", "value": 1 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": "5" }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": [1, "x"] }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0, "b": true }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": 0 }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": "5" },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": "abc" },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": "" },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": [1, "x"] },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0, "b": true },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "5", "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "5", "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "5", "b": "abc" }, "value": { "type": "string", "value": "abc" } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "5", "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "5", "b": "" },
     "value": { "type": "number", "value": 0 },
-    "deviation": { "ours": { "type": "string", "value": "" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} and {b}",
@@ -2222,24 +2267,45 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "5", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "5" },
     "value": { "type": "number", "value": 0 },
-    "deviation": { "ours": { "type": "string", "value": "" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "abc", "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "abc", "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} and {b}", "answers": { "a": "abc", "b": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "abc", "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "abc", "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "abc", "b": [1, "x"] },
@@ -2249,35 +2315,87 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "abc", "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} and {b}", "answers": { "a": "abc" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": "", "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "abc", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "abc" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "", "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": "", "b": "5" },
     "value": { "type": "number", "value": 0 },
-    "deviation": { "ours": { "type": "string", "value": "" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": "", "b": "abc" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": "", "b": "" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": "", "b": [1, "x"] }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": "", "b": true }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": "" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "a": [1, "x"], "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "", "b": "abc" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "", "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "", "b": [1, "x"] },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "", "b": true },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": [1, "x"], "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": [1, "x"], "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} and {b}",
     "answers": { "a": [1, "x"], "b": "abc" },
-    "value": { "type": "string", "value": "abc" }
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": [1, "x"], "b": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": [1, "x"], "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": [1, "x"], "b": [1, "x"] },
@@ -2287,23 +2405,45 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} and {b}",
     "answers": { "a": [1, "x"], "b": true },
-    "value": { "type": "boolean", "value": true }
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": [1, "x"] }, "value": { "type": "list", "items": [] } },
-  { "expression": "{a} and {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": [1, "x"] },
+    "value": { "type": "list", "items": [] },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": true, "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": true, "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} and {b}", "answers": { "a": true, "b": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": true, "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": true, "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "a": true, "b": [1, "x"] },
@@ -2313,19 +2453,40 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   { "expression": "{a} and {b}", "answers": { "a": true, "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} and {b}", "answers": { "a": true }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": { "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": true },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "b": "5" },
     "value": { "type": "number", "value": 0 },
-    "deviation": { "ours": { "type": "string", "value": "" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "b": "abc" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} and {b}", "answers": { "b": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "b": "abc" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} and {b}",
     "answers": { "b": [1, "x"] },
@@ -2335,19 +2496,45 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} and {b}", "answers": { "b": true }, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} and {b}", "answers": {}, "value": { "type": "number", "value": 0 } },
-  { "expression": "{a} or {b}", "answers": { "a": 0, "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "b": true },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": 0, "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": 0, "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} or {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": 0, "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": 0, "b": "" },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": 0, "b": [1, "x"] },
@@ -2357,72 +2544,124 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   { "expression": "{a} or {b}", "answers": { "a": 0, "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} or {b}", "answers": { "a": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": 0 },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": "abc" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": "" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": [1, "x"] },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5", "b": true },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} or {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "abc", "b": "5" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "abc", "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "abc", "b": "" }, "value": { "type": "string", "value": "abc" } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc", "b": 0 },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc", "b": "5" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc", "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc", "b": "" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "abc", "b": [1, "x"] },
-    "value": { "type": "string", "value": "abc" }
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} or {b}", "answers": { "a": "abc", "b": true }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "", "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc", "b": true },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "", "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "", "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} or {b}", "answers": { "a": "", "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "a": "", "b": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "", "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "", "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": "", "b": [1, "x"] },
@@ -2432,10 +2671,16 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   { "expression": "{a} or {b}", "answers": { "a": "", "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} or {b}", "answers": { "a": "" }, "value": { "type": "string", "value": "" } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "a": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "a": [1, "x"], "b": 0 },
@@ -2445,7 +2690,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2456,7 +2702,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2467,7 +2714,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2478,7 +2726,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2489,7 +2738,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2500,7 +2750,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": true }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} or {b}",
@@ -2511,7 +2762,8 @@
         { "type": "number", "value": 1 },
         { "type": "string", "value": "x" }
       ]
-    }
+    },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   { "expression": "{a} or {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} or {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": true } },
@@ -2524,18 +2776,43 @@
   },
   { "expression": "{a} or {b}", "answers": { "a": true, "b": true }, "value": { "type": "boolean", "value": true } },
   { "expression": "{a} or {b}", "answers": { "a": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} or {b}", "answers": { "b": 0 }, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "b": 0 },
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} or {b}",
     "answers": { "b": "5" },
     "value": { "type": "number", "value": 5 },
-    "deviation": { "ours": { "type": "string", "value": "5" }, "rule": "one-number-reading" }
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
-  { "expression": "{a} or {b}", "answers": { "b": "abc" }, "value": { "type": "string", "value": "abc" } },
-  { "expression": "{a} or {b}", "answers": { "b": "" }, "value": { "type": "string", "value": "" } },
-  { "expression": "{a} or {b}", "answers": { "b": [1, "x"] }, "value": { "type": "list", "items": [] } },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "b": "abc" },
+    "value": { "type": "string", "value": "abc" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "b": "" },
+    "value": { "type": "string", "value": "" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or {b}",
+    "answers": { "b": [1, "x"] },
+    "value": { "type": "list", "items": [] },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   { "expression": "{a} or {b}", "answers": { "b": true }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a} or {b}", "answers": {}, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "{a} or {b}",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "{a} contains {b}",
     "answers": { "a": 0, "b": 0 },
@@ -3446,8 +3723,18 @@
   { "expression": "'a' < 'B'", "answers": {}, "value": { "type": "boolean", "value": false } },
   { "expression": "'B' < 'a'", "answers": {}, "value": { "type": "boolean", "value": true } },
   { "expression": "true > false", "answers": {}, "value": { "type": "boolean", "value": true } },
-  { "expression": "1 AND 0", "answers": {}, "value": { "type": "number", "value": 0 } },
-  { "expression": "1 OR 0", "answers": {}, "value": { "type": "number", "value": 1 } },
+  {
+    "expression": "1 AND 0",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "1 OR 0",
+    "answers": {},
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   { "expression": "{a} + 1", "answers": { "a": "5" }, "value": { "type": "number", "value": 6 } },
   { "expression": "{a} * 2", "answers": { "a": "5" }, "value": { "type": "number", "value": 10 } },
   { "expression": "{a} - 1", "answers": { "a": "5" }, "value": { "type": "number", "value": 4 } },
@@ -4353,22 +4640,68 @@
   {
     "expression": "{a} and {b} or {c}",
     "answers": { "a": 1, "b": 0, "c": "z" },
-    "value": { "type": "string", "value": "z" }
+    "value": { "type": "string", "value": "z" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
   },
   {
     "expression": "{a} = 1 and {b} = 2 or {c} = 3",
     "answers": { "a": 1, "b": 2, "c": 9 },
     "value": { "type": "boolean", "value": true }
   },
-  { "expression": "[] and true", "answers": {}, "value": { "type": "number", "value": 0 } },
-  { "expression": "[0] or 0", "answers": {}, "value": { "type": "list", "items": [{ "type": "number", "value": 0 }] } },
-  { "expression": "{a} and {b}", "answers": { "a": true, "b": "x" }, "value": { "type": "string", "value": "x" } },
-  { "expression": "{a} or 'x'", "answers": {}, "value": { "type": "string", "value": "x" } },
-  { "expression": "0 and 1", "answers": {}, "value": { "type": "number", "value": 0 } },
-  { "expression": "1 and 2", "answers": {}, "value": { "type": "number", "value": 2 } },
-  { "expression": "'x' and 'y'", "answers": {}, "value": { "type": "string", "value": "y" } },
-  { "expression": "false or 5", "answers": {}, "value": { "type": "number", "value": 5 } },
-  { "expression": "1 or 2", "answers": {}, "value": { "type": "number", "value": 1 } },
+  {
+    "expression": "[] and true",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "[0] or 0",
+    "answers": {},
+    "value": { "type": "list", "items": [{ "type": "number", "value": 0 }] },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} and {b}",
+    "answers": { "a": true, "b": "x" },
+    "value": { "type": "string", "value": "x" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "{a} or 'x'",
+    "answers": {},
+    "value": { "type": "string", "value": "x" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "0 and 1",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "1 and 2",
+    "answers": {},
+    "value": { "type": "number", "value": 2 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "'x' and 'y'",
+    "answers": {},
+    "value": { "type": "string", "value": "y" },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "false or 5",
+    "answers": {},
+    "value": { "type": "number", "value": 5 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
+  {
+    "expression": "1 or 2",
+    "answers": {},
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "logic-boolean" }
+  },
   {
     "expression": "avg(1, 2, 3)",
     "answers": {
@@ -4714,7 +5047,8 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": 1 }
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "number", "value": 2 }, "rule": "condition-true" }
   },
   { "expression": "iif({a}, 1, 2)", "answers": {}, "value": { "type": "number", "value": 2 } },
   {
@@ -4723,9 +5057,15 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": 1 }
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "number", "value": 2 }, "rule": "condition-true" }
   },
-  { "expression": "iif('x', 1, 2)", "answers": {}, "value": { "type": "number", "value": 1 } },
+  {
+    "expression": "iif('x', 1, 2)",
+    "answers": {},
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "number", "value": 2 }, "rule": "condition-true" }
+  },
   {
     "expression": "iif(1)",
     "answers": {

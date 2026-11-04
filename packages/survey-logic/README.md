@@ -43,7 +43,7 @@ Each function is called by its name, written in any case. A call to a name no fu
 | `dateAdd`      | A date moved by an amount of an interval, in days by default                                 |
 | `dateDiff`     | The amount of an interval between two dates, counted in exact time                           |
 | `day`          | The day of the month of a date, or of the clock's day when the date is empty                 |
-| `iif`          | The second value when the condition is truthy, otherwise the third                           |
+| `iif`          | The second value when the condition is `true`, otherwise the third                           |
 | `max`          | The largest of the values passed, arrays flattened                                           |
 | `maxInArray`   | The largest value of a field over an array's items, or another field of that item            |
 | `min`          | The smallest of the values passed, arrays flattened                                          |

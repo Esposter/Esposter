@@ -22,7 +22,7 @@ export const evaluateUnary = (
     case SurveyExpressionUnaryOperator.Negate:
       return evaluateArithmeticOperator(SurveyExpressionBinaryOperator.Subtract, 0, operand);
     case SurveyExpressionUnaryOperator.Not:
-      return !operand;
+      return operand !== true;
     case SurveyExpressionUnaryOperator.NotEmpty:
       return !checkIsSurveyLogicValueEmpty(operand);
     default:

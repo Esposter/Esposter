@@ -162,25 +162,27 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // `and` and `or` take the value of an operand, not a boolean.
-  // An empty operand reads as zero, or as the empty text or list the other operand asks for, before the operator applies
+  // `and`, `or` and `not` are boolean: an operand counts only when it is `true`, so any other value counts as false (R8)
   test.each([
-    ["and gives its second operand when both are truthy", "1 and 2", {}, 2],
-    ["and gives zero when its first operand is zero", "0 and 1", {}, 0],
-    ["and gives the second text when both are text", "'x' and 'y'", {}, "y"],
-    ["and reads two unanswered questions as zero", "{a} and {b}", {}, 0],
+    ["and of two truthy numbers is false", "1 and 2", {}, false],
+    ["and of zero is false", "0 and 1", {}, false],
+    ["and of two texts is false", "'x' and 'y'", {}, false],
+    ["and of two unanswered questions is false", "{a} and {b}", {}, false],
     ["and of a true answer and a true literal is true", "{a} and true", { a: true }, true],
     ["and of two answers is false when one is false", "{a} and {b}", { a: true, b: false }, false],
-    ["and gives the text of its second operand", "{a} and {b}", { a: true, b: "x" }, "x"],
-    ["or reads an unanswered question as the text of its other operand", "{a} or 'x'", {}, "x"],
-    ["or gives the text when its first operand is zero", "0 or 'x'", {}, "x"],
-    ["or gives its second operand when its first is false", "false or 5", {}, 5],
-    ["or gives its first operand when it is truthy", "1 or 2", {}, 1],
-    ["an empty list is zero for and", "[] and true", {}, 0],
-    ["a list is truthy for or", "[0] or 0", {}, [0]],
-    ["and binds tighter than or", "{a} and {b} or {c}", { a: 1, b: 0, c: "z" }, "z"],
+    ["and of a true answer and a text is false", "{a} and {b}", { a: true, b: "x" }, false],
+    ["or of an unanswered question and a text is false", "{a} or 'x'", {}, false],
+    ["or of zero and a text is false", "0 or 'x'", {}, false],
+    ["or of false and a number is false", "false or 5", {}, false],
+    ["or of two truthy numbers is false", "1 or 2", {}, false],
+    ["or with a true operand is true", "{a} or {b}", { a: "abc", b: true }, true],
+    ["an empty list is false for and", "[] and true", {}, false],
+    ["a list is false for or", "[0] or 0", {}, false],
+    ["and binds tighter than or", "{a} and {b} or {c}", { a: false, b: true, c: true }, true],
     ["comparisons bind tighter than and and or", "{a} = 1 and {b} = 2 or {c} = 3", { a: 1, b: 2, c: 9 }, true],
     ["an empty answer is true under not", "not {a}", { a: null }, true],
+    ["not of a text is true", "not 'x'", {}, true],
+    ["not of true is false", "not true", {}, false],
   ])("%s gives %s", (_title, source, values, expected) => {
     expect.hasAssertions();
 
