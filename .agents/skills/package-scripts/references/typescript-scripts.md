@@ -33,4 +33,5 @@ and commands — the file must run under `node` alone, so it takes no `enum`: th
 left to carry an `enum` into a bare `node` run.
 
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no
-loader to choose.
+loader to choose. `db:migrate` names `node_modules/drizzle-kit/bin.cjs` because drizzle-kit goes ESM only and `bin.cjs` is gone upstream, so
+the path moves to `bin.js` once drizzle-orm PR #6543 ships (the manifest's `"scriptsComments"` TODO carries the link).
