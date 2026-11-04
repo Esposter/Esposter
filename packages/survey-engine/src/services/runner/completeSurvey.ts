@@ -9,7 +9,7 @@ import { getSurveyPageErrors } from "#src/services/runner/getSurveyPageErrors";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyPanelRowAnswers } from "#src/services/runner/getSurveyPanelRowAnswers";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
-import { getSurveyVisiblePageIndexesFromValues } from "#src/services/runner/getSurveyVisiblePageIndexes";
+import { getSurveyVisiblePageIndexesFromValues } from "#src/services/runner/getSurveyVisiblePageIndexesFromValues";
 import { toSurveyAnswerValue } from "#src/services/runner/toSurveyAnswerValue";
 
 // Completes the survey once every visible page is valid. The first page with errors is returned and the state moves to it, unfinished

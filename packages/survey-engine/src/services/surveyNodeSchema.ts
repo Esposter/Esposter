@@ -1,7 +1,3 @@
-import type { SurveyNode } from "#src/models/SurveyNode";
-import type { SurveyPageNode } from "#src/models/SurveyPageNode";
-import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
-import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import type { SurveyBooleanNode } from "#src/models/SurveyBooleanNode";
 import type { SurveyButtonGroupNode } from "#src/models/SurveyButtonGroupNode";
 import type { SurveyCheckboxNode } from "#src/models/SurveyCheckboxNode";
@@ -11,21 +7,24 @@ import type { SurveyExpressionNode } from "#src/models/SurveyExpressionNode";
 import type { SurveyHtmlNode } from "#src/models/SurveyHtmlNode";
 import type { SurveyImageNode } from "#src/models/SurveyImageNode";
 import type { SurveyImagePickerNode } from "#src/models/SurveyImagePickerNode";
-import type { SurveyMatrixNode } from "#src/models/SurveyMatrixNode";
 import type { SurveyMatrixDynamicNode } from "#src/models/SurveyMatrixDynamicNode";
+import type { SurveyMatrixNode } from "#src/models/SurveyMatrixNode";
 import type { SurveyMultipleTextNode } from "#src/models/SurveyMultipleTextNode";
-import type { SurveyPanelNode } from "#src/models/SurveyPanelNode";
+import type { SurveyNode } from "#src/models/SurveyNode";
+import type { SurveyPageNode } from "#src/models/SurveyPageNode";
 import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode";
+import type { SurveyPanelNode } from "#src/models/SurveyPanelNode";
+import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
 import type { SurveyRadioGroupNode } from "#src/models/SurveyRadioGroupNode";
 import type { SurveyRankingNode } from "#src/models/SurveyRankingNode";
 import type { SurveyRatingNode } from "#src/models/SurveyRatingNode";
 import type { SurveySliderNode } from "#src/models/SurveySliderNode";
 import type { SurveyTagBoxNode } from "#src/models/SurveyTagBoxNode";
+import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import type { SurveyTextNode } from "#src/models/SurveyTextNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
-import { MAX_SURVEY_NODE_COUNT } from "#src/services/constants";
-import { surveyIdSchema } from "#src/services/surveyIdSchema";
+import { boundedChildren } from "#src/services/boundedChildren";
 import { surveyBooleanNodeType } from "#src/services/surveyBooleanNodeType";
 import { surveyButtonGroupNodeType } from "#src/services/surveyButtonGroupNodeType";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
@@ -33,30 +32,28 @@ import { surveyCommentNodeType } from "#src/services/surveyCommentNodeType";
 import { surveyDropdownNodeType } from "#src/services/surveyDropdownNodeType";
 import { surveyExpressionNodeType } from "#src/services/surveyExpressionNodeType";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
+import { surveyIdSchema } from "#src/services/surveyIdSchema";
 import { surveyImageNodeType } from "#src/services/surveyImageNodeType";
 import { surveyImagePickerNodeType } from "#src/services/surveyImagePickerNodeType";
-import { surveyMatrixNodeType } from "#src/services/surveyMatrixNodeType";
 import { surveyMatrixDynamicNodeType } from "#src/services/surveyMatrixDynamicNodeType";
+import { surveyMatrixNodeType } from "#src/services/surveyMatrixNodeType";
 import { surveyMultipleTextNodeType } from "#src/services/surveyMultipleTextNodeType";
+import {
+  SURVEY_PLACEABLE_NODE_TYPES,
+  SURVEY_ROOT_NODE_TYPES,
+  SURVEY_TEMPLATE_NODE_TYPES,
+} from "#src/services/surveyNodeTypeLists";
 import { surveyPageNodeType } from "#src/services/surveyPageNodeType";
-import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
+import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
 import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
 import { surveyRankingNodeType } from "#src/services/surveyRankingNodeType";
 import { surveyRatingNodeType } from "#src/services/surveyRatingNodeType";
 import { surveySliderNodeType } from "#src/services/surveySliderNodeType";
 import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
-import {
-  SURVEY_PLACEABLE_NODE_TYPES,
-  SURVEY_ROOT_NODE_TYPES,
-  SURVEY_TEMPLATE_NODE_TYPES,
-} from "#src/services/surveyNodeTypeLists";
 import { createAcceptedTypesError } from "headless-block-editor";
 import { z } from "zod";
-
-// A node's children are bounded by the most nodes a survey may hold, so no slot can hold more than a document can
-const boundedChildren = <TSchema extends z.ZodType>(schema: TSchema) => z.array(schema).max(MAX_SURVEY_NODE_COUNT);
 
 // A panel holds placeable nodes and a dynamic panel's template holds template nodes, so each is reached lazily and the
 // Recursion closes through the unions below

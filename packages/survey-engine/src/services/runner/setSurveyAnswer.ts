@@ -7,7 +7,7 @@ import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerE
 export const setSurveyAnswer = (
   state: SurveyRunnerState,
   name: string,
-  value: SurveyAnswerValue | undefined,
+  value?: SurveyAnswerValue,
 ): SurveyRunnerState => {
   const answers = Object.fromEntries(Object.entries(state.answers).filter(([answerName]) => answerName !== name));
   // The undefined test narrows the value for the record below, which the predicate's unknown parameter would not

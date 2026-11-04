@@ -14,7 +14,7 @@ export interface SurveyBooleanNodeProps extends SurveyQuestionBaseProps {
 }
 
 // The styles in the order the form offers them. The enum keeps its members sorted, so the order is held here
-const surveyBooleanDisplayStyleOptions: readonly SurveyBooleanDisplayStyle[] = [
+const SURVEY_BOOLEAN_DISPLAY_STYLE_OPTIONS: readonly SurveyBooleanDisplayStyle[] = [
   SurveyBooleanDisplayStyle.Switch,
   SurveyBooleanDisplayStyle.Checkbox,
   SurveyBooleanDisplayStyle.Radio,
@@ -28,7 +28,7 @@ export const surveyBooleanNodePropsSchema: z.ZodObject<
   }
 > = z.object({
   ...surveyQuestionBasePropsShape,
-  displayStyle: z.enum(surveyBooleanDisplayStyleOptions).default(SurveyBooleanDisplayStyle.Switch),
+  displayStyle: z.enum(SURVEY_BOOLEAN_DISPLAY_STYLE_OPTIONS).default(SurveyBooleanDisplayStyle.Switch),
   labelFalse: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   labelTrue: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<OwnProps<SurveyBooleanNodeProps>>;

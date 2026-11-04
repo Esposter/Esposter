@@ -6,7 +6,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 // The children port of a survey: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
 // A node with no slot holds no children, typed as the port's own record so the switch's return unions stay assignable to it
-const noSlots: Readonly<Record<string, readonly SurveyNode[]>> = {};
+const NO_SLOTS: Readonly<Record<string, readonly SurveyNode[]>> = {};
 
 export const surveyNodeChildren: BlockChildren<SurveyNode> = (node) => {
   switch (node.type) {
@@ -28,7 +28,7 @@ export const surveyNodeChildren: BlockChildren<SurveyNode> = (node) => {
     case SurveyNodeType.Expression:
     case SurveyNodeType.Html:
     case SurveyNodeType.Image:
-      return noSlots;
+      return NO_SLOTS;
     case SurveyNodeType.Page:
     case SurveyNodeType.Panel:
       return { children: node.props.children };
