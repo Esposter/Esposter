@@ -263,6 +263,21 @@ describe("uiList", () => {
       component.unmount();
     });
 
+    // A reorderable list's live region sits beside the list, since a list holds only its rows and nothing else
+    test("keeps its live region out of the list, which holds its rows alone", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiList<string>, {
+        attachTo: document.body,
+        props: { isReorderable: true, items, label },
+      });
+
+      expect(component.get('[role="list"]').element.querySelector("[aria-live]")).toBeNull();
+      expect(component.find("[aria-live]").exists()).toBe(true);
+
+      component.unmount();
+    });
+
     // A live region reads out only a change, so a second move to the same place clears it and says it again
     test("reads out a second move to the same position again", async () => {
       expect.hasAssertions();
