@@ -10,7 +10,7 @@ A press becomes a gesture, and the gesture becomes a drag only once the pointer 
 
 On release, the cells the preview changed leave the grid as one `onCommit({ changes })`, and a grid that is not editable commits nothing. A drop from outside the grid is a different path. `startExternalDrag` previews the item on the grid under the pointer, and on release asks that grid to `accept` it. The grid commits the visuals the drop pushed, once, and returns the cell the new item lands in, so the caller adds the item there. Under the prevent mode a drop onto another item is refused, and a grid that is not editable refuses every drop: the grid then returns no cell and commits nothing. A drag released over no grid commits nothing.
 
-A body drag over another grid is handed to that grid when the consumer takes a transfer through `onTransfer`. Each move looks up the grid under the pointer with `findGridAt`, skipping the dragged element. Over another grid the drag's own grid draws no placeholder, and that grid previews the item at the cell under the pointer, as a palette drop previews. On release, the grid under the pointer accepts the item as a palette drop is accepted, committing what its landing pushed, and `onTransfer` receives the item, the cell it lands in there and that grid's root element. The source grid commits nothing for the item. A grid that refuses the landing gives no cell, so nothing transfers, and a release over no grid returns the item to its cell. A resize never transfers, and without `onTransfer` a body drag stays in its own grid and commits there as it always has.
+A body drag over another grid is handed to that grid when the consumer takes a transfer through `onTransfer`. Each move looks up the grid under the pointer with `findGridAt`, skipping the dragged element. Over another grid the drag's own grid draws no placeholder, and that grid previews the item at the cell under the pointer, as a palette drop previews. On release, the grid under the pointer accepts the item as a palette drop is accepted, committing what its landing pushed, and `onTransfer` receives the item, the cell it lands in there and that grid's root element. The source grid commits nothing for the item. A grid that refuses the landing gives no cell, so nothing transfers and the item returns to its cell. A release over no grid commits in the item's own grid, clamped, with or without `onTransfer`. A resize never transfers, and without `onTransfer` a body drag stays in its own grid and commits there as it always has.
 
 A keyboard step places an item as a gesture does and commits its changes once, when the step lands. A step that lands where the item already is, leaves the grid, changes an auto-height item's height, or is refused under prevent changes nothing, and `stepItem` returns false. A grid that is not editable steps nothing.
 
@@ -24,11 +24,11 @@ flowchart TD
   cell --> collide["collision mode"]
   collide --> compact["compaction"]
   compact --> preview["preview held in the grid"]
-  preview -->|"pointerup"| commit["one commit of the changed cells"]
+  preview -->|"pointerup over its own grid or over no grid"| commit["one commit of the changed cells"]
   preview -->|"pointercancel"| discarded["gesture and preview discarded"]
   captured -->|"body drag over another grid, with onTransfer"| held["that grid previews the landing cell"]
   held -->|"pointerup over a grid that accepts"| handed["that grid commits its pushes, and onTransfer receives the item and cell"]
-  held -->|"pointerup over no grid, or a refusal"| returned["nothing written, the item returns to its cell"]
+  held -->|"pointerup over a grid that refuses"| returned["nothing written, the item returns to its cell"]
   drop["startExternalDrag: an item from outside"] -->|"each move"| ext["the grid under the pointer previews the landing cell"]
   ext -->|"pointerup over a grid that accepts"| accepted["that grid commits the visuals the drop pushed and returns the cell"]
   ext -->|"refused under prevent, or not editable"| refused["nothing committed"]
@@ -59,7 +59,7 @@ flowchart TD
 ## Notes
 
 - The package draws no handles. It builds every edge's resize, and a consumer binds the handles it chooses to draw.
-- A release with the pointer outside the browser's viewport hits no element, so it finds no grid. With `onTransfer` the item returns to its cell; without it the grid commits the cells its own preview holds, as it does for any release.
+- A release with the pointer outside the browser's viewport hits no element, so it finds no grid. The grid commits the cells its own preview holds, clamped, as it does for any release, with or without `onTransfer`.
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.
 - `startExternalDrag` has no drag threshold, so a click on a palette entry drops it at the click point. A consumer that wants a palette entry to need a drag gives it its own threshold before calling it.
 - `startExternalDrag` ends its listeners on either a release or a cancel of its pointer. A cancelled press is discarded without accepting, and the next press's release is the one that drops the entry.

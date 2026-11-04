@@ -337,7 +337,7 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 
 ### Requirement: An item dragged by its body moves to the grid it is released over
 
-The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when no grid takes it.
+The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when that grid refuses it.
 
 #### Scenario: Hovering another grid previews the landing cell there
 
@@ -367,11 +367,12 @@ The package SHALL hand a body drag released over another grid to that grid when 
 - **WHEN** the item is released over that grid
 - **THEN** nothing is written and the item returns to its cell
 
-#### Scenario: Releasing over no grid returns the item
+#### Scenario: Releasing over no grid commits in the item's own grid
 
-- **GIVEN** an item dragged by its body from a grid that takes a transfer
+- **GIVEN** an item dragged by its body past the grid's edge, with or without a consumer that takes a transfer
 - **WHEN** the item is released over no grid
-- **THEN** nothing is written and the item returns to its cell
+- **THEN** the grid commits the cells its placeholder shows, clamped to the grid
+- **AND** no transfer is made
 
 #### Scenario: A resize never transfers
 
