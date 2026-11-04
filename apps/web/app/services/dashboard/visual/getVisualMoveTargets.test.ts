@@ -31,8 +31,8 @@ describe(getVisualMoveTargets, () => {
     ]);
   });
 
-  // A group keeps out of its own subtree, and out of any group a move into it would carry a group it holds past the depth
-  // Cap: the inner group sits one level below the outer one, so the third level of the chain takes it past the cap
+  // A group keeps out of its own subtree, and out of any group that a move into it would nest past the depth cap.
+  // The inner group sits one level below the outer one, so the third level of the chain takes it past the cap
   test("a group offers no group inside it and no group that would nest it past the cap", () => {
     expect.hasAssertions();
 
@@ -43,8 +43,8 @@ describe(getVisualMoveTargets, () => {
     ]);
   });
 
-  // A numbered label never equals a title another group holds, so the literal "Sales 2" keeps its own label and the repeated
-  // "Sales" takes the next free number
+  // A numbered label never equals a title another group holds.
+  // So the literal "Sales 2" keeps its own label, and the repeated "Sales" takes the next free number
   test("a numbered label skips a title another group already holds", () => {
     expect.hasAssertions();
 
