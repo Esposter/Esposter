@@ -17,11 +17,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined }
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number>[]>(() =>
-  Array.from({ length: node.props.rateCount }, (_value, index) => ({
-    isDisabled,
-    title: String(index + 1),
-    value: index + 1,
-  })),
+  Array.from({ length: node.props.rateCount }, (_value, index) => ({ title: String(index + 1), value: index + 1 })),
 );
 // An answer no step has yet is the empty text, as a choice group's absent value is
 const rating = computed<number | string>({
@@ -52,6 +48,7 @@ const getSmiley = (value: number) =>
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
+        :is-disabled
         :items
         :label
       />

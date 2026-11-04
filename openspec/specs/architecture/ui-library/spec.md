@@ -255,6 +255,22 @@ A grid or calendar SHALL move focus one cell or day at a time with the arrow key
 - **THEN** the day is announced as disabled
 - **AND** the day is not chosen
 
+### Requirement: A disabled toggle group or slider takes no press or key and is drawn faded
+
+A toggle group or slider given as disabled SHALL take no press and no key, and SHALL be drawn at the disabled opacity.
+
+#### Scenario: A disabled toggle group keeps its choice on a press
+
+- **GIVEN** a toggle group that is disabled with its choice on one option
+- **WHEN** the reader presses another option
+- **THEN** the choice does not change
+
+#### Scenario: A disabled slider does not move on a key
+
+- **GIVEN** a slider that is disabled
+- **WHEN** the reader presses the right arrow on it
+- **THEN** its value does not change
+
 ### Requirement: A rating scale is a radio group that previews the steps under the pointer
 
 A rating scale SHALL be one radio group of its numbered steps, each step's mark drawn by its caller with whether the step is filled, and the steps up to the step under the pointer SHALL be filled while the pointer rests on it.

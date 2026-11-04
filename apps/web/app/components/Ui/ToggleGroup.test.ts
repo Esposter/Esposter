@@ -107,6 +107,17 @@ describe("uiToggleGroup", () => {
       expect(second?.attributes("aria-disabled")).toBe("true");
     });
 
+    test("holds a disabled group, which a click does not choose and which is drawn faded", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiToggleGroup<string>, { props: { isDisabled: true, items, label, modelValue: "a" } });
+      await flushPromises();
+      await component.findAll('[role="radio"]')[1]?.trigger("click");
+
+      expect(component.emitted("update:modelValue")).toBeUndefined();
+      expect(component.get('[role="radiogroup"]').classes()).toContain("op-disabled");
+    });
+
     test("chooses a number as it does a string", async () => {
       expect.hasAssertions();
 

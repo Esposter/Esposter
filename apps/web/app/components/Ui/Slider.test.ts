@@ -101,6 +101,19 @@ describe("uiSlider", () => {
       expect(component.emitted<[number]>("end")).toStrictEqual([[1]]);
     });
 
+    test("takes no key while disabled, and is drawn faded", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSlider, {
+        props: { isDisabled: true, label, max: 10, min: 0, modelValue: 5, step: 1, valueText: "5" },
+      });
+      await flushPromises();
+      await component.get('[role="slider"]').trigger("keydown", { key: "ArrowRight" });
+
+      expect(component.emitted("update:modelValue")).toBeUndefined();
+      expect(component.get('[role="group"]').classes()).toContain("op-disabled");
+    });
+
     test("hides its label but keeps it as its name", () => {
       expect.hasAssertions();
 

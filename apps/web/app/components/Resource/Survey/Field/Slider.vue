@@ -24,17 +24,15 @@ const valueText = computed(() => (node.props.showValue ? String(value.value) : "
 <template>
   <div flex flex-col gap-1>
     <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
-    <!-- Inert while disabled, so the thumb takes no focus and no press, and drawn faded as a disabled control is -->
-    <div :class="{ 'op-disabled': isDisabled }" :inert="isDisabled">
-      <UiSlider
-        v-model="value"
-        :label
-        :max="node.props.max"
-        :min="node.props.min"
-        :step="node.props.step"
-        :value-text
-      />
-    </div>
+    <UiSlider
+      v-model="value"
+      :is-disabled
+      :label
+      :max="node.props.max"
+      :min="node.props.min"
+      :step="node.props.step"
+      :value-text
+    />
     <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
   </div>
 </template>

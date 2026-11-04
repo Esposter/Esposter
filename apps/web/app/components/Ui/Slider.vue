@@ -3,6 +3,8 @@ import { Slider } from "@vuetify/v0";
 
 interface Props {
   // Named for assistive technology alone, where the section it sits in already says what it sets
+  // Held at the disabled opacity, where the thumb takes no press and no key
+  isDisabled?: boolean;
   isLabelHidden?: true;
   label: string;
   // A live reading drawn along the track as a fraction of it, which the thumb is set against: a microphone's level
@@ -18,7 +20,7 @@ interface Props {
 // A number picked along a field's track, filled with the accent up to a raised thumb. The model follows every move, and
 // End says the reader settled on a value — a drag let go, or each key press — which is when a setting is saved
 const modelValue = defineModel<number>({ required: true });
-const { isLabelHidden, label, level, levelLabel, max, min, step, valueText } = defineProps<Props>();
+const { isDisabled, isLabelHidden, label, level, levelLabel, max, min, step, valueText } = defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
 // @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here
 // Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
@@ -34,6 +36,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
   <Slider.Root
     #default="{ attrs }"
     :model-value
+    :disabled="isDisabled"
     :max
     :min
     :step
@@ -52,7 +55,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
       }
     "
   >
-    <div :="attrs" flex flex-col gap-1>
+    <div :="attrs" :class="{ 'op-disabled': isDisabled }" flex flex-col gap-1>
       <div flex gap-2>
         <span v-if="!isLabelHidden" flex-1>{{ label }}</span>
         <span text-muted>{{ valueText }}</span>

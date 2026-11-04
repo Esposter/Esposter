@@ -9,6 +9,7 @@ import { mergeProps } from "vue";
 interface Props {
   // Each choice shows its mark alone, its title its accessible name and its tooltip at once, as an icon button's
   // Label is: a rail of emoji categories
+  isDisabled?: boolean;
   isIconOnly?: true;
   // Stacked down rather than along, which the arrows walk the same way
   isVertical?: true;
@@ -26,7 +27,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ mark?: (props: { item: UiMenuItem<T> }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
-const { isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
+const { isDisabled, isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
 </script>
 
 <template>
@@ -34,6 +35,7 @@ const { isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
     #default="{ attrs }"
     :model-value
     :label
+    :disabled="isDisabled"
     mandatory
     renderless
     @update:model-value="
@@ -44,7 +46,11 @@ const { isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
   >
     <div
       :="mergeProps(attrs, $attrs)"
-      :class="[isVertical ? 'inline-flex flex-col' : 'inline-flex', variant ? 'ui-bar' : 'ui-field']"
+      :class="[
+        isVertical ? 'inline-flex flex-col' : 'inline-flex',
+        variant ? 'ui-bar' : 'ui-field',
+        { 'op-disabled': isDisabled },
+      ]"
     >
       <Radio.Root
         v-for="item of items"

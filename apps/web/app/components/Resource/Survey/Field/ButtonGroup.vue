@@ -15,7 +15,7 @@ const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined }
 const { error, isDisabled, node } = defineProps<Props>();
 const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number | string>[]>(() =>
-  node.props.choices.map((choice) => ({ isDisabled, title: getSurveyChoiceText(choice), value: choice.value })),
+  node.props.choices.map((choice) => ({ title: getSurveyChoiceText(choice), value: choice.value })),
 );
 const choice = computed<number | string>({
   get: () => (typeof answer.value === "number" || typeof answer.value === "string" ? answer.value : ""),
@@ -38,6 +38,7 @@ const choice = computed<number | string>({
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
+        :is-disabled
         :items
         :label
       />

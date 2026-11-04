@@ -32,7 +32,7 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 | `buttongroup`   | `ButtonGroup.vue`   | `UiToggleGroup` over the choices                                                                                                                                                                                                           |
 | `rating`        | `Rating.vue`        | `UiToggleGroup` of the numbers from one to the scale's count for labels; `UiRating` of stars, or of one face per step, for the other two types; the minimum and maximum descriptions beneath it in every type                              |
 | `ranking`       | `Ranking.vue`       | a reorderable `UiList` of the choices in the answer's order, each row marked with its place; Alt with Up or Down moves the focused row, announced through the list's live region                                                           |
-| `slider`        | `Slider.vue`        | `UiSlider`, inert and faded while disabled, with its value text when the question shows its value                                                                                                                                          |
+| `slider`        | `Slider.vue`        | `UiSlider`, disabled while the field is, with its value text when the question shows its value                                                                                                                                             |
 | `matrix`        | `Matrix.vue`        | a table with a row per row choice, each row a `UiRadioGroup` over the column choices                                                                                                                                                       |
 | `matrixdynamic` | `MatrixDynamic.vue` | a table whose cells are drawn by their column's kind: `UiTextField` for text and comment, `UiSelect` for dropdown, `UiCheckbox` for checkbox and boolean, `UiToggleGroup` for rating; `UiButton` adds a row and `UiIconButton` removes one |
 | `paneldynamic`  | `PanelDynamic.vue`  | the template's fields drawn once for each panel, in a framed box, with add and remove buttons                                                                                                                                              |
@@ -69,8 +69,6 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 Each gap is a change to the UI library, and each field works around it as the table says.
 
 - The date field has no invalid state and no error prop, so the date and datetime fields draw their error beneath the control and do not mark it invalid.
-- The toggle group has no disabled prop, so the button group and the rating fields disable each item.
-- The slider has no disabled prop, so the slider field is made inert and faded instead.
 - The radio group and the select have no invalid state. The shell draws the error beside them.
 - The library has no required prop, so the shell draws the required mark, and the matrix dynamic caption draws its own.
 - There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
