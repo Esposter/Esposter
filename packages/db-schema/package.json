@@ -80,5 +80,8 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
+  },
+  "scriptsComments": {
+    "db:migrate": "@TODO: https://github.com/drizzle-team/drizzle-orm/pull/6543 — point at node_modules/drizzle-kit/bin.js once it is released, since drizzle-kit goes ESM only and bin.cjs is gone"
   }
 }
