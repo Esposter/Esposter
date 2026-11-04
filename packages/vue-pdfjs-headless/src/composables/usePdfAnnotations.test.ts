@@ -276,6 +276,19 @@ describe("usePdfAnnotations", () => {
     expect(viewer.drawStoredEditors).not.toHaveBeenCalled();
   });
 
+  test("importing a free text with no contents is refused", () => {
+    expect.hasAssertions();
+
+    const pdfDocument = createDocument([[]]);
+    const { state, viewer } = mountAnnotations(pdfDocument);
+
+    expect(
+      state.importXfdf(writeXfdf([{ contents: "", id: "blank", pageNumber: 1, rect: [72, 300, 200, 320] }])),
+    ).toStrictEqual(err("Free text 1 has no contents"));
+    expect(pdfDocument.annotationStorage.size).toBe(0);
+    expect(viewer.drawStoredEditors).not.toHaveBeenCalled();
+  });
+
   test("importing a free text draws it on its page", () => {
     expect.hasAssertions();
 
@@ -330,7 +343,7 @@ describe("usePdfAnnotations", () => {
 
     expect(
       state.importXfdf(
-        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="" page="0" rect="72,300,200,320"/><freetext name="" page="0" rect="72,300,200,320"/></annots></xfdf>`,
+        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="" page="0" rect="72,300,200,320"><contents>a</contents></freetext><freetext name="" page="0" rect="72,300,200,320"><contents>a</contents></freetext></annots></xfdf>`,
       ),
     ).toStrictEqual(ok(undefined));
     expect(pdfDocument.annotationStorage.size).toBe(2);
@@ -344,7 +357,7 @@ describe("usePdfAnnotations", () => {
 
     expect(
       state.importXfdf(
-        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"/><freetext name="a" page="0" rect="72,300,200,320"/></annots></xfdf>`,
+        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"><contents>a</contents></freetext><freetext name="a" page="0" rect="72,300,200,320"><contents>a</contents></freetext></annots></xfdf>`,
       ),
     ).toStrictEqual(ok(undefined));
     expect(pdfDocument.annotationStorage.size).toBe(2);
@@ -355,7 +368,7 @@ describe("usePdfAnnotations", () => {
 
     const pdfDocument = createDocument([[]]);
     const { state } = mountAnnotations(pdfDocument);
-    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"/></annots></xfdf>`;
+    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"><contents>a</contents></freetext></annots></xfdf>`;
 
     expect(state.importXfdf(xfdf)).toStrictEqual(ok(undefined));
     expect(state.importXfdf(xfdf)).toStrictEqual(ok(undefined));

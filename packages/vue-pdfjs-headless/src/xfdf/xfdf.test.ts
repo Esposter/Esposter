@@ -49,10 +49,18 @@ describe("xFDF", () => {
     expect(readXfdf(xfdf, new Set())).toStrictEqual(err("Free text 1 has no valid rect"));
   });
 
+  test.each(["", " "])("a free text whose contents are %j is named in the error", (contents) => {
+    expect.hasAssertions();
+
+    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="1,2,3,4"><contents>${contents}</contents></freetext></annots></xfdf>`;
+
+    expect(readXfdf(xfdf, new Set())).toStrictEqual(err("Free text 1 has no contents"));
+  });
+
   test("free texts with no name each read with an id of their own", () => {
     expect.hasAssertions();
 
-    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="" page="0" rect="1,2,3,4"/><freetext name="" page="0" rect="1,2,3,4"/></annots></xfdf>`;
+    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="" page="0" rect="1,2,3,4"><contents>a</contents></freetext><freetext name="" page="0" rect="1,2,3,4"><contents>a</contents></freetext></annots></xfdf>`;
 
     expect(readIds(xfdf).map((ids) => new Set(ids).size)).toStrictEqual(ok(2));
   });
@@ -60,7 +68,7 @@ describe("xFDF", () => {
   test("free texts that share a name read with the name on the first and an id of their own on the next", () => {
     expect.hasAssertions();
 
-    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="1,2,3,4"/><freetext name="a" page="0" rect="1,2,3,4"/></annots></xfdf>`;
+    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="1,2,3,4"><contents>a</contents></freetext><freetext name="a" page="0" rect="1,2,3,4"><contents>a</contents></freetext></annots></xfdf>`;
 
     expect(readIds(xfdf).map(([first]) => first)).toStrictEqual(ok("a"));
     expect(readIds(xfdf).map((ids) => new Set(ids).size)).toStrictEqual(ok(2));

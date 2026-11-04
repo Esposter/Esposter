@@ -136,6 +136,13 @@ The package SHALL write free-text annotations as XFDF and read XFDF back into th
 - **THEN** an error naming the page is returned
 - **AND** nothing is stored or drawn
 
+#### Scenario: Importing a free text with no contents is refused
+
+- **GIVEN** a document of one page
+- **WHEN** an XFDF file with a free text that has no contents is imported
+- **THEN** an error naming the problem is returned
+- **AND** nothing is stored or drawn
+
 #### Scenario: A drawn free text is exported
 
 - **GIVEN** a free text drawn on the second page

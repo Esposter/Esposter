@@ -14,17 +14,15 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
   const coordinates = (element.getAttribute("rect") ?? "").split(",").map((text) => parseCoordinate(text));
   if (!/^\d+$/u.test(page)) return err(`Free text ${index + 1} has no valid page`);
   if (!checkRectangle(coordinates)) return err(`Free text ${index + 1} has no valid rect`);
+  // The renderer stores no editor whose text is blank, so a free text with none is refused rather than dropped on its page
+  const contents = element.querySelector("contents")?.textContent ?? "";
+  if (contents.trim() === "") return err(`Free text ${index + 1} has no contents`);
 
   const name = element.getAttribute("name") ?? "";
   const id = name === "" || usedIds.has(name) ? crypto.randomUUID() : name;
   usedIds.add(id);
 
-  return ok({
-    contents: element.querySelector("contents")?.textContent ?? "",
-    id,
-    pageNumber: Number(page) + 1,
-    rect: coordinates,
-  });
+  return ok({ contents, id, pageNumber: Number(page) + 1, rect: coordinates });
 };
 
 // Reads the free-text annotations of an XFDF file. The ids already held in the document are passed in, so a free text
