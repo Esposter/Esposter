@@ -37,6 +37,7 @@ pnpm i headless-block-editor zod
 | `getBlockLayerRows`         | function  | Every node in document order, with its depth and pointer                                                                                   |
 | `insertBlockNode`           | function  | Adds a node at an index of a slot, or no operations when the slot does not accept its type                                                 |
 | `moveBlockNode`             | function  | Moves a node to an index of another slot as a remove and an add, or no operations when refused                                             |
+| `NO_BLOCK_SLOTS`            | constant  | The slots of a node that holds none, the record a children port returns for it                                                             |
 | `removeBlockNode`           | function  | Removes the node a pointer names, with its subtree                                                                                         |
 | `renderBlockNodes`          | function  | Renders each node once its slots have rendered, skipping a node whose type the registry lacks                                              |
 | `updateBlockNodeProps`      | function  | One JSON Patch add per prop, replacing a prop the node already has                                                                         |

@@ -15,3 +15,5 @@ export const INPUT_OUTPUT_SLANT_RATIO = 0.2;
 // A fill colour written as six hex digits
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const HEX_COLOR_REGEX: RegExp = /^#[\dA-Fa-f]{6}$/u;
+// The slots of a node that holds no children, typed with a never element so it is assignable to every node type's slots
+export const NO_BLOCK_SLOTS: Readonly<Record<string, readonly never[]>> = {};
