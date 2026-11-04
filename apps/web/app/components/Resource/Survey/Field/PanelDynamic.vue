@@ -61,6 +61,15 @@ const rows = computed(() =>
 const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
   answer.value = panels.value.toSpliced(panelIndex, 1, panel);
 };
+// A panel removed or added takes its key with it, so the rows that stay keep the state their fields hold
+const removePanel = (panelIndex: number) => {
+  answer.value = panels.value.toSpliced(panelIndex, 1);
+  panelKeys.value = panelKeys.value.toSpliced(panelIndex, 1);
+};
+const addPanel = () => {
+  answer.value = [...panels.value, {}];
+  panelKeys.value = [...panelKeys.value, ...createPanelKeys(1)];
+};
 </script>
 
 <template>
@@ -82,6 +91,7 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
               (value) => setPanel(panelIndex, withSurveyAnswer(row.panel, field.node.props.name, value))
             "
           />
+          <!-- eslint-disable vue/no-restricted-syntax -- removes a panel from the unsaved answer draft, which nothing persists until the survey is submitted -->
           <UiIconButton
             :disabled="isDisabled || panels.length <= node.props.minPanelCount"
             :label="node.props.removePanelText || 'Remove panel'"
@@ -89,24 +99,15 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
             :variant="UiButtonVariant.Quiet"
             type="button"
             self-end
-            @click="
-              () => {
-                answer = panels.toSpliced(panelIndex, 1);
-                panelKeys = panelKeys.toSpliced(panelIndex, 1);
-              }
-            "
+            @click="removePanel(panelIndex)"
           />
+          <!-- eslint-enable vue/no-restricted-syntax -->
         </div>
         <UiButton
           :disabled="isDisabled || panels.length >= node.props.maxPanelCount"
           type="button"
           self-start
-          @click="
-            () => {
-              answer = [...panels, {}];
-              panelKeys = [...panelKeys, ...createPanelKeys(1)];
-            }
-          "
+          @click="addPanel()"
         >
           {{ node.props.addPanelText || "Add panel" }}
         </UiButton>
