@@ -54,6 +54,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **Anything pressed wears `ui-button`** — `UiButton`, `UiButtonLink` for somewhere to go, `UiInlineAction` inside a sentence — and lays out its own content (`references/buttons.md`).
 - **A utility cannot recolour a surface**; a state that recolours one is a data attribute the component's scoped style reads (`references/surfaces.md`).
 - **A search is `UiTextField` with the search type**, and a field draws no line, ring, shade or padding of the feature's own (`references/fields.md`).
+- **A focused control keeps the library's ring** — a field or a row adds its tint beneath it, and a component hides the ring only behind an indicator of its own that reaches 3:1, never a tint alone (`references/document-chrome.md`).
 - **A field is `UiTextField` inside a `UiForm`**, with its rules from `UiRules` or a `UiRule` (`references/fields.md`).
 - **A choice between views of one thing is `UiTabs`**; tabs that go somewhere are `UiTabLinks` (`references/tabs.md`).
 - **The call site's attributes go on top of the primitive's** — render from the attribute slot with `$attrs` spread after (`references/authoring-components.md`).
