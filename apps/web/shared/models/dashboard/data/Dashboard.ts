@@ -36,14 +36,14 @@ export const dashboardSchema = z.object({
       if (new Set(ids).size !== ids.length) context.addIssue({ code: "custom", message: "Array items must be unique" });
       if (ids.length > MAX_RESOURCE_CONTENT_SIZE)
         context.addIssue({ code: "custom", message: "The visuals across every group exceed the content limit" });
-      // Whether a group sits deeper than the depth cap, counted from the level given
-      const checkIsGroupTooDeep = (levelVisuals: typeof visuals, depth: number): boolean =>
+      // Whether a group sits deeper than the depth cap somewhere in the tree of the level given, counted from that level
+      const checkIsTreeTooDeep = (levelVisuals: typeof visuals, depth: number): boolean =>
         levelVisuals.some(
           (visual) =>
             visual.visuals !== undefined &&
-            (depth > MAX_VISUAL_GROUP_DEPTH || checkIsGroupTooDeep(visual.visuals, depth + 1)),
+            (depth > MAX_VISUAL_GROUP_DEPTH || checkIsTreeTooDeep(visual.visuals, depth + 1)),
         );
-      if (checkIsGroupTooDeep(visuals, 0))
+      if (checkIsTreeTooDeep(visuals, 0))
         context.addIssue({ code: "custom", message: "A group nests deeper than the group depth allows" });
     }),
 }) satisfies z.ZodType<ToData<Dashboard>>;
