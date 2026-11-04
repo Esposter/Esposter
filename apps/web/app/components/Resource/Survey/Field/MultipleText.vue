@@ -29,19 +29,12 @@ const updateItem = (name: string, text: string) => {
     :title="label"
   >
     <template #default="{ describedBy }">
-      <div
-        role="group"
-        :aria-describedby="describedBy"
-        :aria-invalid="error ? true : undefined"
-        :aria-label="label"
-        flex
-        flex-col
-        gap-2
-      >
+      <div role="group" :aria-describedby="describedBy" :aria-label="label" flex flex-col gap-2>
         <UiTextField
           v-for="item of node.props.items"
           :key="item.name"
           :is-disabled="isDisabled || undefined"
+          :is-invalid="error ? true : undefined"
           :is-required="node.props.isRequired || undefined"
           :label="item.title || item.name"
           :model-value="getText(answers[item.name])"

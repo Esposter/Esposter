@@ -20,6 +20,8 @@ interface Props {
   isDisabled?: true;
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
   // Filter under the column's name, a cell being edited in its row
+  // Marks the field invalid with no message of its own, where a message the field's group shows stands for it
+  isInvalid?: true;
   isLabelHidden?: true;
   // Marks the label with the required mark, which speech announces as required once
   isRequired?: true;
@@ -42,6 +44,7 @@ const {
   hint,
   isAutofocus,
   isDisabled,
+  isInvalid,
   isLabelHidden,
   isRequired,
   label,
@@ -98,7 +101,7 @@ defineExpose({ element });
           :is="rows ? 'textarea' : 'input'"
           ref="element"
           :="attrs"
-          :aria-invalid="error ? true : attrs['aria-invalid']"
+          :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
           :autocomplete
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"

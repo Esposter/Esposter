@@ -85,13 +85,16 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: value }]]]);
     });
 
-    test("shows its error beside the table and marks the table invalid", () => {
+    test("shows its error beside the table, which describes itself by it, and marks each cell invalid", () => {
       expect.hasAssertions();
 
       const component = mountMatrixDynamic(createNode(1, 0, 2), undefined, message);
+      const alert = component.get('[role="alert"]');
 
-      expect(component.get('[role="alert"]').text()).toBe(message);
-      expect(component.get("table").attributes("aria-invalid")).toBe("true");
+      expect(alert.text()).toBe(message);
+      expect(component.get("table").attributes("aria-describedby")).toBe(alert.attributes("id"));
+      expect(component.get("table").attributes("aria-invalid")).toBeUndefined();
+      expect(component.get("input").attributes("aria-invalid")).toBe("true");
     });
   });
 });

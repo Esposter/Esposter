@@ -58,13 +58,19 @@ describe("resourceSurveyFieldMatrix", () => {
       ).toStrictEqual([{ "0": -1 }, { "0": 0 }]);
     });
 
-    test("shows its error beside the group and marks the group invalid", async () => {
+    test("shows its error beside the group and marks each row's choice invalid, not the group", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldMatrix, { props: { error, isDisabled: false, node } });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
-      expect(component.get('[role="group"]').attributes("aria-invalid")).toBe("true");
+      const radioGroups = component.findAll('[role="radiogroup"]');
+
+      expect(component.get('[role="group"]').attributes("aria-invalid")).toBeUndefined();
+      expect(radioGroups).not.toHaveLength(0);
+      expect(radioGroups.map((radioGroup) => radioGroup.attributes("aria-invalid"))).toStrictEqual(
+        radioGroups.map(() => "true"),
+      );
     });
   });
 });

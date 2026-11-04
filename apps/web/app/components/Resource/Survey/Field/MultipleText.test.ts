@@ -93,7 +93,7 @@ describe("resourceSurveyFieldMultipleText", () => {
       ).toStrictEqual([{ a: text }]);
     });
 
-    test("shows its error beside the group and marks the group invalid", async () => {
+    test("shows its error beside the group and marks each item invalid, not the group", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
@@ -101,7 +101,11 @@ describe("resourceSurveyFieldMultipleText", () => {
       });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
-      expect(component.get('[role="group"]').attributes("aria-invalid")).toBe("true");
+      expect(component.get('[role="group"]').attributes("aria-invalid")).toBeUndefined();
+      expect(component.findAll("input").map((input) => input.attributes("aria-invalid"))).toStrictEqual([
+        "true",
+        "true",
+      ]);
     });
   });
 });

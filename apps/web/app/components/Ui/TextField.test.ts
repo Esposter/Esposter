@@ -60,6 +60,14 @@ describe("uiTextField", () => {
       expect(component.vm.element).toBe(component.get("input").element);
     });
 
+    test("marks the control invalid with no message of its own, where a call site says so", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { isInvalid: true, label, modelValue: "" } });
+
+      expect(component.get("input").attributes("aria-invalid")).toBe("true");
+    });
+
     test("takes several lines as a textarea", () => {
       expect.hasAssertions();
 

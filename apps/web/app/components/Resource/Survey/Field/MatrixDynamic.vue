@@ -17,6 +17,9 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
+const errorId = useId();
+// The table holds no invalid state of its own, since a table takes no aria-invalid, so each control in it carries it
+const invalid = computed(() => (error ? true : undefined));
 const rows = computed(() => getSurveyAnswerRows(answer.value, node.props.rowCount));
 // A choice is keyed by its value as text, which is how a select and a toggle group key their options
 const getChoiceItems = (choices: SurveyChoice[]): UiMenuItem<string>[] =>
@@ -49,7 +52,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
 <template>
   <div flex flex-col gap-2>
     <div of-x-auto>
-      <table text-left w-full :aria-invalid="error ? true : undefined">
+      <table text-left w-full :aria-describedby="error ? errorId : undefined">
         <caption text-left>
           <span block>
             {{ node.props.title || node.props.name }}
@@ -71,6 +74,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
                 v-if="column.cellType === SurveyMatrixCellType.Text"
                 is-label-hidden
                 :is-disabled="isDisabled || undefined"
+                :is-invalid="invalid"
                 :label="column.title || column.name"
                 :model-value="getCellText(row[column.name])"
                 @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
@@ -79,6 +83,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
                 v-else-if="column.cellType === SurveyMatrixCellType.Comment"
                 is-label-hidden
                 :is-disabled="isDisabled || undefined"
+                :is-invalid="invalid"
                 :label="column.title || column.name"
                 :model-value="getCellText(row[column.name])"
                 :rows="2"
@@ -86,6 +91,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               />
               <UiSelect
                 v-else-if="column.cellType === SurveyMatrixCellType.Dropdown"
+                :aria-invalid="invalid"
                 :is-disabled
                 :items="takeOne(choiceItemsMap, column.name)"
                 :label="column.title || column.name"
@@ -98,6 +104,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
                 <UiCheckbox
                   v-for="choice of column.choices"
                   :key="String(choice.value)"
+                  :aria-invalid="invalid"
                   is-label-shown
                   :disabled="isDisabled"
                   :label="getSurveyChoiceText(choice)"
@@ -113,6 +120,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               </div>
               <UiCheckbox
                 v-else-if="column.cellType === SurveyMatrixCellType.Boolean"
+                :aria-invalid="invalid"
                 :disabled="isDisabled"
                 :label="column.title || column.name"
                 :model-value="row[column.name] === true"
@@ -120,6 +128,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               />
               <UiToggleGroup
                 v-else-if="column.cellType === SurveyMatrixCellType.Rating"
+                :aria-invalid="invalid"
                 :items="takeOne(choiceItemsMap, column.name)"
                 :label="column.title || column.name"
                 :model-value="getChoiceKey(row[column.name])"
@@ -150,6 +159,6 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
     >
       {{ node.props.addRowText || "Add row" }}
     </UiButton>
-    <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
+    <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
   </div>
 </template>

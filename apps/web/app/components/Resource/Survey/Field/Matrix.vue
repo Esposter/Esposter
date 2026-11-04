@@ -39,7 +39,7 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
     :title="label"
   >
     <template #default="{ describedBy }">
-      <div role="group" :aria-describedby="describedBy" :aria-invalid="error ? true : undefined" :aria-label="label">
+      <div role="group" :aria-describedby="describedBy" :aria-label="label">
         <!-- One row of the table per row choice, its radio group choosing one column of that row -->
         <table w-full>
           <tbody>
@@ -47,6 +47,7 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
               <th scope="row" fw-normal pr-4 text-start align-top>{{ getSurveyChoiceText(row) }}</th>
               <td>
                 <UiRadioGroup
+                  :aria-invalid="error ? true : undefined"
                   :is-disabled
                   :items="columnItems"
                   :label="getSurveyChoiceText(row)"
