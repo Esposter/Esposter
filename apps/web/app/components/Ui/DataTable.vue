@@ -328,7 +328,7 @@ const onGridKeydown = useGridKeyboard({
   <div flex flex-col min-h-0>
     <div ref="scrollContainer" flex-1 min-h-0 of-auto>
       <table
-        class="table"
+        class="data-table"
         :aria-busy="isPending"
         :aria-label="label"
         :data-density="density"
@@ -574,7 +574,7 @@ const onGridKeydown = useGridKeyboard({
 
 <style scoped>
 /* Separate rather than collapsed, so a sticky header keeps its line and the cells' own edges scroll with them */
-.table {
+.data-table {
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -597,7 +597,7 @@ const onGridKeydown = useGridKeyboard({
   padding-block: calc(var(--ui-step) * 2);
 }
 
-.table[data-density="Compact"] .cell:not(.selection) {
+.data-table[data-density="Compact"] .cell:not(.selection) {
   padding-block: var(--ui-step);
 }
 
@@ -639,7 +639,7 @@ const onGridKeydown = useGridKeyboard({
   width: var(--ui-step);
 }
 
-.table[data-scrolled] .pinned-edge::after {
+.data-table[data-scrolled] .pinned-edge::after {
   opacity: 1;
 }
 

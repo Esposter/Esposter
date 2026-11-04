@@ -45,7 +45,7 @@ const id = useId();
         renderless
       >
         <button :="itemAttrs" class="aria-disabled:cursor-default aria-disabled:op-disabled" type="button" ui-item>
-          <span class="ring" p-1 flex shrink-0 size-6 ui-field ui-pill>
+          <span class="field-mark" p-1 flex shrink-0 size-6 ui-field ui-pill>
             <span class="mark" :data-state="itemAttrs['data-state']" flex-1 />
           </span>
           <span flex flex-1 flex-col min-w-0>
@@ -75,7 +75,7 @@ const id = useId();
 
 <style scoped>
 /* An invalid group tints each round mark's field in the error colour, as an invalid text field is tinted */
-[aria-invalid="true"] .ring {
+[aria-invalid="true"] .field-mark {
   background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
 }
 </style>

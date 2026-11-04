@@ -269,6 +269,28 @@ describe("library layout", () => {
   });
 });
 
+// A style block selects its own elements by a class the template sets, and a class the generator matches also draws
+// That utility on every element carrying it: a hook named `ring` drew UnoCSS's box-shadow ring on each round mark. The
+// Library's style blocks are checked, since its hooks are the ones every feature inherits
+describe("style hooks", () => {
+  const STYLE_BLOCK_REGEX = /<style[^>]*>(?<css>[\s\S]*?)<\/style>/gu;
+  const HOOK_REGEX = /(?<![\w-])\.(?<name>[a-z][\w-]*)/gu;
+
+  test("selects no class a utility also matches", async () => {
+    expect.hasAssertions();
+
+    const hooks = new Set<string>();
+    for (const { lines, sourcePath } of sourceFiles) {
+      if (!sourcePath.endsWith(".vue") || !sourcePath.startsWith("components/Ui/")) continue;
+      for (const styleBlock of lines.join("\n").matchAll(STYLE_BLOCK_REGEX))
+        for (const hook of (styleBlock.groups?.css ?? "").matchAll(HOOK_REGEX)) hooks.add(hook.groups?.name ?? "");
+    }
+    const { matched } = await uno.generate(hooks, { preflights: false });
+
+    expect([...hooks].filter((hook) => matched.has(hook))).toStrictEqual([]);
+  });
+});
+
 // Every authored length is `rem` (`styling` skill)
 describe("lengths", () => {
   const STYLE_PATH_REGEX = /\.(?:vue|css)$/u;
