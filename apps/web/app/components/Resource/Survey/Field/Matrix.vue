@@ -39,7 +39,7 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
     :title="label"
   >
     <template #default="{ describedBy, labelledBy }">
-      <div role="group" :aria-describedby="describedBy" :aria-label="label" :aria-labelledby="labelledBy">
+      <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy">
         <!-- One row of the table per row choice, its radio group choosing one column of that row -->
         <table w-full>
           <tbody>

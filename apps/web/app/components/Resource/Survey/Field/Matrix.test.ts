@@ -35,7 +35,9 @@ describe("resourceSurveyFieldMatrix", () => {
         props: { error: "", isDisabled: false, node },
       });
 
-      expect(component.get('[role="group"]').attributes("aria-label")).toBe(title);
+      const labelledBy = component.get('[role="group"]').attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(title);
       expect(component.findAll('[role="radiogroup"]').map((group) => group.attributes("aria-label"))).toStrictEqual([
         "0",
         "0.1",

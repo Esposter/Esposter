@@ -45,7 +45,7 @@ describe("resourceSurveyFieldCheckbox", () => {
       expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${title} * required`);
     });
 
-    test("is a named group of checkboxes, each saying whether it is checked", () => {
+    test("is a group of checkboxes, each saying whether it is checked", () => {
       expect.hasAssertions();
 
       const component = mount(ResourceSurveyFieldCheckbox, {
@@ -53,7 +53,6 @@ describe("resourceSurveyFieldCheckbox", () => {
       });
       const [first, second] = component.findAll('[role="checkbox"]');
 
-      expect(component.get('[role="group"]').attributes("aria-label")).toBe(title);
       expect(first?.attributes("aria-checked")).toBe("true");
       expect(second?.attributes("aria-checked")).toBe("false");
     });

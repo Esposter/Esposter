@@ -24,8 +24,9 @@ describe("resourceSurveyFieldBoolean", () => {
 
       const component = mount(SurveyFieldBoolean, { props: { error: "", isDisabled: false, node: createNode() } });
       const control = component.get('[role="switch"]');
+      const labelledBy = control.attributes("aria-labelledby");
 
-      expect(control.attributes("aria-label")).toBe(title);
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(title);
 
       await control.trigger("click");
       await flushPromises();
