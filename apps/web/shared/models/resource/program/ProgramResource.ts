@@ -19,8 +19,8 @@ export interface ProgramResource {
 
 export const programResourceSchema = z.object({
   audience: datasetReferenceSchema.optional(),
-  emailId: createResourceLinkSchema(ResourceLinkType.Email).or(z.literal("")).default(""),
+  emailId: createResourceLinkSchema(ResourceLinkType.Email).or(z.literal("")),
   // Names the audience column identifying a recipient — display and dedupe key, owner-side only
-  keyColumn: createNormalizedStringSchema(MAX_KEY_COLUMN_LENGTH).default(""),
-  surveyId: createResourceLinkSchema(ResourceLinkType.Survey).or(z.literal("")).default(""),
+  keyColumn: createNormalizedStringSchema(MAX_KEY_COLUMN_LENGTH),
+  surveyId: createResourceLinkSchema(ResourceLinkType.Survey).or(z.literal("")),
 }) satisfies z.ZodType<ToData<ProgramResource>>;

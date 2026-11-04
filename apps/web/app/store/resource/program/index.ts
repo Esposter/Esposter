@@ -1,5 +1,5 @@
-import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { createContentData } from "@/services/resource/createContentData";
+import { createEmptyProgram } from "@/services/resource/program/createEmptyProgram";
 import { ResourceType } from "@esposter/db-schema";
 
 export const useProgramStore = defineStore("resource/program", () => {
@@ -7,6 +7,6 @@ export const useProgramStore = defineStore("resource/program", () => {
     content: programResource,
     loadContent,
     saveContent: saveProgram,
-  } = createContentData<ResourceType.Program>(ResourceType.Program, (data) => data ?? programResourceSchema.parse({}));
+  } = createContentData<ResourceType.Program>(ResourceType.Program, (data) => data ?? createEmptyProgram());
   return { loadContent, programResource, saveProgram };
 });
