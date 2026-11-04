@@ -34,5 +34,5 @@ export const visualSchema = z.object({
   ...layoutItemSchema.shape,
   chart: chartSchema,
   dataset: visualDatasetBindingSchema.optional(),
-  isAutoHeight: z.boolean().default(false),
+  isAutoHeight: z.boolean(),
 }) satisfies z.ZodType<ToData<Visual>>;

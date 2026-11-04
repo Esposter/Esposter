@@ -252,12 +252,6 @@ The editor SHALL offer a Layout control that sets how visuals pack, upward, side
 - **WHEN** the save of the dashboard is refused
 - **THEN** the control shows the previous choice again
 
-#### Scenario: A dashboard saved before the settings reads with the defaults
-
-- **GIVEN** a stored dashboard with no layout settings
-- **WHEN** the owner opens it
-- **THEN** visuals pack upward and a drop pushes the visuals it lands on
-
 #### Scenario: The published dashboard packs by the saved choice
 
 - **GIVEN** a dashboard saved to pack sideways

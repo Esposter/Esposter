@@ -56,7 +56,7 @@ A press on a visual's edge or corner is a gesture of the package, and the grid p
 
 Fit height is a flag on the visual. A tile whose visual fits its height has no fixed height of its own; the tile measures what its table draws and reports it, and the package takes the whole rows that hold it, as one commit.
 
-The layout settings are two fields on the dashboard's content, each a closed set with a default: how items pack, and how a drop on another item resolves. A stored dashboard without them reads with the defaults, so no migration is needed. The published view passes the same two settings to the same grid.
+The layout settings are two fields on the dashboard's content, each a closed set: how items pack, and how a drop on another item resolves. A new dashboard starts packing upward and pushing, and every stored dashboard carries both. The published view passes the same two settings to the same grid.
 
 ```mermaid
 flowchart TD
