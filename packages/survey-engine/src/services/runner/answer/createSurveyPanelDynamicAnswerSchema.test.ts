@@ -39,35 +39,9 @@ const createPanelDynamicNode = (isRequired = false): SurveyPanelDynamicNode => (
   },
   type: SurveyNodeType.PanelDynamic,
 });
-// A template whose required question "b" is shown only in a row whose boolean question "a" is yes
-const createGatedPanelDynamicNode = (): SurveyPanelDynamicNode => ({
-  props: {
-    ...surveyPanelDynamicNodeType.createDefaultProps(),
-    id: crypto.randomUUID(),
-    maxPanelCount: 2,
-    minPanelCount: 1,
-    template: [
-      {
-        props: { ...surveyBooleanNodeType.createDefaultProps(), id: crypto.randomUUID(), name: "a" },
-        type: SurveyNodeType.Boolean,
-      },
-      {
-        props: {
-          ...surveyTextNodeType.createDefaultProps(),
-          id: crypto.randomUUID(),
-          isRequired: true,
-          name: "b",
-          visibleIf: "{panel.a}",
-        },
-        type: SurveyNodeType.Text,
-      },
-    ],
-  },
-  type: SurveyNodeType.PanelDynamic,
-});
 // A template whose text question "b" takes a condition on its row's boolean question "a", as the panel scope it reads
 const createConditionedPanelDynamicNode = (
-  condition: { enableIf: string } | { requiredIf: string },
+  condition: { enableIf: string } | { requiredIf: string } | { visibleIf: string },
   isRequired: boolean,
 ): SurveyPanelDynamicNode => ({
   props: {
@@ -129,7 +103,9 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
   test("accepts an empty answer to a template question its row hides", () => {
     expect.hasAssertions();
 
-    const result = createSchema(createGatedPanelDynamicNode()).safeParse([{ a: false, b: "" }]);
+    const result = createSchema(createConditionedPanelDynamicNode({ visibleIf: "{panel.a}" }, true)).safeParse([
+      { a: false, b: "" },
+    ]);
 
     expect(result.success).toBe(true);
   });
@@ -137,7 +113,9 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
   test("refuses an empty answer to a template question its row shows", () => {
     expect.hasAssertions();
 
-    const result = createSchema(createGatedPanelDynamicNode()).safeParse([{ a: true, b: "" }]);
+    const result = createSchema(createConditionedPanelDynamicNode({ visibleIf: "{panel.a}" }, true)).safeParse([
+      { a: true, b: "" },
+    ]);
 
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
   });
@@ -145,7 +123,7 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
   test("reads each row's own answers as the panel scope", () => {
     expect.hasAssertions();
 
-    const result = createSchema(createGatedPanelDynamicNode()).safeParse([
+    const result = createSchema(createConditionedPanelDynamicNode({ visibleIf: "{panel.a}" }, true)).safeParse([
       { a: true, b: "x" },
       { a: false, b: "" },
     ]);
