@@ -6,7 +6,7 @@ It parses and evaluates the survey's expression language: the conditions that sh
 
 The package has no live SurveyJS. It does not depend on SurveyJS, and the values it is held to were recorded from SurveyJS's expression runner into fixtures that its tests replay.
 
-Design notes live in [the survey logic design](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/survey-logic/design.md).
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-logic).
 
 ## Table of Contents
 
@@ -21,7 +21,6 @@ Design notes live in [the survey logic design](https://github.com/Esposter/Espos
 | Export                                                                                        | Kind     | Purpose                                                                                                                                              |
 | :-------------------------------------------------------------------------------------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `checkSurveyExpression`                                                                       | function | Refuses an expression that does not parse, calls a function the package lacks, or calls an array function's filter form, naming the first such fault |
-| `evaluateSurveyExpression`                                                                    | function | Evaluates a parsed expression over the context's answers                                                                                             |
 | `MAX_SURVEY_EXPRESSION_LENGTH`                                                                | constant | The most characters an expression source may hold; a longer source is refused at its first character past the limit, and nothing throws              |
 | `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at                                        |
 | `runSurveyExpression`                                                                         | function | Parses a source and evaluates it over a context already read as answers, or returns the parse's fault                                                |
