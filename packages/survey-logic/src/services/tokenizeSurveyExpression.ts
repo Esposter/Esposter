@@ -11,13 +11,13 @@ import { err, ok } from "neverthrow";
 
 // Reads the source into its tokens, which end with an end token at the source's length, or returns the first fault
 export const tokenizeSurveyExpression = (source: string): Result<SurveyExpressionToken[], SurveyLogicError> => {
-  const state: SurveyExpressionTokenizerState = { error: null, index: 0, source, tokens: [] };
+  const state: SurveyExpressionTokenizerState = { index: 0, source, tokens: [] };
   advanceSurveyExpressionWhile(state, checkIsSurveyExpressionWhitespace);
-  while (state.error === null && state.index < source.length) {
+  while (state.error === undefined && state.index < source.length) {
     readSurveyExpressionToken(state);
     advanceSurveyExpressionWhile(state, checkIsSurveyExpressionWhitespace);
   }
-  if (state.error !== null) return err(state.error);
+  if (state.error !== undefined) return err(state.error);
 
   state.tokens.push({ position: source.length, text: "", type: SurveyExpressionTokenType.End });
   return ok(state.tokens);
