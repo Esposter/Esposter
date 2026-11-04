@@ -55,13 +55,15 @@ describe("resourceSurveyFieldRanking", () => {
       component.unmount();
     });
 
-    test("shows its error beside the list and marks the list invalid", async () => {
+    test("shows its error beside the list, which is described by it, and marks no list invalid", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldRanking, { props: { error, isDisabled: false, node } });
+      const alert = component.get('[role="alert"]');
 
-      expect(component.get('[role="alert"]').text()).toBe(error);
-      expect(component.get('[role="list"]').attributes("aria-invalid")).toBe("true");
+      expect(alert.text()).toBe(error);
+      expect(component.get('[role="list"]').attributes("aria-describedby")).toBe(alert.attributes("id"));
+      expect(component.get('[role="list"]').attributes("aria-invalid")).toBeUndefined();
     });
   });
 });
