@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyChoice } from "survey-engine";
 
+import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
 import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
 import { surveyChoiceSchema } from "survey-engine";
 
@@ -12,15 +13,7 @@ interface Props {
 // Within its list. A row that breaks either is flagged and the list is not written until every row is valid
 const modelValue = defineModel<SurveyChoice[]>({ required: true });
 const { label } = defineProps<Props>();
-const getChoiceError = (choice: SurveyChoice) =>
-  String(choice.value) === ""
-    ? "A choice needs a value"
-    : surveyChoiceSchema.safeParse(choice).error?.issues[0]?.message;
-const editor = useSurveyListEditor(modelValue, {
-  duplicateMessage: "Choice values must be unique",
-  getItemError: getChoiceError,
-  getKey: (choice) => String(choice.value),
-});
+const editor = useSurveyListEditor(modelValue, getSurveyChoiceListEditorOptions(surveyChoiceSchema));
 const { addItems, updateItem } = editor;
 const addText = ref("");
 const addFromField = () => {

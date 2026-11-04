@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
 import { useAlertStore } from "@/store/alert";
 import { surveyImageChoiceSchema, SurveyNodeType } from "survey-engine";
 
@@ -19,14 +20,7 @@ const choices = computed(() => {
 // The rows as a draft, and writes a list only once every row is valid, so a value the list refuses stays as typed
 const editor = useSurveyListEditor(
   computed({ get: () => choices.value, set: (nextChoices) => updateNodeProps({ choices: nextChoices }) }),
-  {
-    duplicateMessage: "Choice values must be unique",
-    getItemError: (choice) =>
-      String(choice.value) === ""
-        ? "A choice needs a value"
-        : surveyImageChoiceSchema.safeParse(choice).error?.issues[0]?.message,
-    getKey: (choice) => String(choice.value),
-  },
+  getSurveyChoiceListEditorOptions(surveyImageChoiceSchema),
 );
 const { addItems, updateItem } = editor;
 // A picked image adds a choice, since a choice cannot be saved without its picture. Its value is a fresh id, which
