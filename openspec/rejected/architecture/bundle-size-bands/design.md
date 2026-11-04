@@ -18,4 +18,4 @@ An explicit ceiling per bundle and per types file, written in the package's own 
 
 ## The revisit trigger
 
-The same package's `src/index.test.ts` has three commits that each raise a ceiling and add neither a dependency nor an export, which `git log -p` on that file shows. Then the number records the growth instead of a limit someone chose, and the ceilings give way to a measured budget read in review. The [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page argues against one global number answered by raising it, and wants a per-route first-load number defined before any budget is enforced.
+One package's ceiling has been raised three times, which `git log -p -- packages/<package>/src/index.test.ts` shows as three commits that change its number. Then the number records the growth instead of a limit someone chose, and the ceilings give way to a measured budget read in review. The [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page argues against one global number answered by raising it, and wants a per-route first-load number defined before any budget is enforced.
