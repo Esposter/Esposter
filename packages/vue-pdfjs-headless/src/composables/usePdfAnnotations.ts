@@ -92,7 +92,6 @@ export const usePdfAnnotations = ({
   pdfDocument,
   viewer,
 }: UsePdfAnnotationsOptions): PdfAnnotationsState => {
-  // Undefined until the document's comments have been read, so a tab shows loading rather than an empty list
   const comments = shallowRef<PdfComment[]>();
   const loadComments = getSynchronizedFunction(async (loaded: PDFDocumentProxy) => {
     await getResultAsync(async () => {

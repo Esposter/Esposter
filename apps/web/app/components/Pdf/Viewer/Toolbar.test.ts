@@ -43,11 +43,14 @@ const openMenu = async (component: ReturnType<typeof mountToolbar>) => {
 const getMenuItem = (component: ReturnType<typeof mountToolbar>, title: string) =>
   component.findAll('[role^="menuitem"]').find((item) => item.text() === title);
 // The picker is the input the dialog opens: its click is answered with the file the reader chose, and the types it takes
-// Are returned, one per opening
+// Are returned, one per opening. An input already holding the file reports no change, as a browser's does for the same
+// File chosen again
 const choosesFile = (file: File) => {
   const accepts: string[] = [];
   vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(function (this: HTMLInputElement) {
     accepts.push(this.accept);
+    if (this.files?.length) return;
+
     Object.defineProperty(this, "files", { value: [file] });
     this.dispatchEvent(new Event("change"));
   });
@@ -167,6 +170,21 @@ describe("pdfViewerToolbar", () => {
 
       expect(accepts).toStrictEqual([expect.stringContaining(MimeType.Xfdf)]);
       expect(annotations.importXfdf).toHaveBeenCalledExactlyOnceWith("a");
+    });
+
+    test("importing the file just imported imports it again", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState();
+      const component = await openMenu(mountToolbar({ annotations }));
+      choosesFile(new File(["a"], "notes.xfdf"));
+      await getMenuItem(component, "Import annotations")?.trigger("click");
+      await flushPromises();
+      await openMenu(component);
+      await getMenuItem(component, "Import annotations")?.trigger("click");
+      await flushPromises();
+
+      expect(annotations.importXfdf).toHaveBeenCalledTimes(2);
     });
 
     test("a refused import alerts once", async () => {

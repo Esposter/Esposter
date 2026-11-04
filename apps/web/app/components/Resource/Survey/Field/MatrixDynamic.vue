@@ -11,6 +11,7 @@ import type {
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
+import { getSurveyAnswerText } from "@/services/resource/survey/getSurveyAnswerText";
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
 import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
@@ -44,7 +45,6 @@ const choiceItemsMap = computed(() =>
 );
 // A rating cell's steps are the numbers of its scale, since its column carries no choices to draw them from
 const ratingItems = getSurveyRatingItems(MATRIX_CELL_RATING_COUNT);
-const getCellText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
 const getChoiceKey = (value: SurveyAnswerValue | undefined) =>
   typeof value === "number" || typeof value === "string" ? String(value) : "";
 // The value a picked key stands for, so a numeric choice is still a number in the answer
@@ -112,7 +112,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 :is-invalid="invalid"
                 :is-required="column.isRequired || undefined"
                 :label="column.title || column.name"
-                :model-value="getCellText(row[column.name])"
+                :model-value="getSurveyAnswerText(row[column.name])"
                 @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
               />
               <UiTextField
@@ -122,7 +122,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 :is-invalid="invalid"
                 :is-required="column.isRequired || undefined"
                 :label="column.title || column.name"
-                :model-value="getCellText(row[column.name])"
+                :model-value="getSurveyAnswerText(row[column.name])"
                 :rows="2"
                 @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
               />

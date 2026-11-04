@@ -13,7 +13,7 @@ interface Props {
   viewer: PdfViewerState;
 }
 
-const tab = defineModel<PdfSidebarTab>("tab", { default: PdfSidebarTab.Outline });
+const tab = defineModel<PdfSidebarTab>("tab", { required: true });
 const { annotations, pdfDocument, viewer } = defineProps<Props>();
 const emit = defineEmits<{ chosePage: [] }>();
 // The outline, the thumbnails and the comments go to their pages through this viewer, which also tells the dialog that

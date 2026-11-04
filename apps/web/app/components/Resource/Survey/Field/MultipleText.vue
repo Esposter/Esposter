@@ -2,6 +2,7 @@
 import type { SurveyAnswerValue, SurveyMultipleTextNode } from "survey-engine";
 
 import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
+import { getSurveyAnswerText } from "@/services/resource/survey/getSurveyAnswerText";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -14,7 +15,6 @@ const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined }
 const { error, isDisabled, node } = defineProps<Props>();
 // The answer is a record from each item's name to its text, read as the empty record until one is given
 const answers = useSurveyRecordAnswer(answer);
-const getText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
 const updateItem = (name: string, text: string) => {
   answer.value = { ...answers.value, [name]: text };
 };
@@ -31,7 +31,7 @@ const updateItem = (name: string, text: string) => {
           :is-invalid="error ? true : undefined"
           :is-required="item.isRequired || undefined"
           :label="item.title || item.name"
-          :model-value="getText(answers[item.name])"
+          :model-value="getSurveyAnswerText(answers[item.name])"
           :type="SURVEY_TEXT_FIELD_TYPES[item.inputType]"
           @update:model-value="(text) => updateItem(item.name, text)"
         />

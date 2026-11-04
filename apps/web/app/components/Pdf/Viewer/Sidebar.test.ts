@@ -6,6 +6,7 @@ import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnno
 import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
 import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -18,6 +19,7 @@ const mountSidebar = (outline: PdfOutline | undefined = [], comments: PdfComment
     props: {
       annotations: createPdfAnnotationsState({ comments: shallowRef<PdfComment[] | undefined>(comments) }),
       pdfDocument: createDocument(6),
+      tab: PdfSidebarTab.Outline,
       viewer: createPdfViewerState({ outline: shallowRef<PdfOutline | undefined>(outline) }),
     },
   });
