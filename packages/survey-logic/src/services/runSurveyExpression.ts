@@ -7,9 +7,6 @@ import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
 
 // Parses the source and evaluates the tree over a context that is already read as answers, or returns the parse's fault.
-// Stored answers are read once, by toSurveyLogicAnswer, where a caller builds the context.
-// The survey engine builds two: its runner values, and each dynamic panel row's scope.
-// So a null is unanswered by the time an expression sees it.
 // A call to a name with no function is empty here, since refusing it is the check's job
 export const runSurveyExpression = (
   source: string,
