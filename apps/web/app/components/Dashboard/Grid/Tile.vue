@@ -80,7 +80,7 @@ useResizeObserver(tile, (entries) => {
         :key="edge"
         class="dashboard-grid-handle"
         :data-edge="edge"
-        @pointerdown.stop="(event) => emit('press', event, event.pointerType === 'touch' ? undefined : edge)"
+        @pointerdown.stop="(event) => emit('press', event, edge)"
       />
     </template>
   </div>

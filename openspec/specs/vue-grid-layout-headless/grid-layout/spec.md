@@ -129,11 +129,11 @@ The package SHALL resize an item from any of its four edges or four corners, kee
 - **THEN** the item starts one column further left and spans one column more
 - **AND** its right edge stays where it was
 
-#### Scenario: A touch press on a handle starts no resize
+#### Scenario: A touch press on a handle moves the item
 
 - **GIVEN** an item in the grid
 - **WHEN** a touch presses its handle and drags it
-- **THEN** the grid commits nothing
+- **THEN** the item moves and keeps its size
 
 #### Scenario: A sized-to-content item resizes its width only
 

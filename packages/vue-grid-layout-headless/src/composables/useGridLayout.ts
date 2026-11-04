@@ -127,13 +127,12 @@ export const useGridLayout = <T extends GridItem>(
   };
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
-  const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {
+  const startGesture = (event: PointerEvent, item: T, pressedEdge?: ResizeEdge) => {
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
     if (event.button !== 0) return;
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
-    // A resize is a handle's, and a touch does not resize, so a touch press that names an edge starts nothing. A touch on
-    // The body still moves the item
-    if (edge && event.pointerType === "touch") return;
+    // A touch does not resize, so a touch press on a handle is a press on the body, and it moves the item
+    const edge = event.pointerType === "touch" ? undefined : pressedEdge;
     // An auto-height item takes its height from its content, so an edge that pulls its height starts nothing on it
     if (item.isAutoHeight && edge && checkChangesHeight(edge)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release

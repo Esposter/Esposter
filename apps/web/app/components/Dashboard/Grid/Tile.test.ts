@@ -32,17 +32,6 @@ describe("dashboardGridTile", () => {
     });
   });
 
-  test("a touch press on a handle emits the press without its edge, and a mouse press keeps it", async () => {
-    expect.hasAssertions();
-
-    const wrapper = createTile();
-    const handle = wrapper.get(`[data-edge="${ResizeEdge.East}"]`);
-    await handle.trigger("pointerdown", { button: 0, pointerType: "touch" });
-    await handle.trigger("pointerdown", { button: 0, pointerType: "mouse" });
-
-    expect(wrapper.emitted("press")?.map(([, emittedEdge]) => emittedEdge)).toStrictEqual([undefined, ResizeEdge.East]);
-  });
-
   test("an auto-height tile draws only its east and west handles, since its height is its content's", () => {
     expect.hasAssertions();
 

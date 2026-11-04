@@ -599,10 +599,13 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  test("a touch press on a resize handle starts no resize", async () => {
+  test("a touch press on a handle moves the item", async () => {
     expect.hasAssertions();
 
-    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }] });
+    const { onCommit, wrapper } = mountGrid({
+      edge: ResizeEdge.East,
+      items: [{ h: 2, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }],
+    });
     await flushPromises();
     const handle = wrapper.get(".handle").element;
     handle.dispatchEvent(
@@ -622,7 +625,7 @@ describe(useGridLayout, () => {
       new PointerEvent("pointerup", { bubbles: true, clientX: cellPitch, clientY: 0, pointerId, pointerType: "touch" }),
     );
 
-    expect(onCommit).not.toHaveBeenCalled();
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 1, y: 0 }] }]]);
   });
 
   test("a touch press on a tile's body still moves it", async () => {
