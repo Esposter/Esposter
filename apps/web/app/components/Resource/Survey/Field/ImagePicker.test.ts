@@ -35,6 +35,37 @@ describe("resourceSurveyFieldImagePicker", () => {
       expect(component.get('[role="listbox"]').attributes("aria-label")).toBe(title);
     });
 
+    test("draws a picture its author sized at those pixels", async () => {
+      expect.hasAssertions();
+
+      const node = createNode(false);
+      const component = await mountSuspended(ResourceSurveyFieldImagePicker, {
+        props: {
+          error: "",
+          isDisabled: false,
+          node: { ...node, props: { ...node.props, imageHeight: 80, imageWidth: 120 } },
+        },
+      });
+      const picture = component.get("img").element;
+
+      expect({ height: picture.style.height, width: picture.style.width }).toStrictEqual({
+        height: "80px",
+        width: "120px",
+      });
+    });
+
+    test("draws a picture left unsized in the default mark box, with no size of its own", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldImagePicker, {
+        props: { error: "", isDisabled: false, node: createNode(false) },
+      });
+      const picture = component.get("img").element;
+
+      expect({ height: picture.style.height, width: picture.style.width }).toStrictEqual({ height: "", width: "" });
+      expect(picture.classList.contains("size-6")).toBe(true);
+    });
+
     test("picks a picture by keyboard, which becomes the answer", async () => {
       expect.hasAssertions();
 

@@ -290,6 +290,17 @@ A select given a placeholder SHALL show it in the muted text in its trigger whil
 - **WHEN** the reader opens the list
 - **THEN** the list holds only the choices
 
+### Requirement: A row's mark widens to hold a picture larger than an icon
+
+A row's mark SHALL widen its column to hold a picture set larger than an icon, so the row's title is never drawn over the picture.
+
+#### Scenario: A picture larger than an icon pushes the title along the row
+
+- **GIVEN** a list row whose mark is a picture wider than an icon
+- **WHEN** the row is drawn
+- **THEN** the title starts after the whole picture
+- **AND** an icon mark keeps the default column width
+
 ### Requirement: Text fields report failing rules beside the field
 
 A text field SHALL mark itself invalid and point at its failing message, and the form around it SHALL count its failing rules as the reader types.

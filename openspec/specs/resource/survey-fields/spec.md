@@ -32,6 +32,23 @@ A dropdown or tag box SHALL show the placeholder its author set in its trigger w
 - **THEN** its trigger shows "Pick a colour"
 - **AND** the placeholder is not one of its choices
 
+### Requirement: An image picker draws each picture at the size its author set
+
+An image picker SHALL draw each picture at the pixel width and height its author set, and SHALL draw an unsized picture at the default size of a row's mark.
+
+#### Scenario: A sized picture is drawn at its pixels and keeps its title beside it
+
+- **GIVEN** an image picker whose pictures are set to 120 pixels wide and 80 pixels high
+- **WHEN** the question is drawn
+- **THEN** each picture is drawn 120 pixels wide and 80 pixels high
+- **AND** each picture's title is still beside it
+
+#### Scenario: An unsized picture is drawn at the default mark size
+
+- **GIVEN** an image picker whose pictures have no size set
+- **WHEN** the question is drawn
+- **THEN** each picture is drawn at the default size of a row's mark
+
 ### Requirement: A question that fails a check shows its message beside the field
 
 A question field SHALL show the message the runner gives its question beside the control, marking the control invalid for assistive technology.

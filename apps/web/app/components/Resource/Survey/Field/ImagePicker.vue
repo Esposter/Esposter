@@ -36,6 +36,12 @@ const selectedValues = computed<SurveyAnswerValue[]>(() => {
   if (answer.value === undefined) return [];
   return Array.isArray(answer.value) ? answer.value : [answer.value];
 });
+// A picture its author sized is drawn at those pixels, and one left unsized fills the row's default mark box
+const isSized = computed(() => node.props.imageWidth !== undefined || node.props.imageHeight !== undefined);
+const pictureStyle = computed(() => ({
+  height: node.props.imageHeight === undefined ? undefined : `${node.props.imageHeight}px`,
+  width: node.props.imageWidth === undefined ? undefined : `${node.props.imageWidth}px`,
+}));
 const selectedKeys = computed(() =>
   keyedChoices.value.filter(({ choice }) => selectedValues.value.includes(choice.value)).map(({ key }) => key),
 );
@@ -68,9 +74,9 @@ const onSelect = (keys: string[] | undefined = []) => {
         <template #mark="{ item }">
           <NuxtImg
             :alt="item.title"
-            :class="SURVEY_IMAGE_FIT_CLASSES[node.props.imageFit]"
+            :class="[SURVEY_IMAGE_FIT_CLASSES[node.props.imageFit], { 'size-6': !isSized }]"
             :src="item.imageLink"
-            size-full
+            :style="pictureStyle"
           />
         </template>
         <template #title="{ item }">

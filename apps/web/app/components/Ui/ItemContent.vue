@@ -26,7 +26,7 @@ const { description, icon, image, isMarkless, meaning, shortcut, title } = defin
 </script>
 
 <template>
-  <span v-if="!isMarkless" aria-hidden="true" flex shrink-0 size-6 items-center justify-center>
+  <span v-if="!isMarkless" aria-hidden="true" flex shrink-0 min-h-6 min-w-6 items-center justify-center>
     <slot name="mark">
       <UiAvatar v-if="image !== undefined" :image :name="title" is-small />
       <UiIcon v-else-if="meaning" :meaning />
