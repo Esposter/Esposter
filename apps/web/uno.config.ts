@@ -58,7 +58,7 @@ const uiSurfaceUtilities = {
     {
       "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
       // The document's ring, drawn inside the edge so a field packed in a group is never cut off by its neighbour
-      outline: "var(--ui-focus-width) solid var(--ui-accent)",
+      outline: "var(--ui-focus-ring)",
       "outline-offset": "var(--ui-focus-inset)",
       // A field around an editable of its own, such as a token field's input, is focused while the editable is
       [symbols.selector]: (selector: string) =>
@@ -173,6 +173,10 @@ const BLOCKED_SPELLINGS: [RegExp, string][] = [
   [/\dvh\b/u, "`dvh`, which follows a mobile browser's toolbar"],
 ];
 
+// The focus ring's paint and its inset, declared on each design style's scope beside the style's tokens
+const FOCUS_RING_DECLARATIONS =
+  "--ui-focus-ring:var(--ui-focus-width) solid var(--ui-accent);--ui-focus-inset:calc(var(--ui-focus-width) * -1);";
+
 export default defineConfig({
   blocklist: BLOCKED_SPELLINGS.map(([matcher, canonical]) => [matcher, { message: `write ${canonical}` }]),
   // Every template is read once at startup, from the Vite root Nuxt sets to `app/`. Otherwise the dev stylesheet
@@ -186,13 +190,13 @@ export default defineConfig({
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
   // Reads a colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep
   // Dawn's edge. The inset focus ring is derived from the style's width on the same scope, so a field's and a row's ring
-  // Is drawn inside its edge by one token rather than each spelling the calculation. The base `:focus-visible` ring
-  // Stays outside its edge
+  // Is drawn inside its edge by one token rather than each spelling the calculation. The ring's paint is one token on the
+  // Same scope, so a field and the base `:focus-visible` ring draw it alike. The base ring stays outside its edge
   preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
     getCSS: () =>
       `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
         .map(([styleToken, value]) => `--ui-${styleToken}:${value};`)
-        .join("")}--ui-focus-inset:calc(var(--ui-focus-width) * -1);}`,
+        .join("")}${FOCUS_RING_DECLARATIONS}}`,
     layer: "theme",
   })),
   presets: [

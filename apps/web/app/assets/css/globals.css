@@ -82,7 +82,7 @@
   }
 
   :focus-visible {
-    outline: var(--ui-focus-width) solid var(--ui-accent);
+    outline: var(--ui-focus-ring);
     outline-offset: var(--ui-step);
   }
 }
