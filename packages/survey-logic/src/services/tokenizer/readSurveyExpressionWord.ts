@@ -11,7 +11,7 @@ export const readSurveyExpressionWord = (state: SurveyExpressionTokenizerState):
   advanceSurveyExpressionWhile(state, checkIsSurveyExpressionWordCharacter);
   const word = state.source.slice(start, state.index);
   const lowercasedWord = word.toLowerCase();
-  if (["true", "false"].includes(lowercasedWord))
+  if (["false", "true"].includes(lowercasedWord))
     state.tokens.push({ position: start, text: lowercasedWord, type: SurveyExpressionTokenType.Boolean });
   else if (checkIsSurveyExpressionKeyword(lowercasedWord))
     state.tokens.push({ position: start, text: lowercasedWord, type: SurveyExpressionTokenType.Operator });

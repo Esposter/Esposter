@@ -5,9 +5,9 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { SurveyTextInputType } from "#src/models/SurveyTextInputType";
 import { createSurveyTextAnswerSchema } from "#src/services/runner/answer/createSurveyTextAnswerSchema";
 import {
+  SURVEY_INVALID_ANSWER_MESSAGE,
   SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
-  SURVEY_INVALID_ANSWER_MESSAGE,
 } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";

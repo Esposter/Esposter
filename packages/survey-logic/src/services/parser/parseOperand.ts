@@ -25,6 +25,8 @@ export const parseOperand = (
     case SurveyExpressionTokenType.Boolean:
       state.index++;
       return ok({ position: token.position, type: SurveyExpressionNodeType.Literal, value: token.text === "true" });
+    case SurveyExpressionTokenType.End:
+      break;
     case SurveyExpressionTokenType.Identifier:
       return parseCall(state, parse);
     case SurveyExpressionTokenType.Number:
@@ -42,8 +44,6 @@ export const parseOperand = (
     case SurveyExpressionTokenType.String:
       state.index++;
       return ok({ position: token.position, type: SurveyExpressionNodeType.Literal, value: token.text });
-    case SurveyExpressionTokenType.End:
-      break;
     default:
       return exhaustiveGuard(token.type);
   }

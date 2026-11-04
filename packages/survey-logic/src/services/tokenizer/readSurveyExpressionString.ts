@@ -11,7 +11,7 @@ export const readSurveyExpressionString = (state: SurveyExpressionTokenizerState
   while (state.index < state.source.length && state.source.charAt(state.index) !== quote) {
     const character = state.source.charAt(state.index);
     const nextCharacter = state.source.charAt(state.index + 1);
-    if (character === "\\" && [quote, "\\"].includes(nextCharacter)) {
+    if (character === "\\" && ["\\", quote].includes(nextCharacter)) {
       text += nextCharacter;
       state.index += 2;
     } else {

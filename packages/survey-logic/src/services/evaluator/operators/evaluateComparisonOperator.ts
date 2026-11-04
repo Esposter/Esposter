@@ -20,8 +20,6 @@ export const evaluateComparisonOperator = (
   switch (operator) {
     case SurveyExpressionBinaryOperator.Equal:
       return checkIsSurveyLogicValueEqual(left, right);
-    case SurveyExpressionBinaryOperator.NotEqual:
-      return !checkIsSurveyLogicValueEqual(left, right);
     case SurveyExpressionBinaryOperator.Greater:
       return checkIsSurveyLogicLess(right, left);
     case SurveyExpressionBinaryOperator.GreaterOrEqual:
@@ -30,6 +28,8 @@ export const evaluateComparisonOperator = (
       return checkIsSurveyLogicLess(left, right);
     case SurveyExpressionBinaryOperator.LessOrEqual:
       return checkIsSurveyLogicValueEqual(left, right) || checkIsSurveyLogicLess(left, right);
+    case SurveyExpressionBinaryOperator.NotEqual:
+      return !checkIsSurveyLogicValueEqual(left, right);
     default:
       return exhaustiveGuard(operator);
   }

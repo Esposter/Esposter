@@ -6,8 +6,8 @@ import type { BlockDocumentInput } from "headless-block-editor";
 import type { z } from "zod";
 
 import { MAX_SURVEY_NODE_COUNT } from "#src/services/constants";
-import { surveyPageNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyNodeChildren } from "#src/services/surveyNodeChildren";
+import { surveyPageNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyRegistry } from "#src/services/surveyRegistry";
 import { createBlockDocumentSchema } from "headless-block-editor";
 

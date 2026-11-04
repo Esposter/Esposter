@@ -13,11 +13,6 @@ import { z } from "zod";
 // A text question's answer, held to the input type it is typed with and the bounds and pattern its owner gave
 export const createSurveyTextAnswerSchema = (node: SurveyTextNode): z.ZodType => {
   switch (node.props.inputType) {
-    case SurveyTextInputType.Number:
-      return createSurveyNumberAnswerSchema({
-        max: parseSurveyNumberBound(node.props.max),
-        min: parseSurveyNumberBound(node.props.min),
-      });
     case SurveyTextInputType.Date:
     case SurveyTextInputType.DatetimeLocal:
     case SurveyTextInputType.Time:
@@ -27,15 +22,20 @@ export const createSurveyTextAnswerSchema = (node: SurveyTextNode): z.ZodType =>
       );
     case SurveyTextInputType.Email:
       return createSurveyPatternAnswerSchema(z.email({ error: SURVEY_INVALID_ANSWER_MESSAGE }), node.props.pattern);
-    case SurveyTextInputType.Url:
-      return createSurveyPatternAnswerSchema(z.url({ error: SURVEY_INVALID_ANSWER_MESSAGE }), node.props.pattern);
-    case SurveyTextInputType.Text:
-    case SurveyTextInputType.Tel:
+    case SurveyTextInputType.Number:
+      return createSurveyNumberAnswerSchema({
+        max: parseSurveyNumberBound(node.props.max),
+        min: parseSurveyNumberBound(node.props.min),
+      });
     case SurveyTextInputType.Password:
+    case SurveyTextInputType.Tel:
+    case SurveyTextInputType.Text:
       return createSurveyPatternAnswerSchema(
         createSurveyStringAnswerSchema({ maxLength: node.props.maxLength, minLength: node.props.minLength }),
         node.props.pattern,
       );
+    case SurveyTextInputType.Url:
+      return createSurveyPatternAnswerSchema(z.url({ error: SURVEY_INVALID_ANSWER_MESSAGE }), node.props.pattern);
     default:
       return exhaustiveGuard(node.props.inputType);
   }

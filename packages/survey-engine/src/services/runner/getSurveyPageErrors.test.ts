@@ -1,7 +1,7 @@
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
-import { SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyPageErrors } from "#src/services/runner/getSurveyPageErrors";
 import { describe, expect, test } from "vitest";
 

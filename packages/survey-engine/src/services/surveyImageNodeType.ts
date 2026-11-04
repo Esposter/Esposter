@@ -1,8 +1,8 @@
 import type { SurveyImageNode } from "#src/models/SurveyImageNode";
 import type { SurveyNodeTypeDefinition } from "#src/models/SurveyNodeTypeDefinition";
 
-import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyImageNodePropsSchema } from "#src/models/SurveyImageNodeProps";
+import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
 // An image. It is not a question, so its form and its props share one schema of its own props, and its defaults are the schema's own
 // The type is written out so the schema's shape survives into the emitted declaration

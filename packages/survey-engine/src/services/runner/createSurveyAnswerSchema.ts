@@ -32,30 +32,29 @@ export const createSurveyAnswerSchema = (
   now: Date,
 ): z.ZodType => {
   switch (node.type) {
-    case SurveyNodeType.Text:
-      return createSurveyTextAnswerSchema(node);
-    case SurveyNodeType.Comment:
-      return createSurveyCommentAnswerSchema(node);
     case SurveyNodeType.Boolean:
       return createSurveyBooleanAnswerSchema();
-    case SurveyNodeType.RadioGroup:
-      return createSurveyRadioGroupAnswerSchema(node);
-    case SurveyNodeType.Dropdown:
-      return createSurveyDropdownAnswerSchema(node);
     case SurveyNodeType.ButtonGroup:
       return createSurveyButtonGroupAnswerSchema(node);
     case SurveyNodeType.Checkbox:
       return createSurveyCheckboxAnswerSchema(node);
-    case SurveyNodeType.TagBox:
-      return createSurveyTagBoxAnswerSchema(node);
-    case SurveyNodeType.Rating:
-      return createSurveyRatingAnswerSchema(node);
-    case SurveyNodeType.Ranking:
-      return createSurveyRankingAnswerSchema(node);
+    case SurveyNodeType.Comment:
+      return createSurveyCommentAnswerSchema(node);
+    case SurveyNodeType.Dropdown:
+      return createSurveyDropdownAnswerSchema(node);
+    case SurveyNodeType.Expression:
+      return createSurveyExpressionAnswerSchema();
+    case SurveyNodeType.Html:
+    case SurveyNodeType.Image:
+      return z.undefined({ error: SURVEY_INVALID_ANSWER_MESSAGE });
+    case SurveyNodeType.ImagePicker:
+      return createSurveyImagePickerAnswerSchema(node);
     case SurveyNodeType.Matrix:
       return createSurveyMatrixAnswerSchema(node);
     case SurveyNodeType.MatrixDynamic:
       return createSurveyMatrixDynamicAnswerSchema(node);
+    case SurveyNodeType.MultipleText:
+      return createSurveyMultipleTextAnswerSchema(node);
     case SurveyNodeType.PanelDynamic:
       return createSurveyPanelDynamicAnswerSchema(
         node,
@@ -63,17 +62,18 @@ export const createSurveyAnswerSchema = (
         values,
         now,
       );
-    case SurveyNodeType.MultipleText:
-      return createSurveyMultipleTextAnswerSchema(node);
+    case SurveyNodeType.RadioGroup:
+      return createSurveyRadioGroupAnswerSchema(node);
+    case SurveyNodeType.Ranking:
+      return createSurveyRankingAnswerSchema(node);
+    case SurveyNodeType.Rating:
+      return createSurveyRatingAnswerSchema(node);
     case SurveyNodeType.Slider:
       return createSurveySliderAnswerSchema(node);
-    case SurveyNodeType.ImagePicker:
-      return createSurveyImagePickerAnswerSchema(node);
-    case SurveyNodeType.Expression:
-      return createSurveyExpressionAnswerSchema();
-    case SurveyNodeType.Html:
-    case SurveyNodeType.Image:
-      return z.undefined({ error: SURVEY_INVALID_ANSWER_MESSAGE });
+    case SurveyNodeType.TagBox:
+      return createSurveyTagBoxAnswerSchema(node);
+    case SurveyNodeType.Text:
+      return createSurveyTextAnswerSchema(node);
     default:
       return exhaustiveGuard(node);
   }

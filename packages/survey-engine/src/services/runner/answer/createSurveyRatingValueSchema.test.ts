@@ -1,5 +1,5 @@
-import { SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyRatingValueSchema } from "#src/services/runner/answer/createSurveyRatingValueSchema";
+import { SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
 import { describe, expect, test } from "vitest";
 
