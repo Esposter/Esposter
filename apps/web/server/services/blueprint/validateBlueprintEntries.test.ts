@@ -7,7 +7,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (key: string, rest: Partial<BlueprintEntry> = {}): BlueprintEntry => ({
-  content: {},
+  content: { emailId: "", keyColumn: "", surveyId: "" },
   key,
   name: key,
   type: ResourceType.Program,
@@ -18,7 +18,9 @@ describe(validateBlueprintEntries, () => {
   test("returns the entry references its content walk discovered", () => {
     expect.hasAssertions();
 
-    const funnel = createEntry("b", { content: { emailId: buildBlueprintEntryToken("a") } });
+    const funnel = createEntry("b", {
+      content: { emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
+    });
     const keyReferencesMap = validateBlueprintEntries([createEntry("a"), funnel]);
 
     expect(keyReferencesMap).toStrictEqual(
@@ -64,7 +66,7 @@ describe(validateBlueprintEntries, () => {
   test("fails content its own type rejects", () => {
     expect.hasAssertions();
 
-    const entry = createEntry("a", { content: { emailId: " " } });
+    const entry = createEntry("a", { content: { emailId: " ", keyColumn: "", surveyId: "" } });
 
     expect(() => validateBlueprintEntries([entry])).toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry a").message}]`,

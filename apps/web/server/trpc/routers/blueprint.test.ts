@@ -27,7 +27,7 @@ describe("blueprintRouter", () => {
   // Two program entries: the funnel binds the audience's created id through the audience entry's alias
   const wiredManifest: BlueprintResource = {
     entries: [
-      { content: {}, key: "a", name: "a", type: ResourceType.Program },
+      { content: { emailId: "", keyColumn: "", surveyId: "" }, key: "a", name: "a", type: ResourceType.Program },
       {
         content: { emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
         key: "b",
@@ -109,7 +109,9 @@ describe("blueprintRouter", () => {
     expect.hasAssertions();
 
     const blueprint = await createBlueprint({
-      entries: [{ content: { emailId: " " }, key: "a", name: "a", type: ResourceType.Program }],
+      entries: [
+        { content: { emailId: " ", keyColumn: "", surveyId: "" }, key: "a", name: "a", type: ResourceType.Program },
+      ],
       parameters: [],
     });
 
@@ -164,7 +166,12 @@ describe("blueprintRouter", () => {
 
     const childManifest: BlueprintResource = {
       entries: [
-        { content: {}, key: "a", name: "{{parameter:a}}", type: ResourceType.Program },
+        {
+          content: { emailId: "", keyColumn: "", surveyId: "" },
+          key: "a",
+          name: "{{parameter:a}}",
+          type: ResourceType.Program,
+        },
         {
           content: { emailId: buildBlueprintEntryToken("a"), keyColumn: "", surveyId: "" },
           key: "b",

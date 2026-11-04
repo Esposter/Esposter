@@ -17,6 +17,6 @@ export interface BlueprintResource {
 
 // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- ResourceType comes from @esposter/db-schema on both sides (BlueprintEntry.ts:1, :4); the rule flags a zod object nested in an array even on an exact enum match
 export const blueprintResourceSchema = z.object({
-  entries: createUniqueArraySchema(blueprintEntrySchema, "key").max(MAX_BLUEPRINT_ENTRIES).default([]),
-  parameters: createUniqueArraySchema(blueprintParameterSchema, "key").max(MAX_BLUEPRINT_PARAMETERS).default([]),
+  entries: createUniqueArraySchema(blueprintEntrySchema, "key").max(MAX_BLUEPRINT_ENTRIES),
+  parameters: createUniqueArraySchema(blueprintParameterSchema, "key").max(MAX_BLUEPRINT_PARAMETERS),
 }) satisfies z.ZodType<ToData<BlueprintResource>>;
