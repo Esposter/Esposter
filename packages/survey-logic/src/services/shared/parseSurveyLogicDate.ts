@@ -1,18 +1,15 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
+import { createSurveyLogicWallClock } from "#src/services/shared/createSurveyLogicWallClock";
+import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
+
 // An ISO date, with an optional time of day: the separator is a T or the space RFC 3339 allows, the seconds and the fraction are
 // Optional, and a zone is Z or an offset. The whole text must match, so a date with a word after it is not a date
 const DATE_TEXT_REGEX =
   /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:[T ](?<hour>\d{2}):(?<minute>\d{2})(?::(?<second>\d{2})(?:\.(?<fraction>\d+))?)?(?<zone>Z|[+-]\d{2}:\d{2})?)?$/u;
 
-// Whether a month and a day name a day that exists, so the thirty-first of April is not one
-const checkIsCalendarDay = (year: number, month: number, day: number): boolean => {
-  const date = new Date(Date.UTC(2000, 0, 1));
-  date.setUTCFullYear(year, month - 1, day);
-  return date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
-};
-
-// The date an ISO text names, or undefined when the text names none. A text with no zone is local time, the time the date functions read
+// The date an ISO text names, or undefined when the text names none. A text with no zone is its wall clock, read as written, so
+// No zone or daylight saving change moves it. A text with a zone is the moment it names, read on the local clock
 export const parseSurveyLogicDate = (value: SurveyLogicValue): Date | undefined => {
   if (typeof value !== "string") return undefined;
 
@@ -39,15 +36,17 @@ export const parseSurveyLogicDate = (value: SurveyLogicValue): Date | undefined 
 
   const millisecond = Number(`${fractionText}00`.slice(0, 3));
   if (zone !== undefined) {
-    const date = new Date(
+    const instant = new Date(
       `${yearText}-${monthText}-${dayText}T${hourText}:${minuteText}:${secondText}.${millisecond.toString().padStart(3, "0")}${zone}`,
     );
-    return Number.isNaN(date.getTime()) ? undefined : date;
+    return Number.isNaN(instant.getTime()) ? undefined : toSurveyLogicWallClock(instant);
   }
 
-  // The setters rather than the constructor, which reads a year below 100 as one of the 1900s
-  const date = new Date(0);
-  date.setFullYear(year, month - 1, day);
-  date.setHours(hour, minute, second, millisecond);
-  return date;
+  return createSurveyLogicWallClock(year, month - 1, day, hour, minute, second, millisecond);
+};
+
+// Whether a month and a day name a day that exists in the year, so the thirty-first of April is not one
+const checkIsCalendarDay = (year: number, month: number, day: number): boolean => {
+  const date = createSurveyLogicWallClock(year, month - 1, day, 0, 0, 0, 0);
+  return date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 };

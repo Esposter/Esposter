@@ -1,4 +1,12 @@
-import { TEST_BIRTHDATE, TEST_CONTEXT, TEST_EPOCH_DATE } from "#src/services/functions/constants.test";
+import {
+  TEST_BIRTHDATE,
+  TEST_CONTEXT,
+  TEST_DAYLIGHT_GAP_DATE,
+  TEST_EPOCH_DATE,
+  TEST_YEAR_ONE_DATE,
+  TEST_YEAR_ZERO_DATE,
+  TEST_YEAR_ZERO_MARCH_DATE,
+} from "#src/services/functions/constants.test";
 import { dateDiffFunction } from "#src/services/functions/dateDiffFunction";
 import { describe, expect, test } from "vitest";
 
@@ -19,6 +27,26 @@ describe(dateDiffFunction, () => {
       12,
     ],
     ["a date-time end counts its time", [TEST_EPOCH_DATE, `${TEST_EPOCH_DATE}T05:00`, "hours"], 5],
+    [
+      "the hours across a daylight saving gap count the wall clock, which the gap does not shorten",
+      [`${TEST_DAYLIGHT_GAP_DATE}T00:00`, `${TEST_DAYLIGHT_GAP_DATE}T04:00`, "hours"],
+      4,
+    ],
+    [
+      "two times with offsets that name one moment have no hours between them",
+      [`${TEST_EPOCH_DATE}T10:30:00Z`, `${TEST_EPOCH_DATE}T12:30:00+02:00`, "hours"],
+      0,
+    ],
+    [
+      "the days from the first day of year zero to the first day of year one count its leap day",
+      [TEST_YEAR_ZERO_DATE, TEST_YEAR_ONE_DATE],
+      366,
+    ],
+    [
+      "the days from the first of January to the first of March of year zero count its leap day",
+      [TEST_YEAR_ZERO_DATE, TEST_YEAR_ZERO_MARCH_DATE],
+      60,
+    ],
     ["the months between two dates", [TEST_BIRTHDATE, TEST_EPOCH_DATE, "months"], 432],
     ["the months between two dates are the same in either order", [TEST_EPOCH_DATE, TEST_BIRTHDATE, "months"], 432],
     ["the years between two dates", [TEST_BIRTHDATE, TEST_EPOCH_DATE, "years"], 36],

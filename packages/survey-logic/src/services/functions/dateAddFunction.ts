@@ -11,19 +11,19 @@ import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 // And months and years by whole calendar months
 const unitAdditionMap: Record<string, (date: Date, amount: number) => void> = {
   days: (date, amount) => {
-    date.setDate(date.getDate() + amount);
+    date.setUTCDate(date.getUTCDate() + amount);
   },
   hours: (date, amount) => {
-    date.setHours(date.getHours() + amount);
+    date.setUTCHours(date.getUTCHours() + amount);
   },
   minutes: (date, amount) => {
-    date.setMinutes(date.getMinutes() + amount);
+    date.setUTCMinutes(date.getUTCMinutes() + amount);
   },
   months: (date, amount) => {
     addSurveyLogicMonths(date, amount);
   },
   seconds: (date, amount) => {
-    date.setSeconds(date.getSeconds() + amount);
+    date.setUTCSeconds(date.getUTCSeconds() + amount);
   },
   years: (date, amount) => {
     addSurveyLogicMonths(date, amount * 12);

@@ -6,5 +6,5 @@ import { getDateOrNow } from "#src/services/shared/getDateOrNow";
 export const monthFunction: SurveyLogicFunction = (args, context) => {
   const date = getDateOrNow(args[0], context.now);
 
-  return date === undefined ? undefined : date.getMonth() + 1;
+  return date === undefined ? undefined : date.getUTCMonth() + 1;
 };

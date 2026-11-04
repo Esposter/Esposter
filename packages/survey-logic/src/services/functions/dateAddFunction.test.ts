@@ -1,4 +1,11 @@
-import { TEST_CONTEXT, TEST_EPOCH_DATE, TEST_NEXT_YEAR_DATE } from "#src/services/functions/constants.test";
+import {
+  TEST_CONTEXT,
+  TEST_DAYLIGHT_GAP_DATE,
+  TEST_EPOCH_DATE,
+  TEST_NEXT_YEAR_DATE,
+  TEST_YEAR_ONE_DATE,
+  TEST_YEAR_ZERO_DATE,
+} from "#src/services/functions/constants.test";
 import { dateAddFunction } from "#src/services/functions/dateAddFunction";
 import { describe, expect, test } from "vitest";
 
@@ -29,6 +36,18 @@ describe(dateAddFunction, () => {
       ["1970-10-24T09:30", 1],
       "1970-10-25T09:30:00.000",
     ],
+    [
+      "a time in a daylight saving gap is kept as written",
+      [`${TEST_DAYLIGHT_GAP_DATE}T02:30`, 0, "hours"],
+      `${TEST_DAYLIGHT_GAP_DATE}T02:30:00.000`,
+    ],
+    [
+      "hours added to a time in a daylight saving gap move its wall clock through the gap",
+      [`${TEST_DAYLIGHT_GAP_DATE}T01:30`, 1, "hours"],
+      `${TEST_DAYLIGHT_GAP_DATE}T02:30:00.000`,
+    ],
+    ["a year zero is a leap year of three hundred and sixty-six days", [TEST_YEAR_ZERO_DATE, 366], TEST_YEAR_ONE_DATE],
+    ["a date that moves before year zero has no result", [TEST_YEAR_ZERO_DATE, -1], undefined],
     ["a shift past the largest date has no result", [TEST_EPOCH_DATE, 1e12], undefined],
     ["the epoch given as the number zero is not a date", [0, 1, "hours"], undefined],
     ["an amount that reads as no number makes the date invalid, so it is empty", [TEST_EPOCH_DATE, "x"], undefined],

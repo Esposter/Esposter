@@ -40,7 +40,7 @@ Each function is called by its name, written in any case. A call to a name no fu
 | `avgInArray`   | The average of a field over the items of an array value                                                                               |
 | `count`        | How many values are passed, arrays flattened                                                                                          |
 | `countInArray` | How many items of an array value hold a value in a field                                                                              |
-| `dateAdd`      | A date moved by an amount of an interval, in days by default                                                                          |
+| `dateAdd`      | A date moved by an amount of an interval, in days by default; a date moved outside years zero to 9999 has no result                   |
 | `dateDiff`     | The amount of an interval between two dates: calendar days, months or years, or hours, minutes and seconds on the clock               |
 | `day`          | The day of the month of a date, or of the clock's day when the date is empty                                                          |
 | `iif`          | The second value when the condition is `true`, otherwise the third                                                                    |
