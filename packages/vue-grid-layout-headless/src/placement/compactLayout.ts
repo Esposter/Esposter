@@ -1,4 +1,4 @@
-import type { GridItem } from "#src/models/GridItem";
+import type { GridBlock } from "#src/models/GridBlock";
 
 import { CompactType } from "#src/models/CompactType";
 import { checkIsColliding } from "#src/placement/checkIsColliding";
@@ -8,7 +8,11 @@ import { checkIsColliding } from "#src/placement/checkIsColliding";
 // Along that row as it can go. One that starts inside another is pushed along the axis until it clears, so a
 // Compacted layout never overlaps. A layout with no compaction keeps each item where it was placed, and still pushes an
 // Overlapping one down until it clears
-export const compactLayout = <T extends GridItem>(layout: T[], columnNumber: number, compactType: CompactType): T[] => {
+export const compactLayout = <T extends GridBlock>(
+  layout: T[],
+  columnNumber: number,
+  compactType: CompactType,
+): T[] => {
   const copies = layout.map((item) => ({ ...item }));
   const isHorizontal = compactType === CompactType.Horizontal;
   const axis = isHorizontal ? "x" : "y";

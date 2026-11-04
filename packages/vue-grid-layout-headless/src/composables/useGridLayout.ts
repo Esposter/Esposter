@@ -1,3 +1,4 @@
+import type { GridBlock } from "#src/models/GridBlock";
 import type { GridCell } from "#src/models/GridCell";
 import type { GridGeometry } from "#src/models/GridGeometry";
 import type { GridGesture } from "#src/models/GridGesture";
@@ -13,10 +14,9 @@ import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
-import { CollisionMode } from "#src/models/CollisionMode";
-import { checkIsColliding } from "#src/placement/checkIsColliding";
+import { checkChangesHeight } from "#src/placement/checkChangesHeight";
 import { checkIsSameCell } from "#src/placement/checkIsSameCell";
-import { correctBounds } from "#src/placement/correctBounds";
+import { clampCell } from "#src/placement/clampCell";
 import { fitLayout } from "#src/placement/fitLayout";
 import { getCellPosition } from "#src/placement/getCellPosition";
 import { getCellSize } from "#src/placement/getCellSize";
@@ -25,8 +25,9 @@ import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
 import { placeMove } from "#src/placement/placeMove";
+import { GRID_MIN_SPAN } from "#src/services/constants";
 import { mountedGrids } from "#src/services/mountedGrids";
-import { checkIsNestedControl, takeOne } from "@esposter/shared";
+import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
@@ -90,26 +91,25 @@ export const useGridLayout = <T extends GridItem>(
     const layoutBottom = getLayoutBottom(activePreview.value?.layout ?? layout.value);
     return Math.max(0, getCellSize(layoutBottom, rowPitch.value, gap)) + 2 * padding;
   });
+  // Ending a gesture also ends the drop preview an external drag holds, since a layout replaced under either is no longer the one previewed
   const resetGesture = () => {
     gesture.value = undefined;
     gesturePreview.value = undefined;
+    externalPreview.value = undefined;
   };
   // A gesture previews the layout it began on, so a layout replaced under it — a reload, a restore, another column
   // Count — ends the gesture rather than letting its release write cells the new layout never had. A held external
-  // Preview was laid out on the old layout too, so it is dropped, and the next move previews the new one
+  // Preview was laid out on that layout too, and resetting the gesture drops it, so the next move previews the new one
   watch(layout, () => {
     resetGesture();
-    externalPreview.value = undefined;
   });
   // The layout a cell lands in, as the collision mode resolves it. A refused cell keeps the grid's own layout, so it is drawn
   // Where it was attempted and the grid is left as it was
-  const getPreview = (cell: GridItem, landingLayout: GridItem[]): GridPreview => {
-    const isRefused =
-      getOptions().collision === CollisionMode.Prevent && layout.value.some((other) => checkIsColliding(cell, other));
-    if (isRefused) return { cell, isRefused, layout: layout.value };
-
+  const getPreview = (cell: GridBlock, landingLayout: GridItem[]): GridPreview => {
     const landedLayout = placeMove(landingLayout, cell, getOptions());
-    return { cell: landedLayout.find(({ id }) => id === cell.id) ?? cell, isRefused, layout: landedLayout };
+    if (!landedLayout) return { cell, isRefused: true, layout: layout.value };
+
+    return { cell: landedLayout.find(({ id }) => id === cell.id) ?? cell, isRefused: false, layout: landedLayout };
   };
   // An item dropped with its top-left under the point lands in the columns and below the top, on the layout it is not yet
   // Part of, so its collisions resolve as a move's do
@@ -122,12 +122,7 @@ export const useGridLayout = <T extends GridItem>(
     const offset = { x: point.x - left - padding, y: point.y - top - padding };
     const columnIndex = Math.floor(offset.x / columnPitch.value);
     const rowIndex = Math.floor(offset.y / rowPitch.value);
-    const cell = takeOne(
-      correctBounds(
-        [{ h: item.h, id: item.id, w: item.w, x: columnIndex, y: Math.max(0, rowIndex) }],
-        getOptions().columnNumber,
-      ),
-    );
+    const cell = clampCell({ ...item, x: columnIndex, y: rowIndex }, getOptions().columnNumber);
     return getPreview(cell, [...layout.value, cell]);
   };
 
@@ -136,6 +131,11 @@ export const useGridLayout = <T extends GridItem>(
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
     if (event.button !== 0) return;
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
+    // A resize is a handle's, and a touch resizes from the visual's menu, so a touch press on a handle starts nothing. A touch on
+    // The body still moves the item
+    if (edge && event.pointerType === "touch") return;
+    // An auto-height item takes its height from its content, so an edge that pulls its height starts nothing on it
+    if (item.isAutoHeight && edge && checkChangesHeight(edge)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
     if (gesture.value && gesture.value.pointerId !== event.pointerId) return;
     if (!(event.currentTarget instanceof Element)) return;
@@ -177,8 +177,8 @@ export const useGridLayout = <T extends GridItem>(
     if (isCellChanged) gesturePreview.value = getPreview(cell, layout.value);
   };
   // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
-  const getChangedCells = (changedLayout: GridItem[]): GridItem[] =>
-    changedLayout.flatMap((item): GridItem[] => {
+  const getChangedCells = (changedLayout: GridBlock[]): GridBlock[] =>
+    changedLayout.flatMap((item): GridBlock[] => {
       const savedItem = savedItemMap.value.get(item.id);
       return !savedItem || !checkIsSameCell(item, savedItem)
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
@@ -202,13 +202,19 @@ export const useGridLayout = <T extends GridItem>(
     if (!getOptions().isEditable || !item) return false;
 
     const { dh = 0, dw = 0, dx = 0, dy = 0 } = step;
-    const target = takeOne(
-      correctBounds(
-        [{ ...item, h: item.h + dh, w: item.w + dw, x: item.x + dx, y: item.y + dy }],
-        getOptions().columnNumber,
-      ),
-    );
-    if (checkIsSameCell(target, item)) return false;
+    // An auto-height item takes its height from its content, so a step that would change its height changes nothing
+    if (item.isAutoHeight && dh !== 0) return false;
+
+    const target = {
+      ...item,
+      h: Math.max(GRID_MIN_SPAN, item.h + dh),
+      w: Math.max(GRID_MIN_SPAN, item.w + dw),
+      x: item.x + dx,
+      y: item.y + dy,
+    };
+    // A step that would leave the grid, past its top, left or last column, changes nothing rather than being pulled back in
+    const isOutside = target.x < 0 || target.y < 0 || target.x + target.w > getOptions().columnNumber;
+    if (isOutside || checkIsSameCell(target, item)) return false;
 
     const preview = getPreview(target, layout.value);
     const changes = preview.isRefused ? [] : getChangedCells(preview.layout);
@@ -231,7 +237,7 @@ export const useGridLayout = <T extends GridItem>(
   // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
   const reportContentHeight = (id: string, contentHeight: number) => {
     const savedItem = savedItemMap.value.get(id);
-    if (!savedItem?.isAutoHeight) return;
+    if (!getOptions().isEditable || !savedItem?.isAutoHeight) return;
 
     const h = getCellSpan(contentHeight, rowPitch.value, getOptions().spacing.gap);
     if (h === savedItem.h) return;

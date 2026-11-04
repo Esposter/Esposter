@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type { GridBlock } from "#src/models/GridBlock";
 import type { GridCell } from "#src/models/GridCell";
 import type { GridCommit } from "#src/models/GridCommit";
 import type { GridGeometry } from "#src/models/GridGeometry";
@@ -15,6 +16,10 @@ import { startExternalDrag } from "#src/services/startExternalDrag";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, shallowRef, useTemplateRef } from "vue";
+
+// An item as a test writes it: its height flag is stated only where a test reads it, and absent means false
+type TestItem = GridBlock & { isAutoHeight?: boolean };
+const toGridItem = (item: TestItem): GridItem => ({ isAutoHeight: false, ...item });
 
 // A tile's geometry as the inline style a test reads its position from
 const getStyle = ({ height, left, top, width }: GridGeometry) => ({
@@ -50,13 +55,13 @@ describe(useGridLayout, () => {
     compactType?: CompactType;
     edge?: ResizeEdge;
     isEditable?: boolean;
-    items: GridItem[];
+    items: TestItem[];
     spacing?: GridSpacing;
   }) => {
     const onCommit = vi.fn<(commit: GridCommit) => void>();
     const gridLayout = shallowRef<GridLayout>();
     // The items are held as a ref, so a test can replace them under a gesture the way a version restore does
-    const itemsRef = shallowRef(items);
+    const itemsRef = shallowRef(items.map((item) => toGridItem(item)));
     const wrapper = mount(
       defineComponent({
         setup() {
@@ -112,15 +117,15 @@ describe(useGridLayout, () => {
     // A pointer over a grid is over its own root, so a release lands on the grid that was pressed
     vi.spyOn(document, "elementsFromPoint").mockReturnValue([wrapper.element]);
 
-    const setItems = (nextItems: GridItem[]) => {
-      itemsRef.value = nextItems;
+    const setItems = (nextItems: TestItem[]) => {
+      itemsRef.value = nextItems.map((item) => toGridItem(item));
     };
 
     return { grid: gridLayout, onCommit, setItems, wrapper };
   };
   // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a press.
   // The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback the drop calls
-  const mountPalette = (item: GridItem) => {
+  const mountPalette = (item: TestItem) => {
     const palette = document.createElement("div");
     document.body.append(palette);
     onTestFinished(() => {
@@ -128,7 +133,7 @@ describe(useGridLayout, () => {
     });
     const onDrop = vi.fn<(cell: GridCell) => void>();
     palette.addEventListener("pointerdown", (event) => {
-      startExternalDrag(event, item, onDrop);
+      startExternalDrag(event, toGridItem(item), onDrop);
     });
     const dispatch = (type: string, point: { clientX: number; clientY: number }) =>
       palette.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId, ...point }));
@@ -468,7 +473,7 @@ describe(useGridLayout, () => {
     expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 1, y: 0 }] }]]);
   });
 
-  test("a step past the columns is clamped", () => {
+  test("a step past the last column changes nothing", () => {
     expect.hasAssertions();
 
     const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 10, y: 0 }] });
@@ -498,6 +503,181 @@ describe(useGridLayout, () => {
     });
 
     expect(grid.value?.stepItem("a", { dx: 2 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a step above the top row changes nothing", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dy: -1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a step that grows an item past the last column changes nothing", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dw: 1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a step that shrinks an item below one cell in height changes nothing", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 1, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dh: -1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a step that moves an item past the last column changes nothing", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 4, x: 8, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dx: 1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("an auto-height item's south handle changes no height", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      edge: ResizeEdge.South,
+      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
+    });
+    await flushPromises();
+    const handle = wrapper.get(".handle");
+    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: 0, clientY: rowPitch * 3, pointerId });
+    await handle.trigger("pointerup", { clientX: 0, clientY: rowPitch * 3, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("an auto-height item's corner handle changes no height", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      edge: ResizeEdge.SouthEast,
+      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
+    });
+    await flushPromises();
+    const handle = wrapper.get(".handle");
+    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: 0, clientY: rowPitch * 3, pointerId });
+    await handle.trigger("pointerup", { clientX: 0, clientY: rowPitch * 3, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("an auto-height item's east handle resizes its width and keeps its height", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      edge: ResizeEdge.East,
+      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
+    });
+    await flushPromises();
+    const handle = wrapper.get(".handle");
+    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: cellPitch, clientY: 0, pointerId });
+    await handle.trigger("pointerup", { clientX: cellPitch, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 3, x: 0, y: 0 }] }]]);
+  });
+
+  test("a step changing an auto-height item's height changes nothing", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dh: 1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a touch press on a resize handle starts no resize", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }] });
+    await flushPromises();
+    const handle = wrapper.get(".handle").element;
+    handle.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, clientX: 0, clientY: 0, pointerId, pointerType: "touch" }),
+    );
+    handle.dispatchEvent(
+      new PointerEvent("pointermove", {
+        bubbles: true,
+        buttons: 1,
+        clientX: cellPitch,
+        clientY: 0,
+        pointerId,
+        pointerType: "touch",
+      }),
+    );
+    handle.dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, clientX: cellPitch, clientY: 0, pointerId, pointerType: "touch" }),
+    );
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a touch press on a tile's body still moves it", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", isAutoHeight: false, w: 2, x: 0, y: 0 }] });
+    await flushPromises();
+    const tile = wrapper.get(".tile").element;
+    tile.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, clientX: 0, clientY: 0, pointerId, pointerType: "touch" }),
+    );
+    tile.dispatchEvent(
+      new PointerEvent("pointermove", {
+        bubbles: true,
+        buttons: 1,
+        clientX: cellPitch,
+        clientY: 0,
+        pointerId,
+        pointerType: "touch",
+      }),
+    );
+    tile.dispatchEvent(
+      new PointerEvent("pointerup", { bubbles: true, clientX: cellPitch, clientY: 0, pointerId, pointerType: "touch" }),
+    );
+
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 1, y: 0 }] }]]);
+  });
+
+  test("a layout replaced during a palette drag clears its drop preview", async () => {
+    expect.hasAssertions();
+
+    const { grid, setItems } = mountGrid({ items: [] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding });
+
+    expect(grid.value?.placeholder.value).toBeDefined();
+
+    setItems([{ h: 2, id: "b", isAutoHeight: false, w: 2, x: 6, y: 0 }]);
+    await flushPromises();
+
+    expect(grid.value?.placeholder.value).toBeUndefined();
+  });
+
+  test("a published grid's auto-height item reports no height change", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({
+      isEditable: false,
+      items: [{ h: 2, id: "a", isAutoHeight: true, w: 2, x: 0, y: 0 }],
+    });
+
+    grid.value?.reportContentHeight("a", 200);
+
     expect(onCommit).not.toHaveBeenCalled();
   });
 
@@ -584,7 +764,7 @@ describe(useGridLayout, () => {
   test.each([
     [cellPitch * 2 + spacing.padding, 2],
     [138, 1],
-  ])("dropping a palette entry into the grid at clientX %s lands in column %s", async (clientX, x) => {
+  ])("#6 dropping a palette entry into the grid at clientX %s lands in column %s", async (clientX, x) => {
     expect.hasAssertions();
 
     const { onCommit } = mountGrid({ items: [] });

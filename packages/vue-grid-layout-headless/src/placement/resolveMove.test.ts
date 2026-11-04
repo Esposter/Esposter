@@ -78,4 +78,39 @@ describe(resolveMove, () => {
       { h: 1, id: "b", w: 1, x: 3, y: 1 },
     ]);
   });
+
+  test("a prevent landing on another item returns no layout", () => {
+    expect.hasAssertions();
+
+    expect(
+      resolveMove(
+        [
+          { h: 2, id: "a", w: 2, x: 0, y: 0 },
+          { h: 2, id: "b", w: 2, x: 2, y: 0 },
+        ],
+        { h: 2, id: "a", w: 2, x: 1, y: 0 },
+        CollisionMode.Prevent,
+        4,
+      ),
+    ).toBeUndefined();
+  });
+
+  test("a prevent move onto free cells lands the item where it was dropped", () => {
+    expect.hasAssertions();
+
+    expect(
+      resolveMove(
+        [
+          { h: 2, id: "a", w: 2, x: 0, y: 0 },
+          { h: 2, id: "b", w: 2, x: 2, y: 0 },
+        ],
+        { h: 2, id: "a", w: 2, x: 0, y: 2 },
+        CollisionMode.Prevent,
+        4,
+      ),
+    ).toStrictEqual([
+      { h: 2, id: "a", w: 2, x: 0, y: 2 },
+      { h: 2, id: "b", w: 2, x: 2, y: 0 },
+    ]);
+  });
 });

@@ -29,7 +29,7 @@ pnpm i vue-grid-layout-headless
 
 ```vue
 <script setup lang="ts">
-import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
+import { CollisionMode, CompactType, ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
 import { shallowRef, useTemplateRef } from "vue";
 
 const root = useTemplateRef<HTMLElement>("root");
@@ -66,7 +66,7 @@ const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
       }"
       @pointerdown="startGesture($event, item)"
     >
-      <span class="resize-handle" @pointerdown.stop="startResize($event, item)" />
+      <span class="resize-handle" @pointerdown.stop="startGesture($event, item, ResizeEdge.SouthEast)" />
     </div>
   </div>
 </template>
@@ -84,8 +84,9 @@ Each tile supplies these values:
 | `CollisionMode`     | enum       | What a dropped item does to the items it lands on: push, swap, or prevent the drop                                                                           |
 | `CompactType`       | enum       | The direction a layout compacts in: vertical, horizontal, or none                                                                                            |
 | `getFirstFreeCell`  | function   | The first cell a new item of a given span fits in, scanning rows from the top and columns from the left                                                      |
+| `GridBlock`         | interface  | A cell the grid places, named by its id: what a move, a commit or a placement carries                                                                        |
 | `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed                                                                                               |
-| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                                                                      |
+| `GridItem`          | interface  | A block the grid places, named by the entity it lays out, and whether that entity takes its height from its content                                          |
 | `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the placeholder, the height, the press and the step                                                       |
 | `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter                                                             |
 | `GridPlaceholder`   | interface  | The box a drag draws where its item would land, marked when the grid would refuse the landing                                                                |

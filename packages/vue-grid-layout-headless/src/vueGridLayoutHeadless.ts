@@ -2,6 +2,7 @@
 export * from "#src/composables/useGridLayout";
 export * from "#src/models/CollisionMode";
 export * from "#src/models/CompactType";
+export type * from "#src/models/GridBlock";
 export type * from "#src/models/GridCell";
 export type * from "#src/models/GridCommit";
 export type * from "#src/models/GridGeometry";

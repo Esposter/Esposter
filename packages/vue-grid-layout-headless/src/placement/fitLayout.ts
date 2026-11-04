@@ -1,9 +1,13 @@
 import type { CompactType } from "#src/models/CompactType";
-import type { GridItem } from "#src/models/GridItem";
+import type { GridBlock } from "#src/models/GridBlock";
 
+import { clampCell } from "#src/placement/clampCell";
 import { compactLayout } from "#src/placement/compactLayout";
-import { correctBounds } from "#src/placement/correctBounds";
 
 // A layout fitted to a grid of the given columns: its items within the columns, then compacted in the grid's direction
-export const fitLayout = <T extends GridItem>(layout: T[], columnNumber: number, compactType: CompactType): T[] =>
-  compactLayout(correctBounds(layout, columnNumber), columnNumber, compactType);
+export const fitLayout = <T extends GridBlock>(layout: T[], columnNumber: number, compactType: CompactType): T[] =>
+  compactLayout(
+    layout.map((item) => clampCell(item, columnNumber)),
+    columnNumber,
+    compactType,
+  );

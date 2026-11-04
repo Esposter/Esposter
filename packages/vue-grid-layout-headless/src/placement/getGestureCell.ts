@@ -1,4 +1,4 @@
-import type { GridItem } from "#src/models/GridItem";
+import type { GridBlock } from "#src/models/GridBlock";
 
 import { ResizeEdge } from "#src/models/ResizeEdge";
 import { GRID_MIN_SPAN } from "#src/services/constants";
@@ -30,9 +30,9 @@ export const getGestureCell = ({
   columnPitch: number;
   edge?: ResizeEdge;
   offset: { x: number; y: number };
-  origin: GridItem;
+  origin: GridBlock;
   rowPitch: number;
-}): GridItem => {
+}): GridBlock => {
   const columnDelta = Math.round(offset.x / columnPitch);
   const rowDelta = Math.round(offset.y / rowPitch);
   if (!edge) {
