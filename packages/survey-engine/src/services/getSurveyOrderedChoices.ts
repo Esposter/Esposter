@@ -4,7 +4,7 @@ import { SurveyChoicesOrder } from "#src/models/SurveyChoicesOrder";
 import { createSeededRandom } from "#src/services/createSeededRandom";
 import { getSurveyChoiceText } from "#src/services/getSurveyChoiceText";
 import { hashSurveySeed } from "#src/services/hashSurveySeed";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 // The choices in the order a respondent sees them: the list's own, by text, or shuffled by a seed the session holds so the order holds still
 export const getSurveyOrderedChoices = (
@@ -30,7 +30,7 @@ export const getSurveyOrderedChoices = (
 
       while (remaining.length > 0) {
         const index = Math.floor(random() * remaining.length);
-        shuffled.push(...remaining.slice(index, index + 1));
+        shuffled.push(takeOne(remaining, index));
         remaining = remaining.toSpliced(index, 1);
       }
 
