@@ -18,7 +18,15 @@ describe(checkIsSurveyLogicValueEqual, () => {
       true,
     ],
     ["holds a record's value unequal to a field the other record lacks", { a: 1, b: 2 }, { a: 1 }, false],
-    ["holds records with the same fields and values equal in either order", { a: 1, b: "x" }, { a: 1, b: "x" }, true],
+    [
+      "holds records with the same fields and values equal in either order",
+      { a: 1, b: "x" },
+      Object.fromEntries([
+        ["b", "x"],
+        ["a", 1],
+      ]),
+      true,
+    ],
     ["holds records unequal when one value differs", { a: 1 }, { a: 2 }, false],
     ["holds two records with only empty fields equal", { a: "" }, { b: undefined }, true],
   ])("%s", (_title, left, right, expected) => {
