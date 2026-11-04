@@ -4,6 +4,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyDocumentSchema } from "#src/services/surveyDocumentSchema";
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyNodeTypeDefinitionMap } from "#src/services/surveyNodeTypeDefinitionMap";
+import { MAX_SURVEY_EXPRESSION_LENGTH } from "survey-logic";
 import { describe, expect, test } from "vitest";
 
 // A minimal node of a type: its definition's default props, its slots empty, and a fresh id
@@ -19,6 +20,27 @@ describe("surveyNodeSchema", () => {
     expect.hasAssertions();
 
     expect(surveyNodeSchema.safeParse(createNode(type)).success).toBe(true);
+  });
+
+  // One node of each family that holds an expression, taking the expression it holds as its own prop
+  test.each([
+    ["a question's condition", SurveyNodeType.Text, (expression: string) => ({ visibleIf: expression })],
+    ["a panel's condition", SurveyNodeType.Panel, (expression: string) => ({ enableIf: expression })],
+    ["a calculated value's expression", SurveyNodeType.Expression, (expression: string) => ({ expression })],
+    [
+      "a validator's expression",
+      SurveyNodeType.Text,
+      (expression: string) => ({ validators: [{ expression, text: "a" }] }),
+    ],
+  ])("%s accepts an expression at the limit and refuses one past it", (_title, type, createProps) => {
+    expect.hasAssertions();
+
+    const node = createNode(type) as SurveyNode;
+    const parses = (expression: string) =>
+      surveyNodeSchema.safeParse({ ...node, props: { ...node.props, ...createProps(expression) } }).success;
+
+    expect(parses("1".repeat(MAX_SURVEY_EXPRESSION_LENGTH))).toBe(true);
+    expect(parses("1".repeat(MAX_SURVEY_EXPRESSION_LENGTH + 1))).toBe(false);
   });
 });
 

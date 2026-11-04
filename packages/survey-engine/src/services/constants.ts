@@ -18,8 +18,6 @@ export const MAX_SURVEY_TEXT_LENGTH = 1000;
 export const MAX_SURVEY_IMAGE_SIZE = 2048;
 // The most characters a block of HTML or a completion page's markup may hold
 export const MAX_SURVEY_HTML_LENGTH = 20_000;
-// The most characters an expression may hold, the longest a condition or a calculated value takes
-export const MAX_SURVEY_EXPRESSION_LENGTH = 1000;
 // The most characters a node's id may hold
 export const MAX_SURVEY_ID_LENGTH = 64;
 // The most validators a question may hold
