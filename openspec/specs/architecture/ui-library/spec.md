@@ -255,6 +255,17 @@ A grid or calendar SHALL move focus one cell or day at a time with the arrow key
 - **THEN** the day is announced as disabled
 - **AND** the day is not chosen
 
+### Requirement: A required label carries one mark that speech skips and announces the word once
+
+A label a call site marks required SHALL draw a mark that assistive technology does not read, and SHALL announce the word required once, beside the label.
+
+#### Scenario: A required text field's label is read once as required
+
+- **GIVEN** a text field that a call site marks required
+- **WHEN** the field's label is read
+- **THEN** the label is announced with the word required once
+- **AND** the mark itself is not announced
+
 ### Requirement: A radio group, select or date field a call site marks invalid is drawn in the error colour
 
 A radio group, select or date field SHALL take the invalid mark a call site sets on it, and SHALL draw its control in the error colour while it is marked.

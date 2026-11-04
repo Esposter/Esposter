@@ -18,7 +18,7 @@ flowchart TD
 
 A field takes `node`, `isDisabled` and `error`, and binds its answer with `v-model`. It never evaluates a condition, validates an answer or reads another question: the runner decides all three, and the field shows the error the runner gives its question.
 
-Most fields draw their question through `Field/Shell.vue`, which draws the title with a required mark, the description under it and the error as an alert. The required mark is an `aria-hidden` star beside the word "required" for speech, and the control is described by the description and the error together, in that order. Text, comment and slider keep their library control's own label instead. Matrix dynamic draws its own caption, and expression, html and image draw no question chrome of their own.
+Most fields draw their question through `Field/Shell.vue`, which draws the title with a required mark, the description under it and the error as an alert. The required mark is an `aria-hidden` star beside the word "required" for speech, and the control is described by the description and the error together, in that order. Text, comment, slider and date keep their library control's own label instead, which draws the same required mark from `Ui/RequiredMark.vue`. Matrix dynamic captions its table with that mark, and expression, html and image draw no question chrome of their own.
 
 | Kind            | Field               | Drawn with                                                                                                                                                                                                                                 |
 | --------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -52,6 +52,8 @@ An email, telephone or URL answer is the same line field as a text answer, typed
 
 An invalid radio group, select, tag box, date or datetime field is marked invalid and tinted in the error colour, with the shell's alert or the field's message beneath it and nothing else drawn for it.
 
+A required question shows one mark after its title, the star drawn in the error colour and hidden from speech, with the word required announced once beside the title. A text question's hint is its description alone, so the word no longer ends it. Each labelled control draws that same mark rather than its own.
+
 A dropdown and a tag box with a placeholder show it in the trigger while nothing is picked, in the same muted text a text field's placeholder takes, in place of the question's title that the shell already draws above. The list never offers it, so it cannot be picked.
 
 ## Decisions
@@ -70,7 +72,6 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 
 Each gap is a change to the UI library, and each field works around it as the table says.
 
-- The library has no required prop, so the shell draws the required mark, and the matrix dynamic caption draws its own.
 - There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
 
 ## Key files
@@ -85,7 +86,7 @@ Each gap is a change to the UI library, and each field works around it as the ta
 | `apps/web/app/composables/survey/useSurveyRecordAnswer.ts`         | a record answer read as an object                                                                   |
 | `apps/web/app/services/resource/survey/getSurveyAnswerRows.ts`     | a list answer's rows, with the question's initial count of empty rows before any answer             |
 | `apps/web/app/services/resource/survey/withSurveyAnswer.ts`        | a row's record with one answer set, or cleared                                                      |
-| `apps/web/app/services/survey/getSurveyFieldHint.ts`               | the hint under a text field: its description, and the required word after it                        |
 | `apps/web/app/components/Ui/`                                      | the UI library the fields are drawn from                                                            |
 | `apps/web/app/components/Ui/Rating.vue`                            | a rating scale of numbered steps, filled by the caller's mark up to the pointer or the choice       |
+| `apps/web/app/components/Ui/RequiredMark.vue`                      | the required mark a label carries: drawn for sight, and the word announced once beside the label    |
 | `apps/web/app/components/Ui/setupUiStyle.test.ts`                  | the helper that runs a field's component test once per design style                                 |

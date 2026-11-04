@@ -32,6 +32,17 @@ An email, telephone or URL question SHALL be drawn as a text field typed as that
 - **THEN** its input is typed as an email
 - **AND** the input offers the email autofill
 
+### Requirement: A required question's title says so once and the field's hint does not repeat it
+
+A required question SHALL show the required mark once beside its title, and its field's hint SHALL carry only the question's description.
+
+#### Scenario: A required text question's label shows the mark and its hint is the description alone
+
+- **GIVEN** a text question that is required and has the description "Your work address"
+- **WHEN** the question is drawn
+- **THEN** its label shows the required mark and the word required
+- **AND** its hint is "Your work address"
+
 ### Requirement: A dropdown or tag box shows its placeholder until a respondent picks
 
 A dropdown or tag box SHALL show the placeholder its author set in its trigger while nothing is picked.

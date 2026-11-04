@@ -161,6 +161,15 @@ describe("uiTextField", () => {
       expect(control.attributes("autocomplete")).toBe(autocomplete);
     });
 
+    test("marks a required label with a mark speech skips, and says required once", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { isRequired: true, label, modelValue: "" } });
+
+      expect(component.get('[aria-hidden="true"]').text()).toBe("*");
+      expect(component.get("label").text()).toBe(`${label} * required`);
+    });
+
     test("names a search by its label, and clears it from inside the field once it holds text", async () => {
       expect.hasAssertions();
 

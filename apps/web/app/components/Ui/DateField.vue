@@ -11,6 +11,8 @@ interface Props {
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a cell being
   // Edited in its row
   isLabelHidden?: true;
+  // Marks the label with the required mark, which speech announces as required once
+  isRequired?: true;
   // A moment rather than a day: the panel takes a time of day under the calendar
   isTime?: true;
   label: string;
@@ -27,6 +29,7 @@ const {
   isClearable,
   isDisabled,
   isLabelHidden,
+  isRequired,
   isTime,
   label,
   max,
@@ -76,9 +79,10 @@ defineExpose({ element });
     ref="field"
     v-model:is-open="isOpen"
     :is-clearable="Boolean(isClearable && modelValue && !isDisabled)"
-    :is-disabled="isDisabled"
+    :is-disabled
     :is-empty="!modelValue"
     :is-label-hidden
+    :is-required
     :label
     :placeholder
     @clear="modelValue = undefined as TModel"

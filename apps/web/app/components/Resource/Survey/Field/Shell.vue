@@ -23,8 +23,7 @@ const describedBy = computed(
   <div flex flex-col gap-1>
     <span text-sm text-muted>
       {{ title }}
-      <span v-if="isRequired" aria-hidden="true" text-error>*</span>
-      <span v-if="isRequired" sr-only> required</span>
+      <UiRequiredMark v-if="isRequired" />
     </span>
     <span v-if="description" :id="descriptionId" text-sm text-muted>{{ description }}</span>
     <slot :described-by />

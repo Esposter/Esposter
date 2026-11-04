@@ -53,7 +53,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
         <caption text-left>
           <span block>
             {{ node.props.title || node.props.name }}
-            <span v-if="node.props.isRequired" text-error>*<span sr-only> required</span></span>
+            <UiRequiredMark v-if="node.props.isRequired" />
           </span>
           <span v-if="node.props.description" text-sm text-muted block>{{ node.props.description }}</span>
         </caption>

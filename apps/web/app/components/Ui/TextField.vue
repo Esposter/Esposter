@@ -21,6 +21,8 @@ interface Props {
   // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
   // Filter under the column's name, a cell being edited in its row
   isLabelHidden?: true;
+  // Marks the label with the required mark, which speech announces as required once
+  isRequired?: true;
   label: string;
   // The most characters it lets in, where the control stops the typing and counts it under the field as `counter` does
   maxlength?: number;
@@ -41,6 +43,7 @@ const {
   isAutofocus,
   isDisabled,
   isLabelHidden,
+  isRequired,
   label,
   maxlength,
   placeholder,
@@ -76,7 +79,9 @@ defineExpose({ element });
     gap-1
   >
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
-    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted>{{ label }}</label>
+    <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
+      >{{ label }} <UiRequiredMark v-if="isRequired"
+    /></label>
     <div relative>
       <UiIcon
         v-if="isSearch"

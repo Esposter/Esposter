@@ -2,7 +2,6 @@
 import type { SurveyAnswerValue, SurveyTextNode } from "survey-engine";
 
 import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
-import { getSurveyFieldHint } from "@/services/survey/getSurveyFieldHint";
 import { SurveyTextInputType } from "survey-engine";
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const title = computed(() => node.props.title || node.props.name);
-const hint = computed(() => getSurveyFieldHint(node.props.description, node.props.isRequired));
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
@@ -46,6 +44,7 @@ const date = computed<Date | undefined>({
     <UiDateField
       v-if="isDate"
       v-model="date"
+      :is-required="node.props.isRequired || undefined"
       :aria-invalid="error ? true : undefined"
       is-clearable
       :is-disabled="isDisabled || undefined"
@@ -55,7 +54,8 @@ const date = computed<Date | undefined>({
     <UiTextField
       v-else
       :error
-      :hint
+      :hint="node.props.description"
+      :is-required="node.props.isRequired || undefined"
       :is-disabled="isDisabled || undefined"
       :label="title"
       :maxlength="node.props.maxLength"
@@ -65,7 +65,7 @@ const date = computed<Date | undefined>({
       @update:model-value="(value) => updateText(value)"
     />
     <template v-if="isDate">
-      <span v-if="hint" text-sm text-muted>{{ hint }}</span>
+      <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
       <span v-if="error" role="alert" text-sm text-error>{{ error }}</span>
     </template>
   </div>
