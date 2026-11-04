@@ -7,11 +7,9 @@ export class FileEntity {
   declare filename: string;
   // Whether the sibling {prefix}/{id}.thumb blob was actually written, recorded by the uploader that wrote it.
   // Without it, a missing thumbnail can only be inferred from a failed image load — the same signal an expired
-  // Read SAS gives — so whichever way the renderer reads that signal is wrong for the other case. Attachments
-  // Written before it was recorded read back as false and render their original, exactly as they did then
+  // Read SAS gives — so whichever way the renderer reads that signal is wrong for the other case
   hasThumbnail = false;
   declare id: string;
-  // Older Azure Table message rows do not have this property, so an unmarked attachment remains unspoiled.
   isSpoiler = false;
   declare mimetype: string;
   declare size: number;
@@ -26,9 +24,9 @@ export const FileEntityPropertyNames = getPropertyNames<FileEntity>();
 export const fileEntitySchema = z.object({
   // The upload SAS target and every delete that names this file interpolate it into a blob name
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
-  hasThumbnail: z.boolean().default(false),
+  hasThumbnail: z.boolean(),
   id: z.uuid(),
-  isSpoiler: z.boolean().default(false),
+  isSpoiler: z.boolean(),
   mimetype: z.string().max(MIMETYPE_MAX_LENGTH),
   size: z.int().positive(),
 }) satisfies z.ZodType<FileEntity>;
