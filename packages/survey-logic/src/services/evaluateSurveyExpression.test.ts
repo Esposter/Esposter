@@ -287,13 +287,13 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // An answer reads as the value it holds: a true or false text as that boolean, and a quoted text without its quotes.
-  // Any other text stays text until an operation needs a number from it
+  // An answer reads as the value it is stored as: a text stays text, even one spelling a boolean or wrapped in quotes.
+  // An operation reads it as a number only where it needs one
   test.each([
     ["a numeric answer reads as a number", "{a} = 5", { a: "5" }, true],
-    ["a true answer text reads as a boolean in any case", "{a} = true", { a: "TRUE" }, true],
-    ["a quoted answer reads without its quotes", "{a} = 'hi'", { a: "'hi'" }, true],
-    ["a double-quoted answer reads without its quotes", "{a} = 'hi'", { a: '"hi"' }, true],
+    ["a text answer spelling a boolean stays text", "{a} + 'x'", { a: "TRUE" }, "TRUEx"],
+    ["a quoted answer keeps its quotes", "{a} + 'x'", { a: "'hi'" }, "'hi'x"],
+    ["a double-quoted answer keeps its quotes", "{a} + 'x'", { a: '"hi"' }, '"hi"x'],
     ["a dotted name with no key reads as empty", "{a.b} empty", { a: 5 }, true],
     ["a dotted name reads a nested answer", "{m.row1.col1}", { m: { row1: { col1: 7 } } }, 7],
     ["a whole dotted key is read before a path", "{m.row1.col1}", { m: { row1: { col1: 7 } }, "m.row1.col1": 9 }, 9],

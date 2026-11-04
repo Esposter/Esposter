@@ -38,24 +38,17 @@ describe(toSurveyLogicAnswer, () => {
     expect(toSurveyLogicAnswer(value)).toStrictEqual(value);
   });
 
-  test.each<[string, string, boolean]>([
-    ["reads the text TRUE in capitals as the boolean true", "TRUE", true],
-    ["reads the text false in lower case as the boolean false", "false", false],
-    ["reads the text True in title case as the boolean true", "True", true],
-  ])("%s", (_title, value, expected) => {
+  test.each<[string, string]>([
+    ["keeps the text TRUE in capitals as text", "TRUE"],
+    ["keeps the text false in lower case as text", "false"],
+    ["keeps the text True in title case as text", "True"],
+    ["keeps text in single quotes with the quotes", "'hi'"],
+    ["keeps text in double quotes with the quotes", '"hi"'],
+    ["keeps a lone single quote as the quote itself", "'"],
+  ])("%s", (_title, value) => {
     expect.hasAssertions();
 
-    expect(toSurveyLogicAnswer(value)).toStrictEqual(expected);
-  });
-
-  test.each<[string, string, string]>([
-    ["reads text in single quotes as the text without them", "'hi'", "hi"],
-    ["reads text in double quotes as the text without them", '"hi"', "hi"],
-    ["keeps a lone single quote as the quote itself", "'", "'"],
-  ])("%s", (_title, value, expected) => {
-    expect.hasAssertions();
-
-    expect(toSurveyLogicAnswer(value)).toStrictEqual(expected);
+    expect(toSurveyLogicAnswer(value)).toStrictEqual(value);
   });
 
   test.each<[string, SurveyLogicStoredValue]>([

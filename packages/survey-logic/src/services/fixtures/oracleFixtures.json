@@ -3167,8 +3167,18 @@
     "value": { "type": "number", "value": 31 },
     "deviation": { "ours": { "type": "string", "value": "0x1F" }, "rule": "one-number-reading" }
   },
-  { "expression": "{a}", "answers": { "a": "TRUE" }, "value": { "type": "boolean", "value": true } },
-  { "expression": "{a}", "answers": { "a": "'hi'" }, "value": { "type": "string", "value": "hi" } },
+  {
+    "expression": "{a}",
+    "answers": { "a": "TRUE" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "string", "value": "TRUE" }, "rule": "answer-type" }
+  },
+  {
+    "expression": "{a}",
+    "answers": { "a": "'hi'" },
+    "value": { "type": "string", "value": "hi" },
+    "deviation": { "ours": { "type": "string", "value": "'hi'" }, "rule": "answer-type" }
+  },
   {
     "expression": "{a}",
     "answers": {},

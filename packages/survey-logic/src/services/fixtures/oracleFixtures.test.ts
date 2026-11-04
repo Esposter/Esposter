@@ -63,6 +63,8 @@ describe("the oracle fixtures", () => {
       "The package accepts `not`, a minus before any operand and a leading-dot number, which SurveyJS refuses",
     "aggregate-skip":
       "Aggregates skip what is not a value: an empty, non-numeric or record item is not counted, and an average, minimum or maximum of nothing is undefined",
+    "answer-type":
+      "An answer keeps its stored type: a text spelling a boolean or wrapped in quotes stays text, where SurveyJS reads the spelled boolean or the unquoted text",
     "array-filter": "The filter form of an array function is refused, so the package answers empty",
     "case-sensitive": "Names are case-sensitive here, where SurveyJS ignores case",
     "date-time-end":
