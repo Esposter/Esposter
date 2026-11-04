@@ -243,5 +243,4 @@ Paths relative to the repository root.
 
 ## Open
 
-- [ ] **Save: stored saves need the characters backfill before the schema reads them** — no source yet: the backfill file for the characters slice; commit `d36c447c9f` says an older save is refused until its stored blob is backfilled, and names no file or run for it.
 - [ ] **a new player holds Original Resin at its cap from the epoch, with Mondstadt's Reputation at its first level** — no source yet for the game's new-player state: `EMPTY_WALLET` in `packages/genshin-world/src/services/inventory/constants.ts` sets Original Resin to `ORIGINAL_RESIN_CAP`, 200 (`packages/genshin-world/src/services/originalResin/constants.ts` line 2), from the epoch (line 64), and the cached Reputation page gives no starting level, so a new account's save would settle both.
