@@ -105,8 +105,8 @@ catalog:
   "@tiptap/vue-3": ^3.32.2
   "@tresjs/cientos": ^5.10.1
   "@tresjs/core": ^5.10.1
-  "@trpc/client": ^11.23.0
-  "@trpc/server": ^11.23.0
+  "@trpc/client": ^11.24.0
+  "@trpc/server": ^11.24.0
   "@tsdown/css": 0.23.2
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
