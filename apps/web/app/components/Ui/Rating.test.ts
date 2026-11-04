@@ -64,6 +64,19 @@ describe("uiRating", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[4], [5]]);
     });
 
+    test("ends its hover preview when a key moves the choice, so the steps show the choice it moved to", async () => {
+      expect.hasAssertions();
+
+      const component = mountRating({ modelValue: 2 });
+      await flushPromises();
+      await component.findAll('[role="radio"]')[3]?.trigger("pointerenter");
+      await component.findAll('[role="radio"]')[1]?.trigger("keydown", { key: "ArrowRight" });
+      await flushPromises();
+
+      expect(component.emitted("update:modelValue")).toStrictEqual([[3]]);
+      expect(getFilled(component)).toStrictEqual([true, true, true, false, false]);
+    });
+
     test("neither changes its choice nor previews a step while disabled", async () => {
       expect.hasAssertions();
 

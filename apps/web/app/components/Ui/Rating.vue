@@ -32,6 +32,7 @@ const filledTo = computed(() => hovered.value ?? (typeof modelValue.value === "n
     @update:model-value="
       (value) => {
         if (value !== undefined) modelValue = value;
+        hovered = undefined;
       }
     "
   >
