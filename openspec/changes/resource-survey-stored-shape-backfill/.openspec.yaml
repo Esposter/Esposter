@@ -1,0 +1,5 @@
+schema: spec-driven
+affected_areas: [resource]
+skip_specs: true
+x-model: claude-haiku-5-5
+x-waiting: "1.1 to 2.2 wait on a session logged in to the dev and prod storage accounts (az login); none is held in the repository, so the run is the owner's or a machine's that holds that login"
