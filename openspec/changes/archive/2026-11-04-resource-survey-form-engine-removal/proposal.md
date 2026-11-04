@@ -1,6 +1,6 @@
 # Survey Removal
 
-Part of the [survey form engine program](../resource-survey-form-engine-program/design.md).
+Part of the [survey form engine program](../../resource-survey-form-engine-program/design.md).
 
 ## Why
 

@@ -1,6 +1,6 @@
 # Survey Removal
 
-The last part of the [survey form engine program](../resource-survey-form-engine-program/design.md): it runs after the [respondent](../../specs/resource/survey-respondent/design.md) part's swap, because the purge deletes what the old pages wrote and the removal deletes what they ran on.
+The last part of the [survey form engine program](../../resource-survey-form-engine-program/design.md): it runs after the [respondent](../../../specs/resource/survey-respondent/design.md) part's swap, because the purge deletes what the old pages wrote and the removal deletes what they ran on.
 
 ## How it works
 
