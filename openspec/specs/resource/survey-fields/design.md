@@ -58,6 +58,7 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 
 ## Decisions
 
+- **A matrix's cells are a radio group per row, not a library cell.** A per-cell radio with a shared name and a roving keyboard across the rows would be a library part with one caller, the single-choice matrix, and its grid machinery costs more than the rows it replaces, which are already one radio group each. Rejected: a cell part for one caller.
 - **A field is dumb.** It holds no logic of the survey, so the preview, the respondent page and the Creator's canvas draw the same components. Rejected: a field that evaluates its own condition, which makes the preview and the page disagree the first time a condition changes.
 - **Fields load on demand.** The map imports each field lazily, so a survey's page loads only the kinds it draws. Rejected: importing every field into the runner, which loads every kind for every survey.
 - **A choice's pick is held apart from its answer.** The answer holds other text as itself, so a text equal to a choice's value cannot be read back from the answer as the pick of that choice. `useSurveyChoiceAnswer`, the checkbox and the tag box keep the picks and the other text as the reader makes them, and the answer is written from them. Rejected: deriving the pick from the answer alone, which drops the other option the moment its text is cleared.
@@ -72,7 +73,7 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 
 Each gap is a change to the UI library, and each field works around it as the table says.
 
-- There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
+- There is no tile group of images: the image picker is a list of rows.
 
 ## Key files
 
