@@ -62,8 +62,18 @@ type ViewerModule = Awaited<ReturnType<typeof loadPdfViewer>>;
 // The renderer's viewer module, with the four constructors the viewer is built from and the target its links open in
 const createViewerModule = () =>
   ({ EventBus, LinkTarget: { BLANK: 2 }, PDFFindController, PDFLinkService, PDFViewer }) as unknown as ViewerModule;
-// The document the viewer reads as it loads: six pages, and no outline
-const createDocument = () => ({ getOutline: () => Promise.resolve(null), numPages: 6 }) as unknown as PDFDocumentProxy;
+// A page with no annotations, which is what its comments are read from
+const createPage = () => ({ cleanup: () => true, getAnnotations: () => Promise.resolve([]) });
+// The document the viewer reads as it loads: six pages, and no outline. A test that reads its comments passes its pages
+const createDocument = (
+  getPage = vi.fn<(pageNumber: number) => Promise<unknown>>(() => Promise.resolve(createPage())),
+) =>
+  ({
+    annotationStorage: new Map(),
+    getOutline: () => Promise.resolve(null),
+    getPage,
+    numPages: 6,
+  }) as unknown as PDFDocumentProxy;
 
 // The viewer's state is the package's, so this file asserts the dialog's own part: the failure, the password prompt
 // The password is handed back to the document, and a document is passed only by a test that shows its pages
@@ -247,6 +257,24 @@ describe("pdfViewer", () => {
       await flushPromises();
 
       expect(component.find('[role="tablist"]').exists()).toBe(true);
+    });
+
+    test("the comments are read only once the Comments tab is opened", async () => {
+      expect.hasAssertions();
+
+      const getPage = vi.fn<(pageNumber: number) => Promise<unknown>>(() => Promise.resolve(createPage()));
+      const component = await mountViewer({ pdfDocument: createDocument(getPage) });
+      await flushPromises();
+
+      expect(getPage).not.toHaveBeenCalled();
+
+      await component
+        .findAll('[role="tab"]')
+        .find((tab) => tab.text() === "Comments")
+        ?.trigger("click");
+      await flushPromises();
+
+      expect(getPage).toHaveBeenCalledWith(1);
     });
   });
 });

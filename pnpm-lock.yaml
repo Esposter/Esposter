@@ -1329,6 +1329,9 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 3.0.3(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
       nitro:
         specifier: npm:nitro-nightly@latest
         version: nitro-nightly@3.0.261103-rc

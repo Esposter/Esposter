@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
+import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { usePdfViewer } from "vue-pdfjs-headless";
+import { usePdfAnnotations, usePdfViewer } from "vue-pdfjs-headless";
 
 interface Props {
   filename: string;
@@ -43,6 +44,16 @@ const state = usePdfViewer({
 // Opens it. The reader's own choice is kept with the browser once made
 const { mdAndDown } = useUiDisplay();
 const isSidebarOpen = useLocalStorage(LocalStorageKey.PdfSidebarOpen, !mdAndDown.value, { writeDefaults: false });
+// The tab the reader last chose stays chosen in this browser, so the sidebar opens on it again. The comments are read
+// Only while their tab is open, so a document nobody reads comments of reads none
+const sidebarTab = useLocalStorage<PdfSidebarTab>(LocalStorageKey.PdfSidebarTab, PdfSidebarTab.Outline, {
+  writeDefaults: false,
+});
+const annotations = usePdfAnnotations({
+  isCommentsWanted: () => isSidebarOpen.value && sidebarTab.value === PdfSidebarTab.Comments,
+  pdfDocument: () => pdfDocument,
+  viewer: state,
+});
 const isWatermarkOpen = ref(false);
 const isUnavailable = computed(() => isFailed || isViewerFailed.value);
 // The pages' area waits on the viewer's module and on the document, and a failure says so in place of a spinner. A
@@ -61,6 +72,7 @@ const closeSidebarOnPhone = () => {
   <div bg-background flex flex-col gap-2 min-h-0>
     <PdfViewerToolbar
       v-model:is-sidebar-open="isSidebarOpen"
+      :annotations
       :filename
       :viewer="state"
       @watermark="isWatermarkOpen = true"
@@ -80,6 +92,8 @@ const closeSidebarOnPhone = () => {
     <div flex flex-1 min-h-0 relative>
       <PdfViewerSidebar
         v-if="isSidebarOpen && !isUnavailable"
+        v-model:tab="sidebarTab"
+        :annotations
         :pdf-document
         :viewer="state"
         @chose-page="() => closeSidebarOnPhone()"

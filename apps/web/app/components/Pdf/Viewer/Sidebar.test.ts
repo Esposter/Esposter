@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { PdfOutline } from "vue-pdfjs-headless";
+import type { PdfComment, PdfOutline } from "vue-pdfjs-headless";
 
+import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.fixture";
 import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
 import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -12,9 +13,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // No card comes into view of the rail here, so no page is drawn and the document needs no page of its own
 const createDocument = (numPages: number) =>
   ({ getPage: vi.fn<PDFDocumentProxy["getPage"]>(), numPages }) as unknown as PDFDocumentProxy;
-const mountSidebar = (outline: PdfOutline | undefined = []) =>
+const mountSidebar = (outline: PdfOutline | undefined = [], comments: PdfComment[] | undefined = []) =>
   mount(PdfViewerSidebar, {
     props: {
+      annotations: createPdfAnnotationsState({ comments: shallowRef<PdfComment[] | undefined>(comments) }),
       pdfDocument: createDocument(6),
       viewer: createPdfViewerState({ outline: shallowRef<PdfOutline | undefined>(outline) }),
     },
@@ -56,6 +58,19 @@ describe("pdfViewerSidebar", () => {
 
       expect(component.text()).not.toContain("This PDF has no outline");
       expect(component.findAll("button").some((button) => button.text() === "Page 1")).toBe(true);
+    });
+
+    test("choosing a comment tells the dialog a page was chosen", async () => {
+      expect.hasAssertions();
+
+      const component = mountSidebar([], [{ contents: "a", pageNumber: 2 }]);
+      await chooseTab(component, "Comments");
+      await component
+        .findAll("button")
+        .find((button) => button.text() === "Page 2 a")
+        ?.trigger("click");
+
+      expect(component.emitted("chosePage")).toStrictEqual([[]]);
     });
   });
 });

@@ -1,20 +1,33 @@
 // @vitest-environment happy-dom
-import type { PdfViewerState } from "vue-pdfjs-headless";
+import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
+import { MimeType } from "#shared/models/file/MimeType";
+import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.fixture";
 import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
 import PdfViewerToolbar from "@/components/Pdf/Viewer/Toolbar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { useAlertStore } from "@/store/alert";
+import { downloadFile } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
-import { PDF_ROTATION_STEP } from "vue-pdfjs-headless";
+import { err } from "neverthrow";
+import { createPinia, setActivePinia, storeToRefs } from "pinia";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { PDF_ROTATION_STEP, PdfEditorMode } from "vue-pdfjs-headless";
+
+vi.mock(import("@esposter/shared"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  downloadFile: vi.fn<typeof downloadFile>(),
+}));
 
 const mountToolbar = ({
+  annotations = createPdfAnnotationsState(),
   isSidebarOpen = true,
   viewer = createPdfViewerState(),
-}: { isSidebarOpen?: boolean; viewer?: PdfViewerState } = {}) =>
+}: { annotations?: PdfAnnotationsState; isSidebarOpen?: boolean; viewer?: PdfViewerState } = {}) =>
   mount(PdfViewerToolbar, {
     props: {
+      annotations,
       filename: "report.pdf",
       isSidebarOpen,
       "onUpdate:isSidebarOpen": vi.fn<(isOpen: boolean) => void>(),
@@ -29,8 +42,27 @@ const openMenu = async (component: ReturnType<typeof mountToolbar>) => {
 };
 const getMenuItem = (component: ReturnType<typeof mountToolbar>, title: string) =>
   component.findAll('[role^="menuitem"]').find((item) => item.text() === title);
+// The picker is the input the dialog opens: its click is answered with the file the reader chose, and the types it takes
+// Are returned, one per opening
+const choosesFile = (file: File) => {
+  const accepts: string[] = [];
+  vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(function (this: HTMLInputElement) {
+    accepts.push(this.accept);
+    Object.defineProperty(this, "files", { value: [file] });
+    this.dispatchEvent(new Event("change"));
+  });
+
+  return accepts;
+};
 
 describe("pdfViewerToolbar", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
@@ -98,6 +130,81 @@ describe("pdfViewerToolbar", () => {
       await getMenuItem(component, "Whole word")?.trigger("click");
 
       expect(isWholeWord.value).toBe(true);
+    });
+
+    test("adding text is marked while it is on, and choosing it turns it off", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState();
+      const viewer = createPdfViewerState({ editorMode: ref(PdfEditorMode.FreeText) });
+      const component = await openMenu(mountToolbar({ annotations, viewer }));
+
+      expect(getMenuItem(component, "Add text")?.attributes("aria-checked")).toBe("true");
+
+      await getMenuItem(component, "Add text")?.trigger("click");
+
+      expect(annotations.setEditorMode).toHaveBeenCalledExactlyOnceWith(PdfEditorMode.None);
+    });
+
+    test("adding text turns the editor mode on", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState();
+      const component = await openMenu(mountToolbar({ annotations }));
+      await getMenuItem(component, "Add text")?.trigger("click");
+
+      expect(annotations.setEditorMode).toHaveBeenCalledExactlyOnceWith(PdfEditorMode.FreeText);
+    });
+
+    test("importing annotations hands the file's text to the composable", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState();
+      const component = await openMenu(mountToolbar({ annotations }));
+      const accepts = choosesFile(new File(["a"], "notes.xfdf"));
+      await getMenuItem(component, "Import annotations")?.trigger("click");
+      await flushPromises();
+
+      expect(accepts).toStrictEqual([expect.stringContaining(MimeType.Xfdf)]);
+      expect(annotations.importXfdf).toHaveBeenCalledExactlyOnceWith("a");
+    });
+
+    test("a refused import alerts once", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState({
+        importXfdf: vi.fn<PdfAnnotationsState["importXfdf"]>(() => err("a")),
+      });
+      const alertStore = useAlertStore();
+      const { alerts } = storeToRefs(alertStore);
+      const component = await openMenu(mountToolbar({ annotations }));
+      choosesFile(new File(["a"], "notes.xfdf"));
+      await getMenuItem(component, "Import annotations")?.trigger("click");
+      await flushPromises();
+
+      expect(alerts.value.map(({ text }) => text)).toStrictEqual(["notes.xfdf: a"]);
+    });
+
+    test("exporting annotations downloads the XFDF under the document's name", async () => {
+      expect.hasAssertions();
+
+      const annotations = createPdfAnnotationsState({ exportXfdf: () => "<xfdf/>" });
+      const component = await openMenu(mountToolbar({ annotations }));
+      await getMenuItem(component, "Export annotations")?.trigger("click");
+
+      expect(downloadFile).toHaveBeenCalledExactlyOnceWith("report.xfdf", "<xfdf/>", MimeType.Xfdf);
+    });
+
+    test("the annotation tools are unavailable until a document opens", async () => {
+      expect.hasAssertions();
+
+      const component = await openMenu(mountToolbar({ viewer: createPdfViewerState({ pagesCount: ref(0) }) }));
+
+      expect(
+        ["Add text", "Import annotations", "Export annotations"].map((title) =>
+          getMenuItem(component, title)?.attributes("aria-disabled"),
+        ),
+      ).toStrictEqual(["true", "true", "true"]);
     });
 
     test("going to a page", async () => {

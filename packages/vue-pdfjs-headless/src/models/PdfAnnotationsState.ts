@@ -4,7 +4,8 @@ import type { Result } from "neverthrow";
 import type { ShallowRef } from "vue";
 
 export interface PdfAnnotationsState {
-  comments: ShallowRef<PdfComment[]>;
+  // Undefined until the comments are read, so a tab shows loading while they are on their way
+  comments: ShallowRef<PdfComment[] | undefined>;
   exportXfdf: () => string;
   importXfdf: (xfdf: string) => Result<void, string>;
   setEditorMode: (mode: PdfEditorMode) => void;

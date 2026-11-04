@@ -92,13 +92,18 @@ export const usePdfAnnotations = ({
   pdfDocument,
   viewer,
 }: UsePdfAnnotationsOptions): PdfAnnotationsState => {
-  const comments = shallowRef<PdfComment[]>([]);
+  // Undefined until the document's comments have been read, so a tab shows loading rather than an empty list
+  const comments = shallowRef<PdfComment[]>();
   const loadComments = getSynchronizedFunction(async (loaded: PDFDocumentProxy) => {
     await getResultAsync(async () => {
       const loadedComments = await readComments(loaded);
       // Comments still loading when another document replaces this one are dropped, as the newer document's stand
       if (loaded === toValue(pdfDocument)) comments.value = loadedComments;
-    }).match(noop, console.error);
+    }).match(noop, (error) => {
+      console.error(error);
+      // Comments that cannot be read are an empty list, so their tab says so rather than loading for ever
+      if (loaded === toValue(pdfDocument)) comments.value = [];
+    });
   });
   const setEditorMode = (mode: PdfEditorMode) => {
     viewer.editorMode.value = mode;
@@ -130,7 +135,7 @@ export const usePdfAnnotations = ({
   watch(
     () => toValue(pdfDocument),
     (loaded) => {
-      comments.value = [];
+      comments.value = undefined;
       if (!loaded) return;
 
       setEditorHook(loaded, (kind) => {

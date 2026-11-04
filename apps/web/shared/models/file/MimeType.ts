@@ -12,6 +12,7 @@ export enum MimeType {
   Png = "image/png",
   Svg = "image/svg+xml",
   Webp = "image/webp",
+  Xfdf = "application/vnd.adobe.xfdf",
   Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   Xml = "application/xml",
 }

@@ -8,6 +8,7 @@ import { createAnnotationStorage } from "#src/composables/createAnnotationStorag
 import { usePdfAnnotations } from "#src/composables/usePdfAnnotations";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
+import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { err, ok } from "neverthrow";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
@@ -93,11 +94,47 @@ describe("usePdfAnnotations", () => {
     });
     await flushPromises();
 
-    expect(state.comments.value).toStrictEqual([]);
+    expect(state.comments.value).toBeUndefined();
     isCommentsWanted.value = true;
     await flushPromises();
 
     expect(state.comments.value).toStrictEqual([{ contents: "First", pageNumber: 1 }]);
+  });
+
+  test("comments are unread until their read settles", async () => {
+    expect.hasAssertions();
+
+    const lateComments = Promise.withResolvers<TestAnnotation[]>();
+    const pdfDocument = {
+      annotationStorage: createAnnotationStorage(),
+      getPage: () => Promise.resolve({ cleanup: () => true, getAnnotations: () => lateComments.promise }),
+      numPages: 1,
+    } as unknown as PDFDocumentProxy;
+    const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
+    await flushPromises();
+
+    expect(state.comments.value).toBeUndefined();
+    lateComments.resolve([{ contents: "First", subtype: "Text" }]);
+    await flushPromises();
+
+    expect(state.comments.value).toStrictEqual([{ contents: "First", pageNumber: 1 }]);
+  });
+
+  test("comments that cannot be read are an empty list", async () => {
+    expect.hasAssertions();
+
+    const error = new Error(" ");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
+    const pdfDocument = {
+      annotationStorage: createAnnotationStorage(),
+      getPage: () => Promise.reject(error),
+      numPages: 1,
+    } as unknown as PDFDocumentProxy;
+    const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
+    expect(state.comments.value).toStrictEqual([]);
   });
 
   test("a document's comments are read once, however often they are wanted again", async () => {

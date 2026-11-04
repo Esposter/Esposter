@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { PdfViewerState } from "vue-pdfjs-headless";
+import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
 import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 interface Props {
+  annotations: PdfAnnotationsState;
   pdfDocument?: PDFDocumentProxy;
   viewer: PdfViewerState;
 }
 
-const { pdfDocument, viewer } = defineProps<Props>();
+const tab = defineModel<PdfSidebarTab>("tab", { default: PdfSidebarTab.Outline });
+const { annotations, pdfDocument, viewer } = defineProps<Props>();
 const emit = defineEmits<{ chosePage: [] }>();
-// The tab the reader last chose stays chosen in this browser, so the sidebar opens on it again
-const tab = useLocalStorage<PdfSidebarTab>(LocalStorageKey.PdfSidebarTab, PdfSidebarTab.Outline, {
-  writeDefaults: false,
-});
-// The outline and the thumbnails take their pages through this viewer, which also tells the dialog a page was chosen
+// The outline, the thumbnails and the comments go to their pages through this viewer, which also tells the dialog that
+// A page was chosen
 const pageViewer: PdfViewerState = {
   ...viewer,
   followBookmark: (item) => {
@@ -34,6 +32,7 @@ const pageViewer: PdfViewerState = {
 const items: UiTabItem<PdfSidebarTab>[] = [
   { meaning: UiIconMeaning.Bookmark, title: "Outline", value: PdfSidebarTab.Outline },
   { meaning: UiIconMeaning.Image, title: "Thumbnails", value: PdfSidebarTab.Thumbnails },
+  { meaning: UiIconMeaning.Comment, title: "Comments", value: PdfSidebarTab.Comments },
 ];
 </script>
 
@@ -60,7 +59,8 @@ const items: UiTabItem<PdfSidebarTab>[] = [
     <UiTabs v-model="tab" :items label="Sidebar" :variant="UiTabsVariant.Header" is-filling>
       <template #default="{ value }">
         <PdfViewerOutline v-if="value === PdfSidebarTab.Outline" :viewer="pageViewer" />
-        <PdfViewerThumbnailRail v-else :pdf-document :viewer="pageViewer" />
+        <PdfViewerThumbnailRail v-else-if="value === PdfSidebarTab.Thumbnails" :pdf-document :viewer="pageViewer" />
+        <PdfViewerComments v-else-if="value === PdfSidebarTab.Comments" :annotations :viewer="pageViewer" />
       </template>
     </UiTabs>
   </div>
