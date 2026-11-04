@@ -23,6 +23,19 @@ describe("dashboardIndex", () => {
   const gridWidth = 970;
   const exportCsvLabel = '[aria-label="Export CSV"]';
   const responseColumn = "response";
+  // A card bound to a snapshot of two rows, so the published page offers its export and the export reads the snapshot
+  const createSnapshotCard = () =>
+    new Visual({
+      dataset: {
+        query: { series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }], xColumn: "team" },
+        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        snapshot: {
+          columns: [{ name: responseColumn, type: ColumnType.String }],
+          rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],
+        },
+      },
+      type: VisualType.Card,
+    });
 
   // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
   beforeEach(() => {
@@ -56,17 +69,7 @@ describe("dashboardIndex", () => {
 
     const readDataset = vi.fn<() => never>();
     trpcMsw.dataset.readDataset.query(readDataset);
-    const visual = new Visual({
-      dataset: {
-        query: { series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }], xColumn: "team" },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-        snapshot: {
-          columns: [{ name: responseColumn, type: ColumnType.String }],
-          rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],
-        },
-      },
-      type: VisualType.Card,
-    });
+    const visual = createSnapshotCard();
     const wrapper = await mountSuspended(DashboardIndex, {
       props: { collision: CollisionMode.Push, compactType: CompactType.Vertical, visuals: [visual] },
     });
@@ -79,5 +82,18 @@ describe("dashboardIndex", () => {
       `Count of ${responseColumn}\n2`,
       MimeType.Csv,
     );
+  });
+
+  // A group draws its children as the page does, so a bound child keeps its export and the group, which has no data, offers none
+  test("a published group draws its bound child with the child's export", async () => {
+    expect.hasAssertions();
+
+    const group = new Visual({ type: VisualType.Group, visuals: [createSnapshotCard()] });
+    const wrapper = await mountSuspended(DashboardIndex, {
+      props: { collision: CollisionMode.Push, compactType: CompactType.Vertical, visuals: [group] },
+    });
+    await flushPromises();
+
+    expect(wrapper.findAll(exportCsvLabel)).toHaveLength(1);
   });
 });

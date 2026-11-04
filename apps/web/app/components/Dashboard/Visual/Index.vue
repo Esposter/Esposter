@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { Dataset } from "#shared/models/dataset/Dataset";
+import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -9,17 +11,24 @@ import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/con
 import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
 import { checkIsAxisVisualPropsData } from "@/services/dashboard/checkIsAxisVisualPropsData";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
+import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useClipboardStore } from "@/store/clipboard";
 import { takeOne } from "@esposter/shared";
 import { defu } from "defu";
 
 interface Props {
+  collision: CollisionMode;
+  compactType: CompactType;
+  // Drawn in the editor, where a group's grid takes edits and its children are the editor's own tiles
+  isEditable?: true;
   visual: Visual;
 }
 
-// The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh
-defineSlots<{ actions?: (props: { dataset?: Dataset }) => VNode }>();
-const { visual } = defineProps<Props>();
+// The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh. A group's
+// Children are drawn by the caller's child slot, and by this component again when it gives none
+defineSlots<{ actions?: (props: { dataset?: Dataset }) => VNode; child?: (props: { visual: Visual }) => VNode }>();
+const { collision, compactType, isEditable, visual } = defineProps<Props>();
+const emit = defineEmits<DashboardVisualEmits>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");
 const height = ref<number>();
@@ -30,6 +39,9 @@ useResizeObserver(container, (entries) => {
 });
 
 const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData } = useVisualPropsData(() => visual);
+// The rows a visual draws, which the editor's menu and a viewer's export both take, and nothing for a demo or a failed read
+const drawnDataset = computed(() => (visualPropsData.value ? resolvedDataset.value : undefined));
+const isGroup = computed(() => visual.type === VisualType.Group);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,
@@ -51,8 +63,24 @@ const { copy } = clipboardStore;
 </script>
 
 <template>
-  <div size-full ui-frame>
-    <div ref="container" h-full relative>
+  <div size-full relative ui-frame>
+    <DashboardVisualGroup
+      v-if="isGroup"
+      :collision
+      :compact-type
+      :is-editable
+      :visual
+      @commit="(changes) => emit('commit', changes)"
+      @open="(child) => emit('open', child)"
+      @transfer="(transfer) => emit('transfer', transfer)"
+    >
+      <template #default="{ visual: child }">
+        <slot name="child" :visual="child">
+          <DashboardVisual :collision :compact-type :is-editable :visual="child" />
+        </slot>
+      </template>
+    </DashboardVisualGroup>
+    <div v-else ref="container" h-full relative>
       <UiErrorState v-if="error" pointer-events-auto :error @retry="refresh()" />
       <!-- A bound visual's own data is on its way: the tile's shape rather than the demo data it would otherwise show -->
       <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
@@ -72,10 +100,20 @@ const { copy } = clipboardStore;
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
-      <!-- The corner's marks sit above the tile's resize handles, which are drawn over the same corners -->
-      <div flex gap-1 pointer-events-auto right-1 top-1 absolute z-1>
-        <!-- The rows are offered only when the visual draws them, so a demo tile or a tile whose read failed has none -->
-        <slot name="actions" :dataset="visualPropsData ? resolvedDataset : undefined" />
+    </div>
+    <!-- The corner's marks sit above the tile's resize handles, which are drawn over the same corners -->
+    <div flex gap-1 pointer-events-auto right-1 top-1 absolute z-1>
+      <slot name="actions" :dataset="drawnDataset" />
+      <!-- A viewer's file is the published rows, which the snapshot holds, so the export reads nothing live -->
+      <UiIconButton
+        v-if="!isEditable && drawnDataset"
+        label="Export CSV"
+        :meaning="UiIconMeaning.Download"
+        :variant="UiButtonVariant.Quiet"
+        @click="exportDashboardVisualCsv(visual, drawnDataset)"
+      />
+      <!-- A group draws no data of its own, so it has no link to copy and nothing to refresh -->
+      <template v-if="!isGroup">
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->
         <UiIconButton
@@ -98,7 +136,7 @@ const { copy } = clipboardStore;
           :variant="UiButtonVariant.Quiet"
           @click="refresh()"
         />
-      </div>
+      </template>
     </div>
   </div>
 </template>

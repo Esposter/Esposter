@@ -7,7 +7,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { setVisualType } from "@/services/dashboard/setVisualType";
-import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
+import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
@@ -21,9 +21,15 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-// A card and a table draw no chart, so the chart type and the chart's settings have nothing to set for them
+// A card and a table draw no chart, and a group draws none of its own, so the chart type and the chart's settings have
+// Nothing to set for them
+const isGroup = computed(() => editedItem.value.type === VisualType.Group);
 const isChartVisual = computed(
-  () => editedItem.value.type !== VisualType.Card && editedItem.value.type !== VisualType.Table,
+  () => editedItem.value.type !== VisualType.Card && editedItem.value.type !== VisualType.Table && !isGroup.value,
+);
+// A group is made from the palette and keeps its type, so a chart's type picker offers every type but the group's
+const visualTypeItems = computed(() =>
+  VisualTypeCategoryDefinitions.flatMap(({ items }) => items).filter(({ value }) => value !== VisualType.Group),
 );
 const chartTypeItems = computed(() =>
   VisualTypeChartTypesMap[editedItem.value.type].map((value) => ({
@@ -48,7 +54,8 @@ const chartTypeItems = computed(() =>
     :schema
     @close="resetItem()"
   >
-    <template #prepend-form>
+    <!-- A group's type, dataset and chart come from the palette and the grid, so its form edits only its title -->
+    <template v-if="!isGroup" #prepend-form>
       <!-- What the visual *is*, chosen on the visual rather than in the toolbar that adds it: every reference
         dashboard (Grafana, Power BI, Looker) picks the visualization inside the panel, where the data it is
         being drawn from is visible and the choice is still changeable afterwards -->
@@ -56,7 +63,7 @@ const chartTypeItems = computed(() =>
         <div flex flex-col gap-1 w-64>
           <span text-sm text-muted>Visual type</span>
           <UiSelect
-            :items="VisualTypeItemCategoryDefinitions"
+            :items="visualTypeItems"
             label="Visual type"
             :model-value="editedItem.type"
             @update:model-value="(type) => setVisualType(editedItem, type)"
@@ -86,5 +93,6 @@ const chartTypeItems = computed(() =>
       v-model="editedItem.chart.configuration.title"
       label="Label"
     />
+    <UiTextField v-else-if="isGroup" v-model="editedItem.chart.configuration.title" label="Title" />
   </StyledEditFormDialog>
 </template>

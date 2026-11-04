@@ -13,11 +13,11 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-// The palette writes into the dashboard the store holds, so each test starts from an empty one rather than a read
-const loadDashboard = () => {
+// The palette writes into the dashboard the store holds, so each test starts from the visuals it is given rather than a read
+const loadDashboard = (visuals: Visual[] = []) => {
   const dashboardStore = useDashboardStore();
   const { dashboard } = storeToRefs(dashboardStore);
-  dashboard.value = new Dashboard();
+  dashboard.value = new Dashboard({ visuals });
 };
 
 describe("dashboardPaletteTile", () => {
@@ -147,6 +147,41 @@ describe("dashboardPaletteTile", () => {
     const { visuals } = storeToRefs(visualStore);
 
     expect(visuals.value).toStrictEqual([]);
+    tile.unmount();
+  });
+
+  // The group's grid is the one under the release, and its root names the group, so the visual is added inside that group
+  test("a tile dropped on a group's grid adds a visual inside that group", async () => {
+    expect.hasAssertions();
+
+    const group = new Visual({ type: VisualType.Group, visuals: [] });
+    loadDashboard([group]);
+    const groupGrid = await mountSuspended(DashboardGrid, {
+      attachTo: document.body,
+      attrs: { "data-group-id": group.id },
+      props: {
+        collision: CollisionMode.Push,
+        columnNumber,
+        compactType: CompactType.Vertical,
+        isEditable: true,
+        rowHeight: 40,
+        visuals: [],
+      },
+    });
+    onTestFinished(() => {
+      groupGrid.unmount();
+    });
+    const tile = await mountSuspended(DashboardPaletteTile, {
+      attachTo: document.body,
+      props: { title: "Bar", type: VisualType.Bar },
+    });
+    await dragTileTo(tile, cellPoint, groupGrid.element);
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(visuals.value.map(({ visuals: groupVisuals }) => groupVisuals?.map(({ type }) => type))).toStrictEqual([
+      [VisualType.Bar],
+    ]);
     tile.unmount();
   });
 });

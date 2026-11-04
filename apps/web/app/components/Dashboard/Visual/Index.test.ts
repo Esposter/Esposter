@@ -12,8 +12,10 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
+import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 describe("dashboardVisualIndex", () => {
+  const gridProps = { collision: CollisionMode.Push, compactType: CompactType.Vertical };
   const { trpcMsw } = setupMswTrpc();
 
   test("a table whose read fails shows the error state", async () => {
@@ -32,7 +34,7 @@ describe("dashboardVisualIndex", () => {
       },
       type: VisualType.Table,
     });
-    const wrapper = await mountSuspended(DashboardVisualIndex, { props: { visual } });
+    const wrapper = await mountSuspended(DashboardVisualIndex, { props: { ...gridProps, visual } });
     await readAnswered;
     await flushPromises();
 
@@ -44,7 +46,7 @@ describe("dashboardVisualIndex", () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardVisualIndex, {
-      props: { visual: new Visual({ type: VisualType.Card }) },
+      props: { ...gridProps, visual: new Visual({ type: VisualType.Card }) },
     });
 
     expect(

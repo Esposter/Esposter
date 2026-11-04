@@ -139,4 +139,36 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     expect(deletingVisualId.value).toBe(table.id);
     expect(visuals.value).toHaveLength(1);
   });
+
+  // A group holds no data to export, so its menu has the edit, the copy, the height, and the delete, and no Export CSV
+  test("a group's menu offers its fit height and no export", async () => {
+    expect.hasAssertions();
+
+    const group = new Visual({ type: VisualType.Group, visuals: [] });
+    await loadDashboard([group]);
+    const menu = await mountMenu(group);
+
+    await expect(openMenu(menu)).resolves.toStrictEqual([
+      "Edit visual",
+      "Duplicate visual",
+      "Fit height to content",
+      "Delete visual",
+    ]);
+  });
+
+  // Move to is offered only where the visual has a list to move into: a visual beside a group has one, and a group alone has none
+  test("move to is offered only where the visual has somewhere else to go", async () => {
+    expect.hasAssertions();
+
+    const card = new Visual({ type: VisualType.Card });
+    const group = new Visual({ type: VisualType.Group, visuals: [], x: 4 });
+    await loadDashboard([card, group]);
+    const cardItems = await openMenu(await mountMenu(card));
+    const groupItems = await openMenu(await mountMenu(group));
+
+    expect({ card: cardItems.includes("Move to…"), group: groupItems.includes("Move to…") }).toStrictEqual({
+      card: true,
+      group: false,
+    });
+  });
 });

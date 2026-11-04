@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import type { Visual } from "#shared/models/dashboard/data/Visual";
+import type { DashboardGridTransfer } from "@/models/dashboard/DashboardGridTransfer";
+import type { GridBlock } from "vue-grid-layout-headless";
+
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_EDITOR_ROW_HEIGHT, DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
+import { findVisual } from "@/services/dashboard/visual/findVisual";
+import { getVisualDeleteDescription } from "@/services/dashboard/visual/getVisualDeleteDescription";
 import { useDashboardStore } from "@/store/dashboard";
 import { useDashboardDialogStore } from "@/store/dashboard/dialog";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -10,13 +16,28 @@ const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
 const { editedItem, visuals } = storeToRefs(visualStore);
-const { deleteVisual, editItem, updateVisual } = visualStore;
+const { deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
-const { deletingVisualId } = storeToRefs(dashboardDialogStore);
+const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
+// The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same write
+// By id as the dashboard's own, wherever the visual sits
+const commitVisuals = (changes: GridBlock[]) => {
+  for (const change of changes) updateVisual(change);
+};
+const openVisual = (visual: Visual) => {
+  editItem({ id: visual.id });
+};
+const transferVisual = (transfer: DashboardGridTransfer) => {
+  moveVisual({ id: transfer.id }, transfer.targetGroupId, transfer.cell);
+};
 // One delete confirm for every tile: a tile's Delete names its visual in the dialog store, and the confirm resolves it
 // Here. Resolved through the primitive, so a visual removed while its confirm is open drops the target with it
 const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deletingVisualId, () =>
-  visuals.value.find(({ id }) => id === deletingVisualId.value),
+  findVisual(visuals.value, { id: deletingVisualId.value }),
+);
+// One move dialog for every menu, which names the visual it moves in the dialog store the same way
+const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisualId, () =>
+  findVisual(visuals.value, { id: movingVisualId.value }),
 );
 </script>
 
@@ -36,20 +57,18 @@ const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deleti
       :compact-type="dashboard.compactType"
       :row-height="DASHBOARD_EDITOR_ROW_HEIGHT"
       is-editable
-      @commit="
-        (changes) => {
-          for (const change of changes) updateVisual(change);
-        }
-      "
-      @open="(visual) => editItem({ id: visual.id })"
+      @commit="(changes) => commitVisuals(changes)"
+      @open="(visual) => openVisual(visual)"
+      @transfer="(transfer) => transferVisual(transfer)"
     >
       <template #default="{ visual }">
         <DashboardVisualPreviewContainer
-          size-full
-          cursor-pointer
-          ui-frame
-          active="not-focus-within:[background-image:var(--ui-pressed-overlay)]"
           :visual
+          :collision="dashboard.collision"
+          :compact-type="dashboard.compactType"
+          @commit="(changes) => commitVisuals(changes)"
+          @open="(openedVisual) => openVisual(openedVisual)"
+          @transfer="(transfer) => transferVisual(transfer)"
         />
       </template>
     </DashboardGrid>
@@ -71,8 +90,9 @@ const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deleti
     "
     is-optimistic
   >
-    <p>Delete this visual from the dashboard?</p>
+    <p>{{ getVisualDeleteDescription(deletingVisual) }}</p>
   </UiConfirmDialog>
+  <DashboardVisualPreviewMoveDialog v-if="movingVisual" v-model="isMoveOpen" :visual="movingVisual" />
   <DashboardVisualPreviewEditFormDialog v-if="editedItem" :key="editedItem.id" v-model="editedItem" />
 </template>
 

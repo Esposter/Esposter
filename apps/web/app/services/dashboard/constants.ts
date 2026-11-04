@@ -19,6 +19,8 @@ export const DASHBOARD_BREAKPOINTS = [
 ] as const;
 // The key a dashboard dataset's category column is read under, and a table visual totals it under
 export const DASHBOARD_TABLE_CATEGORY_KEY = "category";
+// The name a group shows while it has no title, in its header, its menu's move list and its delete confirm
+export const DASHBOARD_UNTITLED_GROUP_TITLE = "Untitled group";
 // The keys a focused visual takes, listed as the grid's shortcuts. The grid binds them itself, so no command runs them
 export const DASHBOARD_GRID_COMMANDS: UiCommand[] = [
   {

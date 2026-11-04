@@ -6,6 +6,7 @@ import type { Item } from "@/models/shared/Item";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
+import { getVisualMoveTargets } from "@/services/dashboard/visual/getVisualMoveTargets";
 import { useDashboardDialogStore } from "@/store/dashboard/dialog";
 import { useVisualStore } from "@/store/dashboard/visual";
 
@@ -18,9 +19,12 @@ interface Props {
 const { dataset, visual } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { duplicateVisual, editItem, setAutoHeight } = visualStore;
+const { visuals } = storeToRefs(visualStore);
 const dashboardDialogStore = useDashboardDialogStore();
-const { deletingVisualId } = storeToRefs(dashboardDialogStore);
-// The visual's occasional actions, each a row the menu lists. Fit height is offered only for a table, whose rows set its height
+const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
+const moveTargets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
+// The visual's occasional actions, each a row the menu lists. Fit height is offered for a table, whose rows set its height,
+// And for a group, whose height is the rows its grid takes. Move to is offered only where the visual has somewhere to go
 const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,
@@ -45,7 +49,7 @@ const items = computed<Item[]>(() => [
         },
       ]
     : []),
-  ...(visual.type === VisualType.Table
+  ...(visual.type === VisualType.Table || visual.type === VisualType.Group
     ? [
         {
           isSelected: visual.isAutoHeight,
@@ -54,6 +58,17 @@ const items = computed<Item[]>(() => [
             await setAutoHeight({ id: visual.id }, !visual.isAutoHeight);
           },
           title: "Fit height to content",
+        },
+      ]
+    : []),
+  ...(moveTargets.value.length > 0
+    ? [
+        {
+          meaning: UiIconMeaning.Drag,
+          onClick: () => {
+            movingVisualId.value = visual.id;
+          },
+          title: "Move to…",
         },
       ]
     : []),

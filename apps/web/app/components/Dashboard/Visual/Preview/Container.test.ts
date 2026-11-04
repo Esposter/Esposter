@@ -13,6 +13,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
+import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -20,6 +21,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 }));
 
 describe("dashboardVisualPreviewContainer", () => {
+  const gridProps = { collision: CollisionMode.Push, compactType: CompactType.Vertical };
   const { trpcMsw } = setupMswTrpc();
   const menuLabel = '[aria-label="Visual actions"]';
   const responseColumn = "response";
@@ -47,7 +49,9 @@ describe("dashboardVisualPreviewContainer", () => {
         rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],
       };
     });
-    const wrapper = await mountSuspended(DashboardVisualPreviewContainer, { props: { visual: createBoundVisual() } });
+    const wrapper = await mountSuspended(DashboardVisualPreviewContainer, {
+      props: { ...gridProps, visual: createBoundVisual() },
+    });
     await readAnswered;
     await flushPromises();
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
@@ -69,7 +73,7 @@ describe("dashboardVisualPreviewContainer", () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, {
-      props: { visual: new Visual({ type: VisualType.Card }) },
+      props: { ...gridProps, visual: new Visual({ type: VisualType.Card }) },
     });
     await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
@@ -86,7 +90,9 @@ describe("dashboardVisualPreviewContainer", () => {
       onReadAnswered();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const wrapper = await mountSuspended(DashboardVisualPreviewContainer, { props: { visual: createBoundVisual() } });
+    const wrapper = await mountSuspended(DashboardVisualPreviewContainer, {
+      props: { ...gridProps, visual: createBoundVisual() },
+    });
     await readAnswered;
     await flushPromises();
 

@@ -33,7 +33,8 @@ onClickExceptDrag(
     :variant="UiButtonVariant.Quiet"
     @pointerdown="
       (event) => {
-        startExternalDrag(event, new Visual({ type }), (cell) => addVisual(type, cell));
+        // Dropped on a group's grid, the visual is added inside that group, and on the dashboard's own grid it is added at the top
+        startExternalDrag(event, new Visual({ type }), (cell, target) => addVisual(type, cell, target.dataset.groupId));
       }
     "
   >

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { CollisionMode, CompactType, GridBlock } from "vue-grid-layout-headless";
+import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_COMMANDS, DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
@@ -19,7 +20,7 @@ interface Props {
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 const { collision, columnNumber, compactType, isEditable, rowHeight, visuals } = defineProps<Props>();
-const emit = defineEmits<{ commit: [changes: GridBlock[]]; open: [visual: Visual] }>();
+const emit = defineEmits<DashboardVisualEmits>();
 const grid = useTemplateRef("grid");
 const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, tiles } = useGridLayout(grid, () => ({
   collision,
@@ -29,6 +30,9 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
   isEditable: isEditable === true,
   items: visuals,
   onCommit: ({ changes }) => emit("commit", changes),
+  // A group's grid reads its group from its own data-group-id, and the dashboard's own grid has none
+  onTransfer: (transfer) =>
+    emit("transfer", { cell: transfer.cell, id: transfer.item.id, targetGroupId: transfer.target.dataset.groupId }),
   rowHeight,
   spacing: { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN },
 }));

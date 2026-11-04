@@ -6,6 +6,14 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
+// A DOM without layout has no hit test, so the element under a release is the one the test names, as a browser would
+const stubElementAtPoint = (element: Element) => {
+  document.elementsFromPoint = () => [element];
+  onTestFinished(() => {
+    Reflect.deleteProperty(document, "elementsFromPoint");
+  });
+};
+
 describe("dashboardGrid", () => {
   // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px apart
   const columnNumber = 12;
@@ -147,6 +155,8 @@ describe("dashboardGrid", () => {
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
     });
+    // A touch moves the visual, so the release asks which grid is under the pointer, and this DOM has no hit test to answer
+    stubElementAtPoint(wrapper.element);
     const handle = wrapper.get('[data-edge="SouthEast"]');
     await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId, pointerType: "touch" });
     await handle.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: 0, pointerId });
@@ -209,4 +219,36 @@ describe("dashboardGrid", () => {
 
     expect(wrapper.emitted<[Visual]>("open")?.map(([emitted]) => emitted.id)).toStrictEqual([visual.id]);
   });
+
+  // A body drag released over another grid is handed to it with the group that grid stands for, read from its root. The
+  // Grid under the pointer is stubbed, since a DOM without layout has no hit test, and the target mounts as a group's grid does
+  test.each([
+    ["a group's grid", crypto.randomUUID()],
+    ["the dashboard's own grid", undefined],
+  ])(
+    "a body drag released over %s hands the visual over with that grid's group",
+    async (_description, targetGroupId) => {
+      expect.hasAssertions();
+
+      const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
+      const wrapper = await mountSuspended(DashboardGrid, {
+        props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+      });
+      const target = await mountSuspended(DashboardGrid, {
+        attrs: { "data-group-id": targetGroupId },
+        props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [] },
+      });
+      stubElementAtPoint(target.element);
+      // The release lands in the target's first cell, past its padding
+      const releasePoint = { clientX: 10, clientY: 10 };
+      const tile = wrapper.get(".dashboard-grid-tile");
+      await tile.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
+      await tile.trigger("pointermove", { buttons: 1, ...releasePoint, pointerId });
+      await tile.trigger("pointerup", { ...releasePoint, pointerId });
+
+      expect(wrapper.emitted("transfer")).toStrictEqual([
+        [{ cell: { h: 2, w: 2, x: 0, y: 0 }, id: visual.id, targetGroupId }],
+      ]);
+    },
+  );
 });

@@ -2,10 +2,7 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_PUBLISHED_ROW_HEIGHT } from "@/services/dashboard/constants";
-import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
 
 interface Props {
@@ -34,18 +31,7 @@ const columnNumber = computed(() => getBreakpointColumnNumber(width.value));
       :visuals
     >
       <template #default="{ visual }">
-        <!-- A viewer's file is the published rows, which the snapshot holds, so the export reads nothing live -->
-        <DashboardVisual :visual>
-          <template #actions="{ dataset }">
-            <UiIconButton
-              v-if="dataset"
-              label="Export CSV"
-              :meaning="UiIconMeaning.Download"
-              :variant="UiButtonVariant.Quiet"
-              @click="exportDashboardVisualCsv(visual, dataset)"
-            />
-          </template>
-        </DashboardVisual>
+        <DashboardVisual :collision :compact-type :visual />
       </template>
     </DashboardGrid>
   </div>

@@ -8,6 +8,7 @@ import { getVisualDepth } from "#shared/services/dashboard/getVisualDepth";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
+import { checkIsMoveTooDeep } from "@/services/dashboard/visual/checkIsMoveTooDeep";
 import { createNewVisual } from "@/services/dashboard/visual/createNewVisual";
 import { findVisual } from "@/services/dashboard/visual/findVisual";
 import { getVisualList } from "@/services/dashboard/visual/getVisualList";
@@ -165,15 +166,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       createAlert("The visual to move into is not a group", "error");
       return;
     }
-    const depthChange =
-      (targetGroup ? getVisualDepth(dashboard.visuals, targetGroup.id) + 1 : 0) -
-      getVisualDepth(dashboard.visuals, visual.id);
-    const isTooDeep = movedVisuals.some(
-      (movedVisual) =>
-        movedVisual.visuals !== undefined &&
-        getVisualDepth(dashboard.visuals, movedVisual.id) + depthChange > MAX_VISUAL_GROUP_DEPTH,
-    );
-    if (isTooDeep) {
+    if (checkIsMoveTooDeep(dashboard.visuals, visual.id, targetGroupId)) {
       createAlert("A group cannot nest any deeper", "error");
       return;
     }

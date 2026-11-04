@@ -6,6 +6,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
+import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
@@ -124,5 +125,81 @@ describe("dashboardEditorContent", () => {
     expect(
       wrapper.findAllComponents(DashboardVisualPreviewEditFormDialog).map((dialog) => dialog.props("modelValue").id),
     ).toStrictEqual([tableVisual.id]);
+  });
+
+  // A visual released over a group's grid is moved into that group, and the grid it was released on names the group
+  test("a visual released over a group's grid moves into that group", async () => {
+    expect.hasAssertions();
+
+    const group = new Visual({ type: VisualType.Group, visuals: [] });
+    const cardVisual = new Visual({ type: VisualType.Card, x: 4 });
+    const wrapper = await mountEditor([group, cardVisual]);
+    wrapper
+      .findComponent(DashboardGrid)
+      .vm.$emit("transfer", {
+        cell: { h: cardVisual.h, w: cardVisual.w, x: 0, y: 0 },
+        id: cardVisual.id,
+        targetGroupId: group.id,
+      });
+    await flushPromises();
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(visuals.value.map((visual) => visual.visuals?.map(({ id }) => id))).toStrictEqual([[cardVisual.id]]);
+  });
+
+  // A visual released over the dashboard's own grid leaves the group it was in, and sits at the top level
+  test("a visual released over the dashboard's own grid leaves its group", async () => {
+    expect.hasAssertions();
+
+    const cardVisual = new Visual({ type: VisualType.Card });
+    const group = new Visual({ type: VisualType.Group, visuals: [cardVisual] });
+    const wrapper = await mountEditor([group]);
+    wrapper
+      .findComponent(DashboardGrid)
+      .vm.$emit("transfer", {
+        cell: { h: cardVisual.h, w: cardVisual.w, x: 4, y: 0 },
+        id: cardVisual.id,
+        targetGroupId: undefined,
+      });
+    await flushPromises();
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(visuals.value.map(({ id, visuals: groupVisuals }) => [id, groupVisuals?.length])).toStrictEqual([
+      [group.id, 0],
+      [cardVisual.id, undefined],
+    ]);
+  });
+
+  // A visual inside a group keeps its own tile and menu, so the group's grid draws each child the way the dashboard's grid does
+  test("a visual inside a group gets its own menu in the editor", async () => {
+    expect.hasAssertions();
+
+    const cardVisual = new Visual({ type: VisualType.Card });
+    const group = new Visual({ type: VisualType.Group, visuals: [cardVisual] });
+    const wrapper = await mountEditor([group]);
+    await flushPromises();
+
+    // The group's corner menu follows the body that holds its child, as the template places it
+    expect(
+      wrapper.findAllComponents(DashboardVisualPreviewActionsMenu).map((menu) => menu.props("visual").id),
+    ).toStrictEqual([cardVisual.id, group.id]);
+  });
+
+  // A group's delete names it and counts every visual it takes with it, down its whole tree
+  test("a group's delete confirm says how many visuals it takes with it", async () => {
+    expect.hasAssertions();
+
+    const group = new Visual({
+      type: VisualType.Group,
+      visuals: [new Visual({ type: VisualType.Card }), new Visual({ type: VisualType.Table, x: 4 })],
+    });
+    const wrapper = await mountEditor([group]);
+    await pickTileMenuItem(wrapper, group.id, "Delete visual");
+
+    expect(wrapper.getComponent(UiConfirmDialog).text()).toContain(
+      "Delete this group from the dashboard, and 2 visuals inside?",
+    );
   });
 });
