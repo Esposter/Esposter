@@ -5,6 +5,7 @@ import ResourceSurveyFieldRating from "@/components/Resource/Survey/Field/Rating
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
 import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "survey-engine";
@@ -87,13 +88,7 @@ describe("resourceSurveyFieldRating", () => {
         props: { error: "", isDisabled: false, modelValue: 4, node: createNode(SurveyRatingType.Smileys, 5) },
       });
       await flushPromises();
-      const meanings = [
-        UiIconMeaning.SmileyVeryUnhappy,
-        UiIconMeaning.SmileyUnhappy,
-        UiIconMeaning.SmileyNeutral,
-        UiIconMeaning.SmileyHappy,
-        UiIconMeaning.SmileyVeryHappy,
-      ];
+      const meanings = SURVEY_SMILEY_MEANINGS;
       const marks = component.findAll('[role="radio"] span');
 
       expect(
