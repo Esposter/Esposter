@@ -4,10 +4,12 @@ export const createSurveyLogicWallClock = (
   year: number,
   monthIndex: number,
   day: number,
-  hour: number,
-  minute: number,
-  second: number,
-  millisecond: number,
+  {
+    hour = 0,
+    millisecond = 0,
+    minute = 0,
+    second = 0,
+  }: { hour?: number; millisecond?: number; minute?: number; second?: number } = {},
 ): Date => {
   const wallClock = new Date(0);
   wallClock.setUTCFullYear(year, monthIndex, day);
