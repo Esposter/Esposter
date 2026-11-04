@@ -9,9 +9,8 @@ import { jsonDateParse } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 // The server holds the save, so a save it cannot parse is an error rather than a fresh game: the client's next save
-// Would write that fresh game over the one it could not read. The rule is in
-// openspec/specs/architecture/persisted-data-latest-shape-only/design.md. The ETag is answered beside the model, the one
-// The next save is sent under
+// Would write that fresh game over the one it could not read. The ETag is answered beside the model, the one the next
+// Save is sent under. The rule: openspec/specs/architecture/persisted-data-latest-shape-only/design.md
 export const createReadBlobStateProcedure = <TData, TInit>(
   container: AzureContainer,
   Model: new (init?: TInit) => TData,
