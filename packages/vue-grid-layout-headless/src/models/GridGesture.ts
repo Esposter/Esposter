@@ -1,5 +1,6 @@
 import type { GridBlock } from "#src/models/GridBlock";
 import type { GridPoint } from "#src/models/GridPoint";
+import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 
 // A pointer gesture held over an item, from the press until the release or the cancel
@@ -17,4 +18,6 @@ export interface GridGesture<T extends GridBlock = GridBlock> {
   origin: T;
   pointerId: number;
   start: GridPoint;
+  // The other grid the pointer is over, which a body drag previews on and hands its release to. Undefined over its own grid
+  transfer?: MountedGrid;
 }

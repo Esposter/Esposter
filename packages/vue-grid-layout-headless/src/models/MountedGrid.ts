@@ -8,6 +8,8 @@ export interface MountedGrid {
   // Item is refused, so nothing is committed. Returns the cell the item landed in, or undefined when it did not land
   accept: (item: GridItem, point: GridPoint) => GridCell | undefined;
   clearPreview: () => void;
+  // The grid's root element, which the grid is registered under and which a hand-over names
+  element: HTMLElement;
   // Shows the cell the item would land on under the point, marked refused where the grid would refuse it
   preview: (item: GridItem, point: GridPoint) => void;
 }
