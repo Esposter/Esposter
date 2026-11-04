@@ -137,7 +137,6 @@ describe(useReadClicker, () => {
       return { etag: "etag" };
     });
     await mountReadClicker();
-    vi.spyOn(console, "error").mockImplementation(() => {});
 
     session.value = { user: { id: crypto.randomUUID() } };
     await flushPromises();
