@@ -1,11 +1,17 @@
 // @vitest-environment happy-dom
-import type { SurveyAnswerValue, SurveyMatrixDynamicNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyMatrixColumn, SurveyMatrixDynamicNode } from "survey-engine";
 
 import ResourceSurveyFieldMatrixDynamic from "@/components/Resource/Survey/Field/MatrixDynamic.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyMatrixCellType, surveyMatrixDynamicNodePropsSchema, SurveyNodeType } from "survey-engine";
+import {
+  MATRIX_CELL_RATING_COUNT,
+  SurveyMatrixCellType,
+  surveyMatrixDynamicNodePropsSchema,
+  SurveyNodeType,
+} from "survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
 const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAnswerValue, error = "") => {
@@ -36,10 +42,22 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
     const label = "label";
     const message = "message";
     const value = "b";
-    const createNode = (rowCount: number, minRowCount: number, maxRowCount: number): SurveyMatrixDynamicNode => ({
+    const createColumn = (cellType: SurveyMatrixCellType): SurveyMatrixColumn => ({
+      cellType,
+      choices: [],
+      isRequired: false,
+      name: columnName,
+      title: columnName,
+    });
+    const createNode = (
+      rowCount: number,
+      minRowCount: number,
+      maxRowCount: number,
+      columns = [createColumn(SurveyMatrixCellType.Text)],
+    ): SurveyMatrixDynamicNode => ({
       props: {
         ...surveyMatrixDynamicNodePropsSchema.parse({
-          columns: [{ cellType: SurveyMatrixCellType.Text, name: columnName, title: columnName }],
+          columns,
           maxRowCount,
           minRowCount,
           name: "b",
@@ -83,6 +101,24 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       await component.get("input").setValue(value);
 
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: value }]]]);
+    });
+
+    test("draws a rating cell with one step for each step of its scale", () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
+
+      expect(component.findAll('[role="radio"]')).toHaveLength(MATRIX_CELL_RATING_COUNT);
+    });
+
+    test("writes the step pressed into its row as the number of that step", async () => {
+      expect.hasAssertions();
+
+      const step = 3;
+      const component = mountMatrixDynamic(createNode(1, 0, 2, [createColumn(SurveyMatrixCellType.Rating)]));
+      await takeOne(component.findAll('[role="radio"]'), step - 1).trigger("click");
+
+      expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: step }]]]);
     });
 
     test("shows its error beside the table, which describes itself by it, and marks each cell invalid", () => {

@@ -16,6 +16,8 @@ export const SURVEY_OUT_OF_RANGE_MESSAGE = "This answer is out of range.";
 export const SURVEY_NOT_A_CHOICE_MESSAGE = "This answer is not one of the choices.";
 // The message for a matrix or dynamic panel with fewer or more rows or panels than its question allows
 export const SURVEY_WRONG_COUNT_MESSAGE = "This answer has the wrong number of rows or panels.";
+// The steps every rating cell of a matrix takes, since a column sets no scale of its own for its cells
+export const MATRIX_CELL_RATING_COUNT = 5;
 // The value a none choice holds when a respondent picks it, the one answer that is not a choice's own value
 export const SURVEY_NONE_ANSWER = "none";
 // The message for an answer under a name the document holds no question for

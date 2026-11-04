@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { SurveyAnswerValue, SurveyRatingNode } from "survey-engine";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
+import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
 import { takeOne } from "@esposter/shared";
 import { SurveyRatingType } from "survey-engine";
 
@@ -15,9 +15,7 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const items = computed<UiMenuItem<number>[]>(() =>
-  Array.from({ length: node.props.rateCount }, (_value, index) => ({ title: String(index + 1), value: index + 1 })),
-);
+const items = computed(() => getSurveyRatingItems(node.props.rateCount));
 // An answer no step has yet is the empty text, as a choice group's absent value is
 const rating = computed<number | string>({
   get: () => (typeof answer.value === "number" ? answer.value : ""),

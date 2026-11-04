@@ -12,9 +12,10 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
-import { getSurveyChoiceText, SurveyMatrixCellType } from "survey-engine";
+import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "survey-engine";
 
 interface Props {
   error: string;
@@ -37,7 +38,12 @@ const choiceItemsMap = computed(() =>
     node.props.columns.map<[string, UiMenuItem<string>[]]>((column) => [column.name, getChoiceItems(column.choices)]),
   ),
 );
+// A rating cell's steps are the numbers of its scale, since its column carries no choices to draw them from
+const ratingItems = getSurveyRatingItems(MATRIX_CELL_RATING_COUNT);
 const getCellText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
+// A rating cell holds its step as a number, and an empty cell holds the empty text no step has as its value
+const getRatingValue = (value: SurveyAnswerValue | undefined): number | string =>
+  typeof value === "number" ? value : "";
 const getChoiceKey = (value: SurveyAnswerValue | undefined) =>
   typeof value === "number" || typeof value === "string" ? String(value) : "";
 // The value a picked key stands for, so a numeric choice is still a number in the answer
@@ -54,7 +60,7 @@ const toggleChoice = (value: SurveyAnswerValue | undefined, choiceValue: SurveyC
 const setRow = (rowIndex: number, row: SurveyAnswers) => {
   answer.value = rows.value.toSpliced(rowIndex, 1, row);
 };
-// A dropdown and a rating cell choose from the same options and write the answer the same way, so both take these
+// A dropdown cell chooses from its column's choices, and the choice a key picks is written as that choice's own value
 const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers, rowIndex: number) => ({
   "aria-invalid": invalid.value,
   isDisabled: isDisabled || undefined,
@@ -138,7 +144,12 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               />
               <UiToggleGroup
                 v-else-if="column.cellType === SurveyMatrixCellType.Rating"
-                :="getChoiceCellAttributes(column, row, rowIndex)"
+                :aria-invalid="invalid"
+                :is-disabled="isDisabled || undefined"
+                :items="ratingItems"
+                :label="column.title || column.name"
+                :model-value="getRatingValue(row[column.name])"
+                @update:model-value="(step) => setRow(rowIndex, withSurveyAnswer(row, column.name, step))"
               />
             </td>
             <td p-1 align-top>

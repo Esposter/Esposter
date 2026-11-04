@@ -51,6 +51,21 @@ describe(createSurveyMatrixDynamicAnswerSchema, () => {
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
   });
 
+  test("refuses a required rating cell left empty, so a rating column takes a step", () => {
+    expect.hasAssertions();
+
+    const node = createMatrixDynamicNode();
+    const result = createSurveyMatrixDynamicAnswerSchema({
+      ...node,
+      props: {
+        ...node.props,
+        columns: [{ cellType: SurveyMatrixCellType.Rating, choices: [], isRequired: true, name: "c", title: "" }],
+      },
+    }).safeParse([{}]);
+
+    expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
+  });
+
   test("refuses a row keyed by a column its question does not have", () => {
     expect.hasAssertions();
 
