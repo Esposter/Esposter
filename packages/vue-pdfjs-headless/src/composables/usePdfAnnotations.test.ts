@@ -263,7 +263,7 @@ describe("usePdfAnnotations", () => {
     );
   });
 
-  test("importing a free text past the last page is refused", () => {
+  test("importing a free text past the last page", () => {
     expect.hasAssertions();
 
     const pdfDocument = createDocument([[]]);
@@ -276,7 +276,7 @@ describe("usePdfAnnotations", () => {
     expect(viewer.drawStoredEditors).not.toHaveBeenCalled();
   });
 
-  test("an imported free text is drawn on its page", () => {
+  test("importing a free text draws it on its page", () => {
     expect.hasAssertions();
 
     const pdfDocument = createDocument([[], []]);
