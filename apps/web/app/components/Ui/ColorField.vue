@@ -41,19 +41,17 @@ const pickerValue = computed({
   <!-- The value beside the swatch rather than inside the label, so the label alone names the control -->
   <div flex flex-col gap-2>
     <div v-if="swatches.length > 0" role="group" :aria-label="label" flex flex-wrap gap-1>
-      <!-- Pressed wears the button's outline, since the inline colour would hide the accent fill a pressed button takes -->
+      <!-- Pressed is an accent line inside the swatch, since the inline colour would hide the accent fill a pressed button
+      takes. Its focus ring sits outside, so the two never share a place -->
       <button
         v-for="swatch in swatches"
         :key="swatch.name"
         type="button"
         ui-button
-        outline-2
-        outline-transparent
-        outline-offset-2
-        outline-solid
+        ui-ring-outside
         rd-full
         size-6
-        class="aria-pressed:outline-accent"
+        class="aria-pressed:ui-selected"
         :aria-label="swatch.name"
         :aria-pressed="modelValue === getReference(swatch.name)"
         :style="{ backgroundColor: swatch.value }"

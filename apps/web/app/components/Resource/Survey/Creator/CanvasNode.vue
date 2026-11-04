@@ -20,11 +20,8 @@ const { select } = useSurveyCreatorCommands();
 <template>
   <!-- A question is drawn by its field with the pointer events off, so a click lands on this element and selects it -->
   <div
-    :class="{ 'outline-accent': selectedPointer === pointer }"
-    outline-2
-    outline-transparent
-    outline-offset-2
-    outline-solid
+    :class="{ 'ui-selected': selectedPointer === pointer }"
+    ui-ring-outside
     rd="[--ui-container-radius]"
     tabindex="0"
     @click.stop="select(pointer)"

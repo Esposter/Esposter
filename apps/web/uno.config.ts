@@ -281,11 +281,16 @@ export default defineConfig({
     // Current or focused one. A focused row rings as `ui-row` does. Under a finger, eleven steps tall, as a button is
     "ui-item":
       "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+    // The document's ring drawn just outside a control, a focus width off its edge, as a tight group of them needs
+    // Its selection is inside, so the ring has no neighbour's edge to cut it off
+    "ui-ring-outside": "focus-visible:outline-offset-[var(--ui-focus-width)]",
     // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column,
     // The title and whatever ends the row, on one line one control height tall. A focused row rings inside its edge.
     // So a neighbour in the list never cuts the ring off
     "ui-row":
       "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)] focus-visible:outline-offset-[var(--ui-focus-inset)]",
+    // A selection drawn as an accent line just inside a control's edge, where the focus ring is drawn outside it
+    "ui-selected": "shadow-[inset_0_0_0_var(--ui-indicator-width)_var(--ui-accent)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
     // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A header tab is also the chosen radio of a toggle
     // Group drawn as one

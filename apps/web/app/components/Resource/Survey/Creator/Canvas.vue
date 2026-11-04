@@ -2,7 +2,7 @@
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 
 // The survey drawn as a respondent would see it, with no answers and nothing to type into. Each page is a heading over its
-// Elements, a page and every element is chosen by a click or Enter, and the chosen one is outlined
+// Elements, a page and every element is chosen by a click or Enter, and the chosen one takes an accent line inside its edge
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { select } = useSurveyCreatorCommands();
@@ -14,11 +14,8 @@ const getPagePointer = (pageIndex: number) => `/content/${pageIndex}`;
     <section
       v-for="(page, pageIndex) of surveyDocument.content"
       :key="page.props.id"
-      :class="{ 'outline-accent': selectedPointer === getPagePointer(pageIndex) }"
-      outline-2
-      outline-transparent
-      outline-offset-2
-      outline-solid
+      :class="{ 'ui-selected': selectedPointer === getPagePointer(pageIndex) }"
+      ui-ring-outside
       rd="[--ui-container-radius]"
       flex
       flex-col
