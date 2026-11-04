@@ -6,6 +6,7 @@ import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Surve
 import UiFileField from "@/components/Ui/FileField.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
+import { useAlertStore } from "@/store/alert";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -180,5 +181,30 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
 
     expect(getChoices(surveyDocument.value, pointer)).toStrictEqual([]);
     expect(deleteFile).toHaveBeenCalledExactlyOnceWith(url);
+  });
+
+  test("a picture that lands after its row is removed is reported, and written to no row", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument(["a", "b"]));
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+    const alertStore = useAlertStore();
+    const { alerts } = storeToRefs(alertStore);
+    const { promise, resolve } = Promise.withResolvers<string>();
+    uploadFile.mockReturnValue(promise);
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+    component
+      .findAllComponents(UiFileField)
+      .find((field) => field.props("label") === "Replace image of choice 2")
+      ?.vm.$emit("update:modelValue", [new File(["c"], "c")]);
+    await component.get('[aria-label="Remove choice 2"]').trigger("click");
+    await getButtonByText(component, "Remove")?.trigger("click");
+    resolve("c");
+    await flushPromises();
+
+    expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a"]);
+    expect(alerts.value.map(({ text }) => text)).toStrictEqual(["The image could not be applied."]);
   });
 });

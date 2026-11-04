@@ -20,13 +20,16 @@ const { editor, label, noun } = defineProps<Props>();
 const rows = computed(() => editor.rows.value);
 const errors = computed(() => editor.errors.value);
 const announcement = computed(() => editor.announcement.value);
-// A removal is asked for first: the row it asks about is held with its place until its confirm answers
-const removingRow = ref<{ id: string; index: number }>();
-const isRemoveOpen = ref(false);
-const askRemove = (id: string, index: number) => {
-  removingRow.value = { id, index };
-  isRemoveOpen.value = true;
-};
+// A removal is asked for first: the row it asks about is held by its id, its place is read from the rows as they are
+// Now, and the confirm is open only while that row is in the list, so a change that removes it closes the confirm
+const removingId = ref("");
+const removingIndex = computed(() => rows.value.findIndex((row) => row.id === removingId.value));
+const isRemoveOpen = computed({
+  get: () => removingIndex.value !== -1,
+  set: (isOpen) => {
+    if (!isOpen) removingId.value = "";
+  },
+});
 </script>
 
 <template>
@@ -49,7 +52,7 @@ const askRemove = (id: string, index: number) => {
           :count="rows.length"
           :noun
           @move="(toIndex) => editor.moveItem(row.id, toIndex)"
-          @remove="askRemove(row.id, index)"
+          @remove="removingId = row.id"
         />
       </div>
       <slot name="below" :index :row />
@@ -57,15 +60,11 @@ const askRemove = (id: string, index: number) => {
     <div aria-live="polite" sr-only>{{ announcement }}</div>
     <slot name="add" />
     <UiConfirmDialog
-      v-if="removingRow !== undefined"
+      v-if="isRemoveOpen"
       v-model="isRemoveOpen"
       confirm-label="Remove"
-      :confirm="
-        () => {
-          if (removingRow !== undefined) editor.removeItem(removingRow.id);
-        }
-      "
-      :title="`Remove ${noun} ${removingRow.index + 1}?`"
+      :confirm="() => editor.removeItem(removingId)"
+      :title="`Remove ${noun} ${removingIndex + 1}?`"
     >
       <p>Remove this {{ noun }} from the survey?</p>
     </UiConfirmDialog>

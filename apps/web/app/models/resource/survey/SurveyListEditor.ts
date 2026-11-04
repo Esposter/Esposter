@@ -10,5 +10,5 @@ export interface SurveyListEditor<T> {
   onRowKeydown: (event: KeyboardEvent, id: string) => Promise<void>;
   removeItem: (id: string) => void;
   rows: ShallowRef<SurveyListRow<T>[]>;
-  updateItem: (id: string, update: Partial<T>) => void;
+  updateItem: (id: string, update: Partial<T>) => boolean;
 }

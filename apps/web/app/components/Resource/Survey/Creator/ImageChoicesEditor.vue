@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAlertStore } from "@/store/alert";
 import { surveyImageChoiceSchema, SurveyNodeType } from "survey-engine";
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
 
 const { pointer } = defineProps<Props>();
 const { node, updateNodeProps, uploadPicked } = useSurveyPointerNode(() => pointer);
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 // The choices of the picker at the pointer, or none when the node there is not an image picker
 const choices = computed(() => {
   const picker = node.value;
@@ -30,7 +33,12 @@ const { addItems, updateItem } = editor;
 // Keeps it unique among the choices, since a respondent's answer holds the value
 const addChoice = (files: File[]) =>
   uploadPicked(files, (imageLink) => addItems([{ imageLink, text: "", value: crypto.randomUUID() }]));
-const replaceImage = (id: string, files: File[]) => uploadPicked(files, (imageLink) => updateItem(id, { imageLink }));
+// A picture lands on the row it was picked for. An edit that removed that row while the upload ran leaves nothing to
+// Write it to, so the picture is reported rather than dropped
+const replaceImage = (id: string, files: File[]) =>
+  uploadPicked(files, (imageLink) => {
+    if (!updateItem(id, { imageLink })) createAlert("The image could not be applied.", "error");
+  });
 </script>
 
 <template>

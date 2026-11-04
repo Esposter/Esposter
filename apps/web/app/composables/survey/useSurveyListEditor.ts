@@ -56,9 +56,12 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
     rows.value = [...rows.value, ...items.map((item) => createRow(item))];
     commit();
   };
+  // Returns whether a row held the id, so a caller whose row an edit has since removed can tell its update landed nowhere
   const updateItem = (id: string, update: Partial<T>) => {
+    const isApplied = rows.value.some((row) => row.id === id);
     rows.value = rows.value.map((row) => (row.id === id ? { ...row, item: { ...row.item, ...update } } : row));
     commit();
+    return isApplied;
   };
   const removeItem = (id: string) => {
     rows.value = rows.value.filter((row) => row.id !== id);

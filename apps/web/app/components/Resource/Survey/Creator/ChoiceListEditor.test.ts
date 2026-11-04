@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import UiForm from "@/components/Ui/Form.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -102,5 +103,41 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
 
     expect(wrapper.text()).toContain("A choice needs a value");
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  });
+
+  test("an outside change that removes the row a removal asks about closes its confirm", async () => {
+    expect.hasAssertions();
+    const red = { text: "Red", value: "red" };
+    const blue = { text: "Blue", value: "blue" };
+    const green = { text: "", value: "green" };
+    const wrapper = await mountSuspended(ResourceSurveyCreatorChoiceListEditor, {
+      props: { label: "Choices", modelValue: [red, blue, green] },
+    });
+    await wrapper.find('button[aria-label="Remove choice 2"]').trigger("click");
+
+    expect(wrapper.findComponent(UiConfirmDialog).exists()).toBe(true);
+
+    await wrapper.setProps({ modelValue: [red, green] });
+
+    expect(wrapper.findComponent(UiConfirmDialog).exists()).toBe(false);
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+  });
+
+  test("an outside change that inserts a row above the one a removal asks about renumbers the confirm's title", async () => {
+    expect.hasAssertions();
+    const red = { text: "Red", value: "red" };
+    const blue = { text: "Blue", value: "blue" };
+    const green = { text: "", value: "green" };
+    const pink = { text: "", value: "pink" };
+    const wrapper = await mountSuspended(ResourceSurveyCreatorChoiceListEditor, {
+      props: { label: "Choices", modelValue: [red, blue, green] },
+    });
+    await wrapper.find('button[aria-label="Remove choice 2"]').trigger("click");
+
+    expect(wrapper.findComponent(UiConfirmDialog).props("title")).toBe("Remove choice 2?");
+
+    await wrapper.setProps({ modelValue: [pink, red, blue, green] });
+
+    expect(wrapper.findComponent(UiConfirmDialog).props("title")).toBe("Remove choice 3?");
   });
 });
