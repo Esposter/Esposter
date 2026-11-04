@@ -1,12 +1,12 @@
 ## Purpose
 
-Parse a survey's expression text and evaluate it over the survey's answers to the value SurveyJS gives for the same expression, refusing a malformed expression with the position of its fault.
+Parse a survey's expression text and evaluate it over the survey's answers by the language's own rules, refusing a malformed expression with the position of its fault.
 
 ## Requirements
 
-### Requirement: An expression evaluates to the value SurveyJS gives it
+### Requirement: An expression evaluates by the language's rules
 
-An expression over a record of answers SHALL evaluate to the value SurveyJS's expression runner gives for the same expression and answers, except for the deliberate deviations the design lists.
+An expression over a record of answers SHALL evaluate by the language rules the design states: one absent value, a text read as a number only as a plain decimal, calendar dates, and text compared exactly.
 
 #### Scenario: Comparison and logic over answers
 
@@ -44,6 +44,22 @@ An expression over a record of answers SHALL evaluate to the value SurveyJS's ex
 
 - **WHEN** the expression `2 ^ 3 ^ 2` is evaluated
 - **THEN** the value is 512
+
+#### Scenario: A month added to a day its target month lacks ends on that month's last day
+
+- **WHEN** the expression `dateAdd('1970-01-31', 1, 'months')` is evaluated
+- **THEN** the value is `'1970-02-28'`
+
+#### Scenario: Text is compared exactly
+
+- **GIVEN** the answers `{ "colours": ["red", "blue"] }`
+- **WHEN** the expression `{colours} contains 'RED'` is evaluated
+- **THEN** the value is false
+
+#### Scenario: A boolean is never ordered
+
+- **WHEN** the expression `true > false` is evaluated
+- **THEN** the value is false
 
 ### Requirement: A malformed expression is refused with the position of the fault
 

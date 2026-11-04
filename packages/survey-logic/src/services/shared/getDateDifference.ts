@@ -1,16 +1,38 @@
-import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
-
+import { addSurveyLogicMonths } from "#src/services/shared/addSurveyLogicMonths";
 import { getDaysBetween } from "#src/services/shared/getDaysBetween";
+import { getOwnValue } from "#src/services/shared/getOwnValue";
 
-// The days, the whole months or the whole years from one date to another.
-// Years are the whole months divided by twelve and truncated.
-// An interval SurveyJS does not know counts years, so an unknown interval reads as years.
-export const getDateDifference = (from: Date, to: Date, interval: SurveyLogicValue): number => {
-  if (interval === "days") return getDaysBetween(from, to);
+// The length of each time unit in milliseconds, counted on the wall clock
+const millisecondsPerUnitMap: Record<string, number> = { hours: 3_600_000, minutes: 60_000, seconds: 1000 };
+
+// A date's wall clock as a count of milliseconds: its local fields read as if they were UTC, so a daylight saving change cannot move them
+const getWallClockMilliseconds = (date: Date): number =>
+  Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds(),
+    date.getMilliseconds(),
+  );
+
+// The time from one date to another in a unit: the days, the whole months or years, or the hours, minutes or seconds rounded up.
+// The order of the two dates does not matter. Undefined for a unit the language does not know
+export const getDateDifference = (first: Date, second: Date, unit: string): number | undefined => {
+  const [from, to] = first.getTime() <= second.getTime() ? [first, second] : [second, first];
+  if (unit === "days") return getDaysBetween(from, to);
+
+  const milliseconds = getOwnValue(millisecondsPerUnitMap, unit);
+  if (milliseconds !== undefined)
+    return Math.ceil((getWallClockMilliseconds(to) - getWallClockMilliseconds(from)) / milliseconds);
+  if (unit !== "months" && unit !== "years") return undefined;
 
   const monthsApart = (to.getFullYear() - from.getFullYear()) * 12 + to.getMonth() - from.getMonth();
-  // A month is whole only once the later date reaches the day the earlier one fell on
-  const wholeMonths = to.getDate() < from.getDate() ? monthsApart - 1 : monthsApart;
+  // A month is whole once it reaches the day and the time of day the earlier date falls on
+  const anchor = new Date(from);
+  addSurveyLogicMonths(anchor, monthsApart);
+  const wholeMonths = getWallClockMilliseconds(anchor) > getWallClockMilliseconds(to) ? monthsApart - 1 : monthsApart;
 
-  return interval === "months" ? wholeMonths : Math.trunc(wholeMonths / 12) || 0;
+  return unit === "months" ? wholeMonths : Math.trunc(wholeMonths / 12);
 };

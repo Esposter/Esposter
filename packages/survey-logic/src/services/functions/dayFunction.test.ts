@@ -8,6 +8,7 @@ describe(dayFunction, () => {
     ["the clock's day when no date is given", [], 2],
     ["the clock's day when the date is an empty string", [""], 2],
     ["an unreadable date is empty", ["x"], undefined],
+    ["a number is not a date", [0], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

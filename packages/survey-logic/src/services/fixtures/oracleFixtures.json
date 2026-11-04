@@ -142,7 +142,12 @@
   { "expression": "{a} < {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": 0, "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < {b}", "answers": { "a": 0, "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < {b}",
+    "answers": { "a": 0, "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} < {b}", "answers": { "a": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": false } },
@@ -209,7 +214,12 @@
   },
   { "expression": "{a} < {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} < {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < {b}",
+    "answers": { "a": true, "b": "5" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} < {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} < {b}", "answers": { "a": true, "b": "" }, "value": { "type": "boolean", "value": false } },
   {
@@ -231,7 +241,12 @@
   { "expression": "{a} <= {b}", "answers": { "a": 0, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": 0, "b": "" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": 0, "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} <= {b}", "answers": { "a": 0, "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": 0, "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} <= {b}", "answers": { "a": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "5", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": "5", "b": "5" }, "value": { "type": "boolean", "value": true } },
@@ -306,7 +321,12 @@
   },
   { "expression": "{a} <= {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} <= {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} <= {b}",
+    "answers": { "a": true, "b": "5" },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} <= {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} <= {b}", "answers": { "a": true, "b": "" }, "value": { "type": "boolean", "value": false } },
   {
@@ -340,7 +360,12 @@
     "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "unordered-values" }
   },
   { "expression": "{a} > {b}", "answers": { "a": "5", "b": [1, "x"] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} > {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} > {b}",
+    "answers": { "a": "5", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} > {b}", "answers": { "a": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": "abc", "b": "5" }, "value": { "type": "boolean", "value": false } },
@@ -389,7 +414,12 @@
     "value": { "type": "boolean", "value": false }
   },
   { "expression": "{a} > {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} > {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} > {b}",
+    "answers": { "a": true, "b": 0 },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} > {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} > {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   {
@@ -433,7 +463,12 @@
     "answers": { "a": "5", "b": [1, "x"] },
     "value": { "type": "boolean", "value": false }
   },
-  { "expression": "{a} >= {b}", "answers": { "a": "5", "b": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} >= {b}",
+    "answers": { "a": "5", "b": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} >= {b}", "answers": { "a": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": 0 }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} >= {b}", "answers": { "a": "abc", "b": "5" }, "value": { "type": "boolean", "value": false } },
@@ -486,7 +521,12 @@
     "value": { "type": "boolean", "value": false }
   },
   { "expression": "{a} >= {b}", "answers": { "a": [1, "x"] }, "value": { "type": "boolean", "value": false } },
-  { "expression": "{a} >= {b}", "answers": { "a": true, "b": 0 }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} >= {b}",
+    "answers": { "a": true, "b": 0 },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} >= {b}", "answers": { "a": true, "b": "5" }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} >= {b}", "answers": { "a": true, "b": "abc" }, "value": { "type": "boolean", "value": false } },
   {
@@ -3722,7 +3762,12 @@
   },
   { "expression": "'a' < 'B'", "answers": {}, "value": { "type": "boolean", "value": false } },
   { "expression": "'B' < 'a'", "answers": {}, "value": { "type": "boolean", "value": true } },
-  { "expression": "true > false", "answers": {}, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "true > false",
+    "answers": {},
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   {
     "expression": "1 AND 0",
     "answers": {},
@@ -4291,7 +4336,12 @@
     "value": { "type": "number", "value": 0 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} < 5", "answers": { "a": true }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": true },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} = 5", "answers": { "a": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = 0", "answers": { "a": true }, "value": { "type": "boolean", "value": false } },
   { "expression": "{a} = ''", "answers": { "a": true }, "value": { "type": "boolean", "value": false } },
@@ -4313,7 +4363,12 @@
     "value": { "type": "number", "value": -1 },
     "deviation": { "ours": { "type": "undefined" }, "rule": "numeric-arithmetic" }
   },
-  { "expression": "{a} < 5", "answers": { "a": false }, "value": { "type": "boolean", "value": true } },
+  {
+    "expression": "{a} < 5",
+    "answers": { "a": false },
+    "value": { "type": "boolean", "value": true },
+    "deviation": { "ours": { "type": "boolean", "value": false }, "rule": "exact-text" }
+  },
   { "expression": "{a} = 5", "answers": { "a": false }, "value": { "type": "boolean", "value": false } },
   {
     "expression": "{a} = 0",
@@ -5966,18 +6021,30 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": 0 }
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
   },
-  { "expression": "age('1970-01-03')", "answers": {}, "value": { "type": "number", "value": 0 } },
+  {
+    "expression": "age('1970-01-03')",
+    "answers": {},
+    "value": { "type": "number", "value": 0 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
+  },
   {
     "expression": "age('2000-02-29')",
     "answers": {
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": -30 }
+    "value": { "type": "number", "value": -30 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
   },
-  { "expression": "age('2000-02-29')", "answers": {}, "value": { "type": "number", "value": -30 } },
+  {
+    "expression": "age('2000-02-29')",
+    "answers": {},
+    "value": { "type": "number", "value": -30 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
+  },
   {
     "expression": "age('x')",
     "answers": {
@@ -6073,12 +6140,14 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "string", "value": "1970-01-01" }
+    "value": { "type": "string", "value": "1970-01-01" },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('1970-01-01', 3, 'weeks')",
     "answers": {},
-    "value": { "type": "string", "value": "1970-01-01" }
+    "value": { "type": "string", "value": "1970-01-01" },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('1970-01-01', 0)",
@@ -6087,13 +6156,13 @@
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
     "value": { "type": "null" },
-    "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
+    "deviation": { "ours": { "type": "string", "value": "1970-01-01" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('1970-01-01', 0)",
     "answers": {},
     "value": { "type": "null" },
-    "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
+    "deviation": { "ours": { "type": "string", "value": "1970-01-01" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('1970-01-01', '3', 'days')",
@@ -6116,12 +6185,14 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "string", "value": "1970-03-03" }
+    "value": { "type": "string", "value": "1970-03-03" },
+    "deviation": { "ours": { "type": "string", "value": "1970-02-28" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('1970-01-31', 1, 'months')",
     "answers": {},
-    "value": { "type": "string", "value": "1970-03-03" }
+    "value": { "type": "string", "value": "1970-03-03" },
+    "deviation": { "ours": { "type": "string", "value": "1970-02-28" }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateAdd('x', 1)",
@@ -6204,13 +6275,13 @@
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('1970-01-01', '1970-01-01 05:00:00', 'hours')",
     "answers": {},
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('1970-01-01', '1970-01-01 00:05:00', 'minutes')",
@@ -6219,13 +6290,13 @@
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('1970-01-01', '1970-01-01 00:05:00', 'minutes')",
     "answers": {},
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 5 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('1970-01-01', '1970-01-01 00:00:09', 'seconds')",
@@ -6234,13 +6305,13 @@
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 9 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 9 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('1970-01-01', '1970-01-01 00:00:09', 'seconds')",
     "answers": {},
     "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "number", "value": 9 }, "rule": "date-time-end" }
+    "deviation": { "ours": { "type": "number", "value": 9 }, "rule": "calendar-dates" }
   },
   {
     "expression": "dateDiff('x', '1970-01-01')",

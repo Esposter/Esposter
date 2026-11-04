@@ -10,6 +10,7 @@ describe(avgFunction, () => {
     ["skips an empty text and averages the numbers", ["", 5], 5],
     ["is empty for a text that is not a number", ["abc"], undefined],
     ["is empty when there is nothing to average", [], undefined],
+    ["is empty when its total overflows", [Number.MAX_VALUE, Number.MAX_VALUE], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

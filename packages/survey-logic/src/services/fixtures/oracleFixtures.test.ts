@@ -66,9 +66,9 @@ describe("the oracle fixtures", () => {
     "answer-type":
       "An answer keeps its stored type: a text spelling a boolean or wrapped in quotes stays text, where SurveyJS reads the spelled boolean or the unquoted text",
     "array-filter": "The filter form of an array function is refused, so the package answers empty",
+    "calendar-dates":
+      "Dates are calendar dates: only ISO text is a date, an invalid date has no result, a day moves by the calendar, a month clamps to its end, an unknown unit has no result, and a date-time end counts its time, where SurveyJS gives a shifted or NaN date",
     "case-sensitive": "Names are case-sensitive here, where SurveyJS ignores case",
-    "date-time-end":
-      "SurveyJS answers NaN for a date-time end with an hours, minutes or seconds unit; this package answers the real difference",
     "power-grouping":
       "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
     "unary-minus":
@@ -83,6 +83,8 @@ describe("the oracle fixtures", () => {
       "A boolean equals only the same boolean, so `false` is not zero, a text spelling `true` is not `true`, and a list holding a number does not hold `true`, where SurveyJS equates them",
     "unordered-values":
       "An empty value, or a number against a text that is not a number, is never ordered, where SurveyJS orders them as zero or as text",
+    "exact-text":
+      "Text is compared exactly, by code point, and a boolean is never ordered: a boolean is neither less nor greater than anything, where SurveyJS orders it as a number",
     "falsy-needle": "A needle of zero or false matches like any other value, where SurveyJS treats it as empty",
     "negated-containment":
       "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",

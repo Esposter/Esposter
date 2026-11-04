@@ -6,6 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(checkIsSurveyLogicContaining, () => {
   test.each<[string, SurveyLogicValue, SurveyLogicValue, boolean]>([
     ["finds a text inside a text", "abc", "b", true],
+    ["finds nothing in a text for a needle in another case", "abc", "B", false],
     ["finds a zero needle inside a text", "a0b", 0, true],
     ["finds nothing in a text for a record needle", "abc", { a: "b" }, false],
     ["finds nothing in a text for an unanswered record needle", "abc", { a: undefined }, false],

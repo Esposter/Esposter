@@ -4,17 +4,12 @@ import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurvey
 import { getDateDifference } from "#src/services/shared/getDateDifference";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
 
-// The whole years from a birthdate to the clock, or the whole months when the interval says so
-export const ageFunction: SurveyLogicFunction = (args, context) => {
-  const [birthdateValue, intervalValue] = args;
-
-  if (checkIsSurveyLogicValueEmpty(birthdateValue)) return undefined;
-
+// The whole years from a birthdate to the clock, or the time in the interval the argument names. A birthdate after the clock has no age
+export const ageFunction: SurveyLogicFunction = ([birthdateValue, intervalValue], context) => {
   const birthdate = parseSurveyLogicDate(birthdateValue);
-  if (Number.isNaN(birthdate.getTime())) return undefined;
+  const unit = checkIsSurveyLogicValueEmpty(intervalValue) ? "years" : intervalValue;
+  if (birthdate === undefined || birthdate.getTime() > context.now.getTime() || typeof unit !== "string")
+    return undefined;
 
-  // SurveyJS measures a day count from the birthdate to no second date, which is zero
-  if (intervalValue === "days") return 0;
-
-  return getDateDifference(birthdate, context.now, intervalValue);
+  return getDateDifference(birthdate, context.now, unit);
 };

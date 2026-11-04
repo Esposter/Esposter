@@ -4,9 +4,9 @@ import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurvey
 import { checkIsSurveyLogicValueEqual } from "#src/services/shared/checkIsSurveyLogicValueEqual";
 import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
 
-// The containment `contains` tests (R7). A list holds each item of the right side, and a text holds the right side as a
-// Substring in any case. An empty left side holds nothing, a record holds no text, and an empty needle is in nothing, so
-// `notcontains` is the negation of this
+// The containment `contains` tests (R7, R12). A list holds each item of the right side, and a text holds the right side as an
+// Exact substring, case included. An empty left side holds nothing, a record holds no text, and an empty needle is in nothing,
+// So `notcontains` is the negation of this
 export const checkIsSurveyLogicContaining = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
   if (Array.isArray(left)) {
     if (left.length === 0) return false;
@@ -16,8 +16,8 @@ export const checkIsSurveyLogicContaining = (left: SurveyLogicValue, right: Surv
   }
   if (checkIsSurveyLogicValueEmpty(left) || typeof left === "object") return false;
 
-  const needle = toSurveyLogicText(right).toLowerCase();
+  const needle = toSurveyLogicText(right);
   if (needle === "") return false;
 
-  return toSurveyLogicText(left).toLowerCase().includes(needle);
+  return toSurveyLogicText(left).includes(needle);
 };

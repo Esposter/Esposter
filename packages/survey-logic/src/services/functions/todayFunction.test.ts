@@ -11,6 +11,7 @@ describe(todayFunction, () => {
     ["an empty shift moves nothing", [undefined], "1970-01-02"],
     ["a numeric string shift is read as its number, not joined onto the day", ["1"], "1970-01-03"],
     ["an unreadable shift is empty", ["x"], undefined],
+    ["a boolean shift reads as no number, so it is empty", [false], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 
