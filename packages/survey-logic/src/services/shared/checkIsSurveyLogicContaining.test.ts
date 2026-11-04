@@ -12,6 +12,13 @@ describe(checkIsSurveyLogicContaining, () => {
     ["finds nothing in a text for an unanswered record needle", "abc", { a: undefined }, false],
     ["finds nothing in a text for an empty needle", "abc", "", false],
     ["finds nothing in an unanswered haystack", undefined, "x", false],
+    ["finds nothing in a list for an empty list needle", [1, 2], [], false],
+    ["finds nothing in a list for an empty text needle, even one of its items", [1, ""], "", false],
+    ["finds nothing in a list holding an unanswered item for an unanswered needle", [undefined], undefined, false],
+    ["finds every item of a list needle in a text", "ab", ["a", "b"], true],
+    ["finds nothing in a text for a list needle with a missing item", "ab", ["a", "z"], false],
+    ["finds the items of a list needle one by one, never joined into one text", "a b", ["a", "b"], true],
+    ["finds a number inside a text as text", "a10", 10, true],
   ])("%s", (_title, left, right, expected) => {
     expect.hasAssertions();
 

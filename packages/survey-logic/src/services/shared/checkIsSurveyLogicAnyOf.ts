@@ -1,19 +1,13 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { checkIsSurveyLogicContaining } from "#src/services/shared/checkIsSurveyLogicContaining";
+import { checkIsSurveyLogicItemHeld } from "#src/services/shared/checkIsSurveyLogicItemHeld";
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 
-// SurveyJS's `anyof`, read by R7: one of the values on the right is in the left. An empty list on the right is any of
-// Nothing, and an empty side otherwise decides alone. A scalar on either side is read as the one-item list it would be
+// The anyof test (R7, R11): the left holds one item of the right, a scalar right being one item. An empty needle is held by
+// Nothing, so `anyof` of it is false
 export const checkIsSurveyLogicAnyOf = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
-  if (Array.isArray(right) && right.length === 0) return false;
+  if (checkIsSurveyLogicValueEmpty(right)) return false;
 
-  const isLeftEmpty = checkIsSurveyLogicValueEmpty(left);
-  if (isLeftEmpty && checkIsSurveyLogicValueEmpty(right)) return true;
-  if (isLeftEmpty) return false;
-  if (checkIsSurveyLogicValueEmpty(right)) return true;
-  if (!Array.isArray(left)) return checkIsSurveyLogicContaining(right, left);
-  if (!Array.isArray(right)) return checkIsSurveyLogicContaining(left, right);
-
-  return right.some((item) => checkIsSurveyLogicContaining(left, item));
+  const needleItems = Array.isArray(right) ? right : [right];
+  return needleItems.some((item) => checkIsSurveyLogicItemHeld(left, item));
 };

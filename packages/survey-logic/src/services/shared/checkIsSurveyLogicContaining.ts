@@ -1,23 +1,13 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
+import { checkIsSurveyLogicItemHeld } from "#src/services/shared/checkIsSurveyLogicItemHeld";
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
-import { checkIsSurveyLogicValueEqual } from "#src/services/shared/checkIsSurveyLogicValueEqual";
-import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
 
-// The containment `contains` tests (R7, R11). A list holds each item of the right side, and a text holds the right side as an
-// Exact substring, case included. An empty left side holds nothing, a record holds no text, and an empty needle is in nothing,
-// So `notcontains` is the negation of this
+// The containment `contains` tests (R7, R11): the left holds every item of the right, a scalar right being one item. An empty
+// Needle is held by nothing, so `notcontains` is the negation of this. A list needle is never joined into one text
 export const checkIsSurveyLogicContaining = (left: SurveyLogicValue, right: SurveyLogicValue): boolean => {
-  if (Array.isArray(left)) {
-    if (left.length === 0) return false;
+  if (checkIsSurveyLogicValueEmpty(right)) return false;
 
-    const rightItems = Array.isArray(right) ? right : [right];
-    return rightItems.every((item) => left.some((leftItem) => checkIsSurveyLogicValueEqual(leftItem, item)));
-  }
-  if (checkIsSurveyLogicValueEmpty(left) || typeof left === "object") return false;
-
-  const needle = toSurveyLogicText(right);
-  if (needle === "") return false;
-
-  return toSurveyLogicText(left).includes(needle);
+  const needleItems = Array.isArray(right) ? right : [right];
+  return needleItems.every((item) => checkIsSurveyLogicItemHeld(left, item));
 };

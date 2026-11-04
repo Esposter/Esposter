@@ -88,7 +88,8 @@ describe("the oracle fixtures", () => {
     "falsy-needle": "A needle of zero or false matches like any other value, where SurveyJS treats it as empty",
     "negated-containment":
       "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",
-    "empty-needle-list": "`anyof` of an empty list is false, where SurveyJS gives true for any answer",
+    "empty-needle":
+      "An empty needle, unanswered, empty text or empty list, is contained in nothing, so `contains` and `anyof` are false for it and `allof` is true, where SurveyJS gives `contains` and `anyof` true and `allof` false",
     "logic-boolean":
       "`and` and `or` are boolean: an operand counts only when it is `true`, so the result is `true` or `false`, where SurveyJS gives the operand that decides the result",
     "condition-true":
@@ -100,6 +101,8 @@ describe("the oracle fixtures", () => {
     "one-number-reading":
       "One text-to-number rule: a text is a number only as a plain decimal, so a hexadecimal, binary, octal or comma-decimal text stays text, and an answer keeps its text until an operation asks for a number",
     "text-function": "Text functions read their index as a number: a substring index that is not a number has no part",
+    "text-haystack":
+      "`anyof` reads its left side as the text or list that holds the right side's items, as `contains` does, so `'re' anyof 'red'` is false, where SurveyJS reads a scalar left side as the needle",
   };
 
   const fixtures: readonly OracleFixture[] = oracleFixtures;
