@@ -11,7 +11,7 @@ export class BasicChartConfiguration extends Serializable {
 }
 
 export const basicChartConfigurationSchema = z.object({
-  dataLabels: z.boolean().default(false),
-  subtitle: z.string().max(ITEM_NAME_MAX_LENGTH).default(""),
-  title: z.string().max(ITEM_NAME_MAX_LENGTH).default(""),
+  dataLabels: z.boolean(),
+  subtitle: z.string().max(ITEM_NAME_MAX_LENGTH),
+  title: z.string().max(ITEM_NAME_MAX_LENGTH),
 }) satisfies z.ZodType<ToData<BasicChartConfiguration>>;
