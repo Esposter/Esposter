@@ -135,7 +135,7 @@ describe(useGridLayout, () => {
     onTestFinished(() => {
       palette.remove();
     });
-    const onDrop = vi.fn<(cell: GridCell) => void>();
+    const onDrop = vi.fn<(cell: GridCell, target: HTMLElement) => void>();
     palette.addEventListener("pointerdown", (event) => {
       startExternalDrag(event, toGridItem(item), onDrop);
     });
@@ -853,7 +853,7 @@ describe(useGridLayout, () => {
   ])("#6 dropping a palette entry into the grid at clientX %s lands in column %s", async (clientX, x) => {
     expect.hasAssertions();
 
-    const { onCommit } = mountGrid({ items: [] });
+    const { onCommit, wrapper } = mountGrid({ items: [] });
     await flushPromises();
     const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX, clientY: spacing.padding };
@@ -861,7 +861,7 @@ describe(useGridLayout, () => {
     dispatch("pointermove", point);
     dispatch("pointerup", point);
 
-    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x, y: 0 }]]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x, y: 0 }, wrapper.element]]);
     expect(onCommit).not.toHaveBeenCalled();
   });
 
@@ -896,20 +896,20 @@ describe(useGridLayout, () => {
   test("a dropped item wider than the grid is narrowed to its columns", async () => {
     expect.hasAssertions();
 
-    mountGrid({ columnNumber: 4, items: [] });
+    const { wrapper } = mountGrid({ columnNumber: 4, items: [] });
     await flushPromises();
     const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 5, x: 0, y: 0 });
     const point = { clientX: spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
-    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 4, x: 0, y: 0 }]]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 4, x: 0, y: 0 }, wrapper.element]]);
   });
 
   test("a cancelled palette press accepts once on the next release", async () => {
     expect.hasAssertions();
 
-    mountGrid({ items: [] });
+    const { wrapper } = mountGrid({ items: [] });
     await flushPromises();
     const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
@@ -918,7 +918,7 @@ describe(useGridLayout, () => {
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
-    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x: 2, y: 0 }]]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x: 2, y: 0 }, wrapper.element]]);
   });
 
   test("a drop outside every grid", async () => {

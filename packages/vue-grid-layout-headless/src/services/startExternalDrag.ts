@@ -5,8 +5,13 @@ import type { MountedGrid } from "#src/models/MountedGrid";
 import { findGridAt } from "#src/services/findGridAt";
 
 // An item from outside every grid, such as a palette entry, is dragged by its element: the grid under the pointer previews the
-// Cell the item would land on, and the release drops it there, or nowhere when no grid takes it
-export const startExternalDrag = (event: PointerEvent, item: GridItem, onDrop: (cell: GridCell) => void): void => {
+// Cell the item would land on, and the release drops it there, or nowhere when no grid takes it. The drop receives the grid's
+// Root too, so a consumer reads its own data attribute from it to know which group the item landed in
+export const startExternalDrag = (
+  event: PointerEvent,
+  item: GridItem,
+  onDrop: (cell: GridCell, target: HTMLElement) => void,
+): void => {
   // Only the primary button starts a drag, since a touch or pen contact reports button 0 too
   if (event.button !== 0) return;
   if (!(event.currentTarget instanceof HTMLElement)) return;
@@ -42,8 +47,9 @@ export const startExternalDrag = (event: PointerEvent, item: GridItem, onDrop: (
       controller.abort();
       lastGrid?.clearPreview();
       const point = { x: releaseEvent.clientX, y: releaseEvent.clientY };
-      const cell = findGridAt(point, element)?.accept(item, point);
-      if (cell) onDrop(cell);
+      const grid = findGridAt(point, element);
+      const cell = grid?.accept(item, point);
+      if (grid && cell) onDrop(cell, grid.element);
     },
     { signal },
   );

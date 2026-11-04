@@ -310,6 +310,7 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 - **GIVEN** a palette entry dragged with the span it would take
 - **WHEN** it is released over an empty cell of the grid
 - **THEN** the entry is placed at that cell and the grid commits the items it pushes
+- **AND** the drop hands the caller the cell and the grid's root element
 
 #### Scenario: A drop outside every grid
 
