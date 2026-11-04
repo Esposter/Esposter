@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type { DOMWrapper } from "@vue/test-utils";
 import type { SurveyAnswerValue, SurveyMatrixColumn, SurveyMatrixDynamicNode } from "survey-engine";
 
 import ResourceSurveyFieldMatrixDynamic from "@/components/Resource/Survey/Field/MatrixDynamic.vue";
@@ -25,6 +26,16 @@ const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAn
     },
   });
   return component;
+};
+
+const getLabelText = (
+  component: ReturnType<typeof mountMatrixDynamic>,
+  element: Pick<DOMWrapper<Element>, "attributes">,
+) => {
+  const labelledBy = element.attributes("aria-labelledby");
+  assert.exists(labelledBy);
+
+  return component.get(`[id="${labelledBy}"]`).text();
 };
 
 const findButton = (component: ReturnType<typeof mountMatrixDynamic>, text: string) => {
@@ -121,26 +132,50 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: step }]]]);
     });
 
-    test("marks a required column's header, and gives each of its cells aria-required", () => {
+    test("marks a required column's header, and gives its text and dropdown cells aria-required", () => {
       expect.hasAssertions();
 
-      const choices = [{ text: "", value: "b" }];
       const component = mountMatrixDynamic(
         createNode(1, 0, 2, [
           { cellType: SurveyMatrixCellType.Text, choices: [], isRequired: true, name: "a", title: "a" },
-          { cellType: SurveyMatrixCellType.Dropdown, choices, isRequired: true, name: "b", title: "b" },
-          { cellType: SurveyMatrixCellType.Boolean, choices: [], isRequired: true, name: "c", title: "c" },
+          {
+            cellType: SurveyMatrixCellType.Dropdown,
+            choices: [{ text: "", value: "b" }],
+            isRequired: true,
+            name: "b",
+            title: "b",
+          },
         ]),
       );
 
-      expect(component.findAll("th").map((header) => header.text())).toStrictEqual([
-        "a * required",
-        "b * required",
-        "c * required",
-      ]);
+      expect(component.findAll("th").map((header) => header.text())).toStrictEqual(["a * required", "b * required"]);
       expect(component.get("input").attributes("aria-required")).toBe("true");
       expect(component.get('[role="combobox"]').attributes("aria-required")).toBe("true");
-      expect(component.get('[role="checkbox"]').attributes("aria-required")).toBe("true");
+    });
+
+    test("names a required column's checkbox, boolean and rating cells by its header, which carries the word, and gives none aria-required", () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(
+        createNode(1, 0, 2, [
+          {
+            cellType: SurveyMatrixCellType.Checkbox,
+            choices: [{ text: "", value: "b" }],
+            isRequired: true,
+            name: "a",
+            title: "a",
+          },
+          { cellType: SurveyMatrixCellType.Boolean, choices: [], isRequired: true, name: "c", title: "c" },
+          { cellType: SurveyMatrixCellType.Rating, choices: [], isRequired: true, name: "d", title: "d" },
+        ]),
+      );
+      const checkboxes = component.findAll('[role="checkbox"]');
+
+      expect(checkboxes.map((checkbox) => checkbox.attributes("aria-required"))).toStrictEqual([undefined, undefined]);
+      expect(getLabelText(component, component.get('[role="group"]'))).toBe("a * required");
+      expect(getLabelText(component, takeOne(checkboxes, 1))).toBe("c * required");
+      expect(getLabelText(component, component.get('[role="radiogroup"]'))).toBe("d * required");
+      expect(component.get('[role="radiogroup"]').attributes("aria-required")).toBeUndefined();
     });
 
     test("leaves an optional column's header and cells unmarked", () => {

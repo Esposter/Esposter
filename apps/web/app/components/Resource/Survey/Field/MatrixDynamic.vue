@@ -26,6 +26,9 @@ interface Props {
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const errorId = useId();
+// A column's header names the cells that take no aria-required, so a required column's word reaches speech through it
+const headerId = useId();
+const getHeaderId = (columnIndex: number) => `${headerId}-${columnIndex}`;
 // The table holds no invalid state of its own, since a table takes no aria-invalid, so each control in it carries it
 const invalid = computed(() => (error ? true : undefined));
 const rows = computed(() => getSurveyAnswerRows(answer.value, node.props.rowCount));
@@ -86,8 +89,16 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
         </caption>
         <thead>
           <tr>
-            <!-- A required column is marked here, and each of its cells that takes aria-required says so, which names it once -->
-            <th v-for="column of node.props.columns" :key="column.name" scope="col" text-sm text-muted p-1>
+            <!-- A required column is marked here; its text, comment and dropdown cells say so through aria-required -->
+            <th
+              v-for="(column, columnIndex) of node.props.columns"
+              :id="getHeaderId(columnIndex)"
+              :key="column.name"
+              scope="col"
+              text-sm
+              text-muted
+              p-1
+            >
               {{ column.title || column.name }}
               <UiRequiredMark v-if="column.isRequired" />
             </th>
@@ -95,7 +106,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
         </thead>
         <tbody>
           <tr v-for="(row, rowIndex) of rows" :key="rowIndex">
-            <td v-for="column of node.props.columns" :key="column.name" p-1 align-top>
+            <td v-for="(column, columnIndex) of node.props.columns" :key="column.name" p-1 align-top>
               <UiTextField
                 v-if="column.cellType === SurveyMatrixCellType.Text"
                 is-label-hidden
@@ -121,12 +132,18 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 v-else-if="column.cellType === SurveyMatrixCellType.Dropdown"
                 :="getChoiceCellAttributes(column, row, rowIndex)"
               />
-              <div v-else-if="column.cellType === SurveyMatrixCellType.Checkbox" flex flex-col gap-1>
+              <div
+                v-else-if="column.cellType === SurveyMatrixCellType.Checkbox"
+                :aria-labelledby="getHeaderId(columnIndex)"
+                role="group"
+                flex
+                flex-col
+                gap-1
+              >
                 <UiCheckbox
                   v-for="choice of column.choices"
                   :key="String(choice.value)"
                   :aria-invalid="invalid"
-                  :aria-required="column.isRequired ? true : undefined"
                   is-label-shown
                   :disabled="isDisabled"
                   :label="getSurveyChoiceText(choice)"
@@ -143,7 +160,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               <UiCheckbox
                 v-else-if="column.cellType === SurveyMatrixCellType.Boolean"
                 :aria-invalid="invalid"
-                :aria-required="column.isRequired ? true : undefined"
+                :aria-labelledby="getHeaderId(columnIndex)"
                 :disabled="isDisabled"
                 :label="column.title || column.name"
                 :model-value="row[column.name] === true"
@@ -152,6 +169,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               <UiToggleGroup
                 v-else-if="column.cellType === SurveyMatrixCellType.Rating"
                 :aria-invalid="invalid"
+                :aria-labelledby="getHeaderId(columnIndex)"
                 :is-disabled="isDisabled || undefined"
                 :items="ratingItems"
                 :label="column.title || column.name"
