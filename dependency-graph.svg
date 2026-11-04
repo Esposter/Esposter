@@ -551,10 +551,10 @@
 <stop offset="1" style="stop-color:#d7c2fd;stop-opacity:1.;"/>
 </linearGradient>
 </defs>
-<polygon filter="url(#nodeShadow)" fill="url(#node27_l_22)" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="690.22,-1491.63 572.25,-1491.63 568.25,-1487.63 568.25,-1455.63 686.22,-1455.63 690.22,-1459.63 690.22,-1491.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="686.22,-1487.63 568.25,-1487.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="686.22,-1487.63 686.22,-1455.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="686.22,-1487.63 690.22,-1491.63"/>
+<polygon filter="url(#nodeShadow)" fill="url(#node27_l_22)" stroke="#7f65bd" stroke-width="1.6" points="690.22,-1491.63 572.25,-1491.63 568.25,-1487.63 568.25,-1455.63 686.22,-1455.63 690.22,-1459.63 690.22,-1491.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="686.22,-1487.63 568.25,-1487.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="686.22,-1487.63 686.22,-1455.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="686.22,-1487.63 690.22,-1491.63"/>
 <text xml:space="preserve" text-anchor="middle" x="629.23" y="-1469.73" font-family="Helvetica,sans-Serif" font-size="13.00" fill="#161b22">survey&#45;engine</text>
 </g>
 <!-- web&#45;&gt;survey&#45;engine -->
@@ -572,10 +572,10 @@
 <stop offset="1" style="stop-color:#d7c2fd;stop-opacity:1.;"/>
 </linearGradient>
 </defs>
-<polygon filter="url(#nodeShadow)" fill="url(#node28_l_23)" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="936.34,-1547.63 830.67,-1547.63 826.67,-1543.63 826.67,-1511.63 932.34,-1511.63 936.34,-1515.63 936.34,-1547.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="932.34,-1543.63 826.67,-1543.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="932.34,-1543.63 932.34,-1511.63"/>
-<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" stroke-dasharray="5,2" points="932.34,-1543.63 936.34,-1547.63"/>
+<polygon filter="url(#nodeShadow)" fill="url(#node28_l_23)" stroke="#7f65bd" stroke-width="1.6" points="936.34,-1547.63 830.67,-1547.63 826.67,-1543.63 826.67,-1511.63 932.34,-1511.63 936.34,-1515.63 936.34,-1547.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="932.34,-1543.63 826.67,-1543.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="932.34,-1543.63 932.34,-1511.63"/>
+<polyline fill="none" stroke="#7f65bd" stroke-width="1.6" points="932.34,-1543.63 936.34,-1547.63"/>
 <text xml:space="preserve" text-anchor="middle" x="881.5" y="-1525.73" font-family="Helvetica,sans-Serif" font-size="13.00" fill="#161b22">survey&#45;logic</text>
 </g>
 <!-- web&#45;&gt;survey&#45;logic -->
