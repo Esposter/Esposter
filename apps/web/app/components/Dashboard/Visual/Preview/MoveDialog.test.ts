@@ -33,4 +33,25 @@ describe("dashboardVisualPreviewMoveDialog", () => {
       layout: visuals.value.map((top) => top.visuals?.map(({ id }) => id)),
     }).toStrictEqual({ closed: [[false]], layout: [[visual.id]] });
   });
+
+  // The dialog names no cell, so the store places the visual at the first free cell of the group, past the card at its first
+  test("choosing a group places the visual at the group's first free cell", async () => {
+    expect.hasAssertions();
+
+    const groupCard = new Visual({ type: VisualType.Card });
+    const group = new Visual({ type: VisualType.Group, visuals: [groupCard] });
+    const visual = new Visual({ type: VisualType.Card, x: 4 });
+    loadDashboard([group, visual]);
+    const wrapper = await mountSuspended(DashboardVisualPreviewMoveDialog, { props: { modelValue: true, visual } });
+    wrapper.findComponent(UiRadioGroup).vm.$emit("update:modelValue", group.id);
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(visuals.value.map((top) => top.visuals?.map(({ id, x, y }) => ({ id, x, y })))).toStrictEqual([
+      [
+        { id: groupCard.id, x: 0, y: 0 },
+        { id: visual.id, x: 4, y: 0 },
+      ],
+    ]);
+  });
 });
