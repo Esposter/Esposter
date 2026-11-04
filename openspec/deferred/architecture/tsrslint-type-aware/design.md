@@ -10,7 +10,7 @@ tsrs's own type-aware linter, `tsrs --lint` launched as `tsrs-lint` (first the t
 
 ## Revisit when
 
-`tsrs --lint` accepts a way to run a content mapper, a flag or a variable, **or** oxlint ships tsrs as a backend of its own ([oxc-project/tsrs 378](https://github.com/oxc-project/tsrs/issues/378)). Either one removes the tsconfig error, and then the swap is the path setting, marked with a `@TODO` to drop once oxlint finds the backend itself, plus removing `oxlint-tsgolint` and the `vite-plus>oxlint-tsgolint` override, which vite-plus's hard dependency on it makes necessary.
+`tsrs --lint` accepts a way to run a content mapper, a flag or a variable ([oxc-project/tsrs 876](https://github.com/oxc-project/tsrs/issues/876)), **or** oxlint ships tsrs as a backend of its own ([oxc-project/tsrs 378](https://github.com/oxc-project/tsrs/issues/378)). Either one removes the tsconfig error, and then the swap is the path setting, marked with a `@TODO` to drop once oxlint finds the backend itself, plus removing `oxlint-tsgolint`. That removal needs the `vite-plus>oxlint-tsgolint` override, because vite-plus depends on it, and with the override `vp lint` throws on every run, type-aware or not, until it stops resolving the package unconditionally ([voidzero-dev/vite-plus 3339](https://github.com/voidzero-dev/vite-plus/issues/3339)).
 
 ## Key files
 
