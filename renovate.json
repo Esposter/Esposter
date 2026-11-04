@@ -43,8 +43,8 @@
       "matchPackageNames": ["vue-tsc"]
     },
     {
-      "description": "tsdown 0.23.3 moves its declaration plugin from 0.29.0-beta.2 to 0.28.8, and the size tests of genshin-interface, genshin-world and vue-phaserjs move with the declaration and bundle output, so the bump is a dedicated pass that reads that output before it lands. `@tsdown/css` pins its tsdown to the exact same version, so the two move together. Drop this rule and restore the carets once that output is checked.",
-      "enabled": false,
+      "description": "`@tsdown/css` pins its tsdown peer to the exact same version, so the two move as one; a bump of either alone leaves the pair mismatched.",
+      "groupName": "tsdown",
       "matchPackageNames": ["@tsdown/css", "tsdown"]
     },
     {

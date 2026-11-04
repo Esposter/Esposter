@@ -107,7 +107,7 @@ catalog:
   "@tresjs/core": ^5.10.1
   "@trpc/client": ^11.24.0
   "@trpc/server": ^11.24.0
-  "@tsdown/css": 0.23.2
+  "@tsdown/css": ^0.23.5
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
   "@types/sax": ^1.2.7
@@ -226,7 +226,7 @@ catalog:
   three: ^0.187.0
   three-globe: ^2.45.6
   three-mesh-bvh: ^0.9.18
-  tsdown: 0.23.2
+  tsdown: ^0.23.5
   tsrs: ^0.21.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
