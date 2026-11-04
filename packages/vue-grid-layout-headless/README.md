@@ -88,10 +88,11 @@ Each tile supplies these values:
 | `GridCommit`         | interface  | What a release writes back: the cells that one gesture changed                                                                                               |
 | `GridItem`           | interface  | A block the grid places, named by the entity it lays out, with `isAutoHeight` for whether that entity takes its height from its content                      |
 | `GridLayout`         | interface  | What a grid hands its consumer: the tiles to draw, the placeholder, the height, the press and the step                                                       |
-| `GridLayoutOptions`  | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter                                                             |
+| `GridLayoutOptions`  | interface  | What a grid lays out, how its gestures read the pointer, and where a body drag released over another grid goes, passed to the composable as a getter         |
 | `GridPlaceholder`    | interface  | The box a drag draws where its item would land, marked when the grid would refuse the landing                                                                |
 | `GridStep`           | interface  | A keyboard step: the whole cells an item moves by and the whole cells its span grows by                                                                      |
 | `GridTile`           | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                                                                             |
+| `GridTransfer`       | interface  | The hand-over of a body drag released over another grid: the item, the cell it lands in there and that grid's root element                                   |
 | `ResizeEdge`         | enum       | The edge or corner that a resize pulls                                                                                                                       |
 | `startExternalDrag`  | function   | Drags an item from outside every grid, such as a palette entry. Previews it on the grid under the pointer and passes the cell it lands on to a drop callback |
 | `useGridLayout`      | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes, and steps an item from the keyboard                                 |

@@ -334,3 +334,71 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 - **GIVEN** a palette press that the browser cancels
 - **WHEN** the pointer is pressed and released again over the grid
 - **THEN** the entry is placed once
+
+### Requirement: An item dragged by its body moves to the grid it is released over
+
+The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when no grid takes it.
+
+#### Scenario: Hovering another grid previews the landing cell there
+
+- **GIVEN** a consumer that takes a transfer and an item dragged by its body
+- **WHEN** the pointer is over another grid
+- **THEN** that grid draws the placeholder at the cell under the pointer
+- **AND** the item's own grid draws none
+
+#### Scenario: Releasing over another grid hands the item to onTransfer and the source commits nothing
+
+- **GIVEN** an item dragged by its body from a grid that takes a transfer, over another grid that holds an item where it would land
+- **WHEN** the item is released over the other grid
+- **THEN** the other grid commits the item it pushes aside
+- **AND** the consumer receives the item and the cell it lands in, once
+- **AND** the item's own grid writes nothing
+
+#### Scenario: Releasing over its own grid commits
+
+- **GIVEN** an item dragged by its body within a grid that takes a transfer
+- **WHEN** the item is released over its own grid
+- **THEN** the grid commits its changed cells
+- **AND** no transfer is made
+
+#### Scenario: A grid that refuses the item returns it
+
+- **GIVEN** an item dragged by its body over a grid in the prevent mode that holds an item where it would land
+- **WHEN** the item is released over that grid
+- **THEN** nothing is written and the item returns to its cell
+
+#### Scenario: Releasing over no grid returns the item
+
+- **GIVEN** an item dragged by its body from a grid that takes a transfer
+- **WHEN** the item is released over no grid
+- **THEN** nothing is written and the item returns to its cell
+
+#### Scenario: A resize never transfers
+
+- **GIVEN** a resize handle pulled over another grid, in a grid that takes a transfer
+- **WHEN** the handle is released
+- **THEN** the grid commits its resized item
+- **AND** no transfer is made
+
+#### Scenario: Without onTransfer the item stays in its grid
+
+- **GIVEN** a grid that takes no transfer and an item dragged by its body over another grid
+- **WHEN** the item is released over that grid
+- **THEN** the grid commits its changed cells
+- **AND** the other grid writes nothing
+
+### Requirement: A nested grid owns the presses on its items
+
+The package SHALL give a press on an item of a nested grid to that grid, so the grid around it takes no gesture from it.
+
+#### Scenario: A press on a nested grid's item is not the outer grid's
+
+- **GIVEN** a grid inside an item of an outer grid
+- **WHEN** an item of the inner grid is pressed and dragged
+- **THEN** the outer grid commits nothing
+
+#### Scenario: A nested item's gesture moves only the inner grid's item
+
+- **GIVEN** a grid inside an item of an outer grid
+- **WHEN** an item of the inner grid is pressed and dragged
+- **THEN** the inner grid commits the item's new cell alone
