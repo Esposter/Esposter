@@ -23,9 +23,10 @@ const { editedItem, visuals } = storeToRefs(visualStore);
 const { deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
+const isEmpty = computed(() => visuals.value.length === 0);
 // Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it holds
 // The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to act on
-useCommands(() => (visuals.value.length === 0 ? [] : DASHBOARD_GRID_COMMANDS));
+useCommands(() => (isEmpty.value ? [] : DASHBOARD_GRID_COMMANDS));
 // The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same write
 // By id as the dashboard's own, wherever the visual sits
 const commitVisuals = (changes: GridBlock[]) => {
@@ -50,7 +51,7 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
 
 <template>
   <UiEmptyState
-    v-if="visuals.length === 0"
+    v-if="isEmpty"
     description="Add a visual from the bar above or drop one from Visuals onto the grid, then click it to bind its data"
     :meaning="UiIconMeaning.Chart"
     title="No visuals yet"
