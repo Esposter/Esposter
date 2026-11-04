@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyChoice } from "survey-engine";
 
-import { parseChoiceLine } from "@/services/resource/survey/parseChoiceLine";
+import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
 import { surveyChoiceSchema } from "survey-engine";
 
 interface Props {
@@ -24,9 +24,10 @@ const editor = useSurveyListEditor(modelValue, {
 const { addItems, updateItem } = editor;
 const addText = ref("");
 const addFromField = () => {
-  if (addText.value.trim() === "") return;
+  const choices = parseChoiceLines(addText.value);
+  if (choices.length === 0) return;
 
-  addItems([parseChoiceLine(addText.value)]);
+  addItems(choices);
   addText.value = "";
 };
 // A paste of several lines becomes a row each, which a single-line field would otherwise join into one
@@ -35,12 +36,7 @@ const pasteLines = (event: ClipboardEvent) => {
   if (!text.includes("\n")) return;
 
   event.preventDefault();
-  addItems(
-    text
-      .split(/\r?\n/u)
-      .filter((line) => line.trim() !== "")
-      .map((line) => parseChoiceLine(line)),
-  );
+  addItems(parseChoiceLines(text));
 };
 </script>
 

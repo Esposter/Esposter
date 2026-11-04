@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyMatrixColumn } from "survey-engine";
 
+import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurveyMatrixColumnFromText";
 import { SurveyMatrixCellType, surveyMatrixColumnSchema } from "survey-engine";
 
 interface Props {
@@ -21,17 +22,10 @@ const cellTypeItems = Object.values(SurveyMatrixCellType).map((cellType) => ({ t
 const addText = ref("");
 // A column added takes its title as its name, so it is refused where the name is not valid or repeats another's
 const addFromField = () => {
-  if (addText.value.trim() === "") return;
+  const columns = toSurveyMatrixColumnFromText(addText.value);
+  if (columns.length === 0) return;
 
-  addItems([
-    {
-      cellType: SurveyMatrixCellType.Text,
-      choices: [],
-      isRequired: false,
-      name: addText.value.trim(),
-      title: addText.value.trim(),
-    },
-  ]);
+  addItems(columns);
   addText.value = "";
 };
 const isChoiceCellType = (cellType: SurveyMatrixCellType) =>

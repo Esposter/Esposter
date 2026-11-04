@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyMultipleTextItem } from "survey-engine";
 
+import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
 import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "survey-engine";
 
 interface Props {
@@ -24,16 +25,10 @@ const inputTypeItems = Object.values(SurveyMultipleTextItemInputType).map((input
 const addText = ref("");
 // An item added takes its typed text as its name and its title, which the owner can then change
 const addFromField = () => {
-  if (addText.value.trim() === "") return;
+  const items = toSurveyMultipleTextItemFromText(addText.value);
+  if (items.length === 0) return;
 
-  addItems([
-    {
-      inputType: SurveyMultipleTextItemInputType.Text,
-      isRequired: false,
-      name: addText.value.trim(),
-      title: addText.value.trim(),
-    },
-  ]);
+  addItems(items);
   addText.value = "";
 };
 </script>
