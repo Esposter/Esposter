@@ -156,7 +156,7 @@ jobs:
             echo "The version commit does not carry exactly one tag." >&2
             exit 1
           fi
-          if git diff --name-only HEAD refs/release/main | grep -Ev '(^|/)(package\.json|CHANGELOG\.md)$|^lerna\.json$'; then
+          if git diff --name-only HEAD refs/release/main | grep -Ev '(^|/)(package\.json|package-lock\.json|CHANGELOG\.md)$|^lerna\.json$'; then
             echo "The version commit changes paths other than versions and changelogs, listed above." >&2
             exit 1
           fi
