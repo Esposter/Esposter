@@ -19,11 +19,11 @@ export interface SurveyRootProps {
   completedHtml: string;
   completeText: string;
   description: string;
+  isQuestionNumbersVisible: boolean;
   logo: string;
   pageNextText: string;
   pagePrevText: string;
   showProgressBar: SurveyProgressBarPlacement;
-  showQuestionNumbers: boolean;
   title: string;
 }
 
@@ -38,11 +38,11 @@ export const surveyRootPropsSchema: z.ZodObject<
     completedHtml: z.ZodDefault<z.ZodString>;
     completeText: z.ZodDefault<z.ZodString>;
     description: z.ZodDefault<z.ZodString>;
+    isQuestionNumbersVisible: z.ZodDefault<z.ZodBoolean>;
     logo: z.ZodDefault<z.ZodString>;
     pageNextText: z.ZodDefault<z.ZodString>;
     pagePrevText: z.ZodDefault<z.ZodString>;
     showProgressBar: z.ZodDefault<z.ZodEnum<typeof SurveyProgressBarPlacement>>;
-    showQuestionNumbers: z.ZodDefault<z.ZodBoolean>;
     title: z.ZodDefault<z.ZodString>;
   },
   z.core.$strict
@@ -55,10 +55,10 @@ export const surveyRootPropsSchema: z.ZodObject<
   completedHtml: z.string().max(MAX_SURVEY_HTML_LENGTH).default(""),
   completeText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   description: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
+  isQuestionNumbersVisible: z.boolean().default(false),
   logo: z.string().max(MAX_SURVEY_URL_LENGTH).default(""),
   pageNextText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   pagePrevText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   showProgressBar: z.enum(SurveyProgressBarPlacement).default(SurveyProgressBarPlacement.Off),
-  showQuestionNumbers: z.boolean().default(false),
   title: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<SurveyRootProps>;

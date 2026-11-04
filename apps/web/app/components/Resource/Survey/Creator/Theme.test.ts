@@ -81,7 +81,7 @@ describe("resourceSurveyCreatorTheme", () => {
       await component.get('[role="switch"]').trigger("click");
       await flushPromises();
 
-      expect(surveyDocument.value.root.props.showQuestionNumbers).toBe(true);
+      expect(surveyDocument.value.root.props.isQuestionNumbersVisible).toBe(true);
     });
 
     test("the progress bar select and the question numbers switch show the settings the survey holds", async () => {
@@ -91,7 +91,7 @@ describe("resourceSurveyCreatorTheme", () => {
       load(
         surveyDocumentSchema.parse({
           content: [],
-          root: { props: { showProgressBar: SurveyProgressBarPlacement.Top, showQuestionNumbers: true } },
+          root: { props: { isQuestionNumbersVisible: true, showProgressBar: SurveyProgressBarPlacement.Top } },
         }),
       );
 

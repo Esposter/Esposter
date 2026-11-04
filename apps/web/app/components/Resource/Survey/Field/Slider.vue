@@ -19,7 +19,7 @@ const value = computed<number>({
   },
 });
 // A hidden value is an empty reading, so assistive technology reads the thumb by its own number instead
-const valueText = computed(() => (node.props.showValue ? String(value.value) : ""));
+const valueText = computed(() => (node.props.isValueVisible ? String(value.value) : ""));
 </script>
 
 <template>

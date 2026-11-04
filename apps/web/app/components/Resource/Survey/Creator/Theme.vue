@@ -55,10 +55,10 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
         @update:model-value="(showProgressBar) => updateRootProps({ showProgressBar })"
       />
       <UiSwitch
-        :model-value="rootProps.showQuestionNumbers"
+        :model-value="rootProps.isQuestionNumbersVisible"
         is-label-shown
         label="Show question numbers"
-        @update:model-value="(showQuestionNumbers) => updateRootProps({ showQuestionNumbers })"
+        @update:model-value="(isQuestionNumbersVisible) => updateRootProps({ isQuestionNumbersVisible })"
       />
     </div>
     <!-- The preview draws with the survey's own colours, so it shows what a respondent will see of them -->

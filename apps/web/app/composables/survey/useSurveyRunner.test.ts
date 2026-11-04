@@ -63,7 +63,7 @@ describe(useSurveyRunner, () => {
       createSurveyTestPage([createSurveyTestQuestion("first")]),
       createSurveyTestPage([createSurveyTestQuestion("second")]),
     ]);
-    surveyDocument.root.props.showQuestionNumbers = true;
+    surveyDocument.root.props.isQuestionNumbersVisible = true;
     const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
 
     expect([...runner.questionNumbers.value.values()]).toStrictEqual([1, 2]);

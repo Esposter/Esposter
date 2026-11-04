@@ -38,9 +38,9 @@ const rootJsonSchema = zodToJsonSchema(
     accentColor: true,
     backgroundColor: true,
     calculatedValues: true,
+    isQuestionNumbersVisible: true,
     logo: true,
     showProgressBar: true,
-    showQuestionNumbers: true,
   }),
 );
 // The props an edit changed, the only ones written, so the rest of the props are left as they were
