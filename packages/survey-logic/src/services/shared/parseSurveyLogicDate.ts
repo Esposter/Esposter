@@ -2,8 +2,8 @@ import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { checkIsCalendarDay } from "#src/services/shared/checkIsCalendarDay";
 import { createSurveyLogicWallClock } from "#src/services/shared/createSurveyLogicWallClock";
-import { padWithZeros } from "#src/services/shared/padWithZeros";
 import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
+import { padWithZeros } from "@esposter/shared";
 
 // An ISO date, with an optional time of day: the separator is a T or the space RFC 3339 allows, the seconds and the fraction are
 // Optional, and a zone is Z or an offset. The whole text must match, so a date with a word after it is not a date

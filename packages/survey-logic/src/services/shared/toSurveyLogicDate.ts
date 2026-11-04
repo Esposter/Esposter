@@ -1,4 +1,4 @@
-import { padWithZeros } from "#src/services/shared/padWithZeros";
+import { padWithZeros } from "@esposter/shared";
 
 // A wall-clock midnight is written as its date alone, the form a date answer takes, so a result compares with an answer.
 // Any other moment keeps its time, which parseSurveyLogicDate reads back to the same wall clock. A year past the four digits a

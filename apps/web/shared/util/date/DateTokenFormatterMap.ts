@@ -7,6 +7,7 @@ import {
   EN_US_SHORT_WEEKDAY_FORMATTER,
 } from "#shared/services/intl/constants";
 import { DateToken } from "#shared/util/date/DateToken";
+import { padWithZeros } from "@esposter/shared";
 
 const PADDED_LENGTH = 2;
 const YEAR_LENGTH = 4;
@@ -20,7 +21,6 @@ const OrdinalSuffixMap: Record<Intl.LDMLPluralRule, string> = {
   [OrdinalSuffix.Zero]: "th",
 };
 
-const padNumber = (value: number, length = PADDED_LENGTH): string => String(value).padStart(length, "0");
 // Month and weekday names come from Intl rather than a hand-written table, and pinned to en-US rather than the
 // Reader's locale: these tokens only reach the message list and the resource table, whose labels are the one
 // Place a format string is still written by hand instead of being a `<NuxtTime>`
@@ -31,20 +31,20 @@ const formatDatePart = (formatter: Intl.DateTimeFormat, zonedDateTime: Temporal.
 export const DateTokenFormatterMap: Record<DateToken, (zonedDateTime: Temporal.ZonedDateTime) => string> = {
   [DateToken.A]: ({ hour }) => (hour < NOON_HOUR ? "AM" : "PM"),
   [DateToken.D]: ({ day }) => String(day),
-  [DateToken.DD]: ({ day }) => padNumber(day),
+  [DateToken.DD]: ({ day }) => padWithZeros(day, PADDED_LENGTH),
   [DateToken.ddd]: (zonedDateTime) => formatDatePart(EN_US_SHORT_WEEKDAY_FORMATTER, zonedDateTime),
   [DateToken.dddd]: (zonedDateTime) => formatDatePart(EN_US_LONG_WEEKDAY_FORMATTER, zonedDateTime),
   [DateToken.Do]: ({ day }) => `${day}${OrdinalSuffixMap[EN_US_ORDINAL_PLURAL_RULES.select(day)]}`,
   [DateToken.H]: ({ hour }) => String(hour),
   [DateToken.h]: ({ hour }) => String(hour % NOON_HOUR || NOON_HOUR),
-  [DateToken.HH]: ({ hour }) => padNumber(hour),
-  [DateToken.hh]: ({ hour }) => padNumber(hour % NOON_HOUR || NOON_HOUR),
+  [DateToken.HH]: ({ hour }) => padWithZeros(hour, PADDED_LENGTH),
+  [DateToken.hh]: ({ hour }) => padWithZeros(hour % NOON_HOUR || NOON_HOUR, PADDED_LENGTH),
   [DateToken.M]: ({ month }) => String(month),
-  [DateToken.MM]: ({ month }) => padNumber(month),
-  [DateToken.mm]: ({ minute }) => padNumber(minute),
+  [DateToken.MM]: ({ month }) => padWithZeros(month, PADDED_LENGTH),
+  [DateToken.mm]: ({ minute }) => padWithZeros(minute, PADDED_LENGTH),
   [DateToken.MMM]: (zonedDateTime) => formatDatePart(EN_US_SHORT_MONTH_FORMATTER, zonedDateTime),
   [DateToken.MMMM]: (zonedDateTime) => formatDatePart(EN_US_LONG_MONTH_FORMATTER, zonedDateTime),
-  [DateToken.ss]: ({ second }) => padNumber(second),
-  [DateToken.YYYY]: ({ year }) => padNumber(year, YEAR_LENGTH),
+  [DateToken.ss]: ({ second }) => padWithZeros(second, PADDED_LENGTH),
+  [DateToken.YYYY]: ({ year }) => padWithZeros(year, YEAR_LENGTH),
   [DateToken.Z]: ({ offset }) => offset,
 };
