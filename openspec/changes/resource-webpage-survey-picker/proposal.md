@@ -21,7 +21,7 @@ Build the picker as a schema-form renderer keyed on the resource-link declaratio
 
 - The program setup already binds its survey through a select over the owner's surveys, so a second survey picker would be a copy. A component that knows the invite's field by name would also need a second one for each other link field, and the repo already has more than one such field. A renderer keyed on the declaration covers every link field the schema forms draw, so the next picker is written once.
 
-**Against the survey form engine.** The picker does not depend on the typed survey document of the [survey form engine](../resource-survey-form-engine-program/design.md). It reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
+**Against the survey form engine.** The picker does not depend on the typed survey document of the [survey form engine](../archive/2026-11-04-resource-survey-form-engine-program/design.md). It reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
 
 **Ordering.** The engine's one-time purge deletes every stored survey and removes each invite that names one. If the picker shipped first, an owner could bind a survey the purge then deletes. So the picker waits for the purge to run in each environment.
 

@@ -39,5 +39,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- A survey bound to an invite that is unpublished stays bound, and the picker flags it rather than offering it again. The picker is built by [resource-webpage-survey-picker](../../../changes/resource-webpage-survey-picker/proposal.md) and its release is held until the one-time purge in the [survey form engine](../../../changes/resource-survey-form-engine-program/proposal.md) has run in each environment.
+- A survey bound to an invite that is unpublished stays bound, and the picker flags it rather than offering it again. The picker is built by [resource-webpage-survey-picker](../../../changes/resource-webpage-survey-picker/proposal.md) and its release is held until the one-time purge in the [survey form engine](../../../changes/archive/2026-11-04-resource-survey-form-engine-program/proposal.md) has run in each environment.
 - Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside a published page bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is mobile-friendly. Revisit only on real demand.
