@@ -1,6 +1,6 @@
 ## 1. Sidebar and thumbnails
 
-- [x] 1.1 Write the sidebar's scenarios first and see them fail: the outline and thumbnails tabs, the open-by-width default, and the remembered choice. Verify: `pnpm test app/components/Pdf --run` from `apps/web` reports them failing.
+- [ ] 1.1 Write the sidebar's scenarios first and see them fail: the outline and thumbnails tabs, the open-by-width default, and the remembered choice. Verify: `pnpm test app/components/Pdf --run` from `apps/web` reports them failing.
 - [x] 1.2 Build the sidebar with its two tabs, the outline entry navigation and the thumbnail cards that go to and mark their page. Verify: the same command passes.
 - [x] 1.3 Build the phone-width overlay of the sidebar over the pages. Verify: the same command passes.
 

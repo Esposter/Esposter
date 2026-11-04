@@ -33,9 +33,9 @@ The viewer SHALL draw only the pages the reader can see, so a long document open
 - **THEN** only the pages in view are drawn
 - **AND** scrolling draws each page as it comes into view
 
-### Requirement: The reader can move through, zoom and rotate a PDF
+### Requirement: The reader can move through and zoom a PDF
 
-The viewer SHALL let the reader go to any page, zoom in and out, fit the page to the width or to the view, show it at actual size, and rotate it.
+The viewer SHALL let the reader go to any page, zoom in and out, fit a page to the view, and show it at actual size.
 
 #### Scenario: Going to a page
 
@@ -52,7 +52,7 @@ The viewer SHALL let the reader go to any page, zoom in and out, fit the page to
 
 ### Requirement: The reader can search a PDF's text
 
-The viewer SHALL find text in the PDF, with options to match case and whole words, step to the previous and next match, and show how many matches there are.
+The viewer SHALL find text in the PDF, highlight every match, step to the previous and next match, and show how many matches there are.
 
 #### Scenario: Searching for a word
 
@@ -66,6 +66,24 @@ The viewer SHALL find text in the PDF, with options to match case and whole word
 - **GIVEN** a PDF open in the viewer
 - **WHEN** the reader searches for a word the PDF does not hold
 - **THEN** the viewer says nothing was found
+
+#### Scenario: Pressing Enter goes to the next match
+
+- **GIVEN** a search with three matches, the viewer on the first
+- **WHEN** the reader presses Enter in the search field
+- **THEN** the viewer goes to the second match
+
+#### Scenario: Opening a PDF with search terms
+
+- **GIVEN** a viewer given the terms "invoice" and "total"
+- **WHEN** its document loads
+- **THEN** every match of both terms is highlighted
+
+#### Scenario: Opening a PDF without search terms
+
+- **GIVEN** a viewer given no terms
+- **WHEN** its document loads
+- **THEN** nothing is highlighted
 
 ### Requirement: The reader can download and print a PDF
 
@@ -129,38 +147,16 @@ The viewer SHALL show the scale as a percentage, and choosing the readout SHALL 
 - **WHEN** the toolbar is shown
 - **THEN** the zoom readout is disabled
 
-### Requirement: The search highlights every match and takes its options from the menu
+### Requirement: The search's options come from the menu
 
-The viewer SHALL highlight every match of the search, and SHALL match whole words or the case only while the menu's Whole word or Match case item is on.
+The viewer SHALL match whole words or the case only while the menu's Whole word or Match case item is on.
 
-#### Matching whole words
+#### Scenario: Matching whole words
 
 - **GIVEN** a document holding "cat" once and "cats" once
 - **AND** the reader has searched for "cat"
 - **WHEN** the reader turns on Whole word
 - **THEN** one match is counted
-
-#### Pressing Enter goes to the next match
-
-- **GIVEN** a search with three matches, the viewer on the first
-- **WHEN** the reader presses Enter in the search field
-- **THEN** the viewer goes to the second match
-
-### Requirement: A PDF opened with search terms highlights them
-
-The viewer SHALL highlight every match of the terms its caller passes with the document, once the document loads.
-
-#### Opening a PDF with search terms
-
-- **GIVEN** a viewer given the terms "invoice" and "total"
-- **WHEN** its document loads
-- **THEN** every match of both terms is highlighted
-
-#### Opening a PDF without search terms
-
-- **GIVEN** a viewer given no terms
-- **WHEN** its document loads
-- **THEN** nothing is highlighted
 
 ### Requirement: The sidebar lists the outline or the thumbnails
 
@@ -258,12 +254,6 @@ The viewer SHALL turn every page a quarter turn left or right from the menu, and
 - **GIVEN** pages at their upright rotation
 - **WHEN** the reader chooses Rotate left
 - **THEN** the pages and their thumbnails are turned a quarter turn counter-clockwise
-
-#### Four quarter turns return the pages upright
-
-- **GIVEN** pages turned a quarter turn clockwise three times
-- **WHEN** the reader chooses Rotate right once more
-- **THEN** the pages are upright again
 
 ### Requirement: The reader views the whole viewer full screen
 

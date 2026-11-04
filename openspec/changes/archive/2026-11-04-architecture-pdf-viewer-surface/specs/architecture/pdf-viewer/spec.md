@@ -1,4 +1,84 @@
+## RENAMED Requirements
+
+- FROM: ### Requirement: The reader can move through, zoom and rotate a PDF
+- TO: ### Requirement: The reader can move through and zoom a PDF
+
+## MODIFIED Requirements
+
+### Requirement: The reader can move through and zoom a PDF
+
+The viewer SHALL let the reader go to any page, zoom in and out, fit a page to the view, and show it at actual size.
+
+#### Scenario: Going to a page
+
+- **GIVEN** a PDF open in the viewer
+- **WHEN** the reader enters a page number
+- **THEN** that page is scrolled into view
+
+#### Scenario: Zooming past the largest scale
+
+- **GIVEN** a PDF shown at the largest scale the viewer allows
+- **WHEN** the reader tries to zoom in
+- **THEN** the scale stays where it is
+- **AND** the zoom-in control is disabled
+
+### Requirement: The reader can search a PDF's text
+
+The viewer SHALL find text in the PDF, highlight every match, step to the previous and next match, and show how many matches there are.
+
+#### Scenario: Searching for a word
+
+- **GIVEN** a PDF open in the viewer
+- **WHEN** the reader searches for a word the PDF holds
+- **THEN** the first match is highlighted and scrolled into view
+- **AND** the number of matches is shown
+
+#### Scenario: Searching for a word the PDF does not hold
+
+- **GIVEN** a PDF open in the viewer
+- **WHEN** the reader searches for a word the PDF does not hold
+- **THEN** the viewer says nothing was found
+
+#### Scenario: Pressing Enter goes to the next match
+
+- **GIVEN** a search with three matches, the viewer on the first
+- **WHEN** the reader presses Enter in the search field
+- **THEN** the viewer goes to the second match
+
+#### Scenario: Opening a PDF with search terms
+
+- **GIVEN** a viewer given the terms "invoice" and "total"
+- **WHEN** its document loads
+- **THEN** every match of both terms is highlighted
+
+#### Scenario: Opening a PDF without search terms
+
+- **GIVEN** a viewer given no terms
+- **WHEN** its document loads
+- **THEN** nothing is highlighted
+
+## REMOVED Requirements
+
+### Requirement: The search highlights every match and takes its options from the menu
+
+Its highlighting is the search requirement's, and its Enter scenario is that requirement's too. Its options are the new requirement below.
+
+### Requirement: A PDF opened with search terms highlights them
+
+Its scenarios are scenarios of the search requirement, which owns the highlighting of every match.
+
 ## ADDED Requirements
+
+### Requirement: The search's options come from the menu
+
+The viewer SHALL match whole words or the case only while the menu's Whole word or Match case item is on.
+
+#### Scenario: Matching whole words
+
+- **GIVEN** a document holding "cat" once and "cats" once
+- **AND** the reader has searched for "cat"
+- **WHEN** the reader turns on Whole word
+- **THEN** one match is counted
 
 ### Requirement: The sidebar lists the outline or the thumbnails
 
@@ -96,12 +176,6 @@ The viewer SHALL turn every page a quarter turn left or right from the menu, and
 - **GIVEN** pages at their upright rotation
 - **WHEN** the reader chooses Rotate left
 - **THEN** the pages and their thumbnails are turned a quarter turn counter-clockwise
-
-#### Four quarter turns return the pages upright
-
-- **GIVEN** pages turned a quarter turn clockwise three times
-- **WHEN** the reader chooses Rotate right once more
-- **THEN** the pages are upright again
 
 ### Requirement: The reader views the whole viewer full screen
 

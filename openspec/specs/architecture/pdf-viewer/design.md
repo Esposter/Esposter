@@ -19,77 +19,120 @@ flowchart TD
   document --> thumbnail["Thumbnail.vue: usePdfPage on the first page"]
   document -->|"a press opens the dialog"| viewer["Viewer: usePdfViewer"]
   viewerLoader["loadPdfViewer: the viewer's components, when the viewer mounts"] -->|"the viewer module"| viewer
-  viewer --> toolbar["Toolbar: pages, zoom, rotate, print, download"]
+  viewer --> toolbar["Toolbar: pages, zoom, sidebar toggle, More menu"]
   viewer --> search["Search row: the query, its count and its matches"]
-  viewer --> prompt["the password field, or the failure text"]
+  viewer --> sidebar["Sidebar: outline or thumbnail cards, when open"]
+  viewer --> prompt["the password form, or the failure text"]
+  viewer --> watermark["WatermarkDialog: asks the text, then downloads"]
 ```
 
 ## Surface
 
-The viewer's root, `Pdf/Viewer/Index.vue`, draws a toolbar, a search row, the password field when the document asks for one, and the pages. The toolbar holds the sidebar toggle, the page and zoom controls and a More menu of the occasional commands; the sidebar lists the outline and the thumbnails; a watermark dialog asks the text of a download. Every control is built, so nothing on the surface waits (see `Not built`).
+The viewer draws a primary bar, a search row, the password form when the document asks for one, the sidebar when it is open, and the pages. The occasional commands sit in one More menu. Each visible control below has a task, a frequency and a reason it is where it is. A control that could not say how often it is used and why it is visible is not drawn, and the removals are the last table.
 
 ### The controls
 
-| Control                           | What it does                                                                    | Where it is                                       |
-| :-------------------------------- | :------------------------------------------------------------------------------ | :------------------------------------------------ |
-| Previous page                     | Goes back a page                                                                | Toolbar, first                                    |
-| Page field, with "of N" beside it | Holds the current page; Go goes to the number typed                             | Toolbar                                           |
-| Go                                | Goes to the page typed in the field                                             | Toolbar, after the field                          |
-| Next page                         | Goes forward a page                                                             | Toolbar                                           |
-| Zoom out ("−")                    | Makes the pages smaller                                                         | Toolbar, a text button                            |
-| Zoom in ("+")                     | Makes the pages larger; disabled at the largest scale                           | Toolbar, a text button                            |
-| Fit width                         | Fits the pages to the width                                                     | Toolbar, a text button                            |
-| Fit page                          | Fits a whole page in the view                                                   | Toolbar, a text button                            |
-| Actual size                       | Shows the pages at their own size                                               | Toolbar, a text button                            |
-| Rotate                            | Turns the pages                                                                 | Toolbar, a text button                            |
-| Print                             | Prints the document, each page rendered to an image                             | Toolbar, a text button                            |
-| Download                          | Saves the document under its file name                                          | Toolbar, last, an icon button                     |
-| Search field                      | Holds the query                                                                 | Search row                                        |
-| Match case, Whole word            | Set how a search matches                                                        | Search row, checkboxes                            |
-| Previous match, Next match        | Step back and on through the matches                                            | Search row, icon buttons                          |
-| Matches count                     | "current of total", or "No matches" when a query has none; a polite live region | Search row, after the buttons                     |
-| Password field and Open           | Unlocks a protected document                                                    | Between the search row and the pages, while asked |
+| Control                                                   | Task it serves                                         | How often                             | Where it lives                          | Why there                                                                                                                                                                           |
+| :-------------------------------------------------------- | :----------------------------------------------------- | :------------------------------------ | :-------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sidebar toggle (pressed while open)                       | Shows or hides the outline and the thumbnails          | Every session                         | Primary bar, first                      | It is the only way to open the sidebar, and its pressed state says whether it is open, so it stays out of the menu, as a toggle does                                                |
+| Previous page                                             | Goes back a page                                       | Every session                         | Primary bar                             | Paging back is the most repeated move in a document                                                                                                                                 |
+| Page field, with "of N" beside it                         | Goes to a page by number, and says where the reader is | Every session                         | Primary bar                             | A number is typed here and Enter goes to it, so no Go button repeats the field's own job. "of N" is the page count, the one reading the reader needs to know how far is left        |
+| Next page                                                 | Goes forward a page                                    | Every session                         | Primary bar                             | As Previous page                                                                                                                                                                    |
+| Zoom out                                                  | Makes the pages smaller                                | Often                                 | Primary bar, beside the readout         | Zoom is a primary task, and the pair of zoom buttons with the readout between them reads as one control                                                                             |
+| Zoom readout, a percentage, which resets to fit the width | Shows the scale and returns it to fit                  | Sometimes, after zooming              | Primary bar, between the zoom buttons   | The readout is the reset, so no separate "Fit width" control is drawn; it is the state a document opens in, which the resize keeps                                                  |
+| Zoom in                                                   | Makes the pages larger                                 | Often                                 | Primary bar, beside the readout         | As Zoom out                                                                                                                                                                         |
+| More (labelled "PDF actions")                             | Opens every command that is not used in every session  | Every session as the door to the rest | Primary bar, last                       | One menu holds the occasional commands, so the bar draws one mark for them and not five buttons. The menu's groups keep the search settings, the view and the file apart            |
+| Search field                                              | Finds text in the document                             | Every search                          | Search row, under the primary bar       | Its own row, so the field is never pushed out by the navigation, and it is the one place a query is typed                                                                           |
+| Matches count, "2 of 5" or "No matches"                   | Says how many matches there are                        | Every search                          | Search row, after the field             | It is read beside the field it counts for, and is a live region so a screen reader hears each change                                                                                |
+| Previous match                                            | Steps back to the match before                         | Every search                          | Search row                              | A step through matches is what a search is for; Enter takes the next one, and this button takes the previous one                                                                    |
+| Next match                                                | Steps on to the next match                             | Every search                          | Search row                              | As Previous match                                                                                                                                                                   |
+| Match case (menu item, marked while on)                   | Makes a search respect capitals                        | Sometimes                             | More menu, first group                  | A setting of a search, changed rarely, so it does not take a place in the row beside the field it changes                                                                           |
+| Whole word (menu item, marked while on)                   | Finds a word and not part of a longer one              | Sometimes                             | More menu, first group                  | As Match case                                                                                                                                                                       |
+| Rotate left                                               | Turns the pages a quarter turn counter-clockwise       | Sometimes                             | More menu, second group                 | Rotation is for a scan that was put in sideways, which is occasional; left and right are two items so each is a single choice                                                       |
+| Rotate right                                              | Turns the pages a quarter turn clockwise               | Sometimes                             | More menu, second group                 | As Rotate left                                                                                                                                                                      |
+| Fit page                                                  | Fits a whole page in the view                          | Rarely                                | More menu, second group                 | Reading a full page is occasional, and the width is the default fit, so the page fit waits in the menu                                                                              |
+| Actual size                                               | Shows the page at its own size                         | Rarely                                | More menu, second group                 | Used to check a print's scale; it is kept, and rarely needs a place on the bar                                                                                                      |
+| Full screen, reading Exit full screen while on            | Makes the whole viewer fill the screen                 | Sometimes                             | More menu, second group                 | It changes the whole viewer, not one control, so it is an action of the viewer; the menu item carries its own state in its label                                                    |
+| Print                                                     | Prints every page, one to a sheet                      | Sometimes                             | More menu, third group                  | A command that leaves the app, used when needed and not while reading                                                                                                               |
+| Download                                                  | Saves the document under its name                      | Sometimes                             | More menu, third group                  | Saving is a file action, which sits with print; a download button on the bar would repeat it                                                                                        |
+| Download with watermark                                   | Saves a copy with a text stamped on each page          | Rarely                                | More menu, third group, then its dialog | A marked copy is a different file from the reader's own download, so it is named in the menu rather than as a second download button                                                |
+| Watermark dialog: text field, Cancel, Download            | Asks the text before the file is made                  | Rarely, as the step of the above      | A dialog over the viewer                | The text is one value asked before one file is made. A popover would hide the pages it sits over; the dialog is the owner's ruling, and its Download is the dialog's confirm action |
+| Sidebar tabs, Outline and Thumbnails                      | Chooses what the sidebar lists                         | Sometimes                             | Sidebar header                          | A choice between two views of one thing is a set of tabs, drawn as the library draws them                                                                                           |
+| Outline entries                                           | Goes to a section of the document                      | Sometimes                             | Sidebar, Outline tab                    | The document's own table of contents; each entry is a row that goes somewhere, so it is a row of the list                                                                           |
+| Thumbnail cards                                           | Goes to a page by sight                                | Sometimes                             | Sidebar, Thumbnails tab                 | Each card is a whole page the reader chooses, so it is a card and not a row, and the page in view is marked                                                                         |
+| Password field and Open                                   | Unlocks a protected document                           | When the document asks                | Between the search row and the pages    | It must come before any page, so it stands above them while it is asked                                                                                                             |
 
-The viewer draws no zoom readout: the scale is not shown, and the two zoom buttons are text.
+### Removed from the surface
 
-### Layout
+These were on the surface before and are not drawn now, for the reason the second column gives.
 
-The toolbar and the search row are flex rows that wrap onto further rows as the width narrows. The viewer has no breakpoint of its own. The dialog it sits in is `min(64rem, 96vw)` wide and expands with its own control, and takes the height the reader gives it, with the pages filling what is left.
+These were on the surface before and are not now, for the reason the second column gives.
+
+| Removed control                      | Why it is gone                                                                                                                      |
+| :----------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| Go                                   | The page field commits on Enter, so a button repeating Enter is a second control for one job                                        |
+| Fit width                            | The zoom readout resets to fit the width, so one control does both                                                                  |
+| Rotate, Print, Download (icon)       | Occasional commands; they moved into the More menu so the bar holds only what every session uses                                    |
+| Match case and Whole word checkboxes | Sometimes used; a checkbox pair beside the field took a row's width at a phone's width, so they moved into the menu as marked items |
+| Text zoom buttons "−" and "+"        | Replaced by the icon pair with the readout between them, so the zoom reads as one control and not as three text buttons             |
+
+### Layout at desktop width
+
+From `md` the sidebar is a column of 14rem at the start of the row, beside the pages. The viewer is the dialog's full width, `min(64rem, 96vw)`, which the dialog expands with its own control. The primary bar is one row: the sidebar toggle and the page controls at the start, the zoom controls in the middle, and More at the end. The search row sits under it at full width. Nothing wraps; the page count is the one control that gives way first, below `sm`.
+
+### Layout at phone width
+
+Below `md` the sidebar is an overlay on the start edge of the pages, at most 18rem wide and 85% of the viewer, and it is closed unless the reader opens it. Below `sm` the page count is hidden, and the bar keeps its controls in one row within the dialog's width: the sidebar toggle, the page controls, the zoom controls and the readout, and More at the end. The search row stays under the bar at full width, the field taking the space left after the count and the two match buttons. The zoom controls stay visible at every width: they are primary, and a breakpoint does not move a primary control into the menu.
+
+The sidebar's overlay has no close control of its own. The sidebar toggle, which stays on the bar, is its close, so the overlay never covers the control that closes it.
 
 ### States
 
-- **Error.** The document or the viewer's module failed: "The PDF could not be loaded." stands above the pages. A thumbnail whose document failed shows the same text in place of its canvas.
-- **Password.** The password form stands above the pages while the document asks for one. A wrong password shows "The password is wrong." as the field's error.
-- **No match.** The matches count reads "No matches".
+- **Loading.** The viewer's module or the document is still arriving: a spinner stands over the pages, and the page controls are disabled until a document opens. The zoom readout is disabled with no document.
+- **Empty outline.** The Outline tab says "This PDF has no outline". An outline still being read shows three placeholder rows instead, so the two are told apart.
+- **No thumbnails yet.** A card whose page has not been drawn shows a blank canvas with its page number, and the page is drawn once its card comes into view.
+- **Error.** The document or the viewer's module failed: "The PDF could not be loaded." stands above the pages, which are not drawn, and the sidebar is hidden.
+- **Password.** The password form stands above the pages while the document asks for one, and a wrong password shows "The password is wrong." as the field's error.
+- **Full screen.** The whole viewer fills the screen with its layout unchanged, and the More menu's Full screen item reads Exit full screen.
+- **Rotated.** Every page and every thumbnail turns with the rotation. The rotation belongs to the viewer and is not remembered between viewers.
+- **No match.** The matches count reads "No matches" and the match buttons are disabled.
 - **No query.** The matches count is empty.
 
 ### Focus order
 
-Tab moves in DOM order: the toolbar's controls, then the search row's, then the password form when it is asked, then the pages container.
+Tab moves in this order: the sidebar toggle, Previous page, the page field, Next page, Zoom out, the zoom readout, Zoom in and More; then the search field, Previous match and Next match; then the password form when it is asked; then the sidebar when it is open, its tabs first and then the outline entries or the thumbnail cards; then the pages. A menu opens with its first item focused, as the library's menus do.
 
-### Accessibility
+## Keyboard model
 
-- **Every icon button has an accessible name** taken from its `label`, which is also its tooltip. The zoom buttons are named "Zoom out" and "Zoom in".
-- **The toolbar is named** "PDF tools", and the search row is a search landmark.
+- **Enter in the page field** goes to the page typed. **Enter in the search field** goes to the next match, and Previous match goes back.
+- **Enter or Space on a thumbnail card** chooses it, as a button does. An outline entry is a list row, so the arrow keys move between entries and Enter chooses one, as the library's lists do.
+- **Escape** closes an open menu or dialog first. In full screen, the browser's own Escape leaves full screen, and the viewer stays open.
+- **No shortcut of the viewer's own.** The viewer adds no key handling; every control is reached by Tab.
+
+## Narrow screens
+
+A phone's width is below `md`, and the page count yields below `sm`, as the layout sets out. The breakpoints are the app's, read through its display composable; no component is written for a device. A control moves into the More menu only where it is occasional, so no primary control changes place between widths.
+
+## Accessibility
+
+- **Every control has an accessible name.** Each icon button takes its name from its `label`, which is also its tooltip. The zoom readout is named with its percentage, "Zoom 125%, reset".
+- **Toggles say whether they are on.** The sidebar toggle is pressed while open. Match case and Whole word are marked menu items, so a screen reader hears each one's state.
+- **The menu is a menu.** Its trigger is named "PDF actions"; its items are menu items, and the marked ones are checkable.
+- **Regions and lists name what they hold.** The toolbar is named "PDF tools" and the search row is a search landmark. The sidebar's tabs are named "Sidebar", the outline is named "Outline", and each thumbnail card is a button named by its page, with `aria-current` on the card of the page in view.
 - **Live text.** The matches count is a polite live region, so a change of match is read out.
+- **Focus is visible.** Every control takes the library's focus ring.
+- **The watermark dialog's field has a label**, "Watermark text", and its Download is disabled while the field is empty, so the reason is visible in the disabled state.
 - **The password field is labelled** "Password", and its wrong-password text is its error.
-
-### Keyboard
-
-The viewer adds no key handling of its own. Each control is a button or a field reached by Tab, and the Go button goes to the page typed.
-
-## Not built
-
-Nothing in the viewer's surface is unbuilt. The sidebar and its toggle, the More menu, rotation left and right, full screen, the download with a watermark and the zoom readout are all in `Pdf/Viewer/`, each with its tests. The change that designed them, the PDF viewer surface change, is archived under `openspec/changes/archive/`, and its decisions are kept under `Decisions` below.
 
 ## Decisions
 
-The viewer's own decisions, its state, its overlay geometry, its scroll, its search and its print, are the package's, in its [design](../../vue-pdfjs-headless/viewer/design.md). The app's decision is the one below.
+The viewer's own decisions, its state, its overlay geometry, its scroll, its search and its print, are the package's, in its [design](../../vue-pdfjs-headless/viewer/design.md). The app's decisions are these.
 
-- **Highlight on load is the caller's option, with no caller yet.** The package's `usePdfViewer` takes `highlightTerms`, and the viewer's root forwards it from its own prop, which no caller passes. No place in the app opens a PDF from a search result with a query: a message search result shows its attachment as a preview, and a preview opens its message and not the viewer. So the option is exposed and passed by no one, which the Notes say.
-- **The sidebar's choices are remembered in the browser.** Its open or closed state and its tab use the app's local storage keys, so a reader who keeps the thumbnails open sees them again. It starts closed at a phone's width and open otherwise, and overlays the pages at a phone's width.
-- **Full screen is the whole viewer, not the scrolling pages.** The package's container is the scroll region, so full screen on it would hide the toolbar and the sidebar. The app takes full screen on the viewer's root with the browser's own composable, and the package keeps no fullscreen state.
-- **The download with a watermark is a dialog, not a popover, because it asks for a value before it makes a file.** A popover would hide the pages it sits over.
+- **Highlight on load is the caller's option, with no caller yet.** The package's `usePdfViewer` takes `highlightTerms`, and `Viewer/Index.vue` passes it on. No place in the app opens a PDF from a search result with a query: a message search result shows its attachment as a preview, and a preview opens its message and not the viewer. So the option is exposed and passed by no one, which the Notes say.
+- **The sidebar's choices are remembered in the browser.** The open or closed state and the tab use the app's local storage keys, so a reader who keeps the thumbnails open sees them again. The sidebar starts closed at a phone's width and open otherwise, until the reader has chosen.
+- **Full screen is the whole viewer, not the scrolling pages.** The package's container is the scroll region, so full screen on it would hide the toolbar and the sidebar, the controls a reader is using. The app takes full screen on the viewer's root with the browser's own composable, and the package keeps no fullscreen state of its own.
+- **The download with a watermark is a dialog, not a popover, because it asks for a value before it makes a file.** The owner's ruling names it a small dialog.
+- **The thumbnail rail is the app's to draw.** The sidebar's card list is a component of the app, so its look follows the app's surfaces, while the package's composable supplies which cards are drawn at a time.
 - **Thumbnails turn with the pages.** A rail that stayed upright under a rotated page would show a different document from the one on screen.
 
 ## Key files
@@ -105,6 +148,7 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 | `apps/web/app/components/Pdf/Viewer/Outline.vue`             | The outline's entries as a list, nested entries indented under their parent, and the loading and empty states                                                                                                                     |
 | `apps/web/app/components/Pdf/Viewer/ThumbnailRail.vue`       | One card per page, drawn as it comes into view, turned with the pages and marked when current                                                                                                                                     |
 | `apps/web/app/components/Pdf/Viewer/WatermarkDialog.vue`     | The text asked before a download with a watermark                                                                                                                                                                                 |
+| `apps/web/app/services/pdf/flattenOutline.ts`                | The outline's entries flattened into the rows the sidebar lists, each keyed by its position in the tree                                                                                                                           |
 | `apps/web/app/composables/shared/useLazyLoad.ts`             | The mount-time load the renderer and the viewer's module both go through: the value kept, a failure logged and flagged for the failure text, and a load the component unmounts before it settles aborted with its outcome dropped |
 | `apps/web/app/services/pdf/loadPdfRenderer.ts`               | `pdfjs-dist`, imported after mount, with the worker from the app's URL                                                                                                                                                            |
 | `apps/web/app/services/pdf/loadPdfViewer.ts`                 | The viewer's components and stylesheet, imported when a viewer mounts                                                                                                                                                             |
@@ -116,6 +160,11 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 
 ## Notes
 
-- The `fullscreen` permissions grant in `apps/web/configuration/security.ts` is the call view's: its stage calls `requestFullscreen` on its own element. The viewer's full screen is the browser's own on its root (`Pdf/Viewer/Index.vue`), and leaving it on Escape is the browser's behaviour, which no app test pins.
+- The `fullscreen` permissions grant in `apps/web/configuration/security.ts` is written for the call view's stage, which requests full screen on its own element. The viewer's full screen is on the same origin, so the same grant covers it.
 - The package's `usePdfViewer` takes `highlightTerms`, and no caller passes it. Nothing in the app opens a viewer from a search with a query, so the option is the seam a later search result would pass through.
 - Annotation editing and comments are the [PDF annotations change](../../vue-pdfjs-headless/annotations/design.md)'s, and are not on this surface.
+
+## Sources
+
+- [pdf.js viewer](https://github.com/mozilla/pdf.js/blob/master/web/pdf_viewer.js): its sidebar's Outline and Thumbnails tabs and its find bar's options menu are the reference for the surface above, departed from in the places the removed table names.
+- [@vue-pdf-viewer](https://www.npmjs.com/package/@vue-pdf-viewer/viewer), read from its tracker and its documentation only.
