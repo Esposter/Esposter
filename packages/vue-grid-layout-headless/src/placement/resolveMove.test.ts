@@ -59,4 +59,23 @@ describe(resolveMove, () => {
       { h: 1, id: "b", w: 3, x: 0, y: 1 },
     ]);
   });
+
+  test("a swap pushes the item it lands on when the dropped item would be left past the last column", () => {
+    expect.hasAssertions();
+
+    expect(
+      resolveMove(
+        [
+          { h: 1, id: "a", w: 2, x: 0, y: 0 },
+          { h: 1, id: "b", w: 1, x: 3, y: 0 },
+        ],
+        { h: 1, id: "a", w: 2, x: 2, y: 0 },
+        CollisionMode.Swap,
+        4,
+      ),
+    ).toStrictEqual([
+      { h: 1, id: "a", w: 2, x: 2, y: 0 },
+      { h: 1, id: "b", w: 1, x: 3, y: 1 },
+    ]);
+  });
 });

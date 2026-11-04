@@ -6,7 +6,7 @@ import { moveItem } from "#src/placement/moveItem";
 
 // The layout with the target moved onto its new cell, as the collision mode says. Push moves the items it lands on down.
 // Swap trades places with the one item a move lands on, and pushes when it lands on several, when the item resizes,
-// Or when the item it trades into the moved item's old cell would stick out past the last column.
+// Or when either item would stick out past the last column once they trade.
 // Prevent refuses a drop that lands on any other item, so every item stays where it was
 export const resolveMove = <T extends GridItem>(
   layout: T[],
@@ -25,7 +25,8 @@ export const resolveMove = <T extends GridItem>(
     landedItems.length === 1 &&
     landedItem &&
     movedItem &&
-    movedItem.x + landedItem.w <= columnNumber
+    movedItem.x + landedItem.w <= columnNumber &&
+    landedItem.x + movedItem.w <= columnNumber
   ) {
     const swappedLayout = layout.map((item) =>
       item.id === landedItem.id ? { ...item, x: movedItem.x, y: movedItem.y } : { ...item },

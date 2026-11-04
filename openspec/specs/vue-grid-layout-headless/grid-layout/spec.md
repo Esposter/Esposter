@@ -68,10 +68,10 @@ The package SHALL resolve an item dropped onto others by pushing them aside, swa
 - **WHEN** an item is dropped across two others
 - **THEN** the two are pushed aside as in the push mode
 
-#### Scenario: A swap that would leave the other item past the last column
+#### Scenario: A swap that would leave either item past the last column
 
 - **GIVEN** the swap mode
-- **WHEN** an item is dropped onto one other that is wider than the cells the dropped item leaves
+- **WHEN** an item is dropped onto one other, and trading places would run either item past the last column
 - **THEN** the other item is pushed aside as in the push mode, so no item ends outside the columns
 
 #### Scenario: A move refused under prevent
