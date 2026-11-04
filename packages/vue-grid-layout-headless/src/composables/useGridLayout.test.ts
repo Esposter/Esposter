@@ -545,6 +545,24 @@ describe(useGridLayout, () => {
     expect(grid.value?.placeholder.value).toBe(placeholder);
   });
 
+  test("a layout change under a held palette preview is redrawn on the next move within its cell", async () => {
+    expect.hasAssertions();
+
+    const { grid, setItems } = mountGrid({ items: [] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding });
+    setItems([{ h: 2, id: "a", w: 2, x: 2, y: 0 }]);
+    await flushPromises();
+    const getTileTop = () => grid.value?.tiles.value.find(({ item }) => item.id === "a")?.geometry.top;
+    const topBefore = getTileTop();
+    expect(topBefore).toBeDefined();
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding + 1, clientY: spacing.padding });
+
+    expect(getTileTop()).toBeGreaterThan(Number(topBefore));
+  });
+
   test("leaving the grid clears the preview", async () => {
     expect.hasAssertions();
 

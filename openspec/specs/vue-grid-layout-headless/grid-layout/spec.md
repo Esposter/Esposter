@@ -236,6 +236,13 @@ The package SHALL show an item dragged in from outside any grid where it would l
 - **WHEN** the pointer leaves the grid
 - **THEN** the placeholder is removed
 
+#### Scenario: A layout replaced under a held palette preview is redrawn
+
+- **GIVEN** a palette entry held over a cell of the grid
+- **WHEN** the consumer replaces the items while the pointer stays in that cell
+- **THEN** the held preview is dropped
+- **AND** the next move previews the cell on the new layout
+
 ### Requirement: The package finds the first free cell for a new item
 
 The package SHALL find the first cell a new item of a given span fits in, scanning rows from the top and columns from the left.

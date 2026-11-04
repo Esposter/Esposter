@@ -95,9 +95,11 @@ export const useGridLayout = <T extends GridItem>(
     gesturePreview.value = undefined;
   };
   // A gesture previews the layout it began on, so a layout replaced under it — a reload, a restore, another column
-  // Count — ends the gesture rather than letting its release write cells the new layout never had
+  // Count — ends the gesture rather than letting its release write cells the new layout never had. A held external
+  // Preview was laid out on the old layout too, so it is dropped, and the next move previews the new one
   watch(layout, () => {
     resetGesture();
+    externalPreview.value = undefined;
   });
   // The layout a cell lands in, as the collision mode resolves it. A refused cell keeps the grid's own layout, so it is drawn
   // Where it was attempted and the grid is left as it was
