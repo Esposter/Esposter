@@ -90,27 +90,27 @@ The package answers the recorded SurveyJS value for every fixture row except the
 
 ## Key files
 
-| File                                                                        | Role                                                                               |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `packages/survey-logic/package.json`                                        | the private package's manifest                                                     |
-| `packages/survey-logic/README.md`                                           | the public surface, every implemented function and the deliberately absent ones    |
-| `packages/survey-logic/src/services/tokenizeSurveyExpression.ts`            | reads the source into tokens, or the first fault with its position                 |
-| `packages/survey-logic/src/services/parseSurveyExpression.ts`               | parses the tokens into a tree by power, refusing tokens left over                  |
-| `packages/survey-logic/src/services/SurveyExpressionBinaryOperatorMap.ts`   | the binary operators, their spellings and powers                                   |
-| `packages/survey-logic/src/services/evaluateSurveyExpression.ts`            | evaluates a tree over a context, one evaluator per node type                       |
-| `packages/survey-logic/src/services/runSurveyExpression.ts`                 | parses a source and evaluates it over a context already read as answers            |
-| `packages/survey-logic/src/services/checkSurveyExpression.ts`               | refuses a source that does not parse, calls an unknown function or uses a filter   |
-| `packages/survey-logic/src/services/findSurveyExpressionRefusal.ts`         | finds the first refused call in source order                                       |
-| `packages/survey-logic/src/services/functions/SurveyLogicFunctionMap.ts`    | the registry the evaluator and the check read, merged from the two function maps   |
-| `packages/survey-logic/src/services/shared/toSurveyLogicAnswer.ts`          | the one boundary where stored answers are read: a storage null as undefined (R1)   |
-| `packages/survey-logic/src/services/shared/toSurveyLogicNumber.ts`          | the one reader of a text as a number (R2)                                          |
-| `packages/survey-logic/src/services/shared/checkIsSurveyLogicItemHeld.ts`   | the one item a haystack holds, shared by `contains`, `anyof` and `allof` (R7, R11) |
-| `packages/survey-logic/src/services/shared/checkIsSurveyLogicContaining.ts` | the containment `contains` test over every item of its right side, exact (R11)     |
-| `packages/survey-logic/src/services/shared/checkIsSurveyLogicLess.ts`       | the ordering behind `<`, with a boolean never ordered (R7, R11)                    |
-| `packages/survey-logic/src/services/shared/parseSurveyLogicDate.ts`         | the one reader of an ISO text as a date, or as none (R9)                           |
-| `packages/survey-logic/src/services/shared/getDateDifference.ts`            | the interval between two dates, in calendar units or on the wall clock (R9)        |
-| `packages/survey-logic/src/services/shared/createSurveyLogicWallClock.ts`   | the one constructor of a wall-clock date, its year set whole (R9)                  |
-| `packages/survey-logic/src/services/shared/toSurveyLogicWallClock.ts`       | the one reader of the local clock as a wall clock (R9)                             |
-| `packages/survey-logic/src/services/fixtures/oracleFixtures.json`           | the recorded SurveyJS values, and each deviating row with its rule key             |
-| `packages/survey-logic/src/services/fixtures/oracleFixtures.test.ts`        | replays each row and checks each deviation names a key and still differs           |
-| `packages/math-expression-compiler/src/models/`                             | the sibling package whose layout this one follows                                  |
+| File                                                                        | Role                                                                                                               |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `packages/survey-logic/package.json`                                        | the private package's manifest                                                                                     |
+| `packages/survey-logic/README.md`                                           | the public surface, every implemented function and the deliberately absent ones                                    |
+| `packages/survey-logic/src/services/tokenizeSurveyExpression.ts`            | reads the source into tokens, or the first fault with its position                                                 |
+| `packages/survey-logic/src/services/parseSurveyExpression.ts`               | parses the tokens into a tree by power, refusing tokens left over                                                  |
+| `packages/survey-logic/src/services/SurveyExpressionBinaryOperatorMap.ts`   | the binary operators, their spellings and powers                                                                   |
+| `packages/survey-logic/src/services/evaluateSurveyExpression.ts`            | evaluates a tree over a context, one evaluator per node type                                                       |
+| `packages/survey-logic/src/services/runSurveyExpression.ts`                 | parses a source and evaluates it over a context already read as answers                                            |
+| `packages/survey-logic/src/services/checkSurveyExpression.ts`               | refuses a source that does not parse, calls an unknown function or uses a filter                                   |
+| `packages/survey-logic/src/services/findSurveyExpressionRefusal.ts`         | finds the first refused call in source order                                                                       |
+| `packages/survey-logic/src/services/functions/SurveyLogicFunctionMap.ts`    | the registry the evaluator and the check read, merged from the three function maps, its array functions among them |
+| `packages/survey-logic/src/services/shared/toSurveyLogicAnswer.ts`          | the one boundary where stored answers are read: a storage null as undefined (R1)                                   |
+| `packages/survey-logic/src/services/shared/toSurveyLogicNumber.ts`          | the one reader of a text as a number (R2)                                                                          |
+| `packages/survey-logic/src/services/shared/checkIsSurveyLogicItemHeld.ts`   | the one item a haystack holds, shared by `contains`, `anyof` and `allof` (R7, R11)                                 |
+| `packages/survey-logic/src/services/shared/checkIsSurveyLogicContaining.ts` | the containment `contains` test over every item of its right side, exact (R11)                                     |
+| `packages/survey-logic/src/services/shared/checkIsSurveyLogicLess.ts`       | the ordering behind `<`, with a boolean never ordered (R7, R11)                                                    |
+| `packages/survey-logic/src/services/shared/parseSurveyLogicDate.ts`         | the one reader of an ISO text as a date, or as none (R9)                                                           |
+| `packages/survey-logic/src/services/shared/getDateDifference.ts`            | the interval between two dates, in calendar units or on the wall clock (R9)                                        |
+| `packages/survey-logic/src/services/shared/createSurveyLogicWallClock.ts`   | the one constructor of a wall-clock date, its year set whole (R9)                                                  |
+| `packages/survey-logic/src/services/shared/toSurveyLogicWallClock.ts`       | the one reader of the local clock as a wall clock (R9)                                                             |
+| `packages/survey-logic/src/services/fixtures/oracleFixtures.json`           | the recorded SurveyJS values, and each deviating row with its rule key                                             |
+| `packages/survey-logic/src/services/fixtures/oracleFixtures.test.ts`        | replays each row and checks each deviation names a key and still differs                                           |
+| `packages/math-expression-compiler/src/models/`                             | the sibling package whose layout this one follows                                                                  |
