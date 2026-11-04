@@ -4,6 +4,7 @@ import type { SurveyAnswerValue, SurveyRatingNode } from "survey-engine";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
 import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
+import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
 import { takeOne } from "@esposter/shared";
 import { SurveyRatingType } from "survey-engine";
 
@@ -16,9 +17,8 @@ interface Props {
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
 const items = computed(() => getSurveyRatingItems(node.props.rateCount));
-// An answer no step has yet is the empty text, as a choice group's absent value is
 const rating = computed<number | string>({
-  get: () => (typeof answer.value === "number" ? answer.value : ""),
+  get: () => getSurveyRatingStep(answer.value),
   set: (value) => {
     answer.value = value;
   },

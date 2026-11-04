@@ -25,10 +25,10 @@ const inputTypeItems = Object.values(SurveyMultipleTextItemInputType).map((input
 const addText = ref("");
 // An item added takes its typed text as its name and its title, which the owner can then change
 const addFromField = () => {
-  const items = toSurveyMultipleTextItemFromText(addText.value);
-  if (items.length === 0) return;
+  const item = toSurveyMultipleTextItemFromText(addText.value);
+  if (!item) return;
 
-  addItems(items);
+  addItems([item]);
   addText.value = "";
 };
 </script>

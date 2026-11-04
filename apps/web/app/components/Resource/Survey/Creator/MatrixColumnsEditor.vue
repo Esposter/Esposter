@@ -22,10 +22,10 @@ const cellTypeItems = Object.values(SurveyMatrixCellType).map((cellType) => ({ t
 const addText = ref("");
 // A column added takes its title as its name, so it is refused where the name is not valid or repeats another's
 const addFromField = () => {
-  const columns = toSurveyMatrixColumnFromText(addText.value);
-  if (columns.length === 0) return;
+  const column = toSurveyMatrixColumnFromText(addText.value);
+  if (!column) return;
 
-  addItems(columns);
+  addItems([column]);
   addText.value = "";
 };
 const isChoiceCellType = (cellType: SurveyMatrixCellType) =>

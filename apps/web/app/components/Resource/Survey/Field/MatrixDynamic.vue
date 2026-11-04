@@ -13,6 +13,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRatingItems";
+import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
 import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "survey-engine";
@@ -44,9 +45,6 @@ const choiceItemsMap = computed(() =>
 // A rating cell's steps are the numbers of its scale, since its column carries no choices to draw them from
 const ratingItems = getSurveyRatingItems(MATRIX_CELL_RATING_COUNT);
 const getCellText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
-// A rating cell holds its step as a number, and an empty cell holds the empty text no step has as its value
-const getRatingValue = (value: SurveyAnswerValue | undefined): number | string =>
-  typeof value === "number" ? value : "";
 const getChoiceKey = (value: SurveyAnswerValue | undefined) =>
   typeof value === "number" || typeof value === "string" ? String(value) : "";
 // The value a picked key stands for, so a numeric choice is still a number in the answer
@@ -173,7 +171,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 :is-disabled="isDisabled || undefined"
                 :items="ratingItems"
                 :label="column.title || column.name"
-                :model-value="getRatingValue(row[column.name])"
+                :model-value="getSurveyRatingStep(row[column.name])"
                 @update:model-value="(step) => setRow(rowIndex, withSurveyAnswer(row, column.name, step))"
               />
             </td>
