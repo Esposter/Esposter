@@ -135,19 +135,25 @@ The settings cursor SHALL move between options with direction input and SHALL sa
 - **WHEN** the player confirms
 - **THEN** the game returns to the title
 
-### Requirement: Stored data in an unreadable or older shape starts a fresh run
+### Requirement: Stored data in an unreadable or older shape starts a fresh run in this browser
 
-The game SHALL accept only the current save shape, and stored data that cannot be read or is in an older shape SHALL start a fresh run.
+The game SHALL accept only the current save shape. Stored data in this browser that cannot be read or is in an older shape SHALL start a fresh run. A signed-in player's stored run that cannot be read SHALL be reported as an error, and no run SHALL start over it.
 
-#### Scenario: Unreadable stored data starts a fresh run
+#### Scenario: Unreadable stored data in this browser starts a fresh run
 
-- **WHEN** the page opens and the stored data cannot be read
+- **WHEN** the page opens and the stored data in this browser cannot be read
 - **THEN** a fresh run starts
 
-#### Scenario: Older-shape stored data starts a fresh run
+#### Scenario: Older-shape stored data in this browser starts a fresh run
 
-- **WHEN** the page opens and the stored data is in an older shape
+- **WHEN** the page opens and the stored data in this browser is in an older shape
 - **THEN** a fresh run starts
+
+#### Scenario: A signed-in player's unreadable run is reported
+
+- **WHEN** the page opens and the signed-in player's stored run cannot be read
+- **THEN** the page shows an error
+- **AND** no fresh run starts
 
 ### Requirement: Saves are refused when the stored copy has changed
 

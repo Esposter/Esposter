@@ -20,18 +20,4 @@ describe(toClicker, () => {
 
     expect(toClicker(toClickerSave(clicker))).toStrictEqual(clicker);
   });
-
-  test("falls back to a fresh game for unreadable saves", () => {
-    expect.hasAssertions();
-
-    const fallbackClicker = toClicker("");
-
-    expect(fallbackClicker).toStrictEqual(
-      new Clicker({
-        createdAt: fallbackClicker.createdAt,
-        id: fallbackClicker.id,
-        updatedAt: fallbackClicker.updatedAt,
-      }),
-    );
-  });
 });

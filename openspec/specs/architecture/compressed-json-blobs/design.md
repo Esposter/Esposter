@@ -35,7 +35,7 @@ The staged upload of a large save stays gzip, the exception the [compression sta
 
 **What each number describes.** A resource's `contentHash` stays the hash of the JSON, because a client compares its own bytes against it. Its `contentSize` stays the JSON's length, because it sizes the transport and the server's cost to parse. The storage charge is the compressed length, because the ledger counts stored bytes and a blob's `BlobCreated` event reports the stored length. So the quota meter drops by the ratio, and the reconcile still agrees with the charge ([storage quotas](../../resource/storage-quotas/design.md)).
 
-**Latest shape only.** Every reader assumes the frame, and there is no plain-JSON branch ([persisted data — latest shape only](../persisted-data-latest-shape-only/design.md)). A resource's content is the owner's data and must never reset, and a game save would reset to a fresh game on a read it cannot parse. Blobs stored before the frame were converted once by a one-off script that is no longer in the repo, so no plain blob remains for a reader to meet.
+**Latest shape only.** Every reader assumes the frame, and there is no plain-JSON branch ([persisted data — latest shape only](../persisted-data-latest-shape-only/design.md)). A resource's content is the owner's data and must never reset, and a server-stored game save is the player's only copy, so a read it cannot parse is an error, never a fresh game. Blobs stored before the frame were converted once by a one-off script that is no longer in the repo, so no plain blob remains for a reader to meet.
 
 ## What it costs in compute
 
@@ -49,7 +49,7 @@ A save gains one compression, and every server read gains one decompression. Nei
 
 - **The compression fails:** the save throws before anything is uploaded. A resource save unwinds the way a failed upload already does: the version bump rolls back with its transaction, and a cleared binding stays cleared.
 - **The quota:** a rewritten content blob raises a `BlobCreated` event with its new length, and the reconcile moves the owner's counter by the difference.
-- **A read that fails:** a game's load surfaces the error rather than answering with a fresh game, so no autosave can overwrite the save it could not read. Only a save that no longer parses resets.
+- **A read that fails:** a game's load surfaces the error rather than answering with a fresh game, so no autosave can overwrite the save it could not read. Only a guest's save in this browser, which no other copy holds, resets when it no longer parses.
 
 ## Key files
 

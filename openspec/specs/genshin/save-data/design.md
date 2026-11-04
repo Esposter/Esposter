@@ -183,7 +183,7 @@ Paths relative to the repository root.
 | `apps/web/server/models/genshin/GenshinSaveEnvelope.ts`                                | the blob's shape: the save, the session id and the session a start replaced                                   |
 | `apps/web/server/services/blobState/readBlobState.ts`                                  | the blob's ETag and JSON from one download, decoded through `decompressJsonBlob`                              |
 | `apps/web/server/services/blobState/writeBlobState.ts`                                 | the write under the ETag, create-only when none, a refusal as CONFLICT                                        |
-| `apps/web/server/trpc/procedure/blobState/createReadBlobStateProcedure.ts`             | the shared read: `{ data, etag }` for Clicker and Dungeons                                                    |
+| `apps/web/server/trpc/procedure/blobState/createReadBlobStateProcedure.ts`             | the shared read: `{ data, etag }` for Clicker and Dungeons, an error for a save it cannot parse               |
 | `apps/web/server/trpc/procedure/blobState/createSaveBlobStateProcedure.ts`             | the shared save: `{ data, etag }` in, the new ETag out                                                        |
 | `apps/web/app/services/trpc/checkIsTRPCConflict.ts`                                    | the page's test for a CONFLICT answer                                                                         |
 | `packages/genshin-world/src/save.ts`                                                   | the save's entry for the server, `genshin-world/save`                                                         |

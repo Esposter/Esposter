@@ -1,9 +1,11 @@
 import { Clicker } from "#shared/models/clicker/data/Clicker";
+import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
 import { toClicker } from "@/services/clicker/save/toClicker";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { parseJsonWithSchema } from "@/services/shared/parseJsonWithSchema";
 import { useClickerStore } from "@/store/clicker";
 import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
-import { checkIsDeepEqual, getResult, jsonDateParse, omitDeep } from "@esposter/shared";
+import { checkIsDeepEqual, omitDeep } from "@esposter/shared";
 
 export const useReadClicker = async () => {
   const { $trpc } = useNuxtApp();
@@ -20,28 +22,28 @@ export const useReadClicker = async () => {
       ? oldVirtualClicker
       : newVirtualClicker;
   });
-
+  // Until a read has put the game in place the store holds a new game, and saving that would overwrite the save the
+  // Read did not reach, so a change before then is not saved
+  let isRead = false;
   watch(virtualClicker, async () => {
-    await saveClicker();
+    if (isRead) await saveClicker();
   });
 
   await useReadData(
     async () => {
       // eslint-disable-next-line no-restricted-syntax -- the offline save system reads and writes this key imperatively through `useSaveToLocalStorage`; a ref would be a second owner of it — see openspec/specs/architecture/browser-execution/design.md
       const clickerJson = window.localStorage.getItem(LocalStorageKey.ClickerStore);
-      setClicker(
-        clickerJson
-          ? getResult(() => jsonDateParse(clickerJson))
-              .map((savedClicker) => toClicker(savedClicker))
-              .orTee(console.error)
-              .unwrapOr(new Clicker())
-          : new Clicker(),
-      );
+      // A guest's save lives only in this browser, so one that no longer parses starts a fresh game
+      const savedClicker = clickerJson ? parseJsonWithSchema(clickerJson, clickerSaveSchema) : undefined;
+      setClicker(savedClicker ? toClicker(savedClicker) : new Clicker());
+      isRead = true;
       await applyOfflineProgress();
     },
     async () => {
+      // The server parsed the save before answering it, and a read that fails throws, which leaves the page unopened
       const { data, etag } = await $trpc.clicker.readClicker.query();
       setClicker(toClicker(data), etag);
+      isRead = true;
       await applyOfflineProgress();
     },
   );

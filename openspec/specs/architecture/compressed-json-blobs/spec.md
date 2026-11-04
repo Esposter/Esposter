@@ -73,7 +73,7 @@ A save SHALL store nothing and report failure when its document cannot be compre
 
 ### Requirement: A game load reports a read it cannot complete
 
-A game load SHALL report a save it cannot read rather than start a fresh game over it.
+A game load SHALL report a server-stored save it cannot read rather than start a fresh game over it. A guest's save held only in this browser is the exception: one that no longer parses starts a fresh game.
 
 #### Scenario: A failed read does not start a fresh game
 
@@ -83,9 +83,16 @@ A game load SHALL report a save it cannot read rather than start a fresh game ov
 - **AND** no fresh game starts
 - **AND** the saved progress is left as it was
 
-#### Scenario: A save that no longer parses starts a fresh game
+#### Scenario: A server-stored save that no longer parses is reported
 
-- **GIVEN** a player's stored save no longer parses
+- **GIVEN** a signed-in player's stored save no longer parses
+- **WHEN** the game loads
+- **THEN** the player sees an error
+- **AND** no fresh game starts
+
+#### Scenario: A guest's save in this browser that no longer parses starts a fresh game
+
+- **GIVEN** a guest's save in this browser no longer parses
 - **WHEN** the game loads
 - **THEN** a fresh game starts
 

@@ -5,8 +5,10 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
+import { compressZstd } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("dungeonsRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dungeons"]>;
@@ -18,6 +20,7 @@ describe("dungeonsRouter", () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   test("saves and reads", async () => {
@@ -39,5 +42,23 @@ describe("dungeonsRouter", () => {
     await expect(
       caller.saveDungeons({ data: new Dungeons(), etag: firstEtag }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: The save changed since it was read]`);
+  });
+
+  test("refuses a read of a save that no longer parses, and leaves the save as it is", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    await caller.saveDungeons({ data: new Dungeons() });
+    const container = MockContainerDatabase.get(AzureContainer.UserAssets);
+    assert.exists(container);
+    const [blobName] = container.keys();
+    assert.exists(blobName);
+    const unparseableBlob = await compressZstd(JSON.stringify({ settings: "not settings" }));
+    container.set(blobName, unparseableBlob);
+
+    await expect(caller.readDungeons()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: The saved game could not be read]`,
+    );
+    expect(container.get(blobName)).toStrictEqual(unparseableBlob);
   });
 });

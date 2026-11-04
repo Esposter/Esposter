@@ -5,9 +5,10 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { clickerRouter } from "#server/trpc/routers/clicker";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
+import { compressZstd } from "@esposter/db";
 import { AzureContainer } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("clickerRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
@@ -19,6 +20,7 @@ describe("clickerRouter", () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   test("saves and reads", async () => {
@@ -29,6 +31,15 @@ describe("clickerRouter", () => {
     const { data: storedClickerSave } = await caller.readClicker();
 
     expect(storedClickerSave).toStrictEqual(clickerSave);
+  });
+
+  test("answers a fresh game, under no ETag, for a player with no save", async () => {
+    expect.hasAssertions();
+
+    const { data, etag } = await caller.readClicker();
+
+    expect(data).toStrictEqual(new ClickerSave({ createdAt: data.createdAt, id: data.id, updatedAt: data.updatedAt }));
+    expect(etag).toBeUndefined();
   });
 
   test("refuses a save sent under an etag another save has replaced", async () => {
@@ -66,5 +77,24 @@ describe("clickerRouter", () => {
     await expect(caller.readClicker()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Unknown frame descriptor]`,
     );
+  });
+
+  // The server's copy is the player's only one, so a save it cannot parse is refused and left as it is
+  test("refuses a read of a save that no longer parses, and leaves the save as it is", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    await caller.saveClicker({ data: new ClickerSave() });
+    const container = MockContainerDatabase.get(AzureContainer.ClickerAssets);
+    assert.exists(container);
+    const [blobName] = container.keys();
+    assert.exists(blobName);
+    const unparseableBlob = await compressZstd(JSON.stringify({ pointCount: "many" }));
+    container.set(blobName, unparseableBlob);
+
+    await expect(caller.readClicker()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: The saved game could not be read]`,
+    );
+    expect(container.get(blobName)).toStrictEqual(unparseableBlob);
   });
 });

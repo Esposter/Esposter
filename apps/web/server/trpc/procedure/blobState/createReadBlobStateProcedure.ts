@@ -1,24 +1,31 @@
 import type { AzureContainer } from "@esposter/db-schema";
+import type { z } from "zod";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { getSaveBlobName } from "@esposter/db-schema";
-import { getResult, jsonDateParse } from "@esposter/shared";
+import { jsonDateParse } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 
-// The init parameter is typed never so every state class with an optional-init constructor is accepted —
-// Their init types vary (Partial<X> vs PartialDeep<X>), which is what the `as never` below pays for.
-// Only a save that no longer parses resets to a fresh game (openspec/specs/architecture/persisted-data-latest-shape-only/design.md). A
-// Read that fails surfaces instead: answered with a fresh game, the client's next autosave would overwrite the save
-// It could not read. The ETag is answered beside the model, the one the next save is sent under
-export const createReadBlobStateProcedure = <TData>(container: AzureContainer, Model: new (init?: never) => TData) =>
+// The server holds the save, so a save it cannot parse is an error rather than a fresh game: the client's next save
+// Would write that fresh game over the one it could not read. The rule is in
+// openspec/specs/architecture/persisted-data-latest-shape-only/design.md. The ETag is answered beside the model, the one
+// The next save is sent under
+export const createReadBlobStateProcedure = <TData, TInit>(
+  container: AzureContainer,
+  Model: new (init?: TInit) => TData,
+  schema: z.ZodType<TInit>,
+) =>
   standardAuthedProcedure.query<{ data: TData; etag?: string }>(async ({ ctx }) => {
     const containerClient = await useContainerClient(container);
     const { etag, json } = await readBlobState(containerClient, getSaveBlobName(ctx.getSessionPayload.user.id));
     if (!json) return { data: new Model(), etag };
-    // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- `any` is not assignable to `never`
-    const data = getResult(() => new Model(jsonDateParse(json.toString()) as never))
-      .orTee(console.error)
-      .unwrapOr(new Model());
-    return { data, etag };
+
+    const parsedSave = schema.safeParse(jsonDateParse(json.toString()));
+    if (!parsedSave.success) {
+      console.error(parsedSave.error);
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The saved game could not be read" });
+    }
+    return { data: new Model(parsedSave.data), etag };
   });

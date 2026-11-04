@@ -22,7 +22,7 @@ flowchart TD
 
 A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`, parsed by `toLocalDungeons`, so a stored value that is not a save starts a fresh run rather than failing the page); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
 
-**No legacy shapes** — per the [latest-shape-only convention](../../architecture/persisted-data-latest-shape-only/design.md), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a blob that fails to parse starts fresh.
+**No legacy shapes** — per the [latest-shape-only convention](../../architecture/persisted-data-latest-shape-only/design.md), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a guest's blob that fails to parse starts fresh, and a signed-in player's is reported as an error, since the server holds it.
 
 **Settings** — the Settings scene edits `dungeons.settings`, shared across runs: text speed (Slow/Mid/Fast, driving dialog animation delay), battle style, animations on/off, sound on/off + volume percentage, and theme mode (recoloring the UI glass panels via `ThemeModeColorsMap`). Settings persist in the same blob write.
 

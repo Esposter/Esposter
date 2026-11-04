@@ -21,14 +21,14 @@ flowchart TD
   save60 --> persist{useSave + toClickerSave}
   persist -->|authed| blob[clicker.saveClicker → Azure blob userId/save]
   persist -->|anonymous| ls[localStorage ClickerStore]
-  blob --> load[useReadClicker]
-  ls --> load
-  load -->|clickerSaveSchema + toClicker| clicker[in-memory Clicker]
+  blob -->|parsed by the server; a failure is an error| load[useReadClicker]
+  ls -->|parsed here; a failure starts a fresh game| load
+  load -->|toClicker| clicker[in-memory Clicker]
 ```
 
-**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `pointCount` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `checkIsDeepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch.
+**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `pointCount` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `checkIsDeepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch. The watch saves only once a read has put the game in place, so a read that fails leaves nothing to save over the server's copy.
 
-**Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. There is no migration or self-heal path ([latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)): a save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game.
+**Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. There is no migration or self-heal path ([latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)): a guest's save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game, while a signed-in player's save that fails it is an error, since the server's copy is the only one.
 
 **Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`). Each save is conditional on its ETag, as the [conditional writes](../../architecture/conditional-writes/design.md) page records — `useSave` holds that ETag for every store that uses it, so a store only names its procedure — and a refused save reloads the page to take the server's copy; anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](../../../rejected/resource/games-integration/design.md).
 
@@ -52,7 +52,7 @@ Paths relative to `apps/web`.
 | `app/composables/shared/useWorkerInterval.ts` | worker-backed interval, cleared on unmount        |
 | `app/services/clicker/applyGameTick.ts`       | per-tick production math (points + producedValue) |
 | `app/services/clicker/save/toClickerSave.ts`  | serialize in-memory state to ids/counters         |
-| `app/services/clicker/save/toClicker.ts`      | parse + hydrate ids back                          |
+| `app/services/clicker/save/toClicker.ts`      | hydrate ids back                                  |
 | `app/store/clicker/index.ts`                  | save root, `useSave` wiring                       |
 | `app/store/clicker/popup.ts`                  | click handling + floating point popups            |
 | `server/trpc/routers/clicker.ts`              | read/save + content-map procedures                |
