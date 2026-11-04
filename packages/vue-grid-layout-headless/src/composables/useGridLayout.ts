@@ -182,15 +182,14 @@ export const useGridLayout = <T extends GridItem>(
     });
     const point = { x: event.clientX, y: event.clientY };
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
-    // A body drag over another grid is previewed on that grid and not on its own, and one over no grid is previewed nowhere
-    const isTransferable = checkIsTransferable(activeGesture);
-    const grid = isTransferable ? findGridAt(point, activeGesture.element) : undefined;
-    const isOwnGrid = !isTransferable || grid?.element === root.value;
-    const transfer = isOwnGrid ? undefined : grid;
+    // A body drag over another grid is previewed on that grid and not on its own. Over its own grid or over no grid it is
+    // Previewed on its own, so a release over no grid commits the cells its placeholder shows
+    const grid = checkIsTransferable(activeGesture) ? findGridAt(point, activeGesture.element) : undefined;
+    const transfer = grid?.element === root.value ? undefined : grid;
     if (activeGesture.transfer !== transfer) activeGesture.transfer?.clearPreview();
     gesture.value = { ...activeGesture, cell, isStarted: true, offset, transfer };
     transfer?.preview(activeGesture.origin, point);
-    if (!isOwnGrid) gesturePreview.value = undefined;
+    if (transfer) gesturePreview.value = undefined;
     else if (isCellChanged || !gesturePreview.value) gesturePreview.value = getPreview(cell, layout.value);
   };
   // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
@@ -240,8 +239,9 @@ export const useGridLayout = <T extends GridItem>(
     getOptions().onCommit({ changes });
     return true;
   };
-  // A release over this grid writes the cells its drag previewed, once. A drag the mode refuses leaves the layout as it was,
-  // So it writes nothing. A body drag released over another grid is handed to that grid, and one over no grid returns
+  // A release writes the cells its drag previewed, once. A drag the mode refuses leaves the layout as it was, so it writes
+  // Nothing. A body drag released over another grid is handed to that grid instead, and a release over no grid commits in
+  // Its own grid, as it does with or without onTransfer
   const handlePointerUp = (event: PointerEvent) => {
     const activeGesture = gesture.value;
     if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
@@ -249,16 +249,15 @@ export const useGridLayout = <T extends GridItem>(
     const point = { x: event.clientX, y: event.clientY };
     const preview = gesturePreview.value;
     const changes = preview && !preview.isRefused ? getChangedCells(preview.layout) : [];
-    const isTransferable = checkIsTransferable(activeGesture);
-    const grid = isTransferable ? findGridAt(point, activeGesture.element) : undefined;
+    const grid = checkIsTransferable(activeGesture) ? findGridAt(point, activeGesture.element) : undefined;
     resetGesture();
-    if (!isTransferable || grid?.element === root.value) {
+    if (!grid || grid.element === root.value) {
       if (changes.length > 0) getOptions().onCommit({ changes });
       return;
     }
-    // A grid that refuses the item gives no cell back, so the item stays where it was, as it does over no grid
-    const cell = grid?.accept(activeGesture.origin, point);
-    if (grid && cell) getOptions().onTransfer?.({ cell, item: activeGesture.origin, target: grid.element });
+    // A grid that refuses the item gives no cell back, so the item stays where it was and nothing transfers
+    const cell = grid.accept(activeGesture.origin, point);
+    if (cell) getOptions().onTransfer?.({ cell, item: activeGesture.origin, target: grid.element });
   };
   // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
   const reportContentHeight = (id: string, contentHeight: number) => {

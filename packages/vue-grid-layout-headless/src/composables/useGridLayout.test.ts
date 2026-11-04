@@ -1060,30 +1060,36 @@ describe(useGridLayout, () => {
     expect(source.wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
   });
 
-  test("#21 releasing over no grid returns the item", async () => {
+  test("#21 releasing over no grid commits in the item's own grid, with or without onTransfer", async () => {
     expect.hasAssertions();
 
     const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
-    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }], onTransfer });
+    const withTransfer = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }], onTransfer });
+    const withoutTransfer = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
     await flushPromises();
     // The page itself is under the pointer, which no grid claims
     vi.spyOn(document, "elementsFromPoint").mockReturnValue([document.body]);
-    const tile = wrapper.get(".tile");
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", {
-      buttons: 1,
-      clientX: cellPitch * 2 + spacing.padding,
-      clientY: spacing.padding,
-      pointerId,
-    });
+    // The release is past the grid's right edge, so the item is committed at the last column the grid clamps it to
+    const dragPastEdge = async ({ wrapper }: ReturnType<typeof mountGrid>) => {
+      const tile = wrapper.get(".tile");
+      await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+      await tile.trigger("pointermove", {
+        buttons: 1,
+        clientX: gridWidth + cellPitch,
+        clientY: spacing.padding,
+        pointerId,
+      });
 
-    expect(wrapper.find(".placeholder").exists()).toBe(false);
+      expect(wrapper.find(".placeholder").exists()).toBe(true);
 
-    await tile.trigger("pointerup", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding, pointerId });
+      await tile.trigger("pointerup", { clientX: gridWidth + cellPitch, clientY: spacing.padding, pointerId });
+    };
+    await dragPastEdge(withTransfer);
+    await dragPastEdge(withoutTransfer);
 
-    expect(onCommit).not.toHaveBeenCalled();
+    expect(withTransfer.onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 10, y: 0 }] }]]);
+    expect(withoutTransfer.onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 10, y: 0 }] }]]);
     expect(onTransfer).not.toHaveBeenCalled();
-    expect(wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
   });
 
   test("#21 releasing over its own grid commits", async () => {
