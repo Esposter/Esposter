@@ -38,6 +38,6 @@ Build order of the parts. Each part carries its own tasks; this list is the orde
 ## 4. Removal and close
 
 - [x] 4.1 Run the [removal](../archive/2026-11-04-resource-survey-form-engine-removal/design.md) part.
-      Verify: a repo search for the `survey-core`, `survey-creator-core` and `survey-vue3-ui` package names finds nothing outside the archive folder, and the lockfile holds no SurveyJS package.
+      Verify: a repo search for the SurveyJS package names the [removal's verify line](../archive/2026-11-04-resource-survey-form-engine-removal/tasks.md) names finds nothing outside the archive folder, and the lockfile holds no SurveyJS package.
 - [ ] 4.3 Archive each part into its capability and write the capabilities as built; remove the roadmap item.
       Verify: `pnpm exec openspec validate --strict --no-interactive` passes with no change left under this prefix.
