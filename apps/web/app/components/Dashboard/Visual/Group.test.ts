@@ -52,7 +52,7 @@ describe("dashboardVisualGroup", () => {
   const mountGroup = (visual: Visual, isEditable?: true) =>
     mountSuspended(DashboardVisualGroup, { props: { collision, compactType, isEditable, visual }, slots: childSlots });
 
-  test("shows the group's title over a nested grid drawing each of its visuals", async () => {
+  test("shows each visual a group holds on the group's own grid", async () => {
     expect.hasAssertions();
 
     const group = createGroup(
@@ -76,7 +76,7 @@ describe("dashboardVisualGroup", () => {
     expect(wrapper.get("[data-group-id]").attributes("data-group-id")).toBe(group.id);
   });
 
-  test("heads an untitled group in the editor as 'Untitled group'", async () => {
+  test("heads an untitled group in the editor as Untitled group", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountGroup(createGroup([]), true);
@@ -84,7 +84,7 @@ describe("dashboardVisualGroup", () => {
     expect(wrapper.get("header").text()).toBe("Untitled group");
   });
 
-  test("draws no header for an untitled group on the published page", async () => {
+  test("a published group draws no header when it is untitled", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountGroup(createGroup([new Visual({ type: VisualType.Bar })]));
@@ -92,12 +92,13 @@ describe("dashboardVisualGroup", () => {
     expect(wrapper.find("header").exists()).toBe(false);
   });
 
-  test("tells the owner to drop a visual into an empty group in the editor", async () => {
+  test("tells the owner how to fill an empty group", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountGroup(createGroup([]), true);
 
     expect(wrapper.text()).toContain("Drop a visual here");
+    expect(wrapper.text()).toContain("Or choose Move to in a visual's menu");
   });
 
   test("hands a nested grid's commit, open and transfer up to its caller", async () => {

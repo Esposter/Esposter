@@ -4,7 +4,7 @@ import { MEGABYTE } from "#shared/services/app/constants";
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, padWithZeros } from "@esposter/shared";
 
 export const uploadBlocks = async (
   file: Blob,
@@ -26,7 +26,7 @@ export const uploadBlocks = async (
   };
 
   for (let index = 0; index < totalBlocks; index++) {
-    const blockId = btoa(`block-${String(index).padStart(blockIndexWidth, "0")}`);
+    const blockId = btoa(`block-${padWithZeros(index, blockIndexWidth)}`);
     const start = index * blockSize;
     const end = Math.min(start + blockSize, file.size);
     blockUploads.push(

@@ -337,6 +337,27 @@ describe(useVisualStore, () => {
     expect({ x: movedGroup.x, y: movedGroup.y }).toStrictEqual({ x: 2, y: 1 });
   });
 
+  // A move given no cell takes the first free cell of the group it moves into, as a new visual does
+  test("a visual moved into a group takes the first free cell of that group", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [
+        new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Card })] }),
+        new Visual({ type: VisualType.Card }),
+      ],
+    });
+    const visualStore = await setupStore();
+    const { moveVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const [group, movedCard] = visuals.value;
+    assert.exists(group);
+    assert.exists(movedCard);
+    moveVisual({ id: movedCard.id }, group.id);
+
+    expect({ x: movedCard.x, y: movedCard.y }).toStrictEqual({ x: 4, y: 0 });
+  });
+
   // A move is checked against the depth of every group it carries, so a group moved one level too deep is refused whole
   test("refuses a move that nests a group past the depth cap", async () => {
     expect.hasAssertions();

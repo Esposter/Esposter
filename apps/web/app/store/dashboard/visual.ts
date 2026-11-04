@@ -2,14 +2,13 @@ import type { GridCell } from "vue-grid-layout-headless";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { findVisualList } from "#shared/services/dashboard/findVisualList";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
-import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { checkIsGroupTooDeep } from "@/services/dashboard/visual/checkIsGroupTooDeep";
 import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
 import { createNewVisual } from "@/services/dashboard/visual/createNewVisual";
 import { findVisual } from "@/services/dashboard/visual/findVisual";
+import { findVisualLocation } from "@/services/dashboard/visual/findVisualLocation";
 import { getVisualList } from "@/services/dashboard/visual/getVisualList";
 import { removeVisualFromList } from "@/services/dashboard/visual/removeVisualFromList";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -29,14 +28,9 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       dashboardStore.dashboard.visuals = newVisuals;
     },
   });
-  // A new visual goes into the list its parent group holds, or the dashboard's own list. A refusal says why, and
-  // Returns nothing, so nothing is added: the dashboard is full, the parent is missing or no group, or a group would nest
-  // Past the depth cap
+  // A new visual goes into the list its parent group holds, or the dashboard's own list. A refusal says why and
+  // Returns nothing, so nothing is added: the parent is missing or no group, or a group would nest past the depth cap
   const getNewVisualList = (type: VisualType, parentId?: Visual["id"]) => {
-    if (listVisuals(visuals.value).length >= MAX_RESOURCE_CONTENT_SIZE) {
-      createAlert("The dashboard holds the most visuals it can", "error");
-      return undefined;
-    }
     if (parentId === undefined) return visuals.value;
 
     const parent = findVisual(visuals.value, { id: parentId });
@@ -107,13 +101,12 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   // Group removes every visual it holds with it, and the removed visual itself is put back into its list
   const deleteVisual = async (ids: { id: Visual["id"] }) => {
     const dashboard = dashboardStore.dashboard;
-    const list = findVisualList(dashboard.visuals, ids.id);
-    const deletedVisual = findVisual(dashboard.visuals, ids);
-    if (!list || !deletedVisual) return false;
+    const location = findVisualLocation(dashboard.visuals, ids.id);
+    if (!location) return false;
 
-    removeVisualFromList(dashboard, list.group, ids.id);
+    removeVisualFromList(dashboard, location.group, ids.id);
     const isSuccessful = await saveDashboard();
-    if (!isSuccessful) getVisualList(dashboard, list.group).push(deletedVisual);
+    if (!isSuccessful) getVisualList(dashboard, location.group).push(location.visual);
     return isSuccessful;
   };
   // A copy of one visual and of every visual it holds, each under a fresh id: its type, chart, binding and fit height,
@@ -135,34 +128,35 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   const duplicateVisual = async (ids: { id: Visual["id"] }) => {
     const dashboard = dashboardStore.dashboard;
-    const list = findVisualList(dashboard.visuals, ids.id);
-    const visual = findVisual(dashboard.visuals, ids);
-    if (!list || !visual) return false;
+    const location = findVisualLocation(dashboard.visuals, ids.id);
+    if (!location) return false;
 
-    const duplicatedVisual = copyVisual(structuredClone(toRawDeep(visual)));
-    duplicatedVisual.y = visual.y + visual.h;
-    getVisualList(dashboard, list.group).push(duplicatedVisual);
+    const duplicatedVisual = copyVisual(structuredClone(toRawDeep(location.visual)));
+    duplicatedVisual.y = location.visual.y + location.visual.h;
+    getVisualList(dashboard, location.group).push(duplicatedVisual);
     const isSuccessful = await saveDashboard();
-    if (!isSuccessful) removeVisualFromList(dashboard, list.group, duplicatedVisual.id);
+    if (!isSuccessful) removeVisualFromList(dashboard, location.group, duplicatedVisual.id);
     return isSuccessful;
   };
-  // Moves a visual, with every visual it holds, into another group's list at the cell given, or into the dashboard's own
-  // List when there is no target group. A move the move rule refuses changes nothing. Within one list the grid commits the
-  // Move, not this
-  const moveVisual = (ids: { id: Visual["id"] }, targetGroupId: undefined | Visual["id"], cell: GridCell) => {
+  // Moves a visual, with every visual it holds, into another group's list, or into the dashboard's own list when there is
+  // No target group. It lands at the cell given, or at the first free cell of the list it moves into when none is given.
+  // A move the move rule refuses changes nothing. Within one list the grid commits the move, not this
+  const moveVisual = (ids: { id: Visual["id"] }, targetGroupId: undefined | Visual["id"], cell?: GridCell) => {
     const dashboard = dashboardStore.dashboard;
-    const source = findVisualList(dashboard.visuals, ids.id);
-    const visual = findVisual(dashboard.visuals, ids);
-    if (!source || !visual) return;
+    const location = findVisualLocation(dashboard.visuals, ids.id);
+    if (!location) return;
+
+    const { group, visual } = location;
     if (checkIsMoveRefused(dashboard.visuals, visual.id, targetGroupId)) {
       createAlert("The visual cannot move there", "error");
       return;
     }
 
     const targetGroup = targetGroupId === undefined ? undefined : findVisual(dashboard.visuals, { id: targetGroupId });
-    removeVisualFromList(dashboard, source.group, ids.id);
-    Object.assign(visual, cell);
-    getVisualList(dashboard, targetGroup).push(visual);
+    removeVisualFromList(dashboard, group, ids.id);
+    const targetVisuals = getVisualList(dashboard, targetGroup);
+    Object.assign(visual, cell ?? getFirstFreeCell(targetVisuals, DASHBOARD_NO_COLUMNS, visual));
+    targetVisuals.push(visual);
   };
   // The ambient operations first, so the persisting create and delete above are the ones the store hands out
   return {

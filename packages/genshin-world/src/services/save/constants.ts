@@ -39,6 +39,7 @@ import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave"
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { InitialBannerKindWishPityMap } from "#src/services/wish/InitialBannerKindWishPityMap";
+import { padWithZeros } from "@esposter/shared";
 import { BannerKind } from "genshin-interface/save";
 
 // A save's ids are the game's own, short and fixed, so one bound serves every id a slice holds
@@ -225,7 +226,7 @@ const LONGEST_INVENTORY_ITEM_LENGTH = Math.max(
 const LONGEST_ABYSS_CYCLE_SAVE = {
   chambers: Object.fromEntries(
     Array.from({ length: MAX_ABYSS_CHAMBER_COUNT }, (_value, index) => [
-      String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+      padWithZeros(index, MAX_SAVE_ID_LENGTH),
       { isCleared: true, stars: 3 },
     ]),
   ),
