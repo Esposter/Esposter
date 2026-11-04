@@ -59,7 +59,6 @@ const getCheckColor = (fill: string) => getContrastingColor(readHexColor(fill) ?
         ui-button
         ui-ring-outside
         rd-full
-        size-6
         class="aria-pressed:ui-selected"
         :aria-label="swatch.name"
         :aria-pressed="isSelected(swatch.name)"
