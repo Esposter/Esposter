@@ -200,16 +200,23 @@ const surveyTemplateNodeOptions = [
   surveyImageNodeSchemaValue,
 ] satisfies readonly [z.core.$ZodTypeDiscriminable, ...z.core.$ZodTypeDiscriminable[]];
 
-export const surveyTemplateNodeSchema: z.ZodType<SurveyTemplateNode> = z.discriminatedUnion(
+const surveyTemplateNodeSchema: z.ZodType<SurveyTemplateNode> = z.discriminatedUnion(
   "type",
   surveyTemplateNodeOptions,
   createAcceptedTypesError(SURVEY_TEMPLATE_NODE_TYPES),
 ) satisfies z.ZodType<SurveyTemplateNode>;
 
+// Every question and a panel, the nodes a page or a panel accepts
+const surveyPlaceableNodeOptions = [
+  ...surveyTemplateNodeOptions,
+  surveyPanelDynamicNodeSchemaValue,
+  surveyPanelNodeSchemaValue,
+] satisfies readonly [z.core.$ZodTypeDiscriminable, ...z.core.$ZodTypeDiscriminable[]];
+
 // The nodes a page or a panel accepts: every question and a panel
 export const surveyPlaceableNodeSchema: z.ZodType<SurveyPlaceableNode> = z.discriminatedUnion(
   "type",
-  [...surveyTemplateNodeOptions, surveyPanelDynamicNodeSchemaValue, surveyPanelNodeSchemaValue],
+  surveyPlaceableNodeOptions,
   createAcceptedTypesError(SURVEY_PLACEABLE_NODE_TYPES),
 ) satisfies z.ZodType<SurveyPlaceableNode>;
 
@@ -219,11 +226,6 @@ export const surveyPageNodeSchema: z.ZodType<SurveyPageNode> = surveyPageNodeSch
 // Any node a survey holds, checked by its type tag and then by its own schema
 export const surveyNodeSchema: z.ZodType<SurveyNode> = z.discriminatedUnion(
   "type",
-  [
-    ...surveyTemplateNodeOptions,
-    surveyPanelDynamicNodeSchemaValue,
-    surveyPanelNodeSchemaValue,
-    surveyPageNodeSchemaValue,
-  ],
+  [...surveyPlaceableNodeOptions, surveyPageNodeSchemaValue],
   createAcceptedTypesError([...SURVEY_ROOT_NODE_TYPES, ...SURVEY_PLACEABLE_NODE_TYPES]),
 ) satisfies z.ZodType<SurveyNode>;
