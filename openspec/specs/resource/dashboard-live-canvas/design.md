@@ -28,7 +28,7 @@ flowchart LR
 ## Decisions
 
 - **One renderer for the editor and the published page.** The editor tile reuses `DashboardVisual` rather than a twin, so the editor and the reader cannot disagree about a chart.
-- **No stock icons.** The visual-type select's entries come from `VisualTypeItemCategoryDefinitions`, each with the chart icon meaning rather than a stock image.
+- **No stock icons.** The visual-type select's entries come from `VisualTypeCategoryDefinitions`, each with the chart icon meaning rather than a stock image.
 - **The corner actions are a slot, not a second corner.** Two absolutely positioned rows at the same corner would overlap, so the tile passes its actions into the visual's own row.
 - **Nothing is persisted differently.** The editor saves the dashboard content; only what a tile draws changes.
 - **One edit form and one delete confirm, for the whole editor.** A tile mounts no dialog of its own. Its Delete names its visual in the dashboard dialog store, and the editor's one confirm resolves it, as the [singleton dialogs](../../architecture/singleton-dialogs/design.md) pattern has a list's item do. The edit form is the editor's too, mounted on the edited draft and keyed by its visual. A grid of N tiles mounts nothing until one opens, and then one dialog.

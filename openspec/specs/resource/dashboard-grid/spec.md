@@ -260,7 +260,7 @@ The editor SHALL offer a Layout control that sets how visuals pack, upward, side
 
 ### Requirement: A visual's occasional actions are one menu
 
-The editor SHALL keep a visual's edit, duplicate, export, fit height and delete actions in one menu on the visual, and SHALL ask the owner to confirm before a visual is deleted.
+The editor SHALL keep a visual's edit, duplicate, export, fit height, move to and delete actions in one menu on the visual, with export only where the visual holds rows, and SHALL ask the owner to confirm before a visual is deleted.
 
 #### Scenario: Opening a visual's menu
 
@@ -437,3 +437,104 @@ The published view, the snapshot summary, the resource links, the agent's schema
 - **GIVEN** a blueprint entry for a dashboard whose group holds a visual bound to another entry
 - **WHEN** the blueprint's entries are validated
 - **THEN** the dashboard entry depends on the entry it is bound to
+
+### Requirement: A group shows its title and a grid of its visuals in the editor
+
+A group SHALL show its title in a header over a grid of the visuals it holds, each drawn as the dashboard draws them, and an empty group SHALL say how to fill it.
+
+#### Scenario: heads an untitled group in the editor as Untitled group
+
+- **GIVEN** a group with no title in the editor
+- **WHEN** the owner views the dashboard
+- **THEN** the group's header reads Untitled group
+
+#### Scenario: tells the owner how to fill an empty group
+
+- **GIVEN** an empty group in the editor
+- **WHEN** the owner views the dashboard
+- **THEN** the group says to drop a visual into it or to choose Move to in a visual's menu
+
+#### Scenario: shows each visual a group holds on the group's own grid
+
+- **GIVEN** a group holding a bar visual and a table visual
+- **WHEN** the owner views the dashboard
+- **THEN** the group's grid draws both visuals
+
+### Requirement: A visual released over a group's grid joins that group
+
+A palette tile or a visual released over a group's grid SHALL be placed inside that group, and a visual released over the dashboard's own grid SHALL leave the group it was in.
+
+#### Scenario: a tile dropped on a group's grid adds a visual inside that group
+
+- **GIVEN** an empty group in the editor
+- **WHEN** the owner drags the Bar tile from the palette and releases it over the group's grid
+- **THEN** the group holds a Bar visual
+
+#### Scenario: a visual released over a group's grid moves into that group
+
+- **GIVEN** a card visual on the dashboard and an empty group
+- **WHEN** the owner drags the card and releases it over the group's grid
+- **THEN** the group holds the card
+
+#### Scenario: a visual released over the dashboard's own grid leaves its group
+
+- **GIVEN** a group holding a card visual
+- **WHEN** the owner drags the card and releases it over the dashboard's own grid
+- **THEN** the card is on the dashboard and the group holds no visual
+
+### Requirement: The owner moves a visual into a group from its menu
+
+A visual's menu SHALL offer Move to where the visual has a group or the dashboard to go to, and the move SHALL place the visual at the first free cell of the group chosen. The menu SHALL NOT offer a group the move would nest past the depth cap.
+
+#### Scenario: move to is offered only where the visual has somewhere else to go
+
+- **GIVEN** a card visual and an empty group on the dashboard
+- **WHEN** the owner opens the menus of the card and the group
+- **THEN** the card's menu offers Move to
+- **AND** the group's menu offers no Move to
+
+#### Scenario: a group offers no group inside it and no group that would nest it past the cap
+
+- **GIVEN** a group holding another group, and a chain of four groups on the dashboard
+- **WHEN** the owner opens the outer group's Move to
+- **THEN** the menu lists no group the outer group would take past the depth cap
+- **AND** the menu lists no group the outer group holds
+
+#### Scenario: a visual moved into a group takes the first free cell of that group
+
+- **GIVEN** a group holding a card at its first cell, and a card outside the group
+- **WHEN** the owner chooses the group in Move to
+- **THEN** the moved card takes the first free cell after the group's card
+
+### Requirement: A group's menu has no export, and its delete counts what it takes
+
+A group's menu SHALL offer fit height and no export, and its delete confirm SHALL name the group and the number of visuals it takes with it.
+
+#### Scenario: a group's menu offers its fit height and no export
+
+- **GIVEN** an empty group in the editor
+- **WHEN** the owner opens the group's menu
+- **THEN** the menu lists Edit visual, Duplicate visual, Fit height to content and Delete visual, and no Export CSV
+
+#### Scenario: a group's delete confirm says how many visuals it takes with it
+
+- **GIVEN** a group holding two visuals
+- **WHEN** the owner chooses Delete visual from the group's menu
+- **THEN** the confirm names the group and says it takes two visuals with it
+
+### Requirement: A published group is read-only, and its visuals keep their export
+
+A published group SHALL draw its visuals with no editing control, and a bound visual inside it SHALL keep its export.
+
+#### Scenario: a published group draws its bound child with the child's export
+
+- **GIVEN** a group holding a card bound to a snapshot
+- **WHEN** a viewer opens the published dashboard
+- **THEN** the card offers Export CSV
+- **AND** the group offers none
+
+#### Scenario: a published group draws no header when it is untitled
+
+- **GIVEN** an untitled group on a published dashboard
+- **WHEN** a viewer opens it
+- **THEN** the group draws no header
