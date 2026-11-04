@@ -65,6 +65,35 @@ const createGatedPanelDynamicNode = (): SurveyPanelDynamicNode => ({
   },
   type: SurveyNodeType.PanelDynamic,
 });
+// A template whose text question "b" takes a condition on its row's boolean question "a", as the panel scope it reads
+const createConditionedPanelDynamicNode = (
+  condition: { enableIf: string } | { requiredIf: string },
+  isRequired: boolean,
+): SurveyPanelDynamicNode => ({
+  props: {
+    ...surveyPanelDynamicNodeType.createDefaultProps(),
+    id: crypto.randomUUID(),
+    maxPanelCount: 2,
+    minPanelCount: 1,
+    template: [
+      {
+        props: { ...surveyBooleanNodeType.createDefaultProps(), id: crypto.randomUUID(), name: "a" },
+        type: SurveyNodeType.Boolean,
+      },
+      {
+        props: {
+          ...surveyTextNodeType.createDefaultProps(),
+          ...condition,
+          id: crypto.randomUUID(),
+          isRequired,
+          name: "b",
+        },
+        type: SurveyNodeType.Text,
+      },
+    ],
+  },
+  type: SurveyNodeType.PanelDynamic,
+});
 
 describe(createSurveyPanelDynamicAnswerSchema, () => {
   const now = new Date(0);
@@ -122,6 +151,48 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
     ]);
 
     expect(result.success).toBe(true);
+  });
+
+  test("refuses an empty answer to a template question its row requires", () => {
+    expect.hasAssertions();
+
+    const result = createSchema(createConditionedPanelDynamicNode({ requiredIf: "{panel.a}" }, false)).safeParse([
+      { a: false, b: "" },
+      { a: true, b: "" },
+    ]);
+
+    expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
+  });
+
+  test("accepts an empty answer to a template question its row does not require", () => {
+    expect.hasAssertions();
+
+    const result = createSchema(createConditionedPanelDynamicNode({ requiredIf: "{panel.a}" }, false)).safeParse([
+      { a: false, b: "" },
+      { a: true, b: "x" },
+    ]);
+
+    expect(result.success).toBe(true);
+  });
+
+  test("accepts an empty answer to a required template question its row disables", () => {
+    expect.hasAssertions();
+
+    const result = createSchema(createConditionedPanelDynamicNode({ enableIf: "{panel.a}" }, true)).safeParse([
+      { a: false, b: "" },
+    ]);
+
+    expect(result.success).toBe(true);
+  });
+
+  test("refuses an empty answer to a required template question its row enables", () => {
+    expect.hasAssertions();
+
+    const result = createSchema(createConditionedPanelDynamicNode({ enableIf: "{panel.a}" }, true)).safeParse([
+      { a: true, b: "" },
+    ]);
+
+    expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
   });
 
   test("refuses fewer panels than its owner's minimum", () => {

@@ -4,6 +4,8 @@ import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import type { SurveyLogicContext, SurveyLogicRecord } from "survey-logic";
 
 import { createSurveyNamedAnswerSchema } from "#src/services/runner/answer/createSurveyNamedAnswerSchema";
+import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnabled";
+import { checkSurveyNodeRequired } from "#src/services/runner/checkSurveyNodeRequired";
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_WRONG_COUNT_MESSAGE } from "#src/services/runner/constants";
 import { surveyAnswerValueSchema } from "#src/services/runner/surveyAnswerValueSchema";
@@ -18,7 +20,7 @@ const toSurveyPanelScope = (row: Record<string, SurveyAnswerValue | undefined>):
 };
 
 // A dynamic panel's answer: a list of panels within the bounds its owner set, each one answering the template's questions
-// A template question hidden in a row is skipped for that row: it is neither required nor checked
+// A template question a row hides or disables is skipped for that row: it is neither required nor checked, as a top-level one is not
 // The row's own answers are the panel scope its condition reads, beside the survey's values
 // The template's questions are checked by the schema the caller passes in, since this module cannot import the function that imports it
 export const createSurveyPanelDynamicAnswerSchema = (
@@ -28,7 +30,6 @@ export const createSurveyPanelDynamicAnswerSchema = (
   now: Date,
 ): z.ZodType => {
   const templateFields = node.props.template.map((question) => ({
-    isRequired: "isRequired" in question.props && question.props.isRequired,
     name: question.props.name,
     question,
     schema: createTemplateAnswerSchema(question),
@@ -44,11 +45,12 @@ export const createSurveyPanelDynamicAnswerSchema = (
     .max(node.props.maxPanelCount, { error: SURVEY_WRONG_COUNT_MESSAGE })
     .superRefine((rows, ctx) => {
       for (const [index, row] of rows.entries()) {
-        const scope = toSurveyPanelScope(row);
+        const scopes = { panel: toSurveyPanelScope(row) };
         const rowSchema = createSurveyNamedAnswerSchema(
-          templateFields.map(({ isRequired, name, question, schema }) =>
-            checkSurveyNodeVisible(question, values, now, { panel: scope })
-              ? { isRequired, name, schema }
+          templateFields.map(({ name, question, schema }) =>
+            checkSurveyNodeVisible(question, values, now, scopes) &&
+            checkSurveyNodeEnabled(question, values, now, scopes)
+              ? { isRequired: checkSurveyNodeRequired(question, values, now, scopes), name, schema }
               : { isRequired: false, name, schema: z.unknown() },
           ),
         );
