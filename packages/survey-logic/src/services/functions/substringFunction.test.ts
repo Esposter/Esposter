@@ -27,6 +27,7 @@ describe(substringFunction, () => {
     ["truncates a fractional start toward zero", ["hello", 1.9, 3], "el"],
     ["gives the text between an end before the start, with the indices swapped", ["hello", 4, 1], "ell"],
     ["reads a numeric text end as its number", ["hello", 0, "2"], "he"],
+    ["runs to the end of the text when the end is empty", ["abc", 1, ""], "bc"],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 
