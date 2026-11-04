@@ -631,7 +631,7 @@ describe("messageRouter", () => {
 
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype, size }],
       message,
       roomId,
       timeZone,
@@ -756,7 +756,7 @@ describe("messageRouter", () => {
 
     const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -776,7 +776,7 @@ describe("messageRouter", () => {
 
     const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1094,7 +1094,7 @@ describe("messageRouter", () => {
     const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
     await reportStoredUpload(blobName);
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: sasEntity.id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id: sasEntity.id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1152,7 +1152,7 @@ describe("messageRouter", () => {
 
     const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1173,8 +1173,8 @@ describe("messageRouter", () => {
     const secondId = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
       files: [
-        { filename, id: firstId, mimetype, size },
-        { filename, id: secondId, mimetype, size },
+        { filename, hasThumbnail: false, id: firstId, isSpoiler: false, mimetype, size },
+        { filename, hasThumbnail: false, id: secondId, isSpoiler: false, mimetype, size },
       ],
       roomId,
       timeZone,
@@ -1197,7 +1197,7 @@ describe("messageRouter", () => {
 
     const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1220,7 +1220,7 @@ describe("messageRouter", () => {
 
     const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1244,7 +1244,7 @@ describe("messageRouter", () => {
     const newFileId = crypto.randomUUID();
     const deleteFileId = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: newFileId, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id: newFileId, isSpoiler: false, mimetype, size }],
       roomId,
       timeZone,
     });
@@ -1263,7 +1263,7 @@ describe("messageRouter", () => {
     const id = crypto.randomUUID();
     const message = createOwnMentionMessage();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, hasThumbnail: false, id, isSpoiler: false, mimetype, size }],
       message,
       roomId,
       timeZone,
