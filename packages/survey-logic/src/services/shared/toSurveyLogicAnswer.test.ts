@@ -12,10 +12,12 @@ describe(toSurveyLogicAnswer, () => {
     ["keeps the value beside a null in a list", [null, 1], [undefined, 1]],
     [
       "reads a record field that holds a null as undefined, keeping the other fields",
-      { name: null, age: 2 },
-      { name: undefined, age: 2 },
+      { age: 2, name: null },
+      { age: 2, name: undefined },
     ],
     ["reads a null nested in a list in a record as undefined", { answers: [null] }, { answers: [undefined] }],
+    ["reads a quoted text nested in a record as the text without its quotes", { q: "'hi'" }, { q: "hi" }],
+    ["reads a boolean text nested in a record as the boolean", { flag: "true" }, { flag: true }],
   ])("%s", (_title, value, expected) => {
     expect.hasAssertions();
 
