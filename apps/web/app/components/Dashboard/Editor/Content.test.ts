@@ -255,6 +255,24 @@ describe("dashboardEditorContent", () => {
     expect(commands.value.map(({ id }) => id)).toStrictEqual(DASHBOARD_GRID_COMMANDS.map(({ id }) => id));
   });
 
+  // The grid's keys act on a visual, so the editor lists them only once the dashboard holds one to act on
+  test("lists the dashboard commands only once the dashboard holds a visual", async () => {
+    expect.hasAssertions();
+
+    await mountEditor([]);
+    const commandStore = useCommandStore();
+    const { commands } = storeToRefs(commandStore);
+    const commandIdsWhenEmpty = commands.value.map(({ id }) => id);
+    const visualStore = useVisualStore();
+    const { createVisual } = visualStore;
+    createVisual(VisualType.Card);
+
+    expect({ empty: commandIdsWhenEmpty, withVisual: commands.value.map(({ id }) => id) }).toStrictEqual({
+      empty: [],
+      withVisual: DASHBOARD_GRID_COMMANDS.map(({ id }) => id),
+    });
+  });
+
   // A group's delete names it and counts every visual it takes with it, down its whole tree
   test("a group's delete confirm says how many visuals it takes with it", async () => {
     expect.hasAssertions();

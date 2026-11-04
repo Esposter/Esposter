@@ -24,7 +24,8 @@ const { deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
 // Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it holds
-useCommands(DASHBOARD_GRID_COMMANDS);
+// The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to act on
+useCommands(() => (visuals.value.length === 0 ? [] : DASHBOARD_GRID_COMMANDS));
 // The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same write
 // By id as the dashboard's own, wherever the visual sits
 const commitVisuals = (changes: GridBlock[]) => {
