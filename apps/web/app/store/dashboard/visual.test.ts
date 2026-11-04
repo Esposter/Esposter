@@ -87,6 +87,20 @@ describe(useVisualStore, () => {
     expect(duplicatedVisual.y).toBe(visual.y + visual.h);
   });
 
+  test("duplicating a fit-height visual keeps fit height", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({ visuals: [new Visual({ isAutoHeight: true, type: VisualType.Table })] });
+    const visualStore = await setupStore();
+    const { duplicateVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const isSuccessful = await duplicateVisual({ id: takeOne(visuals.value).id });
+    const duplicatedVisual = takeOne(visuals.value, 1);
+
+    expect(isSuccessful).toBe(true);
+    expect(duplicatedVisual.isAutoHeight).toBe(true);
+  });
+
   // A visual removed while its dialog was open has nothing to save onto, so the save is refused before the dashboard
   // Is written and the dialog stays open on the draft
   test("refuses an edit whose visual was removed and keeps the dialog open", async () => {

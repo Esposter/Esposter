@@ -87,7 +87,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     if (!isSuccessful && deletedVisual) createDashboardVisual(deletedVisual);
     return isSuccessful;
   };
-  // A copy of one visual — its type, chart and binding, never a publish snapshot — under the original at its size,
+  // A copy of one visual — its type, chart, binding and fit height, never a publish snapshot — under the original at its size,
   // Saved through the same write path and taken back out if the save is refused, as a refused delete puts its
   // Visual back
   const duplicateVisual = async (ids: { id: Visual["id"] }) => {
@@ -95,11 +95,12 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const visual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));
     if (!visual) return false;
 
-    const { chart, dataset, h, type, w, x, y } = structuredClone(toRawDeep(visual));
+    const { chart, dataset, h, isAutoHeight, type, w, x, y } = structuredClone(toRawDeep(visual));
     const duplicatedVisual = new Visual({
       chart,
       dataset: dataset && { query: dataset.query, reference: dataset.reference },
       h,
+      isAutoHeight,
       type,
       w,
       x,
