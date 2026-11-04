@@ -9,7 +9,7 @@ A report is a small, checked experiment that someone else can run in a minute. I
 ## Where a draft lives
 
 - **A draft is a paste-ready markdown file** in a `reports` folder of the OpenSpec change that found the gap. The first line is the title and the rest is the body. One report per file. The owner files it by hand. Once it is filed, the file goes and the change links the issue.
-- **When the owner says to file it directly, this page still applies in full**: the section order, the cause at a quoted line, the nearest issues and the footer. Load it before the first `gh issue create`, not after, and re-read a filed issue against it with `gh issue edit --body-file` when it was filed without.
+- **When the owner says to file it directly, this page still applies in full**: the section order, the cause at a quoted line, the nearest issues and the footer. Load it before the first `gh issue create`. Re-read a filed issue against it with `gh issue edit --body-file` when it was filed without.
 - **The target's own form decides the headings.** Read it first: `gh api repos/<owner>/<repo>/contents/.github/ISSUE_TEMPLATE` lists the forms. Keep its field names as headings, and add the sections below that the form lacks.
 - **Match the earlier reports I opened in the same repository** (`gh search issues --repo <owner>/<repo> --author <login>`): their title shape, their section order and how they quote an error.
 
