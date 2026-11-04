@@ -15,8 +15,8 @@ export interface SurveyImagePickerNodeProps extends SurveyQuestionBaseProps {
   imageFit: SurveyImageFit;
   imageHeight?: number;
   imageWidth?: number;
+  isLabelVisible: boolean;
   multiSelect: boolean;
-  showLabel: boolean;
 }
 
 // Choices are unique by their value, since the value is what the picked answer holds
@@ -26,8 +26,8 @@ export const surveyImagePickerNodePropsSchema: z.ZodObject<
     imageFit: z.ZodDefault<z.ZodEnum<typeof SurveyImageFit>>;
     imageHeight: z.ZodOptional<z.ZodInt>;
     imageWidth: z.ZodOptional<z.ZodInt>;
+    isLabelVisible: z.ZodDefault<z.ZodBoolean>;
     multiSelect: z.ZodDefault<z.ZodBoolean>;
-    showLabel: z.ZodDefault<z.ZodBoolean>;
   }
 > = z.object({
   ...surveyQuestionBasePropsShape,
@@ -35,6 +35,6 @@ export const surveyImagePickerNodePropsSchema: z.ZodObject<
   imageFit: z.enum(SurveyImageFit).default(SurveyImageFit.Contain),
   imageHeight: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
   imageWidth: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
+  isLabelVisible: z.boolean().default(true),
   multiSelect: z.boolean().default(false),
-  showLabel: z.boolean().default(true),
 }) satisfies z.ZodType<OwnProps<SurveyImagePickerNodeProps>>;

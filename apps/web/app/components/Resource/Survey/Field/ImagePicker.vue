@@ -70,7 +70,7 @@ const onSelect = (keys: string[] | undefined = []) => {
           />
         </template>
         <template #title="{ item }">
-          <span :class="{ 'sr-only': !node.props.showLabel }">{{ item.title }}</span>
+          <span :class="{ 'sr-only': !node.props.isLabelVisible }">{{ item.title }}</span>
         </template>
       </UiList>
     </template>
