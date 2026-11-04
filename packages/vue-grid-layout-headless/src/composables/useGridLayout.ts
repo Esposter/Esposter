@@ -93,13 +93,17 @@ export const useGridLayout = <T extends GridItem>(
     const layoutBottom = getLayoutBottom(activePreview.value?.layout ?? layout.value);
     return Math.max(0, getCellSize(layoutBottom, rowPitch.value, gap)) + 2 * padding;
   });
+  // The grid as the registry holds it, which an external drag or a body drag previews over and hands a drop to
+  const clearPreview = () => {
+    externalPreview.value = undefined;
+  };
   // Ending a gesture also ends the drop preview an external drag holds and the one a body drag holds on another grid, since a
   // Layout replaced under either is no longer the one previewed
   const resetGesture = () => {
     gesture.value?.transfer?.clearPreview();
     gesture.value = undefined;
     gesturePreview.value = undefined;
-    externalPreview.value = undefined;
+    clearPreview();
   };
   // A gesture previews the layout it began on, so a layout replaced under it — a reload, a restore, another column
   // Count — ends the gesture rather than letting its release write cells the new layout never had. A held external
@@ -131,7 +135,7 @@ export const useGridLayout = <T extends GridItem>(
   };
 
   // A body drag is handed to the grid its pointer is over only when the consumer takes a transfer. A resize never leaves its
-  // Own grid, and a drag without onTransfer stays in its grid as it did before a transfer existed
+  // Own grid, and without onTransfer a body drag stays in its own grid
   const checkIsTransferable = (activeGesture: GridGesture<T>): boolean =>
     getOptions().onTransfer !== undefined && !activeGesture.edge;
   // The other grid a body drag is handed to, which is the one under its pointer and never its own, so none is returned for it
@@ -286,10 +290,6 @@ export const useGridLayout = <T extends GridItem>(
 
   // The element, its observer and the listeners' controller are held from mount, so unmount detaches what mount attached
   const attached = shallowRef<{ controller: AbortController; element: HTMLElement; observer: ResizeObserver }>();
-  // The grid as the registry holds it, which an external drag or a body drag previews over and hands a drop to
-  const clearPreview = () => {
-    externalPreview.value = undefined;
-  };
   const previewDrop = (item: GridItem, point: GridPoint) => {
     const preview = getDropPreview(item, point);
     // A pointer moving within the cell it is over previews the same layout, so the held preview is kept, not redrawn
@@ -315,6 +315,8 @@ export const useGridLayout = <T extends GridItem>(
     attached.value = { controller, element, observer };
   });
   onUnmounted(() => {
+    // A gesture held when its grid unmounts ends with it, so a body drag held over another grid clears the preview it drew there
+    resetGesture();
     if (!attached.value) return;
 
     const { controller, element, observer } = attached.value;

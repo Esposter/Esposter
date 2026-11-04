@@ -41,6 +41,40 @@ describe(useGridLayout, () => {
   const cellPitch = getColumnPitch(gridWidth, columnNumber, spacing);
   const rowPitch = rowHeight + spacing.gap;
 
+  // The options a grid lays out with, so a test states only the ones it changes
+  const createGridOptions = ({
+    checkIsRefused,
+    collision = CollisionMode.Push,
+    columnNumber: gridColumnNumber = columnNumber,
+    compactType = CompactType.Vertical,
+    isEditable = true,
+    items,
+    onCommit,
+    onTransfer,
+    spacing: gridSpacing = spacing,
+  }: {
+    checkIsRefused?: GridRefusal;
+    collision?: CollisionMode;
+    columnNumber?: number;
+    compactType?: CompactType;
+    isEditable?: boolean;
+    items: GridItem[];
+    onCommit: (commit: GridCommit) => void;
+    onTransfer?: (transfer: GridTransfer) => void;
+    spacing?: GridSpacing;
+  }) => ({
+    checkIsRefused,
+    collision,
+    columnNumber: gridColumnNumber,
+    compactType,
+    dragStartDistance,
+    isEditable,
+    items,
+    onCommit,
+    onTransfer,
+    rowHeight,
+    spacing: gridSpacing,
+  });
   // Mounts a grid whose tiles carry their geometry as inline styles, and whose handle resizes from the given edge, so a
   // Test reads where each one is drawn
   const mountGrid = ({
@@ -72,19 +106,19 @@ describe(useGridLayout, () => {
       defineComponent({
         setup() {
           const root = useTemplateRef<HTMLElement>("root");
-          const layout = useGridLayout(root, () => ({
-            checkIsRefused,
-            collision,
-            columnNumber: gridColumnNumber,
-            compactType,
-            dragStartDistance,
-            isEditable,
-            items: itemsRef.value,
-            onCommit,
-            onTransfer,
-            rowHeight,
-            spacing: gridSpacing,
-          }));
+          const layout = useGridLayout(root, () =>
+            createGridOptions({
+              checkIsRefused,
+              collision,
+              columnNumber: gridColumnNumber,
+              compactType,
+              isEditable,
+              items: itemsRef.value,
+              onCommit,
+              onTransfer,
+              spacing: gridSpacing,
+            }),
+          );
           gridLayout.value = layout;
           const { placeholder, startGesture, tiles } = layout;
 
@@ -158,17 +192,9 @@ describe(useGridLayout, () => {
     const InnerGrid = defineComponent({
       setup() {
         const root = useTemplateRef<HTMLElement>("root");
-        const { startGesture, tiles } = useGridLayout(root, () => ({
-          collision: CollisionMode.Push,
-          columnNumber,
-          compactType: CompactType.Vertical,
-          dragStartDistance,
-          isEditable: true,
-          items: innerItems,
-          onCommit: innerCommit,
-          rowHeight,
-          spacing,
-        }));
+        const { startGesture, tiles } = useGridLayout(root, () =>
+          createGridOptions({ items: innerItems, onCommit: innerCommit }),
+        );
 
         return () =>
           h(
@@ -190,17 +216,9 @@ describe(useGridLayout, () => {
       defineComponent({
         setup() {
           const root = useTemplateRef<HTMLElement>("root");
-          const { startGesture, tiles } = useGridLayout(root, () => ({
-            collision: CollisionMode.Push,
-            columnNumber,
-            compactType: CompactType.Vertical,
-            dragStartDistance,
-            isEditable: true,
-            items: outerItems,
-            onCommit: outerCommit,
-            rowHeight,
-            spacing,
-          }));
+          const { startGesture, tiles } = useGridLayout(root, () =>
+            createGridOptions({ items: outerItems, onCommit: outerCommit }),
+          );
 
           return () =>
             h(
@@ -1105,6 +1123,31 @@ describe(useGridLayout, () => {
     expect(source.onCommit).not.toHaveBeenCalled();
     expect(target.onCommit).not.toHaveBeenCalled();
     expect(source.wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
+  });
+
+  test("#21 unmounting the source grid mid-drag clears the placeholder it drew on another grid", async () => {
+    expect.hasAssertions();
+
+    const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
+    const source = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }], onTransfer });
+    const target = mountGrid({ items: [] });
+    await flushPromises();
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([target.wrapper.element]);
+    const tile = source.wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", {
+      buttons: 1,
+      clientX: cellPitch * 2 + spacing.padding,
+      clientY: spacing.padding,
+      pointerId,
+    });
+
+    expect(target.grid.value?.placeholder.value).toBeDefined();
+
+    // A live update that removes the source's group unmounts its grid while a drag held over another grid is in progress
+    source.wrapper.unmount();
+
+    expect(target.grid.value?.placeholder.value).toBeUndefined();
   });
 
   test("#21 releasing over no grid commits in the item's own grid, with or without onTransfer", async () => {
