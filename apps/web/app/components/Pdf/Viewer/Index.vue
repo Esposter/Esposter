@@ -4,6 +4,7 @@ import type { PDFDocumentProxy } from "pdfjs-dist";
 import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { PDF_IMAGE_RESOURCES_BASE_URL } from "@/services/pdf/constants";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { usePdfAnnotations, usePdfViewer } from "vue-pdfjs-headless";
@@ -36,6 +37,7 @@ const { isFailed: isViewerFailed, loaded: viewerApi } = useLazyLoad(loadPdfViewe
 const state = usePdfViewer({
   container: () => container.value ?? undefined,
   highlightTerms: () => highlightTerms,
+  imageResourcesPath: PDF_IMAGE_RESOURCES_BASE_URL,
   pdfDocument: () => pdfDocument,
   viewer: () => viewer.value ?? undefined,
   viewerApi: () => viewerApi.value,
