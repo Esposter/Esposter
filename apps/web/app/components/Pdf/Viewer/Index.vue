@@ -98,8 +98,12 @@ const closeSidebarOnPhone = () => {
         :viewer="state"
         @chose-page="() => closeSidebarOnPhone()"
       />
-      <div ref="container" flex-1 min-h-0 min-w-0 of-auto>
-        <div ref="viewer" class="pdfViewer" />
+      <!-- pdf.js takes its container only when the container is absolutely positioned, so the pages' region is a cell
+        the container fills -->
+      <div flex-1 min-h-0 min-w-0 relative>
+        <div ref="container" inset-0 absolute of-auto>
+          <div ref="viewer" class="pdfViewer" />
+        </div>
       </div>
       <div v-if="isLoading" flex items-center inset-0 justify-center absolute>
         <UiSpinner />

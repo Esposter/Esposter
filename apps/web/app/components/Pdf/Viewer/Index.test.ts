@@ -233,7 +233,7 @@ describe("pdfViewer", () => {
       const sidebar = component.get('[role="tablist"]').element.closest("[absolute]");
 
       expect(sidebar?.hasAttribute("start-0")).toBe(true);
-      expect(component.get(".pdfViewer").element.parentElement?.hasAttribute("flex-1")).toBe(true);
+      expect(component.get(".pdfViewer").element.parentElement?.parentElement?.hasAttribute("flex-1")).toBe(true);
     });
 
     test("choosing a page closes the sidebar on a phone", async () => {
