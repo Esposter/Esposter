@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyMultipleTextItem, SurveyMultipleTextNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyMultipleTextNode } from "survey-engine";
 
-import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { SurveyMultipleTextItemInputType } from "survey-engine";
+import { SURVEY_MULTIPLE_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
@@ -17,9 +16,6 @@ const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each item's name to its text, read as the empty record until one is given
 const answers = useSurveyRecordAnswer(answer);
 const getText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
-// An email is drawn as a text field, since the library's text field takes no email type
-const getTextFieldType = ({ inputType }: SurveyMultipleTextItem) =>
-  inputType === SurveyMultipleTextItemInputType.Number ? UiTextFieldType.Number : undefined;
 const updateItem = (name: string, text: string) => {
   answer.value = { ...answers.value, [name]: text };
 };
@@ -48,7 +44,7 @@ const updateItem = (name: string, text: string) => {
           :is-disabled="isDisabled || undefined"
           :label="item.title || item.name"
           :model-value="getText(answers[item.name])"
-          :type="getTextFieldType(item)"
+          :type="SURVEY_MULTIPLE_TEXT_FIELD_TYPES[item.inputType]"
           @update:model-value="(text) => updateItem(item.name, text)"
         />
       </div>

@@ -4,6 +4,7 @@ import type { UiRule } from "@/models/ui/UiRule";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { TEXT_FIELD_AUTOCOMPLETES } from "@/services/ui/constants";
 import { Input } from "@vuetify/v0";
 
 interface Props {
@@ -56,6 +57,8 @@ const inputRules = computed(() => rules.map((rule) => (value: unknown) => rule(S
 const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");
 // A search says what it searches inside itself, so its label is the hint and stays its accessible name
 const isSearch = computed(() => type === UiTextFieldType.Search);
+// An email, a telephone number or a URL offers the browser's autofill for it
+const autocomplete = computed(() => (type ? TEXT_FIELD_AUTOCOMPLETES[type] : undefined));
 
 defineExpose({ element });
 </script>
@@ -91,6 +94,7 @@ defineExpose({ element });
           ref="element"
           :="attrs"
           :aria-invalid="error ? true : attrs['aria-invalid']"
+          :autocomplete
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"
           :maxlength

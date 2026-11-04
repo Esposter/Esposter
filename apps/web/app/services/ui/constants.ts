@@ -1,5 +1,7 @@
 import type { UiStyle } from "@/models/ui/UiStyle";
 
+import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+
 // The terminal's spinner: a star that grows and shrinks back, a frame at a time
 export const SPINNER_FRAMES = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
 export const SPINNER_INTERVAL_MS = 120;
@@ -35,6 +37,12 @@ export const POPOVER_POSITION_AREA = "bottom span-right";
 export const POPOVER_POSITION_TRY = "flip-block, flip-inline, flip-block flip-inline, bottom span-all, top span-all";
 // How many chosen titles a select holding several lists on its trigger, past which it reads how many are chosen
 export const SELECT_TRIGGER_TITLE_LIMIT = 3;
+// The autofill each kind of text field offers, which the browser fills from the reader's own details
+export const TEXT_FIELD_AUTOCOMPLETES: Partial<Record<UiTextFieldType, string>> = {
+  [UiTextFieldType.Email]: "email",
+  [UiTextFieldType.Tel]: "tel",
+  [UiTextFieldType.Url]: "url",
+};
 // Where a tooltip opens against what it names: above it, unless the region around it says otherwise through the custom
 // Property, as the dock's rail does to open them beside it
 export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";

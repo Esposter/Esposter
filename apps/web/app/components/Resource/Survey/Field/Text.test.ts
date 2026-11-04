@@ -47,6 +47,18 @@ describe("resourceSurveyFieldText", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([["a"], [undefined]]);
     });
 
+    test("draws an email question as an email field, with the browser's email autofill", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldText, {
+        props: { error: "", isDisabled: false, node: createNode(SurveyTextInputType.Email) },
+      });
+      const control = component.get("input");
+
+      expect(control.attributes("type")).toBe("email");
+      expect(control.attributes("autocomplete")).toBe("email");
+    });
+
     test("answers a number question with a number", async () => {
       expect.hasAssertions();
 

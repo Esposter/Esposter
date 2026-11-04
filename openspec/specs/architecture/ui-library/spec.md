@@ -290,6 +290,17 @@ A select given a placeholder SHALL show it in the muted text in its trigger whil
 - **WHEN** the reader opens the list
 - **THEN** the list holds only the choices
 
+### Requirement: A text field typed as email, telephone or URL takes the browser's input type
+
+A text field typed as an email, a telephone number or a URL SHALL take the browser's input of that type, and SHALL offer the autofill of the same name.
+
+#### Scenario: A telephone field offers the telephone autofill
+
+- **GIVEN** a text field typed as a telephone number
+- **WHEN** the field is drawn
+- **THEN** its input is typed as a telephone number
+- **AND** the input offers the telephone autofill
+
 ### Requirement: A row's mark widens to hold a picture larger than an icon
 
 A row's mark SHALL widen its column to hold a picture set larger than an icon, so the row's title is never drawn over the picture.

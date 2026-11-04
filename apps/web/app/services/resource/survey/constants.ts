@@ -6,7 +6,7 @@ import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditio
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "survey-engine";
+import { SurveyImageFit, SurveyMultipleTextItemInputType, SurveyNodeType, SurveyTextInputType } from "survey-engine";
 import { SurveyExpressionBinaryOperator } from "survey-logic";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
@@ -134,9 +134,19 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
 
 // The input types the library's text field draws as its own control; the rest are typed as plain text
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<Partial<Record<SurveyTextInputType, UiTextFieldType>>> = {
+  [SurveyTextInputType.Email]: UiTextFieldType.Email,
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
   [SurveyTextInputType.Password]: UiTextFieldType.Password,
+  [SurveyTextInputType.Tel]: UiTextFieldType.Tel,
   [SurveyTextInputType.Time]: UiTextFieldType.Time,
+  [SurveyTextInputType.Url]: UiTextFieldType.Url,
+};
+// The input type each item of a multiple text question is drawn with, where an item of another kind is plain text
+export const SURVEY_MULTIPLE_TEXT_FIELD_TYPES: Readonly<
+  Partial<Record<SurveyMultipleTextItemInputType, UiTextFieldType>>
+> = {
+  [SurveyMultipleTextItemInputType.Email]: UiTextFieldType.Email,
+  [SurveyMultipleTextItemInputType.Number]: UiTextFieldType.Number,
 };
 
 // The kinds the palette offers, in the groups it draws them under. The page is the toolbar's to add

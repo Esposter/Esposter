@@ -43,6 +43,30 @@ describe("resourceSurveyFieldMultipleText", () => {
       expect(component.findAll("label").map((label) => label.text())).toStrictEqual(itemTitles);
     });
 
+    test("draws an email item as an email field", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
+        props: {
+          error: "",
+          isDisabled: false,
+          node: {
+            props: {
+              ...surveyMultipleTextNodePropsSchema.parse({
+                items: [{ inputType: "email", name: "a", title: "A" }],
+                name: "a",
+                title,
+              }),
+              id,
+            },
+            type: SurveyNodeType.MultipleText,
+          },
+        },
+      });
+
+      expect(component.get("input").attributes("type")).toBe("email");
+    });
+
     test("takes the text typed into an item as that item's answer", async () => {
       expect.hasAssertions();
 

@@ -147,6 +147,20 @@ describe("uiTextField", () => {
       expect(control.attributes("type")).toBe("number");
     });
 
+    test.each([
+      [UiTextFieldType.Email, "email"],
+      [UiTextFieldType.Tel, "tel"],
+      [UiTextFieldType.Url, "url"],
+    ])("takes the %s type, with the autofill of the same name", (type, autocomplete) => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { label, modelValue: "", type } });
+      const control = component.get("input");
+
+      expect(control.attributes("type")).toBe(type);
+      expect(control.attributes("autocomplete")).toBe(autocomplete);
+    });
+
     test("names a search by its label, and clears it from inside the field once it holds text", async () => {
       expect.hasAssertions();
 

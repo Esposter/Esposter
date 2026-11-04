@@ -21,6 +21,17 @@ A question field SHALL be labelled by the question's title and answerable by key
 - **WHEN** a respondent moves the third choice up with Alt and the up arrow
 - **THEN** the answer lists it second
 
+### Requirement: An email, telephone or URL question is drawn as a field of its kind
+
+An email, telephone or URL question SHALL be drawn as a text field typed as that kind, so the respondent's keyboard and autofill are the kind's.
+
+#### Scenario: An email question offers the browser's email autofill
+
+- **GIVEN** a text question of the email kind
+- **WHEN** the question is drawn
+- **THEN** its input is typed as an email
+- **AND** the input offers the email autofill
+
 ### Requirement: A dropdown or tag box shows its placeholder until a respondent picks
 
 A dropdown or tag box SHALL show the placeholder its author set in its trigger while nothing is picked.
