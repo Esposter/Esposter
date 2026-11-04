@@ -101,6 +101,25 @@ describe("dashboardPaletteTile", () => {
     tile.unmount();
   });
 
+  test("activating a tile", async () => {
+    expect.hasAssertions();
+
+    loadDashboard([new Visual({ type: VisualType.Card })]);
+    const tile = await mountSuspended(DashboardPaletteTile, {
+      attachTo: document.body,
+      props: { title: "Table", type: VisualType.Table },
+    });
+    await tile.get("button").trigger("click");
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(visuals.value.map(({ type, x, y }) => ({ type, x, y }))).toStrictEqual([
+      { type: VisualType.Card, x: 0, y: 0 },
+      { type: VisualType.Table, x: 4, y: 0 },
+    ]);
+    tile.unmount();
+  });
+
   // A release over the grid places the visual where it is released, not where the press began
   test("a tile dropped on the grid adds a visual where it is released", async () => {
     expect.hasAssertions();

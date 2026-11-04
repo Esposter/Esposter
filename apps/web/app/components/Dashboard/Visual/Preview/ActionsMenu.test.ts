@@ -73,6 +73,31 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     await expect(openMenu(menu)).resolves.toContain("Fit height to content");
   });
 
+  test("opening a visual's menu", async () => {
+    expect.hasAssertions();
+
+    const table = new Visual({
+      dataset: {
+        query: {
+          series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
+          xColumn: responseColumn,
+        },
+        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      },
+      type: VisualType.Table,
+    });
+    await loadDashboard([table]);
+    const menu = await mountMenu(table, dataset);
+
+    await expect(openMenu(menu)).resolves.toStrictEqual([
+      "Edit visual",
+      "Duplicate visual",
+      "Export CSV",
+      "Fit height to content",
+      "Delete visual",
+    ]);
+  });
+
   test("a chart's menu offers no fit height to content", async () => {
     expect.hasAssertions();
 

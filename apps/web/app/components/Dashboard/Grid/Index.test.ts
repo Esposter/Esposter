@@ -9,6 +9,7 @@ import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import { useDashboardStore } from "@/store/dashboard";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -57,7 +58,7 @@ describe("dashboardGrid", () => {
     vi.unstubAllGlobals();
   });
 
-  test("#45 Dragging across several cells writes the visual once, after the release", async () => {
+  test("dragging across several cells", async () => {
     expect.hasAssertions();
 
     const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
@@ -73,8 +74,13 @@ describe("dashboardGrid", () => {
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch * 2, clientY: 0, pointerId });
+    const placeholder = wrapper.get(".dashboard-grid-placeholder");
+    assert(placeholder.element instanceof HTMLElement);
 
-    expect(wrapper.emitted("commit")).toBeUndefined();
+    expect({ commits: wrapper.emitted("commit"), left: placeholder.element.style.left }).toStrictEqual({
+      commits: undefined,
+      left: "170px",
+    });
 
     await tile.trigger("pointerup", { clientX: columnPitch * 2, clientY: 0, pointerId });
 
@@ -105,7 +111,7 @@ describe("dashboardGrid", () => {
     }).toStrictEqual({ height: "90px", left: "250px", top: "60px", width: "150px" });
   });
 
-  test("#54 Scrolling a published dashboard on a phone never captures the touch", async () => {
+  test("scrolling a published dashboard on a phone", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardGrid, {
@@ -299,5 +305,148 @@ describe("dashboardGrid", () => {
     expect(target.emitted("commit")).toBeUndefined();
     expect(wrapper.emitted("transfer")).toBeUndefined();
     expect(getCells()).toStrictEqual(cellsBefore);
+  });
+
+  test("dropping a visual onto another", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
+    const other = new Visual({ h: 2, w: 2, x: 2, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual, other] },
+    });
+    stubElementAtPoint(wrapper.element);
+    const tile = wrapper.get(".dashboard-grid-tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointerup", { clientX: columnPitch * 2, clientY: 0, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([
+      [
+        [
+          { h: 2, id: visual.id, w: 2, x: 2, y: 0 },
+          { h: 2, id: other.id, w: 2, x: 2, y: 2 },
+        ],
+      ],
+    ]);
+  });
+
+  test("swapping places with the visual dropped on", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
+    const other = new Visual({ h: 2, w: 2, x: 2, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: {
+        collision: CollisionMode.Swap,
+        columnNumber,
+        compactType,
+        isEditable: true,
+        rowHeight,
+        visuals: [visual, other],
+      },
+    });
+    stubElementAtPoint(wrapper.element);
+    const tile = wrapper.get(".dashboard-grid-tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch * 2, clientY: 0, pointerId });
+    await tile.trigger("pointerup", { clientX: columnPitch * 2, clientY: 0, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([
+      [
+        [
+          { h: 2, id: other.id, w: 2, x: 0, y: 0 },
+          { h: 2, id: visual.id, w: 2, x: 2, y: 0 },
+        ],
+      ],
+    ]);
+  });
+
+  // The top-left handle moves the west and north edges, so a drag past the bottom-right corner clamps the visual to one cell
+  test("shrinking a visual to nothing", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 2, y: 1 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType: CompactType.None, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    const handle = wrapper.get('[data-edge="NorthWest"]');
+    await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: columnPitch * 3, clientY: 150, pointerId });
+    await handle.trigger("pointerup", { clientX: columnPitch * 3, clientY: 150, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 1, id: visual.id, w: 1, x: 3, y: 2 }]]]);
+  });
+
+  test("resizing from a side", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 2, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    const handle = wrapper.get('[data-edge="West"]');
+    await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: -columnPitch, clientY: 0, pointerId });
+    await handle.trigger("pointerup", { clientX: -columnPitch, clientY: 0, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 3, x: 1, y: 0 }]]]);
+  });
+
+  test("resizing from a corner", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 0, y: 1 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType: CompactType.None, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    const handle = wrapper.get('[data-edge="NorthEast"]');
+    await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: -50, pointerId });
+    await handle.trigger("pointerup", { clientX: columnPitch, clientY: -50, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 3, id: visual.id, w: 3, x: 0, y: 0 }]]]);
+  });
+
+  test("moving with the arrow keys", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    await wrapper.get(".dashboard-grid-tile").trigger("keydown", { key: "ArrowRight" });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 1, y: 0 }]]]);
+  });
+
+  test("a step that changes a sized-to-content visual's height changes nothing", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, isAutoHeight: true, w: 2, x: 0, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    // The tile's content is measured once it mounts, and that measure is a commit of its own, so the step is read against it
+    await flushPromises();
+    const commitsBeforeStep = wrapper.emitted("commit");
+    await wrapper.get(".dashboard-grid-tile").trigger("keydown", { key: "ArrowDown", shiftKey: true });
+
+    expect(wrapper.emitted("commit")).toStrictEqual(commitsBeforeStep);
+  });
+
+  // A sized-to-content visual draws handles only on its sides, so its bottom edge has no handle to drag
+  test("a sized-to-content visual's bottom edge changes nothing", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, isAutoHeight: true, w: 2, x: 0, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+    });
+
+    expect(wrapper.findAll(".dashboard-grid-handle").map((handle) => handle.attributes("data-edge"))).toStrictEqual([
+      "East",
+      "West",
+    ]);
   });
 });

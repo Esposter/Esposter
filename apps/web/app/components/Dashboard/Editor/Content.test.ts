@@ -8,6 +8,7 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
+import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
 import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { DASHBOARD_GRID_COMMANDS } from "@/services/dashboard/constants";
@@ -17,6 +18,7 @@ import { useVisualStore } from "@/store/dashboard/visual";
 import { useResourceStore } from "@/store/resource";
 import { useCommandStore } from "@/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -127,6 +129,42 @@ describe("dashboardEditorContent", () => {
     expect(
       wrapper.findAllComponents(DashboardVisualPreviewEditFormDialog).map((dialog) => dialog.props("modelValue").id),
     ).toStrictEqual([tableVisual.id]);
+  });
+
+  test("deleting asks first", async () => {
+    expect.hasAssertions();
+
+    const cardVisual = new Visual({ type: VisualType.Card });
+    const wrapper = await mountEditor([cardVisual]);
+    await pickTileMenuItem(wrapper, cardVisual.id, "Delete visual");
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect({
+      isOpen: wrapper.getComponent(UiConfirmDialog).props("modelValue"),
+      visuals: visuals.value.map(({ id }) => id),
+    }).toStrictEqual({ isOpen: true, visuals: [cardVisual.id] });
+  });
+
+  // A press with no move is the grid's release with nothing to commit, and the click that follows opens the visual
+  test("a short drag is a click", async () => {
+    expect.hasAssertions();
+
+    const cardVisual = new Visual({ type: VisualType.Card });
+    const wrapper = await mountEditor([cardVisual]);
+    const pointer = { button: 0, clientX: 0, clientY: 0, pointerId: 1 };
+    const tile = wrapper.get(".dashboard-grid-tile");
+    await tile.trigger("pointerdown", pointer);
+    await tile.trigger("pointerup", pointer);
+    const preview = takeOne(wrapper.findAllComponents(DashboardVisualPreviewContainer));
+    await preview.trigger("mousedown");
+    await preview.trigger("click");
+    const visualStore = useVisualStore();
+    const { editedItem } = storeToRefs(visualStore);
+
+    expect({ commits: wrapper.findComponent(DashboardGrid).emitted("commit"), id: editedItem.value?.id }).toStrictEqual(
+      { commits: undefined, id: cardVisual.id },
+    );
   });
 
   // A visual released over a group's grid is moved into that group, and the grid it was released on names the group

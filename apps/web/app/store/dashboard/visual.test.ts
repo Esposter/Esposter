@@ -229,6 +229,24 @@ describe(useVisualStore, () => {
     });
   });
 
+  // Turning fit height off writes only the flag, so the rows the visual had stay as they were
+  test("turning fit height off keeps the rows it last had", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({ visuals: [new Visual({ h: 5, isAutoHeight: true, type: VisualType.Table })] });
+    const visualStore = await setupStore();
+    const { setAutoHeight } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    const isSuccessful = await setAutoHeight({ id }, false);
+
+    expect({
+      h: takeOne(visuals.value).h,
+      isAutoHeight: takeOne(visuals.value).isAutoHeight,
+      isSuccessful,
+    }).toStrictEqual({ h: 5, isAutoHeight: false, isSuccessful: true });
+  });
+
   // A fit height the server refuses is taken back, so the menu shows the flag the saved visual has
   test("takes a fit height back when the save is refused", async () => {
     expect.hasAssertions();
