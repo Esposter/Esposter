@@ -5,6 +5,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { countdownNodeType } from "#shared/services/pageBuilder/countdownNodeType";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
+import { runInThisContext } from "node:vm";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Local midnight a number of days after the epoch, so every test date is computed and never typed
@@ -59,6 +60,20 @@ describe("countdownNodeType", () => {
       `<div aria-atomic="false" aria-live="off" class="countdown" data-ends-at="${endsAt}" data-end-text="${TEST_LABEL}" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
       `<div aria-atomic="false" aria-live="off" class="countdown" data-ends-at="${endsAt}" data-end-text="" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
     ]);
+  });
+
+  test("the page runs the script with no module scope, so it fills in the digits", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    vi.setSystemTime(localDayFromEpoch(0));
+    document.body.innerHTML = serializeHtml([
+      countdownNodeType.render(createCountdown(toDateInput(localDayFromEpoch(1)))),
+    ]);
+    // The page receives the script as its own source text, where no import of this module is in scope
+    runInThisContext(`(${String(countdownNodeType.script)})();`);
+
+    expect(readDigits().map((digits) => /^\d{2}$/u.test(digits ?? ""))).toStrictEqual([true, true, true, true]);
   });
 
   test("a countdown refuses a date and time that is not on the calendar", () => {

@@ -10,7 +10,6 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { checkIsRealEndsAt } from "#shared/services/pageBuilder/checkIsRealEndsAt";
 import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
 import { createCountdownUnit } from "#shared/services/pageBuilder/createCountdownUnit";
-import { padWithZeros } from "@esposter/shared";
 import { z } from "zod";
 
 // A date, or a date and a time, in the form the editor's inputs write
@@ -67,7 +66,7 @@ const countdownScript = () => {
       };
       for (const unit of units) {
         const value = unit.querySelector<HTMLElement>(".countdown-value");
-        if (value) value.textContent = padWithZeros(amounts[unit.dataset.unit ?? ""] ?? 0, 2);
+        if (value) value.textContent = String(amounts[unit.dataset.unit ?? ""] ?? 0).padStart(2, "0");
       }
       return true;
     };
