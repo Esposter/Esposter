@@ -10,8 +10,6 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 - [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show
 
-- [ ] [Dashboard grid's resize handles](../../specs/resource/dashboard-grid/design.md) — the eight handles are sized and positioned but never painted, so the editor shows only the cursor and the outline, while the design and the hover-or-focus scenario say handles are drawn. Choose what a handle looks like on hover or focus (the owner's decision, since the spec leaves the look open), then paint it in `Grid/Tile.vue` and assert it in its test
-
 ## Later
 
 - [ ] [Flowchart removal's client delta](../archive/2026-11-02-resource-flowchart-retirement/proposal.md#bundle-measurement) — measure the client bytes the removal released against the last release before it. The archived change's task 3.5 is ticked, but its proposal records only the built size of the five Vue Flow packages, a ceiling, so the exact delta is not on record; this item measures it, or the owner accepts the ceiling as the figure
