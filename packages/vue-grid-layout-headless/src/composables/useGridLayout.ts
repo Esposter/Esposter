@@ -10,6 +10,7 @@ import type { GridPoint } from "#src/models/GridPoint";
 import type { GridPreview } from "#src/models/GridPreview";
 import type { GridStep } from "#src/models/GridStep";
 import type { GridTile } from "#src/models/GridTile";
+import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
@@ -133,6 +134,13 @@ export const useGridLayout = <T extends GridItem>(
   // Own grid, and a drag without onTransfer stays in its grid as it did before a transfer existed
   const checkIsTransferable = (activeGesture: GridGesture<T>): boolean =>
     getOptions().onTransfer !== undefined && !activeGesture.edge;
+  // The other grid a body drag is handed to, which is the one under its pointer and never its own, so none is returned for it
+  const findTransfer = (activeGesture: GridGesture<T>, point: GridPoint): MountedGrid | undefined => {
+    if (!checkIsTransferable(activeGesture)) return undefined;
+
+    const grid = findGridAt(point, activeGesture.element);
+    return grid?.element === root.value ? undefined : grid;
+  };
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
   const startGesture = (event: PointerEvent, item: T, pressedEdge?: ResizeEdge) => {
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
@@ -184,8 +192,7 @@ export const useGridLayout = <T extends GridItem>(
     const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
     // A body drag over another grid is previewed on that grid and not on its own. Over its own grid or over no grid it is
     // Previewed on its own, so a release over no grid commits the cells its placeholder shows
-    const grid = checkIsTransferable(activeGesture) ? findGridAt(point, activeGesture.element) : undefined;
-    const transfer = grid?.element === root.value ? undefined : grid;
+    const transfer = findTransfer(activeGesture, point);
     if (activeGesture.transfer !== transfer) activeGesture.transfer?.clearPreview();
     gesture.value = { ...activeGesture, cell, isStarted: true, offset, transfer };
     transfer?.preview(activeGesture.origin, point);
@@ -249,15 +256,15 @@ export const useGridLayout = <T extends GridItem>(
     const point = { x: event.clientX, y: event.clientY };
     const preview = gesturePreview.value;
     const changes = preview && !preview.isRefused ? getChangedCells(preview.layout) : [];
-    const grid = checkIsTransferable(activeGesture) ? findGridAt(point, activeGesture.element) : undefined;
+    const transfer = findTransfer(activeGesture, point);
     resetGesture();
-    if (!grid || grid.element === root.value) {
+    if (!transfer) {
       if (changes.length > 0) getOptions().onCommit({ changes });
       return;
     }
     // A grid that refuses the item gives no cell back, so the item stays where it was and nothing transfers
-    const cell = grid.accept(activeGesture.origin, point);
-    if (cell) getOptions().onTransfer?.({ cell, item: activeGesture.origin, target: grid.element });
+    const cell = transfer.accept(activeGesture.origin, point);
+    if (cell) getOptions().onTransfer?.({ cell, item: activeGesture.origin, target: transfer.element });
   };
   // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
   const reportContentHeight = (id: string, contentHeight: number) => {
