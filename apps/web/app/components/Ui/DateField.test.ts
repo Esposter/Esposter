@@ -35,7 +35,10 @@ describe("uiDateField", () => {
     test("passes what a call site sets, such as an invalid mark, on its trigger", async () => {
       expect.hasAssertions();
 
-      const component = await mountSuspended(UiDateField, { attrs: { "aria-invalid": "true" }, props: { label } });
+      const component = await mountSuspended(UiDateField, {
+        attrs: { "aria-invalid": "true" },
+        props: { label, modelValue: undefined },
+      });
 
       expect(component.get("button").attributes("aria-invalid")).toBe("true");
     });

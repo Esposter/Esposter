@@ -18,7 +18,7 @@ describe("uiRating", () => {
           count,
           label,
           ...props,
-          "onUpdate:modelValue": (modelValue: number) => component.setProps({ modelValue }),
+          "onUpdate:modelValue": (modelValue: number | string) => component.setProps({ modelValue }),
         },
         slots: { mark: ({ isOn, value }) => h("i", { "data-filled": String(isOn), "data-value": value }) },
       });

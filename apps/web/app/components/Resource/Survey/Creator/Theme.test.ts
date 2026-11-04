@@ -97,7 +97,7 @@ describe("resourceSurveyCreatorTheme", () => {
 
       const component = await mountSuspended(ResourceSurveyCreatorTheme);
 
-      expect(component.getComponent(UiSelect).props("modelValue")).toBe(SurveyProgressBarPlacement.Top);
+      expect(component.get('[role="combobox"]').text()).toBe("Top of the survey");
       expect(component.get('[role="switch"]').attributes("aria-checked")).toBe("true");
     });
 
