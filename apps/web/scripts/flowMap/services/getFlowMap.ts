@@ -1,12 +1,12 @@
 import type { FlowMapPage } from "@@/scripts/flowMap/models/FlowMapPage";
 import type { FlowMapSourceNode } from "@@/scripts/flowMap/models/FlowMapSourceNode";
 
+import { WEB_DIRECTORY } from "@@/scripts/constants";
 import {
   NODE_ID_SEPARATOR_REGEX,
   ROUTE_PARAMETER_PLACEHOLDER,
   SHELL_ENTRY_PATTERNS,
   SHELL_NODE_ID,
-  WEB_DIRECTORY,
 } from "@@/scripts/flowMap/constants";
 import { readPages } from "@@/scripts/flowMap/services/readPages";
 import { readSourceContext } from "@@/scripts/flowMap/services/readSourceContext";

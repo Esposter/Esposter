@@ -1,5 +1,6 @@
 import type { FlowMapSourceContext } from "@@/scripts/flowMap/models/FlowMapSourceContext";
 
+import { WEB_DIRECTORY } from "@@/scripts/constants";
 import {
   AUTO_IMPORT_PATTERN,
   COMPONENTS_DIRECTORY,
@@ -8,7 +9,6 @@ import {
   MIDDLEWARE_EXTENSION_REGEX,
   MIDDLEWARE_PATTERN,
   NON_SOURCE_PATTERNS,
-  WEB_DIRECTORY,
 } from "@@/scripts/flowMap/constants";
 import { getComponentKey } from "@@/scripts/flowMap/services/getComponentKey";
 import { globSync, readFileSync } from "node:fs";

@@ -1,6 +1,6 @@
+import { WEB_DIRECTORY } from "@@/scripts/constants";
 import { resolve } from "node:path";
 
-export const WEB_DIRECTORY = resolve(import.meta.dirname, "../..");
 export const COMPONENTS_DIRECTORY = "app/components";
 export const PAGES_DIRECTORY = "app/pages";
 export const AUTO_IMPORT_PATTERN = "app/composables/**/*.ts";

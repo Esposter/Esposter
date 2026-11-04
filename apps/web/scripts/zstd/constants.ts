@@ -1,6 +1,6 @@
+import { WEB_DIRECTORY } from "@@/scripts/constants";
 import { resolve } from "node:path";
 
-const WEB_DIRECTORY = resolve(import.meta.dirname, "../..");
 // Pinned with the checksum its release publishes, so a regeneration builds the same bytes or refuses to run. The
 // Version tracks the libzstd node:zlib bundles, so the browser's encoder and the server's decoder are one codec
 export const ZSTD_VERSION = "1.5.7";

@@ -1,6 +1,7 @@
 import type { FlowMapPage } from "@@/scripts/flowMap/models/FlowMapPage";
 
-import { PAGE_EXTENSION_REGEX, PAGES_DIRECTORY, WEB_DIRECTORY } from "@@/scripts/flowMap/constants";
+import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { PAGE_EXTENSION_REGEX, PAGES_DIRECTORY } from "@@/scripts/flowMap/constants";
 import { globSync } from "node:fs";
 import { resolve } from "node:path";
 

@@ -1,4 +1,5 @@
-import { COMPONENTS_DIRECTORY, NON_SOURCE_PATTERNS, WEB_DIRECTORY } from "@@/scripts/flowMap/constants";
+import { WEB_DIRECTORY } from "@@/scripts/constants";
+import { COMPONENTS_DIRECTORY, NON_SOURCE_PATTERNS } from "@@/scripts/flowMap/constants";
 import { readSourceContext } from "@@/scripts/flowMap/services/readSourceContext";
 import { readSourceNode } from "@@/scripts/flowMap/services/readSourceNode";
 import { globSync } from "node:fs";
