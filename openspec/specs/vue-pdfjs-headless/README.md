@@ -5,7 +5,7 @@
 The package's capabilities, each with its own design page and requirements:
 
 - [Document](document/design.md) loads a document from a URL, from bytes or from a file, through the consumer's renderer, with its progress, its password prompt, its failure and a superseded load.
-- [Viewer](viewer/design.md) draws the pages, their overlays, zoom, search, outline and thumbnails, fullscreen, download and print.
+- [Viewer](viewer/design.md) draws the pages, their overlays, zoom, search, outline and thumbnails, rotation, download and print.
 - [Annotations](annotations/design.md) keeps form values and drawn annotations in the saved bytes, reports each drawing, lists comments, exchanges free texts as XFDF, and stamps a watermark on the download alone.
 
 The app's own use of the package is the [PDF viewer](../architecture/pdf-viewer/design.md): the renderer's worker and folders, the thumbnail and the dialog's look.

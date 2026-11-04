@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A loaded PDF's drawing and the viewer's state as the headless package `vue-pdfjs-headless` states them: sharp pages, zoom within bounds, search, the outline and thumbnails, fullscreen, download and print, with no styling and no controls of its own.
+A loaded PDF's drawing and the viewer's state as the headless package `vue-pdfjs-headless` states them: sharp pages, zoom within bounds, search, the outline and thumbnails, rotation, download and print, with no styling and no controls of its own.
 
 ## Requirements
 
@@ -60,6 +60,13 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 - **THEN** the scale stays at the largest
 - **AND** zooming in is reported as unavailable
 
+#### Zooming out at the smallest scale
+
+- **GIVEN** a document at the renderer's smallest scale
+- **WHEN** the reader tries to zoom out
+- **THEN** the scale stays at the smallest
+- **AND** zooming out is reported as unavailable
+
 #### Scenario: Fitting a page to the width
 
 - **GIVEN** a document open in the viewer
@@ -81,14 +88,20 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 
 ### Requirement: Rotation turns every page a quarter turn
 
-The package SHALL turn every page a quarter turn on each rotate, wrapping after a full turn.
+The package SHALL turn every page a quarter turn clockwise or counter-clockwise on each rotate, wrapping after a full turn in either direction.
 
 #### Scenario: Rotating a document
 
 - **GIVEN** a document open in the viewer, unrotated
-- **WHEN** the reader rotates it
+- **WHEN** the reader rotates it a quarter turn clockwise
 - **THEN** every page is turned a quarter turn
 - **AND** the viewer reports the new rotation
+
+#### Scenario: Rotating counter-clockwise
+
+- **GIVEN** a document open in the viewer, unrotated
+- **WHEN** the reader rotates it a quarter turn counter-clockwise
+- **THEN** every page is turned a quarter turn counter-clockwise
 
 #### Scenario: Rotating past a full turn
 
@@ -134,6 +147,25 @@ The package SHALL give the document's outline as bookmarks and draw a page's thu
 - **WHEN** it loads
 - **THEN** the bookmarks are empty
 
+#### Scenario: An outline still being read
+
+- **GIVEN** a document whose outline is still being read
+- **WHEN** the reader looks at the bookmarks
+- **THEN** the bookmarks are not yet known, rather than empty
+
+#### Scenario: An outline that cannot be read
+
+- **GIVEN** a document whose outline cannot be read
+- **WHEN** it loads
+- **THEN** the bookmarks are empty
+- **AND** the failure is logged
+
+#### Scenario: An outline read for a replaced document
+
+- **GIVEN** a document whose outline is still being read
+- **WHEN** another document is opened before that read finishes
+- **THEN** the first document's outline is not shown
+
 #### Scenario: The thumbnail sidebar marks the current page
 
 - **GIVEN** a sidebar of thumbnails beside the viewer
@@ -141,25 +173,27 @@ The package SHALL give the document's outline as bookmarks and draw a page's thu
 - **THEN** the second thumbnail is marked as current
 - **AND** a thumbnail out of view is not drawn
 
-### Requirement: Fullscreen follows the browser
+#### A drawn thumbnail turns with the pages
 
-The package SHALL enter fullscreen on the consumer's container and report whether it is fullscreen as the browser changes it.
-
-#### Scenario: Leaving fullscreen with the Escape key
-
-- **GIVEN** the viewer in fullscreen
-- **WHEN** the reader presses Escape
-- **THEN** the viewer reports that it is no longer fullscreen
+- **GIVEN** a thumbnail already drawn in the sidebar
+- **WHEN** the document is rotated a quarter turn
+- **THEN** the thumbnail is drawn turned with its page
 
 ### Requirement: A document downloads and prints
 
-The package SHALL download a document under its file name and print every page within the device's canvas.
+The package SHALL download a document under its file name, with a watermark on every page when the consumer gives one for that download, and print every page within the device's canvas.
 
 #### Scenario: Downloading a document under its name
 
 - **GIVEN** a document loaded from a file named "report.pdf"
 - **WHEN** the reader downloads it
 - **THEN** a file named "report.pdf" holding the document's bytes is saved
+
+#### Scenario: Downloading with a watermark
+
+- **GIVEN** a document loaded from a file named "report.pdf"
+- **WHEN** the reader downloads it with a watermark
+- **THEN** a file named "report.pdf" is saved with the watermark on every page, as the annotations spec states
 
 #### Scenario: Printing a document
 

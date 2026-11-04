@@ -6,7 +6,7 @@
 
 - **`usePdfAnnotations`** takes the viewer and the document `usePdfViewer` and `usePdfDocument` return. It sets the editor mode, reports each drawn annotation, lists comments, and imports and exports XFDF free texts through the storage.
 - **XFDF** is read and written by `readXfdf` and `writeXfdf`, which the package exports from its barrel, framework-free and renderer-free. It carries free texts only.
-- **The download** `usePdfViewer` returns saves through the renderer once the storage holds an entry or a watermark is set. The watermark is stored for that save alone.
+- **The download** `usePdfViewer` returns saves through the renderer once the storage holds an entry or a watermark is given for the download. The watermark is stored for that save alone.
 
 ```mermaid
 flowchart TD

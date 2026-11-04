@@ -87,7 +87,7 @@ The package SHALL write free-text annotations as XFDF and read XFDF back into th
 
 ### Requirement: A download carries the edits and the watermark
 
-The package SHALL download the original bytes while nothing has changed and no watermark is set. Otherwise it SHALL download the renderer's saved bytes, with the watermark written on every page when one is set, and the watermark SHALL NOT remain in the document's storage once the download is saved.
+The package SHALL download the original bytes while nothing has changed and no watermark is given for the download. Otherwise it SHALL download the renderer's saved bytes, with the watermark written on every page when one is given, and the watermark SHALL NOT remain in the document's storage once the download is saved.
 
 #### Scenario: A watermarked download
 
