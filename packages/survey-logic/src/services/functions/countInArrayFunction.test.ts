@@ -7,7 +7,9 @@ describe(countInArrayFunction, () => {
     ["counts the items whose field holds a value", [SURVEY_ITEMS, "price"], 3],
     ["counts only the items whose field reads as a number", [SURVEY_ITEMS, "q"], 1],
     ["counts nothing for an empty array", [[], "price"], 0],
-    ["counts nothing when the field name is missing", [SURVEY_ITEMS], 0],
+    ["counts nothing for an unanswered array", [undefined, "price"], 0],
+    ["has no count when the field name is missing", [SURVEY_ITEMS], undefined],
+    ["has no count when the field name is not text", [SURVEY_ITEMS, 5], undefined],
     ["is empty when the arguments hold a filter", [SURVEY_ITEMS, "price", "{name} = 'a'"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();

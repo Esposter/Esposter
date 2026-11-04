@@ -7,17 +7,16 @@ import { getSurveyNumberWithPrecision } from "#src/services/shared/getSurveyNumb
 // For example, -4.89 times 100 is -488.99999999999994, and cut as it is it would read -4.88
 const PRODUCT_DIGITS = 15;
 
-// The number cut to a number of decimal places, or to its whole part when the precision is not a positive whole number
+// The number cut to a number of decimal places, or to its whole part when the precision is zero
 export const truncFunction: SurveyLogicFunction = (args) => {
   const numberWithPrecision = getSurveyNumberWithPrecision(args);
   if (numberWithPrecision === undefined) return undefined;
 
   const [number, precision] = numberWithPrecision;
-  const places = Number.isInteger(precision) && precision > 0 ? precision : 0;
-  if (places === 0) return Math.trunc(number);
+  if (precision === 0) return Math.trunc(number);
   // A number with no digits past the places is itself, so a whole number in exponent form is not moved by its scale
-  if (countSurveyLogicDecimals(number) <= places) return number;
+  if (countSurveyLogicDecimals(number) <= precision) return number;
 
-  const scale = 10 ** places;
+  const scale = 10 ** precision;
   return Math.trunc(Number((number * scale).toPrecision(PRODUCT_DIGITS))) / scale;
 };

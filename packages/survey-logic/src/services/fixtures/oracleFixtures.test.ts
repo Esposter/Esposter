@@ -69,6 +69,8 @@ describe("the oracle fixtures", () => {
     "calendar-dates":
       "Dates are calendar dates: only ISO text is a date, an invalid date has no result, a day moves by the calendar, a month clamps to its end, an unknown unit has no result, and a date-time end counts its time, where SurveyJS gives a shifted or NaN date",
     "case-sensitive": "Names are case-sensitive here, where SurveyJS ignores case",
+    "precision-range":
+      "A precision is a whole number from zero to one hundred, so a negative precision has no result, where SurveyJS rounds to tens or cuts a whole number",
     "power-grouping":
       "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
     "unary-minus":

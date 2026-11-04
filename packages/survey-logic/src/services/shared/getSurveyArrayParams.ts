@@ -11,7 +11,7 @@ import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 // An item counts only when its field reads as a number
 export const getSurveyArrayParams = (args: SurveyLogicValue[]): SurveyLogicArrayParams | undefined => {
   const [data, name, returnCandidate] = args;
-  if (args.length < 2 || args.length > 4 || !data || typeof name !== "string") return undefined;
+  if (args.length < 2 || args.length > 4 || typeof name !== "string") return undefined;
 
   const hasReturnField =
     args.length > 2 && typeof returnCandidate === "string" && checkIsSurveyFieldName(returnCandidate);

@@ -10,7 +10,9 @@ describe(sumInArrayFunction, () => {
     ["ignores a field returned by name", [SURVEY_ITEMS, "price", "name"], 6],
     ["sums nothing for a field no item holds", [SURVEY_ITEMS, "missing"], 0],
     ["sums nothing for an empty array", [[], "price"], 0],
-    ["sums nothing when the field name is missing", [SURVEY_ITEMS], 0],
+    ["sums nothing for an unanswered array", [undefined, "price"], 0],
+    ["has no sum when the field name is missing", [SURVEY_ITEMS], undefined],
+    ["has no sum when the field name is not text", [SURVEY_ITEMS, 5], undefined],
     ["is empty when the arguments hold a filter", [SURVEY_ITEMS, "price", "{name} = 'a'"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();

@@ -7,7 +7,7 @@ import { sumSurveyNumbers } from "#src/services/shared/sumSurveyNumbers";
 // A filter is a condition over each item, which the arguments do not carry, so a call that passes one has no sum
 export const sumInArrayFunction: SurveyLogicFunction = (args) => {
   const params = getSurveyArrayParams(args);
-  if (params === undefined) return 0;
+  if (params === undefined) return undefined;
   if (params.isFiltered) return undefined;
 
   return sumSurveyNumbers(params.rows.map((row) => row.field));

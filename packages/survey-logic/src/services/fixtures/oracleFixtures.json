@@ -5827,9 +5827,15 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": 1200 }
+    "value": { "type": "number", "value": 1200 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "precision-range" }
   },
-  { "expression": "round(1234.5678, -2)", "answers": {}, "value": { "type": "number", "value": 1200 } },
+  {
+    "expression": "round(1234.5678, -2)",
+    "answers": {},
+    "value": { "type": "number", "value": 1200 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "precision-range" }
+  },
   {
     "expression": "round('2.567', 2)",
     "answers": {
@@ -5958,9 +5964,15 @@
       "a": 5,
       "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
     },
-    "value": { "type": "number", "value": 1 }
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "precision-range" }
   },
-  { "expression": "trunc(1.9, -1)", "answers": {}, "value": { "type": "number", "value": 1 } },
+  {
+    "expression": "trunc(1.9, -1)",
+    "answers": {},
+    "value": { "type": "number", "value": 1 },
+    "deviation": { "ours": { "type": "undefined" }, "rule": "precision-range" }
+  },
   {
     "expression": "trunc('3,75', 1)",
     "answers": {

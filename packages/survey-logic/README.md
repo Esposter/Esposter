@@ -49,12 +49,12 @@ Each function is called by its name, written in any case. A call to a name no fu
 | `min`          | The smallest of the values passed, arrays flattened                                                                                   |
 | `minInArray`   | The smallest value of a field over an array's items, or another field of that item                                                    |
 | `month`        | The month of a date, from one for January, or of the clock's day when the date is empty                                               |
-| `round`        | The number rounded to a number of decimal places, or to a whole number when none is given                                             |
+| `round`        | The number rounded to a number of decimal places, or to a whole number when none is given; a precision past zero to 100 has no result |
 | `substring`    | The part of a text from a start index up to an end index                                                                              |
 | `sum`          | The sum of the values passed, arrays flattened                                                                                        |
 | `sumInArray`   | The sum of a field over the items of an array value                                                                                   |
 | `today`        | The clock's day at midnight, moved by a number of days when one is given                                                              |
-| `trunc`        | The number cut to a number of decimal places, or to its whole part when none is given                                                 |
+| `trunc`        | The number cut to a number of decimal places, or to its whole part when none is given; a precision past zero to 100 has no result     |
 | `weekday`      | The day of the week of a date, from zero for Sunday                                                                                   |
 | `year`         | The year of a date, or of the clock's day when the date is empty                                                                      |
 
