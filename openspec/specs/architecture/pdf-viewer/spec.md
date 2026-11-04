@@ -77,8 +77,8 @@ The viewer SHALL find text in the PDF, highlight every match, step to the previo
 
 - **GIVEN** a viewer given the terms "invoice" and "total"
 - **WHEN** its document loads
-- **THEN** every match of both terms is highlighted
-- **AND** the search bar shows "invoice total", so Next and Previous continue that search
+- **THEN** the search bar shows "invoice total", so the terms are searched as one phrase
+- **AND** the matches of that phrase are highlighted, so Next and Previous continue that search
 
 #### Scenario: Opening a PDF without search terms
 
