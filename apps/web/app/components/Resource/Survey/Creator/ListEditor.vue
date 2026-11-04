@@ -2,11 +2,13 @@
 import type { SurveyListEditor } from "@/models/resource/survey/SurveyListEditor";
 import type { SurveyListRow } from "@/models/resource/survey/SurveyListRow";
 
+import { capitalize } from "@esposter/shared";
+
 interface Props {
   editor: SurveyListEditor<TItem>;
-  // The list's name, drawn above its rows and named by each row's group, such as "Choices" or "Rows"
+  // The list's name, drawn above its rows, such as "Choices" or "Rows"
   label: string;
-  // The noun a row is named by in its buttons and in its removal's confirm, such as "choice" or "column"
+  // The noun a row is named by in its group, its buttons and its removal's confirm, such as "choice" or "column"
   noun: string;
 }
 
@@ -38,7 +40,7 @@ const isRemoveOpen = computed({
     <div
       v-for="(row, index) of rows"
       :key="row.id"
-      :aria-label="`${label} ${index + 1}`"
+      :aria-label="`${capitalize(noun)} ${index + 1}`"
       role="group"
       flex
       flex-col

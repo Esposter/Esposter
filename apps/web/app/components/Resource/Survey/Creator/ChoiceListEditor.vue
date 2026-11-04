@@ -6,7 +6,7 @@ import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
 import { surveyChoiceSchema } from "survey-engine";
 
 interface Props {
-  // The list's name, drawn above its rows and named by each row's group, such as "Choices" or "Rows"
+  // The list's name, drawn above its rows, such as "Choices" or "Rows"
   label: string;
 }
 // A choice's value is what an answer holds and its text is what a respondent reads, so a value is needed and unique

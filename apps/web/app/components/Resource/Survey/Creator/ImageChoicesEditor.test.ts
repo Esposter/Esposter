@@ -77,6 +77,17 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     expect(choice).toStrictEqual({ imageLink: url, text: "", value: choice.value });
   });
 
+  test("a choice row is named by its singular noun, so the first choice reads as Choice 1", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument(["a"]));
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+
+    expect(component.get('[role="group"]').attributes("aria-label")).toBe("Choice 1");
+  });
+
   test("moving a choice down swaps it with the choice after it", async () => {
     expect.hasAssertions();
     const surveyCreatorStore = useSurveyCreatorStore();

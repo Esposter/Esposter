@@ -5,7 +5,7 @@ import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toS
 import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "survey-engine";
 
 interface Props {
-  // The list's name, drawn above its rows and named by each row's group, such as "Items"
+  // The list's name, drawn above its rows, such as "Items"
   label: string;
 }
 // An item is one input of the question, held under its name, which an answer is keyed by, so a name is unique within the

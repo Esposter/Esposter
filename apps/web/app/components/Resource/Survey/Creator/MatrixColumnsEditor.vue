@@ -5,7 +5,7 @@ import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurve
 import { SurveyMatrixCellType, surveyMatrixColumnSchema } from "survey-engine";
 
 interface Props {
-  // The list's name, drawn above its rows and named by each row's group, such as "Columns"
+  // The list's name, drawn above its rows, such as "Columns"
   label: string;
 }
 // A column is told apart by its name, since an answer is keyed by it, and each column's own settings are checked by its
