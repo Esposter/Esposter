@@ -38,6 +38,7 @@ const scheduleJob = async () => {
           })
         : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
             message: marked.parse(text.value, { async: false }),
+            replyRowKey: "",
             roomId,
             runAt: scheduledAt.value,
           }),

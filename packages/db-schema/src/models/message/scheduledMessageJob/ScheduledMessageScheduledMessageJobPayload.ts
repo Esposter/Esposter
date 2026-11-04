@@ -17,6 +17,6 @@ export interface ScheduledMessageScheduledMessageJobPayload extends ItemEntityTy
 
 export const scheduledMessageScheduledMessageJobPayloadSchema = z.object({
   message: sanitizedMessageSchema.pipe(z.string().min(1).max(MESSAGE_MAX_LENGTH)),
-  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
+  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")),
   type: z.literal(ScheduledMessageJobType.ScheduledMessage),
 }) satisfies z.ZodType<ScheduledMessageScheduledMessageJobPayload>;

@@ -59,7 +59,12 @@ describe("scheduledMessageJobRouter", () => {
   const setupMemberScheduledMessage = async () => {
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({
+      message,
+      replyRowKey: "",
+      roomId,
+      runAt,
+    });
     return { member, scheduledMessageJob };
   };
 
@@ -95,7 +100,12 @@ describe("scheduledMessageJobRouter", () => {
   test("schedules message", async () => {
     expect.hasAssertions();
 
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({
+      message,
+      replyRowKey: "",
+      roomId,
+      runAt,
+    });
 
     expect(scheduledMessageJob.roomId).toBe(roomId);
     expect(scheduledMessageJob.payload).toStrictEqual({
@@ -193,7 +203,7 @@ describe("scheduledMessageJobRouter", () => {
     [ScheduledMessageJobType.Reminder, () => scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text })],
     [
       ScheduledMessageJobType.ScheduledMessage,
-      () => scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt }),
+      () => scheduledMessageJobCaller.scheduleMessage({ message, replyRowKey: "", roomId, runAt }),
     ],
   ] as const)("fails to schedule a %s as non-member", async (_type, schedule) => {
     expect.hasAssertions();
@@ -283,7 +293,12 @@ describe("scheduledMessageJobRouter", () => {
   test("fails send scheduled message now with job claimed for delivery", async () => {
     expect.hasAssertions();
 
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({
+      message,
+      replyRowKey: "",
+      roomId,
+      runAt,
+    });
     await mockContext.db
       .update(scheduledMessageJobsInMessage)
       .set({ processingStartedAt: new Date() })

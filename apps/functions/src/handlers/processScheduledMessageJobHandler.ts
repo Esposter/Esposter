@@ -56,7 +56,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       return;
     }
     // Parsed BEFORE the claim, and it is the last thing that may fail before it: a payload the current schema
-    // Rejects (a shape an older deploy wrote, column drift) throws here while the row is still untouched, so the
+    // Rejects (column drift, or a shape it no longer takes) throws here while the row is still untouched, so the
     // Redelivery finds it claimable. Parsed after the claim, that same throw strands the job — the claim is
     // Single-shot, so every redelivery loses the race, and the row is left neither deliverable nor cancellable
     const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
