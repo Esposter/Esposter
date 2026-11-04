@@ -121,6 +121,49 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.emitted<[SurveyAnswerValue]>("update:modelValue")).toStrictEqual([[[{ [columnName]: step }]]]);
     });
 
+    test("marks a required column's header, and gives each of its cells aria-required", () => {
+      expect.hasAssertions();
+
+      const choices = [{ text: "", value: "b" }];
+      const component = mountMatrixDynamic(
+        createNode(1, 0, 2, [
+          { cellType: SurveyMatrixCellType.Text, choices: [], isRequired: true, name: "a", title: "a" },
+          { cellType: SurveyMatrixCellType.Dropdown, choices, isRequired: true, name: "b", title: "b" },
+          { cellType: SurveyMatrixCellType.Boolean, choices: [], isRequired: true, name: "c", title: "c" },
+        ]),
+      );
+
+      expect(component.findAll("th").map((header) => header.text())).toStrictEqual([
+        "a * required",
+        "b * required",
+        "c * required",
+      ]);
+      expect(component.get("input").attributes("aria-required")).toBe("true");
+      expect(component.get('[role="combobox"]').attributes("aria-required")).toBe("true");
+      expect(component.get('[role="checkbox"]').attributes("aria-required")).toBe("true");
+    });
+
+    test("leaves an optional column's header and cells unmarked", () => {
+      expect.hasAssertions();
+
+      const component = mountMatrixDynamic(
+        createNode(1, 0, 2, [
+          { cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "a", title: "a" },
+          {
+            cellType: SurveyMatrixCellType.Dropdown,
+            choices: [{ text: "", value: "b" }],
+            isRequired: false,
+            name: "b",
+            title: "b",
+          },
+        ]),
+      );
+
+      expect(component.findAll("th").map((header) => header.text())).toStrictEqual(["a", "b"]);
+      expect(component.get("input").attributes("aria-required")).toBeUndefined();
+      expect(component.get('[role="combobox"]').attributes("aria-required")).toBeUndefined();
+    });
+
     test("shows its error beside the table, which describes itself by it, and marks each cell invalid", () => {
       expect.hasAssertions();
 

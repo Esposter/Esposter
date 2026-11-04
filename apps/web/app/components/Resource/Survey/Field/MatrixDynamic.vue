@@ -63,6 +63,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
 // A dropdown cell chooses from its column's choices, and the choice a key picks is written as that choice's own value
 const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers, rowIndex: number) => ({
   "aria-invalid": invalid.value,
+  "aria-required": column.isRequired ? true : undefined,
   isDisabled: isDisabled || undefined,
   items: takeOne(choiceItemsMap.value, column.name),
   label: column.title || column.name,
@@ -85,8 +86,10 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
         </caption>
         <thead>
           <tr>
+            <!-- A required column is marked here, and each of its cells that takes aria-required says so, which names it once -->
             <th v-for="column of node.props.columns" :key="column.name" scope="col" text-sm text-muted p-1>
               {{ column.title || column.name }}
+              <UiRequiredMark v-if="column.isRequired" />
             </th>
           </tr>
         </thead>
@@ -98,6 +101,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 is-label-hidden
                 :is-disabled="isDisabled || undefined"
                 :is-invalid="invalid"
+                :is-required="column.isRequired || undefined"
                 :label="column.title || column.name"
                 :model-value="getCellText(row[column.name])"
                 @update:model-value="(value) => setRow(rowIndex, withSurveyAnswer(row, column.name, value))"
@@ -107,6 +111,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                 is-label-hidden
                 :is-disabled="isDisabled || undefined"
                 :is-invalid="invalid"
+                :is-required="column.isRequired || undefined"
                 :label="column.title || column.name"
                 :model-value="getCellText(row[column.name])"
                 :rows="2"
@@ -121,6 +126,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
                   v-for="choice of column.choices"
                   :key="String(choice.value)"
                   :aria-invalid="invalid"
+                  :aria-required="column.isRequired ? true : undefined"
                   is-label-shown
                   :disabled="isDisabled"
                   :label="getSurveyChoiceText(choice)"
@@ -137,6 +143,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               <UiCheckbox
                 v-else-if="column.cellType === SurveyMatrixCellType.Boolean"
                 :aria-invalid="invalid"
+                :aria-required="column.isRequired ? true : undefined"
                 :disabled="isDisabled"
                 :label="column.title || column.name"
                 :model-value="row[column.name] === true"
