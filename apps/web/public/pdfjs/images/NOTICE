@@ -1,0 +1,4 @@
+The annotation-*.svg icons in this folder are copied unchanged from web/images/ in pdfjs-dist 6.5.438,
+the renderer the app pins. They are the icons pdf.js draws for a text annotation and a file attachment,
+and are licensed under the Apache License, Version 2.0, as pdf.js is (https://github.com/mozilla/pdf.js/blob/master/LICENSE).
+A bump of pdfjs-dist copies them again from its install.
