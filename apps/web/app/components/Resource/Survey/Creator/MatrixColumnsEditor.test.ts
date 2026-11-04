@@ -10,7 +10,7 @@ import { SurveyMatrixCellType } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
-  test("a column added, renamed and removed reaches the list", async () => {
+  test("owner adds, renames and removes a matrix column", async () => {
     expect.hasAssertions();
     const wrapper = await mountSuspended(ResourceSurveyCreatorMatrixColumnsEditor, {
       props: { label: "Columns", modelValue: [] },

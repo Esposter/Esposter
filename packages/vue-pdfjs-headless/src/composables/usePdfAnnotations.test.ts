@@ -84,7 +84,7 @@ describe("usePdfAnnotations", () => {
     expect(state.comments.value).toStrictEqual([]);
   });
 
-  test("comments are read once they are wanted, not before", async () => {
+  test("comments are not read until they are wanted", async () => {
     expect.hasAssertions();
 
     const isCommentsWanted = ref(false);

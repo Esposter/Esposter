@@ -85,10 +85,16 @@ The package SHALL write free-text annotations as XFDF and read XFDF back into th
 - **THEN** an error naming the problem is returned
 - **AND** the document still holds only its one free text
 
-#### Scenario: Importing free texts that share a name or have none
+#### Scenario: Importing two free texts with no name stores both
 
 - **GIVEN** a document of one page
-- **WHEN** an XFDF file with two free texts, both named alike or both unnamed, is imported
+- **WHEN** an XFDF file with two free texts, both unnamed, is imported
+- **THEN** both free texts are stored
+
+#### Scenario: Importing two free texts that share a name stores both
+
+- **GIVEN** a document of one page
+- **WHEN** an XFDF file with two free texts, both named alike, is imported
 - **THEN** both free texts are stored
 
 #### Scenario: Importing a free text past the last page
