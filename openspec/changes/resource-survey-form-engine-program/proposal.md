@@ -20,7 +20,7 @@ The survey is rebuilt on our own code and SurveyJS is removed. One change would 
 - **[Properties](../../specs/resource/survey-properties/design.md)**: the property grid and the choice, matrix and column editors.
 - **[Logic builder](../../specs/resource/survey-logic-builder/design.md)**: the condition builder beside the raw expression.
 - **[Theme and files](../../specs/resource/survey-theme-files/design.md)**: the theme subset and the uploads with their delete hooks.
-- **[Removal](../resource-survey-form-engine-removal/design.md)**: the one-time purge, SurveyJS's removal and the prose the change makes stale.
+- **[Removal](../archive/2026-11-04-resource-survey-form-engine-removal/design.md)**: the one-time purge, SurveyJS's removal and the prose the change makes stale.
 
 The rejected alternative, keeping SurveyJS and checking its document on save, is recorded in [its rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md).
 

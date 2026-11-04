@@ -4,7 +4,7 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 ## Next
 
-- [ ] [Survey purge](../resource-survey-form-engine-removal/design.md) — publish `PurgeSurveyResources` to the application topic once in each environment, then verify zero survey rows, response rows and invite references and an empty rerun. This needs the owner, and it waits until the Azure Functions host runs the repo's Node major (the node-major reference under `.agents/skills/dependency-updates/references/node-major.md`)
+- [ ] [Survey purge](../archive/2026-11-04-resource-survey-form-engine-removal/design.md) — publish `PurgeSurveyResources` to the application topic once in each environment, then verify zero survey rows, response rows and invite references and an empty rerun. This needs the owner, and it waits until the Azure Functions host runs the repo's Node major (the node-major reference under `.agents/skills/dependency-updates/references/node-major.md`)
 
 - [ ] [Survey runner and Creator accessibility](../../specs/resource/survey-fields/design.md) — the runner and the Creator pass a recorded accessibility check in both styles and both modes (labelled fields, focus order, announced errors), then the owner listens once with a screen reader
 
