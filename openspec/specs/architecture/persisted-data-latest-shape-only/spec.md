@@ -63,7 +63,7 @@ A field added to a stored table entity SHALL describe the rows written after the
 
 #### Scenario: A default stays only where a current writer omits the value
 
-- **GIVEN** a stored row's field holds an empty value, which the Table does not store
+- **GIVEN** a current writer leaves a stored row's field `undefined`, which the Table stores as no property
 - **WHEN** the row is read
 - **THEN** the field reads its default value
 - **AND** no read path infers the field from the row's other values
