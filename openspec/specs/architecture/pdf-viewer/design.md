@@ -136,6 +136,7 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 - **Comments are listed, not added.** The viewer offers no add-comment control, because the renderer's save drops text annotations and a comment added would not reach the download. The [annotations design](../../vue-pdfjs-headless/annotations/design.md) states why.
 - **The Comments tab decides whether the comments are read.** The dialog holds the sidebar's tab, so opening the tab is what asks for the comments, and a document nobody reads comments of reads none.
 - **A refused import is an alert, not a dialog.** The alert names the file and the reason, since the reader has nothing else in the viewer to act on, and the document is left as it was.
+- **A document's permission flags are not enforced.** The renderer is built without `enablePermissions`, so a PDF's copy, print and modify flags change nothing and every tool works on every document. Rejected: enforcing them, which would turn the annotation tools, copying and printing off for a locked document, a limit nothing in the app asks for.
 - **Export names the file after the document.** It takes the document's name without its `.pdf` extension, and is saved through the same download the Download item uses.
 
 ## Key files
