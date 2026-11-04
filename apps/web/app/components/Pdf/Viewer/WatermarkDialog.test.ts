@@ -49,7 +49,7 @@ describe("pdfViewerWatermarkDialog", () => {
       expect(getButton("Download")?.hasAttribute("disabled")).toBe(true);
     });
 
-    test("downloading with a watermark saves the document with that text", async () => {
+    test("downloading with a watermark", async () => {
       expect.hasAssertions();
 
       const { component, viewer } = mountDialog();
@@ -61,7 +61,7 @@ describe("pdfViewerWatermarkDialog", () => {
       expect(viewer.download).toHaveBeenCalledExactlyOnceWith("report.pdf", "DRAFT");
     });
 
-    test("cancelling saves nothing", async () => {
+    test("cancelling the watermark dialog saves nothing", async () => {
       expect.hasAssertions();
 
       const { component, viewer } = mountDialog();

@@ -344,6 +344,19 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
+  test("rotating past a full turn", () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    state.rotate(PDF_ROTATION_STEP);
+    state.rotate(PDF_ROTATION_STEP);
+    state.rotate(PDF_ROTATION_STEP);
+    state.rotate(PDF_ROTATION_STEP);
+
+    expect(state.pagesRotation.value).toBe(0);
+    scope.stop();
+  });
+
   test("zooming out at the smallest scale", () => {
     expect.hasAssertions();
 

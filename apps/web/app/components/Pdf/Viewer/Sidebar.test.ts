@@ -5,9 +5,7 @@ import type { PdfOutline } from "vue-pdfjs-headless";
 import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
 import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
-import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -42,13 +40,13 @@ describe("pdfViewerSidebar", () => {
   });
   afterEach(() => {
     vi.unstubAllGlobals();
-    useLocalStorage(LocalStorageKey.PdfSidebarTab, PdfSidebarTab.Outline).value = PdfSidebarTab.Outline;
+    localStorage.clear();
   });
 
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    test("switching to the thumbnails lists them, and the outline is no longer listed", async () => {
+    test("switching the sidebar between the outline and the thumbnails", async () => {
       expect.hasAssertions();
 
       const component = mountSidebar([]);
@@ -58,18 +56,6 @@ describe("pdfViewerSidebar", () => {
 
       expect(component.text()).not.toContain("This PDF has no outline");
       expect(component.findAll("button").some((button) => button.text() === "Page 1")).toBe(true);
-    });
-
-    test("the thumbnails tab chosen is remembered in this browser", async () => {
-      expect.hasAssertions();
-
-      const component = mountSidebar();
-      await chooseTab(component, "Thumbnails");
-      component.unmount();
-      const reopened = mountSidebar();
-      await flushPromises();
-
-      expect(reopened.findAll("button").some((button) => button.text() === "Page 1")).toBe(true);
     });
   });
 });

@@ -29,7 +29,7 @@ describe("pdfViewerOutline", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    test("following an outline entry goes to its destination", async () => {
+    test("following an outline entry", async () => {
       expect.hasAssertions();
 
       const chapter = createNode("Chapter");
@@ -43,7 +43,7 @@ describe("pdfViewerOutline", () => {
       expect(viewer.followBookmark).toHaveBeenCalledExactlyOnceWith(chapter);
     });
 
-    test("a nested entry is listed after its parent and indented beneath it", () => {
+    test("a nested entry sits under its parent", () => {
       expect.hasAssertions();
 
       const component = mountOutline([createNode("Chapter 1", [createNode("Section 1.1")])]);
@@ -64,7 +64,7 @@ describe("pdfViewerOutline", () => {
       expect(component.text()).toContain("This PDF has no outline");
     });
 
-    test("an outline still being read is loading, not empty", () => {
+    test("an outline still being read is loading", () => {
       expect.hasAssertions();
 
       const component = mountOutline(undefined);

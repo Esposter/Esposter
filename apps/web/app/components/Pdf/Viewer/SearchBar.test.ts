@@ -12,7 +12,7 @@ describe("pdfViewerSearchBar", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    test("pressing Enter in the search field goes to the next match", async () => {
+    test("pressing Enter goes to the next match", async () => {
       expect.hasAssertions();
 
       const viewer = createPdfViewerState({ matchesCount: ref({ current: 1, total: 3 }) });
@@ -23,7 +23,7 @@ describe("pdfViewerSearchBar", () => {
       expect(viewer.findNext).toHaveBeenCalledExactlyOnceWith();
     });
 
-    test("the count reads the match in view out of the total", () => {
+    test("searching for a word", () => {
       expect.hasAssertions();
 
       const component = mountSearchBar(
@@ -33,7 +33,7 @@ describe("pdfViewerSearchBar", () => {
       expect(component.get('[aria-live="polite"]').text()).toBe("2 of 5");
     });
 
-    test("a search that finds no match says so, and its match buttons are unavailable", () => {
+    test("searching for a word the PDF does not hold", () => {
       expect.hasAssertions();
 
       const component = mountSearchBar(

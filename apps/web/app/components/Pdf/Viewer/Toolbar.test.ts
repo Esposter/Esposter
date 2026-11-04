@@ -47,7 +47,7 @@ describe("pdfViewerToolbar", () => {
       expect(component.emitted("update:isSidebarOpen")).toStrictEqual([[false]]);
     });
 
-    test("rotate right turns the pages a quarter turn clockwise", async () => {
+    test("rotating right", async () => {
       expect.hasAssertions();
 
       const viewer = createPdfViewerState();
@@ -57,7 +57,7 @@ describe("pdfViewerToolbar", () => {
       expect(viewer.rotate).toHaveBeenCalledExactlyOnceWith(PDF_ROTATION_STEP);
     });
 
-    test("rotate left turns the pages a quarter turn counter-clockwise", async () => {
+    test("rotating left", async () => {
       expect.hasAssertions();
 
       const viewer = createPdfViewerState();
@@ -101,7 +101,37 @@ describe("pdfViewerToolbar", () => {
       expect(isMatchCase.value).toBe(false);
     });
 
-    test("the zoom readout shows the scale and resets it to fit the width", async () => {
+    test("matching whole words", async () => {
+      expect.hasAssertions();
+
+      const isWholeWord = ref(false);
+      const component = await openMenu(mountToolbar({ viewer: createPdfViewerState({ isWholeWord }) }));
+      await getMenuItem(component, "Whole word")?.trigger("click");
+
+      expect(isWholeWord.value).toBe(true);
+    });
+
+    test("going to a page", async () => {
+      expect.hasAssertions();
+
+      const viewer = createPdfViewerState();
+      const component = mountToolbar({ viewer });
+      await component.get('input[type="number"]').setValue("4");
+      await component.get("form").trigger("submit");
+      await flushPromises();
+
+      expect(viewer.goToPage).toHaveBeenCalledExactlyOnceWith(4);
+    });
+
+    test("zooming past the largest scale", () => {
+      expect.hasAssertions();
+
+      const component = mountToolbar({ viewer: createPdfViewerState({ isZoomInDisabled: computed(() => true) }) });
+
+      expect(component.get('[aria-label="Zoom in"]').attributes("disabled")).toBeDefined();
+    });
+
+    test("resetting a zoomed document", async () => {
       expect.hasAssertions();
 
       const viewer = createPdfViewerState();
@@ -112,7 +142,7 @@ describe("pdfViewerToolbar", () => {
       expect(viewer.fitWidth).toHaveBeenCalledExactlyOnceWith();
     });
 
-    test("zoom out is disabled at the smallest scale the viewer allows", () => {
+    test("zooming out at the smallest scale", () => {
       expect.hasAssertions();
 
       const component = mountToolbar({ viewer: createPdfViewerState({ isZoomOutDisabled: computed(() => true) }) });

@@ -38,7 +38,7 @@ describe("pdfViewerThumbnailRail", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    test("a thumbnail not yet drawn holds its place with its page number", async () => {
+    test("a thumbnail not yet drawn holds its place", async () => {
       expect.hasAssertions();
 
       const { component } = mountRail();
@@ -48,7 +48,7 @@ describe("pdfViewerThumbnailRail", () => {
       expect(getCard(component, 1)?.find("canvas").exists()).toBe(true);
     });
 
-    test("choosing a thumbnail goes to its page", async () => {
+    test("choosing a thumbnail", async () => {
       expect.hasAssertions();
 
       const { component, viewer } = mountRail();
@@ -57,7 +57,7 @@ describe("pdfViewerThumbnailRail", () => {
       expect(viewer.goToPage).toHaveBeenCalledExactlyOnceWith(4);
     });
 
-    test("the card of the page in view is marked as current, and no other", () => {
+    test("the page in view is marked", () => {
       expect.hasAssertions();
 
       const { component } = mountRail(2);
