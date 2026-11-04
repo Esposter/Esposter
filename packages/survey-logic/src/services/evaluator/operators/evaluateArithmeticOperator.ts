@@ -37,16 +37,16 @@ export const evaluateArithmeticOperator = (
   switch (operator) {
     case SurveyExpressionBinaryOperator.Add:
       return toSurveyLogicResult(roundSurveyLogicSum(leftNumber, rightNumber, leftNumber + rightNumber));
-    case SurveyExpressionBinaryOperator.Subtract:
-      return toSurveyLogicResult(roundSurveyLogicSum(leftNumber, rightNumber, leftNumber - rightNumber));
-    case SurveyExpressionBinaryOperator.Multiply:
-      return toSurveyLogicResult(roundSurveyLogicProduct(leftNumber, rightNumber, leftNumber * rightNumber));
     case SurveyExpressionBinaryOperator.Divide:
       return rightNumber === 0 ? undefined : toSurveyLogicResult(leftNumber / rightNumber);
     case SurveyExpressionBinaryOperator.Modulo:
       return rightNumber === 0 ? undefined : toSurveyLogicResult(leftNumber % rightNumber);
+    case SurveyExpressionBinaryOperator.Multiply:
+      return toSurveyLogicResult(roundSurveyLogicProduct(leftNumber, rightNumber, leftNumber * rightNumber));
     case SurveyExpressionBinaryOperator.Power:
       return toSurveyLogicResult(leftNumber ** rightNumber);
+    case SurveyExpressionBinaryOperator.Subtract:
+      return toSurveyLogicResult(roundSurveyLogicSum(leftNumber, rightNumber, leftNumber - rightNumber));
     default:
       return exhaustiveGuard(operator);
   }

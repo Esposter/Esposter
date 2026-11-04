@@ -2,9 +2,9 @@
 // Unanswered, so the value model never holds it
 export type SurveyLogicStoredValue =
   | boolean
+  | null
   | number
   | string
-  | null
+  | SurveyLogicStoredValue[]
   | undefined
-  | { [name: string]: SurveyLogicStoredValue }
-  | SurveyLogicStoredValue[];
+  | { [name: string]: SurveyLogicStoredValue };

@@ -19,9 +19,9 @@ export const TEST_NEXT_YEAR_DATE: string = epochDate.add({ years: 1 }).toString(
 // The day the United States' clocks went forward in the epoch's year, when two o'clock is skipped in Los Angeles
 export const TEST_DAYLIGHT_GAP_DATE: string = epochDate.add({ days: 115 }).toString();
 // Year zero is a leap year, so its first day and the first day of its successor are three hundred and sixty-six days apart
-export const TEST_YEAR_ZERO_DATE: string = Temporal.PlainDate.from({ year: 0, month: 1, day: 1 }).toString();
-export const TEST_YEAR_ZERO_MARCH_DATE: string = Temporal.PlainDate.from({ year: 0, month: 3, day: 1 }).toString();
-export const TEST_YEAR_ONE_DATE: string = Temporal.PlainDate.from({ year: 1, month: 1, day: 1 }).toString();
+export const TEST_YEAR_ZERO_DATE: string = Temporal.PlainDate.from({ day: 1, month: 1, year: 0 }).toString();
+export const TEST_YEAR_ZERO_MARCH_DATE: string = Temporal.PlainDate.from({ day: 1, month: 3, year: 0 }).toString();
+export const TEST_YEAR_ONE_DATE: string = Temporal.PlainDate.from({ day: 1, month: 1, year: 1 }).toString();
 
 // A matrix's items, each holding a numeric field, a text that reads as a number, a text that reads as none, an empty
 // Field, and a missing one

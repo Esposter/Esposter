@@ -1,13 +1,12 @@
 // @unocss-include
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { SurveyMultipleTextItemInputType } from "survey-engine";
 
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import type { SurveyMultipleTextItemInputType } from "survey-engine";
-
 import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "survey-engine";
 import { SurveyExpressionBinaryOperator } from "survey-logic";
 

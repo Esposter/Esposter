@@ -66,45 +66,45 @@ describe("the oracle fixtures", () => {
     "answer-type":
       "An answer keeps its stored type: a text spelling a boolean or wrapped in quotes stays text, where SurveyJS reads the spelled boolean or the unquoted text",
     "array-filter": "The filter form of an array function is refused, so the package answers empty",
+    "boolean-equality":
+      "A boolean equals only the same boolean, so `false` is not zero, a text spelling `true` is not `true`, and a list holding a number does not hold `true`, where SurveyJS equates them",
     "calendar-dates":
       "Dates are calendar dates: only ISO text is a date, an invalid date has no result, a day moves by the calendar, a month clamps to its end, an unknown unit has no result, and a date-time end counts its time, where SurveyJS gives a shifted or NaN date",
     "case-sensitive": "Names are case-sensitive here, where SurveyJS ignores case",
-    "precision-range":
-      "A precision is a whole number from zero to one hundred, so a negative precision has no result, where SurveyJS rounds to tens or cuts a whole number",
-    "power-grouping":
-      "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
-    "unary-minus":
-      "A unary minus binds looser than `^`, so `-2 ^ 2` is the negation of a square, where SurveyJS squares a negation",
-    "numbers-compare":
-      "Two values that read as numbers compare as numbers, so `'10' < '9'` is false and `'5.0' = '5'` is true, where SurveyJS compares the texts",
-    "text-identity":
-      "Texts are equal only when they are identical, with no trimming and no change of case, where SurveyJS trims and ignores case",
+    "condition-true":
+      "`iif` takes its second value only when its condition is `true`, so a number or text condition takes the third value, where SurveyJS takes any truthy condition",
     "empty-equality":
       "Empty values equal each other, so an empty list or record equals an unanswered value and an empty text, where SurveyJS does not",
-    "boolean-equality":
-      "A boolean equals only the same boolean, so `false` is not zero, a text spelling `true` is not `true`, and a list holding a number does not hold `true`, where SurveyJS equates them",
-    "unordered-values":
-      "An empty value, or a number against a text that is not a number, is never ordered, where SurveyJS orders them as zero or as text",
+    "empty-needle":
+      "An empty needle, unanswered, empty text or empty list, is contained in nothing, so `contains` and `anyof` are false for it and `allof` is true, where SurveyJS gives `contains` and `anyof` true and `allof` false",
     "exact-text":
       "Text is compared exactly, by code point, and a boolean is never ordered: a boolean is neither less nor greater than anything, where SurveyJS orders it as a number",
     "falsy-needle": "A needle of zero or false matches like any other value, where SurveyJS treats it as empty",
-    "negated-containment":
-      "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",
-    "empty-needle":
-      "An empty needle, unanswered, empty text or empty list, is contained in nothing, so `contains` and `anyof` are false for it and `allof` is true, where SurveyJS gives `contains` and `anyof` true and `allof` false",
     "logic-boolean":
       "`and` and `or` are boolean: an operand counts only when it is `true`, so the result is `true` or `false`, where SurveyJS gives the operand that decides the result",
-    "condition-true":
-      "`iif` takes its second value only when its condition is `true`, so a number or text condition takes the third value, where SurveyJS takes any truthy condition",
+    "negated-containment":
+      "`notcontains` is the negation of `contains`, so an empty needle or an unanswered haystack is not contained and `notcontains` holds, where SurveyJS gives false",
+    "numbers-compare":
+      "Two values that read as numbers compare as numbers, so `'10' < '9'` is false and `'5.0' = '5'` is true, where SurveyJS compares the texts",
     "numeric-arithmetic":
       "Arithmetic is numeric: an empty, boolean, list or record operand has no result, `+` joins only two texts that are not numbers, and a division or remainder by zero has none",
     "one-absent-value":
       "One absent value: an operation with no result, an unanswered operand or an invalid date is undefined, where SurveyJS gives null, NaN or an invalid date",
     "one-number-reading":
       "One text-to-number rule: a text is a number only as a plain decimal, so a hexadecimal, binary, octal or comma-decimal text stays text, and an answer keeps its text until an operation asks for a number",
+    "power-grouping":
+      "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
+    "precision-range":
+      "A precision is a whole number from zero to one hundred, so a negative precision has no result, where SurveyJS rounds to tens or cuts a whole number",
     "text-function": "Text functions read their index as a number: a substring index that is not a number has no part",
     "text-haystack":
       "`anyof` reads its left side as the text or list that holds the right side's items, as `contains` does, so `'re' anyof 'red'` is false, where SurveyJS reads a scalar left side as the needle",
+    "text-identity":
+      "Texts are equal only when they are identical, with no trimming and no change of case, where SurveyJS trims and ignores case",
+    "unary-minus":
+      "A unary minus binds looser than `^`, so `-2 ^ 2` is the negation of a square, where SurveyJS squares a negation",
+    "unordered-values":
+      "An empty value, or a number against a text that is not a number, is never ordered, where SurveyJS orders them as zero or as text",
   };
 
   const fixtures: readonly OracleFixture[] = oracleFixtures;

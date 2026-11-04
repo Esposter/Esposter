@@ -20,6 +20,18 @@ export const evaluateBinary = (
   const left = evaluate(node.left, context);
   const right = evaluate(node.right, context);
   switch (node.operator) {
+    case SurveyExpressionBinaryOperator.Add:
+    case SurveyExpressionBinaryOperator.Divide:
+    case SurveyExpressionBinaryOperator.Modulo:
+    case SurveyExpressionBinaryOperator.Multiply:
+    case SurveyExpressionBinaryOperator.Power:
+    case SurveyExpressionBinaryOperator.Subtract:
+      return evaluateArithmeticOperator(node.operator, left, right);
+    case SurveyExpressionBinaryOperator.AllOf:
+    case SurveyExpressionBinaryOperator.AnyOf:
+    case SurveyExpressionBinaryOperator.Contains:
+    case SurveyExpressionBinaryOperator.NotContains:
+      return evaluateMembershipOperator(node.operator, left, right);
     case SurveyExpressionBinaryOperator.And:
     case SurveyExpressionBinaryOperator.Or:
       return evaluateLogicOperator(node.operator, left, right);
@@ -30,18 +42,6 @@ export const evaluateBinary = (
     case SurveyExpressionBinaryOperator.LessOrEqual:
     case SurveyExpressionBinaryOperator.NotEqual:
       return evaluateComparisonOperator(node.operator, left, right);
-    case SurveyExpressionBinaryOperator.AllOf:
-    case SurveyExpressionBinaryOperator.AnyOf:
-    case SurveyExpressionBinaryOperator.Contains:
-    case SurveyExpressionBinaryOperator.NotContains:
-      return evaluateMembershipOperator(node.operator, left, right);
-    case SurveyExpressionBinaryOperator.Add:
-    case SurveyExpressionBinaryOperator.Divide:
-    case SurveyExpressionBinaryOperator.Modulo:
-    case SurveyExpressionBinaryOperator.Multiply:
-    case SurveyExpressionBinaryOperator.Power:
-    case SurveyExpressionBinaryOperator.Subtract:
-      return evaluateArithmeticOperator(node.operator, left, right);
     default:
       return exhaustiveGuard(node.operator);
   }
