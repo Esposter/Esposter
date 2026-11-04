@@ -6,7 +6,12 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { SurveyNodeType, surveyPanelDynamicNodePropsSchema, surveyTextNodePropsSchema } from "survey-engine";
+import {
+  surveyCheckboxNodePropsSchema,
+  SurveyNodeType,
+  surveyPanelDynamicNodePropsSchema,
+  surveyTextNodePropsSchema,
+} from "survey-engine";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
 const mountPanelDynamic = async (node: SurveyPanelDynamicNode, error = "") => {
@@ -31,10 +36,11 @@ const findAddButton = (component: Awaited<ReturnType<typeof mountPanelDynamic>>)
 };
 
 describe("resourceSurveyFieldPanelDynamic", () => {
-  // A row's field loads on demand through a dynamic import, which is module I/O rather than a microtask, so the text field's
-  // Module is awaited once up front and each mount resolves it within its flush
+  // A row's field loads on demand through a dynamic import, which is module I/O rather than a microtask, so the text and
+  // Checkbox fields' modules are awaited once up front and each mount resolves them within its flush
   beforeAll(async () => {
     await import("@/components/Resource/Survey/Field/Text.vue");
+    await import("@/components/Resource/Survey/Field/Checkbox.vue");
   });
 
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -103,6 +109,44 @@ describe("resourceSurveyFieldPanelDynamic", () => {
       });
 
       expect(component.get("input").attributes("aria-required")).toBe("true");
+    });
+
+    test("keeps a panel's picks with its row when a panel before it is removed", async () => {
+      expect.hasAssertions();
+
+      const node = createNode(2, 0, 3);
+      const component = await mountPanelDynamic({
+        ...node,
+        props: {
+          ...node.props,
+          template: [
+            {
+              props: {
+                ...surveyCheckboxNodePropsSchema.parse({
+                  choices: [
+                    { text: "a", value: "a" },
+                    { text: "b", value: "b" },
+                  ],
+                  name: "q",
+                  title: "question",
+                }),
+                id: crypto.randomUUID(),
+              },
+              type: SurveyNodeType.Checkbox,
+            },
+          ],
+        },
+      });
+      await component.findAll('[role="checkbox"]')[0]?.trigger("click");
+      await flushPromises();
+      await component.findAll('[role="checkbox"]')[3]?.trigger("click");
+      await flushPromises();
+      await component.findAll('[aria-label="Remove panel"]')[0]?.trigger("click");
+      await flushPromises();
+
+      expect(
+        component.findAll('[role="checkbox"]').map((checkbox) => checkbox.attributes("aria-checked")),
+      ).toStrictEqual(["false", "true"]);
     });
 
     test("adds and removes panels only within its bounds", async () => {
