@@ -7,6 +7,7 @@ import { ViewerSoundForm } from "#src/models/ViewerSoundForm";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+// The state files live on the user's machine, so an older shape is read, not rewritten
 export const STATE_DIRECTORY: string = join(homedir(), ".claude", "genshin-persona");
 export const PICK_RECORDS_PATH: string = join(STATE_DIRECTORY, "picks.tsv");
 export const PIN_PATH: string = join(STATE_DIRECTORY, "pin");
