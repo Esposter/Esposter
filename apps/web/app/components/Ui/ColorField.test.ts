@@ -1,7 +1,9 @@
 // @vitest-environment happy-dom
 import UiColorField from "@/components/Ui/ColorField.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -58,6 +60,58 @@ describe("uiColorField", () => {
       await component.get('button[aria-label="color-brand"]').trigger("click");
 
       expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["var(--color-brand)"]]);
+    });
+
+    test("a selected swatch draws a check mark over its fill, and an unselected one does not", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiColorField, {
+        props: {
+          label: "label",
+          modelValue: "var(--color-brand)",
+          swatches: [
+            { name: "color-brand", value: "#ff0000" },
+            { name: "color-accent", value: "#00ff00" },
+          ],
+        },
+      });
+      const checkClass = UiIconMap[uiStyle][UiIconMeaning.Selected];
+
+      expect(component.get('button[aria-label="color-brand"]').find(`[class~="${checkClass}"]`).exists()).toBe(true);
+      expect(component.get('button[aria-label="color-accent"]').find(`[class~="${checkClass}"]`).exists()).toBe(false);
+    });
+
+    test("a selected swatch is pressed, and its check mark is hidden from assistive technology", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiColorField, {
+        props: {
+          label: "label",
+          modelValue: "var(--color-brand)",
+          swatches: [{ name: "color-brand", value: "#ff0000" }],
+        },
+      });
+      const swatch = component.get('button[aria-label="color-brand"]');
+      const checkClass = UiIconMap[uiStyle][UiIconMeaning.Selected];
+
+      expect(swatch.attributes("aria-pressed")).toBe("true");
+      expect(swatch.get(`[class~="${checkClass}"]`).attributes("aria-hidden")).toBe("true");
+    });
+
+    test("the check mark takes the colour that contrasts more with the selected swatch's fill", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiColorField, {
+        props: {
+          label: "label",
+          modelValue: "var(--color-brand)",
+          swatches: [{ name: "color-brand", value: "#000000" }],
+        },
+      });
+
+      const checkClass = UiIconMap[uiStyle][UiIconMeaning.Selected];
+
+      expect(component.get<HTMLElement>(`[class~="${checkClass}"]`).element.style.color).toBe("#ffffff");
     });
 
     test("a colour that is not hex shows in the picker as the hex of the colour the browser reads it as", async () => {

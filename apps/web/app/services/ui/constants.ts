@@ -118,3 +118,6 @@ export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 })
 export const DEFAULT_PICKER_COLOR = "#000000";
 // A six-digit hex colour, the only form a colour picker holds
 export const HEX_COLOR_REGEX = /^#[\da-f]{6}$/iu;
+// The two colours a mark drawn over a swatch takes, whichever contrasts with the swatch's fill
+export const CONTRAST_BLACK = "#000000";
+export const CONTRAST_WHITE = "#ffffff";
