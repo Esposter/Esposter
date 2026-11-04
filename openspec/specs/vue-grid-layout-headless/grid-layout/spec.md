@@ -303,7 +303,7 @@ The package SHALL find the first cell a new item of a given span fits in, scanni
 
 ### Requirement: Items drop in from outside the grid
 
-The package SHALL take an item dragged in from outside every grid, and SHALL return an item released over no grid to where it was.
+The package SHALL take an item dragged in from outside every grid, return an item released over no grid to where it was, and pass over a grid the consumer refuses for the item.
 
 #### Scenario: Dropping a palette entry into the grid
 
@@ -324,6 +324,13 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 - **WHEN** it is released over an item of the grid
 - **THEN** the grid commits nothing
 
+#### Scenario: a palette entry a grid refuses is neither previewed nor dropped
+
+- **GIVEN** a palette entry the consumer refuses for the grid under the pointer, dragged over an item the grid would push aside
+- **WHEN** the pointer is over the grid and the entry is released there
+- **THEN** the grid draws no placeholder and commits nothing
+- **AND** the drop hands the caller no cell
+
 #### Scenario: A dropped item wider than the grid is narrowed to its columns
 
 - **GIVEN** a palette entry wider than the grid's columns
@@ -338,7 +345,7 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 
 ### Requirement: An item dragged by its body moves to the grid it is released over
 
-The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when that grid refuses it.
+The package SHALL hand a body drag released over another grid to that grid when the consumer takes a transfer, and SHALL return the item to its cell when that grid refuses it, previewing nothing over a grid that refuses it before the release.
 
 #### Scenario: Hovering another grid previews the landing cell there
 
@@ -368,7 +375,20 @@ The package SHALL hand a body drag released over another grid to that grid when 
 - **WHEN** the item is released over that grid
 - **THEN** nothing is written and the item returns to its cell
 
-#### Scenario: Releasing over no grid commits in the item's own grid
+#### Scenario: #21 a grid that refuses the item previews nothing and commits no pushes
+
+- **GIVEN** an item dragged by its body over a grid the consumer refuses for it, which holds an item where it would land
+- **WHEN** the pointer is over that grid and the item is released there
+- **THEN** that grid draws no placeholder and commits nothing
+- **AND** no transfer is made and the item returns to its cell
+
+#### Scenario: #21 unmounting the source grid mid-drag clears the placeholder it drew on another grid
+
+- **GIVEN** an item dragged by its body over another grid, which draws its placeholder there
+- **WHEN** the grid the item was dragged from unmounts
+- **THEN** the other grid draws no placeholder
+
+#### Scenario: #21 releasing over no grid commits in the item's own grid, with or without onTransfer
 
 - **GIVEN** an item dragged by its body past the grid's edge, with or without a consumer that takes a transfer
 - **WHEN** the item is released over no grid
