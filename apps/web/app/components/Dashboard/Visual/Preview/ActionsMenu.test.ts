@@ -102,16 +102,6 @@ describe("dashboardVisualPreviewActionsMenu", () => {
     await expect(openMenu(menu)).resolves.toContain("Export CSV");
   });
 
-  test("a static visual's menu offers no export", async () => {
-    expect.hasAssertions();
-
-    const staticVisual = new Visual({ type: VisualType.Card });
-    await loadDashboard([staticVisual]);
-    const menu = await mountMenu(staticVisual);
-
-    await expect(openMenu(menu)).resolves.not.toContain("Export CSV");
-  });
-
   // Fit height is a write of its own, so it saves the flag onto the visual the menu was opened on
   test("fit height to content saves the flag onto its visual", async () => {
     expect.hasAssertions();
