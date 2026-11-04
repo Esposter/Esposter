@@ -16,6 +16,6 @@ Each package's size test used to pin its built bundle and its types to a band: t
 
 An explicit ceiling per bundle and per types file, written in the package's own test. Growth below it never fails, nothing is rounded and a shrink never fails. A change that legitimately outgrows a ceiling raises that one number in the same commit, after a fresh build shows the real size; the procedure is the `build` skill's (`.agents/skills/build/references/dist-size.md`).
 
-## Revisit when
+## The revisit trigger
 
-A ceiling keeps being raised without a reason in its commit, so the number records the growth instead of a limit someone chose. Then the ceilings give way to a measured budget read in review. The argument the [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page makes against one number that a breach is answered by raising already describes that end state.
+The same package's `src/index.test.ts` has three commits that each raise a ceiling and add neither a dependency nor an export, which `git log -p` on that file shows. Then the number records the growth instead of a limit someone chose, and the ceilings give way to a measured budget read in review. The [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page argues against one global number answered by raising it, and wants a per-route first-load number defined before any budget is enforced.
