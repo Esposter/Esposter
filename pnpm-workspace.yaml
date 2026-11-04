@@ -67,8 +67,8 @@ catalog:
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
   "@kjanat/actionlint": ^1.17.0
-  "@lerna-lite/cli": ^5.6.4
-  "@lerna-lite/publish": ^5.6.4
+  "@lerna-lite/cli": ^5.7.0
+  "@lerna-lite/publish": ^5.7.0
   "@lezer/highlight": ^1.2.5
   "@livekit/track-processors": ^0.8.2
   "@modelcontextprotocol/sdk": ^1.32.2
