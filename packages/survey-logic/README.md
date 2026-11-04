@@ -1,20 +1,46 @@
 # survey-logic
 
 [![Apache-2.0 licensed][badge-license]][url-license]
+[![NPM version][badge-npm-version]][url-npm]
+[![NPM downloads][badge-npm-downloads]][url-npm]
+[![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. It is checked against SurveyJS's recorded answers with every deliberate difference listed.
-
-The package has no live SurveyJS. It does not depend on SurveyJS, and the values it is held to were recorded from SurveyJS's expression runner into fixtures that its tests replay.
+It parses and evaluates the survey's expression language: the conditions that show, enable or require a question, the calculated values and the validators, written over a survey's answers. It depends on no SurveyJS, and it is checked against SurveyJS's recorded answers, with every deliberate difference listed.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-logic).
 
 ## Table of Contents
 
+- 🚀 [Getting Started](#getting-started)
 - 🧩 [Key Exports](#key-exports)
 - 🧮 [Functions](#functions)
 - ⚖️ [License](#license)
 
 ---
+
+## <a name="getting-started">🚀 Getting Started</a>
+
+```bash
+pnpm i survey-logic
+```
+
+```ts
+import { runSurveyExpression } from "survey-logic";
+
+const result = runSurveyExpression("{age} >= 18 and {country} = 'NZ'", {
+  now: new Date(),
+  scopes: {},
+  values: { age: 21, country: "NZ" },
+});
+
+result.match(
+  (value) => console.log(value), // true
+  (error) => console.error(error.message),
+);
+```
+
+- `runSurveyExpression` returns a neverthrow `Result`. A fault in the expression is an error value, never a throw.
+- Answers read from storage pass through `toSurveyLogicAnswers` first, so a stored null reads as unanswered.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
@@ -69,7 +95,11 @@ The functions that read the live survey object, "displayValue", "isContainerRead
 
 ## <a name="license">⚖️ License</a>
 
-This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+Licensed under [Apache-2.0][url-license].
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-npm-version]: https://img.shields.io/npm/v/survey-logic/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/survey-logic/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/survey-logic/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/survey-logic.svg

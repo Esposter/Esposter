@@ -1,17 +1,56 @@
 # survey-engine
 
 [![Apache-2.0 licensed][badge-license]][url-license]
+[![NPM version][badge-npm-version]][url-npm]
+[![NPM downloads][badge-npm-downloads]][url-npm]
+[![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
 It defines a survey as a typed document on the headless block editor: one node type per question kind, the checks a save passes, and a runner whose state is plain functions over the document and a record of answers. It uses no framework or DOM.
 
-Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
+Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-document).
 
 ## Table of Contents
 
+- 🚀 [Getting Started](#getting-started)
 - 🧩 [Key Exports](#key-exports)
 - ⚖️ [License](#license)
 
 ---
+
+## <a name="getting-started">🚀 Getting Started</a>
+
+```bash
+pnpm i survey-engine zod
+```
+
+```ts
+import {
+  completeSurvey,
+  createSurveyRunnerState,
+  setSurveyAnswer,
+  SurveyNodeType,
+  surveyDocumentSchema,
+} from "survey-engine";
+
+const document = surveyDocumentSchema.parse({
+  content: [
+    {
+      props: {
+        children: [{ props: { id: crypto.randomUUID(), isRequired: true, name: "email" }, type: SurveyNodeType.Text }],
+        id: crypto.randomUUID(),
+      },
+      type: SurveyNodeType.Page,
+    },
+  ],
+  root: { props: {} },
+});
+const answered = setSurveyAnswer(createSurveyRunnerState(document, {}, 0), "email", "reader@example.com");
+const completion = completeSurvey(document, answered, new Date());
+// completion.state.isCompleted is true, and completion.answers holds the email
+```
+
+- `zod` is the peer the question schemas are written in. Install it beside the package.
+- `surveyDocumentSchema` is the save check. Parse a document with it before a respondent runs the survey.
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
@@ -41,7 +80,11 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="license">⚖️ License</a>
 
-This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+Licensed under [Apache-2.0][url-license].
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-npm-version]: https://img.shields.io/npm/v/survey-engine/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/survey-engine/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/survey-engine/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/survey-engine.svg
