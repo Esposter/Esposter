@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -9,12 +9,12 @@ describe("headless-block-editor", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 64 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(64 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 32 KB"`);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(32 * KIBIBYTE);
   });
 });

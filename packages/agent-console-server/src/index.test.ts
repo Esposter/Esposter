@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -8,18 +8,14 @@ describe("agent-console-server", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(resolve(distDirectory, "index.js"))).toMatchInlineSnapshot(`"index.js: up to 16 KB"`);
-    expect(getFileSizeReport(resolve(distDirectory, "contracts.js"))).toMatchInlineSnapshot(
-      `"contracts.js: up to 4 KB"`,
-    );
+    expect(getFileSize(resolve(distDirectory, "index.js"))).toBeLessThanOrEqual(16 * KIBIBYTE);
+    expect(getFileSize(resolve(distDirectory, "contracts.js"))).toBeLessThanOrEqual(4 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(resolve(distDirectory, "index.d.ts"))).toMatchInlineSnapshot(`"index.d.ts: up to 64 KB"`);
-    expect(getFileSizeReport(resolve(distDirectory, "contracts.d.ts"))).toMatchInlineSnapshot(
-      `"contracts.d.ts: up to 16 KB"`,
-    );
+    expect(getFileSize(resolve(distDirectory, "index.d.ts"))).toBeLessThanOrEqual(64 * KIBIBYTE);
+    expect(getFileSize(resolve(distDirectory, "contracts.d.ts"))).toBeLessThanOrEqual(16 * KIBIBYTE);
   });
 });

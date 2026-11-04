@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -12,24 +12,24 @@ describe("trpc-nuxt-module", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 4 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(4 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 0.5 KB"`);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(0.5 * KIBIBYTE);
   });
 
   test("client runtime bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distClientFile)).toMatchInlineSnapshot(`"createTRPCNuxtClient.js: up to 2 KB"`);
+    expect(getFileSize(distClientFile)).toBeLessThanOrEqual(2 * KIBIBYTE);
   });
 
   test("server runtime bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distServerFile)).toMatchInlineSnapshot(`"createTRPCEventHandler.js: up to 2 KB"`);
+    expect(getFileSize(distServerFile)).toBeLessThanOrEqual(2 * KIBIBYTE);
   });
 });

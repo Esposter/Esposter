@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -9,12 +9,12 @@ describe("math-expression-compiler", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 128 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(128 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 32 KB"`);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(32 * KIBIBYTE);
   });
 });

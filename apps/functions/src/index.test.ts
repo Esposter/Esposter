@@ -1,6 +1,6 @@
 import type { PackageManifest } from "@esposter/configuration";
 
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -17,7 +17,7 @@ describe("@esposter/functions", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 8192 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(8192 * KIBIBYTE);
   });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so

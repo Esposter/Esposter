@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -13,12 +13,12 @@ describe("@esposter/shared-node", () => {
   test("bench bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distBenchFile)).toMatchInlineSnapshot(`"bench.js: up to 0.25 KB"`);
+    expect(getFileSize(distBenchFile)).toBeLessThanOrEqual(0.25 * KIBIBYTE);
   });
 
   test("reporter bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distReporterFile)).toMatchInlineSnapshot(`"reporter.js: up to 8 KB"`);
+    expect(getFileSize(distReporterFile)).toBeLessThanOrEqual(8 * KIBIBYTE);
   });
 });

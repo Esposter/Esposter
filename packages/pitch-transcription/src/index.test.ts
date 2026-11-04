@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -12,13 +12,13 @@ describe("pitch-transcription", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 8 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(8 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 8 KB"`);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(8 * KIBIBYTE);
   });
 
   // A resolve hook registered before the import records every specifier the subpath's module graph asks for, and fails on

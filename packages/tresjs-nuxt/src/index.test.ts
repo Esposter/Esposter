@@ -1,4 +1,4 @@
-import { getFileSizeReport } from "@esposter/configuration";
+import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -9,12 +9,12 @@ describe("tresjs-nuxt", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 4 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(4 * KIBIBYTE);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: up to 0.25 KB"`);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(0.25 * KIBIBYTE);
   });
 });
