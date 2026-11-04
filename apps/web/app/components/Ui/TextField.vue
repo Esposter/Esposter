@@ -83,7 +83,7 @@ defineExpose({ element });
   >
     <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -- the control is the primitive's, which takes the id this label names -->
     <label :for="String(id)" :class="{ 'sr-only': isLabelHidden || isSearch }" text-sm text-muted
-      >{{ label }} <UiRequiredMark v-if="isRequired"
+      >{{ label }} <UiRequiredMark v-if="isRequired" is-silent
     /></label>
     <div relative>
       <UiIcon
@@ -102,6 +102,7 @@ defineExpose({ element });
           ref="element"
           :="attrs"
           :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
+          :aria-required="isRequired || undefined"
           :autocomplete
           :autofocus="isAutofocus"
           :class="{ 'ui-pill pl-10 pr-10': isSearch }"

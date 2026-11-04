@@ -126,6 +126,17 @@ describe("uiSlider", () => {
       expect(component.find("[data-invalid]").exists()).toBe(true);
     });
 
+    test("names a required thumb by its label and the required word", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSlider, {
+        props: { isRequired: true, label, max: 100, min: 0, modelValue: 0, step: 1, valueText },
+      });
+      const labelledBy = component.get('[role="slider"]').attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${label} * required`);
+    });
+
     test("hides its label but keeps it as its name", () => {
       expect.hasAssertions();
 

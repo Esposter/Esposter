@@ -31,6 +31,17 @@ describe("uiPopoverField", () => {
       expect(filledComponent.get(`[id="${filledValueId}"]`).text()).toBe(value);
     });
 
+    test("names a required trigger by its label and the required word", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiPopoverField, {
+        props: { isClearable: false, isEmpty: true, isRequired: true, label, placeholder },
+      });
+      const labelledBy = component.get("button").attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${label} * required`);
+    });
+
     test("passes what a call site sets, such as an invalid mark, on its trigger", async () => {
       expect.hasAssertions();
 

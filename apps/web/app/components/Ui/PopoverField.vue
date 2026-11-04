@@ -28,6 +28,7 @@ const emit = defineEmits<{ clear: [] }>();
 const popover = useTemplateRef("popover");
 // The trigger, which what opens the field in place of something else focuses
 const element = computed(() => popover.value?.triggerElement);
+const labelId = useId();
 const valueId = useId();
 
 defineExpose({ element });
@@ -35,7 +36,7 @@ defineExpose({ element });
 
 <template>
   <div flex flex-col gap-1>
-    <span :class="{ 'sr-only': isLabelHidden }" text-sm text-muted
+    <span :id="labelId" :class="{ 'sr-only': isLabelHidden }" text-sm text-muted
       >{{ label }} <UiRequiredMark v-if="isRequired"
     /></span>
     <div flex gap-1 items-center>
@@ -44,6 +45,7 @@ defineExpose({ element });
         v-model:is-open="isOpen"
         :="$attrs"
         :aria-describedby="valueId"
+        :aria-labelledby="isRequired ? labelId : undefined"
         :disabled="isDisabled"
         is-label-shown
         :label

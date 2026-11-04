@@ -68,6 +68,15 @@ describe("uiTextField", () => {
       expect(component.get("input").attributes("aria-invalid")).toBe("true");
     });
 
+    test("says it is required through aria-required, and draws its label's mark for sight alone", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { isRequired: true, label, modelValue: "" } });
+
+      expect(component.get("input").attributes("aria-required")).toBe("true");
+      expect(component.get("label").text()).toBe(`${label} *`);
+    });
+
     test("takes several lines as a textarea", () => {
       expect.hasAssertions();
 
@@ -167,15 +176,6 @@ describe("uiTextField", () => {
 
       expect(control.attributes("type")).toBe(type);
       expect(control.attributes("autocomplete")).toBe(autocomplete);
-    });
-
-    test("marks a required label with a mark speech skips, and says required once", () => {
-      expect.hasAssertions();
-
-      const component = mount(UiTextField, { props: { isRequired: true, label, modelValue: "" } });
-
-      expect(component.get('[aria-hidden="true"]').text()).toBe("*");
-      expect(component.get("label").text()).toBe(`${label} * required`);
     });
 
     test("names a search by its label, and clears it from inside the field once it holds text", async () => {

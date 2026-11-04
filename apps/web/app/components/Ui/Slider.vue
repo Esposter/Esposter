@@ -27,6 +27,7 @@ const modelValue = defineModel<number>({ required: true });
 const { isDisabled, isInvalid, isLabelHidden, isRequired, label, level, levelLabel, max, min, step, valueText } =
   defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
+const labelId = useId();
 // @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here
 // Vuetify 0 says a drag ended but not that a key moved the thumb, so a change while no pointer is down is a key's and
 // Settles at once. The flag is raised in the capture phase, ahead of the track setting the value it was pressed at
@@ -62,7 +63,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
   >
     <div :="attrs" :class="{ 'op-disabled': isDisabled }" flex flex-col gap-1>
       <div flex gap-2>
-        <span v-if="!isLabelHidden" flex-1>{{ label }} <UiRequiredMark v-if="isRequired" /></span>
+        <span v-if="!isLabelHidden" :id="labelId" flex-1>{{ label }} <UiRequiredMark v-if="isRequired" /></span>
         <span text-muted>{{ valueText }}</span>
       </div>
       <div
@@ -107,6 +108,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
           class="thumb"
           :aria-label="label"
           :aria-invalid="isInvalid || undefined"
+          :aria-labelledby="isRequired ? labelId : undefined"
           :aria-valuetext="valueText"
           size-4
           cursor-grab
