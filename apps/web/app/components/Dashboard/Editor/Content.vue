@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_EDITOR_ROW_HEIGHT, DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
+import { useDashboardStore } from "@/store/dashboard";
 import { useDashboardDialogStore } from "@/store/dashboard/dialog";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 
+const dashboardStore = useDashboardStore();
+const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
 const { editedItem, visuals } = storeToRefs(visualStore);
-const { deleteVisual, updateVisual } = visualStore;
+const { deleteVisual, editItem, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId } = storeToRefs(dashboardDialogStore);
 // One delete confirm for every tile: a tile's Delete names its visual in the dialog store, and the confirm resolves it
@@ -20,7 +23,7 @@ const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deleti
 <template>
   <UiEmptyState
     v-if="visuals.length === 0"
-    description="Add a visual from the bar above, then click it to bind its data"
+    description="Add a visual from the bar above or drop one from Visuals onto the grid, then click it to bind its data"
     :meaning="UiIconMeaning.Chart"
     title="No visuals yet"
     flex-1
@@ -28,7 +31,9 @@ const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deleti
   <div v-else p-3 flex-1>
     <DashboardGrid
       :visuals
+      :collision="dashboard.collision"
       :column-number="DASHBOARD_NO_COLUMNS"
+      :compact-type="dashboard.compactType"
       :row-height="DASHBOARD_EDITOR_ROW_HEIGHT"
       is-editable
       @commit="
@@ -36,6 +41,7 @@ const { isOpen: isDeleteOpen, item: deletingVisual } = useSingletonDialog(deleti
           for (const change of changes) updateVisual(change);
         }
       "
+      @open="(visual) => editItem({ id: visual.id })"
     >
       <template #default="{ visual }">
         <DashboardVisualPreviewContainer

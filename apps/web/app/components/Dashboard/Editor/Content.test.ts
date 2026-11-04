@@ -1,9 +1,12 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
+import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -11,17 +14,15 @@ import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("dashboardEditorContent", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const gridWidth = 970;
-  const deleteTableLabel = '[aria-label="Delete Table visual"]';
-  const editLabel = '[aria-label="Edit visual"]';
+  const menuLabel = '[aria-label="Visual actions"]';
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
 
@@ -69,12 +70,28 @@ describe("dashboardEditorContent", () => {
     return wrapper;
   };
 
-  // A Delete pressed on any tile opens the one confirm the editor mounts, and nothing else on the grid mounts one
-  test("one delete confirm serves every tile, titled for the tile whose Delete was pressed", async () => {
+  // A menu's item picked on the tile of one visual, opened from the keyboard the way the overflow menu's own test opens it
+  const pickTileMenuItem = async (wrapper: VueWrapper, visualId: Visual["id"], title: string) => {
+    const menu = wrapper
+      .findAllComponents(DashboardVisualPreviewActionsMenu)
+      .find((item) => item.props("visual").id === visualId);
+    assert(menu);
+    await menu.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    await menu
+      .findAll('[role="menuitem"]')
+      .find((item) => item.text() === title)
+      ?.trigger("click");
+    await flushPromises();
+  };
+
+  // A Delete picked on any tile's menu opens the one confirm the editor mounts, and nothing else on the grid mounts one
+  test("one delete confirm serves every tile, titled for the tile whose Delete was picked", async () => {
     expect.hasAssertions();
 
-    const wrapper = await mountEditor([new Visual({ type: VisualType.Card }), new Visual({ type: VisualType.Table })]);
-    await wrapper.get(deleteTableLabel).trigger("click");
+    const tableVisual = new Visual({ type: VisualType.Table });
+    const wrapper = await mountEditor([new Visual({ type: VisualType.Card }), tableVisual]);
+    await pickTileMenuItem(wrapper, tableVisual.id, "Delete visual");
 
     expect(wrapper.findAllComponents(UiConfirmDialog).map((dialog) => dialog.props("title"))).toStrictEqual([
       "Delete Table visual",
@@ -87,7 +104,7 @@ describe("dashboardEditorContent", () => {
     const cardVisual = new Visual({ type: VisualType.Card });
     const tableVisual = new Visual({ type: VisualType.Table, x: 4 });
     const wrapper = await mountEditor([cardVisual, tableVisual]);
-    await wrapper.get(deleteTableLabel).trigger("click");
+    await pickTileMenuItem(wrapper, tableVisual.id, "Delete visual");
     await wrapper.getComponent(UiConfirmDialog).props("confirm")();
     await flushPromises();
     const visualStore = useVisualStore();
@@ -96,13 +113,13 @@ describe("dashboardEditorContent", () => {
     expect(visuals.value.map(({ id }) => id)).toStrictEqual([cardVisual.id]);
   });
 
-  test("an edit opens the editor's one edit form on the visual whose tile was clicked", async () => {
+  test("an edit opens the editor's one edit form on the visual whose menu picked it", async () => {
     expect.hasAssertions();
 
     const cardVisual = new Visual({ type: VisualType.Card });
     const tableVisual = new Visual({ type: VisualType.Table, x: 4 });
     const wrapper = await mountEditor([cardVisual, tableVisual]);
-    await takeOne(wrapper.findAll(editLabel), 1).trigger("click");
+    await pickTileMenuItem(wrapper, tableVisual.id, "Edit visual");
 
     expect(
       wrapper.findAllComponents(DashboardVisualPreviewEditFormDialog).map((dialog) => dialog.props("modelValue").id),

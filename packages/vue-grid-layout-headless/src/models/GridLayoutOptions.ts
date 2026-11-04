@@ -16,7 +16,7 @@ export interface GridLayoutOptions<T extends GridItem = GridItem> {
   dragStartDistance: number;
   isEditable: boolean;
   items: T[];
-  // Receives what one gesture changed, once, when its pointer is released, and what an auto-height item's reported
+  // Receives what one gesture, step or drop changed, once, when it lands, and what an auto-height item's reported
   // Content changed
   onCommit: (commit: GridCommit) => void;
   rowHeight: number;

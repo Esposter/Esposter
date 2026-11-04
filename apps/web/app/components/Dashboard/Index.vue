@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
+import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -8,10 +9,12 @@ import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDash
 import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
 
 interface Props {
+  collision: CollisionMode;
+  compactType: CompactType;
   visuals: Visual[];
 }
 
-const { visuals } = defineProps<Props>();
+const { collision, compactType, visuals } = defineProps<Props>();
 const container = useTemplateRef("container");
 const { width } = useElementSize(container);
 // The published dashboard only shows its visuals, so a narrower screen reflows them and nothing here is saved
@@ -22,7 +25,14 @@ const columnNumber = computed(() => getBreakpointColumnNumber(width.value));
 
 <template>
   <div ref="container">
-    <DashboardGrid v-if="width" :column-number :row-height="DASHBOARD_PUBLISHED_ROW_HEIGHT" :visuals>
+    <DashboardGrid
+      v-if="width"
+      :collision
+      :column-number
+      :compact-type
+      :row-height="DASHBOARD_PUBLISHED_ROW_HEIGHT"
+      :visuals
+    >
       <template #default="{ visual }">
         <!-- A viewer's file is the published rows, which the snapshot holds, so the export reads nothing live -->
         <DashboardVisual :visual>

@@ -14,6 +14,8 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   chart = new Chart();
   dataset?: VisualDatasetBinding;
   h = 4;
+  // Whether the visual takes its rows from the content it draws, rather than from its saved span
+  isAutoHeight = false;
   type = VisualType.Area;
   w = 4;
   x = 0;
@@ -32,4 +34,5 @@ export const visualSchema = z.object({
   ...layoutItemSchema.shape,
   chart: chartSchema,
   dataset: visualDatasetBindingSchema.optional(),
+  isAutoHeight: z.boolean().default(false),
 }) satisfies z.ZodType<ToData<Visual>>;

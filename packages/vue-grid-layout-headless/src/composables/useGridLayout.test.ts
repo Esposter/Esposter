@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type { GridCell } from "#src/models/GridCell";
 import type { GridCommit } from "#src/models/GridCommit";
 import type { GridGeometry } from "#src/models/GridGeometry";
 import type { GridItem } from "#src/models/GridItem";
@@ -97,7 +98,12 @@ describe(useGridLayout, () => {
                   ],
                 ),
               ),
-              placeholder.value ? h("div", { class: "placeholder", style: getStyle(placeholder.value) }) : null,
+              placeholder.value
+                ? h("div", {
+                    class: placeholder.value.isRefused ? "placeholder refused" : "placeholder",
+                    style: getStyle(placeholder.value.geometry),
+                  })
+                : null,
             ]);
         },
       }),
@@ -113,18 +119,20 @@ describe(useGridLayout, () => {
     return { grid: gridLayout, onCommit, setItems, wrapper };
   };
   // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a press.
-  // The returned function fires a pointer event of the given type at that element
-  const mountPalette = (item: Pick<GridItem, "h" | "id" | "w">) => {
+  // The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback the drop calls
+  const mountPalette = (item: GridItem) => {
     const palette = document.createElement("div");
     document.body.append(palette);
     onTestFinished(() => {
       palette.remove();
     });
+    const onDrop = vi.fn<(cell: GridCell) => void>();
     palette.addEventListener("pointerdown", (event) => {
-      startExternalDrag(event, item);
+      startExternalDrag(event, item, onDrop);
     });
-    return (type: string, point: { clientX: number; clientY: number }) =>
+    const dispatch = (type: string, point: { clientX: number; clientY: number }) =>
       palette.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId, ...point }));
+    return { dispatch, onDrop };
   };
 
   beforeEach(() => {
@@ -184,7 +192,7 @@ describe(useGridLayout, () => {
 
     await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }], removed: [] }]]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] }]]);
   });
 
   test("a cancelled pointer writes nothing", async () => {
@@ -264,7 +272,7 @@ describe(useGridLayout, () => {
     await wrapper.get(".grid").trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
     await wrapper.get(".grid").trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }], removed: [] }]]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] }]]);
   });
 
   test("#38 #51 Resizing from the left edge", async () => {
@@ -277,7 +285,7 @@ describe(useGridLayout, () => {
     await handle.trigger("pointermove", { buttons: 1, clientX: -cellPitch, clientY: 0, pointerId });
     await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 3, x: 1, y: 0 }], removed: [] }]]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 3, x: 1, y: 0 }] }]]);
   });
 
   test("a resize past the grid's edge", async () => {
@@ -352,7 +360,7 @@ describe(useGridLayout, () => {
     await tile.trigger("pointermove", { buttons: 1, clientX: 0, clientY: rowPitch * 2, pointerId });
     await tile.trigger("pointerup", { clientX: 0, clientY: rowPitch * 2, pointerId });
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 1, id: "a", w: 2, x: 0, y: 2 }], removed: [] }]]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 1, id: "a", w: 2, x: 0, y: 2 }] }]]);
   });
 
   test("#11 #42 #55 An item grows to hold its content", async () => {
@@ -363,7 +371,7 @@ describe(useGridLayout, () => {
     // Two row pitches of content are taller than two rows hold, since a row's gap belongs to the cell below it
     grid.value?.reportContentHeight("a", 100);
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 3, id: "a", w: 2, x: 0, y: 0 }], removed: [] }]]);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 3, id: "a", w: 2, x: 0, y: 0 }] }]]);
   });
 
   test("#66 Swapping two items on drop", async () => {
@@ -389,7 +397,6 @@ describe(useGridLayout, () => {
             { h: 2, id: "b", w: 2, x: 0, y: 0 },
             { h: 2, id: "a", w: 2, x: 4, y: 0 },
           ],
-          removed: [],
         },
       ],
     ]);
@@ -420,7 +427,6 @@ describe(useGridLayout, () => {
             { h: 2, id: "b", w: 2, x: 2, y: 2 },
             { h: 2, id: "c", w: 2, x: 4, y: 2 },
           ],
-          removed: [],
         },
       ],
     ]);
@@ -453,22 +459,112 @@ describe(useGridLayout, () => {
     expect(grid.value?.gridHeight.value).toBe(80);
   });
 
+  test("a step onto a free cell is committed", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dx: 1 })).toBe(true);
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 1, y: 0 }] }]]);
+  });
+
+  test("a step past the columns is clamped", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 10, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dx: 1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a resize step never shrinks an item below one cell", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 1, x: 0, y: 0 }] });
+
+    expect(grid.value?.stepItem("a", { dw: -1 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a step onto another item under prevent is refused", () => {
+    expect.hasAssertions();
+
+    const { grid, onCommit } = mountGrid({
+      collision: CollisionMode.Prevent,
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 2, y: 0 },
+      ],
+    });
+
+    expect(grid.value?.stepItem("a", { dx: 2 })).toBe(false);
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("hovering the grid previews the landing cell", async () => {
+    expect.hasAssertions();
+
+    const { grid } = mountGrid({ items: [] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding });
+
+    expect(grid.value?.placeholder.value).toStrictEqual({
+      geometry: { height: 90, left: 170, top: 10, width: 150 },
+      isRefused: false,
+    });
+  });
+
+  test("hovering an item under prevent previews a refusal", async () => {
+    expect.hasAssertions();
+
+    const { grid } = mountGrid({ collision: CollisionMode.Prevent, items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: spacing.padding, clientY: spacing.padding });
+
+    expect(grid.value?.placeholder.value).toStrictEqual({
+      geometry: { height: 90, left: 10, top: 10, width: 150 },
+      isRefused: true,
+    });
+  });
+
+  test("leaving the grid clears the preview", async () => {
+    expect.hasAssertions();
+
+    const { grid } = mountGrid({ items: [] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding });
+
+    expect(grid.value?.placeholder.value).toBeDefined();
+
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([document.body]);
+    dispatch("pointermove", { clientX: -1, clientY: -1 });
+
+    expect(grid.value?.placeholder.value).toBeUndefined();
+  });
+
   // The drop lands on the column under the pointer, so a pointer a little short of column 2's edge is still in column 1
   test.each([
     [cellPitch * 2 + spacing.padding, 2],
     [138, 1],
-  ])("#6 Dropping a palette entry at clientX %s lands in column %s", async (clientX, x) => {
+  ])("dropping a palette entry into the grid at clientX %s lands in column %s", async (clientX, x) => {
     expect.hasAssertions();
 
     const { onCommit } = mountGrid({ items: [] });
     await flushPromises();
-    const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointermove", point);
     dispatch("pointerup", point);
 
-    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "palette", w: 2, x, y: 0 }], removed: [] }]]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x, y: 0 }]]);
+    expect(onCommit).not.toHaveBeenCalled();
   });
 
   test("a palette entry dropped onto an item under prevent is refused", async () => {
@@ -476,11 +572,12 @@ describe(useGridLayout, () => {
 
     const { onCommit } = mountGrid({ collision: CollisionMode.Prevent, items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
     await flushPromises();
-    const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX: spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
+    expect(onDrop).not.toHaveBeenCalled();
     expect(onCommit).not.toHaveBeenCalled();
   });
 
@@ -489,192 +586,57 @@ describe(useGridLayout, () => {
 
     const { onCommit } = mountGrid({ isEditable: false, items: [] });
     await flushPromises();
-    const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
+    expect(onDrop).not.toHaveBeenCalled();
     expect(onCommit).not.toHaveBeenCalled();
   });
 
   test("a dropped item wider than the grid is narrowed to its columns", async () => {
     expect.hasAssertions();
 
-    const { onCommit } = mountGrid({ columnNumber: 4, items: [] });
+    mountGrid({ columnNumber: 4, items: [] });
     await flushPromises();
-    const dispatch = mountPalette({ h: 2, id: "palette", w: 5 });
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 5, x: 0, y: 0 });
     const point = { clientX: spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
-    expect(onCommit.mock.calls).toStrictEqual([
-      [{ changes: [{ h: 2, id: "palette", w: 4, x: 0, y: 0 }], removed: [] }],
-    ]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 4, x: 0, y: 0 }]]);
   });
 
   test("a cancelled palette press accepts once on the next release", async () => {
     expect.hasAssertions();
 
-    const { onCommit } = mountGrid({ items: [] });
+    mountGrid({ items: [] });
     await flushPromises();
-    const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
     const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointercancel", point);
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
-    expect(onCommit.mock.calls).toStrictEqual([
-      [{ changes: [{ h: 2, id: "palette", w: 2, x: 2, y: 0 }], removed: [] }],
-    ]);
-  });
-
-  test("#21 Moving an item into another grid", async () => {
-    expect.hasAssertions();
-
-    const source = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
-    const target = mountGrid({ items: [] });
-    await flushPromises();
-    const tile = source.wrapper.get(".tile");
-    // The pointer is over the target past the source's right edge, so the target previews the item there, and the
-    // Dragged tile is the first element under the pointer, which the release looks past
-    vi.spyOn(document, "elementsFromPoint").mockImplementation((x) =>
-      x >= cellPitch * 5 ? [tile.element, target.wrapper.element] : [tile.element, source.wrapper.element],
-    );
-    const point = { clientX: cellPitch * 6 + spacing.padding, clientY: 0, pointerId };
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { ...point, buttons: 1 });
-    await tile.trigger("pointerup", point);
-
-    expect(source.onCommit.mock.calls).toStrictEqual([[{ changes: [], removed: ["a"] }]]);
-    expect(target.onCommit.mock.calls).toStrictEqual([
-      [{ changes: [{ h: 2, id: "a", w: 2, x: 6, y: 0 }], removed: [] }],
-    ]);
-  });
-
-  test("a move refused by the grid under the pointer commits nothing", async () => {
-    expect.hasAssertions();
-
-    const source = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
-    const target = mountGrid({ collision: CollisionMode.Prevent, items: [{ h: 2, id: "b", w: 2, x: 0, y: 0 }] });
-    await flushPromises();
-    const tile = source.wrapper.get(".tile");
-    // The pointer releases over the target's own item, which prevent refuses to land the dragged item on
-    vi.spyOn(document, "elementsFromPoint").mockReturnValue([tile.element, target.wrapper.element]);
-    const point = { clientX: spacing.padding, clientY: spacing.padding, pointerId };
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { ...point, buttons: 1 });
-    await tile.trigger("pointerup", point);
-
-    expect(source.onCommit).not.toHaveBeenCalled();
-    expect(target.onCommit).not.toHaveBeenCalled();
-  });
-
-  test("#22 #40 Dragging inside a nested grid", async () => {
-    expect.hasAssertions();
-
-    const outerCommit = vi.fn<(commit: GridCommit) => void>();
-    const innerCommit = vi.fn<(commit: GridCommit) => void>();
-    const outerItems: GridItem[] = [{ h: 4, id: "outer", w: 12, x: 0, y: 0 }];
-    const innerItems: GridItem[] = [{ h: 2, id: "inner", w: 2, x: 0, y: 0 }];
-    const innerGrid = shallowRef<GridLayout>();
-    // The inner grid is a component of its own, as a nested grid is in an app, so its root mounts with its tile
-    const InnerGrid = defineComponent({
-      setup() {
-        const innerRoot = useTemplateRef<HTMLElement>("innerRoot");
-        const inner = useGridLayout(innerRoot, () => ({
-          collision: CollisionMode.Push,
-          columnNumber,
-          compactType: CompactType.Vertical,
-          dragStartDistance,
-          isEditable: true,
-          items: innerItems,
-          onCommit: innerCommit,
-          rowHeight,
-          spacing,
-        }));
-        innerGrid.value = inner;
-
-        return () =>
-          h(
-            "div",
-            { class: "inner", ref: "innerRoot" },
-            inner.tiles.value.map(({ geometry, item }) =>
-              h("div", {
-                class: "inner-tile",
-                onPointerdown: (event: PointerEvent) => {
-                  inner.startGesture(event, item);
-                },
-                style: getStyle(geometry),
-              }),
-            ),
-          );
-      },
-    });
-    const wrapper = mount(
-      defineComponent({
-        setup() {
-          const outerRoot = useTemplateRef<HTMLElement>("outerRoot");
-          const outer = useGridLayout(outerRoot, () => ({
-            collision: CollisionMode.Push,
-            columnNumber,
-            compactType: CompactType.Vertical,
-            dragStartDistance,
-            isEditable: true,
-            items: outerItems,
-            onCommit: outerCommit,
-            rowHeight,
-            spacing,
-          }));
-
-          // The inner grid sits inside the outer grid's tile, so a press on its tile bubbles up through the outer tile too
-          return () =>
-            h(
-              "div",
-              { class: "grid", ref: "outerRoot" },
-              outer.tiles.value.map(({ geometry, item }) =>
-                h(
-                  "div",
-                  {
-                    class: "outer-tile",
-                    onPointerdown: (event: PointerEvent) => {
-                      outer.startGesture(event, item);
-                    },
-                    style: getStyle(geometry),
-                  },
-                  [h(InnerGrid)],
-                ),
-              ),
-            );
-        },
-      }),
-    );
-    await flushPromises();
-    const tile = wrapper.get(".inner-tile");
-    vi.spyOn(document, "elementsFromPoint").mockReturnValue([tile.element, wrapper.get(".inner").element]);
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
-    await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
-
-    expect(outerCommit).not.toHaveBeenCalled();
-    expect(innerCommit.mock.calls).toStrictEqual([
-      [{ changes: [{ h: 2, id: "inner", w: 2, x: 2, y: 0 }], removed: [] }],
-    ]);
+    expect(onDrop.mock.calls).toStrictEqual([[{ h: 2, w: 2, x: 2, y: 0 }]]);
   });
 
   test("a drop outside every grid", async () => {
     expect.hasAssertions();
 
-    const { onCommit, wrapper } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }] });
+    const { onCommit } = mountGrid({ items: [] });
     await flushPromises();
-    // Outside every grid the pointer is over the page itself, which no grid claims, so the move the drag previewed is dropped
+    // Outside every grid the pointer is over the page itself, which no grid claims, so the entry is not dropped
     vi.spyOn(document, "elementsFromPoint").mockReturnValue([document.body]);
-    const tile = wrapper.get(".tile");
-    const point = { clientX: cellPitch * 4 + spacing.padding, clientY: 0, pointerId };
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { ...point, buttons: 1 });
-    await tile.trigger("pointerup", point);
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    dispatch("pointerdown", point);
+    dispatch("pointermove", point);
+    dispatch("pointerup", point);
 
+    expect(onDrop).not.toHaveBeenCalled();
     expect(onCommit).not.toHaveBeenCalled();
   });
 

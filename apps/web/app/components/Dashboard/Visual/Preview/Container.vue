@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { getSynchronizedFunction } from "@esposter/shared";
 
@@ -13,7 +10,7 @@ interface Props {
 
 const { visual } = defineProps<Props>();
 const visualStore = useVisualStore();
-const { duplicateVisual, editItem } = visualStore;
+const { editItem } = visualStore;
 const container = useTemplateRef("container");
 
 onClickExceptDrag(
@@ -25,34 +22,14 @@ onClickExceptDrag(
 <template>
   <div ref="container" size-full>
     <!-- The chart is drawn as it is published, but takes no pointer: a press on it is the tile's drag, and its click
-      opens the edit form. The corner's actions and the error state's Retry sit above it again -->
+      opens the edit form. The corner's menu sits above it again -->
     <div size-full pointer-events-none>
       <DashboardVisual :visual>
         <template #actions="{ dataset }">
-          <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts a visual's
-            Actions on the tile's own corner, so edit, duplicate, export and delete sit there here too. A press here never
-            reaches the tile's drag tracking, and its click is the corner's own -->
+          <!-- Clicking the tile opens its edit form, which nothing on screen says on its own, so the one menu on the corner
+            holds the edit beside the occasional actions. A press here never reaches the tile's drag tracking -->
           <div data-nested-interaction="true" flex gap-1 @mousedown.stop @mousemove.stop>
-            <UiIconButton
-              label="Edit visual"
-              :meaning="UiIconMeaning.Edit"
-              :variant="UiButtonVariant.Quiet"
-              @click="editItem({ id: visual.id })"
-            />
-            <UiIconButton
-              label="Duplicate visual"
-              :meaning="UiIconMeaning.Copy"
-              :variant="UiButtonVariant.Quiet"
-              @click="duplicateVisual({ id: visual.id })"
-            />
-            <UiIconButton
-              v-if="dataset"
-              label="Export CSV"
-              :meaning="UiIconMeaning.Download"
-              :variant="UiButtonVariant.Quiet"
-              @click="exportDashboardVisualCsv(visual, dataset)"
-            />
-            <DashboardVisualPreviewDeleteButton :id="visual.id" :type="visual.type" />
+            <DashboardVisualPreviewActionsMenu :dataset :visual />
           </div>
         </template>
       </DashboardVisual>

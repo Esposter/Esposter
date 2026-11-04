@@ -11,6 +11,7 @@ import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -66,7 +67,9 @@ describe("dashboardIndex", () => {
       },
       type: VisualType.Card,
     });
-    const wrapper = await mountSuspended(DashboardIndex, { props: { visuals: [visual] } });
+    const wrapper = await mountSuspended(DashboardIndex, {
+      props: { collision: CollisionMode.Push, compactType: CompactType.Vertical, visuals: [visual] },
+    });
     await flushPromises();
     await wrapper.get(exportCsvLabel).trigger("click");
 

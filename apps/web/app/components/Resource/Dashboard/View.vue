@@ -29,7 +29,12 @@ const dashboard = new BaseDashboard(content as never);
       <h1 ui-display>{{ name }}</h1>
       <UiButton :variant="UiButtonVariant.Quiet" @click="exportDashboardPng(name)">Export PNG</UiButton>
     </div>
-    <Dashboard v-if="dashboard.visuals.length > 0" :visuals="dashboard.visuals" />
+    <Dashboard
+      v-if="dashboard.visuals.length > 0"
+      :collision="dashboard.collision"
+      :compact-type="dashboard.compactType"
+      :visuals="dashboard.visuals"
+    />
     <UiEmptyState v-else :meaning="UiIconMeaning.Chart" title="This dashboard has no visuals" />
   </div>
 </template>

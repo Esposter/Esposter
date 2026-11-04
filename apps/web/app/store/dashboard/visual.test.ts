@@ -194,4 +194,38 @@ describe(useVisualStore, () => {
 
     expect(visuals.value).toStrictEqual([]);
   });
+
+  // The first free cell is the one a new visual of its span fits in, scanning rows from the top
+  test("a new visual takes the first free cell beside the visuals there are", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { createVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    createVisual();
+
+    expect(visuals.value).toHaveLength(2);
+    expect({ w: visuals.value[1]?.w, x: visuals.value[1]?.x, y: visuals.value[1]?.y }).toStrictEqual({
+      w: 4,
+      x: 4,
+      y: 0,
+    });
+  });
+
+  // A fit height the server refuses is taken back, so the menu shows the flag the saved visual has
+  test("takes a fit height back when the save is refused", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { setAutoHeight } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const isSuccessful = await setAutoHeight({ id }, true);
+
+    expect(isSuccessful).toBe(false);
+    expect(takeOne(visuals.value).isAutoHeight).toBe(false);
+  });
 });

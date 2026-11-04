@@ -1,4 +1,7 @@
+import type { GridCell } from "vue-grid-layout-headless";
+
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -6,6 +9,7 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { useAlertStore } from "@/store/alert";
 import { useDashboardStore } from "@/store/dashboard";
 import { toRawDeep } from "@esposter/shared";
+import { getFirstFreeCell } from "vue-grid-layout-headless";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
@@ -23,14 +27,14 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     updateVisual,
     ...restOperationData
   } = createOperationData(visuals, ["id"], "Visual");
-  const createVisual = () => {
-    storeCreateVisual(
-      new Visual({
-        x: (visuals.value.length * 2) % DASHBOARD_NO_COLUMNS,
-        // Puts the item at the bottom
-        y: visuals.value.length + DASHBOARD_NO_COLUMNS,
-      }),
-    );
+  // A new visual of a type takes the first cell its span fits in, so an added visual never moves the ones there are
+  const createVisual = (type: VisualType = VisualType.Area) => {
+    const span = new Visual({ type });
+    storeCreateVisual(new Visual({ type, ...getFirstFreeCell(visuals.value, DASHBOARD_NO_COLUMNS, span) }));
+  };
+  // A visual the palette dropped on the grid is saved at the cell the grid placed it in
+  const addVisual = (type: VisualType, cell: GridCell) => {
+    storeCreateVisual(new Visual({ type, ...cell }));
   };
   const editFormData = createEditFormData(
     computed(() => visuals.value),
@@ -58,6 +62,18 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const isSuccessful = await saveDashboard();
     if (isSuccessful) isEditFormDialogOpen.value = false;
     else updateDashboardVisual(snapshot);
+    return isSuccessful;
+  };
+  // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form
+  const setAutoHeight = async (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
+    const { updateVisual: updateDashboardVisual } = getDashboardOperationData();
+    const visual = visuals.value.find(getEntityIdEqualComparator<Visual>(["id"], ids));
+    if (!visual) return false;
+
+    const previousIsAutoHeight = visual.isAutoHeight;
+    updateDashboardVisual({ id: visual.id, isAutoHeight });
+    const isSuccessful = await saveDashboard();
+    if (!isSuccessful) updateDashboardVisual({ id: visual.id, isAutoHeight: previousIsAutoHeight });
     return isSuccessful;
   };
   // Same write path: remove locally, persist the dashboard, revert on failure so a failed delete keeps the visual
@@ -98,10 +114,12 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   return {
     ...restOperationData,
     ...editFormData,
+    addVisual,
     createVisual,
     deleteVisual,
     duplicateVisual,
     save,
+    setAutoHeight,
     updateVisual,
     visuals,
   };

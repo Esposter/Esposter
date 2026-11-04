@@ -21,7 +21,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 
 describe("dashboardVisualPreviewContainer", () => {
   const { trpcMsw } = setupMswTrpc();
-  const exportCsvLabel = '[aria-label="Export CSV"]';
+  const menuLabel = '[aria-label="Visual actions"]';
   const responseColumn = "response";
   const createBoundVisual = () =>
     new Visual({
@@ -35,8 +35,8 @@ describe("dashboardVisualPreviewContainer", () => {
       type: VisualType.Card,
     });
 
-  // The tile's corner offers the file of the rows its visual draws, once the read has answered
-  test("a bound visual's tile downloads the CSV of the rows it draws", async () => {
+  // The tile's menu offers the file of the rows its visual draws, once the read has answered
+  test("a bound visual's menu downloads the CSV of the rows it draws", async () => {
     expect.hasAssertions();
 
     const { promise: readAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
@@ -50,7 +50,12 @@ describe("dashboardVisualPreviewContainer", () => {
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, { props: { visual: createBoundVisual() } });
     await readAnswered;
     await flushPromises();
-    await wrapper.get(exportCsvLabel).trigger("click");
+    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    await wrapper
+      .findAll('[role="menuitem"]')
+      .find((item) => item.text() === "Export CSV")
+      ?.trigger("click");
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Card}.csv`,
@@ -60,14 +65,16 @@ describe("dashboardVisualPreviewContainer", () => {
   });
 
   // A static visual has no rows to export, since its values are typed into the chart rather than read from a dataset
-  test("a static visual's tile offers no Export CSV", async () => {
+  test("a static visual's menu offers no Export CSV", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(DashboardVisualPreviewContainer, {
       props: { visual: new Visual({ type: VisualType.Card }) },
     });
+    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
 
-    expect(wrapper.findAll(exportCsvLabel)).toHaveLength(0);
+    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).not.toContain("Export CSV");
   });
 
   // A visual whose source is gone shows its error state, and there are no rows left to export
@@ -84,6 +91,9 @@ describe("dashboardVisualPreviewContainer", () => {
     await flushPromises();
 
     expect(wrapper.findComponent(UiErrorState).exists()).toBe(true);
-    expect(wrapper.findAll(exportCsvLabel)).toHaveLength(0);
+    await wrapper.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+
+    expect(wrapper.findAll('[role="menuitem"]').map((item) => item.text())).not.toContain("Export CSV");
   });
 });
