@@ -4,7 +4,7 @@ import type { SurveyLogicValue } from "survey-logic";
 // A computed value as a stored answer. An empty result has no answer to store
 // A list or a record holding one is left out with it, since an answer cannot hold a gap
 export const toSurveyAnswerValue = (value: SurveyLogicValue): SurveyAnswerValue | undefined => {
-  if (value === null || value === undefined) return undefined;
+  if (value === undefined) return undefined;
   if (typeof value !== "object") return value;
 
   if (Array.isArray(value)) {

@@ -12,6 +12,12 @@ describe(toSurveyLogicValue, () => {
     expect(toSurveyLogicValue(value)).toStrictEqual(value);
   });
 
+  test("a null the storage holds is unanswered", () => {
+    expect.hasAssertions();
+
+    expect(toSurveyLogicValue(null)).toBeUndefined();
+  });
+
   test("a list reads item by item", () => {
     expect.hasAssertions();
 
