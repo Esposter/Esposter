@@ -28,6 +28,12 @@ The package SHALL set the renderer's editor mode to none, free text, ink, highli
 - **THEN** the renderer's editor mode is ink
 - **AND** setting the mode to none sets the renderer's mode to none
 
+#### Scenario: A mode chosen while the document loads
+
+- **GIVEN** a document still loading in the viewer
+- **WHEN** the consumer sets the mode to ink
+- **THEN** the renderer's editor mode is ink once the renderer reports its editor
+
 #### Scenario: Drawing reports a change
 
 - **GIVEN** the editor mode is ink
