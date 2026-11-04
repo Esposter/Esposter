@@ -43,6 +43,24 @@ A required question SHALL show the required mark once beside its title, and its 
 - **THEN** its label shows the required mark and the word required
 - **AND** its hint is "Your work address"
 
+### Requirement: A question is marked required while its requiring condition holds
+
+A question SHALL draw the required mark while its own flag is set or its requiring condition holds over the current answers, and SHALL stop drawing it once that condition no longer holds.
+
+#### Scenario: a question whose requiring condition holds draws the required mark and blocks the next page
+
+- **GIVEN** a page with a text question "a" and a text question "b" required only when "a" is "yes", followed by a second page
+- **WHEN** the respondent answers "a" with "yes"
+- **THEN** "b" draws the required mark
+- **AND** moving to the next page is refused until "b" is answered
+
+#### Scenario: a question stops drawing the required mark when its requiring condition stops holding
+
+- **GIVEN** the same page with "a" answered "yes" and "b" unanswered
+- **WHEN** the respondent changes "a" to "no"
+- **THEN** "b" no longer draws the required mark
+- **AND** moving to the next page is allowed
+
 ### Requirement: A dropdown or tag box shows its placeholder until a respondent picks
 
 A dropdown or tag box SHALL show the placeholder its author set in its trigger while nothing is picked.
