@@ -23,6 +23,7 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
 <template>
   <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
     <UiRadioGroup
+      :aria-invalid="error ? true : undefined"
       :is-disabled
       :items
       :label="title"

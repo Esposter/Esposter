@@ -67,6 +67,14 @@ describe("uiSelect", () => {
       expect(component.findAll('[role="option"]')).toHaveLength(items.length);
     });
 
+    test("passes what a call site sets, such as an invalid mark, on its trigger", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, { attrs: { "aria-invalid": "true" }, props: { items, label, modelValue: "" } });
+
+      expect(component.get('[role="combobox"]').attributes("aria-invalid")).toBe("true");
+    });
+
     test("keeps no mark column on a trigger whose chosen option carries no mark", () => {
       expect.hasAssertions();
 

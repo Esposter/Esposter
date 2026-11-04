@@ -13,6 +13,7 @@ interface Props {
   placeholder?: string;
 }
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
+defineOptions({ inheritAttrs: false });
 const modelValue = defineModel<TModel>({ required: true });
 const { isDisabled, items, label, placeholder } = defineProps<Props>();
 </script>
@@ -32,7 +33,7 @@ const { isDisabled, items, label, placeholder } = defineProps<Props>();
       }
     "
   >
-    <UiSelectActivator :items :label :placeholder />
+    <UiSelectActivator :="$attrs" :items :label :placeholder />
     <Select.Content ui-popover>
       <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
         <Select.Item

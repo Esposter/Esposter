@@ -71,6 +71,7 @@ const setOtherText = (text: string) => {
     :title="label"
   >
     <UiSelect
+      :aria-invalid="error ? true : undefined"
       :is-disabled
       :items
       :label

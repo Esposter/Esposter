@@ -53,6 +53,7 @@ const choice = computed({
       <UiRadioGroup
         v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
         v-model="choice"
+        :aria-invalid="error ? true : undefined"
         :is-disabled
         :items
         :label="title"

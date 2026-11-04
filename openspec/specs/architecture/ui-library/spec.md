@@ -255,6 +255,24 @@ A grid or calendar SHALL move focus one cell or day at a time with the arrow key
 - **THEN** the day is announced as disabled
 - **AND** the day is not chosen
 
+### Requirement: A radio group or select a call site marks invalid is drawn in the error colour
+
+A radio group or select SHALL take the invalid mark a call site sets on it, and SHALL draw its control in the error colour while it is marked.
+
+#### Scenario: An invalid select's trigger is marked invalid and tinted in the error colour
+
+- **GIVEN** a select whose call site marks it invalid
+- **WHEN** the select is drawn
+- **THEN** its trigger is marked invalid
+- **AND** the trigger is tinted in the error colour
+
+#### Scenario: An invalid radio group marks its group and tints its round marks
+
+- **GIVEN** a radio group whose call site marks it invalid
+- **WHEN** the group is drawn
+- **THEN** the group is marked invalid
+- **AND** each round mark's field is tinted in the error colour
+
 ### Requirement: A disabled toggle group or slider takes no press or key and is drawn faded
 
 A toggle group or slider given as disabled SHALL take no press and no key, and SHALL be drawn at the disabled opacity.

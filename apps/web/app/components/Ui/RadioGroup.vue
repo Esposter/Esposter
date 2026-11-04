@@ -2,6 +2,7 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { Radio } from "@vuetify/v0";
+import { mergeProps } from "vue";
 
 interface Props {
   // While an answer is already on its way, as a poll's vote is
@@ -13,6 +14,7 @@ interface Props {
 // One answer out of a list, each a row of its own with a line saying more under its title, where a toggle group is a
 // Few short segments on one track. A radio group, so it is one stop in the tab order and the arrows move the choice
 // Along it. What goes under an option's title, such as a poll's tally, fills the append slot
+defineOptions({ inheritAttrs: false });
 defineSlots<{ append?: (props: { value: T }) => VNode }>();
 const modelValue = defineModel<T>();
 const { isDisabled = false, items, label } = defineProps<Props>();
@@ -32,7 +34,7 @@ const id = useId();
       }
     "
   >
-    <div :="attrs" flex flex-col>
+    <div :="mergeProps(attrs, $attrs)" flex flex-col>
       <Radio.Root
         v-for="({ description, title, value }, index) of items"
         #default="{ attrs: itemAttrs }"
@@ -43,7 +45,7 @@ const id = useId();
         renderless
       >
         <button :="itemAttrs" class="aria-disabled:cursor-default aria-disabled:op-disabled" type="button" ui-item>
-          <span p-1 flex shrink-0 size-6 ui-field ui-pill>
+          <span class="ring" p-1 flex shrink-0 size-6 ui-field ui-pill>
             <span class="mark" :data-state="itemAttrs['data-state']" flex-1 />
           </span>
           <span flex flex-1 flex-col min-w-0>
@@ -68,5 +70,12 @@ const id = useId();
 
 .mark[data-state="checked"] {
   transform: none;
+}
+</style>
+
+<style scoped>
+/* An invalid group tints each round mark's field in the error colour, as an invalid text field is tinted */
+[aria-invalid="true"] .ring {
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
 }
 </style>

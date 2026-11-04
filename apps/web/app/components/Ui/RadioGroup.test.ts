@@ -99,5 +99,16 @@ describe("uiRadioGroup", () => {
       expect(second?.attributes("aria-disabled")).toBe("true");
       expect(component.props("modelValue")).toBe("a");
     });
+    test("passes what a call site sets, such as an invalid mark, on the group's own element", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiRadioGroup<string>, {
+        attrs: { "aria-invalid": "true" },
+        props: { items, label, modelValue: "a" },
+      });
+      await flushPromises();
+
+      expect(component.get('[role="radiogroup"]').attributes("aria-invalid")).toBe("true");
+    });
   });
 });
