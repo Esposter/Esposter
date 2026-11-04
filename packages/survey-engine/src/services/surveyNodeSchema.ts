@@ -206,7 +206,6 @@ const surveyTemplateNodeSchema: z.ZodType<SurveyTemplateNode> = z.discriminatedU
   createAcceptedTypesError(SURVEY_TEMPLATE_NODE_TYPES),
 ) satisfies z.ZodType<SurveyTemplateNode>;
 
-// Every question and a panel, the nodes a page or a panel accepts
 const surveyPlaceableNodeOptions = [
   ...surveyTemplateNodeOptions,
   surveyPanelDynamicNodeSchemaValue,
