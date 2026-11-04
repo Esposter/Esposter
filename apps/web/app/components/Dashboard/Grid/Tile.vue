@@ -17,7 +17,7 @@ interface Props {
 }
 
 // A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
-// The handles are drawn after the visual, so the visual's corner marks sit above them at one, and a dragged tile at two
+// The handles are drawn after the visual, and a dragged tile is at two
 defineSlots<{ default: () => VNode }>();
 const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
 const emit = defineEmits<{
@@ -87,7 +87,8 @@ useResizeObserver(tile, (entries) => {
 <style scoped>
 /* A handle is the handle size, capped at a third of the tile in each axis, so the two corners of a one-column tile never
   overlap. A corner is a square of that size, and an edge runs between two corners, so a visual too small for both keeps its
-  corners and loses its edges. The percentage resolves against the tile's width for a width and its height for a height */
+  corners and loses its edges. The percentage resolves against the tile's width for a width and its height for a height. The
+  visual's corner marks are inset by this same cap, so no mark covers a corner */
 .dashboard-grid-tile {
   --dashboard-handle: 0.75rem;
   --dashboard-cap: min(var(--dashboard-handle), 33%);
