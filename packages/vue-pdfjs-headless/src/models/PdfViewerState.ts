@@ -28,6 +28,7 @@ export interface PdfViewerState {
   pagesRotation: Ref<number>;
   previousPage: () => void;
   print: () => void;
+  resetZoom: () => void;
   rotate: (degrees: number) => void;
   scale: Ref<number>;
   searchQuery: Ref<string>;

@@ -19,6 +19,8 @@ import {
   PDF_MAX_SCALE,
   PDF_MIME_TYPE,
   PDF_MIN_SCALE,
+  PDF_OPENING_SCALE,
+  PDF_ZOOM_STEP,
 } from "#src/services/constants";
 import { getDownloadBytes } from "#src/services/getDownloadBytes";
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
@@ -63,6 +65,8 @@ export const usePdfViewer = ({
   const pagesRotation = ref(0);
   const scale = ref(0);
   const searchQuery = ref("");
+  // Bumped with each document, so the search runs on a new document even when its terms are the last one's
+  const documentGeneration = ref(0);
   const isZoomInDisabled = computed(() => scale.value >= PDF_MAX_SCALE);
   const isZoomOutDisabled = computed(() => scale.value <= PDF_MIN_SCALE);
   let abortController: AbortController | undefined;
@@ -104,7 +108,7 @@ export const usePdfViewer = ({
     pdfViewer = instance;
     // The renderer takes a preset scale only once its pages exist, which pagesinit announces
     bus.on("pagesinit", () => {
-      instance.currentScaleValue = "auto";
+      instance.currentScaleValue = PDF_OPENING_SCALE;
     });
     bus.on("pagechanging", (event: { pageNumber: number }) => {
       currentPageNumber.value = event.pageNumber;
@@ -171,6 +175,8 @@ export const usePdfViewer = ({
     // So a document that replaces another starts from the state a new viewer has.
     currentPageNumber.value = 1;
     pagesRotation.value = 0;
+    // The search starts over with the document: its query and matches are cleared, and the terms it opens with are searched
+    searchQuery.value = "";
     matchesCount.value = { current: 0, total: 0 };
     isNotFound.value = false;
     if (!loaded) return;
@@ -178,8 +184,9 @@ export const usePdfViewer = ({
     // The renderer's mode is reset with its document, so the mode the consumer chose is set again on each one
     pdfViewer.annotationEditorMode = { mode: editorMode.value };
     loadOutline(loaded);
-    const terms = toValue(highlightTerms);
-    if (terms.length > 0) findText({ query: terms });
+    // The terms are one phrase the search bar shows, so the highlight and the bar's Next and Previous search the same query
+    searchQuery.value = toValue(highlightTerms).join(" ");
+    documentGeneration.value++;
   };
   // A new query is searched from its first match, and a step to the next or previous one again from where the search is
   const findText = ({ isPrevious = false, query, type = "" }: FindTextOptions) => {
@@ -193,6 +200,11 @@ export const usePdfViewer = ({
       type,
     });
   };
+  // Registered before the viewer is created, since a document loaded during setup bumps the generation this watches
+  // A search runs again when its query or options change, and when a document loads, which searches the terms it opens with
+  watch([searchQuery, isMatchCase, isWholeWord, documentGeneration], () => {
+    if (toValue(pdfDocument)) findText({ query: searchQuery.value });
+  });
   const removePrint = () => {
     printGeneration++;
     printRoot?.remove();
@@ -214,11 +226,19 @@ export const usePdfViewer = ({
   const nextPage = () => {
     pdfViewer?.nextPage();
   };
+  // A step from the current scale, held to the package's own range, since pdf.js would hold it to its wider one
+  const zoomTo = (nextScale: number) => {
+    if (pdfViewer) pdfViewer.currentScale = Math.min(Math.max(nextScale, PDF_MIN_SCALE), PDF_MAX_SCALE);
+  };
   const zoomIn = () => {
-    pdfViewer?.increaseScale();
+    if (pdfViewer && pdfViewer.currentScale > 0) zoomTo(pdfViewer.currentScale * PDF_ZOOM_STEP);
   };
   const zoomOut = () => {
-    pdfViewer?.decreaseScale();
+    if (pdfViewer && pdfViewer.currentScale > 0) zoomTo(pdfViewer.currentScale / PDF_ZOOM_STEP);
+  };
+  // The zoom readout's reset: the scale a document opens in, which is not the actual size that the menu's item sets
+  const resetZoom = () => {
+    if (pdfViewer) pdfViewer.currentScaleValue = PDF_OPENING_SCALE;
   };
   const fitWidth = () => {
     if (pdfViewer) pdfViewer.currentScaleValue = "page-width";
@@ -285,9 +305,6 @@ export const usePdfViewer = ({
     // The renderer reads its document to leave a mode, so a mode set before a document loads waits for applyDocument
     if (pdfViewer && toValue(pdfDocument)) pdfViewer.annotationEditorMode = { mode };
   });
-  watch([searchQuery, isMatchCase, isWholeWord], () => {
-    findText({ query: searchQuery.value });
-  });
   onScopeDispose(() => {
     removePrint();
     if (!pdfViewer) return;
@@ -323,6 +340,7 @@ export const usePdfViewer = ({
     pagesRotation,
     previousPage,
     print,
+    resetZoom,
     rotate,
     scale,
     searchQuery,

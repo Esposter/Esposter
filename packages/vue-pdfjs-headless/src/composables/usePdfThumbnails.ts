@@ -10,7 +10,8 @@ interface UsePdfThumbnailsOptions {
   // The viewer's rotation, which every thumbnail turns with so the rail shows the pages as the viewer does
   pagesRotation: MaybeRefOrGetter<number>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
-  // The sidebar's own scrolling element, whose view decides which rows are in view, read when a document loads
+  // The sidebar's own scrolling element, whose view decides which rows are in view. It may mount after the document
+  // Loads, so the observer is made against it whenever it changes
   root: MaybeRefOrGetter<HTMLElement | undefined>;
 }
 
@@ -27,11 +28,7 @@ export const usePdfThumbnails = ({
   let observer: IntersectionObserver | undefined;
   let scope: EffectScope | undefined;
 
-  const createThumbnail = (
-    pageNumber: number,
-    currentDocument: PDFDocumentProxy,
-    currentObserver: IntersectionObserver,
-  ): PdfThumbnail => {
+  const createThumbnail = (pageNumber: number, currentDocument: PDFDocumentProxy): PdfThumbnail => {
     const canvas = shallowRef<HTMLCanvasElement | undefined>();
     const isVisible = ref(false);
     const thumbnail: PdfThumbnail = {
@@ -51,9 +48,9 @@ export const usePdfThumbnails = ({
       if (!element) return;
 
       rows.set(element, thumbnail);
-      currentObserver.observe(element);
+      observer?.observe(element);
       onCleanup(() => {
-        currentObserver.unobserve(element);
+        observer?.unobserve(element);
         rows.delete(element);
       });
     });
@@ -61,41 +58,45 @@ export const usePdfThumbnails = ({
     return thumbnail;
   };
 
-  // Stops the thumbnails of the document in place and the observer that watches their rows
-  const disposeThumbnails = () => {
-    scope?.stop();
-    observer?.disconnect();
-  };
-
+  // The observer the rows are watched through, made again each time the sidebar's element changes, and each row it watches
+  // Is watched again by the new one
   watch(
-    () => toValue(pdfDocument),
-    (loaded) => {
-      disposeThumbnails();
-      rows.clear();
-      thumbnails.value = [];
-      if (!loaded) return;
-
-      const currentObserver = new IntersectionObserver(
+    () => toValue(root),
+    (rootElement) => {
+      observer?.disconnect();
+      observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             const row = rows.get(entry.target);
             if (row) row.isVisible.value = entry.isIntersecting;
           }
         },
-        { root: toValue(root) ?? null },
+        { root: rootElement ?? null },
       );
-      observer = currentObserver;
+      for (const element of rows.keys()) observer.observe(element);
+    },
+    { immediate: true },
+  );
+  watch(
+    () => toValue(pdfDocument),
+    (loaded) => {
+      scope?.stop();
+      rows.clear();
+      thumbnails.value = [];
+      if (!loaded) return;
+
       scope = effectScope();
       thumbnails.value =
         scope.run(() =>
-          Array.from({ length: loaded.numPages }, (_value, index) =>
-            createThumbnail(index + 1, loaded, currentObserver),
-          ),
+          Array.from({ length: loaded.numPages }, (_value, index) => createThumbnail(index + 1, loaded)),
         ) ?? [];
     },
     { immediate: true },
   );
-  onScopeDispose(disposeThumbnails);
+  onScopeDispose(() => {
+    scope?.stop();
+    observer?.disconnect();
+  });
 
   return thumbnails;
 };

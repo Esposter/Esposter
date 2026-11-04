@@ -29,9 +29,11 @@ const mountPage = async (page: PDFPageProxy) => {
 
 const createPage = (render: PDFPageProxy["render"]): PDFPageProxy =>
   ({
+    cleanup: vi.fn<PDFPageProxy["cleanup"]>(() => true),
     getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
     render,
-  }) as PDFPageProxy;
+    rotate: 0,
+  }) as unknown as PDFPageProxy;
 
 describe(usePdfPage, () => {
   type ResizeCallback = (entries: ResizeObserverEntry[]) => void;
@@ -124,8 +126,10 @@ describe(usePdfPage, () => {
       ({ scale }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
     );
     const page = {
+      cleanup: vi.fn<PDFPageProxy["cleanup"]>(() => true),
       getViewport,
       render: vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))),
+      rotate: 0,
     } as unknown as PDFPageProxy;
     const pagesRotation = shallowRef(0);
     const scope = effectScope();
@@ -144,6 +148,50 @@ describe(usePdfPage, () => {
 
     expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP);
     scope.stop();
+  });
+
+  test("a page's own quarter turn is kept under the viewer's turn", async () => {
+    expect.hasAssertions();
+
+    const getViewport = vi.fn<(parameters: { rotation?: number; scale: number }) => { height: number; width: number }>(
+      ({ scale }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
+    );
+    // The page's own /Rotate is a quarter turn, which the viewer's turn must add to rather than replace
+    const page = {
+      cleanup: vi.fn<PDFPageProxy["cleanup"]>(() => true),
+      getViewport,
+      render: vi.fn<PDFPageProxy["render"]>(() => createRenderTask(new Promise(() => {}))),
+      rotate: PDF_ROTATION_STEP,
+    } as unknown as PDFPageProxy;
+    const pagesRotation = shallowRef(0);
+    const scope = effectScope();
+    scope.run(() => {
+      usePdfPage({
+        canvas: window.document.createElement("canvas"),
+        pageNumber: 1,
+        pagesRotation,
+        pdfDocument: createDocument(page),
+      });
+    });
+    await flushPromises();
+    reportWidth(400);
+
+    expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP);
+    pagesRotation.value = PDF_ROTATION_STEP;
+    await nextTick();
+
+    expect(getViewport.mock.lastCall?.[0].rotation).toBe(PDF_ROTATION_STEP * 2);
+    scope.stop();
+  });
+
+  test("a page's cached proxy is released when its scope ends", async () => {
+    expect.hasAssertions();
+
+    const cleanup = vi.fn<PDFPageProxy["cleanup"]>(() => true);
+    const { scope } = await mountPage({ cleanup } as unknown as PDFPageProxy);
+    scope.stop();
+
+    expect(cleanup).toHaveBeenCalledTimes(1);
   });
 
   test("a draw a newer one cancelled logs nothing", async () => {

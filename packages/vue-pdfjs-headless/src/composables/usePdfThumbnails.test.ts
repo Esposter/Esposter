@@ -5,7 +5,7 @@ import { usePdfThumbnails } from "#src/composables/usePdfThumbnails";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope, nextTick, ref } from "vue";
+import { effectScope, nextTick, ref, shallowRef } from "vue";
 
 describe(usePdfThumbnails, () => {
   const PAGE_COUNT = 3;
@@ -13,14 +13,29 @@ describe(usePdfThumbnails, () => {
   const ROW_WIDTH = 120;
   const QUARTER_TURN = 90;
 
-  // The sidebar's rows are reported in and out of view by the observer the composable made
+  // The sidebar's rows are reported in and out of view by the observer the composable made, the latest of which is kept
+  // With the root it was made against and the rows it watches
   let reportVisibility: (element: Element, isIntersecting: boolean) => void = noop;
-  const IntersectionObserverStub = function (callback: (entries: IntersectionObserverEntry[]) => void) {
+  let latestObserver: undefined | { observed: Element[]; root?: Document | Element | null };
+  const IntersectionObserverStub = function (
+    callback: (entries: IntersectionObserverEntry[]) => void,
+    options?: IntersectionObserverInit,
+  ) {
+    const observed: Element[] = [];
+    latestObserver = { observed, root: options?.root ?? null };
     reportVisibility = (element, isIntersecting) => {
       callback([{ isIntersecting, target: element } as IntersectionObserverEntry]);
     };
 
-    return { disconnect: () => {}, observe: () => {}, unobserve: () => {} };
+    return {
+      disconnect: () => {
+        observed.length = 0;
+      },
+      observe: (element: Element) => {
+        observed.push(element);
+      },
+      unobserve: () => {},
+    };
   };
   // A row reports its width as soon as it is observed, so its page can draw once it is in view
   const ResizeObserverStub = function (callback: (entries: ResizeObserverEntry[]) => void) {
@@ -41,23 +56,26 @@ describe(usePdfThumbnails, () => {
   });
 
   // Mounts a sidebar of one row per page, each row's canvas attached, and returns the render the rows share
-  const mountSidebar = async (pagesRotation = ref(0)) => {
+  const mountSidebar = async (pagesRotation = ref(0), root = shallowRef<HTMLElement | undefined>()) => {
     const render = vi.fn<PDFPageProxy["render"]>(
       () => ({ cancel: () => {}, promise: Promise.resolve() }) as RenderTask,
     );
     const getViewport = vi.fn<(parameters: { rotation?: number; scale: number }) => { height: number; width: number }>(
       ({ scale }) => ({ height: scale, width: scale }),
     );
-    const page = { getViewport, render } as unknown as PDFPageProxy;
+    const page = {
+      cleanup: vi.fn<PDFPageProxy["cleanup"]>(() => true),
+      getViewport,
+      render,
+      rotate: 0,
+    } as unknown as PDFPageProxy;
     const pdfDocument = {
       getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
       numPages: PAGE_COUNT,
     } as unknown as PDFDocumentProxy;
     const currentPageNumber = ref(1);
     const scope = effectScope();
-    const thumbnails = scope.run(() =>
-      usePdfThumbnails({ currentPageNumber, pagesRotation, pdfDocument, root: undefined }),
-    );
+    const thumbnails = scope.run(() => usePdfThumbnails({ currentPageNumber, pagesRotation, pdfDocument, root }));
     assert(thumbnails);
     for (const row of thumbnails.value) row.canvas.value = window.document.createElement("canvas");
     await flushPromises();
@@ -106,6 +124,23 @@ describe(usePdfThumbnails, () => {
     await flushPromises();
 
     expect(render).toHaveBeenCalledTimes(1);
+    scope.stop();
+  });
+
+  test("the rows are in view of the sidebar once it mounts, not of the viewport", async () => {
+    expect.hasAssertions();
+
+    // The sidebar mounts after its document has loaded, so its rows are first watched against the viewport
+    const root = shallowRef<HTMLElement | undefined>();
+    const { scope, thumbnails } = await mountSidebar(ref(0), root);
+    const firstCanvas = thumbnails.value[0]?.canvas.value;
+    assert(firstCanvas);
+    const sidebar = window.document.createElement("div");
+    root.value = sidebar;
+    await flushPromises();
+
+    expect(latestObserver?.root).toBe(sidebar);
+    expect(latestObserver?.observed).toContain(firstCanvas);
     scope.stop();
   });
 });

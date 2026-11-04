@@ -46,8 +46,8 @@ export const usePdfPage = ({
 
     // A newer draw replaces the one in flight, since pdf.js drawing two renders onto one canvas leaves it half drawn
     cancelRender();
-    // The page's size as it is turned, so a quarter turn draws the page at its turned width
-    const rotation = toValue(pagesRotation);
+    // The viewer's turn adds to the page's own /Rotate, since pdf.js takes a given rotation in place of the page's own
+    const rotation = (page.rotate + toValue(pagesRotation)) % 360;
     const { height, width } = page.getViewport({ rotation, scale: 1 });
     const viewport = page.getViewport({
       rotation,
@@ -121,5 +121,7 @@ export const usePdfPage = ({
   onScopeDispose(() => {
     loadGeneration++;
     cancelRender();
+    // The renderer caches a page's proxy for the document's life, and its own viewer releases the proxy once the page is no longer drawn
+    page?.cleanup();
   });
 };

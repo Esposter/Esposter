@@ -12,7 +12,9 @@ const addWatermark = async (pdfDocument: PDFDocumentProxy, watermark: string): P
   );
 
   return pages.map((page, pageIndex) => {
-    const { height, width } = page.getViewport({ scale: 1 });
+    // A free text's rectangle is in the page's unturned user space, so the band is laid across that box's middle
+    const [left = 0, bottom = 0, right = 0, top = 0] = page.view;
+    const middle = (bottom + top) / 2;
     const id = `watermark${pageIndex}`;
     const key = `${PDF_EDITOR_KEY_PREFIX}${id}`;
     annotationStorage.setValue(
@@ -22,7 +24,7 @@ const addWatermark = async (pdfDocument: PDFDocumentProxy, watermark: string): P
         fontSize: PDF_WATERMARK_FONT_SIZE,
         id,
         pageIndex,
-        rect: [0, height / 2 - PDF_WATERMARK_FONT_SIZE / 2, width, height / 2 + PDF_WATERMARK_FONT_SIZE / 2],
+        rect: [left, middle - PDF_WATERMARK_FONT_SIZE / 2, right, middle + PDF_WATERMARK_FONT_SIZE / 2],
         value: watermark,
       }),
     );

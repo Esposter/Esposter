@@ -51,6 +51,7 @@ const createPage = (
   ({
     getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
     render,
+    view: [0, 0, PAGE_WIDTH, PAGE_HEIGHT],
   }) as PDFPageProxy;
 
 // A document with no outline resolves to null, which the viewer reads as no bookmarks
@@ -76,6 +77,8 @@ describe(usePdfViewer, () => {
 
   // The scale a preset zoom lands on in the stub, whatever the preset
   const FIT_SCALE = 1.5;
+  // The renderer zooms in by a step of 1.1 and stops at 25, which is past the package's own largest scale
+  const PDF_RENDERER_MAX_SCALE = 25;
   // The renderer's viewer components stand in for their real ones, which need a canvas and a worker.
   // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
@@ -114,8 +117,10 @@ describe(usePdfViewer, () => {
   const createFindController = ({ eventBus }: { eventBus: EventBusStub }) => {
     eventBus.on("find", (event: unknown) => {
       stubs.findEvents.push(event);
-      const matchesCount = { current: matches > 0 ? 1 : 0, total: matches };
-      eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: matches > 0 ? 0 : FIND_STATE_NOT_FOUND });
+      // The renderer finds nothing for an empty query, so a cleared search has no matches
+      const total = (event as { query: string }).query === "" ? 0 : matches;
+      const matchesCount = { current: total > 0 ? 1 : 0, total };
+      eventBus.dispatch("updatefindcontrolstate", { matchesCount, state: total > 0 ? 0 : FIND_STATE_NOT_FOUND });
       eventBus.dispatch("updatefindmatchescount", { matchesCount });
     });
 
@@ -177,7 +182,7 @@ describe(usePdfViewer, () => {
       },
       // The renderer stops zooming at its largest scale, so a step past it leaves the scale where it is
       increaseScale: () => {
-        viewer.currentScale = Math.min(viewer.currentScale * 1.1, PDF_MAX_SCALE);
+        viewer.currentScale = Math.min(viewer.currentScale * 1.1, PDF_RENDERER_MAX_SCALE);
       },
       nextPage: () => {
         viewer.currentPageNumber += 1;
@@ -274,6 +279,18 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
+  test("zooming in past the largest scale stops at the package's maximum", () => {
+    expect.hasAssertions();
+
+    const { scope, state, viewer } = mountViewer(createDocument(3));
+    // A step from 9.1 would overshoot the package's largest scale, which the zoom must not pass
+    viewer.currentScale = 9.1;
+    state.zoomIn();
+
+    expect(viewer.currentScale).toBe(PDF_MAX_SCALE);
+    scope.stop();
+  });
+
   test("a loaded document opens fitted to its container", () => {
     expect.hasAssertions();
 
@@ -310,6 +327,19 @@ describe(usePdfViewer, () => {
     state[action]();
 
     expect(viewer.currentScaleValue).toBe(scaleValue);
+    scope.stop();
+  });
+
+  test("the zoom reset returns to the scale a document opens in", () => {
+    expect.hasAssertions();
+
+    const { scope, state, viewer } = mountViewer(createDocument(3));
+    stubs.eventBus?.dispatch("pagesinit", {});
+    const openedScale = viewer.currentScaleValue;
+    state.fitWidth();
+    state.resetZoom();
+
+    expect(viewer.currentScaleValue).toBe(openedScale);
     scope.stop();
   });
 
@@ -406,6 +436,22 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
+  test("a document that replaces another starts with no search", async () => {
+    expect.hasAssertions();
+
+    matches = 2;
+    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(createDocument(3));
+    const { scope, state } = mountViewer(pdfDocument);
+    state.searchQuery.value = "word";
+    await flushPromises();
+    pdfDocument.value = createDocument(3);
+    await flushPromises();
+
+    expect(state.searchQuery.value).toBe("");
+    expect(state.matchesCount.value).toStrictEqual({ current: 0, total: 0 });
+    scope.stop();
+  });
+
   test("downloading a document under its name", async () => {
     expect.hasAssertions();
 
@@ -444,7 +490,7 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("#268 Filling a form and downloading it", async () => {
+  test("an entry in the annotation storage makes the download save the renderer's bytes", async () => {
     expect.hasAssertions();
 
     const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
@@ -587,13 +633,16 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("#24 highlighting a list of terms on load", () => {
+  test("#24 highlighting the terms a document opens with", async () => {
     expect.hasAssertions();
 
     const TERMS = ["word", "page"];
-    const { scope } = mountViewer(createDocument(3), TERMS);
+    const { scope, state } = mountViewer(createDocument(3), TERMS);
+    await flushPromises();
     const [find] = stubs.findEvents;
 
+    // The terms are the one query the search bar shows, so Next and Previous continue the search the highlight made
+    expect(state.searchQuery.value).toBe("word page");
     expect(stubs.findEvents).toHaveLength(1);
     expect(find).toStrictEqual({
       caseSensitive: false,
@@ -601,7 +650,7 @@ describe(usePdfViewer, () => {
       findPrevious: false,
       highlightAll: true,
       matchDiacritics: false,
-      query: TERMS,
+      query: "word page",
       type: "",
     });
     scope.stop();
