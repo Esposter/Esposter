@@ -52,12 +52,15 @@ An email, telephone or URL answer is the same line field as a text answer, typed
 
 An invalid radio group, select, tag box, date or datetime field is marked invalid and tinted in the error colour, with the shell's alert or the field's message beneath it and nothing else drawn for it.
 
+A disabled slider is faded as a whole, its label and value with it, and takes no press or key.
+
 A required question shows one mark after its title, the star drawn in the error colour and hidden from speech, with the word required announced once beside the title. A text question's hint is its description alone, so the word no longer ends it. Each labelled control draws that same mark rather than its own.
 
 A dropdown and a tag box with a placeholder show it in the trigger while nothing is picked, in the same muted text a text field's placeholder takes, in place of the question's title that the shell already draws above. The list never offers it, so it cannot be picked.
 
 ## Decisions
 
+- **The image picker's pictures are a list's rows, not tiles.** A tile group would be a second library part with one caller, the picker, and the list already draws each picture through its mark slot at the size its author set. Rejected: a tile part for one caller.
 - **A matrix's cells are a radio group per row, not a library cell.** A per-cell radio with a shared name and a roving keyboard across the rows would be a library part with one caller, the single-choice matrix, and its grid machinery costs more than the rows it replaces, which are already one radio group each. Rejected: a cell part for one caller.
 - **A field is dumb.** It holds no logic of the survey, so the preview, the respondent page and the Creator's canvas draw the same components. Rejected: a field that evaluates its own condition, which makes the preview and the page disagree the first time a condition changes.
 - **Fields load on demand.** The map imports each field lazily, so a survey's page loads only the kinds it draws. Rejected: importing every field into the runner, which loads every kind for every survey.
@@ -71,9 +74,7 @@ A dropdown and a tag box with a placeholder show it in the trigger while nothing
 
 ## Not built
 
-Each gap is a change to the UI library, and each field works around it as the table says.
-
-- There is no tile group of images: the image picker is a list of rows.
+Every gap the library lacked is built, or kept field-local by a decision above, so none is open.
 
 ## Key files
 
