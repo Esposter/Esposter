@@ -109,7 +109,7 @@ watch(
   max-height: 15rem;
   overflow-y: auto;
   /* Its focus ring is drawn just inside the editor, in the padding, since the frame around it has no room outside */
-  outline-offset: calc(var(--ui-focus-width) * -1);
+  outline-offset: var(--ui-focus-inset);
 
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);

@@ -54,6 +54,6 @@ useAdoptResourceContent(ResourceType.Note, () => {
   padding: 1rem;
   min-height: 100%;
   /* Its focus ring is drawn just inside the editor, since the scroller around it would cut off a ring drawn outside */
-  outline-offset: calc(var(--ui-focus-width) * -1);
+  outline-offset: var(--ui-focus-inset);
 }
 </style>

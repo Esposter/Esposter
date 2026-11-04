@@ -59,7 +59,7 @@ const uiSurfaceUtilities = {
       "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
       // The document's ring, drawn inside the edge so a field packed in a group is never cut off by its neighbour
       outline: "var(--ui-focus-width) solid var(--ui-accent)",
-      "outline-offset": "calc(var(--ui-focus-width) * -1)",
+      "outline-offset": "var(--ui-focus-inset)",
       // A field around an editable of its own, such as a token field's input, is focused while the editable is
       [symbols.selector]: (selector: string) =>
         `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus, :is(input, textarea):focus-visible))`,
@@ -185,12 +185,13 @@ export default defineConfig({
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
   // Reads a colour is resolved where it is declared: inherited from the root, a frame inside a dusk scope would keep
-  // Dawn's edge
+  // Dawn's edge. The inset focus ring is derived from the style's width on the same scope, so every ring is drawn inside
+  // Its edge by one token rather than each spelling the calculation
   preflights: Object.entries(UiStyleMap).map(([uiStyle, styleTokens]) => ({
     getCSS: () =>
       `[data-ui-style="${uiStyle}"]{${Object.entries(styleTokens)
         .map(([styleToken, value]) => `--ui-${styleToken}:${value};`)
-        .join("")}}`,
+        .join("")}--ui-focus-inset:calc(var(--ui-focus-width) * -1);}`,
     layer: "theme",
   })),
   presets: [
@@ -250,13 +251,13 @@ export default defineConfig({
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's
       // Trigger opens, in a search field's pill. Focused, it rings inside its edge and tints over its fill
-      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)] data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
+      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-offset-[var(--ui-focus-inset)] data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's
       // Fill, which reads too heavy for a count many of them sit beside
       "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text",
       // An invalid field is tinted in the error colour, as an invalid text field is, whichever field it is drawn as
       "data-[variant=Field]:aria-[invalid=true]:bg-[var(--ui-field-invalid-background)]",
-      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)] data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
+      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-offset-[var(--ui-focus-inset)] data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
@@ -284,7 +285,7 @@ export default defineConfig({
     // The title and whatever ends the row, on one line one control height tall. A focused row rings inside its edge.
     // So a neighbour in the list never cuts the ring off
     "ui-row":
-      "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)] focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)]",
+      "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)] focus-visible:outline-offset-[var(--ui-focus-inset)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
     // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A header tab is also the chosen radio of a toggle
     // Group drawn as one
