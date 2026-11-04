@@ -52,20 +52,21 @@ When the schema of server-stored content changes, the stored content SHALL be re
 
 ### Requirement: A field added to a stored row applies to rows written from then on
 
-A field added to a stored table entity SHALL describe rows written after the change, and rows written earlier SHALL read the field's default.
+A field added to a stored table entity SHALL describe the rows written after the change. Where the earlier rows must carry it, they SHALL be backfilled, and the schema SHALL require the field.
 
-#### Scenario: A new field is added to an entity
+#### Scenario: A field the earlier rows must carry is backfilled
 
-- **GIVEN** an entity gains a new field
-- **WHEN** a row written before the change is read
+- **GIVEN** an entity gains a field that the rows written before the change must carry
+- **WHEN** the change is made
+- **THEN** the schema requires the field
+- **AND** the earlier rows are backfilled by a one-off script that is not committed to the repo
+
+#### Scenario: A default stays only where a current writer omits the value
+
+- **GIVEN** a stored row's field holds an empty value, which the Table does not store
+- **WHEN** the row is read
 - **THEN** the field reads its default value
 - **AND** no read path infers the field from the row's other values
-
-#### Scenario: The earlier rows must be corrected
-
-- **GIVEN** the rows written before the change need the new field to be correct
-- **WHEN** the change is made
-- **THEN** a one-off backfill script is committed with the change
 
 ### Requirement: Relational data evolves through migrations
 

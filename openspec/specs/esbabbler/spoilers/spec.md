@@ -74,13 +74,13 @@ An attachment whose file name begins with SPOILER_ SHALL be shown blurred behind
 - **WHEN** the member toggles its eye control
 - **THEN** the attachment is marked or unmarked as a spoiler
 
-### Requirement: Attachments sent before spoilers existed stay visible
+### Requirement: An attachment without the spoiler mark stays visible
 
-An attachment sent before the spoiler mark existed SHALL remain visible without a spoiler.
+An attachment not marked as a spoiler SHALL be shown without a spoiler.
 
-#### Scenario: a reader views an older attachment
+#### Scenario: a reader views an unmarked attachment
 
-- **GIVEN** an attachment sent before spoilers were supported
+- **GIVEN** an attachment that is not marked as a spoiler
 - **WHEN** a reader views the message
 - **THEN** the attachment is shown without a spoiler
 

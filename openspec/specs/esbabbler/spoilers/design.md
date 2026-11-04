@@ -21,7 +21,7 @@ flowchart TD
 
 The composer marks an attachment as a spoiler when its filename starts with `SPOILER_`. The eye button on the attachment preview can toggle the mark. A marked image or video is blurred behind a **SPOILER** label; its first activation reveals it and its next activation opens the viewer.
 
-`FileEntity.isSpoiler` is persisted with the message. Attachment rows without the field read as `false`, so they stay visible. The composer has no text-formatting toolbar, so there is no toolbar button for the text mark.
+`FileEntity.isSpoiler` is persisted with the message, and every attachment carries it, an unmarked one included, so the schema requires the field. The composer has no text-formatting toolbar, so there is no toolbar button for the text mark.
 
 ## Key files
 
