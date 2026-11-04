@@ -1,11 +1,6 @@
 # Tasks
 
-Build order. The purge runs first, in each environment; the rest waits for its report.
-
-## 1. Purge
-
-- [ ] 1.1 Publish one `PurgeSurveyResources` event to the application topic in each environment, after the swap is released.
-      Verify: live survey rows, response rows and invite references are zero, and a rerun finds nothing to delete. This needs the owner.
+Build order. Tasks that remain open are in the roadmap.
 
 ## 2. SurveyJS
 

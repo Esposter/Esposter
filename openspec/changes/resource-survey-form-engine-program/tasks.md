@@ -39,7 +39,5 @@ Build order of the parts. Each part carries its own tasks; this list is the orde
 
 - [ ] 4.1 Run the [removal](../resource-survey-form-engine-removal/design.md) part.
       Verify: a repo search for `survey-core`, `survey-creator` and `survey-vue3-ui` finds nothing outside the archive folder.
-- [ ] 4.2 Owner review of the runner and the Creator in both styles and both modes, with a screen reader.
-      Verify: the review is recorded in this design's Notes.
 - [ ] 4.3 Archive each part into its capability and write the capabilities as built; remove the roadmap item.
       Verify: `pnpm exec openspec validate --strict --no-interactive` passes with no change left under this prefix.
