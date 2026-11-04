@@ -5,6 +5,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { checkSurveyNoneChoice } from "#src/services/checkSurveyNoneChoice";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
 import { checkSurveyQuestion } from "#src/services/checkSurveyQuestion";
+import { exhaustiveGuard } from "@esposter/shared";
 import { getBlockPropPointer } from "headless-block-editor";
 
 // Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope
@@ -20,6 +21,23 @@ export const checkSurveyNodes = (
     if (node.type === SurveyNodeType.RadioGroup || node.type === SurveyNodeType.Checkbox)
       checkSurveyNoneChoice(node.props, nodePointer, issues);
     switch (node.type) {
+      case SurveyNodeType.Boolean:
+      case SurveyNodeType.ButtonGroup:
+      case SurveyNodeType.Checkbox:
+      case SurveyNodeType.Comment:
+      case SurveyNodeType.Dropdown:
+      case SurveyNodeType.ImagePicker:
+      case SurveyNodeType.Matrix:
+      case SurveyNodeType.MatrixDynamic:
+      case SurveyNodeType.MultipleText:
+      case SurveyNodeType.RadioGroup:
+      case SurveyNodeType.Ranking:
+      case SurveyNodeType.Rating:
+      case SurveyNodeType.Slider:
+      case SurveyNodeType.TagBox:
+      case SurveyNodeType.Text:
+        checkSurveyQuestion(node.props, nodePointer, names, issues);
+        break;
       case SurveyNodeType.Expression:
         checkSurveyQuestion(node.props, nodePointer, names, issues);
         checkSurveyOptionalExpression(
@@ -66,10 +84,8 @@ export const checkSurveyNodes = (
         checkSurveyQuestion(node.props, nodePointer, names, issues);
         checkSurveyNodes(node.props.template, getBlockPropPointer(nodePointer, "template"), new Set<string>(), issues);
         break;
-      // Every other node is a question with no check of its own beyond its question checks, which the type of its props
-      // Requires, and its slots are the children port's to decide, which is exhaustive over every type
       default:
-        checkSurveyQuestion(node.props, nodePointer, names, issues);
+        exhaustiveGuard(node);
     }
   }
 };
