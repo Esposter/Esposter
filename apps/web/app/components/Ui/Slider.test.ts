@@ -114,6 +114,18 @@ describe("uiSlider", () => {
       expect(component.get('[role="group"]').classes()).toContain("op-disabled");
     });
 
+    test("marks its thumb invalid and tints its track, leaving the group unmarked", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSlider, {
+        props: { isInvalid: true, label, max: 100, min: 0, modelValue: 0, step: 1, valueText },
+      });
+
+      expect(component.get('[role="slider"]').attributes("aria-invalid")).toBe("true");
+      expect(component.get('[role="group"]').attributes("aria-invalid")).toBeUndefined();
+      expect(component.find("[data-invalid]").exists()).toBe(true);
+    });
+
     test("hides its label but keeps it as its name", () => {
       expect.hasAssertions();
 

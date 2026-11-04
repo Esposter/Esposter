@@ -27,6 +27,7 @@ const valueText = computed(() => (node.props.showValue ? String(value.value) : "
     <UiSlider
       v-model="value"
       :is-disabled
+      :is-invalid="error ? true : undefined"
       :is-required="node.props.isRequired || undefined"
       :label
       :max="node.props.max"

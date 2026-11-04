@@ -5,6 +5,7 @@ interface Props {
   // Held at the disabled opacity, where the thumb takes no press and no key
   isDisabled?: boolean;
   // Named for assistive technology alone, where the section it sits in already says what it sets
+  isInvalid?: true;
   isLabelHidden?: true;
   // Marks the label with the required mark, which speech announces as required once
   isRequired?: true;
@@ -22,7 +23,7 @@ interface Props {
 // A number picked along a field's track, filled with the accent up to a raised thumb. The model follows every move, and
 // End says the reader settled on a value — a drag let go, or each key press — which is when a setting is saved
 const modelValue = defineModel<number>({ required: true });
-const { isDisabled, isLabelHidden, isRequired, label, level, levelLabel, max, min, step, valueText } =
+const { isDisabled, isInvalid, isLabelHidden, isRequired, label, level, levelLabel, max, min, step, valueText } =
   defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
 // @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here
@@ -76,7 +77,16 @@ useEventListener(["pointerup", "pointercancel"], () => {
           }
         "
       >
-        <Slider.Track h-2 w-full cursor-pointer relative ui-field ui-pill>
+        <Slider.Track
+          class="track"
+          :data-invalid="isInvalid || undefined"
+          h-2
+          w-full
+          cursor-pointer
+          relative
+          ui-field
+          ui-pill
+        >
           <Slider.Range class="range" bg-accent h-full absolute ui-pill />
           <!-- Over the fill, so where the reading passes the thumb shows against the accent as well as the track -->
           <div
@@ -95,6 +105,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
         <Slider.Thumb
           class="thumb"
           :aria-label="label"
+          :aria-invalid="isInvalid || undefined"
           :aria-valuetext="valueText"
           size-4
           cursor-grab
@@ -122,6 +133,11 @@ useEventListener(["pointerup", "pointercancel"], () => {
 
 .level {
   background-color: color-mix(in srgb, var(--ui-success) 70%, transparent);
+}
+
+/* An invalid track is tinted in the error colour, as an invalid text field is, under the thumb that carries the mark */
+.track[data-invalid] {
+  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
 }
 
 .thumb[data-state="dragging"] {
