@@ -15,7 +15,7 @@ const visualStore = useVisualStore();
 const { moveVisual } = visualStore;
 const { visuals } = storeToRefs(visualStore);
 const targets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
-// A radio option's value is a string, so the dashboard's own option carries "", which the store takes as no group
+// A radio option's value is a string, so the dashboard's own option carries "", which the dialog converts to no group
 const moveTo = (targetGroupId: string) => {
   moveVisual({ id: visual.id }, targetGroupId || undefined);
   isOpen.value = false;
