@@ -77,6 +77,18 @@ flowchart TD
 
 A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` for its origin, `w` and `h` for its span, with `y` nonnegative. `layoutItemSchema` in `apps/web/shared/models/dashboard/data/LayoutItem.ts` validates it. The grid keys each tile by the visual's `id`, so a commit names the visual it changes and carries its `id` with those four fields.
 
+## Groups
+
+A group is a visual whose type is `VisualType.Group`. It holds other visuals on a grid of its own, drawn and placed by the same grid as the dashboard's own visuals. It draws no chart: it has no chart type, no dataset shape, no demo data and no resolver, and it takes no dataset binding. Its title is the `chart.configuration.title` every visual carries, and it uses no other chart field.
+
+Its children are the optional field `visuals` on `Visual`. A group holds it as an array, which may be empty, and every other type leaves it absent, as `undefined`, never as an empty array. `visualSchema` is recursive through a getter, so a group's visuals are the visual schema again, nested by reference, and the agent's JSON Schema describes one visual definition that each group reuses. The schema refuses a group without `visuals`, a visual of another type that holds them, and a group with a dataset binding. The field is additive and optional, so nothing already stored is invalid, and no backfill or default is owed.
+
+The tree rules are one walk over the dashboard's visuals in `dashboardSchema`, which refuses three things no single visual can see. A visual id held twice anywhere in the tree is refused, which is the uniqueness the dashboard's own list always had, now across every level. A group nested inside more groups than `MAX_VISUAL_GROUP_DEPTH` allows is refused: the top level counts as none, and a group at the cap holds plain visuals only, since a group inside it would pass the cap. The visuals of the whole tree together are held to `MAX_RESOURCE_CONTENT_SIZE`, the cap the dashboard's top-level list has always had, and every list keeps its own array cap at the same constant.
+
+Every write names a visual by its id alone, so no write carries a path into the tree. The store finds the list holding an id by walking the tree, and the list's owning group, if any, comes back with it. Save, the fit-height flag, delete, duplicate and the grid's commit all find their visual this way, so a commit reaches a visual wherever it sits. A rollback lands on the list the write started from, and a create or add takes an optional parent group id. A visual placed in a group takes the first free cell of that group's grid, and a group whose depth would pass the cap is refused where it is created or moved. Duplicating a group copies its whole subtree under fresh ids and places the copy below the original in the same list. Deleting a group removes the visuals it holds with it. A move takes a visual, with the subtree it holds, into another group's list at a cell. It refuses a move into the visual itself or into a group it holds, and a move that would nest any group it carries past the cap. A move within one list is the grid's own commit.
+
+The consumers of a dashboard read its groups through the same walk the schema uses. A published dashboard bakes a dataset snapshot for every bound visual in the tree, the snapshot summary counts every visual, the resource link index reads a binding held inside a group, and blueprint capture and validation read a group's bindings like any other. The surface, the components and the layout of a group are not built; that part is the [resource roadmap](../../../changes/resource-roadmap/tasks.md) item for visual groups.
+
 ## Decisions
 
 - **The library is replaced, not patched.** `grid-layout-plus` carried the drag library, its layout shape and its own resize rules, and keeping it would keep the defects its [upstream verdicts](../../vue-grid-layout-headless/README.md) judge. The placement and gestures live in the package, which the dashboard consumes like any other.
@@ -96,40 +108,48 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 - **Rendering compacts; it does not write back.** A saved layout can overlap: a new visual is placed at a fixed cell without checking its neighbours, so rendering a fitted layout can draw a visual above or below its saved row while the store keeps the saved cell. Writing the compacted layout back to the store on render is rejected: it would write on every open.
 - **A drag previews in the grid until release.** Writing each intermediate position to the store during a drag is rejected. The preview lives in the package's state until release, so a cancelled drag leaves no trace.
 - **Touch is captured only where the page is edited.** Setting `touch-action: none` on every tile is rejected, since it stops a phone from scrolling a published dashboard through its visuals. The published grid leaves touch alone, and the editor claims it for dragging.
+- **A write names its visual by a path, rejected.** A path into the tree goes stale the moment a move changes it, and the id already identifies the visual wherever it sits, so every write names the id alone.
+- **The tree is one flat list with a parent id, rejected.** Each visual would name its group, which loses the grid each group lays out and makes the nesting rules a property every reader rebuilds the tree to check, where the schema walks it once.
 - **The look is the dashboard's own style.** `grid-layout-plus` shipped its CSS inside its JavaScript and wrote it into the page at runtime, which is rejected: the app's build never sees CSS a script writes, so it could not be prefixed, transpiled or minified with the rest ([grid-layout-plus#26](https://github.com/qmhc/grid-layout-plus/issues/26)), and the tiles would wear the library's class names and colours rather than the UI library's tokens. The package ships no styles, and the scoped style block in `Grid/Tile.vue` draws the tiles and their handles, and `Grid/Index.vue` draws the placeholder.
 
 ## Notes
 
 - Move to page is not built. The dashboard's content is one list of visuals, and [pages are rejected](../../../rejected/resource/dashboard-pages/design.md).
-- A group visual that holds its own grid is not built. It needs a recursive visual schema and path-addressed store writes, and it is on the [resource roadmap](../../../changes/resource-roadmap/tasks.md) as the piece that brings nested grids back.
 - The Layout control and the palette are editor-only, so the viewer's page holds no control the editor would need.
 - The outline's colour, the handles' invisibility and the corner cap are checked by eye, since happy-dom does not compute the stylesheet. The tests pin which tiles carry the editable marker, which handles each tile draws, and which gestures a handle starts.
 - The package's collision and compaction names are its own (`CollisionMode`, `CompactType`); the labels a reader sees are the plain words in the Surface table. The stored packing and overlap values are those enum members, so the shared model imports them rather than keeping a second list, and renaming one needs a backfill of every stored dashboard.
 
 ## Key files
 
-| File                                                                  | Role                                                                                  |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------ |
-| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gestures, the keyboard step, the external drop preview and the auto-height report |
-| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A palette press that previews and drops onto the grid under the pointer               |
-| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts` | The first cell a new visual's span fits in                                            |
-| `apps/web/app/components/Dashboard/Grid/Index.vue`                    | The grid: binds the package, emits the commit, holds the keyboard commands            |
-| `apps/web/app/components/Dashboard/Grid/Tile.vue`                     | One visual's tile: eight handles, the keyboard step, the fit-height measure           |
-| `apps/web/app/components/Dashboard/Palette/Index.vue`                 | The collapsible palette of visual types                                               |
-| `apps/web/app/components/Dashboard/Editor/Layout.vue`                 | The Layout popover: two radio groups                                                  |
-| `apps/web/app/components/Dashboard/Editor/Header.vue`                 | The count, Layout and Add visual                                                      |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`                | The editor binding: writes each commit, adds a dropped visual                         |
-| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`      | The editor's visual wrapper: the one menu                                             |
-| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`    | The visual's menu: edit, duplicate, export, fit height, delete                        |
-| `apps/web/app/components/Dashboard/Index.vue`                         | The published view: the saved packing, no editing control                             |
-| `apps/web/app/store/dashboard/visual.ts`                              | Create at the first free cell, add, and the auto-height write                         |
-| `apps/web/app/store/dashboard/index.ts`                               | The layout settings write, reverted on a refused save                                 |
-| `apps/web/shared/models/dashboard/data/Dashboard.ts`                  | The content's packing and collision settings, with their defaults                     |
-| `apps/web/shared/models/dashboard/data/Visual.ts`                     | The visual's fit-height flag, with its default                                        |
-| `apps/web/app/services/dashboard/constants.ts`                        | The dashboard's column counts, row heights, the grid margin and breakpoints           |
-| `apps/web/app/services/dashboard/grid/getBreakpointColumnNumber.ts`   | The column count a published view's width picks                                       |
-| `apps/web/shared/models/dashboard/data/LayoutItem.ts`                 | The placement schema: `x`, `y`, `w` and `h` as cells                                  |
-| `apps/web/app/components/Resource/Dashboard/Editor.vue`               | The autosave that the store write feeds                                               |
+| File                                                                  | Role                                                                                   |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gestures, the keyboard step, the external drop preview and the auto-height report  |
+| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A palette press that previews and drops onto the grid under the pointer                |
+| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts` | The first cell a new visual's span fits in                                             |
+| `apps/web/app/components/Dashboard/Grid/Index.vue`                    | The grid: binds the package, emits the commit, holds the keyboard commands             |
+| `apps/web/app/components/Dashboard/Grid/Tile.vue`                     | One visual's tile: eight handles, the keyboard step, the fit-height measure            |
+| `apps/web/app/components/Dashboard/Palette/Index.vue`                 | The collapsible palette of visual types                                                |
+| `apps/web/app/components/Dashboard/Editor/Layout.vue`                 | The Layout popover: two radio groups                                                   |
+| `apps/web/app/components/Dashboard/Editor/Header.vue`                 | The count, Layout and Add visual                                                       |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`                | The editor binding: writes each commit, adds a dropped visual                          |
+| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`      | The editor's visual wrapper: the one menu                                              |
+| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`    | The visual's menu: edit, duplicate, export, fit height, delete                         |
+| `apps/web/app/components/Dashboard/Index.vue`                         | The published view: the saved packing, no editing control                              |
+| `apps/web/app/store/dashboard/visual.ts`                              | Create, add and move between lists, and the writes addressed by id                     |
+| `apps/web/app/store/dashboard/index.ts`                               | The layout settings write, reverted on a refused save                                  |
+| `apps/web/shared/models/dashboard/data/Dashboard.ts`                  | The content's packing and collision settings, and the one walk over the tree           |
+| `apps/web/shared/models/dashboard/data/Visual.ts`                     | The visual's fit-height flag, and the visuals a group holds with the group's rules     |
+| `apps/web/shared/services/dashboard/constants.ts`                     | The most groups a visual may sit inside                                                |
+| `apps/web/shared/services/dashboard/listVisuals.ts`                   | Every visual of a tree, depth-first                                                    |
+| `apps/web/shared/services/dashboard/findVisualList.ts`                | The list holding a visual id, and the group owning that list                           |
+| `apps/web/shared/services/dashboard/getVisualDepth.ts`                | How many groups a visual sits inside                                                   |
+| `apps/web/app/services/dashboard/VisualTypeCategoryDefinitions.ts`    | The palette's types by category: the charts, then Layout holding the group             |
+| `apps/web/server/services/dashboard/transformPublishedDashboard.ts`   | Bakes each bound visual's dataset, a group's visuals included, into the published view |
+| `apps/web/shared/services/resource/SnapshotSummaryMap.ts`             | The dashboard's summary line, counting every visual in the tree                        |
+| `apps/web/app/services/dashboard/constants.ts`                        | The dashboard's column counts, row heights, the grid margin and breakpoints            |
+| `apps/web/app/services/dashboard/grid/getBreakpointColumnNumber.ts`   | The column count a published view's width picks                                        |
+| `apps/web/shared/models/dashboard/data/LayoutItem.ts`                 | The placement schema: `x`, `y`, `w` and `h` as cells                                   |
+| `apps/web/app/components/Resource/Dashboard/Editor.vue`               | The autosave that the store write feeds                                                |
 
 The package the grid is built on is [grid layout](../../vue-grid-layout-headless/grid-layout/design.md).
 

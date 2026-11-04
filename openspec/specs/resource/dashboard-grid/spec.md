@@ -285,3 +285,155 @@ A published dashboard SHALL show its visuals and its own export, and SHALL show 
 - **WHEN** a viewer opens it
 - **THEN** the page shows its visuals and the Export PNG action
 - **AND** it shows no palette, Layout control or visual menu
+
+### Requirement: A group holds visuals on a grid of its own
+
+A group visual SHALL hold other visuals, each placed on the group's own grid, and the owner SHALL add, edit, move and place a visual inside a group as the dashboard's own visuals are added and placed.
+
+#### Scenario: adds a visual into a group, leaving the dashboard's own list as it was
+
+- **GIVEN** a dashboard holding one group visual
+- **WHEN** the owner adds a bar visual to the group
+- **THEN** the group holds the bar visual
+- **AND** the dashboard's own visuals are unchanged
+
+#### Scenario: updates a visual held by a group by its id alone
+
+- **GIVEN** a visual held by a group
+- **WHEN** the owner places it on another cell of the group's grid
+- **THEN** the visual takes the new cell inside the group
+
+#### Scenario: keeps the visuals a group holds when its edit is saved
+
+- **GIVEN** the owner opened a group's edit form and then added a visual to the group
+- **WHEN** the owner saves the edit
+- **THEN** the group still holds the added visual
+
+### Requirement: A group nests no deeper than the depth cap
+
+A group SHALL NOT sit inside more groups than the depth cap allows. A dashboard holding such a group SHALL be refused, and an add or move that would make one SHALL be refused and change nothing.
+
+#### Scenario: accepts a nested tree of groups up to the depth cap, with plain visuals in the deepest
+
+- **GIVEN** a tree of groups nested to the depth cap, each holding the next
+- **WHEN** the dashboard is saved
+- **THEN** the save is accepted
+
+#### Scenario: refuses a group nested past the depth cap
+
+- **GIVEN** a tree of groups nested one level past the depth cap
+- **WHEN** the dashboard is saved
+- **THEN** the save is refused
+
+#### Scenario: refuses adding a group inside a group at the depth cap
+
+- **GIVEN** a group at the depth cap
+- **WHEN** the owner adds a group inside it
+- **THEN** no group is added
+
+#### Scenario: refuses a move that nests a group past the depth cap
+
+- **GIVEN** a group whose deepest group sits at the depth cap, and another group holding a group
+- **WHEN** the owner moves the nested group into the group at the depth cap
+- **THEN** the group stays where it was
+
+### Requirement: A visual id is unique across every group
+
+Every visual SHALL have an id that no other visual in the dashboard holds, however deep it sits, and a dashboard holding a repeated id SHALL be refused.
+
+#### Scenario: refuses a visual id held twice, across levels of the tree
+
+- **GIVEN** a group and a visual inside it sharing one id
+- **WHEN** the dashboard is saved
+- **THEN** the save is refused
+
+### Requirement: Only a group holds visuals, and a group holds no dataset binding
+
+A group SHALL hold visuals and no dataset binding, every other type SHALL hold no visuals, and a group's type SHALL NOT change in either direction.
+
+#### Scenario: refuses a group with no visuals to hold
+
+- **GIVEN** a group visual with no visuals field
+- **WHEN** the dashboard is saved
+- **THEN** the save is refused
+
+#### Scenario: refuses a visual of another type that holds visuals
+
+- **GIVEN** a bar visual holding visuals
+- **WHEN** the dashboard is saved
+- **THEN** the save is refused
+
+#### Scenario: refuses a group with a dataset binding
+
+- **GIVEN** a group visual with a dataset binding
+- **WHEN** the dashboard is saved
+- **THEN** the save is refused
+
+#### Scenario: keeps a group's type and never makes a visual a group
+
+- **GIVEN** a group and a bar visual
+- **WHEN** the owner changes the group's type to bar and the bar visual's type to group
+- **THEN** the group stays a group and the bar visual stays a bar visual
+
+### Requirement: Deleting, duplicating and moving a group carry the visuals it holds
+
+Deleting a group SHALL remove the visuals it holds. Duplicating a group SHALL copy them under new ids, and moving a visual SHALL move the visuals it holds with it, but a group SHALL NOT move into a group it holds.
+
+#### Scenario: deleting a group removes the visuals it holds with it
+
+- **GIVEN** a group holding a bar visual
+- **WHEN** the owner deletes the group
+- **THEN** no visual remains
+
+#### Scenario: duplicates a group with fresh ids for every visual it holds
+
+- **GIVEN** a group holding a bar visual
+- **WHEN** the owner duplicates the group
+- **THEN** the copy holds a bar visual under an id no other visual has
+
+#### Scenario: moves a visual with its subtree into a group at the cell given
+
+- **GIVEN** a group holding a bar visual, and an empty group beside it
+- **WHEN** the owner moves the first group into the empty group at a cell
+- **THEN** the empty group holds the first group at that cell
+- **AND** the first group still holds the bar visual
+
+#### Scenario: refuses to move a group into a group it holds
+
+- **GIVEN** a group holding another group
+- **WHEN** the owner moves the outer group into the inner one
+- **THEN** the outer group stays where it was
+
+### Requirement: Every reader of a dashboard reads the visuals a group holds
+
+The published view, the snapshot summary, the resource links, the agent's schema and blueprint capture SHALL read a group's visuals as they read the dashboard's own.
+
+#### Scenario: bakes a snapshot for a bound visual inside a group
+
+- **GIVEN** a group holding a visual bound to a survey
+- **WHEN** the dashboard is published
+- **THEN** the published visual inside the group carries the snapshot of its binding
+
+#### Scenario: dashboard: counts every visual in the tree, a group's included
+
+- **GIVEN** a dashboard holding a group with two visuals and one visual outside it
+- **WHEN** a snapshot of the dashboard is summarized
+- **THEN** the summary counts every visual of the tree
+
+#### Scenario: reads a dataset binding held by a visual inside a group
+
+- **GIVEN** a group holding a visual bound to a sheet
+- **WHEN** the resource links of the dashboard are read
+- **THEN** the sheet is one of the links
+
+#### Scenario: describes a group's visuals as the visual schema again, by reference
+
+- **GIVEN** the dashboard's content schema
+- **WHEN** an agent reads its JSON Schema
+- **THEN** a group's visuals are described by reference to the visual definition
+
+#### Scenario: reads the entry a group's bound visual names as a dependency of the dashboard
+
+- **GIVEN** a blueprint entry for a dashboard whose group holds a visual bound to another entry
+- **WHEN** the blueprint's entries are validated
+- **THEN** the dashboard entry depends on the entry it is bound to

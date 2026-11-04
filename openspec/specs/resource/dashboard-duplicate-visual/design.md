@@ -11,7 +11,7 @@ flowchart LR
   SAVE -->|"no"| KEEP["Keep the copy"]
 ```
 
-- **Duplicate visual** sits on the tile's corner between Edit and Delete. The visual store's `duplicateVisual` creates a new `Visual` with a new id and the original's type, chart configuration and binding — its reference and query, never the publish snapshot baked into a published dashboard's binding, which would draw that frozen data forever — placed directly under the original at its width and height.
+- **Duplicate visual** sits on the tile's corner between Edit and Delete. The visual store's `duplicateVisual` creates a new `Visual` with a new id and the original's type, chart configuration and binding — its reference and query, never the publish snapshot baked into a published dashboard's binding, which would draw that frozen data forever — placed directly under the original at its width and height. A group copies the visuals it holds as well, each under a fresh id, so a copy never shares an id with the original.
 - **One write path.** The copy is saved with the dashboard through the same save as every edit, on the dashboard it was issued on, and taken back out if the save is refused, as a refused delete puts its visual back.
 - **The copy opens nothing.** It is the original's twin on the grid; clicking it edits it like any tile.
 
