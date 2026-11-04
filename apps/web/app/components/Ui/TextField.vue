@@ -18,10 +18,10 @@ interface Props {
   isAutofocus?: true;
   // Shown at the disabled opacity and never focused or typed in, as a native disabled control is
   isDisabled?: true;
-  // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
-  // Filter under the column's name, a cell being edited in its row
   // Marks the field invalid with no message of its own, where a message the field's group shows stands for it
   isInvalid?: true;
+  // Named for assistive technology alone, where what surrounds the field already says what it is for: a column's
+  // Filter under the column's name, a cell being edited in its row
   isLabelHidden?: true;
   // Marks the label with the required mark, which speech announces as required once
   isRequired?: true;
