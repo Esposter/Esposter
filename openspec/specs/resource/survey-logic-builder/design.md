@@ -1,6 +1,6 @@
 # Survey Logic Builder
 
-The Logic tab of the [Creator](../survey-creator/design.md), over the [expression language](../survey-logic/design.md). It edits the three conditions an element holds, which are visibility, enablement and required, and the survey's calculated values.
+The Logic tab of the [Creator](../survey-creator/design.md), over the [expression language](../survey-expression/design.md). It edits the three conditions an element holds, which are visibility, enablement and required, and the survey's calculated values.
 
 ## How it works
 
@@ -33,8 +33,8 @@ The Logic tab's second section lists the survey's calculated values, each with a
 
 | File                                                                     | Role                                                                   |
 | ------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| `packages/survey-logic/src/services/parseSurveyExpression.ts`            | the parser the rows are read from                                      |
-| `packages/survey-logic/src/services/checkSurveyExpression.ts`            | the check whose message and position the raw field shows               |
+| `packages/survey-expression/src/services/parseSurveyExpression.ts`       | the parser the rows are read from                                      |
+| `packages/survey-expression/src/services/checkSurveyExpression.ts`       | the check whose message and position the raw field shows               |
 | `apps/web/app/components/Resource/Survey/Creator/LogicBuilder.vue`       | the three conditions: rows, the raw field and its fault                |
 | `apps/web/app/components/Resource/Survey/Creator/CalculatedValues.vue`   | the calculated values: name, expression and the result switch          |
 | `apps/web/app/services/resource/survey/parseSurveyConditionRows.ts`      | expression text to rows, or none for a custom expression               |

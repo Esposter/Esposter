@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument, SurveyNode } from "survey-engine";
+import type { SurveyDocument, SurveyNode } from "headless-survey-engine";
 
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
@@ -8,7 +8,12 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { checkSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
+import {
+  checkSurveyDocument,
+  SurveyNodeType,
+  surveyNodeTypeDefinitionMap,
+  surveyRootPropsSchema,
+} from "headless-survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding a question named "a", and the calculated values given by name

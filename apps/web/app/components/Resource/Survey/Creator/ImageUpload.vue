@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SurveyNodeType } from "survey-engine";
+import { SurveyNodeType } from "headless-survey-engine";
 
 interface Props {
   pointer: string;

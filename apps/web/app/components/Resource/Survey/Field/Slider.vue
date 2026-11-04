@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveySliderNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveySliderNode } from "headless-survey-engine";
 
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 

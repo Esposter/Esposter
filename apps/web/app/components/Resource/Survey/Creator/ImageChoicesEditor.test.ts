@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
@@ -13,7 +13,7 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getBlockNode } from "headless-block-editor";
-import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
+import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "headless-survey-engine";
 import { assert, describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({

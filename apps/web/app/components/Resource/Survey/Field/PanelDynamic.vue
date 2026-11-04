@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import type { SurveyAnswers, SurveyAnswerValue, SurveyPanelDynamicNode, SurveyPanelRowView } from "survey-engine";
+import type {
+  SurveyAnswers,
+  SurveyAnswerValue,
+  SurveyPanelDynamicNode,
+  SurveyPanelRowView,
+} from "headless-survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

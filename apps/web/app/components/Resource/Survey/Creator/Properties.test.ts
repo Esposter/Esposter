@@ -12,7 +12,7 @@ import {
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
-} from "survey-engine";
+} from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 // A page holding one question of the given kind, which the panel edits once it is selected

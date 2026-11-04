@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyAnswers, SurveyDocument } from "survey-engine";
+import type { SurveyAnswers, SurveyDocument } from "headless-survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { SURVEY_FOCUSABLE_SELECTOR } from "@/services/resource/survey/constants";
-import { SurveyProgressBarPlacement } from "survey-engine";
+import { SurveyProgressBarPlacement } from "headless-survey-engine";
 
 interface Props {
   document: SurveyDocument;

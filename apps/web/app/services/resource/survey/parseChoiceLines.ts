@@ -1,4 +1,4 @@
-import type { SurveyChoice } from "survey-engine";
+import type { SurveyChoice } from "headless-survey-engine";
 
 import { parseChoiceLine } from "@/services/resource/survey/parseChoiceLine";
 

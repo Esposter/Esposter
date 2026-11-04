@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SurveyEditDraft } from "@/models/resource/survey/SurveyEditDraft";
-import type { SurveyCalculatedValue } from "survey-engine";
+import type { SurveyCalculatedValue } from "headless-survey-engine";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import {

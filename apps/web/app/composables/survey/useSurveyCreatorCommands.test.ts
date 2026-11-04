@@ -6,12 +6,17 @@ import type {
   SurveyPlaceableNode,
   SurveyTemplateNode,
   SurveyTextNode,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
+import {
+  createSurveyDocument,
+  surveyDocumentSchema,
+  SurveyNodeType,
+  surveyNodeTypeDefinitionMap,
+} from "headless-survey-engine";
 import { createPinia, setActivePinia } from "pinia";
-import { createSurveyDocument, surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 const createQuestion = (name: string): SurveyTextNode => ({

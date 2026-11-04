@@ -1,14 +1,14 @@
 // @unocss-include
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyMultipleTextItemInputType } from "survey-engine";
+import type { SurveyMultipleTextItemInputType } from "headless-survey-engine";
 
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "survey-engine";
-import { SurveyExpressionBinaryOperator } from "survey-logic";
+import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "headless-survey-engine";
+import { SurveyExpressionBinaryOperator } from "survey-expression";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
 export const SURVEY_CONDITION_SECTIONS: readonly { label: string; prop: SurveyConditionProp }[] = [

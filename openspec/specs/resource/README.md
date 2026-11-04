@@ -52,7 +52,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey resource](survey-resource/design.md) — authoring the typed survey document in the Creator, public respondent page, responses dataset
 - [Survey respondent](survey-respondent/design.md) — the public respondent page: the runner, a draft saved as the respondent moves, resume and submit, and the server's check of each answer
 - [Survey document](survey-document/design.md) — the survey as a typed document of pages, panels and questions, refused on save for a repeated name, an unknown kind or an expression that does not parse
-- [Survey logic](survey-logic/design.md) — the survey's expression language: conditions, calculated values and validators parsed to a tree and evaluated over the answers, a malformed one refused with its position
+- [Survey logic](survey-expression/design.md) — the survey's expression language: conditions, calculated values and validators parsed to a tree and evaluated over the answers, a malformed one refused with its position
 - [Survey runner](survey-runner/design.md) — the flow a respondent's session moves through as plain functions: conditions, page moves, answer checks and completion
 - [Survey fields](survey-fields/design.md) — one field per question kind, drawn from the UI library, labelled by its title and answerable by keyboard
 - [Program resource](program-resource/design.md) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status

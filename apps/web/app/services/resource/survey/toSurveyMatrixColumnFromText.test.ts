@@ -1,5 +1,5 @@
 import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurveyMatrixColumnFromText";
-import { SurveyMatrixCellType } from "survey-engine";
+import { SurveyMatrixCellType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("toSurveyMatrixColumnFromText", () => {

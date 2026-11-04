@@ -1,4 +1,4 @@
-import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "survey-engine";
+import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "headless-survey-engine";
 
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import {
@@ -7,7 +7,7 @@ import {
   surveyPageNodeType,
   surveyRootPropsSchema,
   surveyTextNodeType,
-} from "survey-engine";
+} from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 // Each node takes a fresh id, which the document requires to be unique

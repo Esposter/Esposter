@@ -3,7 +3,7 @@ import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditio
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { buildSurveyCondition } from "@/services/resource/survey/buildSurveyCondition";
-import { runSurveyExpression } from "survey-logic";
+import { runSurveyExpression } from "survey-expression";
 import { describe, expect, test } from "vitest";
 
 describe(buildSurveyCondition, () => {

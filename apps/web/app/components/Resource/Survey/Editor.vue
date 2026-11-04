@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { useAlertStore } from "@/store/alert";
 import { useSurveyStore } from "@/store/survey";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
-import { checkSurveyDocument } from "survey-engine";
+import { checkSurveyDocument } from "headless-survey-engine";
 
 const surveyStore = useSurveyStore();
 const { document: storedDocument } = storeToRefs(surveyStore);

@@ -1,7 +1,7 @@
 import type { SurveyConditionValue } from "@/models/resource/survey/SurveyConditionValue";
-import type { SurveyExpressionNode } from "survey-logic";
+import type { SurveyExpressionNode } from "survey-expression";
 
-import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-logic";
+import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-expression";
 
 // A literal's value, and a minus before a number literal, which the expression language reads as a negation of it
 export const toSurveyConditionValue = (node: SurveyExpressionNode): SurveyConditionValue | undefined => {

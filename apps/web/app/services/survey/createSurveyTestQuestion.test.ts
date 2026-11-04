@@ -1,6 +1,6 @@
-import type { SurveyTextNode } from "survey-engine";
+import type { SurveyTextNode } from "headless-survey-engine";
 
-import { SurveyNodeType, surveyTextNodeType } from "survey-engine";
+import { SurveyNodeType, surveyTextNodeType } from "headless-survey-engine";
 import { describe } from "vitest";
 
 // A text question built from its kind's default props, so a fixture holds the shape the schemas parse

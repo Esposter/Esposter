@@ -11,7 +11,7 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { AzureEntityType, DatabaseEntityType, ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { SurveyAnswerValidationMode, validateSurveyAnswers } from "survey-engine";
+import { SurveyAnswerValidationMode, validateSurveyAnswers } from "headless-survey-engine";
 
 // The single write boundary for both response mutations — client state can never bypass it.
 // Costs two blob reads per submission, the live settings and the published snapshot it is checked against; submissions are

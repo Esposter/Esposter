@@ -2,7 +2,7 @@
 import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Canvas.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 const loadSurvey = () => {

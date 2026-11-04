@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveySliderNode } from "survey-engine";
+import type { SurveySliderNode } from "headless-survey-engine";
 
 import SurveyFieldSlider from "@/components/Resource/Survey/Field/Slider.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { SurveyNodeType, surveySliderNodePropsSchema } from "survey-engine";
+import { SurveyNodeType, surveySliderNodePropsSchema } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldSlider", () => {

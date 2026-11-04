@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyTagBoxNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyTagBoxNode } from "headless-survey-engine";
 
-import { getSurveyChoiceText, getSurveyOrderedChoices } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices } from "headless-survey-engine";
 
 interface Props {
   error: string;

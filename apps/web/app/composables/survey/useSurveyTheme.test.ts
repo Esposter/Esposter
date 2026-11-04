@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { useSurveyTheme } from "@/composables/survey/useSurveyTheme";
-import { surveyRootPropsSchema } from "survey-engine";
+import { surveyRootPropsSchema } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe(useSurveyTheme, () => {

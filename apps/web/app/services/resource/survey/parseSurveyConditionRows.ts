@@ -3,7 +3,7 @@ import type { SurveyConditionRows } from "@/models/resource/survey/SurveyConditi
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { getSurveyConditionOperands } from "@/services/resource/survey/getSurveyConditionOperands";
 import { toSurveyConditionRow } from "@/services/resource/survey/toSurveyConditionRow";
-import { parseSurveyExpression, SurveyExpressionBinaryOperator, SurveyExpressionNodeType } from "survey-logic";
+import { parseSurveyExpression, SurveyExpressionBinaryOperator, SurveyExpressionNodeType } from "survey-expression";
 
 // The rows an expression reads as, joined by the one connective, or none when its shape is not rows. Empty text holds
 // Always, so it reads as no rows at all, and a single comparison has no connective, so it is joined as `and`

@@ -1,5 +1,5 @@
 import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
-import { SurveyMultipleTextItemInputType } from "survey-engine";
+import { SurveyMultipleTextItemInputType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("toSurveyMultipleTextItemFromText", () => {

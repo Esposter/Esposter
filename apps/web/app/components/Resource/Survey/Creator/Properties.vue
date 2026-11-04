@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyRootProps } from "survey-engine";
+import type { SurveyRootProps } from "headless-survey-engine";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { SurveyImageExtras, SurveyImageExtrasKeyMap } from "@/services/resource/survey/SurveyImageExtras";
@@ -7,7 +7,7 @@ import { SurveyNodeExtrasComponentMap } from "@/services/resource/survey/SurveyN
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { getBlockTypeDefinition } from "headless-block-editor";
-import { surveyRegistry, surveyRootPropsSchema } from "survey-engine";
+import { surveyRegistry, surveyRootPropsSchema } from "headless-survey-engine";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);

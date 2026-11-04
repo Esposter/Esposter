@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyTextNode } from "survey-engine";
+import type { SurveyTextNode } from "headless-survey-engine";
 
 import SurveyFieldText from "@/components/Resource/Survey/Field/Text.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { SurveyNodeType, SurveyTextInputType, surveyTextNodePropsSchema } from "survey-engine";
+import { SurveyNodeType, SurveyTextInputType, surveyTextNodePropsSchema } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldText", () => {

@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyCommentNode } from "survey-engine";
+import type { SurveyCommentNode } from "headless-survey-engine";
 
 import SurveyFieldComment from "@/components/Resource/Survey/Field/Comment.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { surveyCommentNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { surveyCommentNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldComment", () => {

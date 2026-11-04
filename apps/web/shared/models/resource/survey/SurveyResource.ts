@@ -1,10 +1,10 @@
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
 import type { ToData } from "@esposter/shared";
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { parseJsonPointer } from "@esposter/shared";
-import { checkSurveyDocument, surveyDocumentSchema } from "survey-engine";
+import { checkSurveyDocument, surveyDocumentSchema } from "headless-survey-engine";
 import { z } from "zod";
 
 export interface SurveyResource {

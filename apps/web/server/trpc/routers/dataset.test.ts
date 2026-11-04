@@ -27,7 +27,7 @@ import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
-import { SurveyNodeType } from "survey-engine";
+import { SurveyNodeType } from "headless-survey-engine";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("datasetRouter", () => {

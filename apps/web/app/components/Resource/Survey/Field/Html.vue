@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyHtmlNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyHtmlNode } from "headless-survey-engine";
 
 import { sanitizeHtml } from "@esposter/shared";
 

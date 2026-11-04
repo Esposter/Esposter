@@ -15,7 +15,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { AzureContainer, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
-import { SurveyNodeType } from "survey-engine";
+import { SurveyNodeType } from "headless-survey-engine";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("webpageRouter", () => {

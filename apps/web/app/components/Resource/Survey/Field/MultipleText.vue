@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyMultipleTextNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyMultipleTextNode } from "headless-survey-engine";
 
 import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
 import { getSurveyAnswerText } from "@/services/resource/survey/getSurveyAnswerText";

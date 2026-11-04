@@ -1,12 +1,12 @@
 // @vitest-environment nuxt
-import type { SurveyAnswerValue, SurveyRankingNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyRankingNode } from "headless-survey-engine";
 
 import ResourceSurveyFieldRanking from "@/components/Resource/Survey/Field/Ranking.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyRankingNodePropsSchema } from "survey-engine";
+import { SurveyNodeType, surveyRankingNodePropsSchema } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRanking", () => {

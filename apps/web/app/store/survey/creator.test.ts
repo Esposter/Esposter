@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import type { SurveyPageNode } from "survey-engine";
+import type { SurveyPageNode } from "headless-survey-engine";
 
 import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
 import { createPinia, setActivePinia } from "pinia";
-import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 const createPage = (): SurveyPageNode => ({

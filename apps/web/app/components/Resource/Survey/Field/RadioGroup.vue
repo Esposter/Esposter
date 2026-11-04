@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyRadioGroupNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyRadioGroupNode } from "headless-survey-engine";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field

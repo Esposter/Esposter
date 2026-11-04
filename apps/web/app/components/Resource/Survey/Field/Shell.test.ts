@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import ResourceSurveyFieldShell from "@/components/Resource/Survey/Field/Shell.vue";
 import { mount } from "@vue/test-utils";
-import { surveyTextNodePropsSchema } from "survey-engine";
+import { surveyTextNodePropsSchema } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 // A control that takes the shell's description and error as its own, as a field's control does

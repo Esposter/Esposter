@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { SurveyAnswerValue, SurveyMatrixNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyMatrixNode } from "headless-survey-engine";
 
 import ResourceSurveyFieldMatrix from "@/components/Resource/Survey/Field/Matrix.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyMatrixNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { surveyMatrixNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldMatrix", () => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyCheckboxNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyCheckboxNode } from "headless-survey-engine";
 
-import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "headless-survey-engine";
 
 interface Props {
   error: string;

@@ -1,6 +1,6 @@
-import type { SurveyDocument, SurveyNode } from "survey-engine";
+import type { SurveyDocument, SurveyNode } from "headless-survey-engine";
 
-import { surveyNodeChildren, SurveyNodeType } from "survey-engine";
+import { surveyNodeChildren, SurveyNodeType } from "headless-survey-engine";
 
 // The pictures a node holds of its own: an image's, and each choice's of an image picker
 const getOwnFileUrls = (node: SurveyNode): string[] => {

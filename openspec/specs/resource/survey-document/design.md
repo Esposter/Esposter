@@ -1,6 +1,6 @@
 # Survey Document
 
-The survey as a typed document in the `survey-engine` package, built on the [headless block editor core](../../headless-block-editor/editor-core/design.md) and checked on save through the [survey logic](../survey-logic/design.md) expression language. A document is a root holding pages, pages and panels holding elements, and questions holding none, so the core's checks apply to it unchanged. Its kinds, props and limits are stated on this page and nowhere else, and the survey resource, the runner and the Creator all read the one schema.
+The survey as a typed document in the `headless-survey-engine` package, built on the [headless block editor core](../../headless-block-editor/editor-core/design.md) and checked on save through the [survey logic](../survey-expression/design.md) expression language. A document is a root holding pages, pages and panels holding elements, and questions holding none, so the core's checks apply to it unchanged. Its kinds, props and limits are stated on this page and nowhere else, and the survey resource, the runner and the Creator all read the one schema.
 
 ## How it works
 
@@ -70,33 +70,33 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 - **One answer for "other".** A respondent's typed other text is the answer itself, not a second key beside the choice. Rejected: SurveyJS's pair of keys, which makes a response record's columns depend on what a respondent chose.
 - **One predicate for a node a response holds a value for.** `checkIsSurveyAnsweringNode` is true of a question, a calculated value included, and false of a page, a panel, a block of markup and a picture. The runner's leaf check, its question errors and its enabled check read it, and so do the app's response columns and summary cards. A calculated value answers because a completed response carries its value, though no respondent gives it, so the enabled check disables it on its own. Rejected: narrowing `SurveyQuestionNode` to the answering kinds, which drops the markup, picture and calculated kinds from the union and forces a second type for every placeable leaf.
 - **A dynamic panel's template does not nest.** A template accepts no dynamic panel. Rejected: unbounded nesting, which the Creator's canvas and the runner's scopes would each have to bound for themselves.
-- **The engine is published to npm, with the logic it depends on.** A survey as a typed document on the headless block editor, with no framework or DOM, is reusable on its own, and it takes the [survey logic](../survey-logic/design.md) at runtime, so the two publish as a pair. Rejected: keeping it private as app internals, which kept the document schema reachable from the app alone.
+- **The engine is published to npm, with the logic it depends on.** A survey as a typed document on the headless block editor, with no framework or DOM, is reusable on its own, and it takes the [survey logic](../survey-expression/design.md) at runtime, so the two publish as a pair. Rejected: keeping it private as app internals, which kept the document schema reachable from the app alone.
 
 ## Key files
 
-| File                                                                       | Role                                                                                                |
-| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `packages/survey-engine/package.json`                                      | the package's manifest                                                                              |
-| `packages/survey-engine/src/models/SurveyNodeType.ts`                      | the kinds, by their type tags                                                                       |
-| `packages/survey-engine/src/models/SurveyDocument.ts`                      | the document type: the core's `BlockDocument` over the node union, the root props and the page node |
-| `packages/survey-engine/src/models/SurveyRootProps.ts`                     | the root's props and the calculated values they hold                                                |
-| `packages/survey-engine/src/models/SurveyQuestionBaseProps.ts`             | the shape every question shares                                                                     |
-| `packages/survey-engine/src/models/SurveyChoicesProps.ts`                  | the choice list every choice question shares                                                        |
-| `packages/survey-engine/src/models/SurveyChoiceOptionsProps.ts`            | the order, other answer and its text, which a choice question that lists its choices adds           |
-| `packages/survey-engine/src/models/SurveyNoneChoiceProps.ts`               | the none answer, which a radio group and a checkbox may offer                                       |
-| `packages/survey-engine/src/services/surveyTextNodeType.ts`                | a kind's node type, the worked example: its props schema, form, defaults and label                  |
-| `packages/survey-engine/src/services/surveyNodeSchema.ts`                  | the node union, each kind's node schema with its strict props and its children                      |
-| `packages/survey-engine/src/services/surveyNodeTypeDefinitionMap.ts`       | every kind's definition, which the typecheck holds to every kind                                    |
-| `packages/survey-engine/src/services/surveyNodeTypeLists.ts`               | the types the root, a page or panel, and a template accept                                          |
-| `packages/survey-engine/src/services/surveyNodeChildren.ts`                | the children port, each container's slots and the typed nodes they hold                             |
-| `packages/survey-engine/src/services/surveyRegistry.ts`                    | the registry: the root's content types and props schema, and every kind's definition                |
-| `packages/survey-engine/src/services/surveyIdSchema.ts`                    | a node's id: bounded, and restricted to the characters an HTML id takes                             |
-| `packages/survey-engine/src/services/surveyNameSchema.ts`                  | a question's name: bounded, with no braces                                                          |
-| `packages/survey-engine/src/services/surveyDocumentSchema.ts`              | the document schema, built by the core's `createBlockDocumentSchema`                                |
-| `packages/survey-engine/src/services/checkSurveyDocument.ts`               | the save check, returning every issue                                                               |
-| `packages/survey-engine/src/services/createSurveyDocument.ts`              | the empty survey                                                                                    |
-| `packages/survey-engine/src/services/constants.ts`                         | the package's limits on names, counts and text                                                      |
-| `packages/headless-block-editor/src/models/BlockDocument.ts`               | the core's document type, whose third parameter names the node type the root accepts                |
-| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the core's document schema builder: the shape, then the ids and the node limit                      |
-| `apps/web/shared/models/resource/survey/SurveyResource.ts`                 | the survey resource's content schema, the document schema with the save check as a refinement       |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                       | the Editor, which runs the save check before it saves                                               |
+| File                                                                          | Role                                                                                                |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `packages/headless-survey-engine/package.json`                                | the package's manifest                                                                              |
+| `packages/headless-survey-engine/src/models/SurveyNodeType.ts`                | the kinds, by their type tags                                                                       |
+| `packages/headless-survey-engine/src/models/SurveyDocument.ts`                | the document type: the core's `BlockDocument` over the node union, the root props and the page node |
+| `packages/headless-survey-engine/src/models/SurveyRootProps.ts`               | the root's props and the calculated values they hold                                                |
+| `packages/headless-survey-engine/src/models/SurveyQuestionBaseProps.ts`       | the shape every question shares                                                                     |
+| `packages/headless-survey-engine/src/models/SurveyChoicesProps.ts`            | the choice list every choice question shares                                                        |
+| `packages/headless-survey-engine/src/models/SurveyChoiceOptionsProps.ts`      | the order, other answer and its text, which a choice question that lists its choices adds           |
+| `packages/headless-survey-engine/src/models/SurveyNoneChoiceProps.ts`         | the none answer, which a radio group and a checkbox may offer                                       |
+| `packages/headless-survey-engine/src/services/surveyTextNodeType.ts`          | a kind's node type, the worked example: its props schema, form, defaults and label                  |
+| `packages/headless-survey-engine/src/services/surveyNodeSchema.ts`            | the node union, each kind's node schema with its strict props and its children                      |
+| `packages/headless-survey-engine/src/services/surveyNodeTypeDefinitionMap.ts` | every kind's definition, which the typecheck holds to every kind                                    |
+| `packages/headless-survey-engine/src/services/surveyNodeTypeLists.ts`         | the types the root, a page or panel, and a template accept                                          |
+| `packages/headless-survey-engine/src/services/surveyNodeChildren.ts`          | the children port, each container's slots and the typed nodes they hold                             |
+| `packages/headless-survey-engine/src/services/surveyRegistry.ts`              | the registry: the root's content types and props schema, and every kind's definition                |
+| `packages/headless-survey-engine/src/services/surveyIdSchema.ts`              | a node's id: bounded, and restricted to the characters an HTML id takes                             |
+| `packages/headless-survey-engine/src/services/surveyNameSchema.ts`            | a question's name: bounded, with no braces                                                          |
+| `packages/headless-survey-engine/src/services/surveyDocumentSchema.ts`        | the document schema, built by the core's `createBlockDocumentSchema`                                |
+| `packages/headless-survey-engine/src/services/checkSurveyDocument.ts`         | the save check, returning every issue                                                               |
+| `packages/headless-survey-engine/src/services/createSurveyDocument.ts`        | the empty survey                                                                                    |
+| `packages/headless-survey-engine/src/services/constants.ts`                   | the package's limits on names, counts and text                                                      |
+| `packages/headless-block-editor/src/models/BlockDocument.ts`                  | the core's document type, whose third parameter names the node type the root accepts                |
+| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts`    | the core's document schema builder: the shape, then the ids and the node limit                      |
+| `apps/web/shared/models/resource/survey/SurveyResource.ts`                    | the survey resource's content schema, the document schema with the save check as a refinement       |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                          | the Editor, which runs the save check before it saves                                               |

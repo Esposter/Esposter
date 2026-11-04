@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyTextNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyTextNode } from "headless-survey-engine";
 
 import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
-import { SurveyTextInputType } from "survey-engine";
+import { SurveyTextInputType } from "headless-survey-engine";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid

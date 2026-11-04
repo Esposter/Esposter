@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SurveyMatrixColumn } from "survey-engine";
+import type { SurveyMatrixColumn } from "headless-survey-engine";
 
 import { toSurveyMatrixColumnFromText } from "@/services/resource/survey/toSurveyMatrixColumnFromText";
-import { SurveyMatrixCellType, surveyMatrixColumnSchema } from "survey-engine";
+import { SurveyMatrixCellType, surveyMatrixColumnSchema } from "headless-survey-engine";
 
 interface Props {
   // The list's name, drawn above its rows, such as "Columns"

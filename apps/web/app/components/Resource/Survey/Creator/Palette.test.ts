@@ -2,7 +2,7 @@
 import ResourceSurveyCreatorPalette from "@/components/Resource/Survey/Creator/Palette.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorPalette", () => {

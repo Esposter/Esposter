@@ -1,6 +1,6 @@
 # Survey Runner
 
-The state a respondent's session moves through, as plain functions in the `survey-engine` package with no DOM and no framework, over the [typed document](../survey-document/design.md) and the [expression language](../survey-logic/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so all three refuse the same answer for the same reason. An answer is checked by the schema of the question's kind.
+The state a respondent's session moves through, as plain functions in the `headless-survey-engine` package with no DOM and no framework, over the [typed document](../survey-document/design.md) and the [expression language](../survey-expression/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so all three refuse the same answer for the same reason. An answer is checked by the schema of the question's kind.
 
 ## How it works
 
@@ -62,7 +62,7 @@ The other exports of the runner's folder are the helpers these call: the page an
 
 ## Answers
 
-A `SurveyAnswerValue` is text, a number, a yes or no, a list of answers or a record from a name to an answer. A list or a record may nest three levels deep at most, and every text and list is bounded in length and entry count (the limits in `packages/survey-engine/src/services/constants.ts`). `surveyAnswerValueSchema` is that shape, and the server holds a stored response's answers to it.
+A `SurveyAnswerValue` is text, a number, a yes or no, a list of answers or a record from a name to an answer. A list or a record may nest three levels deep at most, and every text and list is bounded in length and entry count (the limits in `packages/headless-survey-engine/src/services/constants.ts`). `surveyAnswerValueSchema` is that shape, and the server holds a stored response's answers to it.
 
 `createSurveyAnswerSchema` dispatches on the question's kind. An answer that is absent is not checked there, since whether a question must be answered is the page flow's to say. The rules of each kind:
 
@@ -88,7 +88,7 @@ A `SurveyAnswerValue` is text, a number, a yes or no, a list of answers or a rec
 | `expression`              | a text, a number or a yes or no. The runner never checks it, since a calculated value is never enabled                                                                                                                                                                                                                                                                                                                                                                |
 | `html`, `image`           | nothing: any answer is refused                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-A required question is unanswered when its answer is absent, text of nothing but spaces or an empty list; a yes or no and a zero are answers. A record field left empty is not checked by its schema, and a required one that is empty is refused under its own name, so the refusal names the field it is about. A refused answer reports the message of the rule it broke, such as out of range, not one of the choices or too short. Every message is a constant in `packages/survey-engine/src/services/runner/constants.ts`, so the fields and the server show one wording.
+A required question is unanswered when its answer is absent, text of nothing but spaces or an empty list; a yes or no and a zero are answers. A record field left empty is not checked by its schema, and a required one that is empty is refused under its own name, so the refusal names the field it is about. A refused answer reports the message of the rule it broke, such as out of range, not one of the choices or too short. Every message is a constant in `packages/headless-survey-engine/src/services/runner/constants.ts`, so the fields and the server show one wording.
 
 `validateSurveyAnswers` checks a written response against the document. It refuses a name no question holds, and it refuses an answer to a question that is not shown on a submit, which a draft ignores. On a submit it also refuses a dynamic panel's row that holds an answer to a template question the row does not show. A draft checks each present answer of a shown, enabled question and accepts a missing required answer. A submit also checks every shown required question, and it accepts the names of the document's calculated values, which the completed result carries, where a draft refuses them as unknown.
 
@@ -111,19 +111,19 @@ A required question is unanswered when its answer is absent, text of nothing but
 
 ## Key files
 
-| File                                                                     | Role                                                                                                                |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| `packages/survey-engine/src/services/runner/`                            | the functions above, one module each, with their tests; `answer/` holds the per-kind answer schemas                 |
-| `packages/survey-engine/src/services/runner/createSurveyAnswerSchema.ts` | the dispatch from a question's kind to its answer schema                                                            |
-| `packages/survey-engine/src/services/runner/validateSurveyAnswers.ts`    | the server's check of a written response's answers                                                                  |
-| `packages/survey-engine/src/services/runner/getSurveyRunnerValues.ts`    | the calculated values, computed in bounded passes                                                                   |
-| `packages/survey-engine/src/services/runner/completeSurvey.ts`           | completion: the errors, or the answers a result keeps                                                               |
-| `packages/survey-engine/src/services/runner/constants.ts`                | the messages a refused answer and a required question show, and the rating scale of a matrix's cells                |
-| `packages/survey-engine/src/models/`                                     | `SurveyRunnerState`, `SurveyElementView`, `SurveyPageError`, `SurveyAnswerValue` and the other models of the runner |
-| `packages/survey-engine/src/services/getSurveyOrderedChoices.ts`         | the choice order, with the seeded shuffle                                                                           |
-| `packages/survey-engine/src/services/getSurveyChoiceText.ts`             | the text a respondent reads for a choice                                                                            |
-| `packages/survey-engine/src/services/hashSurveySeed.ts`                  | the 32-bit hash of a seed string                                                                                    |
-| `packages/survey-engine/package.json`                                    | the package, which depends on `survey-logic` for expressions and `re2js` for patterns                               |
-| `apps/web/app/composables/survey/useSurveyRunner.ts`                     | the reactive wrapper over the state                                                                                 |
-| `apps/web/app/components/Resource/Survey/Runner.vue`                     | the page: progress, navigation, the alert and the focus of a blocked move                                           |
-| `apps/web/app/components/Resource/Survey/RunnerElement.vue`              | one element of the page: a panel as a fieldset, a question as a field with its number                               |
+| File                                                                              | Role                                                                                                                |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `packages/headless-survey-engine/src/services/runner/`                            | the functions above, one module each, with their tests; `answer/` holds the per-kind answer schemas                 |
+| `packages/headless-survey-engine/src/services/runner/createSurveyAnswerSchema.ts` | the dispatch from a question's kind to its answer schema                                                            |
+| `packages/headless-survey-engine/src/services/runner/validateSurveyAnswers.ts`    | the server's check of a written response's answers                                                                  |
+| `packages/headless-survey-engine/src/services/runner/getSurveyRunnerValues.ts`    | the calculated values, computed in bounded passes                                                                   |
+| `packages/headless-survey-engine/src/services/runner/completeSurvey.ts`           | completion: the errors, or the answers a result keeps                                                               |
+| `packages/headless-survey-engine/src/services/runner/constants.ts`                | the messages a refused answer and a required question show, and the rating scale of a matrix's cells                |
+| `packages/headless-survey-engine/src/models/`                                     | `SurveyRunnerState`, `SurveyElementView`, `SurveyPageError`, `SurveyAnswerValue` and the other models of the runner |
+| `packages/headless-survey-engine/src/services/getSurveyOrderedChoices.ts`         | the choice order, with the seeded shuffle                                                                           |
+| `packages/headless-survey-engine/src/services/getSurveyChoiceText.ts`             | the text a respondent reads for a choice                                                                            |
+| `packages/headless-survey-engine/src/services/hashSurveySeed.ts`                  | the 32-bit hash of a seed string                                                                                    |
+| `packages/headless-survey-engine/package.json`                                    | the package, which depends on `survey-expression` for expressions and `re2js` for patterns                          |
+| `apps/web/app/composables/survey/useSurveyRunner.ts`                              | the reactive wrapper over the state                                                                                 |
+| `apps/web/app/components/Resource/Survey/Runner.vue`                              | the page: progress, navigation, the alert and the focus of a blocked move                                           |
+| `apps/web/app/components/Resource/Survey/RunnerElement.vue`                       | one element of the page: a panel as a fieldset, a question as a field with its number                               |

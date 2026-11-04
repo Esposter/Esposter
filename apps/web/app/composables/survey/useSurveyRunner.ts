@@ -6,7 +6,7 @@ import type {
   SurveyPageError,
   SurveyPanelDynamicNode,
   SurveyPanelRowView,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 import { SURVEY_UNNUMBERED_NODE_TYPES } from "@/services/resource/survey/constants";
 import {
@@ -22,7 +22,7 @@ import {
   goToPreviousSurveyPage,
   setSurveyAnswer,
   SurveyNodeType,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 // Questions are numbered in order across the survey, so a page carries on from the pages before it
 const numberQuestions = (views: SurveyElementView[], numbers: Map<string, number>) => {

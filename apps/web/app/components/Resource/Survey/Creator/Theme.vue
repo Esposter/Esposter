@@ -3,7 +3,7 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { SurveyProgressBarPlacement } from "survey-engine";
+import { SurveyProgressBarPlacement } from "headless-survey-engine";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);

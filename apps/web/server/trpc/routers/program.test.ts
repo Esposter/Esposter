@@ -40,8 +40,8 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
+import { SurveyNodeType } from "headless-survey-engine";
 import { MjmlNodeType } from "mjml-blocks";
-import { SurveyNodeType } from "survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 

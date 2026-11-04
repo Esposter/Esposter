@@ -1,10 +1,10 @@
 import type { SurveyConditionRow } from "@/models/resource/survey/SurveyConditionRow";
-import type { SurveyExpressionNode } from "survey-logic";
+import type { SurveyExpressionNode } from "survey-expression";
 
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { SURVEY_CONDITION_BINARY_OPERATORS } from "@/services/resource/survey/constants";
 import { toSurveyConditionValue } from "@/services/resource/survey/toSurveyConditionValue";
-import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-logic";
+import { SurveyExpressionNodeType, SurveyExpressionUnaryOperator } from "survey-expression";
 
 // A reference compared with a literal, or a reference tested for being empty, read back as the row it was built from.
 // Any other shape is not a row

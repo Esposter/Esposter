@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import type { DOMWrapper } from "@vue/test-utils";
-import type { SurveyAnswerValue, SurveyMatrixColumn, SurveyMatrixDynamicNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyMatrixColumn, SurveyMatrixDynamicNode } from "headless-survey-engine";
 
 import ResourceSurveyFieldMatrixDynamic from "@/components/Resource/Survey/Field/MatrixDynamic.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -12,7 +12,7 @@ import {
   SurveyMatrixCellType,
   surveyMatrixDynamicNodePropsSchema,
   SurveyNodeType,
-} from "survey-engine";
+} from "headless-survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
 const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAnswerValue, error = "") => {

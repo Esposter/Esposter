@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyPlaceableNode } from "survey-engine";
+import type { SurveyPlaceableNode } from "headless-survey-engine";
 
-import { SurveyNodeType } from "survey-engine";
+import { SurveyNodeType } from "headless-survey-engine";
 
 interface Props {
   // The question or panel drawn here, which a page or a panel holds

@@ -3,7 +3,7 @@ import ResourceSurveyFieldHtml from "@/components/Resource/Survey/Field/Html.vue
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { surveyHtmlNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { surveyHtmlNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldHtml", () => {

@@ -4,7 +4,7 @@ Survey is a resource type: its content is a typed survey document and its settin
 
 ## Data model
 
-- Content blob: `surveyResourceSchema = z.strictObject({ document, settings })`. `document` is a `SurveyDocument` from the `survey-engine` package, and `settings` is the [settings section](../survey-response-controls/design.md). The object is strict, so a save in the `{ model }` shape is refused rather than read as an empty survey. A save that omits its document or its settings is refused: neither key has a default. A document the survey check reports issues on is refused, and every issue is reported at the field it names.
+- Content blob: `surveyResourceSchema = z.strictObject({ document, settings })`. `document` is a `SurveyDocument` from the `headless-survey-engine` package, and `settings` is the [settings section](../survey-response-controls/design.md). The object is strict, so a save in the `{ model }` shape is refused rather than read as an empty survey. A save that omits its document or its settings is refused: neither key has a default. A document the survey check reports issues on is refused, and every issue is reported at the field it names.
 - The `settings` section is live collection state read outside the publish snapshot: the accepting-responses toggle and closed message ([response controls](../survey-response-controls/design.md)) and the response mode ([response modes](../survey-response-modes/design.md)) share that one object.
 - `contentVersion` is server-incremented by the resource factory, never by the client.
 - `SurveyResponseEntity` (Azure Table, partitionKey = survey resource id) holds respondent answers plus the opaque `participantToken` that joins a response back to a program participant.

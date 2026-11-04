@@ -1,4 +1,4 @@
-import type { SurveyAnswers, SurveyAnswerValue } from "survey-engine";
+import type { SurveyAnswers, SurveyAnswerValue } from "headless-survey-engine";
 
 // A list answer's rows, each the record of one row's answers. A row that holds no record reads as an empty one.
 // A list with no answer yet holds `count` empty rows, so a row keeps its place in the list whatever its answers hold

@@ -27,12 +27,12 @@ Each document is uploaded with `ifMatch` on the etag it was read at, so a save l
 
 ## Key files
 
-| File                                                         | Role                                                                                  |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| `packages/survey-engine/src/models/SurveyRootProps.ts`       | the root props schema the backfill's output must satisfy (`isQuestionNumbersVisible`) |
-| `packages/survey-engine/src/models/SurveySliderNodeProps.ts` | the slider props schema the backfill's output must satisfy (`isValueVisible`)         |
-| `.agents/skills/backfills/references/the-run.md`             | the run this change follows: script, dry run, dev then prod, re-run, delete           |
-| `.agents/skills/backfills/references/persisted-stores.md`    | where the survey working copy blob is held and what writes it                         |
+| File                                                                  | Role                                                                                  |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `packages/headless-survey-engine/src/models/SurveyRootProps.ts`       | the root props schema the backfill's output must satisfy (`isQuestionNumbersVisible`) |
+| `packages/headless-survey-engine/src/models/SurveySliderNodeProps.ts` | the slider props schema the backfill's output must satisfy (`isValueVisible`)         |
+| `.agents/skills/backfills/references/the-run.md`                      | the run this change follows: script, dry run, dev then prod, re-run, delete           |
+| `.agents/skills/backfills/references/persisted-stores.md`             | where the survey working copy blob is held and what writes it                         |
 
 ## Notes
 

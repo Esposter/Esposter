@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyImageNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyImageNode } from "headless-survey-engine";
 
 import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
 

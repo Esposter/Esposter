@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyExpressionNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyExpressionNode } from "headless-survey-engine";
 
-import { SurveyExpressionDisplayFormat } from "survey-engine";
+import { SurveyExpressionDisplayFormat } from "headless-survey-engine";
 
 interface Props {
   error: string;

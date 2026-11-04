@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { SurveyAnswerValue, SurveyRatingNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyRatingNode } from "headless-survey-engine";
 
 import ResourceSurveyFieldRating from "@/components/Resource/Survey/Field/Rating.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -8,7 +8,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
 import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "survey-engine";
+import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRating", () => {

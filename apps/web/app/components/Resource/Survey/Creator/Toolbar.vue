@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -10,7 +10,12 @@ import { SURVEY_DESIGN_MODE, SURVEY_PREVIEW_MODE } from "@/services/resource/sur
 import { useResourceStore } from "@/store/resource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { getResultAsync, JsonPatchOperationType, toJsonPointer } from "@esposter/shared";
-import { checkSurveyDocument, createSurveyDocument, surveyDocumentSchema, SurveyNodeType } from "survey-engine";
+import {
+  checkSurveyDocument,
+  createSurveyDocument,
+  surveyDocumentSchema,
+  SurveyNodeType,
+} from "headless-survey-engine";
 
 // The whole content and root props of a document, replaced as one edit, so an import or a clear is one history entry
 const getReplaceOperations = (replacement: SurveyDocument): JsonPatchOperation[] => [

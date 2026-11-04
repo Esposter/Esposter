@@ -23,7 +23,7 @@ import { parseSurveyConditionRows } from "@/services/resource/survey/parseSurvey
 import { toSurveyConditionInputValue } from "@/services/resource/survey/toSurveyConditionInputValue";
 import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { SurveyNodeType } from "survey-engine";
+import { SurveyNodeType } from "headless-survey-engine";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);

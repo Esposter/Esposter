@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { SurveyDocument, SurveyTextNode } from "survey-engine";
+import type { SurveyDocument, SurveyTextNode } from "headless-survey-engine";
 
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createCallerFactory } from "#server/trpc";
@@ -36,7 +36,7 @@ import {
   surveyPageNodeType,
   SurveyTextInputType,
   surveyTextNodeType,
-} from "survey-engine";
+} from "headless-survey-engine";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // A text question of the given name, the one kind a save with repeated question names needs

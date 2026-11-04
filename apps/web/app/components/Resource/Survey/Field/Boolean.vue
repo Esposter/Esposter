@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyBooleanNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyBooleanNode } from "headless-survey-engine";
 
-import { SurveyBooleanDisplayStyle } from "survey-engine";
+import { SurveyBooleanDisplayStyle } from "headless-survey-engine";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid

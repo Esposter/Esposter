@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SURVEY_PALETTE_GROUPS } from "@/services/resource/survey/constants";
-import { surveyNodeTypeDefinitionMap } from "survey-engine";
+import { surveyNodeTypeDefinitionMap } from "headless-survey-engine";
 
 const { insertNode } = useSurveyCreatorCommands();
 </script>

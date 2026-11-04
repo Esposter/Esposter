@@ -1,4 +1,4 @@
-import { checkSurveyExpression } from "survey-logic";
+import { checkSurveyExpression } from "survey-expression";
 
 // The message a refused expression is shown with, naming the character it is refused at, or none when it checks
 export const getSurveyExpressionFault = (source: string): string | undefined => {

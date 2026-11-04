@@ -1,7 +1,7 @@
-import type { SurveyCalculatedValue, SurveyDocument } from "survey-engine";
+import type { SurveyCalculatedValue, SurveyDocument } from "headless-survey-engine";
 
 import { SURVEY_CALCULATED_VALUES_POINTER } from "@/services/resource/survey/constants";
-import { checkSurveyDocument } from "survey-engine";
+import { checkSurveyDocument } from "headless-survey-engine";
 
 // The message the survey check gives the calculated value at an index, checked on the document as it would be with these
 // Values in place of its own. A value's issue is named at its pointer or beneath it

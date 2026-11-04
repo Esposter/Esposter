@@ -1,4 +1,4 @@
-import type { SurveyAnswerValue, SurveyChoice } from "survey-engine";
+import type { SurveyAnswerValue, SurveyChoice } from "headless-survey-engine";
 
 // The picks a multiple-pick question starts from, read back from its answer: the answer list itself, the choice values
 // It holds, and the other entry, the one that is neither a choice's value nor a special answer, which says whether other

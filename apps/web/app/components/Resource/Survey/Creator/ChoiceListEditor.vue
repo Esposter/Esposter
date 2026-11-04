@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyChoice } from "survey-engine";
+import type { SurveyChoice } from "headless-survey-engine";
 
 import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
 import { parseChoiceLines } from "@/services/resource/survey/parseChoiceLines";
-import { surveyChoiceSchema } from "survey-engine";
+import { surveyChoiceSchema } from "headless-survey-engine";
 
 interface Props {
   // The list's name, drawn above its rows, such as "Choices" or "Rows"

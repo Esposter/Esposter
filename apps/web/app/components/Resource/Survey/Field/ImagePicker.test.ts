@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { SurveyAnswerValue, SurveyImagePickerNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyImagePickerNode } from "headless-survey-engine";
 
 import ResourceSurveyFieldImagePicker from "@/components/Resource/Survey/Field/ImagePicker.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyImagePickerNodePropsSchema, SurveyNodeType } from "survey-engine";
+import { surveyImagePickerNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldImagePicker", () => {

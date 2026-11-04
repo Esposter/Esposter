@@ -1,4 +1,4 @@
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSurveyCreatorStore } from "@/store/survey/creator";

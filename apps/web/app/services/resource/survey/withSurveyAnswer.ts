@@ -1,4 +1,4 @@
-import type { SurveyAnswers, SurveyAnswerValue } from "survey-engine";
+import type { SurveyAnswers, SurveyAnswerValue } from "headless-survey-engine";
 
 // A row's record with one answer set, or cleared when the answer is absent, so a cleared answer leaves no key behind
 export const withSurveyAnswer = (

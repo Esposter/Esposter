@@ -1,6 +1,6 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
-import type { SurveyDocument, SurveyQuestionNode } from "survey-engine";
+import type { SurveyDocument, SurveyQuestionNode } from "headless-survey-engine";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import {
@@ -9,7 +9,7 @@ import {
   SurveyExpressionDisplayFormat,
   SurveyNodeType,
   SurveyTextInputType,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 const DATE_INPUT_TYPES: ReadonlySet<SurveyTextInputType> = new Set([
   SurveyTextInputType.Date,

@@ -1,11 +1,11 @@
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History } from "@esposter/shared";
-import type { SurveyDocument } from "survey-engine";
+import type { SurveyDocument } from "headless-survey-engine";
 
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { createHistory } from "@esposter/shared";
 import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
-import { createSurveyDocument, surveyNodeChildren } from "survey-engine";
+import { createSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
 
 // The pointer of the node an id names, read off the document's rows in layer order, or nothing when no node holds the id
 const getNodePointerById = (document: SurveyDocument, id: string) =>

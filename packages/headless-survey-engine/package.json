@@ -1,0 +1,61 @@
+{
+  "name": "headless-survey-engine",
+  "version": "4.4.0",
+  "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save and a runner whose state is plain functions, with no framework or DOM",
+  "keywords": [
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/headless-survey-engine#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "headless-block-editor": "workspace:*",
+    "re2js": "catalog:",
+    "survey-expression": "workspace:*"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "zod": "catalog:"
+  }
+}

@@ -1,4 +1,4 @@
-import type { SurveyAnswerValue } from "survey-engine";
+import type { SurveyAnswerValue } from "headless-survey-engine";
 
 import { useSurveyRecordAnswer } from "@/composables/survey/useSurveyRecordAnswer";
 import { describe, expect, test } from "vitest";

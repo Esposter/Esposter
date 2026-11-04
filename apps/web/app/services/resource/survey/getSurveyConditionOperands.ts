@@ -1,6 +1,6 @@
-import type { SurveyExpressionBinaryOperator, SurveyExpressionNode } from "survey-logic";
+import type { SurveyExpressionBinaryOperator, SurveyExpressionNode } from "survey-expression";
 
-import { SurveyExpressionNodeType } from "survey-logic";
+import { SurveyExpressionNodeType } from "survey-expression";
 
 // The operands a chain of one connective holds, read down its left side. A connective on the right is a group of its own,
 // So it stays one operand, which the row conversion then refuses

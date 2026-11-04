@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
+import type { SurveyDocument, SurveyPlaceableNode } from "headless-survey-engine";
 
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
@@ -8,7 +8,7 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "headless-survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding the given text questions, each with the condition it shows under

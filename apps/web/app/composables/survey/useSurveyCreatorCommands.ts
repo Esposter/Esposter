@@ -1,7 +1,7 @@
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 import type { BlockNodeProps } from "headless-block-editor";
-import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "survey-engine";
+import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "headless-survey-engine";
 
 import { ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
@@ -36,7 +36,7 @@ import {
   surveyNodeSchema,
   surveyNodeTypeDefinitionMap,
   surveyRegistry,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 // The slot a node sits in and its index there, or none for a pointer that names no element of a slot
 const getNodeLocation = (nodePointer: string) => {

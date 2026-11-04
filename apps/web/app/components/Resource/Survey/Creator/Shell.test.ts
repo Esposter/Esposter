@@ -3,7 +3,7 @@ import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Ca
 import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/Shell.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 const loadSurvey = () => {

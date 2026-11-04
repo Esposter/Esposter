@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyTagBoxNode, SurveyTagBoxNodeProps } from "survey-engine";
+import type { SurveyTagBoxNode, SurveyTagBoxNodeProps } from "headless-survey-engine";
 
 import ResourceSurveyFieldTagBox from "@/components/Resource/Survey/Field/TagBox.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "survey-engine";
+import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "headless-survey-engine";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldTagBox", () => {

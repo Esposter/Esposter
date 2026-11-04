@@ -2,7 +2,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 import type { BaseSurveySummaryCard } from "@/models/resource/survey/BaseSurveySummaryCard";
 import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCard";
-import type { SurveyChoice, SurveyQuestionNode } from "survey-engine";
+import type { SurveyChoice, SurveyQuestionNode } from "headless-survey-engine";
 
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
@@ -14,7 +14,7 @@ import {
   SurveyExpressionDisplayFormat,
   SurveyNodeType,
   SurveyTextInputType,
-} from "survey-engine";
+} from "headless-survey-engine";
 
 type Answer = NonNullable<ColumnValue>;
 
