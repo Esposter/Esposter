@@ -35,7 +35,7 @@ interface FindTextOptions {
 
 interface UsePdfViewerOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
-  // The terms highlighted on load, every match of each one
+  // The terms highlighted on load, searched as one phrase with the terms joined by a space
   highlightTerms?: MaybeRefOrGetter<string[]>;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;

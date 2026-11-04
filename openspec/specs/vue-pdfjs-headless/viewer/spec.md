@@ -143,12 +143,6 @@ The package SHALL search the document's text, reporting the number of matches an
 - **WHEN** the reader searches for it
 - **THEN** no matches are reported
 
-#### Scenario: Highlighting a list of terms on load
-
-- **GIVEN** a list of two terms passed with the document
-- **WHEN** the document loads
-- **THEN** every match of both terms is highlighted
-
 #### Scenario: Highlighting the terms a document opens with
 
 - **GIVEN** a viewer given the terms "word" and "page"

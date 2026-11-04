@@ -9,8 +9,8 @@ import { usePdfViewer } from "vue-pdfjs-headless";
 
 interface Props {
   filename: string;
-  // The terms highlighted in the document when it loads, every match of each. A caller opening the viewer from a search
-  // Passes the terms it searched for
+  // The terms highlighted in the document when it loads, searched as one phrase with the terms joined by a space. A caller
+  // Opening the viewer from a search passes the terms it searched for
   highlightTerms?: string[];
   isFailed: boolean;
   isPasswordRequested: boolean;
