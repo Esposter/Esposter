@@ -10,5 +10,9 @@ export const diffDaysFunction: SurveyLogicFunction = (args) => {
 
   if (args.length !== 2 || checkIsSurveyLogicValueEmpty(fromValue) || checkIsSurveyLogicValueEmpty(toValue)) return 0;
 
-  return getDaysBetween(parseSurveyLogicDate(fromValue), parseSurveyLogicDate(toValue));
+  const from = parseSurveyLogicDate(fromValue);
+  const to = parseSurveyLogicDate(toValue);
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return undefined;
+
+  return getDaysBetween(from, to);
 };

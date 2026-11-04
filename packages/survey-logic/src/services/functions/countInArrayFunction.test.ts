@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 describe(countInArrayFunction, () => {
   test.each([
     ["counts the items whose field holds a value", [SURVEY_ITEMS, "price"], 3],
-    ["counts the items whose field holds a text, number or not", [SURVEY_ITEMS, "q"], 2],
+    ["counts only the items whose field reads as a number", [SURVEY_ITEMS, "q"], 1],
     ["counts nothing for an empty array", [[], "price"], 0],
     ["counts nothing when the field name is missing", [SURVEY_ITEMS], 0],
     ["is empty when the arguments hold a filter", [SURVEY_ITEMS, "price", "{name} = 'a'"], undefined],

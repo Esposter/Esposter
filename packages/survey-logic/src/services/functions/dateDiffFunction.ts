@@ -18,6 +18,8 @@ export const dateDiffFunction: SurveyLogicFunction = (args) => {
   const interval = intervalValue || "days";
   const from = parseSurveyLogicDate(fromValue);
   const to = parseSurveyLogicDate(toValue);
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return undefined;
+
   const milliseconds = typeof interval === "string" ? getOwnValue(millisecondsPerUnitMap, interval) : undefined;
 
   if (milliseconds !== undefined) return Math.ceil(Math.abs(to.getTime() - from.getTime()) / milliseconds);

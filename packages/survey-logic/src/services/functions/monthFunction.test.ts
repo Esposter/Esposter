@@ -7,7 +7,7 @@ describe(monthFunction, () => {
     ["the month of a date, from one for January", ["1970-03-05"], 3],
     ["the clock's month when no date is given", [], 1],
     ["the clock's month when the date is an empty string", [""], 1],
-    ["an unreadable date is NaN", ["x"], Number.NaN],
+    ["an unreadable date is empty", ["x"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

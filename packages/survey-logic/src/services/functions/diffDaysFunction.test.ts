@@ -8,13 +8,9 @@ describe(diffDaysFunction, () => {
     ["the calendar days are the same in either order", ["1970-01-11", TEST_EPOCH_DATE], 10],
     ["the calendar days ignore the time of day", ["1970-01-01T23:00", "1970-01-02T01:00"], 1],
     ["a missing second date counts zero days", [TEST_EPOCH_DATE], 0],
-    [
-      "the epoch given as the number zero is a date, so a date beside it is unreadable rather than missing",
-      [0, "x"],
-      Number.NaN,
-    ],
+    ["the epoch given as the number zero is a date, so an unreadable date beside it is empty", [0, "x"], undefined],
     ["an empty second date counts zero days", [TEST_EPOCH_DATE, undefined], 0],
-    ["an unreadable date is NaN", [TEST_EPOCH_DATE, "x"], Number.NaN],
+    ["an unreadable date is empty", [TEST_EPOCH_DATE, "x"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

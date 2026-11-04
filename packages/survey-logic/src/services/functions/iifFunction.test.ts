@@ -10,7 +10,7 @@ describe(iifFunction, () => {
     ["returns the second value when the condition is the text zero", ["0", "a", "b"], "a"],
     ["treats an empty list as truthy", [[], 2, 3], 2],
     ["is empty when the condition is false and no third value is given", [0, "a"], undefined],
-    ["reads null with fewer than two arguments", [1], null],
+    ["is empty with fewer than two arguments", [1], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

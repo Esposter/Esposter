@@ -1,15 +1,14 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
-import { sumSurveyValues } from "#src/services/shared/sumSurveyValues";
+import { flattenSurveyNumbers } from "#src/services/shared/flattenSurveyNumbers";
+import { sumSurveyNumbers } from "#src/services/shared/sumSurveyNumbers";
 
-// The average of the values passed, arrays flattened: their total over how many there are.
-// The total goes through the sum's text join, as SurveyJS's does, so an empty text joins it as text.
-// That text still counts in the divisor. With no values the average is 0, as SurveyJS gives it
+// The average of the numbers the values read as, arrays flattened: their total over how many there are.
+// Nothing to average has no average
 export const avgFunction: SurveyLogicFunction = (args) => {
-  const values = flattenSurveyValues(args);
-  if (values.length === 0) return 0;
+  const numbers = flattenSurveyNumbers(args);
+  if (numbers.length === 0) return undefined;
 
-  const total = sumSurveyValues(values);
-  return total === undefined ? undefined : Number(total) / values.length;
+  const total = sumSurveyNumbers(numbers);
+  return total === undefined ? undefined : total / numbers.length;
 };

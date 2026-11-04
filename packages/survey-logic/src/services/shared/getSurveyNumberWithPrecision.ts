@@ -1,12 +1,14 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
-import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
+import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
+import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
-// The number and the precision a rounding function reads from its arguments: the first value is the number, and the
-// Second is the precision, which is zero when empty. Either is NaN when it does not read as a number
-export const getSurveyNumberWithPrecision = (args: SurveyLogicValue[]): [number, number] => {
-  const values = flattenSurveyValues(args);
+// The number and the precision a rounding function reads from its arguments: the first value is the number, and the second is the precision, which is zero when it is empty.
+// Undefined when either reads as no number
+export const getSurveyNumberWithPrecision = (args: SurveyLogicValue[]): [number, number] | undefined => {
+  const [value, precisionValue] = args;
+  const number = toSurveyLogicNumber(value);
+  const precision = checkIsSurveyLogicValueEmpty(precisionValue) ? 0 : toSurveyLogicNumber(precisionValue);
 
-  return [getSurveyNumber(values[0]), getSurveyNumber(values[1] || 0)];
+  return number === undefined || precision === undefined ? undefined : [number, precision];
 };

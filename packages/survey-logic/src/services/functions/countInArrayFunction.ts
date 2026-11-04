@@ -2,7 +2,7 @@ import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
 import { getSurveyArrayParams } from "#src/services/shared/getSurveyArrayParams";
 
-// The number of items of an array value whose field holds a value. A filter is empty for the reason sumInArray gives
+// The number of items whose field reads as a number. A filter is empty for the reason sumInArray gives
 export const countInArrayFunction: SurveyLogicFunction = (args) => {
   const params = getSurveyArrayParams(args);
   if (params === undefined) return 0;

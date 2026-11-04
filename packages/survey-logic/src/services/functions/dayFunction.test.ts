@@ -7,7 +7,7 @@ describe(dayFunction, () => {
     ["the day of the month of a date", ["1970-01-11"], 11],
     ["the clock's day when no date is given", [], 2],
     ["the clock's day when the date is an empty string", [""], 2],
-    ["an unreadable date is NaN", ["x"], Number.NaN],
+    ["an unreadable date is empty", ["x"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

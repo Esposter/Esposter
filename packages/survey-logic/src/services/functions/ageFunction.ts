@@ -10,8 +10,11 @@ export const ageFunction: SurveyLogicFunction = (args, context) => {
 
   if (checkIsSurveyLogicValueEmpty(birthdateValue)) return undefined;
 
+  const birthdate = parseSurveyLogicDate(birthdateValue);
+  if (Number.isNaN(birthdate.getTime())) return undefined;
+
   // SurveyJS measures a day count from the birthdate to no second date, which is zero
   if (intervalValue === "days") return 0;
 
-  return getDateDifference(parseSurveyLogicDate(birthdateValue), context.now, intervalValue);
+  return getDateDifference(birthdate, context.now, intervalValue);
 };

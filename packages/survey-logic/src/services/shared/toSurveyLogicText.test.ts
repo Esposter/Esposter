@@ -6,7 +6,6 @@ import { describe, expect, test } from "vitest";
 describe(toSurveyLogicText, () => {
   test.each<[string, SurveyLogicValue, string]>([
     ["reads an unanswered value as nothing", undefined, ""],
-    ["reads a null as nothing", null, ""],
     ["reads a record as nothing", { name: "Ada" }, ""],
     ["reads a number as its digits", 2.5, "2.5"],
     ["reads a boolean as its word", false, "false"],

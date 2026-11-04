@@ -23,7 +23,7 @@ const DIGITS_ONLY_REGEX = /^\d+$/u;
 // A list is read by its digit keys and a record by its own keys. Any other value holds no key
 const readSurveyLogicKey = (container: SurveyLogicValue, key: string): SurveyLogicValue => {
   if (Array.isArray(container)) return DIGITS_ONLY_REGEX.test(key) ? container.at(Number(key)) : undefined;
-  if (typeof container === "object" && container !== null) return getOwnValue(container, key);
+  if (typeof container === "object") return getOwnValue(container, key);
 
   return undefined;
 };

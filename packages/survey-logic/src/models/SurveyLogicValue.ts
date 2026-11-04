@@ -1,4 +1,5 @@
 import type { SurveyLogicRecord } from "#src/models/SurveyLogicRecord";
 
-// The values an expression reads and computes. Undefined is an empty answer, a question nobody has answered
-export type SurveyLogicValue = boolean | number | string | null | undefined | SurveyLogicRecord | SurveyLogicValue[];
+// The values an expression reads and computes.
+// Undefined is the one absent value: an unanswered question, an empty result or an operation that has no result
+export type SurveyLogicValue = boolean | number | string | undefined | SurveyLogicRecord | SurveyLogicValue[];

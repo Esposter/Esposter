@@ -1,17 +1,18 @@
-import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
+import type { SurveyLogicStoredValue } from "#src/models/SurveyLogicStoredValue";
 
 import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
+import { runSurveyExpression } from "#src/services/runSurveyExpression";
 import { describe, expect, test } from "vitest";
 
-// Every expected value below is what SurveyJS's expression runner gives for the same source, answers and clock.
-// The tests marked as this package's own rule are the exceptions
+// Every expected value below follows this package's rules, not SurveyJS's: undefined is the one absent value, and a storage null reads as undefined.
+// A text is read as a number only where an operation needs one. SurveyJS parity is the fixture replay's job, not this file's.
 describe(evaluateSurveyExpression, () => {
   const now = new Date(0);
 
-  const evaluate = (source: string, values: Record<string, SurveyLogicValue>) =>
-    parseSurveyExpression(source).match(
-      (node) => evaluateSurveyExpression(node, { now, scopes: {}, values }),
+  const evaluate = (source: string, values: Record<string, SurveyLogicStoredValue>) =>
+    runSurveyExpression(source, { now, scopes: {}, values }).match(
+      (value) => value,
       (error) => error,
     );
 
@@ -45,7 +46,7 @@ describe(evaluateSurveyExpression, () => {
     ["a number is not greater or equal to an unanswered question", "{a} >= {b}", { a: 1 }, false],
     ["a number equals a string holding the same number", "{a} = {b}", { a: 1, b: "1" }, true],
     ["an empty string is not equal to zero", "{a} = {b}", { a: "", b: 0 }, false],
-    ["an empty string equals a null answer", "{a} = {b}", { a: "", b: null }, true],
+    ["an empty string equals an unanswered answer", "{a} = {b}", { a: "", b: null }, true],
     ["an empty string compares as zero in a less-than", "{a} < 5", { a: "" }, true],
     ["an empty string never compares greater", "{a} > 5", { a: "" }, false],
     ["an unanswered question is greater or equal to the empty string", "{a} >= ''", {}, true],
@@ -63,7 +64,7 @@ describe(evaluateSurveyExpression, () => {
     ["a boolean equals its spelling in any case", "{a} = 'TRUE'", { a: true }, true],
     ["a boolean does not equal a word that is not true", "{a} = true", { a: "yes" }, false],
     ["a boolean answer does not equal a letter", "{a} = 'x'", { a: true }, false],
-    ["a string zero equals false", "{a} = false", { a: "0" }, true],
+    ["a text zero is not false", "{a} = false", { a: "0" }, false],
     ["a string one equals one", "{a} = 1", { a: "1.0" }, true],
     ["a string one is not unequal to one", "{a} != 1", { a: "1.0" }, false],
     ["a number equals a string with a trailing space", "1 = '1 '", {}, true],
@@ -176,73 +177,74 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // Arithmetic reads each operand as a number when it can, and `+` joins text when either operand is text
+  // Arithmetic reads each operand as a number, and an operand that reads as none has no result.
+  // A division or a remainder by zero has no result either. The one exception is `+`, which joins two texts when both are non-empty and neither reads as a number
   test.each([
     ["a sum of numbers", "1 + 2", {}, 3],
-    ["a text literal and a number join as text", "'5' + 3", {}, "53"],
+    ["a numeric text literal adds as a number", "'5' + 3", {}, 8],
     ["two text literals join", "'a' + 'b'", {}, "ab"],
-    ["text and a number join", "'a' + 1", {}, "a1"],
-    ["a number and text join", "1 + 'b'", {}, "1b"],
-    ["a boolean adds as one", "1 + true", {}, 2],
-    ["a boolean on the left adds as one", "true + 1", {}, 2],
+    ["a text that is not a number has no sum with a number", "'a' + 1", {}, undefined],
+    ["a number and a text that is not a number have no sum", "1 + 'b'", {}, undefined],
+    ["a boolean has no sum with a number", "1 + true", {}, undefined],
+    ["a boolean on the left has no sum with a number", "true + 1", {}, undefined],
     ["a sum is rounded to the decimals of its operands", "0.1 + 0.2", {}, 0.3],
     ["a sum keeps the decimals of its operands", "1.25 + 1", {}, 2.25],
     ["a product keeps the decimals of its operands", "1.25 * 2", {}, 2.5],
     ["a product of a decimal is rounded to its decimals", "0.1 * 3", {}, 0.3],
     ["a difference is rounded to its decimals", "1 - 0.9", {}, 0.1],
-    ["a difference with text that is not a number is not a number", "5 - 'x'", {}, Number.NaN],
+    ["a difference with text that is not a number has no result", "5 - 'x'", {}, undefined],
     ["a difference with numeric text subtracts it", "5 - '2'", {}, 3],
     ["a difference of two numeric texts subtracts them", "'8' - '2'", {}, 6],
-    ["an unanswered question subtracts as zero", "{a} - 1", {}, -1],
-    ["a product with text that is not a number is not a number", "{a} * 2", { a: "abc" }, Number.NaN],
-    ["a product of a list holding a number multiplies it", "{a} * 2", { a: [3] }, 6],
-    ["an unanswered question adds as zero", "{a} + 1", {}, 1],
-    ["an unanswered question joins text as empty", "{a} + 'x'", {}, "x"],
-    ["a number joins a text as text", "{a} + 'x'", { a: 5 }, "5x"],
+    ["an unanswered question has no result in a difference", "{a} - 1", {}, undefined],
+    ["a product with text that is not a number has no result", "{a} * 2", { a: "abc" }, undefined],
+    ["a product of a list holding a number has no result", "{a} * 2", { a: [3] }, undefined],
+    ["an unanswered question has no result in a sum", "{a} + 1", {}, undefined],
+    ["an unanswered question has no result when joined with text", "{a} + 'x'", {}, undefined],
+    ["a number and a text that is not a number have no sum", "{a} + 'x'", { a: 5 }, undefined],
     ["a numeric answer adds as a number", "{a} + 1", { a: "5" }, 6],
-    ["a numeric answer with a leading zero joins as text", "{a} + 1", { a: "0123" }, "01231"],
-    ["an answer with trailing text joins as text", "{a} + 1", { a: "5abc" }, "5abc1"],
-    ["an answer with a comma decimal adds as a number", "{a} + 1", { a: "1,5" }, 2.5],
-    ["an answer in hexadecimal adds as a number", "{a} + 1", { a: "0x10" }, 17],
+    ["a numeric answer with a leading zero reads as its number", "{a} + 1", { a: "0123" }, 124],
+    ["an answer with trailing text has no result in a sum", "{a} + 1", { a: "5abc" }, undefined],
+    ["an answer with a comma decimal has no result in a sum", "{a} + 1", { a: "1,5" }, undefined],
+    ["an answer in hexadecimal has no result in a sum", "{a} + 1", { a: "0x10" }, undefined],
     ["an answer with surrounding spaces adds as a number", "{a} + 1", { a: " 5 " }, 6],
-    ["an answer of only spaces joins as text", "{a} + 1", { a: "  " }, "  1"],
-    ["an answer with an operator in it joins as text", "{a} + 1", { a: "1*2" }, "1*21"],
+    ["an answer of only spaces has no result in a sum", "{a} + 1", { a: "  " }, undefined],
+    ["an answer with an operator in it has no result in a sum", "{a} + 1", { a: "1*2" }, undefined],
     ["an answer in exponent form adds as a number", "{a} + 1", { a: "1e3" }, 1001],
     ["an answer of a decimal below one adds as a number", "{a} + 1", { a: ".5" }, 1.5],
     ["an answer of zero adds as a number", "{a} + 1", { a: "0" }, 1],
-    ["an answer with two leading zeros joins as text", "{a} + 1", { a: "00" }, "001"],
-    ["an answer of infinity joins as text", "{a} + 1", { a: "Infinity" }, "Infinity1"],
-    ["a list holding a number adds as text", "{a} + 1", { a: [3] }, "31"],
-    ["a list of text adds as its number sum", "{a} + 1", { a: ["p", "q"] }, 1],
-    ["a list of numbers adds their sum", "{a} + 1", { a: [1, 2] }, 4],
-    ["two lists join into one", "{a} + {b}", { a: [1, 2], b: [3] }, [1, 2, 3]],
-    ["a list joins a text with a comma", "{a} + 'x'", { a: ["p", "q"] }, "p, qx"],
+    ["an answer of two zeros reads as its number", "{a} + 1", { a: "00" }, 1],
+    ["an answer of infinity has no result in a sum", "{a} + 1", { a: "Infinity" }, undefined],
+    ["a list holding a number has no result in a sum", "{a} + 1", { a: [3] }, undefined],
+    ["a list of text has no result in a sum", "{a} + 1", { a: ["p", "q"] }, undefined],
+    ["a list of numbers has no result in a sum", "{a} + 1", { a: [1, 2] }, undefined],
+    ["two lists have no result in a sum", "{a} + {b}", { a: [1, 2], b: [3] }, undefined],
+    ["a list and a text have no result in a sum", "{a} + 'x'", { a: ["p", "q"] }, undefined],
     ["two text answers join", "{a} + {b}", { a: "x", b: "y" }, "xy"],
     ["two decimal answers add without float noise", "{a} + {b}", { a: 0.1, b: 0.2 }, 0.3],
-    ["an empty text adds to a number as the number", "'' + 5", {}, 5],
-    ["an unanswered question divides as zero", "{a} / 2", {}, 0],
+    ["an empty text has no result in a sum with a number", "'' + 5", {}, undefined],
+    ["an unanswered question has no result in a quotient", "{a} / 2", {}, undefined],
     ["a quotient keeps its fraction", "5 / 2", {}, 2.5],
-    ["a division by zero is empty", "5 / 0", {}, null],
-    ["a division by numeric text of zero is infinite", "5 / '0'", {}, Number.POSITIVE_INFINITY],
-    ["a division by an unanswered question is empty", "{a} / {b}", { a: 4 }, null],
-    ["a division by text that is not a number is not a number", "5 / 'x'", {}, Number.NaN],
+    ["a division by zero has no result", "5 / 0", {}, undefined],
+    ["a division by numeric text of zero has no result", "5 / '0'", {}, undefined],
+    ["a division by an unanswered question has no result", "{a} / {b}", { a: 4 }, undefined],
+    ["a division by text that is not a number has no result", "5 / 'x'", {}, undefined],
     ["a division by numeric text divides", "6 / '2'", {}, 3],
     ["a remainder keeps its sign", "5 % 3", {}, 2],
     ["a remainder of a negative number keeps its sign", "-5 % 3", {}, -2],
     ["a remainder with a negative divisor", "5 % -3", {}, 2],
     ["a remainder of a decimal keeps its fraction", "5.5 % 2", {}, 1.5],
-    ["a remainder by zero is empty", "5 % 0", {}, null],
+    ["a remainder by zero has no result", "5 % 0", {}, undefined],
     ["a remainder by numeric text divides", "7 % '2'", {}, 1],
-    ["a remainder of an unanswered question is zero", "{a} % 3", {}, 0],
+    ["a remainder of an unanswered question has no result", "{a} % 3", {}, undefined],
     ["a power of a negative base binds tighter than the exponent", "-2 ^ 2", {}, 4],
     ["a power with a negative exponent", "2 ^ -2", {}, 0.25],
     ["a power", "2 ^ 3", {}, 8],
     ["a chain of powers groups to the left", "2 ^ 3 ^ 2", {}, 64],
     ["a power binds tighter than a product", "2 ^ 3 * 2", {}, 16],
     ["a power of numeric texts", "'2' ^ '3'", {}, 8],
-    ["a power of text that is not a number is not a number", "'a' ^ 2", {}, Number.NaN],
+    ["a power of text that is not a number has no result", "'a' ^ 2", {}, undefined],
     ["a power with an answer as its exponent", "2 ^ {a}", { a: "3" }, 8],
-    ["a power of an unanswered question is one for a zero exponent", "2 ^ {a}", {}, 1],
+    ["a power with an unanswered exponent has no result", "2 ^ {a}", {}, undefined],
     ["multiplication binds tighter than addition", "1 + 2 * 3", {}, 7],
     ["subtraction is left associative", "1 - 2 - 3", {}, -4],
     ["a chain of subtractions and products", "10 - 2 - 3 * 2", {}, 2],
@@ -270,7 +272,7 @@ describe(evaluateSurveyExpression, () => {
     ["an empty list is empty", "{a} empty", { a: [] }, true],
     ["a list holding an empty text is not empty", "{a} empty", { a: [""] }, false],
     ["a list holding zero is not empty", "{a} empty", { a: [0] }, false],
-    ["a null is empty", "{a} empty", { a: null }, true],
+    ["an answer stored as nothing is empty", "{a} empty", { a: null }, true],
     ["an unanswered question is empty", "{a} empty", {}, true],
     ["a word is not empty", "{a} empty", { a: "x" }, false],
     ["a zero text is not empty", "{a} empty", { a: "0" }, false],
@@ -285,8 +287,8 @@ describe(evaluateSurveyExpression, () => {
     expect(evaluate(source, values)).toStrictEqual(expected);
   });
 
-  // An answer is read as its SurveyJS value.
-  // A numeric text reads as a number, a true or false text as a boolean, and a quoted text without its quotes
+  // An answer reads as the value it holds: a true or false text as that boolean, and a quoted text without its quotes.
+  // Any other text stays text until an operation needs a number from it
   test.each([
     ["a numeric answer reads as a number", "{a} = 5", { a: "5" }, true],
     ["a true answer text reads as a boolean in any case", "{a} = true", { a: "TRUE" }, true],
@@ -294,7 +296,7 @@ describe(evaluateSurveyExpression, () => {
     ["a double-quoted answer reads without its quotes", "{a} = 'hi'", { a: '"hi"' }, true],
     ["a dotted name with no key reads as empty", "{a.b} empty", { a: 5 }, true],
     ["a dotted name reads a nested answer", "{m.row1.col1}", { m: { row1: { col1: 7 } } }, 7],
-    ["a whole dotted key is read before a path", "{m.row1.col1}", { "m.row1.col1": 9, m: { row1: { col1: 7 } } }, 9],
+    ["a whole dotted key is read before a path", "{m.row1.col1}", { m: { row1: { col1: 7 } }, "m.row1.col1": 9 }, 9],
     ["a dotted key holds dots at any depth", "{a.b.c}", { "a.b": { c: 4 } }, 4],
     ["a dotted key inside a nested answer", "{a.b.c}", { a: { "b.c": 4 } }, 4],
     ["an index reads an item of a list under a key", "{panel[0].q1}", { panel: [{ q1: "x" }] }, "x"],

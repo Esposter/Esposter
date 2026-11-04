@@ -1,9 +1,10 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
+import { flattenSurveyNumbers } from "#src/services/shared/flattenSurveyNumbers";
 
-// The number of values passed, arrays flattened. An unanswered value is not counted, but an empty text is, as SurveyJS counts it
+// The number of values that read as a number, arrays flattened. An empty value or a text that is not a number is not counted
 export const countFunction: SurveyLogicFunction = (args) => {
-  const values = flattenSurveyValues(args);
-  return values.length;
+  const numbers = flattenSurveyNumbers(args);
+
+  return numbers.length;
 };

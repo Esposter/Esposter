@@ -1,9 +1,8 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { checkIsSurveyValueGreater } from "#src/services/shared/checkIsSurveyValueGreater";
-import { flattenSurveyValues } from "#src/services/shared/flattenSurveyValues";
+import { flattenSurveyNumbers } from "#src/services/shared/flattenSurveyNumbers";
 import { getSurveyExtreme } from "#src/services/shared/getSurveyExtreme";
 
-// The largest of the values passed, arrays flattened, or empty when none is passed
+// The largest of the numbers the values read as, arrays flattened, or undefined when none reads as a number
 export const maxFunction: SurveyLogicFunction = (args) =>
-  getSurveyExtreme(flattenSurveyValues(args), (best, candidate) => checkIsSurveyValueGreater(candidate, best));
+  getSurveyExtreme(flattenSurveyNumbers(args), (best, candidate) => candidate > best);

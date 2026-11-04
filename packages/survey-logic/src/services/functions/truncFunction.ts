@@ -1,20 +1,23 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
+import { countSurveyLogicDecimals } from "#src/services/shared/countSurveyLogicDecimals";
 import { getSurveyNumberWithPrecision } from "#src/services/shared/getSurveyNumberWithPrecision";
 
-// The number cut to a number of decimal places, or to its whole part when the precision is empty
+// The product is rounded to this many digits before it is cut, since the noise of a float product can put a digit below the cut:
+// -4.89 times 100 is -488.99999999999994, and cut as it is it would read -4.88
+const PRODUCT_DIGITS = 15;
+
+// The number cut to a number of decimal places, or to its whole part when the precision is not a positive whole number
 export const truncFunction: SurveyLogicFunction = (args) => {
-  const [number, precision] = getSurveyNumberWithPrecision(args);
+  const numberWithPrecision = getSurveyNumberWithPrecision(args);
+  if (numberWithPrecision === undefined) return undefined;
 
-  if (Number.isNaN(number) || Number.isNaN(precision)) return Number.NaN;
+  const [number, precision] = numberWithPrecision;
+  const places = Number.isInteger(precision) && precision > 0 ? precision : 0;
+  if (places === 0) return Math.trunc(number);
+  // A number with no digits past the places is itself, so a whole number in exponent form is not moved by its scale
+  if (countSurveyLogicDecimals(number) <= places) return number;
 
-  // Only a whole, positive precision reads decimals, as in SurveyJS, where any other precision keeps the whole part.
-  // The dot is unescaped as SurveyJS writes it, so a number in exponent form reads as it does there
-  const decimalPlaces = Number.isInteger(precision) && precision > 0 ? precision : 0;
-  const truncateRegex = new RegExp(
-    decimalPlaces > 0 ? String.raw`^-?\d+(?:.\d{0,${decimalPlaces}})?` : String.raw`^-?\d+`,
-    "u",
-  );
-
-  return Number(`${number}`.match(truncateRegex)?.[0]);
+  const scale = 10 ** places;
+  return Math.trunc(Number((number * scale).toPrecision(PRODUCT_DIGITS))) / scale;
 };

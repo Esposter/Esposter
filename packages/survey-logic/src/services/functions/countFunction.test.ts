@@ -6,9 +6,9 @@ describe(countFunction, () => {
   test.each([
     ["counts the values passed", [1, 2], 2],
     ["counts the values of an array among them", [[1, [2, 3]]], 3],
-    ["counts an empty text", ["", 1], 2],
+    ["does not count an empty text", ["", 1], 1],
     ["does not count an unanswered value", [undefined, 1], 1],
-    ["counts a record as one value", [{ k: 1 }], 1],
+    ["does not count a record", [{ k: 1 }], 0],
     ["counts nothing as zero", [], 0],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();

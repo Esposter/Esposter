@@ -1,15 +1,22 @@
+import type { SurveyLogicStoredValue } from "#src/models/SurveyLogicStoredValue";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { STRING_QUOTES } from "#src/services/constants";
 import { checkIsSurveyLogicBooleanText } from "#src/services/shared/checkIsSurveyLogicBooleanText";
-import { checkIsSurveyLogicNumber } from "#src/services/shared/checkIsSurveyLogicNumber";
-import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
-// The value an answer reads as, as SurveyJS reads one.
-// A text spelling a boolean is that boolean, a text in quotes loses them, and a text that is a number is that number.
-// A text with a leading zero stays text
-export const toSurveyLogicAnswer = (value: SurveyLogicValue): SurveyLogicValue => {
-  if (!value || typeof value !== "string") return value;
+// A null the storage holds is unanswered at every depth, so no expression reads one
+const toSurveyLogicNullFree = (value: SurveyLogicStoredValue): SurveyLogicValue => {
+  if (value === null) return undefined;
+  if (Array.isArray(value)) return value.map((item) => toSurveyLogicNullFree(item));
+  if (typeof value !== "object") return value;
+
+  return Object.fromEntries(Object.entries(value).map(([name, field]) => [name, toSurveyLogicNullFree(field)]));
+};
+
+// The value an answer reads as. A text spelling a boolean is that boolean, and a text in quotes loses them.
+// Any other text stays text: an operation reads it as a number only where it asks for one
+export const toSurveyLogicAnswer = (value: SurveyLogicStoredValue): SurveyLogicValue => {
+  if (typeof value !== "string") return toSurveyLogicNullFree(value);
   if (checkIsSurveyLogicBooleanText(value)) return value.toLowerCase() === "true";
   if (
     value.length > 1 &&
@@ -17,11 +24,6 @@ export const toSurveyLogicAnswer = (value: SurveyLogicValue): SurveyLogicValue =
     STRING_QUOTES.some((quote) => value.endsWith(quote))
   )
     return value.slice(1, -1);
-  if (!checkIsSurveyLogicNumber(value)) return value;
 
-  const text = value.trim();
-  const isLeadingZero = text.startsWith("0") && !text.startsWith("0x");
-  if (isLeadingZero && text.length > 1 && ![".", ","].some((point) => text.startsWith(point, 1))) return value;
-
-  return toSurveyLogicNumber(value);
+  return value;
 };

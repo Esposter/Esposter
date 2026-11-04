@@ -2,19 +2,16 @@ import type { SurveyLogicArrayParams } from "#src/models/SurveyLogicArrayParams"
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { getOwnValue } from "#src/services/shared/getOwnValue";
-import { getSurveyArrayValue } from "#src/services/shared/getSurveyArrayValue";
 import { getSurveyExtreme } from "#src/services/shared/getSurveyExtreme";
 
-// The extreme of an array's values, by the number each item's field reads as: the item's field, or the item's returned
-// Field when the arguments name one. An item whose field reads as no number takes no part
+// The extreme of an array's fields, by the numbers they read as: the item whose field the comparison prefers, then that item's field, or its returned field when the arguments name one
 export const getSurveyArrayExtreme = (
   params: SurveyLogicArrayParams,
-  checkReplaces: (best: SurveyLogicValue, candidate: SurveyLogicValue) => boolean,
+  checkReplaces: (best: number, candidate: number) => boolean,
 ): SurveyLogicValue => {
-  const rows = params.rows
-    .map((row) => ({ field: getSurveyArrayValue(row.field), item: row.item }))
-    .filter((row) => row.field !== undefined && row.field !== null);
-  const best = getSurveyExtreme(rows, (bestRow, candidateRow) => checkReplaces(bestRow.field, candidateRow.field));
+  const best = getSurveyExtreme(params.rows, (bestRow, candidateRow) =>
+    checkReplaces(bestRow.field, candidateRow.field),
+  );
   if (best === undefined) return undefined;
 
   return params.returnField === undefined ? best.field : getOwnValue(best.item, params.returnField);

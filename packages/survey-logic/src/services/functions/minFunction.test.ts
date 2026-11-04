@@ -5,9 +5,9 @@ import { describe, expect, test } from "vitest";
 describe(minFunction, () => {
   test.each([
     ["finds the smallest number", [3, 1, 2], 1],
-    ["compares two texts as text", ["b", "a"], "a"],
-    ["keeps a text over a number it is not greater than", ["b", 5], "b"],
-    ["compares a boolean as one or zero", [true, 2], true],
+    ["is empty when every value is a text", ["b", "a"], undefined],
+    ["skips a text and takes the smallest number", ["b", 5], 5],
+    ["skips a boolean and takes the smallest number", [true, 2], 2],
     ["compares a number text as its number", ["5", 3], 3],
     ["flattens an array among the values", [[4, 2, 9]], 2],
     ["skips an unanswered value", [undefined, 1], 1],

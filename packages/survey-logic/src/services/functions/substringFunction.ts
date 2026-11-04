@@ -2,17 +2,23 @@ import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
 import { getSurveyTextIndex } from "#src/services/shared/getSurveyTextIndex";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
+import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
 
-// The part of a text from a start index up to an end index, which runs to the text's end when no number is given for it. A
-// Text that is not one, or a start that is not a number, reads as empty. An index reads as an operand does, so a list
-// Holding one number is that number
+// The part of a text from a start index up to an end index, which runs to the text's end when no end is given.
+// A value that is not a text reads as its text, and an unanswered text has no part.
+// An index reads as a number, so a start or an end that reads as none has no part
 export const substringFunction: SurveyLogicFunction = (args) => {
-  const [text, start, end] = args;
+  const [textValue, start, end] = args;
   const startNumber = toSurveyLogicNumber(start);
-  if (typeof text !== "string" || Number.isNaN(startNumber)) return "";
+  if (textValue === undefined || startNumber === undefined) return undefined;
+
+  const text = toSurveyLogicText(textValue);
+  const startIndex = getSurveyTextIndex(startNumber, text.length);
+  if (end === undefined) return text.slice(startIndex);
 
   const endNumber = toSurveyLogicNumber(end);
-  const startIndex = getSurveyTextIndex(startNumber, text.length);
-  const endIndex = Number.isNaN(endNumber) ? text.length : getSurveyTextIndex(endNumber, text.length);
+  if (endNumber === undefined) return undefined;
+
+  const endIndex = getSurveyTextIndex(endNumber, text.length);
   return text.slice(Math.min(startIndex, endIndex), Math.max(startIndex, endIndex));
 };

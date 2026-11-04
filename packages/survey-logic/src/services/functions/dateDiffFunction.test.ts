@@ -17,7 +17,7 @@ describe(dateDiffFunction, () => {
     ["an interval SurveyJS does not know counts years", [TEST_BIRTHDATE, TEST_EPOCH_DATE, "weeks"], 36],
     ["a missing date is empty", [TEST_BIRTHDATE, undefined], undefined],
     ["the epoch given as the number zero is a date, not a missing one", [0, 86_400_000], 1],
-    ["an unreadable date is NaN", [TEST_BIRTHDATE, "x"], Number.NaN],
+    ["an unreadable date is empty", [TEST_BIRTHDATE, "x"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

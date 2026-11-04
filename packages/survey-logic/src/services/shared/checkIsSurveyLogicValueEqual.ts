@@ -17,8 +17,8 @@ export const checkIsSurveyLogicValueEqual = (
   ignoreOrder = true,
 ): boolean => {
   if (left === right) return true;
-  if ((left === null || left === undefined) && right === "") return true;
-  if ((right === null || right === undefined) && left === "") return true;
+  if (left === undefined && right === "") return true;
+  if (right === undefined && left === "") return true;
   if (typeof left === "string" && typeof right === "string")
     return left.trim().toLowerCase() === right.trim().toLowerCase();
   if (checkIsSurveyLogicValueEmpty(left) !== checkIsSurveyLogicValueEmpty(right)) return false;

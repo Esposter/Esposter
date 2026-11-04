@@ -7,7 +7,7 @@ describe(getYearFunction, () => {
     ["the year of a date", [TEST_BIRTHDATE], 1934],
     ["no argument is empty", [], undefined],
     ["an empty argument is empty", [undefined], undefined],
-    ["an unreadable date is NaN", ["x"], Number.NaN],
+    ["an unreadable date is empty", ["x"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

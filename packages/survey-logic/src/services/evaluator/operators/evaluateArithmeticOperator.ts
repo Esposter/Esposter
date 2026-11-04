@@ -1,14 +1,14 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBinaryOperator";
-import { convertSurveyLogicOperands } from "#src/services/evaluator/operators/convertSurveyLogicOperands";
 import { roundSurveyLogicProduct } from "#src/services/shared/roundSurveyLogicProduct";
 import { roundSurveyLogicSum } from "#src/services/shared/roundSurveyLogicSum";
-import { sumSurveyLogicValues } from "#src/services/shared/sumSurveyLogicValues";
+import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
+import { toSurveyLogicResult } from "#src/services/shared/toSurveyLogicResult";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Arithmetic reads both operands as numbers, except `+`, which joins text.
-// A division or remainder by a falsy operand is empty rather than infinite or not a number, as SurveyJS gives it
+// Arithmetic reads both operands as numbers, and an operand that reads as none has no result.
+// `+` also joins two texts that are not numbers, and a division or a remainder by zero, read as a number, has no result either
 export const evaluateArithmeticOperator = (
   operator:
     | SurveyExpressionBinaryOperator.Add
@@ -20,20 +20,33 @@ export const evaluateArithmeticOperator = (
   left: SurveyLogicValue,
   right: SurveyLogicValue,
 ): SurveyLogicValue => {
-  const [convertedLeft, convertedRight] = convertSurveyLogicOperands(left, right);
+  const leftNumber = toSurveyLogicNumber(left);
+  const rightNumber = toSurveyLogicNumber(right);
+  if (leftNumber === undefined || rightNumber === undefined) {
+    const isJoin =
+      operator === SurveyExpressionBinaryOperator.Add &&
+      leftNumber === undefined &&
+      rightNumber === undefined &&
+      typeof left === "string" &&
+      typeof right === "string" &&
+      left !== "" &&
+      right !== "";
+    return isJoin ? left + right : undefined;
+  }
+
   switch (operator) {
     case SurveyExpressionBinaryOperator.Add:
-      return sumSurveyLogicValues(convertedLeft, convertedRight);
+      return toSurveyLogicResult(roundSurveyLogicSum(leftNumber, rightNumber, leftNumber + rightNumber));
     case SurveyExpressionBinaryOperator.Subtract:
-      return roundSurveyLogicSum(convertedLeft, convertedRight, Number(convertedLeft) - Number(convertedRight));
+      return toSurveyLogicResult(roundSurveyLogicSum(leftNumber, rightNumber, leftNumber - rightNumber));
     case SurveyExpressionBinaryOperator.Multiply:
-      return roundSurveyLogicProduct(convertedLeft, convertedRight, Number(convertedLeft) * Number(convertedRight));
+      return toSurveyLogicResult(roundSurveyLogicProduct(leftNumber, rightNumber, leftNumber * rightNumber));
     case SurveyExpressionBinaryOperator.Divide:
-      return convertedRight ? Number(convertedLeft) / Number(convertedRight) : null;
+      return rightNumber === 0 ? undefined : toSurveyLogicResult(leftNumber / rightNumber);
     case SurveyExpressionBinaryOperator.Modulo:
-      return convertedRight ? Number(convertedLeft) % Number(convertedRight) : null;
+      return rightNumber === 0 ? undefined : toSurveyLogicResult(leftNumber % rightNumber);
     case SurveyExpressionBinaryOperator.Power:
-      return Number(convertedLeft) ** Number(convertedRight);
+      return toSurveyLogicResult(leftNumber ** rightNumber);
     default:
       return exhaustiveGuard(operator);
   }

@@ -8,5 +8,6 @@ export const getYearFunction: SurveyLogicFunction = (args) => {
 
   if (args.length !== 1 || !dateValue) return undefined;
 
-  return parseSurveyLogicDate(dateValue).getFullYear();
+  const date = parseSurveyLogicDate(dateValue);
+  return Number.isNaN(date.getTime()) ? undefined : date.getFullYear();
 };

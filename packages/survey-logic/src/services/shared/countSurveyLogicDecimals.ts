@@ -1,13 +1,8 @@
-import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
+// The digits after the point of a number, read from its shortest digits with the exponent taken into account, so a number in exponent form such as `1e-8` carries eight.
+// A whole number, and a large one in exponent form, carries none
+export const countSurveyLogicDecimals = (number: number): number => {
+  const [mantissa = "", exponent = "0"] = number.toExponential().split("e");
+  const fraction = mantissa.split(".")[1] ?? "";
 
-import { checkIsSurveyLogicNumber } from "#src/services/shared/checkIsSurveyLogicNumber";
-import { toSurveyLogicText } from "#src/services/shared/toSurveyLogicText";
-import { takeOne } from "@esposter/shared";
-
-// The digits after the point of a number-reading value, which a sum or a product is rounded to. A whole number has none
-export const countSurveyLogicDecimals = (value: SurveyLogicValue): number => {
-  if (!checkIsSurveyLogicNumber(value) || Math.floor(Number(value)) === value) return 0;
-
-  const parts = toSurveyLogicText(value).split(".");
-  return parts.length > 1 ? takeOne(parts, 1).length : 0;
+  return Math.max(fraction.length - Number(exponent), 0);
 };

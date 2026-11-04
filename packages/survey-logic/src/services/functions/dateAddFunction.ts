@@ -2,9 +2,9 @@ import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
 import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
-import { getSurveyNumber } from "#src/services/shared/getSurveyNumber";
 import { parseSurveyLogicDate } from "#src/services/shared/parseSurveyLogicDate";
 import { toSurveyLogicDate } from "#src/services/shared/toSurveyLogicDate";
+import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
 // Each interval moves a date through the setter of its own unit
 const unitAdditionMap: Record<string, (date: Date, amount: number) => void> = {
@@ -35,7 +35,9 @@ export const dateAddFunction: SurveyLogicFunction = (args) => {
   // SurveyJS reads a zero amount as no amount, so the result is empty rather than the date
   if (args.length < 2 || checkIsSurveyLogicValueEmpty(dateValue) || !amountValue) return undefined;
 
-  const amount = getSurveyNumber(amountValue);
+  const amount = toSurveyLogicNumber(amountValue);
+  if (amount === undefined) return undefined;
+
   const interval = intervalValue || "days";
   const addToDate = typeof interval === "string" ? getOwnValue(unitAdditionMap, interval) : undefined;
   const date = parseSurveyLogicDate(dateValue);

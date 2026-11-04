@@ -10,7 +10,8 @@ describe(ageFunction, () => {
     ["a day interval reads zero, as SurveyJS does with no second date", [TEST_BIRTHDATE, "days"], 0],
     ["an empty birthdate is empty", [undefined], undefined],
     ["the epoch given as the number zero is a birthdate, not an empty one", [0], 0],
-    ["an unreadable birthdate reads as zero years, as SurveyJS does", ["x"], 0],
+    ["an unreadable birthdate is empty", ["x"], undefined],
+    ["an unreadable birthdate is empty for a day interval too", ["x", "days"], undefined],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 

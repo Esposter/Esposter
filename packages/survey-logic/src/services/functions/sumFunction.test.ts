@@ -6,15 +6,15 @@ describe(sumFunction, () => {
   test.each([
     ["adds integers", [1, 2, 3], 6],
     ["reads a number text as its number", [1, "2"], 3],
-    ["reads a comma as the decimal point", ["1,5", 1], 2.5],
+    ["skips a comma decimal, which is not a number", ["1,5", 1], 1],
     ["trims the float error of a decimal sum", [0.1, 0.2], 0.3],
-    ["counts a boolean as one or zero", [true, 1], 2],
+    ["skips a boolean, so it adds nothing", [true, 1], 1],
     ["flattens an array among the values", [[1, [2, 3]], 4], 10],
     ["skips an unanswered value", [undefined, 1], 1],
     ["sums nothing to zero", [], 0],
-    ["joins a text that is not a number to the total as text", ["a", 1], "0a1"],
-    ["joins an empty text to the total as text", ["", 1], "01"],
-    ["is empty when a text total cannot be trimmed", ["a", 0.5], undefined],
+    ["skips a text that is not a number", ["a", 1], 1],
+    ["skips an empty text", ["", 1], 1],
+    ["sums the numbers around a text that is not a number", ["a", 0.5], 0.5],
   ])("%s", (_title, args, expected) => {
     expect.hasAssertions();
 
