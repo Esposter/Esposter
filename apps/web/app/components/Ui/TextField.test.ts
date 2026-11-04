@@ -124,6 +124,15 @@ describe("uiTextField", () => {
       expect(component.get(`#${control.attributes("aria-errormessage")}`).text()).toBe(message);
     });
 
+    test("is described by the message a call site gives it, so the message is read with the control", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiTextField, { props: { error: message, label, modelValue: "" } });
+      const control = component.get("input");
+
+      expect(component.get(`#${control.attributes("aria-describedby")}`).text()).toBe(message);
+    });
+
     test("counts what is typed against the most it takes", () => {
       expect.hasAssertions();
 

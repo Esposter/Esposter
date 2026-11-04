@@ -61,6 +61,8 @@ const inputRules = computed(() => rules.map((rule) => (value: unknown) => rule(S
 // The control is ours to render rather than the primitive's, so what completes the field or anchors to it reads the
 // Element here
 const element = useTemplateRef<HTMLInputElement | HTMLTextAreaElement>("element");
+// The message a call site gives the field, which the control is described by while it shows, as a failing rule's is
+const errorId = useId();
 // A search says what it searches inside itself, so its label is the hint and stays its accessible name
 const isSearch = computed(() => type === UiTextFieldType.Search);
 // An email, a telephone number or a URL offers the browser's autofill for it
@@ -101,6 +103,7 @@ defineExpose({ element });
           :is="rows ? 'textarea' : 'input'"
           ref="element"
           :="attrs"
+          :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
           :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
           :aria-required="isRequired || undefined"
           :autocomplete
@@ -133,7 +136,7 @@ defineExpose({ element });
     <!-- Only while it has something to say, so a field in a row lines up with the buttons beside it -->
     <div v-if="errors.length > 0 || error || countLimit || hint" text-sm flex gap-2>
       <Input.Description v-if="hint && errors.length === 0 && !error" text-muted flex-1>{{ hint }}</Input.Description>
-      <span v-if="error && errors.length === 0" role="alert" text-error flex-1>{{ error }}</span>
+      <span v-if="error && errors.length === 0" :id="errorId" role="alert" text-error flex-1>{{ error }}</span>
       <Input.Error text-error flex-1>{{ errors[0] }}</Input.Error>
       <span v-if="countLimit" text-muted>{{ modelValue.length }} / {{ countLimit }}</span>
     </div>
