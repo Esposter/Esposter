@@ -42,6 +42,7 @@ const updateItem = (name: string, text: string) => {
           v-for="item of node.props.items"
           :key="item.name"
           :is-disabled="isDisabled || undefined"
+          :is-required="node.props.isRequired || undefined"
           :label="item.title || item.name"
           :model-value="getText(answers[item.name])"
           :type="SURVEY_MULTIPLE_TEXT_FIELD_TYPES[item.inputType]"

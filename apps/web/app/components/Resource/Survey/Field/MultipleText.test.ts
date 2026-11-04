@@ -43,6 +43,18 @@ describe("resourceSurveyFieldMultipleText", () => {
       expect(component.findAll("label").map((label) => label.text())).toStrictEqual(itemTitles);
     });
 
+    test("marks each item's label with the required mark when the question is required", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
+        props: { error: "", isDisabled: false, node: { ...node, props: { ...node.props, isRequired: true } } },
+      });
+
+      expect(component.findAll("label").map((label) => label.text())).toStrictEqual(
+        itemTitles.map((itemTitle) => `${itemTitle} * required`),
+      );
+    });
+
     test("draws an email item as an email field", async () => {
       expect.hasAssertions();
 
