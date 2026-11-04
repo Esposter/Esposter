@@ -130,3 +130,36 @@ The page renderer SHALL move a respondent between a survey's visible pages and, 
 - **WHEN** the respondent goes to the next page
 - **THEN** the refusal is shown as an alert
 - **AND** focus moves to the first of the two questions
+
+### Requirement: A dynamic panel's row shows, enables and requires its template questions by its own answers
+
+A dynamic panel SHALL draw each row's template questions only where the row's own answers hold their visibility condition, SHALL disable those whose enabling condition does not hold in that row, and SHALL mark as required those whose requiring condition holds in that row.
+
+#### Scenario: a row shows only the template question its own answer shows
+
+- **GIVEN** a dynamic panel of two rows whose template holds a yes-or-no question "a" and a text question "b" shown only when "a" is yes in its own row, with row 1's "a" yes and row 2's "a" no
+- **WHEN** the panel is drawn
+- **THEN** row 1 draws "b"
+- **AND** row 2 does not draw "b"
+
+#### Scenario: a row disables a template question its own answer does not enable
+
+- **GIVEN** a dynamic panel of two rows whose template holds a yes-or-no question "a" and a text question "b" enabled only when "a" is yes in its own row, with row 1's "a" yes and row 2's "a" no
+- **WHEN** the panel is drawn
+- **THEN** row 1's "b" takes an answer
+- **AND** row 2's "b" is disabled
+
+#### Scenario: a row marks a template question required when its own answer requires it
+
+- **GIVEN** a dynamic panel of two rows whose template holds a yes-or-no question "a" and a text question "b" required only when "a" is yes in its own row, with row 1's "a" yes and row 2's "a" no
+- **WHEN** the panel is drawn
+- **THEN** row 1's "b" is marked required
+- **AND** row 2's "b" is not marked required
+- **AND** the respondent cannot move on while row 1's "b" is unanswered
+
+#### Scenario: answering a row's question reveals the question in that row only
+
+- **GIVEN** a dynamic panel of two rows whose template holds a yes-or-no question "a" and a text question "b" shown only when "a" is yes in its own row, with both rows' "a" unanswered
+- **WHEN** the respondent answers "a" yes in row 2
+- **THEN** row 2 draws "b"
+- **AND** row 1 does not draw "b"

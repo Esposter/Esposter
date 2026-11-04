@@ -58,6 +58,12 @@ The runner SHALL keep, on completion, only the answers of visible questions and 
 - **WHEN** the respondent completes the survey
 - **THEN** the completed answers hold no entry for the hidden question
 
+#### Scenario: a dynamic panel's row drops the answer to a template question its own answers hide
+
+- **GIVEN** a dynamic panel whose row answered a template question and then changed the row's answer so that question is hidden in that row
+- **WHEN** the respondent completes the survey
+- **THEN** the completed answers hold that row without an entry for the hidden question
+
 #### Scenario: the result holds each calculated value flagged for it and each visible calculated-value question
 
 - **GIVEN** a survey with a calculated value flagged for the result and a visible calculated-value question
