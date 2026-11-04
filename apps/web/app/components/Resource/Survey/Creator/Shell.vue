@@ -101,7 +101,7 @@ const rightTab = ref(PROPERTIES_TAB);
 <template>
   <!-- A narrow screen shows one pane at a time as a tab, and a wider one lays the three side by side with the same panes -->
   <div v-if="smAndDown" flex flex-col h-full min-h-0>
-    <UiTabs v-model="narrowTab" :items="narrowTabItems" label="Survey creator" is-filling>
+    <UiTabs v-model="narrowTab" :items="narrowTabItems" :label="SURVEY_CREATOR_COMMAND_GROUP" is-filling>
       <template #default="{ value }">
         <div v-if="value === CANVAS_TAB" flex flex-col gap-2 h-full min-h-0>
           <ResourceSurveyCreatorWorkspace />
