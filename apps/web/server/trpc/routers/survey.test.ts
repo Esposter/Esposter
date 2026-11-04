@@ -236,6 +236,7 @@ describe("surveyRouter", () => {
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const surveyResponse = await caller.readSurveyResponse({
+      participantToken: "",
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });
@@ -251,7 +252,11 @@ describe("surveyRouter", () => {
     await caller.deleteResource({ id: newResource.id });
 
     await expect(
-      caller.readSurveyResponse({ partitionKey: newSurveyResponse.partitionKey, rowKey: newSurveyResponse.rowKey }),
+      caller.readSurveyResponse({
+        participantToken: "",
+        partitionKey: newSurveyResponse.partitionKey,
+        rowKey: newSurveyResponse.rowKey,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
@@ -581,6 +586,7 @@ describe("surveyRouter", () => {
     await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
     const anonymousSurveyResponse = await createSurveyResponse(survey.id, 1);
     const existingSurveyResponse = await caller.readSurveyResponse({
+      participantToken: "",
       partitionKey: survey.id,
       rowKey: newSurveyResponse.rowKey,
     });
@@ -711,7 +717,11 @@ describe("surveyRouter", () => {
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
     await expect(
-      caller.readSurveyResponse({ partitionKey: newResource.id, rowKey: newSurveyResponse.rowKey }),
+      caller.readSurveyResponse({
+        participantToken: "",
+        partitionKey: newResource.id,
+        rowKey: newSurveyResponse.rowKey,
+      }),
     ).resolves.toBeUndefined();
   });
 
@@ -778,6 +788,7 @@ describe("surveyRouter", () => {
       isDraft: true,
       model: { a: 0 },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -790,6 +801,7 @@ describe("surveyRouter", () => {
       model: draftSurveyResponse.model,
       modelVersion: draftSurveyResponse.modelVersion,
       pageNo: 0,
+      participantToken: "",
       partitionKey: draftSurveyResponse.partitionKey,
       rowKey: draftSurveyResponse.rowKey,
     });
@@ -808,6 +820,7 @@ describe("surveyRouter", () => {
       model: { a: 1 },
       modelVersion: newSurveyResponse.modelVersion,
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });

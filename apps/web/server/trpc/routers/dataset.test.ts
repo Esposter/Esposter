@@ -73,6 +73,7 @@ describe("datasetRouter", () => {
       isDraft: false,
       model: { a: 1, b: true, c: "" },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -98,6 +99,7 @@ describe("datasetRouter", () => {
           isDraft: false,
           model: { a: 1 },
           pageNo: 0,
+          participantToken: "",
           partitionKey: newSurvey.id,
           rowKey: crypto.randomUUID(),
         }),
@@ -131,6 +133,7 @@ describe("datasetRouter", () => {
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -157,6 +160,7 @@ describe("datasetRouter", () => {
       isDraft: false,
       model: { c: ["red", 2] },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -175,6 +179,7 @@ describe("datasetRouter", () => {
       isDraft: false,
       model: { submittedAt: "answer" },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });

@@ -44,6 +44,7 @@ describe("dashboardRouter", () => {
       isDraft: false,
       model: { [name]: 1 },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -90,6 +91,7 @@ describe("dashboardRouter", () => {
       isDraft: false,
       model: { [name]: 1, [unreadName]: unreadName },
       pageNo: 0,
+      participantToken: "",
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
