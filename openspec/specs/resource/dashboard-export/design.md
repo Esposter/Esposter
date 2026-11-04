@@ -50,7 +50,7 @@ flowchart LR
 | `apps/web/app/services/dataset/createDatasetCsv.ts`                        | the header and cell rows, through the neutralising escape                         |
 | `apps/web/app/components/Dashboard/Visual/Index.vue`                       | the tile's actions slot, given the resolved dataset only when the visual draws it |
 | `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`           | the editor tile's corner menu, where Export CSV sits beside Duplicate             |
-| `apps/web/app/components/Dashboard/Grid.vue`                               | the grid element the page capture reads                                           |
+| `apps/web/app/components/Dashboard/Grid/Index.vue`                         | the grid element the page capture reads                                           |
 | `apps/web/app/components/Dashboard/Index.vue`                              | the published grid, whose tiles offer the same CSV from the snapshot              |
 | `apps/web/app/components/Resource/Dashboard/View.vue`                      | the published renderer that hosts the page export                                 |
 | `apps/web/server/services/dashboard/projectDatasetToQuery.ts`              | the publish projection that decides which columns the snapshot holds              |

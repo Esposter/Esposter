@@ -67,7 +67,7 @@ An editor tile SHALL redraw its chart to fill the tile's new height when the til
 
 ### Requirement: The tile corner stays usable above the chart
 
-The corner of an editor tile SHALL keep its Edit, Delete, Refresh and Copy link actions usable above the chart.
+The corner of an editor tile SHALL keep its visual menu, Refresh and Copy link usable above the chart.
 
 #### Scenario: The corner buttons work over a chart
 

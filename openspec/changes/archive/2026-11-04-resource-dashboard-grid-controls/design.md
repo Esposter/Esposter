@@ -51,7 +51,7 @@ The editor's visuals are tab stops in their order. Tab moves between them, Enter
 
 `Grid/Index.vue` binds `useGridLayout` to the visuals, the column count, the row height and the dashboard's collision and compaction settings. Each visual is a `Grid/Tile.vue`, which carries eight handles, the keyboard step and, for a table with fit height on, its own measured height. The palette and Layout control live beside the grid in the editor only.
 
-A press on a visual's edge or corner is a gesture of the package, and the grid previews the layout it would leave. A drop from the palette is the package's external drag: the grid previews the landing cell and refuses it under block overlap, and the release commits the new visual with its cell, once. A keyboard step is a single placement committed at once. The editor writes each committed change into the visual store, which autosaves the dashboard.
+A press on a visual's edge or corner is a gesture of the package, and the grid previews the layout it would leave. A drop from the palette is the package's external drag: the grid previews the landing cell and refuses it under block overlap. A release that is not refused hands the store the cell the package placed the new visual in, and the package commits the visuals that drop pushed, once. A keyboard step is a single placement committed at once. The editor writes each committed change into the visual store, which autosaves the dashboard.
 
 Fit height is a flag on the visual. A tile whose visual fits its height has no fixed height of its own; the tile measures what its table draws and reports it, and the package takes the whole rows that hold it, as one commit.
 
@@ -59,7 +59,8 @@ The layout settings are two fields on the dashboard's content, each a closed set
 
 ```mermaid
 flowchart TD
-  P["Palette tile pressed or dropped"] -->|"drop over the grid"| G["Grid commits the added visual and its pushes, once"]
+  P["Palette tile pressed or dropped"] -->|"drop over the grid, at the cell the grid placed it in"| SD["The store saves the dropped visual at that cell"]
+  P -->|"drop over the grid"| G["Grid commits the visuals a drop pushed, once"]
   P -->|"press or Enter"| S["The store adds the type at the first free cell"]
   K["Focused visual: arrows or Shift and arrows"] -->|"one placement per step"| G
   H["Edge or corner pressed"] -->|"gesture, released"| G

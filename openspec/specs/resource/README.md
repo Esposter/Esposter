@@ -76,7 +76,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard duplicate visual](dashboard-duplicate-visual/design.md) — Duplicate on a tile's corner copies its chart settings and binding
 - [Dashboard live canvas](dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data, not a stock icon
 - [Dashboard chart interaction](dashboard-chart-interaction/design.md) — the ApexCharts investigation surface on visuals: linked highlighting, shareable view state, annotations
-- [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: pure placement functions, Pointer Events, one write per gesture
+- [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: resize from any edge, keyboard steps, a palette drop, fit height and the Layout settings, one write per gesture
 - [Dashboard card and table visuals](dashboard-card-and-table-visuals/design.md) — a card's one aggregated number and a table of exact values beside the charts, over the same binding
 - [Dashboard export](dashboard-export/design.md) — the dashboard page as a PNG and each visual's drawn rows as CSV, read from the published snapshot for a viewer
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export

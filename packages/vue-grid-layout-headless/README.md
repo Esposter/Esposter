@@ -43,10 +43,10 @@ const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
   items: items.value,
   rowHeight: 40,
   spacing: { gap: 10, padding: 10 },
-  // A release replaces the cells it changed and drops the ids it removed
-  onCommit: ({ changes, removed }) => {
+  // A release replaces the cells it changed
+  onCommit: ({ changes }) => {
     const changedIds = new Set(changes.map(({ id }) => id));
-    items.value = [...items.value.filter(({ id }) => !changedIds.has(id) && !removed.includes(id)), ...changes];
+    items.value = [...items.value.filter(({ id }) => !changedIds.has(id)), ...changes];
   },
 }));
 </script>
@@ -79,18 +79,21 @@ Each tile supplies these values:
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Kind       | Purpose                                                                                                   |
-| ------------------- | ---------- | --------------------------------------------------------------------------------------------------------- |
-| `CollisionMode`     | enum       | What a dropped item does to the items it lands on: push, swap, or prevent the drop                        |
-| `CompactType`       | enum       | The direction a layout compacts in: vertical, horizontal, or none                                         |
-| `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed or added, and the ids it removed           |
-| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                   |
-| `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the drag placeholder, the height and the press handler |
-| `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter          |
-| `GridTile`          | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                          |
-| `ResizeEdge`        | enum       | The edge or corner that a resize pulls                                                                    |
-| `startExternalDrag` | function   | Drags an item from outside every grid, such as a palette entry. Lands it on the grid under the release.   |
-| `useGridLayout`     | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes.                  |
+| Export              | Kind       | Purpose                                                                                                                                                      |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CollisionMode`     | enum       | What a dropped item does to the items it lands on: push, swap, or prevent the drop                                                                           |
+| `CompactType`       | enum       | The direction a layout compacts in: vertical, horizontal, or none                                                                                            |
+| `getFirstFreeCell`  | function   | The first cell a new item of a given span fits in, scanning rows from the top and columns from the left                                                      |
+| `GridCommit`        | interface  | What a release writes back: the cells that one gesture changed                                                                                               |
+| `GridItem`          | interface  | A cell the grid places, named by the entity it lays out                                                                                                      |
+| `GridLayout`        | interface  | What a grid hands its consumer: the tiles to draw, the placeholder, the height, the press and the step                                                       |
+| `GridLayoutOptions` | interface  | What a grid lays out and how its gestures read the pointer, passed to the composable as a getter                                                             |
+| `GridPlaceholder`   | interface  | The box a drag draws where its item would land, marked when the grid would refuse the landing                                                                |
+| `GridStep`          | interface  | A keyboard step: the whole cells an item moves by and the whole cells its span grows by                                                                      |
+| `GridTile`          | interface  | An item as the grid draws it: its box, and the offset a dragged item is drawn at                                                                             |
+| `ResizeEdge`        | enum       | The edge or corner that a resize pulls                                                                                                                       |
+| `startExternalDrag` | function   | Drags an item from outside every grid, such as a palette entry. Previews it on the grid under the pointer and passes the cell it lands on to a drop callback |
+| `useGridLayout`     | composable | Places items on a grid. Previews and commits the moves and resizes that a pointer makes, and steps an item from the keyboard                                 |
 
 ## <a name="license">⚖️ License</a>
 

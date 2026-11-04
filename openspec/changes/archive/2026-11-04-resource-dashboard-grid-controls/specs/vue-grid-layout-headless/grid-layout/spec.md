@@ -71,7 +71,7 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 
 - **GIVEN** a palette entry dragged with the span it would take
 - **WHEN** it is released over an empty cell of the grid
-- **THEN** the grid commits the entry as added at that cell
+- **THEN** the entry is placed at that cell and the grid commits the items it pushes
 
 #### Scenario: A drop outside every grid
 
@@ -89,13 +89,13 @@ The package SHALL take an item dragged in from outside every grid, and SHALL ret
 
 - **GIVEN** a palette entry wider than the grid's columns
 - **WHEN** it is released over the grid's first column
-- **THEN** the grid commits it at the first column, spanning every column
+- **THEN** the entry is placed at the first column, spanning every column
 
 #### Scenario: A cancelled palette press accepts once on the next release
 
 - **GIVEN** a palette press that the browser cancels
 - **WHEN** the pointer is pressed and released again over the grid
-- **THEN** the grid commits the entry once
+- **THEN** the entry is placed once
 
 ## REMOVED Requirements
 

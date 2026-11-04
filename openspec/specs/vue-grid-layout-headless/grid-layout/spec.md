@@ -163,71 +163,6 @@ The package SHALL size an item marked as sized to its content to the whole rows 
 - **THEN** the item spans three rows
 - **AND** the change is written as a gesture's would be
 
-### Requirement: Items drop in from outside and between grids
-
-The package SHALL take an item dragged in from outside any grid or from another grid, and return an item dropped outside every grid to where it was.
-
-#### Scenario: Dropping a palette entry into the grid
-
-- **GIVEN** a palette entry dragged with the span it would take
-- **WHEN** it is released over an empty cell of the grid
-- **THEN** the grid writes a new item at that cell
-
-#### Scenario: Moving an item into another grid
-
-- **GIVEN** two grids on one page
-- **WHEN** an item is dragged from the first and released over the second
-- **THEN** the first grid writes its removal
-- **AND** the second writes its addition at the cell under the pointer
-
-#### Scenario: A drop outside every grid
-
-- **GIVEN** an item dragged out of its grid
-- **WHEN** it is released over no grid
-- **THEN** nothing is written and the item returns to its cell
-
-#### Scenario: A palette entry dropped onto an item under prevent is refused
-
-- **GIVEN** the prevent mode and a palette entry dragged with the span it would take
-- **WHEN** it is released over an item of the grid
-- **THEN** the grid writes nothing
-
-#### Scenario: A dropped item wider than the grid is narrowed to its columns
-
-- **GIVEN** a palette entry wider than the grid's columns
-- **WHEN** it is released over the grid's first column
-- **THEN** the grid writes it at the first column, spanning every column
-
-#### Scenario: A move refused by the grid under the pointer commits nothing
-
-- **GIVEN** two grids on one page, the second in the prevent mode with an item where the drop would land
-- **WHEN** an item is dragged from the first and released over the second
-- **THEN** the second grid writes nothing
-- **AND** the first grid writes nothing, so the item stays where it was
-
-#### Scenario: A release over another grid routes past the dragged tile
-
-- **GIVEN** the dragged item's own tile under the pointer, with another grid's tile beneath it
-- **WHEN** the item is released
-- **THEN** the release reaches the grid beneath the dragged tile
-
-#### Scenario: A cancelled palette press accepts once on the next release
-
-- **GIVEN** a palette press that the browser cancels
-- **WHEN** the pointer is pressed and released again over the grid
-- **THEN** the grid writes the entry once
-
-### Requirement: A nested grid owns its items' gestures
-
-The package SHALL give a press to the grid nearest the pressed element, so a grid inside an item moves its own items without moving the item it sits in.
-
-#### Scenario: Dragging inside a nested grid
-
-- **GIVEN** a grid inside an item of an outer grid
-- **WHEN** an item of the inner grid is dragged
-- **THEN** the inner grid moves that item
-- **AND** the outer grid's item stays where it was
-
 ### Requirement: A gesture ends when its layout is replaced
 
 The package SHALL end a gesture when the layout it previews is replaced under it, so a release never writes cells the new layout does not have.
@@ -249,3 +184,98 @@ The package SHALL return no tiles until its root reports a width, so a server re
 - **WHEN** the grid is first rendered
 - **THEN** it draws no tiles
 - **AND** it draws them once the width is reported
+
+### Requirement: An item steps by whole cells from the keyboard
+
+The package SHALL step an item by whole cells, placed as a gesture is placed, and SHALL commit the step once when it lands.
+
+#### Scenario: A step onto a free cell is committed
+
+- **GIVEN** an item with free cells to its right
+- **WHEN** the consumer steps it one column right
+- **THEN** the grid commits the item at the new cell once
+
+#### Scenario: A step past the columns is clamped
+
+- **GIVEN** an item at the last column
+- **WHEN** the consumer steps it right
+- **THEN** the item keeps its cell and the grid commits nothing
+
+#### Scenario: A resize step never shrinks an item below one cell
+
+- **GIVEN** an item one cell wide
+- **WHEN** the consumer steps its width down
+- **THEN** the item stays one cell wide and the grid commits nothing
+
+#### Scenario: A step onto another item under prevent is refused
+
+- **GIVEN** the prevent mode and an item beside the stepped one
+- **WHEN** the consumer steps the item onto it
+- **THEN** the grid commits nothing and the step reports that it was refused
+
+### Requirement: A dragged-in item previews its landing cell
+
+The package SHALL show an item dragged in from outside any grid where it would land on the grid under the pointer, and SHALL mark the preview refused when the grid would refuse the drop.
+
+#### Scenario: Hovering the grid previews the landing cell
+
+- **GIVEN** a palette entry dragged over an empty cell of the grid
+- **WHEN** the pointer is over the grid
+- **THEN** the placeholder is drawn at the cell it would land on
+- **AND** it is not marked refused
+
+#### Scenario: Hovering an item under prevent previews a refusal
+
+- **GIVEN** the prevent mode and a palette entry dragged over an item of the grid
+- **WHEN** the pointer is over the item
+- **THEN** the placeholder is marked refused
+
+#### Scenario: Leaving the grid clears the preview
+
+- **GIVEN** a palette entry previewed over the grid
+- **WHEN** the pointer leaves the grid
+- **THEN** the placeholder is removed
+
+### Requirement: The package finds the first free cell for a new item
+
+The package SHALL find the first cell a new item of a given span fits in, scanning rows from the top and columns from the left.
+
+#### Scenario: A new item next to existing items
+
+- **GIVEN** a grid whose first row holds two items, four columns wide
+- **WHEN** a new item two columns wide is placed
+- **THEN** it takes the first row's free cell right of them
+
+### Requirement: Items drop in from outside the grid
+
+The package SHALL take an item dragged in from outside every grid, and SHALL return an item released over no grid to where it was.
+
+#### Scenario: Dropping a palette entry into the grid
+
+- **GIVEN** a palette entry dragged with the span it would take
+- **WHEN** it is released over an empty cell of the grid
+- **THEN** the entry is placed at that cell and the grid commits the items it pushes
+
+#### Scenario: A drop outside every grid
+
+- **GIVEN** a palette entry dragged over no grid
+- **WHEN** it is released
+- **THEN** nothing is committed
+
+#### Scenario: A palette entry dropped onto an item under prevent is refused
+
+- **GIVEN** the prevent mode and a palette entry dragged with the span it would take
+- **WHEN** it is released over an item of the grid
+- **THEN** the grid commits nothing
+
+#### Scenario: A dropped item wider than the grid is narrowed to its columns
+
+- **GIVEN** a palette entry wider than the grid's columns
+- **WHEN** it is released over the grid's first column
+- **THEN** the entry is placed at the first column, spanning every column
+
+#### Scenario: A cancelled palette press accepts once on the next release
+
+- **GIVEN** a palette press that the browser cancels
+- **WHEN** the pointer is pressed and released again over the grid
+- **THEN** the entry is placed once
