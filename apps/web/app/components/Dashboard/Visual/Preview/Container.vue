@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { DashboardGridTransfer } from "@/models/dashboard/DashboardGridTransfer";
-import type { CollisionMode, CompactType, GridBlock } from "vue-grid-layout-headless";
+import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
+import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { useVisualStore } from "@/store/dashboard/visual";
 import { getSynchronizedFunction } from "@esposter/shared";
@@ -15,11 +15,7 @@ interface Props {
 const { collision, compactType, visual } = defineProps<Props>();
 // A group's commits, opens and transfers come up from its grid, and a child group's come up from its own container, so each
 // Container passes what it hears from either on to its caller
-const emit = defineEmits<{
-  commit: [changes: GridBlock[]];
-  open: [visual: Visual];
-  transfer: [transfer: DashboardGridTransfer];
-}>();
+const emit = defineEmits<DashboardVisualEmits>();
 const visualStore = useVisualStore();
 const { editItem } = visualStore;
 const container = useTemplateRef("container");
