@@ -1,4 +1,5 @@
-import { getFileSizeReport } from "#src/services/getFileSizeReport";
+import { KIBIBYTE } from "#src/services/constants";
+import { getFileSize } from "#src/services/getFileSize";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -8,6 +9,6 @@ describe("@esposter/configuration", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: up to 16 KB"`);
+    expect(getFileSize(distFile)).toBeLessThanOrEqual(16 * KIBIBYTE);
   });
 });
