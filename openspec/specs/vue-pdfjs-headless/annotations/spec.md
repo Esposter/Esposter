@@ -8,13 +8,14 @@ A document's forms, drawn annotations, comments and XFDF free texts, and the dow
 
 ### Requirement: Forms are filled and kept on save
 
-The package SHALL keep the values a reader types into a document's form fields in the bytes a download carries.
+The package SHALL keep a value a reader types into a text field in the renderer's annotation storage, and SHALL download the renderer's saved bytes once that storage holds it. Whether another reader draws the typed value depends on the field's appearance, which the package does not change.
 
 #### Scenario: Filling a form and downloading it
 
 - **GIVEN** a document with a text field
 - **WHEN** the reader types into the field and downloads the document
-- **THEN** the downloaded bytes are the renderer's saved bytes, which carry the typed value
+- **THEN** the downloaded bytes are the renderer's saved bytes
+- **AND** reading them back gives the field the typed value
 
 ### Requirement: The editor mode is set and drawn annotations are reported
 

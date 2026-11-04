@@ -78,6 +78,7 @@ The viewer SHALL find text in the PDF, highlight every match, step to the previo
 - **GIVEN** a viewer given the terms "invoice" and "total"
 - **WHEN** its document loads
 - **THEN** every match of both terms is highlighted
+- **AND** the search bar shows "invoice total", so Next and Previous continue that search
 
 #### Scenario: Opening a PDF without search terms
 
@@ -124,16 +125,16 @@ The viewer SHALL ask for the password of a password-protected PDF, and SHALL say
 - **THEN** the viewer says the password is wrong
 - **AND** asks again
 
-### Requirement: The zoom readout shows the scale and resets it to the width
+### Requirement: The zoom readout shows the scale and resets it to the opening scale
 
-The viewer SHALL show the scale as a percentage, and choosing the readout SHALL fit the pages to the width of the viewer.
+The viewer SHALL show the scale as a percentage, and choosing the readout SHALL return the pages to the scale a document opens in.
 
 #### Resetting a zoomed document
 
 - **GIVEN** a document zoomed to 150%
 - **WHEN** the reader chooses the zoom readout
-- **THEN** the pages fit the width
-- **AND** the readout shows the percentage the fit gives
+- **THEN** the pages return to the scale a document opens in
+- **AND** the readout shows the percentage that scale gives
 
 #### Zooming out at the smallest scale
 
@@ -190,7 +191,7 @@ The viewer SHALL show one sidebar, opened and closed from the toolbar, whose two
 
 ### Requirement: An outline entry goes to its page
 
-The viewer SHALL go to an outline entry's destination when the reader chooses it, and SHALL list each nested entry under its parent, indented.
+The viewer SHALL go to an outline entry's destination when the reader chooses it, and SHALL list each nested entry under its parent, indented. An entry with no destination is listed as plain text, not as a control.
 
 #### Following an outline entry
 
@@ -203,6 +204,12 @@ The viewer SHALL go to an outline entry's destination when the reader chooses it
 - **GIVEN** an outline entry "Chapter 1" with a nested entry "Section 1.1"
 - **WHEN** the outline is listed
 - **THEN** "Section 1.1" is listed after "Chapter 1" and indented beneath it
+
+#### An outline entry with no destination is plain text
+
+- **GIVEN** an outline entry that links to a web address and has no destination
+- **WHEN** the outline is listed
+- **THEN** the entry is listed as text, not as a control
 
 #### A document with no outline says so
 
@@ -255,23 +262,6 @@ The viewer SHALL turn every page a quarter turn left or right from the menu, and
 - **WHEN** the reader chooses Rotate left
 - **THEN** the pages and their thumbnails are turned a quarter turn counter-clockwise
 
-### Requirement: The reader views the whole viewer full screen
-
-The viewer SHALL fill the screen with the whole viewer, its toolbar and sidebar included, from the menu's Full screen item, which reads Exit full screen while the viewer is full screen.
-
-#### Entering full screen
-
-- **GIVEN** the viewer not full screen
-- **WHEN** the reader chooses Full screen
-- **THEN** the whole viewer fills the screen
-- **AND** the menu item reads Exit full screen
-
-#### Leaving full screen with Escape
-
-- **GIVEN** the viewer full screen
-- **WHEN** the reader presses Escape
-- **THEN** the menu item reads Full screen again
-
 ### Requirement: The reader downloads a copy with a watermark
 
 The viewer SHALL ask for the watermark text in a small dialog, and SHALL download the document with that text on every page, without the pages on screen showing it.
@@ -297,11 +287,18 @@ The viewer SHALL ask for the watermark text in a small dialog, and SHALL downloa
 
 ### Requirement: At a phone's width the sidebar overlays the pages
 
-The viewer SHALL draw the sidebar over the pages at a phone's width rather than beside them, so the pages keep the whole width.
+The viewer SHALL draw the sidebar over the pages at a phone's width rather than beside them, so the pages keep the whole width. It SHALL close when the reader chooses a page from it.
 
 #### The sidebar covers the pages on a phone
 
 - **GIVEN** a phone-width screen with the sidebar open
 - **WHEN** the reader looks at the pages
 - **THEN** the sidebar covers the start edge of the pages
+- **AND** the pages keep the full width of the viewer
+
+#### Choosing a page closes the sidebar on a phone
+
+- **GIVEN** a phone-width screen with the sidebar open
+- **WHEN** the reader chooses an outline entry or a thumbnail
+- **THEN** the sidebar closes
 - **AND** the pages keep the full width of the viewer

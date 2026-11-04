@@ -49,9 +49,9 @@ The package SHALL give the consumer each rendered page's element and its viewpor
 - **WHEN** it is converted with that page's viewport
 - **THEN** the rectangle lands over the same area on screen at every zoom
 
-### Requirement: Zoom stays within the renderer's bounds
+### Requirement: Zoom stays within the package's bounds
 
-The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel about the pointer, never past the renderer's smallest or largest scale.
+The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel about the pointer, never past the package's smallest or largest scale, and SHALL return the scale to the one a document opens in on reset.
 
 #### Scenario: Zooming in at the largest scale
 
@@ -78,6 +78,18 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 - **GIVEN** a viewer on a narrow container
 - **WHEN** a document loads
 - **THEN** its pages are fitted to the container
+
+#### Scenario: Zooming in past the largest scale stops at the package's maximum
+
+- **GIVEN** a document at a scale of 9.1
+- **WHEN** the reader zooms in
+- **THEN** the scale is the package's largest scale
+
+#### Scenario: The zoom reset returns to the scale a document opens in
+
+- **GIVEN** a document zoomed away from the scale it opened in
+- **WHEN** the reader resets the zoom
+- **THEN** the viewer's scale is the scale it opened in
 
 #### Scenario: Pinching to zoom
 
@@ -109,6 +121,12 @@ The package SHALL turn every page a quarter turn clockwise or counter-clockwise 
 - **WHEN** the reader rotates it again
 - **THEN** the pages are back at no rotation
 
+#### Scenario: A page's own quarter turn is kept under the viewer's turn
+
+- **GIVEN** a page whose own rotation is a quarter turn
+- **WHEN** the viewer's rotation is a quarter turn
+- **THEN** the page is drawn at half a turn, the sum of the two
+
 ### Requirement: Search counts and highlights its matches
 
 The package SHALL search the document's text, reporting the number of matches and highlighting each one.
@@ -130,6 +148,20 @@ The package SHALL search the document's text, reporting the number of matches an
 - **GIVEN** a list of two terms passed with the document
 - **WHEN** the document loads
 - **THEN** every match of both terms is highlighted
+
+#### Scenario: Highlighting the terms a document opens with
+
+- **GIVEN** a viewer given the terms "word" and "page"
+- **WHEN** its document loads
+- **THEN** the search query is "word page"
+- **AND** the matches of that query are highlighted
+
+#### Scenario: A document that replaces another starts with no search
+
+- **GIVEN** a document with a search query and matches
+- **WHEN** another document replaces it
+- **THEN** the search query is empty
+- **AND** the match count is zero of zero
 
 ### Requirement: The outline and thumbnails navigate
 
@@ -178,6 +210,12 @@ The package SHALL give the document's outline as bookmarks and draw a page's thu
 - **GIVEN** a thumbnail already drawn in the sidebar
 - **WHEN** the document is rotated a quarter turn
 - **THEN** the thumbnail is drawn turned with its page
+
+#### Scenario: The rows are in view of the sidebar once it mounts, not of the viewport
+
+- **GIVEN** a document whose thumbnails are listed before the sidebar's element exists
+- **WHEN** the sidebar's element mounts
+- **THEN** the rows are watched against the sidebar's element, not the viewport
 
 ### Requirement: A document downloads and prints
 
