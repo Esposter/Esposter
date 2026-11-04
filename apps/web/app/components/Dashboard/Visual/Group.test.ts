@@ -80,8 +80,7 @@ describe("dashboardVisualGroup", () => {
 
     const wrapper = await mountGroup(createGroup([]), true);
 
-    expect(wrapper.text()).toContain("Drop a visual here");
-    expect(wrapper.text()).toContain("Or choose Move to in a visual's menu");
+    expect(wrapper.text()).toBe("Untitled groupDrop a visual hereOr choose Move to in a visual's menu");
   });
 
   test("hands a nested grid's commit, open and transfer up to its caller", async () => {

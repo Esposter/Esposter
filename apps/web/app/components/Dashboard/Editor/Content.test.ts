@@ -284,8 +284,8 @@ describe("dashboardEditorContent", () => {
     const wrapper = await mountEditor([group]);
     await pickTileMenuItem(wrapper, group.id, "Delete visual");
 
-    expect(wrapper.getComponent(UiConfirmDialog).text()).toContain(
-      "Delete this group from the dashboard, and 2 visuals inside?",
+    expect(wrapper.getComponent(UiConfirmDialog).text()).toBe(
+      "Delete Group visualCloseDelete this group from the dashboard, and 2 visuals inside?CancelDelete",
     );
   });
 });
