@@ -16,7 +16,7 @@ export const todayFunction: SurveyLogicFunction = (args, context) => {
     const days = getSurveyOptionalArgument(args[0], 0, toSurveyLogicNumber);
     if (days === undefined) return undefined;
 
-    date.setUTCDate(date.getUTCDate() + days);
+    date.setUTCDate(date.getUTCDate() + Math.trunc(days));
   }
 
   return toSurveyLogicDate(date);

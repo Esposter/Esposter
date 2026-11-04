@@ -7,6 +7,13 @@ describe(todayFunction, () => {
     ["the clock's day at midnight", [], "1970-01-02"],
     ["a negative shift moves back a day", [-1], "1970-01-01"],
     ["a positive shift moves forward a day", [1], "1970-01-03"],
+    ["a fraction of a shift is cut toward zero, so half a day back is the clock's day", [-0.5], "1970-01-02"],
+    ["a fraction of a shift is cut toward zero, so a day and a half back is a day back", [-1.5], "1970-01-01"],
+    [
+      "a fraction of a shift is cut toward zero, so a day and nine tenths forward is a day forward",
+      [1.9],
+      "1970-01-03",
+    ],
     ["a zero shift is the clock's day", [0], "1970-01-02"],
     ["an empty shift moves nothing", [undefined], "1970-01-02"],
     ["a numeric string shift is read as its number, not joined onto the day", ["1"], "1970-01-03"],
