@@ -17,6 +17,7 @@ import {
   PDF_WATERMARK_COLOR,
   PDF_WATERMARK_FONT_SIZE,
 } from "#src/services/constants";
+import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
@@ -76,6 +77,11 @@ describe(usePdfViewer, () => {
   type LinkServiceStub = ReturnType<typeof createLinkService>;
   type Listener = (event: unknown) => void;
   type PdfViewerStub = ReturnType<typeof createPdfViewerStub>;
+  interface EditorLayerStub {
+    div: { hidden: boolean };
+    isEmpty: boolean;
+  }
+  type EditorManagerStub = ReturnType<typeof createEditorManager>;
 
   // The scale a preset zoom lands on in the stub, whatever the preset
   const FIT_SCALE = 1.5;
@@ -95,6 +101,8 @@ describe(usePdfViewer, () => {
   } = { editorModes: [], findEvents: [], scaleWrites: [] };
   // How many matches the stub document holds for any search
   let matches = 0;
+  // The renderer's editor manager for the document it last reported, a double of the layers of its rendered pages
+  let editorManager: EditorManagerStub | undefined;
 
   // The observer the composable makes for its container, kept so a test can report a resize as a browser would
   let reportResize: (() => void) | undefined;
@@ -253,9 +261,30 @@ describe(usePdfViewer, () => {
       PDFLinkService,
       PDFViewer,
     }) as unknown as PdfViewerApi;
-  // The renderer's editor manager is made after a document's first page, which the stub reports by hand
-  const reportEditorManager = () => {
-    stubs.eventBus?.dispatch("annotationeditoruimanager", {});
+  // The renderer's editor manager has a layer for each page it has rendered, and it restores a stored editor onto
+  // The layer as that page renders. The double does so by making the layer hold an editor
+  const createEditorManager = (renderedPages: number[]) => {
+    const layers = new Map<number, EditorLayerStub>(
+      renderedPages.map((pageIndex) => [pageIndex, { div: { hidden: true }, isEmpty: true }]),
+    );
+
+    return {
+      findClonesForPage: vi.fn<(layer: EditorLayerStub) => Promise<unknown[]>>((layer) => {
+        layer.isEmpty = false;
+
+        return Promise.resolve([]);
+      }),
+      getLayer: (pageIndex: number) => layers.get(pageIndex),
+      layers,
+    };
+  };
+  // The stub reports the renderer's editor manager by hand, which the renderer makes after a document's first page.
+  // The pages it has rendered by then are the layers the manager holds
+  const reportEditorManager = (renderedPages: number[] = []) => {
+    editorManager = createEditorManager(renderedPages);
+    stubs.eventBus?.dispatch("annotationeditoruimanager", { uiManager: editorManager });
+
+    return editorManager;
   };
   const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
     const container = window.document.createElement("div");
@@ -283,6 +312,7 @@ describe(usePdfViewer, () => {
     stubs.editorModes = [];
     stubs.findEvents = [];
     stubs.scaleWrites = [];
+    editorManager = undefined;
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -560,7 +590,6 @@ describe(usePdfViewer, () => {
 
     expect(storedAtSave.map(([, entry]) => entry)).toStrictEqual(
       [0, 1, 2].map((pageIndex) => ({
-        annotationElementId: `watermark${pageIndex}`,
         annotationType: PdfEditorMode.FreeText,
         color: PDF_WATERMARK_COLOR,
         deleted: false,
@@ -603,6 +632,48 @@ describe(usePdfViewer, () => {
     expect(stubs.editorModes).toStrictEqual([]);
     reportEditorManager();
     expect(stubs.editorModes).toStrictEqual([PdfEditorMode.Ink]);
+    scope.stop();
+  });
+
+  test("stored free texts are drawn on each page the renderer has rendered", async () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    const manager = reportEditorManager([0, 2]);
+    state.drawStoredEditors();
+    await flushPromises();
+
+    // Page two is not rendered, so its stored free texts are restored when its render draws it
+    expect(manager.findClonesForPage.mock.calls).toStrictEqual([[manager.layers.get(0)], [manager.layers.get(2)]]);
+    expect(manager.layers.get(0)?.div.hidden).toBe(false);
+    expect(manager.layers.get(2)?.div.hidden).toBe(false);
+    scope.stop();
+  });
+
+  test("drawing stored free texts before the renderer reports its editor manager logs nothing", async () => {
+    expect.hasAssertions();
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
+    const { scope, state } = mountViewer(createDocument(3));
+    state.drawStoredEditors();
+    await flushPromises();
+
+    expect(consoleError).not.toHaveBeenCalled();
+    scope.stop();
+  });
+
+  test("a stored free text the renderer cannot restore is logged", async () => {
+    expect.hasAssertions();
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
+    const { scope, state } = mountViewer(createDocument(3));
+    const manager = reportEditorManager([0]);
+    const error = new Error("The restore failed");
+    manager.findClonesForPage.mockRejectedValueOnce(error);
+    state.drawStoredEditors();
+    await flushPromises();
+
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
     scope.stop();
   });
 

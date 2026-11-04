@@ -8,6 +8,8 @@ export interface PdfViewerState {
   actualSize: () => void;
   currentPageNumber: Ref<number>;
   download: (filename: string, watermark?: string) => void;
+  // Draws the free texts a document's storage holds on each page already rendered, as the page's render draws them
+  drawStoredEditors: () => void;
   editorMode: Ref<PdfEditorMode>;
   findNext: () => void;
   findPrevious: () => void;

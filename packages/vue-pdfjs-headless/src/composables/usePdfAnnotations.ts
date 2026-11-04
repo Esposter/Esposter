@@ -69,14 +69,15 @@ const readFreeTexts = (loaded: PDFDocumentProxy): PdfFreeText[] =>
     return [{ contents: data.value ?? "", id, pageNumber: (data.pageIndex ?? 0) + 1, rect: data.rect }];
   }).flat();
 
-// An imported free text is stored as the renderer's own free text, so the save writes it like one drawn. It is keyed
-// Apart from the renderer's numbered editors, which an imported name could otherwise replace, by the XFDF prefix and the
-// Free text's id
+// An imported free text is stored as the renderer's own free text, so the save writes it like one drawn. Its key is the
+// XFDF prefix and its id, apart from the renderer's numbered editors, which an imported name could otherwise replace.
+// It has the shape of a copy of a page's editor, which the renderer restores onto its page as an editor.
+// The clone flag marks it for that restore, and the copy flag keeps its text on the editor.
+// The save then holds it once, as that editor.
 const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
   for (const { contents, id, pageNumber, rect } of freeTexts)
-    loaded.annotationStorage.setValue(
-      `${PDF_EDITOR_KEY_PREFIX}xfdf${id}`,
-      createFreeTextEntry({
+    loaded.annotationStorage.setValue(`${PDF_EDITOR_KEY_PREFIX}xfdf${id}`, {
+      ...createFreeTextEntry({
         color: PDF_FREE_TEXT_COLOR,
         fontSize: PDF_FREE_TEXT_FONT_SIZE,
         id,
@@ -84,7 +85,9 @@ const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
         rect,
         value: contents,
       }),
-    );
+      isClone: true,
+      isCopy: true,
+    });
 };
 
 export const usePdfAnnotations = ({
@@ -127,6 +130,7 @@ export const usePdfAnnotations = ({
         );
 
       storeFreeTexts(loaded, freeTexts);
+      viewer.drawStoredEditors();
 
       return ok(undefined);
     });

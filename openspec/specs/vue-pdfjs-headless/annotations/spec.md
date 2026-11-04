@@ -89,7 +89,7 @@ The package SHALL list a document's text annotations as its comments, each with 
 
 ### Requirement: Free texts are exchanged as XFDF
 
-The package SHALL write free-text annotations as XFDF and read XFDF back into them. Reading XFDF that is not well-formed SHALL return an error and change nothing.
+The package SHALL write free-text annotations as XFDF and read XFDF back into them. Reading XFDF that is not well-formed SHALL return an error and change nothing. An imported free text SHALL be drawn on its page and saved once.
 
 #### Scenario: An XFDF round trip
 
@@ -103,6 +103,13 @@ The package SHALL write free-text annotations as XFDF and read XFDF back into th
 - **WHEN** text that is not well-formed XML is imported
 - **THEN** an error naming the problem is returned
 - **AND** the document still holds only its one free text
+
+#### Scenario: Importing a free text draws it on its page
+
+- **GIVEN** a document of two pages, its first page rendered
+- **WHEN** an XFDF file with a free text on page one is imported
+- **THEN** the free text is drawn on page one
+- **AND** the document holds the free text once
 
 #### Scenario: Importing two free texts with no name stores both
 
@@ -121,7 +128,7 @@ The package SHALL write free-text annotations as XFDF and read XFDF back into th
 - **GIVEN** a document of one page
 - **WHEN** an XFDF file with a free text on page two is imported
 - **THEN** an error naming the page is returned
-- **AND** nothing is stored
+- **AND** nothing is stored or drawn
 
 #### Scenario: A drawn free text is exported
 

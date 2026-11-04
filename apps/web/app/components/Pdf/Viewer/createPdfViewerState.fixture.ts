@@ -9,6 +9,7 @@ export const createPdfViewerState = (overrides: Partial<PdfViewerState> = {}): P
   actualSize: vi.fn<() => void>(),
   currentPageNumber: ref(1),
   download: vi.fn<PdfViewerState["download"]>(),
+  drawStoredEditors: vi.fn<() => void>(),
   editorMode: ref<PdfEditorMode>(PdfEditorMode.None),
   findNext: vi.fn<() => void>(),
   findPrevious: vi.fn<() => void>(),

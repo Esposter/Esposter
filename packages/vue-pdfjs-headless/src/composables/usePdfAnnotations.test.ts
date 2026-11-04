@@ -7,6 +7,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfAnnotations } from "#src/composables/usePdfAnnotations";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
+import { PDF_FREE_TEXT_COLOR, PDF_FREE_TEXT_FONT_SIZE } from "#src/services/constants";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
 import { noop } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
@@ -49,7 +50,10 @@ describe("usePdfAnnotations", () => {
     pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
     { isCommentsWanted = false, onChange }: MountOptions = {},
   ) => {
-    const viewer = { editorMode: ref(PdfEditorMode.None) } as unknown as PdfViewerState;
+    const viewer = {
+      drawStoredEditors: vi.fn<() => void>(),
+      editorMode: ref(PdfEditorMode.None),
+    } as unknown as PdfViewerState;
     const scope = effectScope();
     scopes.push(scope);
     const state = scope.run(() => usePdfAnnotations({ isCommentsWanted, onChange, pdfDocument, viewer }));
@@ -263,12 +267,44 @@ describe("usePdfAnnotations", () => {
     expect.hasAssertions();
 
     const pdfDocument = createDocument([[]]);
-    const { state } = mountAnnotations(pdfDocument);
+    const { state, viewer } = mountAnnotations(pdfDocument);
 
     expect(
       state.importXfdf(writeXfdf([{ contents: "Off the end", id: "stray", pageNumber: 2, rect: [72, 300, 200, 320] }])),
     ).toStrictEqual(err("The XFDF has a free text on page 2, and the document ends at page 1"));
     expect(pdfDocument.annotationStorage.size).toBe(0);
+    expect(viewer.drawStoredEditors).not.toHaveBeenCalled();
+  });
+
+  test("an imported free text is drawn on its page", () => {
+    expect.hasAssertions();
+
+    const pdfDocument = createDocument([[], []]);
+    const { state, viewer } = mountAnnotations(pdfDocument);
+
+    expect(
+      state.importXfdf(writeXfdf([{ contents: "A note", id: "note", pageNumber: 2, rect: [72, 300, 200, 320] }])),
+    ).toStrictEqual(ok(undefined));
+    // Stored as a clone, the renderer restores it onto its page as an editor, so the save holds it once, as that editor
+    expect([...pdfDocument.annotationStorage]).toStrictEqual([
+      [
+        "pdfjs_internal_editor_xfdfnote",
+        {
+          annotationType: PdfEditorMode.FreeText,
+          color: PDF_FREE_TEXT_COLOR,
+          deleted: false,
+          fontSize: PDF_FREE_TEXT_FONT_SIZE,
+          id: "note",
+          isClone: true,
+          isCopy: true,
+          pageIndex: 1,
+          rect: [72, 300, 200, 320],
+          rotation: 0,
+          value: "A note",
+        },
+      ],
+    ]);
+    expect(viewer.drawStoredEditors).toHaveBeenCalledExactlyOnceWith();
   });
 
   test("an imported free text does not replace a drawn annotation", () => {

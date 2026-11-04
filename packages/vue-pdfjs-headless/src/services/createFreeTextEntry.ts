@@ -11,7 +11,8 @@ interface CreateFreeTextEntryParameters {
   value: string;
 }
 
-// The entry the renderer's annotation storage saves as a free-text annotation, written under the editor key prefix
+// The entry the renderer's annotation storage saves as a free-text annotation, written under the editor key prefix.
+// It carries no annotation element id, since a new annotation is not an edit of one the document already holds
 export const createFreeTextEntry = ({
   color,
   fontSize,
@@ -20,7 +21,6 @@ export const createFreeTextEntry = ({
   rect,
   value,
 }: CreateFreeTextEntryParameters): PdfFreeTextEntry => ({
-  annotationElementId: id,
   annotationType: PdfEditorMode.FreeText,
   color,
   deleted: false,

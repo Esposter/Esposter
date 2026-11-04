@@ -3,7 +3,7 @@ import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfPageOverlay } from "#src/models/PdfPageOverlay";
 import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
-import type { PageViewport, PDFDocumentProxy } from "pdfjs-dist";
+import type { AnnotationEditorUIManager, PageViewport, PDFDocumentProxy } from "pdfjs-dist";
 import type {
   EventBus as PdfJsEventBus,
   PDFLinkService as PdfJsLinkService,
@@ -83,10 +83,10 @@ export const usePdfViewer = ({
   let printGeneration = 0;
   // The renderer makes its editor manager once a document's first page is read, and a new document replaces it.
   // A mode set while there is no manager throws, and a throw in a watcher freezes this viewer's rendering.
-  // So the mode is set only once the renderer reports its manager.
-  let isEditorReady = false;
+  // So the mode is set only once the renderer reports its manager, which is also what the stored editors are drawn through.
+  let editorManager: AnnotationEditorUIManager | undefined;
   const applyEditorMode = () => {
-    if (pdfViewer && isEditorReady) pdfViewer.annotationEditorMode = { mode: editorMode.value };
+    if (pdfViewer && editorManager) pdfViewer.annotationEditorMode = { mode: editorMode.value };
   };
 
   const createViewer = (
@@ -124,8 +124,8 @@ export const usePdfViewer = ({
     });
     // The renderer reports each editor manager it makes, which is the first point its mode can be set.
     // A new manager starts in none, so the mode the reader chose is set again on each document.
-    bus.on("annotationeditoruimanager", () => {
-      isEditorReady = true;
+    bus.on("annotationeditoruimanager", (event: { uiManager: AnnotationEditorUIManager }) => {
+      editorManager = event.uiManager;
       applyEditorMode();
     });
     bus.on("pagechanging", (event: { pageNumber: number }) => {
@@ -188,7 +188,7 @@ export const usePdfViewer = ({
     overlays.value = [];
     outline.value = undefined;
     // Setting the document replaces the renderer's editor manager, so its mode waits for the next one's report
-    isEditorReady = false;
+    editorManager = undefined;
     pdfViewer.setDocument(loaded ?? null);
     linkService.setDocument(loaded ?? null);
     // The renderer resets its page and rotation without an event, and the find controller reports nothing on reset.
@@ -303,6 +303,25 @@ export const usePdfViewer = ({
     }).match(noop, console.error);
   });
 
+  // The renderer restores a stored editor onto its page when the page renders, so each rendered page is restored now
+  const drawStoredEditors = getSynchronizedFunction(async () => {
+    const manager = editorManager;
+    if (!manager) return;
+
+    await getResultAsync(async () => {
+      await Promise.all(
+        Array.from({ length: pagesCount.value }, async (_value, pageIndex) => {
+          const layer = manager.getLayer(pageIndex);
+          if (!layer) return;
+
+          await manager.findClonesForPage(layer);
+          // The renderer hides a layer that holds no editor, so a page that holds one now is shown
+          layer.div.hidden = layer.isEmpty;
+        }),
+      );
+    }).match(noop, console.error);
+  });
+
   usePdfZoomGesture({ container, getViewer: () => pdfViewer });
   watch(
     [() => toValue(viewerApi), () => toValue(container), () => toValue(viewer)],
@@ -336,6 +355,7 @@ export const usePdfViewer = ({
     actualSize,
     currentPageNumber,
     download,
+    drawStoredEditors,
     editorMode,
     findNext,
     findPrevious,
