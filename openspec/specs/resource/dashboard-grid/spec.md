@@ -102,11 +102,11 @@ The editor SHALL let the owner resize a visual from any of its eight edges and c
 - **THEN** its top and right edges move
 - **AND** its bottom and left edges stay where they were
 
-#### Scenario: A touch press on a handle starts no resize
+#### Scenario: A touch press on a handle moves the visual
 
 - **GIVEN** a visual in the editor
 - **WHEN** the owner touches its handle and drags
-- **THEN** the visual keeps its size and position
+- **THEN** the visual moves and keeps its size
 
 #### Scenario: A sized-to-content visual's bottom edge changes nothing
 

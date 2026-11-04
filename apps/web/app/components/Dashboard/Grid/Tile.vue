@@ -17,7 +17,8 @@ interface Props {
 }
 
 // A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
-// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. They stay unpainted by decision: the outline and the cursor show them
+// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. A touch on a handle
+// Moves the tile too, since resizing is not a touch gesture. They stay unpainted by decision: the outline and cursor show them
 defineSlots<{ default: () => VNode }>();
 const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
 const emit = defineEmits<{
@@ -78,7 +79,7 @@ useResizeObserver(tile, (entries) => {
         :key="edge"
         class="dashboard-grid-handle"
         :data-edge="edge"
-        @pointerdown.stop="(event) => emit('press', event, edge)"
+        @pointerdown.stop="(event) => emit('press', event, event.pointerType === 'touch' ? undefined : edge)"
       />
     </template>
   </div>

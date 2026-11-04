@@ -131,7 +131,7 @@ export const useGridLayout = <T extends GridItem>(
     // Only the primary button starts a gesture, since a touch or pen contact reports button 0 too
     if (event.button !== 0) return;
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
-    // A resize is a handle's, and a touch resizes from the visual's menu, so a touch press on a handle starts nothing. A touch on
+    // A resize is a handle's, and a touch does not resize, so a touch press that names an edge starts nothing. A touch on
     // The body still moves the item
     if (edge && event.pointerType === "touch") return;
     // An auto-height item takes its height from its content, so an edge that pulls its height starts nothing on it

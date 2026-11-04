@@ -140,6 +140,21 @@ describe("dashboardGrid", () => {
     expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 3, id: visual.id, w: 3, x: 3, y: 0 }]]]);
   });
 
+  test("a touch press on a handle moves the visual", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
+    });
+    const handle = wrapper.get('[data-edge="SouthEast"]');
+    await handle.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId, pointerType: "touch" });
+    await handle.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: 0, pointerId });
+    await handle.trigger("pointerup", { clientX: columnPitch, clientY: 0, pointerId });
+
+    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 1, y: 0 }]]]);
+  });
+
   test("shift with the down arrow saves a focused visual one row taller", async () => {
     expect.hasAssertions();
 
