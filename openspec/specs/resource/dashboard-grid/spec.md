@@ -86,7 +86,7 @@ A dashboard that cannot be edited SHALL let the reader scroll the page with a to
 
 ### Requirement: A visual resizes from any edge or corner
 
-The editor SHALL let the owner resize a visual from any of its eight edges and corners, keeping it at least one cell wide and tall within the grid's columns.
+The editor SHALL let the owner resize a visual from any of its eight edges and corners, keeping it at least one cell wide and tall within the grid's columns. A visual sized to its content resizes from its left and right edges only, since its height is its content's.
 
 #### Scenario: Resizing from a side
 
@@ -102,6 +102,18 @@ The editor SHALL let the owner resize a visual from any of its eight edges and c
 - **THEN** its top and right edges move
 - **AND** its bottom and left edges stay where they were
 
+#### Scenario: A touch press on a handle starts no resize
+
+- **GIVEN** a visual in the editor
+- **WHEN** the owner touches its handle and drags
+- **THEN** the visual keeps its size and position
+
+#### Scenario: A sized-to-content visual's bottom edge changes nothing
+
+- **GIVEN** a visual sized to its content in the editor
+- **WHEN** the owner drags its bottom edge down
+- **THEN** the visual keeps its height and nothing is saved
+
 #### Scenario: Handles are hidden while a visual is not pointed at or focused
 
 - **GIVEN** a visual in the editor that the pointer is not over and that has no focus
@@ -113,6 +125,12 @@ The editor SHALL let the owner resize a visual from any of its eight edges and c
 - **GIVEN** a visual in the editor
 - **WHEN** the pointer moves over it or it takes focus
 - **THEN** a thin outline shows that it can be resized
+
+#### Scenario: A published visual shows no outline
+
+- **GIVEN** a visual on the published page
+- **WHEN** the pointer moves over it
+- **THEN** no outline is drawn
 
 ### Requirement: A visual moves and resizes from the keyboard
 
@@ -129,6 +147,12 @@ The editor SHALL move a focused visual one cell per arrow key, and resize it one
 - **GIVEN** a visual focused in the editor
 - **WHEN** the owner presses Shift and the down arrow key
 - **THEN** the visual is one row taller and the step is saved
+
+#### Scenario: A step that changes a sized-to-content visual's height changes nothing
+
+- **GIVEN** a visual sized to its content focused in the editor
+- **WHEN** the owner presses Shift and the down arrow key
+- **THEN** the visual does not change and nothing is saved
 
 #### Scenario: A step past the grid's edge changes nothing
 

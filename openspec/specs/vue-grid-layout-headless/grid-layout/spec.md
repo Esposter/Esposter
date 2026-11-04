@@ -129,6 +129,24 @@ The package SHALL resize an item from any of its four edges or four corners, kee
 - **THEN** the item starts one column further left and spans one column more
 - **AND** its right edge stays where it was
 
+#### Scenario: A touch press on a handle starts no resize
+
+- **GIVEN** an item in the grid
+- **WHEN** a touch presses its handle and drags it
+- **THEN** the grid commits nothing
+
+#### Scenario: A sized-to-content item resizes its width only
+
+- **GIVEN** an item sized to its content
+- **WHEN** its right edge is pulled one column right
+- **THEN** the item spans one column more and its height does not change
+
+#### Scenario: A sized-to-content item's south edge changes nothing
+
+- **GIVEN** an item sized to its content
+- **WHEN** its bottom edge is pulled one row down
+- **THEN** the grid commits nothing
+
 #### Scenario: A resize past the grid's edge
 
 - **GIVEN** an item at the grid's left edge
@@ -155,6 +173,12 @@ The package SHALL place a padding around the grid that the consumer sets apart f
 ### Requirement: An item can take its height from its content
 
 The package SHALL size an item marked as sized to its content to the whole rows that hold the content's height.
+
+#### Scenario: A grid that is not editable reports no height change
+
+- **GIVEN** a grid that is not editable, with an item sized to its content
+- **WHEN** the content reports a new height
+- **THEN** the grid commits nothing
 
 #### Scenario: An item grows to hold its content
 
@@ -195,11 +219,29 @@ The package SHALL step an item by whole cells, placed as a gesture is placed, an
 - **WHEN** the consumer steps it one column right
 - **THEN** the grid commits the item at the new cell once
 
-#### Scenario: A step past the columns is clamped
+#### Scenario: A step past the last column changes nothing
 
 - **GIVEN** an item at the last column
 - **WHEN** the consumer steps it right
 - **THEN** the item keeps its cell and the grid commits nothing
+
+#### Scenario: A step above the top row changes nothing
+
+- **GIVEN** an item in the top row
+- **WHEN** the consumer steps it up
+- **THEN** the item keeps its cell and the grid commits nothing
+
+#### Scenario: A step that grows an item past the last column changes nothing
+
+- **GIVEN** an item that ends at the last column
+- **WHEN** the consumer grows it one column wider
+- **THEN** the item keeps its span and the grid commits nothing
+
+#### Scenario: A step that changes a sized-to-content item's height changes nothing
+
+- **GIVEN** an item sized to its content
+- **WHEN** the consumer steps it one row taller
+- **THEN** the grid commits nothing
 
 #### Scenario: A resize step never shrinks an item below one cell
 
@@ -229,6 +271,12 @@ The package SHALL show an item dragged in from outside any grid where it would l
 - **GIVEN** the prevent mode and a palette entry dragged over an item of the grid
 - **WHEN** the pointer is over the item
 - **THEN** the placeholder is marked refused
+
+#### Scenario: A layout replaced during a palette drag clears the preview
+
+- **GIVEN** a palette entry previewed over the grid
+- **WHEN** the grid's layout is replaced
+- **THEN** no placeholder is drawn
 
 #### Scenario: Leaving the grid clears the preview
 
