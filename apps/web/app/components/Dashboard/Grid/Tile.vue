@@ -8,8 +8,8 @@ import { ResizeEdge } from "vue-grid-layout-headless";
 
 interface Props {
   geometry: GridGeometry;
-  // Takes its height from the content it draws, so the tile is as tall as that content and reports it
-  isAutoHeight?: true;
+  // Takes its height from the content it draws, so the tile is as tall as that content and reports it, and it resizes its width only
+  isAutoHeight: boolean;
   isDragged: boolean;
   isEditable?: true;
   label: string;
@@ -28,6 +28,8 @@ const emit = defineEmits<{
 }>();
 const tile = useTemplateRef("tile");
 const edges = Object.values(ResizeEdge);
+// An auto-height tile's height is its content's, so only the handles that move its sides are drawn for it
+const widthEdges = [ResizeEdge.East, ResizeEdge.West];
 useResizeObserver(tile, (entries) => {
   if (!isAutoHeight) return;
 
@@ -42,6 +44,7 @@ useResizeObserver(tile, (entries) => {
     class="dashboard-grid-tile"
     absolute
     :aria-label="isEditable ? label : undefined"
+    :data-editable="isEditable || undefined"
     :role="isEditable ? 'group' : undefined"
     :tabindex="isEditable ? 0 : undefined"
     :style="{
@@ -71,7 +74,7 @@ useResizeObserver(tile, (entries) => {
     <slot />
     <template v-if="isEditable">
       <span
-        v-for="edge of edges"
+        v-for="edge of isAutoHeight ? widthEdges : edges"
         :key="edge"
         class="dashboard-grid-handle"
         :data-edge="edge"
@@ -82,16 +85,20 @@ useResizeObserver(tile, (entries) => {
 </template>
 
 <style scoped>
-/* A corner is a square of the handle size, and an edge runs between two corners, so a visual too small for both keeps its
-  corners and loses its edges */
+/* A handle is the handle size, capped at a third of the tile in each axis, so the two corners of a one-column tile never
+  overlap. A corner is a square of that size, and an edge runs between two corners, so a visual too small for both keeps its
+  corners and loses its edges. The percentage resolves against the tile's width for a width and its height for a height */
 .dashboard-grid-tile {
   --dashboard-handle: 0.75rem;
+  --dashboard-cap: min(var(--dashboard-handle), 33%);
 
   outline: var(--ui-border-width) solid transparent;
   outline-offset: 0;
 }
 
-.dashboard-grid-tile:is(:hover, :focus-visible) {
+/* An editable visual outlines in the accent when the pointer is over it or focus is within it. The outline is drawn beyond the
+  border box, so the layout does not move */
+.dashboard-grid-tile[data-editable]:is(:hover, :focus-within) {
   outline-color: var(--ui-accent);
 }
 
@@ -101,9 +108,9 @@ useResizeObserver(tile, (entries) => {
 
 .dashboard-grid-handle[data-edge="North"],
 .dashboard-grid-handle[data-edge="South"] {
-  left: var(--dashboard-handle);
-  right: var(--dashboard-handle);
-  height: var(--dashboard-handle);
+  left: var(--dashboard-cap);
+  right: var(--dashboard-cap);
+  height: var(--dashboard-cap);
   cursor: ns-resize;
 }
 
@@ -117,9 +124,9 @@ useResizeObserver(tile, (entries) => {
 
 .dashboard-grid-handle[data-edge="East"],
 .dashboard-grid-handle[data-edge="West"] {
-  top: var(--dashboard-handle);
-  bottom: var(--dashboard-handle);
-  width: var(--dashboard-handle);
+  top: var(--dashboard-cap);
+  bottom: var(--dashboard-cap);
+  width: var(--dashboard-cap);
   cursor: ew-resize;
 }
 
@@ -135,8 +142,8 @@ useResizeObserver(tile, (entries) => {
 .dashboard-grid-handle[data-edge="NorthEast"],
 .dashboard-grid-handle[data-edge="SouthWest"],
 .dashboard-grid-handle[data-edge="SouthEast"] {
-  width: var(--dashboard-handle);
-  height: var(--dashboard-handle);
+  width: var(--dashboard-cap);
+  height: var(--dashboard-cap);
 }
 
 .dashboard-grid-handle[data-edge="NorthWest"] {

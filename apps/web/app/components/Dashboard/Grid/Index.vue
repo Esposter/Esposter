@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { CollisionMode, CompactType, GridItem } from "vue-grid-layout-headless";
+import type { CollisionMode, CompactType, GridBlock } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_COMMANDS, DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
@@ -19,7 +19,7 @@ interface Props {
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 const { collision, columnNumber, compactType, isEditable, rowHeight, visuals } = defineProps<Props>();
-const emit = defineEmits<{ commit: [changes: GridItem[]]; open: [visual: Visual] }>();
+const emit = defineEmits<{ commit: [changes: GridBlock[]]; open: [visual: Visual] }>();
 const grid = useTemplateRef("grid");
 const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, tiles } = useGridLayout(grid, () => ({
   collision,
@@ -42,7 +42,7 @@ useCommands(() => (isEditable ? DASHBOARD_GRID_COMMANDS : []));
       v-for="{ geometry, isDragged, item, offset } of tiles"
       :key="item.id"
       :geometry
-      :is-auto-height="item.isAutoHeight || undefined"
+      :is-auto-height="item.isAutoHeight"
       :is-dragged
       :is-editable
       :label="`${prettify(item.type)} visual`"
@@ -59,7 +59,7 @@ useCommands(() => (isEditable ? DASHBOARD_GRID_COMMANDS : []));
       class="dashboard-grid-placeholder"
       absolute
       :data-refused="placeholder.isRefused || undefined"
-      :style="getGeometryStyle(placeholder.geometry)"
+      :style="getGeometryStyle(placeholder.geometry, false)"
     />
   </div>
 </template>

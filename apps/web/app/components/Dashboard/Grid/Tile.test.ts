@@ -9,7 +9,15 @@ describe("dashboardGridTile", () => {
   const label = "Bar visual";
   const createTile = (props: object = {}) =>
     mount(DashboardGridTile, {
-      props: { geometry, isDragged: false, isEditable: true, label, offset: { x: 0, y: 0 }, ...props },
+      props: {
+        geometry,
+        isAutoHeight: false,
+        isDragged: false,
+        isEditable: true,
+        label,
+        offset: { x: 0, y: 0 },
+        ...props,
+      },
       slots: { default: "<button>Inside</button>" },
     });
 
@@ -22,6 +30,24 @@ describe("dashboardGridTile", () => {
 
       expect(wrapper.emitted("press")?.map(([, emittedEdge]) => emittedEdge)).toStrictEqual([edge]);
     });
+  });
+
+  test("an auto-height tile draws only its east and west handles, since its height is its content's", () => {
+    expect.hasAssertions();
+
+    const wrapper = createTile({ isAutoHeight: true });
+
+    expect(wrapper.findAll(".dashboard-grid-handle").map((handle) => handle.attributes("data-edge"))).toStrictEqual([
+      "East",
+      "West",
+    ]);
+  });
+
+  test("an editable tile is marked for its outline, and a read-only tile is not", () => {
+    expect.hasAssertions();
+
+    expect(createTile().attributes("data-editable")).toBe("true");
+    expect(createTile({ isEditable: undefined }).attributes("data-editable")).toBeUndefined();
   });
 
   test("a read-only tile has no handles and no tab stop", () => {
