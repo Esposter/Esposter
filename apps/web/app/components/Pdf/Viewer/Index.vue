@@ -47,8 +47,9 @@ const { mdAndDown } = useUiDisplay();
 const isSidebarOpen = useLocalStorage(LocalStorageKey.PdfSidebarOpen, !mdAndDown.value, { writeDefaults: false });
 const isWatermarkOpen = ref(false);
 const isUnavailable = computed(() => isFailed || isViewerFailed.value);
-// The pages' area waits on the viewer's module and on the document, and a failure says so in place of a spinner
-const isLoading = computed(() => !isUnavailable.value && (!viewerApi.value || !pdfDocument));
+// The pages' area waits on the viewer's module and on the document, and a failure says so in place of a spinner. A
+// Password request holds the document back on purpose, so the prompt stands in for the spinner until it is answered
+const isLoading = computed(() => !isUnavailable.value && !isPasswordRequested && (!viewerApi.value || !pdfDocument));
 const submitPassword = () => {
   emit("submitPassword", passwordInput.value);
 };

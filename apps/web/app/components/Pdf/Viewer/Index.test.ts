@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import PdfViewer from "@/components/Pdf/Viewer/Index.vue";
+import UiSpinner from "@/components/Ui/Spinner.vue";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -52,6 +53,22 @@ describe("pdfViewer", () => {
 
     expect(component.text()).toContain("The PDF could not be loaded.");
     expect(component.find('input[type="password"]').exists()).toBe(false);
+  });
+
+  test("a document still loading shows the spinner", async () => {
+    expect.hasAssertions();
+
+    const component = await mountViewer({});
+
+    expect(component.findComponent(UiSpinner).exists()).toBe(true);
+  });
+
+  test("a password request shows the prompt in place of the spinner", async () => {
+    expect.hasAssertions();
+
+    const component = await mountViewer({ isPasswordRequested: true });
+
+    expect(component.findComponent(UiSpinner).exists()).toBe(false);
   });
 
   test("a wrong password says so", async () => {
