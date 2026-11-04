@@ -26,11 +26,7 @@ const goToComment = (value: string) => {
 </script>
 
 <template>
-  <div v-if="comments === undefined" flex flex-col gap-2>
-    <UiSkeleton h-6 />
-    <UiSkeleton h-6 />
-    <UiSkeleton h-6 />
-  </div>
+  <PdfViewerSidebarListSkeleton v-if="comments === undefined" />
   <UiEmptyState v-else-if="comments.length === 0" :meaning="UiIconMeaning.Comment" title="This PDF has no comments" />
   <UiList v-else :items="rows" label="Comments" @select="(value) => goToComment(value)" />
 </template>

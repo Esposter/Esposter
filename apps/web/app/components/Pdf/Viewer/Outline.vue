@@ -37,11 +37,7 @@ const runs = computed(() => {
 </script>
 
 <template>
-  <div v-if="outline === undefined" flex flex-col gap-2>
-    <UiSkeleton h-6 />
-    <UiSkeleton h-6 />
-    <UiSkeleton h-6 />
-  </div>
+  <PdfViewerSidebarListSkeleton v-if="outline === undefined" />
   <UiEmptyState v-else-if="outline.length === 0" :meaning="UiIconMeaning.Bookmark" title="This PDF has no outline" />
   <template v-else>
     <template v-for="(run, index) of runs" :key="index">
