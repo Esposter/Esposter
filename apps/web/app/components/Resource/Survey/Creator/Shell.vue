@@ -18,7 +18,6 @@ import {
 import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { noop } from "@esposter/shared";
 
 // The tabs a narrow screen stacks the three panes into, one pane at a time: the structure pane's two tabs as one tab
 const narrowTabItems: UiTabItem<string>[] = [
@@ -38,7 +37,7 @@ const rightTabItems: UiTabItem<string>[] = [
   { title: THEME_TAB, value: THEME_TAB },
 ];
 const surveyCreatorStore = useSurveyCreatorStore();
-const { document: surveyDocument, isPreview, selectedPointer } = storeToRefs(surveyCreatorStore);
+const { selectedPointer } = storeToRefs(surveyCreatorStore);
 const { moveNodeDown, moveNodeIntoPrevious, moveNodeOut, moveNodeUp, redo, undo } = useSurveyCreatorCommands();
 // A move acts on the selected element, and does nothing while nothing is selected
 const moveSelected = (move: (pointer: string) => unknown) => () => {
@@ -105,9 +104,7 @@ const rightTab = ref(PROPERTIES_TAB);
     <UiTabs v-model="narrowTab" :items="narrowTabItems" label="Survey creator" is-filling>
       <template #default="{ value }">
         <div v-if="value === CANVAS_TAB" flex flex-col gap-2 h-full min-h-0>
-          <ResourceSurveyCreatorToolbar />
-          <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" :on-complete="noop" />
-          <ResourceSurveyCreatorCanvas v-else />
+          <ResourceSurveyCreatorWorkspace />
         </div>
         <div v-else-if="value === STRUCTURE_TAB" flex flex-col gap-4>
           <ResourceSurveyCreatorPalette />
@@ -135,9 +132,7 @@ const rightTab = ref(PROPERTIES_TAB);
       />
     </div>
     <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
-      <ResourceSurveyCreatorToolbar />
-      <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" :on-complete="noop" />
-      <ResourceSurveyCreatorCanvas v-else />
+      <ResourceSurveyCreatorWorkspace />
     </div>
     <div :style="{ width: `${rightWidth}px` }" shrink-0 min-h-0 relative>
       <UiResizeHandle
