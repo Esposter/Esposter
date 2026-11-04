@@ -69,13 +69,19 @@ The viewer SHALL find text in the PDF, with options to match case and whole word
 
 ### Requirement: The reader can download and print a PDF
 
-The viewer SHALL download the original file under its name, and SHALL print every page of it.
+The viewer SHALL download the file under its name, carrying the reader's edits, and SHALL print every page of it.
 
 #### Scenario: Downloading
 
 - **GIVEN** a PDF open in the viewer
 - **WHEN** the reader downloads it
-- **THEN** the original file is saved under the attachment's file name
+- **THEN** the file is saved under the attachment's file name
+
+#### Scenario: Downloading an edited document
+
+- **GIVEN** a PDF whose form the reader has filled in
+- **WHEN** the reader downloads it
+- **THEN** the saved file carries the typed values, as the `vue-pdfjs-headless` annotations spec states
 
 #### Scenario: Printing
 

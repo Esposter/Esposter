@@ -79,6 +79,23 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 - **THEN** the document zooms in
 - **AND** the point between them stays under them
 
+### Requirement: Rotation turns every page a quarter turn
+
+The package SHALL turn every page a quarter turn on each rotate, wrapping after a full turn.
+
+#### Scenario: Rotating a document
+
+- **GIVEN** a document open in the viewer, unrotated
+- **WHEN** the reader rotates it
+- **THEN** every page is turned a quarter turn
+- **AND** the viewer reports the new rotation
+
+#### Scenario: Rotating past a full turn
+
+- **GIVEN** a document turned three quarters
+- **WHEN** the reader rotates it again
+- **THEN** the pages are back at no rotation
+
 ### Requirement: Search counts and highlights its matches
 
 The package SHALL search the document's text, reporting the number of matches and highlighting each one.
