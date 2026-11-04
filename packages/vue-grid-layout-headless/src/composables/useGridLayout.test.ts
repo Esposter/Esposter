@@ -531,6 +531,20 @@ describe(useGridLayout, () => {
     });
   });
 
+  test("a palette drag moving within the cell it is over keeps its preview", async () => {
+    expect.hasAssertions();
+
+    const { grid } = mountGrid({ items: [] });
+    await flushPromises();
+    const { dispatch } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 });
+    dispatch("pointerdown", { clientX: 0, clientY: 0 });
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding });
+    const placeholder = grid.value?.placeholder.value;
+    dispatch("pointermove", { clientX: cellPitch * 2 + spacing.padding + 1, clientY: spacing.padding });
+
+    expect(grid.value?.placeholder.value).toBe(placeholder);
+  });
+
   test("leaving the grid clears the preview", async () => {
     expect.hasAssertions();
 

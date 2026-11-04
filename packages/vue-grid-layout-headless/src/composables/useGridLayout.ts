@@ -6,6 +6,7 @@ import type { GridLayout } from "#src/models/GridLayout";
 import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
 import type { GridPlaceholder } from "#src/models/GridPlaceholder";
 import type { GridPoint } from "#src/models/GridPoint";
+import type { GridPreview } from "#src/models/GridPreview";
 import type { GridStep } from "#src/models/GridStep";
 import type { GridTile } from "#src/models/GridTile";
 import type { MountedGrid } from "#src/models/MountedGrid";
@@ -27,14 +28,6 @@ import { placeMove } from "#src/placement/placeMove";
 import { mountedGrids } from "#src/services/mountedGrids";
 import { checkIsNestedControl, takeOne } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue, watch } from "vue";
-
-// Where a drag or a drop would land: the cell its item is drawn at, whether the collision mode refuses it, and the layout it
-// Leaves, which is the grid's own layout when it is refused
-interface GridPreview {
-  cell: GridItem;
-  isRefused: boolean;
-  layout: GridItem[];
-}
 
 // The gesture state of a grid. A press on an item becomes a drag past the start distance, the drag previews the layout as
 // The pointer moves, and the release writes the cells the drag changed, once. The consumer draws the returned tiles and
@@ -260,7 +253,12 @@ export const useGridLayout = <T extends GridItem>(
       externalPreview.value = undefined;
     },
     preview: (item, point) => {
-      externalPreview.value = getDropPreview(item, point);
+      const preview = getDropPreview(item, point);
+      // A pointer moving within the cell it is over previews the same layout, so the held preview is kept, not redrawn
+      const current = externalPreview.value;
+      if (preview && current?.cell.id === preview.cell.id && checkIsSameCell(preview.cell, current.cell)) return;
+
+      externalPreview.value = preview;
     },
   };
   onMounted(() => {
