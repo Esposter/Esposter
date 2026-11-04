@@ -15,7 +15,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-// A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
 const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 // The answer's order, with any choice it leaves out kept after it, so the list never loses a choice
 const rankedChoices = computed(() => {
