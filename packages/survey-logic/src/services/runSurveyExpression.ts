@@ -6,11 +6,7 @@ import type { Result } from "neverthrow";
 
 import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
-import { toSurveyLogicAnswer } from "#src/services/shared/toSurveyLogicAnswer";
-
-// The answers of a record, each read as an answer
-const toSurveyLogicAnswers = (record: Record<string, SurveyLogicStoredValue>): Record<string, SurveyLogicValue> =>
-  Object.fromEntries(Object.entries(record).map(([name, answer]) => [name, toSurveyLogicAnswer(answer)]));
+import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswer";
 
 // Parses the source and evaluates the tree, or returns the parse's fault.
 // The answers are read once as answers before any expression reads them, so a null the storage holds is unanswered by the time an expression sees it.
