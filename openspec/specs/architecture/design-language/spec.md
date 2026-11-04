@@ -32,7 +32,7 @@ Every text colour token SHALL meet the WCAG AA contrast threshold on every surfa
 
 ### Requirement: A status is shown with a mark or word as well as its colour
 
-A status SHALL be shown with its colour and a mark or a word, never by colour alone.
+A status SHALL be shown with its colour and a mark or a word, never by colour alone. A selection is held to the same rule, so a selected swatch also carries a check mark.
 
 #### Scenario: An error can be told apart without colour
 

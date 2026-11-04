@@ -362,7 +362,6 @@ The viewer SHALL offer Add text, Import annotations and Export annotations in th
 - **GIVEN** a document open in the viewer
 - **WHEN** the reader chooses an XFDF file in Import annotations
 - **THEN** the file's free texts are imported into the document
-- **AND** each is drawn on its page
 
 #### Scenario: A refused import alerts once
 

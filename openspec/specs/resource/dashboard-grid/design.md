@@ -32,7 +32,7 @@ Nothing else is visible. The published page keeps its title, Export PNG and the 
 
 ### Layout, desktop and phone
 
-On desktop the editor is a header over the canvas. The header holds the count, Layout and Add visual on one row. Beneath it the palette panel is open by default, a row of type chips that wraps, and the grid takes the full width at `DASHBOARD_NO_COLUMNS` columns. Each visual shows its menu mark at the top right, and an outline when the pointer is over it or focus is within it. The corner marks are inset from that corner by the `--dashboard-cap` token the tile's corner handle is drawn with, so no mark covers a handle.
+On desktop the editor is a header over the canvas. The header holds the count, Layout and Add visual on one row. Beneath it the palette panel is open by default, a row of type chips that wraps, and the grid takes the full width at `DASHBOARD_NO_COLUMNS` columns. Each visual shows its menu mark at the top right, and an outline when the pointer is over it or focus is within it. The corner marks are inset from the right by the `--dashboard-cap` token the tile's corner handle is drawn with, and from the top by the whole `--dashboard-handle` token, since the cap's percentage has no height to resolve against on an auto-height tile, so no mark covers a handle.
 
 On a phone, the header keeps the same three marks, and the count truncates before a control does. The palette panel is closed by default, so the grid, not the chips, is the first thing on the screen; the reader opens it to add a visual. The grid keeps `DASHBOARD_NO_COLUMNS` columns, since the editor's cell size is the same on every width and a narrower grid would change where saved visuals land. The Layout popover is a popover anchored to its mark and sized to the viewport with `min()`, never a sheet. Visual menus stay visible on touch, since no hover exists there to reveal them. A touch press on a visual's edge is its move, since resizing is not a touch gesture: on a phone a visual is resized from the keyboard or, for a table, the menu's fit height.
 
@@ -132,7 +132,6 @@ The consumers of a dashboard read its groups through `listVisuals`. A published 
 
 ## Notes
 
-- A page of visuals is rejected: the dashboard's content is a tree of visuals whose groups each hold a list, and [pages](../../../rejected/resource/dashboard-pages/design.md) are rejected.
 - The Layout control and the palette are editor-only, so the viewer's page holds no control the editor would need.
 - The outline's colour, the handles' invisibility and the corner cap are checked by eye, since happy-dom does not compute the stylesheet. The tests pin which tiles carry the editable marker, which handles each tile draws, and which gestures a handle starts.
 - The package's collision and compaction names are its own (`CollisionMode`, `CompactType`); the labels a reader sees are the plain words in the Surface table. The stored packing and overlap values are those enum members, so the shared model imports them rather than keeping a second list, and renaming one needs a backfill of every stored dashboard.

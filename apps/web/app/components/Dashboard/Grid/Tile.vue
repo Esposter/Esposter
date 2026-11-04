@@ -88,7 +88,8 @@ useResizeObserver(tile, (entries) => {
 /* A handle is the handle size, capped at a third of the tile in each axis, so the two corners of a one-column tile never
   overlap. A corner is a square of that size, and an edge runs between two corners, so a visual too small for both keeps its
   corners and loses its edges. The percentage resolves against the tile's width for a width and its height for a height. The
-  visual's corner marks are inset by this same cap, so no mark covers a corner */
+  visual's corner marks clear the corner by this cap from the right and by the whole handle from the top, since the cap's
+  percentage has no height to resolve against on an auto-height tile, so no mark covers a corner */
 .dashboard-grid-tile {
   --dashboard-handle: 0.75rem;
   --dashboard-cap: min(var(--dashboard-handle), 33%);

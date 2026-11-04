@@ -8,7 +8,9 @@ A static file lives in one of two places, and the choice is a rule. `apps/web/ap
 flowchart TD
   File["A static file"] --> Named{"Is its URL named by config, the document head, the manifest, a worker or the browser?"}
   Named -->|yes| Public["apps/web/public/, at a fixed path"]
-  Named -->|no| Assets["apps/web/app/assets/, imported by the code that reads it"]
+  Named -->|no| Built{"Does a library build its URL at runtime?"}
+  Built -->|yes| Public
+  Built -->|no| Assets["apps/web/app/assets/, imported by the code that reads it"]
 ```
 
 A bundled URL changes whenever the file's bytes change, so anything that names a file by its URL outside the bundle has to stay in `public/`. These do:
