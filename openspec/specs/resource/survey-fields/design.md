@@ -56,7 +56,7 @@ An invalid radio group, select, tag box, date or datetime field is marked invali
 
 A disabled slider is faded as a whole, its label and value with it, and takes no press or key.
 
-A required question shows one mark after its title, the star drawn in the error colour and hidden from speech. Speech announces the word once, through the route the control takes (see the paragraph on the required mark above). A text question's hint is its description alone, so the word no longer ends it. Each labelled control draws that same mark rather than its own.
+A required question shows one mark after its title, the star drawn in the error colour and hidden from speech. Speech announces the word once, through the route the control takes (see the paragraph on the required mark above). A text question's hint is its description alone, and the required word reaches speech through the field's accessible name. Each labelled control draws that same mark rather than its own.
 
 A dropdown and a tag box with a placeholder show it in the trigger while nothing is picked, in the same muted text a text field's placeholder takes, in place of the question's title that the shell already draws above. The list never offers it, so it cannot be picked.
 
