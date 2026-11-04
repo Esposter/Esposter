@@ -15,7 +15,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-// A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
 const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
   keyedChoices.value.map(({ choice, key }) => ({
