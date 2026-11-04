@@ -26,5 +26,5 @@ const tokenNameSchema = z
 
 export const webpageRootPropsSchema = z.strictObject({
   lang: z.string().min(1).max(MAX_LANG_LENGTH),
-  tokens: createRecordSchema(tokenNameSchema, styleValueSchema, MAX_TOKEN_COUNT).default({}),
+  tokens: createRecordSchema(tokenNameSchema, styleValueSchema, MAX_TOKEN_COUNT),
 }) satisfies z.ZodType<WebpageRootProps>;
