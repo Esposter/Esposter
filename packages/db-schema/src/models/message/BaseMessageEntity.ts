@@ -46,7 +46,8 @@ export const baseMessageEntitySchema = z.object({
   isEdited: z.literal(true).optional(),
   isForward: z.literal(true).optional(),
   isPinned: z.literal(true).optional(),
-  // An empty value is not stored, so a current row can lack any of these three and reads back as its default
+  // Compatibility defaults for rows written before these fields existed: every current writer sets all three
+  // (an empty value is stored as written), so they stay only until a backfill writes them
   mentions: createUniqueArraySchema(selectUserInAuthSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
   message: sanitizedMessageSchema.default(""),
   replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),

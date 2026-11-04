@@ -34,6 +34,7 @@ export const surveyResponseEntitySchema = z.object({
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
   pageNo: z.int().nonnegative(),
-  // An empty token is not stored, so a row without one reads back as ""
+  // Compatibility default for rows written before the token existed: every current writer sets it
+  // Anonymous responses store "", so the default stays only until a backfill writes older rows
   participantToken: z.union([z.literal(""), z.uuid()]).default(""),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;
