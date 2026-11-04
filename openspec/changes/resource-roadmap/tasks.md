@@ -6,7 +6,7 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 - [ ] [Survey purge](../archive/2026-11-04-resource-survey-form-engine-removal/design.md) — publish `PurgeSurveyResources` to the application topic once in each environment, then verify zero survey rows, response rows and invite references and an empty rerun. This needs the owner, and it waits until the Azure Functions host runs the repo's Node major (the node-major reference under `.agents/skills/dependency-updates/references/node-major.md`)
 
-- [ ] [Survey runner and Creator accessibility](../../specs/resource/survey-fields/design.md) — the runner and the Creator pass a recorded accessibility check in both styles and both modes (labelled fields, focus order, announced errors), then the owner listens once with a screen reader
+- [ ] [Survey runner and Creator accessibility](../../specs/resource/survey-fields/design.md) — owed: the owner's one screen-reader listening to the runner's errors and the Creator's list editors; reported and open: a required multiple-text item left empty does not stop a submit or show an error (the engine's answer check, not the field), and a text field's focus is a 10% accent tint at about 1.1:1 against its surround with its ring left transparent, which is a design call on the focus indicator
 
 - [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show
 
