@@ -137,7 +137,7 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
 // The input types the library's text field draws as its own control, for a text question and for each item of a multiple
 // Text question, which takes a narrower list of them; the rest are typed as plain text
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<
-  Partial<Record<SurveyMultipleTextItemInputType | SurveyTextInputType, UiTextFieldType>>
+  Partial<Record<`${SurveyMultipleTextItemInputType | SurveyTextInputType}`, UiTextFieldType>>
 > = {
   [SurveyTextInputType.Email]: UiTextFieldType.Email,
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
