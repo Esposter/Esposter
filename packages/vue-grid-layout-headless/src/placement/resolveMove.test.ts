@@ -14,6 +14,7 @@ describe(resolveMove, () => {
         ],
         { h: 2, id: "a", w: 2, x: 1, y: 0 },
         CollisionMode.Swap,
+        4,
       ),
     ).toStrictEqual([
       { h: 2, id: "a", w: 2, x: 2, y: 0 },
@@ -32,10 +33,30 @@ describe(resolveMove, () => {
         ],
         { h: 2, id: "a", w: 3, x: 0, y: 0 },
         CollisionMode.Swap,
+        4,
       ),
     ).toStrictEqual([
       { h: 2, id: "a", w: 3, x: 0, y: 0 },
       { h: 2, id: "b", w: 2, x: 2, y: 2 },
+    ]);
+  });
+
+  test("a swap pushes the item it lands on when trading places would leave it past the last column", () => {
+    expect.hasAssertions();
+
+    expect(
+      resolveMove(
+        [
+          { h: 1, id: "a", w: 1, x: 3, y: 0 },
+          { h: 1, id: "b", w: 3, x: 0, y: 0 },
+        ],
+        { h: 1, id: "a", w: 1, x: 0, y: 0 },
+        CollisionMode.Swap,
+        4,
+      ),
+    ).toStrictEqual([
+      { h: 1, id: "a", w: 1, x: 0, y: 0 },
+      { h: 1, id: "b", w: 3, x: 0, y: 1 },
     ]);
   });
 });

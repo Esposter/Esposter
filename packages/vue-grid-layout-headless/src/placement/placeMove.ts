@@ -9,4 +9,4 @@ export const placeMove = <T extends GridItem>(
   layout: T[],
   target: GridItem,
   { collision, columnNumber, compactType }: Pick<GridLayoutOptions, "collision" | "columnNumber" | "compactType">,
-): T[] => compactLayout(resolveMove(layout, target, collision), columnNumber, compactType);
+): T[] => compactLayout(resolveMove(layout, target, collision, columnNumber), columnNumber, compactType);
