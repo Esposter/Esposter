@@ -15,21 +15,22 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 // The answer's order, with any choice it leaves out kept after it, so the list never loses a choice
 const rankedChoices = computed(() => {
+  const keyedChoices = getSurveyKeyedChoices(node.props.choices);
   const ranked: SurveyKeyedChoice<SurveyChoice>[] = Array.isArray(answer.value)
-    ? answer.value.flatMap((value) => keyedChoices.value.filter(({ choice }) => choice.value === value))
+    ? answer.value.flatMap((value) => keyedChoices.filter(({ choice }) => choice.value === value))
     : [];
-  return [...ranked, ...keyedChoices.value.filter((keyed) => !ranked.includes(keyed))];
+  return [...ranked, ...keyedChoices.filter((keyed) => !ranked.includes(keyed))];
 });
 const items = computed<UiListItem<string>[]>(() =>
   rankedChoices.value.map(({ choice, key }) => ({ hasMarkSlot: true, title: getSurveyChoiceText(choice), value: key })),
 );
 // The list hands back its keys in their new order, each read back to the value its choice holds
 const onReorder = (keys: string[]) => {
+  const keyedChoices = getSurveyKeyedChoices(node.props.choices);
   answer.value = keys.flatMap((key) =>
-    keyedChoices.value.filter((keyed) => keyed.key === key).map(({ choice }) => choice.value),
+    keyedChoices.filter((keyed) => keyed.key === key).map(({ choice }) => choice.value),
   );
 };
 </script>
