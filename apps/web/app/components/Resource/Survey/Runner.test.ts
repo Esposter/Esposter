@@ -152,7 +152,7 @@ describe("runner", () => {
 
       const label = findLabel(component, "b");
       assert.exists(label);
-      expect(label.text()).toContain("required");
+      expect(label.text()).toContain("*");
 
       const nextButton = findButton(component, "Next");
       assert.exists(nextButton);
@@ -192,7 +192,7 @@ describe("runner", () => {
 
       const label = findLabel(component, "b");
       assert.exists(label);
-      expect(label.text()).not.toContain("required");
+      expect(label.text()).not.toContain("*");
 
       const nextButton = findButton(component, "Next");
       assert.exists(nextButton);
@@ -261,8 +261,8 @@ describe("runner", () => {
       const [firstRow, secondRow] = findRows(component);
       assert.exists(firstRow);
       assert.exists(secondRow);
-      expect(firstRow.text()).toContain("required");
-      expect(secondRow.text()).not.toContain("required");
+      expect(firstRow.text()).toContain("*");
+      expect(secondRow.text()).not.toContain("*");
 
       const completeButton = findButton(component, "Complete");
       assert.exists(completeButton);
