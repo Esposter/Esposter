@@ -159,9 +159,9 @@ The viewer SHALL match whole words or the case only while the menu's Whole word 
 - **WHEN** the reader turns on Whole word
 - **THEN** one match is counted
 
-### Requirement: The sidebar lists the outline or the thumbnails
+### Requirement: The sidebar lists the outline, the thumbnails or the comments
 
-The viewer SHALL show one sidebar, opened and closed from the toolbar, whose two tabs choose between the outline and the thumbnails, and SHALL remember the reader's open or closed choice and tab in the browser.
+The viewer SHALL show one sidebar, opened and closed from the toolbar, whose three tabs choose between the outline, the thumbnails and the comments, and SHALL remember the reader's open or closed choice and tab in the browser.
 
 #### Switching the sidebar between the outline and the thumbnails
 
@@ -299,6 +299,84 @@ The viewer SHALL draw the sidebar over the pages at a phone's width rather than 
 #### Choosing a page closes the sidebar on a phone
 
 - **GIVEN** a phone-width screen with the sidebar open
-- **WHEN** the reader chooses an outline entry or a thumbnail
+- **WHEN** the reader chooses an outline entry, a thumbnail or a comment
 - **THEN** the sidebar closes
 - **AND** the pages keep the full width of the viewer
+
+### Requirement: The Comments tab lists the document's comments
+
+The viewer SHALL list a document's comments in the sidebar's Comments tab, each named by its page and text, and SHALL go to a comment's page when the reader chooses it.
+
+#### Scenario: The comments are listed by page and text
+
+- **GIVEN** a document with a comment on its second page
+- **WHEN** the reader opens the Comments tab
+- **THEN** the comment is listed by its page and its text
+
+#### Scenario: Choosing a comment goes to its page
+
+- **GIVEN** a document with a comment on its second page
+- **WHEN** the reader chooses the comment
+- **THEN** the viewer shows the second page
+
+#### Scenario: A document with no comments says so
+
+- **GIVEN** a document with no comments
+- **WHEN** the reader opens the Comments tab
+- **THEN** the tab says the document has no comments
+
+#### Scenario: Comments still being read are loading
+
+- **GIVEN** a document whose comments are still being read
+- **WHEN** the reader opens the Comments tab
+- **THEN** placeholder rows are shown in place of the empty text
+
+### Requirement: The comments are read only while their tab is open
+
+The viewer SHALL read a document's comments once its Comments tab is opened, so a document whose comments are never wanted has none read.
+
+#### Scenario: The comments are read only once the Comments tab is opened
+
+- **GIVEN** a document open in the viewer with its sidebar on the outline
+- **WHEN** the reader opens the Comments tab
+- **THEN** the document's comments are read
+
+### Requirement: The reader adds text, and imports or exports annotations, from the More menu
+
+The viewer SHALL offer Add text, Import annotations and Export annotations in the More menu. Add text SHALL switch the free-text mode on and off, marked while it is on. Import and Export SHALL read and write the document's free texts as XFDF. All three SHALL be unavailable until a document is open.
+
+#### Scenario: Adding text is marked while it is on, and choosing it turns it off
+
+- **GIVEN** a document open in the viewer with the free-text mode on, so Add text is marked
+- **WHEN** the reader chooses Add text
+- **THEN** the free-text mode is turned off
+
+#### Scenario: Adding text turns the editor mode on
+
+- **GIVEN** a document open in the viewer with the free-text mode off
+- **WHEN** the reader chooses Add text
+- **THEN** the free-text mode is turned on
+
+#### Scenario: Importing annotations hands the file's text to the composable
+
+- **GIVEN** a document open in the viewer
+- **WHEN** the reader chooses an XFDF file in Import annotations
+- **THEN** the file's free texts are imported into the document
+
+#### Scenario: A refused import alerts once
+
+- **GIVEN** an XFDF file the document refuses
+- **WHEN** the reader chooses the file in Import annotations
+- **THEN** one alert names the file and the reason
+
+#### Scenario: Exporting annotations downloads the XFDF under the document's name
+
+- **GIVEN** a document open in the viewer
+- **WHEN** the reader chooses Export annotations
+- **THEN** an XFDF file named after the document is saved
+
+#### Scenario: The annotation tools are unavailable until a document opens
+
+- **GIVEN** no document open
+- **WHEN** the reader opens the More menu
+- **THEN** Add text, Import annotations and Export annotations are disabled

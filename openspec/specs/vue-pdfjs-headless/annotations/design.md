@@ -17,6 +17,8 @@ flowchart TD
   save --> bytes["Download bytes"]
 ```
 
+The app's PDF viewer is the composable's consumer: its toolbar sets the editor mode and imports and exports the XFDF file, and its sidebar's Comments tab asks for the comments, as the [pdf-viewer design](../../architecture/pdf-viewer/design.md) states.
+
 ## What the renderer saves
 
 These are pdf.js behaviours at the version the workspace catalog pins, probed in Node with its legacy build, because the storage's rules belong to the renderer and not to the package:
@@ -38,7 +40,7 @@ An untouched document's storage is empty, so "the storage has changed" is its si
 - **XFDF carries free texts.** Ink, highlight, stamp and comments are not written or read. XFDF does not name the colour or size of a free text, so an imported one takes the renderer's defaults.
 - **Imports are keyed apart from drawn editors, and a page past the end is refused.** pdf.js numbers its editors from zero, so an imported free text named `0` would replace the first drawn annotation; imports are stored under their own key namespace instead. A free text on a page that does not exist makes the renderer's save fail for the whole download, so the import checks the page count before it stores anything. A drawn editor has no element id until a page saves it, so the export takes its id from the key the renderer stores it under.
 - **An imported free text keeps its name as its id only while the name is free.** XFDF names are optional and may repeat, and an import is stored under its id, so an unnamed free text, or one named as an id the document already holds, takes a generated id instead. Without it the second free text would replace the first under one key. The export writes the id back as the name.
-- **Comments are read when wanted, once for each document.** `usePdfAnnotations` reads a document's text annotations the first time its `isCommentsWanted` is true for that document, so a document nobody reads comments of reads none. A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out for its life.
+- **Comments are read when wanted, once for each document.** `usePdfAnnotations` reads a document's text annotations the first time its `isCommentsWanted` is true for that document, so a document nobody reads comments of reads none. `comments` is undefined until the read settles, as the outline is, so a list shows loading rather than an empty list; a read that fails is an empty list, so its tab says so rather than loading for ever. A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out for its life.
 - **Reading XFDF returns a `Result`.** A file that is not well-formed, or a free text with no valid page or rectangle, returns an error that names the problem and imports nothing.
 - **The watermark is written at save, not drawn on screen.** Drawing it into the page canvas was rejected: the mark would never reach the downloaded file, which is where a watermark is for. It is stored on every page before the save and removed after it, so the pages on screen never hold it. It is laid across the middle of the page's unturned box, so the band crosses a page turned a quarter as well.
 - **The editor mode is the renderer's, applied when a document loads.** The renderer resets its mode with its document, so the mode is set again on each load.
@@ -62,7 +64,7 @@ packages/vue-pdfjs-headless/src/models/                           PdfAnnotationC
 | `packages/vue-pdfjs-headless/src/composables/usePdfViewer.ts`   | the editor mode applied to the renderer, and the download through `getDownloadBytes` |
 | `packages/vue-pdfjs-headless/src/composables/usePdfDocument.ts` | the document whose annotation storage `usePdfAnnotations` reads and writes           |
 | `packages/vue-pdfjs-headless/package.json`                      | the `neverthrow` dependency for the XFDF results                                     |
-| `openspec/specs/architecture/pdf-viewer/design.md`              | The app's PDF viewer, which draws none of these controls                             |
+| `openspec/specs/architecture/pdf-viewer/design.md`              | The app's PDF viewer, which mounts these controls                                    |
 
 ## Sources
 
