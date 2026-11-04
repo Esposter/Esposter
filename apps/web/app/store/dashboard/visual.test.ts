@@ -4,6 +4,9 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
+import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
+import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
@@ -12,7 +15,7 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
 // Loaded before there is anything to edit — and before a save has a resource to write to
@@ -241,5 +244,176 @@ describe(useVisualStore, () => {
 
     expect(isSuccessful).toBe(false);
     expect(takeOne(visuals.value).isAutoHeight).toBe(false);
+  });
+
+  // A group takes the visual into its own list, and the dashboard's own list is left as it was
+  test("adds a visual into a group, leaving the dashboard's own list as it was", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({ visuals: [new Visual({ type: VisualType.Group, visuals: [] })] });
+    const visualStore = await setupStore();
+    const { createVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const group = takeOne(visuals.value);
+    createVisual(VisualType.Bar, group.id);
+
+    expect(visuals.value).toHaveLength(1);
+    expect(group.visuals?.map(({ type }) => type)).toStrictEqual([VisualType.Bar]);
+  });
+
+  // A group at the depth cap holds plain visuals only, so a group added inside it is refused and nothing is added
+  test("refuses adding a group inside a group at the depth cap", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({ visuals: createGroupChain(MAX_VISUAL_GROUP_DEPTH + 1) });
+    const visualStore = await setupStore();
+    const { createVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const deepestGroup = takeOne(listVisuals(visuals.value), MAX_VISUAL_GROUP_DEPTH);
+    createVisual(VisualType.Group, deepestGroup.id);
+
+    expect(listVisuals(visuals.value)).toHaveLength(MAX_VISUAL_GROUP_DEPTH + 2);
+  });
+
+  test("deleting a group removes the visuals it holds with it", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Bar })] })],
+    });
+    const visualStore = await setupStore();
+    const { deleteVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const isSuccessful = await deleteVisual({ id: takeOne(visuals.value).id });
+
+    expect(isSuccessful).toBe(true);
+    expect(visuals.value).toStrictEqual([]);
+  });
+
+  // A copy of a group takes a fresh id everywhere in its subtree, so no two visuals in the tree share one
+  test("duplicates a group with fresh ids for every visual it holds", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Bar })] })],
+    });
+    const visualStore = await setupStore();
+    const { duplicateVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const isSuccessful = await duplicateVisual({ id: takeOne(visuals.value).id });
+    const treeVisuals = listVisuals(visuals.value);
+
+    expect(isSuccessful).toBe(true);
+    expect(treeVisuals.map(({ type }) => type)).toStrictEqual([
+      VisualType.Group,
+      VisualType.Bar,
+      VisualType.Group,
+      VisualType.Bar,
+    ]);
+    expect(new Set(treeVisuals.map(({ id }) => id)).size).toBe(treeVisuals.length);
+  });
+
+  // A visual moves with the visuals it holds into another group, at the cell it is dropped on
+  test("moves a visual with its subtree into a group at the cell given", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [
+        new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Bar })] }),
+        new Visual({ type: VisualType.Group, visuals: [] }),
+      ],
+    });
+    const visualStore = await setupStore();
+    const { moveVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const [movedGroup, targetGroup] = visuals.value;
+    assert.exists(movedGroup);
+    assert.exists(targetGroup);
+    moveVisual({ id: movedGroup.id }, targetGroup.id, { h: 4, w: 4, x: 2, y: 1 });
+
+    expect(visuals.value.map(({ id }) => id)).toStrictEqual([targetGroup.id]);
+    expect(targetGroup.visuals?.map(({ id }) => id)).toStrictEqual([movedGroup.id]);
+    expect(movedGroup.visuals?.map(({ type }) => type)).toStrictEqual([VisualType.Bar]);
+    expect({ x: movedGroup.x, y: movedGroup.y }).toStrictEqual({ x: 2, y: 1 });
+  });
+
+  // A move is checked against the depth of every group it carries, so a group moved one level too deep is refused whole
+  test("refuses a move that nests a group past the depth cap", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [
+        new Visual({ type: VisualType.Group, visuals: createGroupChain(MAX_VISUAL_GROUP_DEPTH) }),
+        new Visual({ type: VisualType.Group, visuals: createGroupChain(1) }),
+      ],
+    });
+    const visualStore = await setupStore();
+    const { moveVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const [deepTree, shallowTree] = visuals.value;
+    assert.exists(deepTree);
+    assert.exists(shallowTree);
+    const shallowGroup = takeOne(shallowTree.visuals ?? []);
+    // The deepest group of the first tree sits at the depth cap, so a group moved into it nests one level past the cap
+    moveVisual({ id: shallowGroup.id }, takeOne(listVisuals([deepTree]), MAX_VISUAL_GROUP_DEPTH).id, {
+      h: 4,
+      w: 4,
+      x: 0,
+      y: 0,
+    });
+
+    expect(shallowTree.visuals?.map(({ id }) => id)).toStrictEqual([shallowGroup.id]);
+    expect(visuals.value).toHaveLength(2);
+  });
+
+  // A group moved into a group it holds would detach itself from the tree, so the move is refused
+  test("refuses to move a group into a group it holds", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Group, visuals: [] })] })],
+    });
+    const visualStore = await setupStore();
+    const { moveVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const outerGroup = takeOne(visuals.value);
+    const innerGroup = takeOne(outerGroup.visuals ?? []);
+    moveVisual({ id: outerGroup.id }, innerGroup.id, { h: 4, w: 4, x: 0, y: 0 });
+
+    expect(visuals.value.map(({ id }) => id)).toStrictEqual([outerGroup.id]);
+    expect(outerGroup.visuals?.map(({ id }) => id)).toStrictEqual([innerGroup.id]);
+  });
+
+  // An id names the visual wherever it sits, so a write aimed at a visual held by a group lands on that visual
+  test("updates a visual held by a group by its id alone", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({
+      visuals: [new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Bar })] })],
+    });
+    const visualStore = await setupStore();
+    const { updateVisual } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const held = takeOne(takeOne(visuals.value).visuals ?? []);
+    updateVisual({ id: held.id, x: 3 });
+
+    expect(held.x).toBe(3);
+  });
+
+  // The edit form copies a group as it stood when it opened, so saving it keeps the visuals added to the group since
+  test("keeps the visuals a group holds when its edit is saved", async () => {
+    expect.hasAssertions();
+
+    content = new Dashboard({ visuals: [new Visual({ type: VisualType.Group, visuals: [] })] });
+    const visualStore = await setupStore();
+    const { createVisual, save } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const group = takeOne(visuals.value);
+    const editedGroup = createEditedVisual(group, VisualType.Group);
+    createVisual(VisualType.Bar, group.id);
+    const isSuccessful = await save(editedGroup);
+
+    expect(isSuccessful).toBe(true);
+    expect(group.visuals?.map(({ type }) => type)).toStrictEqual([VisualType.Bar]);
   });
 });
