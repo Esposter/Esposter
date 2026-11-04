@@ -10,7 +10,7 @@ The attachment loads its document once with the package's `usePdfDocument`, and 
 
 The thumbnail draws the first page with `usePdfPage` into its canvas. In a message it is a button, so a click, Enter or Space opens the dialog; in a preview it opens nothing, since the preview's own click opens its message.
 
-The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its controls are the app's, drawn with the UI library, and each one calls a function of the package. The toolbar, the search row, the sidebar, the watermark dialog and the page body are separate components in the Pdf folder, each with one responsibility, and they share the package's state object rather than a provided context.
+The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its controls are the app's, drawn with the UI library, and each one calls a function of the package. `Viewer.vue` is the one component of the viewer: it draws the toolbar, the search row, the password field and the page container inline, and each control calls a function of the package over the shared state object rather than a provided context. The Pdf folder holds no other viewer component; `Thumbnail.vue` is the message row's canvas.
 
 ```mermaid
 flowchart TD
@@ -19,16 +19,14 @@ flowchart TD
   document --> thumbnail["Thumbnail.vue: usePdfPage on the first page"]
   document -->|"a press opens the dialog"| viewer["Viewer: usePdfViewer"]
   viewerLoader["loadPdfViewer: the viewer's components, when the viewer mounts"] -->|"the viewer module"| viewer
-  viewer --> toolbar["Toolbar: pages, zoom, the More menu"]
-  viewer --> search["SearchBar: the query, its count and its matches"]
-  viewer --> sidebar["Sidebar: Outline or ThumbnailRail, one tab at a time"]
-  viewer --> watermark["WatermarkDialog: asks the text, then downloads"]
+  viewer --> toolbar["Toolbar: pages, zoom, rotate, print, download"]
+  viewer --> search["Search row: the query, its count and its matches"]
   viewer --> prompt["the password field, or the failure text"]
 ```
 
 ## Surface
 
-The surface is decided by where a reader's attention is: the bar holds what is used in every session, and everything else waits behind the one More menu or in the sidebar. Each visible control below has a task, a frequency and a reason it is where it is. A control that could not say how often it is used and why it is visible was removed from the surface; the removals are the last table.
+The surface is decided by where a reader's attention is: the bar holds what is used in every session, and everything else waits behind the one More menu or in the sidebar. Each visible control below has a task, a frequency and a reason it is where it is. A control that could not say how often it is used and why it is visible was removed from the surface; the removals are the last table. The table is the target surface: the controls it names that `Viewer.vue` does not draw yet (the sidebar and its toggle, the More menu, full screen, the watermark download, and rotate left and right) are recorded in the [PDF viewer surface change](../../../changes/architecture-pdf-viewer-surface/proposal.md).
 
 ### The controls
 
