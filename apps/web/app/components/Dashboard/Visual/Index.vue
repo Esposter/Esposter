@@ -101,8 +101,10 @@ const { copy } = clipboardStore;
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
     </div>
-    <!-- The corner's marks are inset by the tile's handle cap, so no mark sits over a corner handle -->
-    <div right="[var(--dashboard-cap)]" top="[var(--dashboard-cap)]" flex gap-1 pointer-events-auto absolute z-1>
+    <!-- The corner's marks clear the corner handle: the right inset is the cap, which resolves against the width, and
+      the top is the whole handle, since the cap's percentage has no height to resolve against on an auto-height
+      tile -->
+    <div right="[var(--dashboard-cap)]" top="[var(--dashboard-handle)]" flex gap-1 pointer-events-auto absolute z-1>
       <slot name="actions" :dataset="drawnDataset" />
       <!-- A viewer's file is the published rows, which the snapshot holds, so the export reads nothing live -->
       <UiIconButton
