@@ -214,6 +214,16 @@ The editor's Add visual button SHALL add an Area visual at the first free cell o
 - **WHEN** the owner presses Add visual
 - **THEN** a new Area visual is saved at the first cell that fits it, and the existing visuals do not move
 
+### Requirement: The editor saves a change to the dashboard's visuals on its own
+
+The editor SHALL save a change to the dashboard's visuals on the autosave cadence, with no save control, once the owner stops changing the dashboard.
+
+#### Scenario: a visual added to the dashboard is autosaved
+
+- **GIVEN** a dashboard open in the editor
+- **WHEN** the owner adds a visual and stops changing the dashboard
+- **THEN** the dashboard is saved with the new visual
+
 ### Requirement: A table fits its height to its content
 
 The editor SHALL offer Fit height to content only for a table visual, which then takes the rows its content needs and no more.
