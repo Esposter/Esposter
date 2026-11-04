@@ -1,6 +1,6 @@
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
-import { SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { completeSurvey } from "#src/services/runner/completeSurvey";
+import { SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { createSurveyRunnerState } from "#src/services/runner/createSurveyRunnerState";
@@ -25,6 +25,35 @@ describe(completeSurvey, () => {
 
     expect(completion.answers).toStrictEqual({ a: "no" });
     expect(completion.state.isCompleted).toBe(true);
+  });
+
+  test("a dynamic panel's row drops the answer to a template question its own answers hide", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([
+        {
+          props: {
+            id: "rows",
+            name: "rows",
+            panelCount: 2,
+            template: [
+              { props: { id: "a", name: "a" }, type: SurveyNodeType.Text },
+              { props: { id: "b", name: "b", visibleIf: "{panel.a} = 'yes'" }, type: SurveyNodeType.Text },
+            ],
+          },
+          type: SurveyNodeType.PanelDynamic,
+        },
+      ]),
+    ]);
+
+    const completion = completeSurvey(
+      document,
+      createSurveyRunnerState(document, { rows: [{ a: "no", b: "stale" }] }, 0),
+      now,
+    );
+
+    expect(completion.answers).toStrictEqual({ rows: [{ a: "no" }] });
   });
 
   test("the first page with errors is returned, and the state moves to it unfinished", () => {

@@ -10,6 +10,7 @@ import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAn
 import { SURVEY_NOT_SHOWN_MESSAGE, SURVEY_UNKNOWN_QUESTION_MESSAGE } from "#src/services/runner/constants";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
+import { getSurveyPanelRowAnswers } from "#src/services/runner/getSurveyPanelRowAnswers";
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
 
@@ -46,6 +47,21 @@ export const validateSurveyAnswers = (
 
     if (!questionNames.has(name)) issues.push({ message: SURVEY_UNKNOWN_QUESTION_MESSAGE, name });
     else if (isSubmit && !shownNames.has(name)) issues.push({ message: SURVEY_NOT_SHOWN_MESSAGE, name });
+  }
+  // A submit refuses a row's answer to a template question the row does not show, as it refuses an answer to a hidden question
+  for (const { node } of views) {
+    if (!isSubmit || node.type !== SurveyNodeType.PanelDynamic) continue;
+
+    const rows = answers[node.props.name];
+    if (!Array.isArray(rows)) continue;
+
+    for (const row of rows) {
+      if (typeof row !== "object" || Array.isArray(row)) continue;
+
+      const shownRow = getSurveyPanelRowAnswers(node, row, values, now);
+      if (Object.keys(shownRow).length < Object.keys(row).length)
+        issues.push({ message: SURVEY_NOT_SHOWN_MESSAGE, name: node.props.name });
+    }
   }
 
   for (const view of views) {

@@ -4,6 +4,8 @@ import type {
   SurveyDocument,
   SurveyElementView,
   SurveyPageError,
+  SurveyPanelDynamicNode,
+  SurveyPanelRowView,
 } from "survey-engine";
 
 import { SURVEY_UNNUMBERED_NODE_TYPES } from "@/services/resource/survey/constants";
@@ -11,7 +13,9 @@ import {
   completeSurvey,
   createSurveyRunnerState,
   getSurveyPageElements,
+  getSurveyPanelRowViews,
   getSurveyProgress,
+  getSurveyRunnerValues,
   getSurveyVisiblePageIndexes,
   goToNextSurveyPage,
   goToPreviousSurveyPage,
@@ -55,6 +59,10 @@ export const useSurveyRunner = (
   });
   const pageElements = computed(() => getSurveyPageElements(getDocument(), state.value, now.value));
   const progress = computed(() => getSurveyProgress(getDocument(), state.value, now.value));
+  const values = computed(() => getSurveyRunnerValues(getDocument(), state.value.answers, now.value));
+  // A dynamic panel's row shows the template questions its own answers show, read against the same values the page reads
+  const getRowViews = (node: SurveyPanelDynamicNode, row: SurveyAnswers): SurveyPanelRowView[] =>
+    getSurveyPanelRowViews(node, row, values.value, now.value);
   const visiblePageIndexes = computed(() => getSurveyVisiblePageIndexes(getDocument(), state.value.answers, now.value));
   const isFirstPage = computed(() => visiblePageIndexes.value[0] === state.value.pageIndex);
   const isLastPage = computed(() => isLastSurveyPage(getDocument(), state.value, now.value));
@@ -111,6 +119,7 @@ export const useSurveyRunner = (
     complete,
     errorByPointer,
     errors,
+    getRowViews,
     isCompleted,
     isFirstPage,
     isLastPage,

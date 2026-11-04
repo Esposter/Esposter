@@ -1,4 +1,7 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "survey-engine";
+
 import Runner from "@/components/Resource/Survey/Runner.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
@@ -7,13 +10,37 @@ import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.tes
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { SURVEY_REQUIRED_MESSAGE, SurveyProgressBarPlacement } from "survey-engine";
+import {
+  SURVEY_REQUIRED_MESSAGE,
+  SurveyNodeType,
+  surveyPanelDynamicNodePropsSchema,
+  SurveyProgressBarPlacement,
+} from "survey-engine";
 import { assert, beforeAll, describe, expect, test } from "vitest";
+
+// A dynamic panel named "rows" of two panels over the template, on a page of its own
+const createRowsDocument = (template: SurveyTemplateNode[]) => {
+  const panel: SurveyPanelDynamicNode = {
+    props: {
+      ...surveyPanelDynamicNodePropsSchema.parse({ name: "rows", panelCount: 2 }),
+      id: crypto.randomUUID(),
+      template,
+    },
+    type: SurveyNodeType.PanelDynamic,
+  };
+
+  return createSurveyTestDocument([createSurveyTestPage([panel])]);
+};
+// A panel's row is a child of the dynamic panel's group, so the group's divs are the rows in order
+const findRows = (component: VueWrapper) => component.findAll('[role="group"] > div');
+const findRowLabels = (component: VueWrapper) =>
+  findRows(component).map((row) => row.findAll("label").map((label) => label.text()));
 
 describe("runner", () => {
   // A field loads on demand through a dynamic import, which is module I/O rather than a microtask
-  // So the text field's module is awaited once up front, and each mount then resolves it within its flush
+  // So the text field's and the dynamic panel's modules are awaited once up front, and each mount then resolves them within its flush
   beforeAll(async () => {
+    await import("@/components/Resource/Survey/Field/PanelDynamic.vue");
     await import("@/components/Resource/Survey/Field/Text.vue");
   });
 
@@ -98,6 +125,98 @@ describe("runner", () => {
       });
 
       expect(component.findAll("[data-pointer]")).toHaveLength(1);
+    });
+
+    test("a row shows only the template question its own answer shows", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createRowsDocument([
+            createSurveyTestQuestion("a"),
+            createSurveyTestQuestion("b", { visibleIf: "{panel.a} = 'yes'" }),
+          ]),
+          initialAnswers: { rows: [{ a: "yes" }, { a: "no" }] },
+        },
+      });
+      await flushPromises();
+
+      expect(findRowLabels(component)).toStrictEqual([["a", "b"], ["a"]]);
+    });
+
+    test("a row disables a template question its own answer does not enable", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createRowsDocument([
+            createSurveyTestQuestion("a"),
+            createSurveyTestQuestion("b", { enableIf: "{panel.a} = 'yes'" }),
+          ]),
+          initialAnswers: { rows: [{ a: "yes" }, { a: "no" }] },
+        },
+      });
+      await flushPromises();
+
+      const [firstRow, secondRow] = findRows(component);
+      assert.exists(firstRow);
+      assert.exists(secondRow);
+      const [, firstRowInput] = firstRow.findAll("input");
+      const [, secondRowInput] = secondRow.findAll("input");
+      assert.exists(firstRowInput);
+      assert.exists(secondRowInput);
+      expect(firstRowInput.attributes("disabled")).toBeUndefined();
+      expect(secondRowInput.attributes("disabled")).toBe("");
+    });
+
+    test("a row marks a template question required when its own answer requires it", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createRowsDocument([
+            createSurveyTestQuestion("a"),
+            createSurveyTestQuestion("b", { requiredIf: "{panel.a} = 'yes'" }),
+          ]),
+          initialAnswers: { rows: [{ a: "yes" }, { a: "no" }] },
+        },
+      });
+      await flushPromises();
+
+      const [firstRow, secondRow] = findRows(component);
+      assert.exists(firstRow);
+      assert.exists(secondRow);
+      expect(firstRow.text()).toContain("required");
+      expect(secondRow.text()).not.toContain("required");
+
+      const completeButton = component.findAll("button").find((button) => button.text() === "Complete");
+      assert.exists(completeButton);
+      await completeButton.trigger("click");
+      await flushPromises();
+
+      expect(component.get('[role="alert"]').text()).toBe(SURVEY_REQUIRED_MESSAGE);
+    });
+
+    test("answering a row's question reveals the question in that row only", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createRowsDocument([
+            createSurveyTestQuestion("a"),
+            createSurveyTestQuestion("b", { visibleIf: "{panel.a} = 'yes'" }),
+          ]),
+        },
+      });
+      await flushPromises();
+      const [, secondRow] = findRows(component);
+      assert.exists(secondRow);
+      const [answerInput] = secondRow.findAll("input");
+      assert.exists(answerInput);
+      await answerInput.setValue("yes");
+      await flushPromises();
+
+      expect(findRowLabels(component)).toStrictEqual([["a"], ["a", "b"]]);
     });
 
     test("a progress bar set to the bottom is drawn after the page's questions", async () => {

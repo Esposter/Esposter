@@ -7,6 +7,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageErrors } from "#src/services/runner/getSurveyPageErrors";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
+import { getSurveyPanelRowAnswers } from "#src/services/runner/getSurveyPanelRowAnswers";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
 import { getSurveyVisiblePageIndexesFromValues } from "#src/services/runner/getSurveyVisiblePageIndexes";
 import { toSurveyAnswerValue } from "#src/services/runner/toSurveyAnswerValue";
@@ -27,15 +28,26 @@ export const completeSurvey = (
     if (errors.length > 0) return { answers: {}, errors, state: { ...state, isCompleted: false, pageIndex } };
   }
 
-  const visibleNodes = pageIndexes.flatMap((pageIndex) =>
-    flattenSurveyElementViews(getSurveyPageViews(document, pageIndex, values, now)).map((view) => view.node),
+  const visibleViews = pageIndexes.flatMap((pageIndex) =>
+    flattenSurveyElementViews(getSurveyPageViews(document, pageIndex, values, now)),
   );
+  const visibleNodes = visibleViews.map((view) => view.node);
   const visibleNames = new Set(
     visibleNodes.flatMap((node) => (node.type === SurveyNodeType.Panel ? [] : [node.props.name])),
   );
   const answers: SurveyAnswers = Object.fromEntries(
     Object.entries(state.answers).filter(([name]) => visibleNames.has(name)),
   );
+  // A dynamic panel's rows keep only the template answers their own rows show
+  for (const { node } of visibleViews) {
+    if (node.type !== SurveyNodeType.PanelDynamic) continue;
+
+    const rows = answers[node.props.name];
+    if (Array.isArray(rows))
+      answers[node.props.name] = rows.map((row) =>
+        typeof row === "object" && !Array.isArray(row) ? getSurveyPanelRowAnswers(node, row, values, now) : row,
+      );
+  }
 
   const includedNames = [
     ...visibleNodes.flatMap((node) => (node.type === SurveyNodeType.Expression ? [node.props.name] : [])),

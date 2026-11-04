@@ -1,11 +1,19 @@
 <script setup lang="ts">
-import type { SurveyAnswers, SurveyAnswerValue, SurveyElementView } from "survey-engine";
+import type {
+  SurveyAnswers,
+  SurveyAnswerValue,
+  SurveyElementView,
+  SurveyPanelDynamicNode,
+  SurveyPanelRowView,
+} from "survey-engine";
 
 import { SurveyNodeType } from "survey-engine";
 
 interface Props {
   answers: SurveyAnswers;
   errorByPointer: (pointer: string) => string;
+  // The runner's view of a dynamic panel's template questions for one row, passed down to the field of each panel
+  getRowViews: (node: SurveyPanelDynamicNode, row: SurveyAnswers) => SurveyPanelRowView[];
   isDisabled: boolean;
   questionNumbers: Map<string, number>;
   // What the shuffled choices are ordered by, the session's seed, passed down to every element of the page
@@ -13,7 +21,7 @@ interface Props {
   view: SurveyElementView;
 }
 
-const { answers, errorByPointer, isDisabled, questionNumbers, seed, view } = defineProps<Props>();
+const { answers, errorByPointer, getRowViews, isDisabled, questionNumbers, seed, view } = defineProps<Props>();
 const emit = defineEmits<{ answer: [name: string, value: SurveyAnswerValue | undefined] }>();
 // Only a question answers under its name, so a page's html and image elements have no answer to hold
 const answer = computed(() => ("name" in view.node.props ? answers[view.node.props.name] : undefined));
@@ -32,6 +40,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
       :key="child.pointer"
       :answers
       :error-by-pointer
+      :get-row-views
       :is-disabled="isDisabled || !view.isEnabled"
       :question-numbers
       :seed
@@ -44,6 +53,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
     <div flex-1 min-w-0>
       <ResourceSurveyField
         :error="errorByPointer(view.pointer)"
+        :get-row-views
         :is-disabled="isDisabled || !view.isEnabled"
         :model-value="answer"
         :node="view.node"

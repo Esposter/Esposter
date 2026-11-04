@@ -26,6 +26,7 @@ const {
   complete,
   errorByPointer,
   errors,
+  getRowViews,
   isFirstPage,
   isLastPage,
   next,
@@ -86,6 +87,7 @@ const submit = () => {
         :key="view.pointer"
         :answers="state.answers"
         :error-by-pointer
+        :get-row-views
         :is-disabled
         :question-numbers
         :seed

@@ -1,23 +1,12 @@
-import type { SurveyAnswerValue } from "#src/models/SurveyAnswerValue";
 import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode";
 import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
-import type { SurveyLogicContext, SurveyLogicRecord } from "survey-logic";
+import type { SurveyLogicContext } from "survey-logic";
 
 import { createSurveyNamedAnswerSchema } from "#src/services/runner/answer/createSurveyNamedAnswerSchema";
-import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnabled";
-import { checkSurveyNodeRequired } from "#src/services/runner/checkSurveyNodeRequired";
-import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_WRONG_COUNT_MESSAGE } from "#src/services/runner/constants";
+import { getSurveyPanelRowViews } from "#src/services/runner/getSurveyPanelRowViews";
 import { surveyAnswerValueSchema } from "#src/services/runner/surveyAnswerValueSchema";
-import { toSurveyLogicAnswer } from "survey-logic";
 import { z } from "zod";
-
-// A row's answers as the panel scope a template question's condition reads, a name the row leaves out reading as absent
-const toSurveyPanelScope = (row: Record<string, SurveyAnswerValue | undefined>): SurveyLogicRecord => {
-  const scope: SurveyLogicRecord = {};
-  for (const [name, answer] of Object.entries(row)) if (answer !== undefined) scope[name] = toSurveyLogicAnswer(answer);
-  return scope;
-};
 
 // A dynamic panel's answer: a list of panels within the bounds its owner set, each one answering the template's questions
 // A template question a row hides or disables is skipped for that row: it is neither required nor checked, as a top-level one is not
@@ -31,7 +20,6 @@ export const createSurveyPanelDynamicAnswerSchema = (
 ): z.ZodType => {
   const templateFields = node.props.template.map((question) => ({
     name: question.props.name,
-    question,
     schema: createTemplateAnswerSchema(question),
   }));
   // Each row's shape is held first, which types its answers for the scope above. Its keys are the template's names, so a key none declares is refused here
@@ -45,14 +33,14 @@ export const createSurveyPanelDynamicAnswerSchema = (
     .max(node.props.maxPanelCount, { error: SURVEY_WRONG_COUNT_MESSAGE })
     .superRefine((rows, ctx) => {
       for (const [index, row] of rows.entries()) {
-        const scopes = { panel: toSurveyPanelScope(row) };
+        const views = getSurveyPanelRowViews(node, row, values, now);
         const rowSchema = createSurveyNamedAnswerSchema(
-          templateFields.map(({ name, question, schema }) =>
-            checkSurveyNodeVisible(question, values, now, scopes) &&
-            checkSurveyNodeEnabled(question, values, now, scopes)
-              ? { isRequired: checkSurveyNodeRequired(question, values, now, scopes), name, schema }
-              : { isRequired: false, name, schema: z.unknown() },
-          ),
+          templateFields.map(({ name, schema }) => {
+            const view = views.find((item) => item.node.props.name === name);
+            return view?.isEnabled
+              ? { isRequired: view.isRequired, name, schema }
+              : { isRequired: false, name, schema: z.unknown() };
+          }),
         );
         const result = rowSchema.safeParse(row);
         if (!result.success)

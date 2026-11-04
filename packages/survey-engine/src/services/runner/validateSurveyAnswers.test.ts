@@ -2,8 +2,8 @@ import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMo
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import {
   SURVEY_INVALID_ANSWER_MESSAGE,
-  SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_NOT_SHOWN_MESSAGE,
+  SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
   SURVEY_UNKNOWN_QUESTION_MESSAGE,
 } from "#src/services/runner/constants";
@@ -82,6 +82,32 @@ describe(validateSurveyAnswers, () => {
     expect(validateSurveyAnswers(document, { a: "no", b: "x" }, SurveyAnswerValidationMode.Draft, now)).toStrictEqual(
       [],
     );
+  });
+
+  test("a submit refuses a dynamic panel's row answer to a template question the row hides, and a draft accepts it", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument([
+      createSurveyPage([
+        {
+          props: {
+            id: "rows",
+            name: "rows",
+            template: [
+              { props: { id: "a", name: "a" }, type: SurveyNodeType.Text },
+              { props: { id: "b", name: "b", visibleIf: "{panel.a} = 'yes'" }, type: SurveyNodeType.Text },
+            ],
+          },
+          type: SurveyNodeType.PanelDynamic,
+        },
+      ]),
+    ]);
+    const answers = { rows: [{ a: "no", b: "x" }] };
+
+    expect(validateSurveyAnswers(document, answers, SurveyAnswerValidationMode.Draft, now)).toStrictEqual([]);
+    expect(validateSurveyAnswers(document, answers, SurveyAnswerValidationMode.Submit, now)).toStrictEqual([
+      { message: SURVEY_NOT_SHOWN_MESSAGE, name: "rows" },
+    ]);
   });
 
   test("a draft accepts a missing required answer, and a submit refuses it with the question named", () => {
