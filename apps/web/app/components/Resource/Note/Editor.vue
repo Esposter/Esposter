@@ -53,6 +53,7 @@ useAdoptResourceContent(ResourceType.Note, () => {
 :deep(.ProseMirror) {
   padding: 1rem;
   min-height: 100%;
-  outline: none;
+  /* Its focus ring is drawn just inside the editor, since the scroller around it would cut off a ring drawn outside */
+  outline-offset: calc(var(--ui-focus-width) * -1);
 }
 </style>

@@ -21,7 +21,6 @@ useFocusWhenActive(input, () => isFocused);
       v-model="modelValue"
       aria-label="Command"
       text-inherit
-      outline-none
       bg-transparent
       field-sizing-content
       @focus="emit('focus')"

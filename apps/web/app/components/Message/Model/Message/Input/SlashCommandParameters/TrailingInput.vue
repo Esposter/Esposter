@@ -37,7 +37,6 @@ useFocusWhenActive(input, () => isFocused);
       v-model="trailingMessage"
       aria-label="Message"
       text-inherit
-      outline-none
       bg-transparent
       w-full
       cursor-text

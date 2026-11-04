@@ -134,7 +134,7 @@ watch(isFocusWithin, (newIsFocusWithin) => {
 </template>
 
 <style scoped>
-/* A field the reader is in is tinted as every field is, though its input draws no ring of its own */
+/* A field the reader is in is tinted and ringed as every field is, since its input draws no ring of its own */
 .field:focus-within {
   background-color: color-mix(in srgb, var(--ui-tint) 10%, var(--ui-panel));
 }

@@ -460,7 +460,7 @@ const onGridKeydown = useGridKeyboard({
                 :="getRowProps?.(item)"
                 :class="{ 'cursor-pointer': onOpen }"
                 :tabindex="isCellNavigable ? undefined : 0"
-                focus-visible:outline-hidden
+                focus-visible:outline-offset="[calc(var(--ui-focus-width)*-1)]"
                 hover:bg="[color-mix(in_srgb,var(--ui-tint)_10%,transparent)]"
                 focus-visible:bg="[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]"
                 @click="

@@ -44,7 +44,8 @@ const FORCED_COLORS_EDGE = {
 // Its surface — a chip, a track, a key cap. A container rounds by the container radius, a control by the control
 // Radius. A popover is the top-layer element a menu, a select or a field's suggestions open in, emptied of the
 // Browser's own popover look and padded, so the lifted frame inside it never overlaps what it hangs off. A focused
-// Field draws its style's focus mark in place of the document's ring, which reads as a second edge around a field
+// Field takes the document's ring just inside its edge, as a row does, and its tint over the fill. A neighbour or a
+// Clipped container never cuts the ring off
 const uiSurfaceUtilities = {
   "ui-field": [
     {
@@ -56,11 +57,12 @@ const uiSurfaceUtilities = {
     },
     {
       "background-color": "color-mix(in srgb, var(--ui-tint) 10%, var(--ui-field-background))",
-      // The ring kept but unseen, since forced colours drop the tint and paint the outline in
-      "outline-color": "transparent",
-      // A field the library wraps around an editable of its own, such as the rich text editor's, is focused while
-      // That is
-      [symbols.selector]: (selector: string) => `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus))`,
+      // The document's ring, drawn inside the edge so a field packed in a group is never cut off by its neighbour
+      outline: "var(--ui-focus-width) solid var(--ui-accent)",
+      "outline-offset": "calc(var(--ui-focus-width) * -1)",
+      // A field around an editable of its own, such as a token field's input, is focused while the editable is
+      [symbols.selector]: (selector: string) =>
+        `${selector}:is(:focus-visible, :has([contenteditable="true"]:focus, :is(input, textarea):focus-visible))`,
     },
     FORCED_COLORS_EDGE,
   ],
@@ -247,14 +249,14 @@ export default defineConfig({
       "data-[variant=Accent]:bg-accent data-[variant=Accent]:text-background",
       "data-[variant=Danger]:bg-error data-[variant=Danger]:text-background",
       // A trigger that holds a value, drawn as the field it is — a select's — and the search field the palette's
-      // Trigger opens, in a search field's pill
-      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-hidden data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
+      // Trigger opens, in a search field's pill. Focused, it rings inside its edge and tints over its fill
+      "data-[variant=Field]:bg-[var(--ui-field-background)] data-[variant=Field]:shadow-none data-[variant=Field]:text-text data-[variant=Field]:focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)] data-[variant=Field]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // A field-toned toggle — a reaction — pressed takes a light tint of the info colour rather than the accent's
       // Fill, which reads too heavy for a count many of them sit beside
       "data-[variant=Field]:aria-pressed:bg-[color-mix(in_srgb,var(--ui-info)_10%,var(--ui-field-background))] data-[variant=Field]:aria-pressed:text-text",
       // An invalid field is tinted in the error colour, as an invalid text field is, whichever field it is drawn as
       "data-[variant=Field]:aria-[invalid=true]:bg-[var(--ui-field-invalid-background)]",
-      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-hidden data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
+      "data-[variant=Search]:bg-[var(--ui-field-background)] data-[variant=Search]:shadow-none data-[variant=Search]:text-text data-[variant=Search]:rd-[var(--ui-pill-radius)] data-[variant=Search]:focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)] data-[variant=Search]:focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_10%,var(--ui-field-background))]",
       // No surface of its own: clear on whatever it sits on, tinted in the accent while hovered. Over a picture, where
       // Clear would not read, a button takes the raised default instead. A quiet toggle still fills while pressed, as a
       // Toolbar's bold does
@@ -275,13 +277,14 @@ export default defineConfig({
     "ui-header-trigger":
       "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
     // One row of a list, pressed: a row, tinted while it is hovered, and more while it is the highlighted, selected,
-    // Current or focused one. The tint marks a focused row, so it draws no ring as well. Under a finger it is eleven
-    // Steps tall at the least, as a button is
+    // Current or focused one. A focused row rings as `ui-row` does. Under a finger, eleven steps tall, as a button is
     "ui-item":
-      "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer focus-visible:outline-hidden hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+      "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
     // One row of a list that goes nowhere — an activity entry, a session — laid out as every row is: a mark's column,
-    // The title and whatever ends the row, on one line one control height tall
-    "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)]",
+    // The title and whatever ends the row, on one line one control height tall. A focused row rings inside its edge.
+    // So a neighbour in the list never cuts the ring off
+    "ui-row":
+      "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)] focus-visible:outline-offset-[calc(var(--ui-focus-width)*-1)]",
     // A row of tabs on a divider, and one tab in it, which draws the active indicator over its own stretch of the line
     // In the accent while it is the selected tab or the current page's link, and is eleven steps tall under a finger. A header tab is also the chosen radio of a toggle
     // Group drawn as one
