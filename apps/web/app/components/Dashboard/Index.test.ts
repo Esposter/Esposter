@@ -6,12 +6,13 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import DashboardIndex from "@/components/Dashboard/Index.vue";
+import { readTileRectangles } from "@/services/dashboard/grid/readTileRectangles.test";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -85,18 +86,7 @@ describe("dashboardIndex", () => {
     });
     await flushPromises();
 
-    expect(
-      wrapper.findAll(".dashboard-grid-tile").map((tile) => {
-        assert(tile.element instanceof HTMLElement);
-
-        return {
-          height: tile.element.style.height,
-          left: tile.element.style.left,
-          top: tile.element.style.top,
-          width: tile.element.style.width,
-        };
-      }),
-    ).toStrictEqual([
+    expect(readTileRectangles(wrapper)).toStrictEqual([
       { height: "110px", left: "10px", top: "10px", width: "300px" },
       { height: "110px", left: "10px", top: "130px", width: "300px" },
     ]);

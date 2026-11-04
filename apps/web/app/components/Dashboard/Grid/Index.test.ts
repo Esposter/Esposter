@@ -6,6 +6,7 @@ import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
+import { readTileRectangles } from "@/services/dashboard/grid/readTileRectangles.test";
 import { stubElementAtPoint } from "@/services/dashboard/grid/stubElementAtPoint.test";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { useDashboardStore } from "@/store/dashboard";
@@ -89,18 +90,7 @@ describe("dashboardGrid", () => {
       },
     });
 
-    expect(
-      wrapper.findAll(".dashboard-grid-tile").map((tile) => {
-        assert(tile.element instanceof HTMLElement);
-
-        return {
-          height: tile.element.style.height,
-          left: tile.element.style.left,
-          top: tile.element.style.top,
-          width: tile.element.style.width,
-        };
-      }),
-    ).toStrictEqual([
+    expect(readTileRectangles(wrapper)).toStrictEqual([
       { height: "40px", left: "10px", top: "10px", width: "950px" },
       { height: "90px", left: "250px", top: "60px", width: "150px" },
       { height: "40px", left: "650px", top: "60px", width: "150px" },
