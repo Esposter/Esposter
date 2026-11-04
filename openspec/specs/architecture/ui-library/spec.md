@@ -255,16 +255,30 @@ A grid or calendar SHALL move focus one cell or day at a time with the arrow key
 - **THEN** the day is announced as disabled
 - **AND** the day is not chosen
 
-### Requirement: A required label carries one mark that speech skips and announces the word once
+### Requirement: A required control says it is required once, through aria-required or its name
 
-A label a call site marks required SHALL draw a mark that assistive technology does not read, and SHALL announce the word required once, beside the label.
+A control a call site marks required SHALL say so once. A control whose role takes aria-required SHALL take it, and its label's mark SHALL be drawn for sight alone. A control whose role does not take it SHALL be named with the word required, so its name carries the word once, and the mark SHALL NOT be read.
 
-#### Scenario: A required text field's label is read once as required
+#### Scenario: A required text field says it is required through aria-required
 
 - **GIVEN** a text field that a call site marks required
-- **WHEN** the field's label is read
-- **THEN** the label is announced with the word required once
-- **AND** the mark itself is not announced
+- **WHEN** the field is read
+- **THEN** its input is announced as required through aria-required
+- **AND** its label's mark is drawn for sight alone, so the word is announced once
+
+#### Scenario: A required slider or popover trigger is named with the word required
+
+- **GIVEN** a slider or a date field that a call site marks required
+- **WHEN** its control is read
+- **THEN** its name is its label with the word required
+- **AND** it takes no aria-required, since its role does not take one
+
+#### Scenario: A required mark's word is read once and its star never
+
+- **GIVEN** a required mark
+- **WHEN** it is read
+- **THEN** the star is hidden from speech
+- **AND** the word required is read once
 
 ### Requirement: A radio group, select or date field a call site marks invalid is drawn in the error colour
 
@@ -301,6 +315,14 @@ A toggle group or slider given as disabled SHALL take no press and no key, and S
 - **WHEN** the reader presses another option
 - **THEN** the choice does not change
 
+#### Scenario: An invalid slider marks its thumb and tints its track
+
+- **GIVEN** a slider that a call site marks invalid
+- **WHEN** the slider is drawn
+- **THEN** its thumb is marked invalid
+- **AND** its track is tinted in the error colour
+- **AND** its group takes no invalid mark
+
 #### Scenario: A disabled slider does not move on a key
 
 - **GIVEN** a slider that is disabled
@@ -317,6 +339,12 @@ A rating scale SHALL be one radio group of its numbered steps, each step's mark 
 - **WHEN** the pointer rests on the fourth step and then leaves the scale
 - **THEN** the first four steps are filled while the pointer rests on the fourth
 - **AND** only the first two are filled once it leaves
+
+#### Scenario: A key that moves the choice ends the preview
+
+- **GIVEN** a scale with its choice at two, and the pointer resting on the fourth step
+- **WHEN** a key moves the choice to the third step
+- **THEN** the first three steps are filled, the preview having ended
 
 #### Scenario: A disabled scale neither changes its choice nor previews
 

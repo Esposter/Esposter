@@ -74,7 +74,7 @@ A dropdown or tag box SHALL show the placeholder its author set in its trigger w
 
 ### Requirement: An image picker draws each picture at the size its author set
 
-An image picker SHALL draw each picture at the pixel width and height its author set, and SHALL draw an unsized picture at the default size of a row's mark.
+An image picker SHALL draw each picture at the pixel width and height its author set, up to the largest size a picture is drawn at, and SHALL draw an unsized picture at the default size of a row's mark.
 
 #### Scenario: A sized picture is drawn at its pixels and keeps its title beside it
 
