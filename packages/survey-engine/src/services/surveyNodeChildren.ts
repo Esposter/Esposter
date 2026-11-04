@@ -2,37 +2,38 @@ import type { SurveyNode } from "#src/models/SurveyNode";
 import type { BlockChildren } from "headless-block-editor";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { exhaustiveGuard } from "@esposter/shared";
 import { NO_BLOCK_SLOTS } from "headless-block-editor";
 
-// The children port of a survey: each node type's slots as the typed list of nodes that slot holds, keyed by the type tag
-// Keyed by every node type, so a new type without an entry fails the satisfies check rather than falling through to no slots
-const SURVEY_NODE_CHILDREN_MAP = {
-  [SurveyNodeType.Boolean]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.ButtonGroup]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Checkbox]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Comment]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Dropdown]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Expression]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Html]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Image]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.ImagePicker]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Matrix]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.MatrixDynamic]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.MultipleText]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Page]: (node) => ({ children: node.props.children }),
-  [SurveyNodeType.Panel]: (node) => ({ children: node.props.children }),
-  [SurveyNodeType.PanelDynamic]: (node) => ({ template: node.props.template }),
-  [SurveyNodeType.RadioGroup]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Ranking]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Rating]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Slider]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.TagBox]: () => NO_BLOCK_SLOTS,
-  [SurveyNodeType.Text]: () => NO_BLOCK_SLOTS,
-} as const satisfies {
-  [Type in SurveyNodeType]: (
-    node: Extract<SurveyNode, { type: Type }>,
-  ) => Readonly<Record<string, readonly SurveyNode[]>>;
+// The children port of a survey: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
+// A node type without a case fails the typecheck at the default, rather than falling through to no slots
+export const surveyNodeChildren: BlockChildren<SurveyNode> = (node) => {
+  switch (node.type) {
+    case SurveyNodeType.Boolean:
+    case SurveyNodeType.ButtonGroup:
+    case SurveyNodeType.Checkbox:
+    case SurveyNodeType.Comment:
+    case SurveyNodeType.Dropdown:
+    case SurveyNodeType.Expression:
+    case SurveyNodeType.Html:
+    case SurveyNodeType.Image:
+    case SurveyNodeType.ImagePicker:
+    case SurveyNodeType.Matrix:
+    case SurveyNodeType.MatrixDynamic:
+    case SurveyNodeType.MultipleText:
+    case SurveyNodeType.RadioGroup:
+    case SurveyNodeType.Ranking:
+    case SurveyNodeType.Rating:
+    case SurveyNodeType.Slider:
+    case SurveyNodeType.TagBox:
+    case SurveyNodeType.Text:
+      return NO_BLOCK_SLOTS;
+    case SurveyNodeType.Page:
+    case SurveyNodeType.Panel:
+      return { children: node.props.children };
+    case SurveyNodeType.PanelDynamic:
+      return { template: node.props.template };
+    default:
+      return exhaustiveGuard(node);
+  }
 };
-
-export const surveyNodeChildren: BlockChildren<SurveyNode> = (node) =>
-  SURVEY_NODE_CHILDREN_MAP[node.type](node as never);
