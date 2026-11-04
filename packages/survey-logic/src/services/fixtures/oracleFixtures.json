@@ -5378,24 +5378,6 @@
     "value": { "type": "string", "value": "1970-04-01" }
   },
   {
-    "expression": "currentDate()",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "string", "value": "1970-01-02T13:00:00.000" }
-  },
-  { "expression": "currentDate()", "answers": {}, "value": { "type": "string", "value": "1970-01-02T13:00:00.000" } },
-  {
-    "expression": "currentYear()",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": 1970 }
-  },
-  { "expression": "currentYear()", "answers": {}, "value": { "type": "number", "value": 1970 } },
-  {
     "expression": "age('1936-01-02')",
     "answers": {
       "a": 5,
@@ -5726,39 +5708,6 @@
     "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
   },
   {
-    "expression": "getDate('1970-01-02')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "string", "value": "1970-01-02" }
-  },
-  { "expression": "getDate('1970-01-02')", "answers": {}, "value": { "type": "string", "value": "1970-01-02" } },
-  {
-    "expression": "getYear('1999-12-31')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": 1999 }
-  },
-  { "expression": "getYear('1999-12-31')", "answers": {}, "value": { "type": "number", "value": 1999 } },
-  {
-    "expression": "getYear('x')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
-  },
-  {
-    "expression": "getYear('x')",
-    "answers": {},
-    "value": { "type": "number", "value": "NaN" },
-    "deviation": { "ours": { "type": "undefined" }, "rule": "one-absent-value" }
-  },
-  {
     "expression": "month('1970-03-15')",
     "answers": {
       "a": 5,
@@ -5809,33 +5758,6 @@
     "value": { "type": "number", "value": 2024 }
   },
   { "expression": "year('2024-03-15')", "answers": {}, "value": { "type": "number", "value": 2024 } },
-  {
-    "expression": "diffDays('1970-01-01', '1970-01-10')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": 9 }
-  },
-  { "expression": "diffDays('1970-01-01', '1970-01-10')", "answers": {}, "value": { "type": "number", "value": 9 } },
-  {
-    "expression": "diffDays('1970-01-10', '1970-01-01')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": 9 }
-  },
-  { "expression": "diffDays('1970-01-10', '1970-01-01')", "answers": {}, "value": { "type": "number", "value": 9 } },
-  {
-    "expression": "diffDays('1970-01-01')",
-    "answers": {
-      "a": 5,
-      "m": [{ "p": 1, "q": "x" }, { "p": 2, "q": "y" }, { "p": "3", "q": "z" }, { "p": "x", "q": "w" }, { "q": "v" }]
-    },
-    "value": { "type": "number", "value": 0 }
-  },
-  { "expression": "diffDays('1970-01-01')", "answers": {}, "value": { "type": "number", "value": 0 } },
   {
     "expression": "maxInArray({m}, 'p', 'q', '{p} > 1')",
     "answers": {

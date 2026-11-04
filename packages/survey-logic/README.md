@@ -22,7 +22,6 @@ Design notes live in [the survey logic design](https://github.com/Esposter/Espos
 | :-------------------------------------------------------------------------------------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at                                        |
 | `tokenizeSurveyExpression`                                                                    | function | Reads an expression's source into the tokens the parser reads                                                                                        |
-| `collectSurveyExpressionReferences`                                                           | function | The distinct question names a tree reads, in the order each is first read                                                                            |
 | `runSurveyExpression`                                                                         | function | Parses an expression and evaluates it over a survey's answers at the context's clock, or returns the parse's fault                                   |
 | `checkSurveyExpression`                                                                       | function | Refuses an expression that does not parse, calls a function the package lacks, or calls an array function's filter form, naming the first such fault |
 | `SurveyExpressionNode`                                                                        | type     | A parsed expression, each node told apart by its `type`                                                                                              |
@@ -41,14 +40,9 @@ Each function is called by its name, written in any case. A call to a name no fu
 | `avgInArray`   | The average of a field over the items of an array value                                      |
 | `count`        | How many values are passed, arrays flattened                                                 |
 | `countInArray` | How many items of an array value hold a value in a field                                     |
-| `currentDate`  | The clock's moment, as a date and time                                                       |
-| `currentYear`  | The year of the clock                                                                        |
 | `dateAdd`      | A date moved by an amount of an interval, in days by default                                 |
 | `dateDiff`     | The amount of an interval between two dates, counted in exact time                           |
 | `day`          | The day of the month of a date, or of the clock's day when the date is empty                 |
-| `diffDays`     | The calendar days between two dates                                                          |
-| `getDate`      | A value read as a date and written back in the form a date answer takes                      |
-| `getYear`      | The year of a date                                                                           |
 | `iif`          | The second value when the condition is truthy, otherwise the third                           |
 | `max`          | The largest of the values passed, arrays flattened                                           |
 | `maxInArray`   | The largest value of a field over an array's items, or another field of that item            |

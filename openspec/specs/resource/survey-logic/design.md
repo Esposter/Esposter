@@ -58,7 +58,6 @@ Each rule names the one function that carries it, and each deviation below names
 | `packages/survey-logic/src/services/runSurveyExpression.ts`               | parses and evaluates a source at the context's clock                             |
 | `packages/survey-logic/src/services/checkSurveyExpression.ts`             | refuses a source that does not parse, calls an unknown function or uses a filter |
 | `packages/survey-logic/src/services/findSurveyExpressionRefusal.ts`       | finds the first refused call in source order                                     |
-| `packages/survey-logic/src/services/collectSurveyExpressionReferences.ts` | the distinct answer names a tree reads                                           |
 | `packages/survey-logic/src/services/functions/surveyLogicFunctionMap.ts`  | the registry the evaluator and the check read, merged from the two function maps |
 | `packages/survey-logic/src/services/shared/toSurveyLogicAnswer.ts`        | the answer as the evaluator reads it, with a storage null as undefined (R1)      |
 | `packages/survey-logic/src/services/shared/toSurveyLogicNumber.ts`        | the one reader of a text as a number (R2)                                        |
