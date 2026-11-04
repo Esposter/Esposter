@@ -63,7 +63,9 @@ const { gridHeight, startGesture, startResize, tiles } = useGridLayout(root, () 
         width: `${geometry.width}px`,
       }"
       @pointerdown="startGesture($event, item)"
-    />
+    >
+      <span class="resize-handle" @pointerdown.stop="startResize($event, item)" />
+    </div>
   </div>
 </template>
 ```
