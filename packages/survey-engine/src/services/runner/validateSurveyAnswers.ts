@@ -5,7 +5,7 @@ import type { SurveyDocument } from "#src/models/SurveyDocument";
 import { SurveyAnswerValidationMode } from "#src/models/SurveyAnswerValidationMode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { flattenSurveyQuestions } from "#src/services/flattenSurveyQuestions";
-import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { SURVEY_NOT_SHOWN_MESSAGE, SURVEY_UNKNOWN_QUESTION_MESSAGE } from "#src/services/runner/constants";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
@@ -66,7 +66,7 @@ export const validateSurveyAnswers = (
 
   for (const view of views) {
     if (view.node.type === SurveyNodeType.Panel) continue;
-    if (!isSubmit && isSurveyAnswerEmpty(answers[view.node.props.name])) continue;
+    if (!isSubmit && checkSurveyAnswerEmpty(answers[view.node.props.name])) continue;
 
     issues.push(...getSurveyQuestionErrors(view, answers, values, now).map(({ message, name }) => ({ message, name })));
   }

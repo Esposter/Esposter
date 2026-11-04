@@ -29,12 +29,42 @@ describe(createSurveyMultipleTextAnswerSchema, () => {
     expect(result.success).toBe(true);
   });
 
-  test("refuses a required item left empty", () => {
+  test("accepts an optional item left empty", () => {
+    expect.hasAssertions();
+
+    const result = createSurveyMultipleTextAnswerSchema(node).safeParse({ a: "a", b: "" });
+
+    expect(result.success).toBe(true);
+  });
+
+  test("refuses a required item whose key is absent, naming the item", () => {
+    expect.hasAssertions();
+
+    const result = createSurveyMultipleTextAnswerSchema(node).safeParse({});
+
+    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: SURVEY_REQUIRED_MESSAGE, path: ["a"] },
+    ]);
+  });
+
+  test("refuses a required item left empty, naming the item", () => {
     expect.hasAssertions();
 
     const result = createSurveyMultipleTextAnswerSchema(node).safeParse({ a: "" });
 
-    expect(getSurveyFirstMessage(result)).toBe(SURVEY_REQUIRED_MESSAGE);
+    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: SURVEY_REQUIRED_MESSAGE, path: ["a"] },
+    ]);
+  });
+
+  test("refuses a required item left as spaces, naming the item", () => {
+    expect.hasAssertions();
+
+    const result = createSurveyMultipleTextAnswerSchema(node).safeParse({ a: " " });
+
+    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: SURVEY_REQUIRED_MESSAGE, path: ["a"] },
+    ]);
   });
 
   test("refuses an item no name declares", () => {

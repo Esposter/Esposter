@@ -1,7 +1,8 @@
+import { SurveyMultipleTextItemInputType } from "#src/models/SurveyMultipleTextItemInputType";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { SURVEY_NOT_A_CHOICE_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
-import { SURVEY_NOT_A_CHOICE_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { takeOne } from "@esposter/shared";
@@ -34,6 +35,38 @@ describe(getSurveyQuestionErrors, () => {
     });
 
     expect(getSurveyQuestionErrors(view, {}, {}, now)).toStrictEqual([{ message: "a", name: "a", pointer }]);
+  });
+
+  test("an unanswered multiple text reports the required message when one of its items is required", () => {
+    expect.hasAssertions();
+
+    const view = getFirstView({
+      props: {
+        id: "a",
+        items: [{ inputType: SurveyMultipleTextItemInputType.Text, isRequired: true, name: "b", title: "" }],
+        name: "a",
+      },
+      type: SurveyNodeType.MultipleText,
+    });
+
+    expect(getSurveyQuestionErrors(view, {}, {}, now)).toStrictEqual([
+      { message: SURVEY_REQUIRED_MESSAGE, name: "a", pointer },
+    ]);
+  });
+
+  test("an unanswered multiple text reports nothing when no item is required", () => {
+    expect.hasAssertions();
+
+    const view = getFirstView({
+      props: {
+        id: "a",
+        items: [{ inputType: SurveyMultipleTextItemInputType.Text, isRequired: false, name: "b", title: "" }],
+        name: "a",
+      },
+      type: SurveyNodeType.MultipleText,
+    });
+
+    expect(getSurveyQuestionErrors(view, {}, {}, now)).toStrictEqual([]);
   });
 
   test("an unanswered optional question reports nothing", () => {

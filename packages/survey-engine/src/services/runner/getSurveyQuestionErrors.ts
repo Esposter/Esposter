@@ -3,7 +3,8 @@ import type { SurveyElementView } from "#src/models/SurveyElementView";
 import type { SurveyPageError } from "#src/models/SurveyPageError";
 import type { SurveyLogicContext } from "survey-logic";
 
-import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
+import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
@@ -25,8 +26,11 @@ export const getSurveyQuestionErrors = (
   const { name } = node.props;
   const answer = answers[name];
   // The undefined test narrows the answer past the check, which the predicate's unknown parameter would not
-  if (answer === undefined || isSurveyAnswerEmpty(answer)) {
-    if (!view.isRequired) return [];
+  if (answer === undefined || checkSurveyAnswerEmpty(answer)) {
+    // A multiple text's items carry their own flags, so an unanswered one can hold a required item its question's flag does not
+    const holdsRequiredItem =
+      node.type === SurveyNodeType.MultipleText && node.props.items.some((item) => item.isRequired);
+    if (!view.isRequired && !holdsRequiredItem) return [];
 
     const message = node.props.requiredErrorText === "" ? SURVEY_REQUIRED_MESSAGE : node.props.requiredErrorText;
     return [{ message, name, pointer }];

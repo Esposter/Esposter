@@ -146,7 +146,7 @@ describe(createSurveyPanelDynamicAnswerSchema, () => {
     expect.hasAssertions();
 
     const result = createSchema(createGatedPanelDynamicNode()).safeParse([
-      { a: true, b: " " },
+      { a: true, b: "x" },
       { a: false, b: "" },
     ]);
 
