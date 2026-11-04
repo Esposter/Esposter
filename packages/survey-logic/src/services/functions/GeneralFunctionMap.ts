@@ -14,7 +14,7 @@ import { sumFunction } from "#src/services/functions/sumFunction";
 import { sumInArrayFunction } from "#src/services/functions/sumInArrayFunction";
 
 // The list, text and logic functions, keyed by their lowercase name
-export const generalFunctionMap: Record<string, SurveyLogicFunction> = {
+export const GeneralFunctionMap: Record<string, SurveyLogicFunction> = {
   avg: avgFunction,
   avginarray: avgInArrayFunction,
   count: countFunction,

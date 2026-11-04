@@ -3,7 +3,7 @@ import type { SurveyExpressionEvaluate } from "#src/models/SurveyExpressionEvalu
 import type { SurveyLogicContext } from "#src/models/SurveyLogicContext";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { surveyLogicFunctionMap } from "#src/services/functions/surveyLogicFunctionMap";
+import { SurveyLogicFunctionMap } from "#src/services/functions/SurveyLogicFunctionMap";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 
 // A call runs the function its lowercased name finds. A name with no function is empty, and its arguments are not read
@@ -12,7 +12,7 @@ export const evaluateCall = (
   context: SurveyLogicContext,
   evaluate: SurveyExpressionEvaluate,
 ): SurveyLogicValue => {
-  const surveyLogicFunction = getOwnValue(surveyLogicFunctionMap, node.name.toLowerCase());
+  const surveyLogicFunction = getOwnValue(SurveyLogicFunctionMap, node.name.toLowerCase());
   if (surveyLogicFunction === undefined) return undefined;
 
   return surveyLogicFunction(

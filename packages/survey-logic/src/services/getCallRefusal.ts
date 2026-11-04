@@ -1,7 +1,7 @@
 import type { SurveyExpressionCallNode } from "#src/models/SurveyExpressionCallNode";
 
 import { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeType";
-import { surveyLogicFunctionMap } from "#src/services/functions/surveyLogicFunctionMap";
+import { SurveyLogicFunctionMap } from "#src/services/functions/SurveyLogicFunctionMap";
 import { checkIsSurveyFieldName } from "#src/services/shared/checkIsSurveyFieldName";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 
@@ -19,7 +19,7 @@ const FILTER_FUNCTION_NAMES: ReadonlySet<string> = new Set([
 // Return-field form, which is supported, so only a fourth argument or a third that is not such a text is a filter
 export const getCallRefusal = (node: SurveyExpressionCallNode): string | undefined => {
   const name = node.name.toLowerCase();
-  if (getOwnValue(surveyLogicFunctionMap, name) === undefined) return `Unknown function "${node.name}"`;
+  if (getOwnValue(SurveyLogicFunctionMap, name) === undefined) return `Unknown function "${node.name}"`;
   if (!FILTER_FUNCTION_NAMES.has(name) || node.args.length < 3) return undefined;
 
   const third = node.args.at(2);

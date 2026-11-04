@@ -12,7 +12,7 @@ import { weekdayFunction } from "#src/services/functions/weekdayFunction";
 import { yearFunction } from "#src/services/functions/yearFunction";
 
 // The date and number functions, keyed by their lowercase name
-export const dateFunctionMap: Record<string, SurveyLogicFunction> = {
+export const DateFunctionMap: Record<string, SurveyLogicFunction> = {
   age: ageFunction,
   dateadd: dateAddFunction,
   datediff: dateDiffFunction,
