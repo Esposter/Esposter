@@ -18,9 +18,22 @@ export const useSurveyListEditor = <T extends object>(modelValue: Ref<T[]>, opti
   const rows = shallowRef(modelValue.value.map((item) => createRow(item)));
   const getItems = () => rows.value.map(({ item }) => item);
   // The rows of a write this editor made already hold its items, so they keep their ids and the focus stays where it
-  // Was; a change from outside, such as an undo, rebuilds them
+  // Was. A change from outside, such as an undo, rebuilds them, and a row keeps its id when an item of the new list is
+  // Deep-equal to its item, each row matched by one item in order, so a row another part of the page holds stays put
   watch(modelValue, (items) => {
-    if (!checkIsDeepEqual(items, getItems())) rows.value = items.map((item) => createRow(item));
+    if (checkIsDeepEqual(items, getItems())) return;
+
+    const previousRows = rows.value;
+    const matchedIds = new Set<string>();
+    rows.value = items.map((item) => {
+      const row = previousRows.find(
+        (previous) => !matchedIds.has(previous.id) && checkIsDeepEqual(previous.item, item),
+      );
+      if (!row) return createRow(item);
+
+      matchedIds.add(row.id);
+      return { id: row.id, item };
+    });
   });
   // A key repeated within the list is flagged on every row after its first, so the first one stays as it was written
   const errors = computed(() => {
