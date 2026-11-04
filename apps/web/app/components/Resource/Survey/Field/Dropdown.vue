@@ -27,6 +27,7 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
       :items
       :label="title"
       :model-value="selectedKey ?? ''"
+      :placeholder="node.props.placeholder"
       @update:model-value="(key) => pick(key)"
     />
     <UiTextField

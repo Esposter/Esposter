@@ -9,9 +9,11 @@ import { Select, useSelectContext } from "@vuetify/v0";
 interface Props {
   items: UiMenuItem<T>[];
   label: string;
+  // Shown while nothing is chosen, in the muted text, in place of the label; never one of the options
+  placeholder?: string;
 }
 
-const { items, label } = defineProps<Props>();
+const { items, label, placeholder } = defineProps<Props>();
 // Inside the select's root, where its context can be read: the primitive walks the options by arrow, Home and End, and
 // By the first letters typed
 const { close, isOpen, modelValue, popover } = useSelectContext("v0:select");
@@ -31,8 +33,9 @@ const selectedItem = computed(() => (selectedItems.value.length === 1 ? selected
 const isMarkless = computed(() =>
   selectedItem.value?.icon || selectedItem.value?.image !== undefined || selectedItem.value?.meaning ? undefined : true,
 );
+const isPlaceholderShown = computed(() => selectedItems.value.length === 0 && Boolean(placeholder));
 const title = computed(() => {
-  if (selectedItems.value.length === 0) return label;
+  if (selectedItems.value.length === 0) return placeholder || label;
   else if (selectedItems.value.length > SELECT_TRIGGER_TITLE_LIMIT) return `${selectedItems.value.length} selected`;
   else return selectedItems.value.map((item) => item.title).join(", ");
 });
@@ -61,6 +64,9 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
       :meaning="selectedItem?.meaning"
       :title
     >
+      <template #title>
+        <span :class="{ 'text-muted': isPlaceholderShown }">{{ title }}</span>
+      </template>
       <template #append>
         <!-- Points down to the list it opens, and turns over while the list is open -->
         <UiIcon :class="{ 'rotate-180': isOpen }" :meaning="UiIconMeaning.Dropdown" />

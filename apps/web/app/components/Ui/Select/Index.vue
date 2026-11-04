@@ -9,10 +9,12 @@ interface Props {
   isDisabled?: boolean;
   items: UiMenuItem<T>[];
   label: string;
+  // Drawn in the trigger, muted, while nothing is chosen, in place of the label; never one of the choices
+  placeholder?: string;
 }
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 const modelValue = defineModel<TModel>({ required: true });
-const { isDisabled, items, label } = defineProps<Props>();
+const { isDisabled, items, label, placeholder } = defineProps<Props>();
 </script>
 
 <!-- A pick of one clears the old choice before it selects the new one, and the model passes on only the choice itself,
@@ -30,7 +32,7 @@ const { isDisabled, items, label } = defineProps<Props>();
       }
     "
   >
-    <UiSelectActivator :items :label />
+    <UiSelectActivator :items :label :placeholder />
     <Select.Content ui-popover>
       <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
         <Select.Item

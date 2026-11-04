@@ -70,7 +70,14 @@ const setOtherText = (text: string) => {
     :is-required="node.props.isRequired"
     :title="label"
   >
-    <UiSelect :is-disabled :items :label :model-value="selectedKeys" @update:model-value="(keys) => choose(keys)" />
+    <UiSelect
+      :is-disabled
+      :items
+      :label
+      :model-value="selectedKeys"
+      :placeholder="node.props.placeholder"
+      @update:model-value="(keys) => choose(keys)"
+    />
     <UiTextField
       v-if="isOtherChosen"
       :is-disabled="isDisabled ? true : undefined"

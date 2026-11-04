@@ -27,6 +27,17 @@ describe("resourceSurveyFieldTagBox", () => {
       type: SurveyNodeType.TagBox,
     });
 
+    test("shows its placeholder while nothing is picked", () => {
+      expect.hasAssertions();
+
+      const placeholder = "Pick colours";
+      const component = mount(ResourceSurveyFieldTagBox, {
+        props: { error: "", isDisabled: false, node: createNode({ placeholder }), seed },
+      });
+
+      expect(component.get('[role="combobox"]').text()).toBe(placeholder);
+    });
+
     test("is a named select that shows the titles of the choices it holds", () => {
       expect.hasAssertions();
 

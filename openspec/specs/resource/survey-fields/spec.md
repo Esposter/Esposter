@@ -21,6 +21,17 @@ A question field SHALL be labelled by the question's title and answerable by key
 - **WHEN** a respondent moves the third choice up with Alt and the up arrow
 - **THEN** the answer lists it second
 
+### Requirement: A dropdown or tag box shows its placeholder until a respondent picks
+
+A dropdown or tag box SHALL show the placeholder its author set in its trigger while nothing is picked.
+
+#### Scenario: A dropdown shows its placeholder until a choice is picked
+
+- **GIVEN** a dropdown question with the placeholder "Pick a colour" and no choice picked
+- **WHEN** the question is drawn
+- **THEN** its trigger shows "Pick a colour"
+- **AND** the placeholder is not one of its choices
+
 ### Requirement: A question that fails a check shows its message beside the field
 
 A question field SHALL show the message the runner gives its question beside the control, marking the control invalid for assistive technology.

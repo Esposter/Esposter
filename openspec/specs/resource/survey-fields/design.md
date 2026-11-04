@@ -26,9 +26,9 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 | `comment`       | `Comment.vue`       | `UiTextField` with its rows                                                                                                                                                                                                                |
 | `boolean`       | `Boolean.vue`       | `UiSwitch`, `UiCheckbox` or a two-option `UiRadioGroup` by its display style, each labelled by the question's state label                                                                                                                  |
 | `radiogroup`    | `RadioGroup.vue`    | `UiRadioGroup` over the choices, with the none and other options and a `UiTextField` for other text, through `useSurveyChoiceAnswer`                                                                                                       |
-| `dropdown`      | `Dropdown.vue`      | `UiSelect` over the choices, with the other option and its text field                                                                                                                                                                      |
+| `dropdown`      | `Dropdown.vue`      | `UiSelect` over the choices, with its placeholder while nothing is picked, and the other option and its text field                                                                                                                         |
 | `checkbox`      | `Checkbox.vue`      | one `UiCheckbox` per choice, with select all (mixed while some are chosen), none and other, in a group                                                                                                                                     |
-| `tagbox`        | `TagBox.vue`        | `UiSelect` in multiple mode over the choices, with an other option and its text field                                                                                                                                                      |
+| `tagbox`        | `TagBox.vue`        | `UiSelect` in multiple mode over the choices, with its placeholder while nothing is picked, and an other option and its text field                                                                                                         |
 | `buttongroup`   | `ButtonGroup.vue`   | `UiToggleGroup` over the choices                                                                                                                                                                                                           |
 | `rating`        | `Rating.vue`        | `UiToggleGroup` of the numbers from one to the scale's count for labels; `UiRating` of stars, or of one face per step, for the other two types; the minimum and maximum descriptions beneath it in every type                              |
 | `ranking`       | `Ranking.vue`       | a reorderable `UiList` of the choices in the answer's order, each row marked with its place; Alt with Up or Down moves the focused row, announced through the list's live region                                                           |
@@ -45,6 +45,8 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 ## Surface
 
 A rating shows one of three scales, and the leanest form of each is what the respondent meets. **Labels** is the numbered segment track, unchanged. **Stars** draws no track and no number: an outlined star for each step, muted, and the chosen star and every star before it filled in the accent. Hovering a star fills the stars up to it, and leaving the scale returns them to the answer, so the pointer previews the answer before it is given. Focus is the document's focus ring on the one star that holds the choice, and the arrow keys move it. **Smileys** draws one face per step, from the angriest at the first step to the happiest at the last, muted, with the chosen face in the accent; no hover preview, since a face is read whole. Both picture types take the field's invalid state as the control's error colour and the shell's alert beneath it, and a disabled scale is faded and inert. On a narrow screen a scale longer than the width wraps its steps onto a second line rather than overflowing. The minimum and maximum descriptions stay beneath every type, since they are the question's own words for its ends.
+
+A dropdown and a tag box with a placeholder show it in the trigger while nothing is picked, in the same muted text a text field's placeholder takes, in place of the question's title that the shell already draws above. The list never offers it, so it cannot be picked.
 
 ## Decisions
 
@@ -66,7 +68,7 @@ Each gap is a change to the UI library, and each field works around it as the ta
 - The date field has no invalid state and no error prop, so the date and datetime fields draw their error beneath the control and do not mark it invalid.
 - The toggle group has no disabled prop, so the button group and the rating fields disable each item.
 - The slider has no disabled prop, so the slider field is made inert and faded instead.
-- The radio group and the select have no invalid state, and the select has no placeholder. The shell draws the error beside them.
+- The radio group and the select have no invalid state. The shell draws the error beside them.
 - The library has no required prop, so the shell draws the required mark, and the matrix dynamic caption draws its own.
 - There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
 

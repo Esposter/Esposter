@@ -35,6 +35,28 @@ describe("resourceSurveyFieldDropdown", () => {
       expect(component.get('[role="combobox"]').attributes("aria-label")).toBe(title);
     });
 
+    test("shows its placeholder while nothing is picked", () => {
+      expect.hasAssertions();
+
+      const placeholder = "Pick a colour";
+      const component = mount(SurveyFieldDropdown, {
+        props: {
+          error: "",
+          isDisabled: false,
+          node: {
+            props: {
+              ...surveyDropdownNodePropsSchema.parse({ choices, name: "a", placeholder, title }),
+              id: crypto.randomUUID(),
+            },
+            type: SurveyNodeType.Dropdown,
+          },
+          seed,
+        },
+      });
+
+      expect(component.get('[role="combobox"]').text()).toBe(placeholder);
+    });
+
     test("answers with the choice the keyboard picks from its open list", async () => {
       expect.hasAssertions();
 

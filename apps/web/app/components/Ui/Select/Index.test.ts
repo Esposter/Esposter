@@ -43,6 +43,30 @@ describe("uiSelect", () => {
       expect(activator.attributes("aria-haspopup")).toBe("listbox");
     });
 
+    test("shows its placeholder muted in place of its label while nothing is chosen", () => {
+      expect.hasAssertions();
+
+      const placeholder = "Pick a plan";
+      const component = mount(UiSelect, { props: { items, label, modelValue: "", placeholder } });
+      const activator = component.get('[role="combobox"]');
+
+      expect(activator.text()).toBe(placeholder);
+      expect(activator.get(".text-muted").text()).toBe(placeholder);
+    });
+
+    test("lists only its choices, never the placeholder", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, {
+        attachTo: document.body,
+        props: { items, label, modelValue: "", placeholder: "Pick a plan" },
+      });
+      await component.get('[role="combobox"]').trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+
+      expect(component.findAll('[role="option"]')).toHaveLength(items.length);
+    });
+
     test("keeps no mark column on a trigger whose chosen option carries no mark", () => {
       expect.hasAssertions();
 

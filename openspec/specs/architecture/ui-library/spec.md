@@ -273,6 +273,23 @@ A rating scale SHALL be one radio group of its numbered steps, each step's mark 
 - **THEN** the choice does not change
 - **AND** no step is previewed
 
+### Requirement: A select with nothing chosen shows its placeholder muted in place of its label
+
+A select given a placeholder SHALL show it in the muted text in its trigger while nothing is chosen, and SHALL NOT list it among its options.
+
+#### Scenario: The trigger shows the placeholder until a choice is made
+
+- **GIVEN** a select with a placeholder and no choice
+- **WHEN** the trigger is read
+- **THEN** it shows the placeholder in the muted text in place of its label
+- **AND** once a choice is made it shows the chosen title
+
+#### Scenario: Opening the select lists only its choices
+
+- **GIVEN** a select with a placeholder and no choice
+- **WHEN** the reader opens the list
+- **THEN** the list holds only the choices
+
 ### Requirement: Text fields report failing rules beside the field
 
 A text field SHALL mark itself invalid and point at its failing message, and the form around it SHALL count its failing rules as the reader types.
