@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswers, SurveyAnswerValue, SurveyChoice, SurveyMatrixDynamicNode } from "survey-engine";
+import type {
+  SurveyAnswers,
+  SurveyAnswerValue,
+  SurveyChoice,
+  SurveyMatrixColumn,
+  SurveyMatrixDynamicNode,
+} from "survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -48,6 +54,16 @@ const toggleChoice = (value: SurveyAnswerValue | undefined, choiceValue: SurveyC
 const setRow = (rowIndex: number, row: SurveyAnswers) => {
   answer.value = rows.value.toSpliced(rowIndex, 1, row);
 };
+// A dropdown and a rating cell choose from the same options and write the answer the same way, so both take these
+const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers, rowIndex: number) => ({
+  "aria-invalid": invalid.value,
+  isDisabled,
+  items: takeOne(choiceItemsMap.value, column.name),
+  label: column.title || column.name,
+  modelValue: getChoiceKey(row[column.name]),
+  "onUpdate:modelValue": (key: string) =>
+    setRow(rowIndex, withSurveyAnswer(row, column.name, findChoiceValue(column.choices, key))),
+});
 </script>
 
 <template>
@@ -92,14 +108,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               />
               <UiSelect
                 v-else-if="column.cellType === SurveyMatrixCellType.Dropdown"
-                :aria-invalid="invalid"
-                :is-disabled
-                :items="takeOne(choiceItemsMap, column.name)"
-                :label="column.title || column.name"
-                :model-value="getChoiceKey(row[column.name])"
-                @update:model-value="
-                  (key) => setRow(rowIndex, withSurveyAnswer(row, column.name, findChoiceValue(column.choices, key)))
-                "
+                :="getChoiceCellAttributes(column, row, rowIndex)"
               />
               <div v-else-if="column.cellType === SurveyMatrixCellType.Checkbox" flex flex-col gap-1>
                 <UiCheckbox
@@ -129,13 +138,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
               />
               <UiToggleGroup
                 v-else-if="column.cellType === SurveyMatrixCellType.Rating"
-                :aria-invalid="invalid"
-                :items="takeOne(choiceItemsMap, column.name)"
-                :label="column.title || column.name"
-                :model-value="getChoiceKey(row[column.name])"
-                @update:model-value="
-                  (key) => setRow(rowIndex, withSurveyAnswer(row, column.name, findChoiceValue(column.choices, key)))
-                "
+                :="getChoiceCellAttributes(column, row, rowIndex)"
               />
             </td>
             <td p-1 align-top>

@@ -21,11 +21,13 @@ const checkIsOtherEntry = (entry: SurveyAnswerValue): entry is string =>
   typeof entry === "string" && entry !== SURVEY_NONE_ANSWER && !choiceValues.value.includes(entry);
 // The picks, none and the other text are held here as the reader makes them. The answer holds other text as itself, so
 // A text equal to a choice's value cannot be read back from it: it would tick that choice and hide the other field
-const initial = Array.isArray(answer.value) ? answer.value : [];
-const pickedValues = ref(choiceValues.value.filter((value) => initial.includes(value)));
+const { initial, isOtherChosen, otherText, pickedValues } = useSurveyPickedAnswer(
+  answer,
+  choiceValues.value,
+  node.props.hasOther,
+  checkIsOtherEntry,
+);
 const isNoneChosen = ref(initial.includes(SURVEY_NONE_ANSWER));
-const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => checkIsOtherEntry(entry)));
-const otherText = ref(initial.find((entry): entry is string => checkIsOtherEntry(entry)) ?? "");
 const checkIsChosen = (value: number | string) => pickedValues.value.includes(value);
 const isAllChosen = computed(
   () => choiceValues.value.length > 0 && choiceValues.value.every((value) => checkIsChosen(value)),

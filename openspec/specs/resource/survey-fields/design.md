@@ -54,7 +54,7 @@ An email, telephone or URL answer is the same line field as a text answer, typed
 
 An invalid radio group, select, tag box, date or datetime field is marked invalid and tinted in the error colour, with the shell's alert or the field's message beneath it and nothing else drawn for it. A dynamic panel's group takes no invalid state of its own: its rows' controls are fields that take no error of the panel's, so the group is described by the panel's alert, drawn once, rather than each row repeating it.
 
-A disabled slider is faded as a whole, its label and value with it, and takes no press or key.
+A disabled slider is faded as a whole, its label and value with it, and takes no press or key. A disabled matrix takes no answer in any of its cells: a text, dropdown, rating, checkbox or boolean cell does not change its answer when typed into or pressed.
 
 A required question shows one mark after its title, the star drawn in the error colour and hidden from speech. Speech announces the word once, through the route the control takes (see the paragraph on the required mark above). A text question's hint is its description alone, and the required word reaches speech through the field's accessible name. Each labelled control draws that same mark rather than its own.
 

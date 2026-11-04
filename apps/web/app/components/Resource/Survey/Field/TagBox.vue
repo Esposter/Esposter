@@ -26,10 +26,12 @@ const checkIsOtherEntry = (entry: SurveyAnswerValue): entry is string =>
   typeof entry === "string" && !choiceValues.value.includes(entry);
 // The picks, whether other is picked and its text are held here as the reader makes them. The answer holds other text as
 // Itself, so a text equal to a choice's value cannot be read back from it: it would pick that choice and drop the field
-const initial = Array.isArray(answer.value) ? answer.value : [];
-const pickedValues = ref(choiceValues.value.filter((value) => initial.includes(value)));
-const isOtherChosen = ref(node.props.hasOther && initial.some((entry) => checkIsOtherEntry(entry)));
-const otherText = ref(initial.find((entry): entry is string => checkIsOtherEntry(entry)) ?? "");
+const { isOtherChosen, otherText, pickedValues } = useSurveyPickedAnswer(
+  answer,
+  choiceValues.value,
+  node.props.hasOther,
+  checkIsOtherEntry,
+);
 const items = computed<UiMenuItem<string>[]>(() => {
   const choices = orderedChoices.value.map((choice, index) => ({
     title: getSurveyChoiceText(choice),

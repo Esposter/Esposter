@@ -97,4 +97,41 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
       expect(component.get("input").attributes("aria-invalid")).toBe("true");
     });
   });
+
+  test("a disabled rating cell keeps its answer, which a press does not change", async () => {
+    expect.hasAssertions();
+
+    const component = mount(ResourceSurveyFieldMatrixDynamic, {
+      props: {
+        error: "",
+        isDisabled: true,
+        node: {
+          props: {
+            ...surveyMatrixDynamicNodePropsSchema.parse({
+              columns: [
+                {
+                  cellType: SurveyMatrixCellType.Rating,
+                  choices: [
+                    { text: "", value: "1" },
+                    { text: "", value: "2" },
+                  ],
+                  name: "a",
+                  title: "a",
+                },
+              ],
+              name: "b",
+              rowCount: 1,
+              title: "label",
+            }),
+            id: crypto.randomUUID(),
+          },
+          type: SurveyNodeType.MatrixDynamic,
+        },
+      },
+    });
+    await flushPromises();
+    await component.findAll('[role="radio"]')[1]?.trigger("click");
+
+    expect(component.emitted("update:modelValue")).toBeUndefined();
+  });
 });
