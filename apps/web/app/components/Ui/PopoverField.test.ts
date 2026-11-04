@@ -9,6 +9,7 @@ describe("uiPopoverField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
+    const callerLabelledBy = crypto.randomUUID();
     const label = "label";
     const placeholder = "placeholder";
     const value = "value";
@@ -40,6 +41,29 @@ describe("uiPopoverField", () => {
       const labelledBy = component.get("button").attributes("aria-labelledby");
 
       expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${label} * required`);
+    });
+
+    test("keeps a caller's aria-labelledby on its trigger while the field is not required", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiPopoverField, {
+        attrs: { "aria-labelledby": callerLabelledBy },
+        props: { isClearable: false, isEmpty: true, label, placeholder },
+      });
+
+      expect(component.get("button").attributes("aria-labelledby")).toBe(callerLabelledBy);
+    });
+
+    test("joins a caller's aria-labelledby with the required label, the caller's first, while the field is required", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(UiPopoverField, {
+        attrs: { "aria-labelledby": callerLabelledBy },
+        props: { isClearable: false, isEmpty: true, isRequired: true, label, placeholder },
+      });
+      const requiredLabelId = component.get("span[id]").attributes("id");
+
+      expect(component.get("button").attributes("aria-labelledby")).toBe(`${callerLabelledBy} ${requiredLabelId}`);
     });
 
     test("passes what a call site sets, such as an invalid mark, on its trigger", async () => {

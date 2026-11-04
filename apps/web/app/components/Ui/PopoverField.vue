@@ -25,11 +25,16 @@ defineSlots<{ default: () => VNode; value: () => VNode }>();
 const isOpen = defineModel<boolean>("isOpen", { default: false });
 const { isClearable, isDisabled, isEmpty, isLabelHidden, isRequired, label, placeholder } = defineProps<Props>();
 const emit = defineEmits<{ clear: [] }>();
+const attrs = useAttrs();
 const popover = useTemplateRef("popover");
 // The trigger, which what opens the field in place of something else focuses
 const element = computed(() => popover.value?.triggerElement);
 const labelId = useId();
 const valueId = useId();
+// The caller's own labelledby stays, and a required field's label joins it after, so the trigger is named by both
+const labelledBy = computed(
+  () => [attrs["aria-labelledby"], isRequired ? labelId : undefined].filter(Boolean).join(" ") || undefined,
+);
 
 defineExpose({ element });
 </script>
@@ -45,7 +50,7 @@ defineExpose({ element });
         v-model:is-open="isOpen"
         :="$attrs"
         :aria-describedby="valueId"
-        :aria-labelledby="isRequired ? labelId : undefined"
+        :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         is-label-shown
         :label
