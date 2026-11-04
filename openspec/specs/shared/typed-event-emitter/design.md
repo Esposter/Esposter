@@ -68,4 +68,4 @@ Every `eventemitter3` issue on `primus/eventemitter3`, read with its comments, a
 
 ## Notes
 
-The package's bundle is larger by the emitter's own code, recorded in `packages/shared/src/index.test.ts`.
+The package's bundle is larger by the emitter's own code, within the size ceiling in `packages/shared/src/index.test.ts`.

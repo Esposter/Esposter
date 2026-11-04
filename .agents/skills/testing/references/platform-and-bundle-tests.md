@@ -18,6 +18,6 @@ Read when a suite is skipped on a platform, or its output depends on the host ru
 Gate with two `test.skipIf`/`describe.skipIf(process.platform …)` tests, one per platform, each with its own snapshot; never an in-test `if` branch. Only the matching OS's test runs, so neither asserts conditionally and no `vitest/no-conditional-expect` disable is needed. `process.platform` reads directly — no `isWindows` const.
 
 ```ts
-test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => { ... });
-test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => { ... });
+test.skipIf(process.platform !== "win32")("path separator (Windows)", () => { ... });
+test.skipIf(process.platform === "win32")("path separator (POSIX)", () => { ... });
 ```

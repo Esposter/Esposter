@@ -14,9 +14,9 @@ A rebuild that rewrites a version the repo commits is drift, not a result: the m
 
 Any bump that reaches a `dist/` is finished only by this sequence, all of it in the bump's own commit:
 
-1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size tests read. Skipping it makes `-u` write the stale `dist/` into the snapshot.
+1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size tests read. Skipping it leaves the size tests reading the stale `dist/`.
 2. Read the `package.json` diff of every package the rebuild touched: the `inlinedDependencies` entries the bump moved, and nothing else.
-3. Refresh the size snapshots as `testing`'s `references/bundle-size.md` names. `apps/functions` and `apps/infra` carry the same snapshot outside `test:packages`, and `apps/functions` inlines the bumped package when it bundles it, so build and refresh them too, as `build`'s `references/dist-size.md` names.
-4. Run the same size tests again without `-u` — they must pass with nothing written. The commands and the path argument that keeps them cheap are the owner pages' to name (`testing`'s `references/bundle-size.md`, `build`'s `references/dist-size.md`). The apps need their own run: the packages' project filter does not reach `apps/functions` or `apps/infra`.
+3. Raise any size ceiling the rebuilt `dist/` outgrows, as `build`'s `references/dist-size.md` names. `apps/functions` and `apps/infra` carry the same size test outside `test:packages`, and `apps/functions` inlines the bumped package when it bundles it, so build and check them too, as that page names.
+4. Run the same size tests again — they must pass with no ceiling changed beyond step 3. The commands and the path argument that keeps them cheap are the owner pages' to name (`testing`'s `references/bundle-size.md`, `build`'s `references/dist-size.md`). The apps need their own run: the packages' project filter does not reach `apps/functions` or `apps/infra`.
 
-Never edit a snapshot to the number a failure printed.
+Never raise a ceiling to a number a failure printed from a stale `dist/`.

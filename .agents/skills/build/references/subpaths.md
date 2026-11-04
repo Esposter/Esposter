@@ -21,7 +21,7 @@ If neither holds, the subpath is a duplicate or a leftover, and it goes.
 - **An export arm in `package.json`** — `source` and `default`, mirrored in `publishConfig.exports` — unless the entry is loaded by path (rule 2), in which case the arm may be absent.
 - **A README line** naming the subpath and what a consumer gets from it.
 - **A test for any "loads nothing from X" claim.** `pitch-transcription`'s `index.test.ts` asserts the `notes` subpath's graph has no `onnxruntime` specifier. A claim with no test is a claim the next import can break.
-- **A size snapshot that moves with it** (`references/dist-size.md`).
+- **A size test the entry can move** (`references/dist-size.md`).
 
 ## Removing one
 

@@ -6,7 +6,7 @@ Read when a package minifies, vendors a dependency the default would externalize
 
 Only an artifact a host downloads and parses at every cold start is worth compressing. Nothing else minifies: a library's consumer minifies for themselves, and readable output is what a stack trace is read through.
 
-**Compression on, mangling off** — which is why it is spelled out as options rather than `minify: true`. Compression takes roughly a third off. Mangling takes off about that much again and renames every identifier, so the stack for a delivery that already happened names `t` instead of the handler — and for a fire-and-forget event, that stack is the whole diagnosis. `dce-only` is worth nothing (rolldown already tree-shakes), and whitespace removal is `codegen.removeWhitespace`, on by default and never restated. No test covers minified output: tests import source, and only the size snapshot reads `dist`.
+**Compression on, mangling off** — which is why it is spelled out as options rather than `minify: true`. Compression takes roughly a third off. Mangling takes off about that much again and renames every identifier, so the stack for a delivery that already happened names `t` instead of the handler — and for a fire-and-forget event, that stack is the whole diagnosis. `dce-only` is worth nothing (rolldown already tree-shakes), and whitespace removal is `codegen.removeWhitespace`, on by default and never restated. No test covers minified output: tests import source, and only the size tests read `dist`.
 
 ## What gets vendored is recorded, not allowlisted
 

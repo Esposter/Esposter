@@ -40,7 +40,7 @@ The environment block comes from `readBenchmarkEnvironment`. It holds the commit
 
 - The reports are committed and read in review, not gated in CI. The Bench workflow in `.github/workflows/Bench.yaml` runs every bench on each push to prove each still executes, and it commits nothing. Thresholds are the `bench` skill's to set.
 - Every bench file must commit its report pair. `scripts/src/workspace/benchArtifacts.test.ts` fails a bench that does not, and a file that only declares `describe.todo` beside shared code is exempt.
-- The bundle-size snapshots in `packages/shared-node/src/index.test.ts` are the package's size gate. They measure the bench and reporter entrypoints, since the reporter is the one that a Vitest run loads.
+- The bundle-size and types-size ceilings in `packages/shared-node/src/index.test.ts` are the package's size gate. They measure the bench and reporter entrypoints, since the reporter is the one that a Vitest run loads.
 - A committed number is only comparable within one host, which is why the environment block travels with it.
 
 ## Key files
@@ -55,6 +55,6 @@ The environment block comes from `readBenchmarkEnvironment`. It holds the commit
 | `packages/shared-node/src/services/writeBenchmarkReport.ts`          | writes the JSON and Markdown reports beside the source                 |
 | `packages/shared-node/src/services/readBenchmarkEnvironment.ts`      | records the machine and checkout a run used                            |
 | `packages/shared-node/src/services/constants.ts`                     | the run options and the baseline task's name                           |
-| `packages/shared-node/src/index.test.ts`                             | the bundle-size snapshots that gate the package's size                 |
+| `packages/shared-node/src/index.test.ts`                             | the bundle-size and types-size ceilings that gate the package's size   |
 | `packages/configuration/src/services/getBenchmarkReporters.ts`       | adds the reporter only when Vitest runs bench                          |
 | `scripts/src/workspace/benchArtifacts.test.ts`                       | every bench must commit its report pair                                |

@@ -36,7 +36,7 @@ the spec sweep, the ledger row. The harness delivers a completion notification; 
 a one-file, "quick" suite too** — the habit that survives is the one applied without weighing it.
 
 Which paths, and from which directory, are the `package-scripts` skill's `references/check-suite.md`: the suites
-of the files touched and the workspace tests for a spec edit; a change that moved bytes into a bundle adds that package's own suite (`AGENTS.md`, "Finishing a change", step 4).
+of the files touched and the workspace tests for a spec edit; a change that grows a bundle adds that package's own suite (`AGENTS.md`, "Finishing a change", step 4).
 
 ## Never poll a backgrounded check
 

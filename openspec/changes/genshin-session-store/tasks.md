@@ -26,5 +26,5 @@ Each task fits one session. The order is the dependency order. A session that ta
 ## 4. The gate
 
 - [x] 4.1 Count the slice by the definition of done and decide. Verify: the count is recorded in the design and is negative, or the change is moved to `openspec/rejected/genshin/` with the numbers.
-- [ ] 4.2 Measure the frame step, the mount and the size snapshot against the baseline. Verify: the numbers are within the noise recorded in 0.2, or the cause is found and fixed in this task.
+- [ ] 4.2 Measure the frame step, the mount and the bundle size against the baseline. Verify: the numbers are within the noise recorded in 0.2, or the cause is found and fixed in this task.
 - [x] 4.3 State the pattern in the guides and write the second change from the fan-out table. Verify: the splitting guide, the integration-root page and the `vue` skill agree that a feature's shared inputs are read from a store, the exception that lets an overlay layer take as many props as its block reads is removed, and `openspec validate` passes for both changes.

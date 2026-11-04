@@ -61,7 +61,7 @@ flowchart TD
 - **The frame step must not slow.** The session's per-frame work runs before every draw, so the change adds no store property read, subscription, patch or watcher to it. The check is the frame step's CPU time over a recorded walk, measured before the first slice and after each, and a slice that raises it by more than the bench's noise is not taken. If the frame step has no harness that runs without a canvas, the first task builds the smallest one; the existing benches cover the kit and camp services, which this change does not touch.
 - **The cost of a store read is measured once,** by a bench comparing a ref read with the same read through a store, so the guideline above rests on a figure and not on a belief.
 - **Mount cost.** Starting the stores adds work at mount; it must not move the time to the first ready event by more than the noise of the visual suite's load.
-- **The package's size snapshot** moves with the lines the change adds and removes, and Pinia is a peer, never bundled (the build skill's dependency placement). The snapshot is updated by the package's own suite.
+- **The package's bundle** grows with the lines the change adds, and Pinia is a peer, never bundled (the build skill's dependency placement). Its size ceiling in the package's own suite is raised only where a fresh build outgrows it.
 
 ## Definition of done
 
