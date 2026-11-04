@@ -17,26 +17,26 @@ A blob is deleted only inside the purge of its own resource, together with that 
 
 Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [features table](../../../specs/resource/whiteboard/design.md#features), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
 
-| Flowchart feature                                 | Whiteboard row, in its features table                            | Status                                                     |
-| ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
-| Labelled step nodes                               | Node label                                                       | Covered                                                    |
-| Node colour                                       | Node colour                                                      | Covered                                                    |
-| Node resize with a minimum size                   | Node resize                                                      | Covered, changed: one minimum for every element            |
-| Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                                    |
-| Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                                |
-| Connector labels, edited inline                   | Edge label                                                       | Covered                                                    |
-| Curved, right-angled and straight paths           | Path kinds, and right-angled routing                             | Covered                                                    |
-| Palette of node types, dropped on the canvas      | Palette, placed by drag or by click                              | Covered, changed: no native drag and drop                  |
-| Minimap                                           | MiniMap                                                          | Dropped, by the owner's decision                           |
-| Dot grid and snap to grid                         | Background grid and snap                                         | Covered                                                    |
-| Pan, zoom and fit                                 | Pan and zoom, and zoom and fit controls                          | Covered                                                    |
-| Delete by keyboard                                | Keyboard                                                         | Covered, extended                                          |
-| Delete a connector from the panel                 | Delete a connector                                               | Covered, changed: from the keyboard, with no panel control |
-| Edge follows its shapes                           | Edge follows its shapes                                          | Covered, changed: the reroute is in the command's patch    |
-| Export to PNG and SVG, fonts and theme background | Export PNG and SVG, and export background and fonts              | Covered, changed: drawn from the model                     |
-| Read-only published view                          | Read-only published view                                         | Deferred, by the owner's decision                          |
-| Agent reads and patches of flowchart content      | Agent tools                                                      | Covered, extended with the typed move                      |
-| Flowchart achievement                             | Earned achievement                                               | Removed with the type, by the owner's decision             |
+| Flowchart feature                                 | Whiteboard row, in its features table               | Status                                                     |
+| ------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
+| Labelled step nodes                               | Shape label                                         | Covered                                                    |
+| Node colour                                       | Shape colour                                        | Covered                                                    |
+| Node resize with a minimum size                   | Shape resize                                        | Covered, changed: one minimum for every element            |
+| Four connection points per node, loose connection | Connection points, and Arrow binds to shapes        | Covered                                                    |
+| Arrowhead on every connector                      | Arrow and arrowhead                                 | Covered, changed: both ends                                |
+| Connector labels, edited inline                   | Arrow label                                         | Covered                                                    |
+| Curved, right-angled and straight paths           | Path kinds, and Right-angled routing                | Covered                                                    |
+| Palette of node types, dropped on the canvas      | Palette                                             | Covered, changed: no native drag and drop                  |
+| Minimap                                           | none, the feature is dropped                        | Dropped, by the owner's decision                           |
+| Dot grid and snap to grid                         | Background grid and snap                            | Covered                                                    |
+| Pan, zoom and fit                                 | Pan and zoom, and Zoom and fit controls             | Covered                                                    |
+| Delete by keyboard                                | Keyboard                                            | Covered, extended                                          |
+| Delete a connector from the panel                 | Delete an arrow                                     | Covered, changed: from the keyboard, with no panel control |
+| Edge follows its shapes                           | Arrow follows its shapes                            | Covered, changed: the reroute is in the command's patch    |
+| Export to PNG and SVG, fonts and theme background | Export PNG and SVG, and Export background and fonts | Covered, changed: drawn from the model                     |
+| Read-only published view                          | none, the feature is deferred                       | Deferred, by the owner's decision                          |
+| Agent reads and patches of flowchart content      | Agent tools                                         | Covered, extended with the typed move                      |
+| Flowchart achievement                             | none, the achievement is removed                    | Removed with the type, by the owner's decision             |
 
 ## Scope of the removal
 
