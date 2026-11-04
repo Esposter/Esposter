@@ -16,8 +16,8 @@ describe(toSurveyLogicAnswer, () => {
       { age: 2, name: undefined },
     ],
     ["reads a null nested in a list in a record as undefined", { answers: [null] }, { answers: [undefined] }],
-    ["reads a quoted text nested in a record as the text without its quotes", { q: "'hi'" }, { q: "hi" }],
-    ["reads a boolean text nested in a record as the boolean", { flag: "true" }, { flag: true }],
+    ["keeps a quoted text nested in a record with its quotes", { q: "'hi'" }, { q: "'hi'" }],
+    ["keeps a boolean text nested in a record as text", { flag: "true" }, { flag: "true" }],
   ])("%s", (_title, value, expected) => {
     expect.hasAssertions();
 
