@@ -415,7 +415,10 @@ describe("dashboardGrid", () => {
     });
     // The tile's content is measured once it mounts, and that measure is a commit of its own, so the step is read against it
     await flushPromises();
-    const commitsBeforeStep = wrapper.emitted("commit");
+    const commits = wrapper.emitted("commit");
+    assert.exists(commits);
+    // The array emitted() returns is the one the wrapper keeps appending to, so the commits are copied before the step
+    const commitsBeforeStep = [...commits];
     await wrapper.get(".dashboard-grid-tile").trigger("keydown", { key: "ArrowDown", shiftKey: true });
 
     expect(wrapper.emitted("commit")).toStrictEqual(commitsBeforeStep);
