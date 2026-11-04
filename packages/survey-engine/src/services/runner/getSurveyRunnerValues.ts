@@ -3,9 +3,8 @@ import type { SurveyDocument } from "#src/models/SurveyDocument";
 import type { SurveyLogicContext } from "survey-logic";
 
 import { getSurveyExpressionNodes } from "#src/services/runner/getSurveyExpressionNodes";
-import { toSurveyLogicValue } from "#src/services/runner/toSurveyLogicValue";
 import { checkIsDeepEqual } from "@esposter/shared";
-import { runSurveyExpression } from "survey-logic";
+import { runSurveyExpression, toSurveyLogicAnswer } from "survey-logic";
 
 // A value that reads a later one settles a pass behind it, so the passes bound how far a chain can read ahead
 const MAX_SURVEY_RUNNER_PASSES = 5;
@@ -19,7 +18,7 @@ export const getSurveyRunnerValues = (
   now: Date,
 ): SurveyLogicContext["values"] => {
   const values: SurveyLogicContext["values"] = {};
-  for (const [name, answer] of Object.entries(answers)) values[name] = toSurveyLogicValue(answer);
+  for (const [name, answer] of Object.entries(answers)) values[name] = toSurveyLogicAnswer(answer);
 
   const calculations = [
     ...document.root.props.calculatedValues,

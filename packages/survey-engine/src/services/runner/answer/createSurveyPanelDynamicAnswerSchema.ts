@@ -9,13 +9,13 @@ import { checkSurveyNodeRequired } from "#src/services/runner/checkSurveyNodeReq
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_WRONG_COUNT_MESSAGE } from "#src/services/runner/constants";
 import { surveyAnswerValueSchema } from "#src/services/runner/surveyAnswerValueSchema";
-import { toSurveyLogicValue } from "#src/services/runner/toSurveyLogicValue";
+import { toSurveyLogicAnswer } from "survey-logic";
 import { z } from "zod";
 
 // A row's answers as the panel scope a template question's condition reads, a name the row leaves out reading as absent
 const toSurveyPanelScope = (row: Record<string, SurveyAnswerValue | undefined>): SurveyLogicRecord => {
   const scope: SurveyLogicRecord = {};
-  for (const [name, answer] of Object.entries(row)) if (answer !== undefined) scope[name] = toSurveyLogicValue(answer);
+  for (const [name, answer] of Object.entries(row)) if (answer !== undefined) scope[name] = toSurveyLogicAnswer(answer);
   return scope;
 };
 

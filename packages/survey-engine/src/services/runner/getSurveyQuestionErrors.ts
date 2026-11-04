@@ -5,10 +5,10 @@ import type { SurveyLogicContext } from "survey-logic";
 
 import { isSurveyAnswerEmpty } from "#src/services/runner/answer/isSurveyAnswerEmpty";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
-import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
+import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
-import { toSurveyLogicValue } from "#src/services/runner/toSurveyLogicValue";
+import { toSurveyLogicAnswer } from "survey-logic";
 
 // The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that does not hold
 // Only an enabled question is checked, since a disabled one takes no answer
@@ -38,7 +38,7 @@ export const getSurveyQuestionErrors = (
     return [{ message: result.error.issues[0]?.message ?? SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
 
   // The validator reads the answer as `{value}`, the one name it may read beyond the survey's own
-  const value = toSurveyLogicValue(answer);
+  const value = toSurveyLogicAnswer(answer);
   return node.props.validators
     .filter((validator) => !checkSurveyExpressionHolds(validator.expression, { ...values, value }, now))
     .map((validator) => ({ message: validator.text, name, pointer }));
