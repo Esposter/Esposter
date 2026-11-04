@@ -12,6 +12,9 @@ export interface GridLayoutOptions<T extends GridItem = GridItem> {
   // Whether this grid refuses an item dragged into it, from another grid or from outside. A refused item is previewed nowhere
   // Over the grid and lands nothing, so the grid never lays out a landing for an item it will not take
   checkIsRefused?: GridRefusal;
+  // Whether an item is solid, so no other item's drag displaces it: a landing that overlaps it is refused under every collision
+  // Mode, and neither a push nor a compaction moves it. The item dragged by its own press still moves and pushes the others
+  checkIsSolid?: (item: T) => boolean;
   // What a dropped item does to the items it lands on
   collision: CollisionMode;
   columnNumber: number;

@@ -80,6 +80,58 @@ The package SHALL resolve an item dropped onto others by pushing them aside, swa
 - **WHEN** an item is dropped onto another
 - **THEN** both items stay where they were
 
+### Requirement: A solid item is never displaced by another item's drag
+
+The package SHALL keep an item the consumer marks solid in its cell while another item's drag moves around it. A landing that overlaps a solid item, or a push or swap that would move one, SHALL be refused under every collision mode as a prevent refuses a landing, and compaction SHALL never raise a solid item. The item dragged by its own press still moves and pushes the items it lands on.
+
+#### Scenario: a landing with no solid predicate pushes the item it lands on
+
+- **GIVEN** a grid with no solid predicate and two items, the second two columns to the right of the first
+- **WHEN** the first is dropped onto the second
+- **THEN** the second moves down out of its way and both are committed
+
+#### Scenario: a landing over a solid item is refused under push and the solid item keeps its cell
+
+- **GIVEN** the push mode and a solid item two columns to the right of another item
+- **WHEN** the other item is dropped onto the solid one
+- **THEN** the solid item keeps its cell and nothing is committed
+
+#### Scenario: a landing over a solid item is refused under swap and the solid item keeps its cell
+
+- **GIVEN** the swap mode and a solid item two columns to the right of another item of the same size
+- **WHEN** the other item is dropped onto the solid one
+- **THEN** the solid item keeps its cell and nothing is committed
+
+#### Scenario: a landing beside a solid item lands normally
+
+- **GIVEN** the push mode and a solid item two columns to the right of another item
+- **WHEN** the other item is dropped on the cell beside the solid one, touching only its edge
+- **THEN** the dropped item lands there and the solid item is not committed
+
+#### Scenario: a landing that pushes a non-solid item leaves a solid item beside it where it was
+
+- **GIVEN** the push mode, a non-solid item two columns to the right of the dragged one, and a solid item further right
+- **WHEN** the dragged item is dropped onto the non-solid one
+- **THEN** the non-solid item moves down and the solid item keeps its cell
+
+#### Scenario: a solid item dragged by its own press moves and pushes a non-solid item
+
+- **GIVEN** the push mode, a solid item, and a non-solid item two columns to its right
+- **WHEN** the solid item is dragged onto the non-solid one
+- **THEN** the solid item takes the cell and the non-solid item moves down
+
+#### Scenario: a solid item keeps its row when the item above it leaves
+
+- **GIVEN** the push mode, a non-solid item in the first row, and a solid item two rows lower, in a column the non-solid item does not reach
+- **WHEN** the non-solid item is dropped far to the right, where it overlaps nothing
+- **THEN** the solid item keeps its row and only the dropped item is committed
+
+#### Scenario: a push that cascades into a solid item is refused under push
+
+- **GIVEN** the push mode, a non-solid item beside the dragged one, and a solid item below the non-solid one
+- **WHEN** the dragged item is dropped onto the non-solid one, which a push would move onto the solid one
+- **THEN** the solid item keeps its cell and nothing is committed
+
 ### Requirement: A press becomes a drag and writes once
 
 The package SHALL start a drag only once a press moves past the start distance, and write the cells a drag changed once, when its pointer is released.

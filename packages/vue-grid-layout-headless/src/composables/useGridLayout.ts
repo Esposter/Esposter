@@ -40,6 +40,11 @@ export const useGridLayout = <T extends GridItem>(
   options: MaybeRefOrGetter<GridLayoutOptions<T>>,
 ): GridLayout<T> => {
   const getOptions = () => toValue(options);
+  // The ids of the items the consumer marks solid, which no other item's drag displaces, so a landing over one is refused
+  const getSolidIds = (): ReadonlySet<string> => {
+    const { checkIsSolid, items } = getOptions();
+    return new Set(checkIsSolid ? items.filter((item) => checkIsSolid(item)).map(({ id }) => id) : []);
+  };
   const width = ref(0);
   const gesture = shallowRef<GridGesture<T>>();
   // The previews of a drag and of an external drop, held until the release or the clear. A drag's preview wins when both are set
@@ -49,7 +54,9 @@ export const useGridLayout = <T extends GridItem>(
   const columnPitch = computed(() => getColumnPitch(width.value, getOptions().columnNumber, getOptions().spacing));
   const rowPitch = computed(() => getOptions().rowHeight + getOptions().spacing.gap);
   // Each item at its saved cell, kept within the columns and compacted, so a narrower screen never overlaps
-  const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber, getOptions().compactType));
+  const layout = computed(() =>
+    fitLayout(getOptions().items, getOptions().columnNumber, getOptions().compactType, getSolidIds()),
+  );
   const savedItemMap = computed(() => new Map(getOptions().items.map((item): [string, T] => [item.id, item])));
   const previewItemMap = computed(
     () => new Map((activePreview.value?.layout ?? []).map((item): [string, GridItem] => [item.id, item])),
@@ -114,7 +121,7 @@ export const useGridLayout = <T extends GridItem>(
   // The layout a cell lands in, as the collision mode resolves it. A refused cell keeps the grid's own layout, so it is drawn
   // Where it was attempted and the grid is left as it was
   const getPreview = (cell: GridBlock, landingLayout: GridItem[]): GridPreview => {
-    const landedLayout = placeMove(landingLayout, cell, getOptions());
+    const landedLayout = placeMove(landingLayout, cell, getOptions(), getSolidIds());
     if (!landedLayout) return { cell, isRefused: true, layout: layout.value };
 
     return { cell: landedLayout.find(({ id }) => id === cell.id) ?? cell, isRefused: false, layout: landedLayout };
@@ -281,7 +288,12 @@ export const useGridLayout = <T extends GridItem>(
 
     const otherItems = getOptions().items.filter((item) => item.id !== id);
     const changes = getChangedCells(
-      fitLayout([...otherItems, { ...savedItem, h }], getOptions().columnNumber, getOptions().compactType),
+      fitLayout(
+        [...otherItems, { ...savedItem, h }],
+        getOptions().columnNumber,
+        getOptions().compactType,
+        getSolidIds(),
+      ),
     );
     if (changes.length > 0) getOptions().onCommit({ changes });
   };

@@ -4,7 +4,7 @@ The grid's placement and its pointer gestures, as `vue-grid-layout-headless` bui
 
 ## How it works
 
-The consumer binds what the grid returns. The grid's root element is the one the pointer is followed across. Each tile's press goes to `startGesture`, and each handle's press goes to `startGesture` with the edge it pulls. A keyboard step on a tile goes to `stepItem`. The consumer draws the returned tiles at their geometry, the placeholder where a drop would land, and the grid's height. The width comes from a `ResizeObserver` on the root, so the column pitch follows the element and not the window. Until the observer reports that width the grid returns no tiles, since a tile's geometry is computed from it, while the grid keeps the height it reserves.
+The consumer binds what the grid returns. The grid's root element is the one the pointer is followed across. Each tile's press goes to `startGesture`, and each handle's press goes to `startGesture` with the edge it pulls. A keyboard step on a tile goes to `stepItem`. The consumer draws the returned tiles at their geometry, the placeholder where a drop would land, and the grid's height. The placeholder takes no pointer, since a body drag's lookup reads the element under the pointer, and a placeholder drawn over another grid would name the grid it sits in. The width comes from a `ResizeObserver` on the root, so the column pitch follows the element and not the window. Until the observer reports that width the grid returns no tiles, since a tile's geometry is computed from it, while the grid keeps the height it reserves.
 
 A press becomes a gesture, and the gesture becomes a drag only once the pointer has travelled `dragStartDistance`, so a press that barely moves stays a click, and only the primary button starts a gesture. A press on a control inside a tile is left to that control, and a press on an item of a nested grid belongs to that grid, so the grid around it takes no gesture from it. A touch never resizes, so a touch press on a handle is a press on the body and moves the item, as a touch on the body does; a press by any other pointer on an edge that pulls an auto-height item's height starts no gesture. The drag then captures the pointer on the element that was pressed. Each move turns the pointer's offset into whole cells with `getGestureCell`, resolves the cell under the grid's collision mode, compacts the result under its compact type, and holds it as a preview. Nothing is written during a gesture. A gesture ends when the layout it previews is replaced, since its release would otherwise write cells the new layout never had.
 
@@ -23,6 +23,7 @@ flowchart TD
   step["stepItem: one whole-cell step from the keyboard"] --> cell
   cell --> collide["collision mode"]
   collide --> compact["compaction"]
+  collide -->|"a landing over a solid item, or a push that moves one"| solidRefused["no layout: refused under any mode"]
   compact --> preview["preview held in the grid"]
   preview -->|"pointerup over its own grid or over no grid"| commit["one commit of the changed cells"]
   preview -->|"pointercancel"| discarded["gesture and preview discarded"]
@@ -44,6 +45,8 @@ flowchart TD
 
 **Auto-height items.** An item marked `isAutoHeight` takes the whole rows that hold the content its consumer reports through `reportContentHeight`. The span is set, the layout compacts, and the changed cells are committed as one commit.
 
+**Solid items.** A consumer marks items solid through `checkIsSolid`, and the grid reads their ids as a set that `placeMove`, `resolveMove`, `compactLayout` and `fitLayout` take alongside the layout. A landing that overlaps a solid item, and a push or swap that would move one, resolves to no layout under every collision mode, as the prevent mode refuses a landing. Compaction places solid items first and never raises one, so the other items compact around it. The item dragged by its own press is not refused for being solid: it moves and pushes the items it lands on.
+
 **Spacing.** The grid's outer padding is its own option, apart from the gap between items. The padding offsets every cell's position, and the gap shortens each cell's size, so the outer edge of the grid stays apart from the outermost items. The grid's height is its last row's bottom without that row's trailing gap, plus the padding on both sides, so the top and bottom edges stay equally apart from the items.
 
 ## Decisions
@@ -56,6 +59,7 @@ flowchart TD
 - **A body drag hands its item over through `onTransfer`, and the package never moves an item between two lists.** The package owns no data: a consumer's items are arrays it reads and the commit writes back, so it cannot take an item out of one array and put it in another. The package moving the item itself is rejected for that reason, since it would have to know the consumer's lists and the groups they stand for. The callback names the item, the cell it lands in and the target's root element, and the consumer reads its own `data-` attribute from that element to know which group it is. A landing the target refuses is never handed over, so a collision mode is not bypassed by a callback that adds the item anyway. Without `onTransfer` a body drag stays in its grid, so a single-grid consumer sees no change.
 - **A consumer refuses an item before its grid lays out the landing.** A refusal found at the release comes after the grid has committed the pushes its landing made, so `checkIsRefused` is asked before anything is previewed or committed. Refusing in the consumer's `onTransfer` is rejected for that reason: the target has already written its pushes by then. The predicate is an option of the grid the item lands on, so a body drag and a palette drop read one rule, and `startExternalDrag` takes the same predicate as its fourth argument, since a palette entry is not yet an item of the grid it lands on. A collision mode still refuses a landing the predicate allows, so the predicate narrows the grid's rules rather than replacing them.
 - **The package depends on `@esposter/shared` for one helper.** `checkIsNestedControl` refuses a press on a control inside a tile, and the rest of the package is native (`addEventListener`, `ResizeObserver`, `setPointerCapture`). The helper is shared rather than copied, so a press rule has one definition.
+- **A solid item is a grid option, not a drop zone for its group.** A consumer marks a container solid with `checkIsSolid`, and the grid keeps it in its cell: a landing over it is refused, and no push, swap or compaction moves it. The alternative was a drop zone the consumer names, so a container's whole tile targets its own grid. That was rejected: a zone only chooses which grid the pointer targets, and the container's footprint is pushed out of the pointer's path while the pointer is still over the grid around it, so the zone never receives the pointer. The option keeps the container in place for the whole approach.
 - **The drag threshold is an option, not a constant.** The package takes `dragStartDistance` from its consumer. The dashboard keeps its own distance in its UI constants, so a consumer tunes its own feel.
 
 ## Notes
@@ -69,23 +73,23 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role                                                                                                          |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `packages/vue-grid-layout-headless/src/vueGridLayoutHeadless.ts`      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                   |
-| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gesture state, the preview, the commits, the keyboard step and the resize observer                        |
-| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer              |
-| `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`      | The grids mounted on the page, keyed by root                                                                  |
-| `packages/vue-grid-layout-headless/src/services/findGridRoot.ts`      | The nearest mounted grid root at or above an element, so an inner grid's root wins for a press and for a drop |
-| `packages/vue-grid-layout-headless/src/services/findGridAt.ts`        | The grid under a point: the first hit outside the dragged element, then its nearest root                      |
-| `packages/vue-grid-layout-headless/src/placement/getGestureCell.ts`   | Turns a pointer's offset into the whole cells a move or a resize lands on                                     |
-| `packages/vue-grid-layout-headless/src/placement/resolveMove.ts`      | Applies the collision mode to a dropped cell: push, swap or refuse                                            |
-| `packages/vue-grid-layout-headless/src/placement/placeMove.ts`        | Places a move: applies the collision mode, then compacts under the grid's columns and type                    |
-| `packages/vue-grid-layout-headless/src/placement/compactLayout.ts`    | Compacts a layout upward, sideways or not at all, resolves overlaps, and bounds a horizontal push             |
-| `packages/vue-grid-layout-headless/src/placement/fitLayout.ts`        | Fits a saved layout to a column count, then compacts it                                                       |
-| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts` | The first cell a new item's span fits in, scanning rows from the top                                          |
-| `packages/vue-grid-layout-headless/src/models/GridRefusal.ts`         | The consumer's refusal of an item for a grid, asked before the grid lays out or commits a landing             |
-| `packages/vue-grid-layout-headless/src/models/GridTransfer.ts`        | The hand-over a body drag released over another grid makes: the item, its cell and that grid's root           |
-| `packages/vue-grid-layout-headless/src/models/GridCommit.ts`          | The commit a release writes: the changed cells                                                                |
+| File                                                                  | Role                                                                                                                        |
+| :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `packages/vue-grid-layout-headless/src/vueGridLayoutHeadless.ts`      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                                                 |
+| `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gesture state, the preview, the commits, the keyboard step and the resize observer                                      |
+| `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer                            |
+| `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`      | The grids mounted on the page, keyed by root                                                                                |
+| `packages/vue-grid-layout-headless/src/services/findGridRoot.ts`      | The nearest mounted grid root at or above an element, so an inner grid's root wins for a press and for a drop               |
+| `packages/vue-grid-layout-headless/src/services/findGridAt.ts`        | The grid under a point: the first hit outside the dragged element, then its nearest root                                    |
+| `packages/vue-grid-layout-headless/src/placement/getGestureCell.ts`   | Turns a pointer's offset into the whole cells a move or a resize lands on                                                   |
+| `packages/vue-grid-layout-headless/src/placement/resolveMove.ts`      | Applies the collision mode to a dropped cell: push, swap or refuse, and refuses any landing that displaces a solid item     |
+| `packages/vue-grid-layout-headless/src/placement/placeMove.ts`        | Places a move: applies the collision mode, then compacts under the grid's columns and type                                  |
+| `packages/vue-grid-layout-headless/src/placement/compactLayout.ts`    | Compacts a layout upward, sideways or not at all, resolves overlaps, and bounds a horizontal push; a solid item never rises |
+| `packages/vue-grid-layout-headless/src/placement/fitLayout.ts`        | Fits a saved layout to a column count, then compacts it                                                                     |
+| `packages/vue-grid-layout-headless/src/placement/getFirstFreeCell.ts` | The first cell a new item's span fits in, scanning rows from the top                                                        |
+| `packages/vue-grid-layout-headless/src/models/GridRefusal.ts`         | The consumer's refusal of an item for a grid, asked before the grid lays out or commits a landing                           |
+| `packages/vue-grid-layout-headless/src/models/GridTransfer.ts`        | The hand-over a body drag released over another grid makes: the item, its cell and that grid's root                         |
+| `packages/vue-grid-layout-headless/src/models/GridCommit.ts`          | The commit a release writes: the changed cells                                                                              |
 
 ## Sources
 

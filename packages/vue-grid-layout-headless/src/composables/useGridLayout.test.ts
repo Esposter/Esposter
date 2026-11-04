@@ -44,6 +44,7 @@ describe(useGridLayout, () => {
   // The options a grid lays out with, so a test states only the ones it changes
   const createGridOptions = ({
     checkIsRefused,
+    checkIsSolid,
     collision = CollisionMode.Push,
     columnNumber: gridColumnNumber = columnNumber,
     compactType = CompactType.Vertical,
@@ -54,6 +55,7 @@ describe(useGridLayout, () => {
     spacing: gridSpacing = spacing,
   }: {
     checkIsRefused?: GridRefusal;
+    checkIsSolid?: (item: GridItem) => boolean;
     collision?: CollisionMode;
     columnNumber?: number;
     compactType?: CompactType;
@@ -64,6 +66,7 @@ describe(useGridLayout, () => {
     spacing?: GridSpacing;
   }) => ({
     checkIsRefused,
+    checkIsSolid,
     collision,
     columnNumber: gridColumnNumber,
     compactType,
@@ -79,6 +82,7 @@ describe(useGridLayout, () => {
   // Test reads where each one is drawn
   const mountGrid = ({
     checkIsRefused,
+    checkIsSolid,
     collision = CollisionMode.Push,
     columnNumber: gridColumnNumber = columnNumber,
     compactType = CompactType.Vertical,
@@ -89,6 +93,7 @@ describe(useGridLayout, () => {
     spacing: gridSpacing = spacing,
   }: {
     checkIsRefused?: GridRefusal;
+    checkIsSolid?: (item: GridItem) => boolean;
     collision?: CollisionMode;
     columnNumber?: number;
     compactType?: CompactType;
@@ -109,6 +114,7 @@ describe(useGridLayout, () => {
           const layout = useGridLayout(root, () =>
             createGridOptions({
               checkIsRefused,
+              checkIsSolid,
               collision,
               columnNumber: gridColumnNumber,
               compactType,
@@ -550,6 +556,194 @@ describe(useGridLayout, () => {
       items: [
         { h: 2, id: "a", w: 2, x: 0, y: 0 },
         { h: 2, id: "b", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a landing with no solid predicate pushes the item it lands on", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [
+        {
+          changes: [
+            { h: 2, id: "a", w: 2, x: 4, y: 0 },
+            { h: 2, id: "b", w: 2, x: 4, y: 2 },
+          ],
+        },
+      ],
+    ]);
+  });
+
+  test("a landing over a solid item is refused under push and the solid item keeps its cell", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "s", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const solidStyle = wrapper.findAll(".tile")[1]?.attributes("style");
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(wrapper.find(".placeholder.refused").exists()).toBe(true);
+    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toBe(solidStyle);
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a landing over a solid item is refused under swap and the solid item keeps its cell", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      collision: CollisionMode.Swap,
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "s", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const solidStyle = wrapper.findAll(".tile")[1]?.attributes("style");
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(wrapper.findAll(".tile")[1]?.attributes("style")).toBe(solidStyle);
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a landing beside a solid item lands normally", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "s", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 2, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] }]]);
+  });
+
+  test("a landing that pushes a non-solid item leaves a solid item beside it where it was", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+        { h: 2, id: "s", w: 2, x: 8, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [
+        {
+          changes: [
+            { h: 2, id: "a", w: 2, x: 4, y: 0 },
+            { h: 2, id: "b", w: 2, x: 4, y: 2 },
+          ],
+        },
+      ],
+    ]);
+  });
+
+  test("a solid item dragged by its own press moves and pushes a non-solid item", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "s", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 4, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([
+      [
+        {
+          changes: [
+            { h: 2, id: "s", w: 2, x: 4, y: 0 },
+            { h: 2, id: "b", w: 2, x: 4, y: 2 },
+          ],
+        },
+      ],
+    ]);
+  });
+
+  test("a solid item keeps its row when the item above it leaves", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "s", w: 2, x: 4, y: 2 },
+      ],
+    });
+    await flushPromises();
+    const tile = wrapper.findAll(".tile")[0];
+    await tile?.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile?.trigger("pointermove", { buttons: 1, clientX: cellPitch * 8, clientY: 0, pointerId });
+    await tile?.trigger("pointerup", { clientX: cellPitch * 8, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([[{ changes: [{ h: 2, id: "a", w: 2, x: 8, y: 0 }] }]]);
+  });
+
+  test("a push that cascades into a solid item is refused under push", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid({
+      checkIsSolid: (item) => item.id === "s",
+      items: [
+        { h: 2, id: "a", w: 2, x: 0, y: 0 },
+        { h: 2, id: "b", w: 2, x: 4, y: 0 },
+        { h: 2, id: "s", w: 2, x: 4, y: 2 },
       ],
     });
     await flushPromises();
