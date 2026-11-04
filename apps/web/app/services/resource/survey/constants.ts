@@ -123,7 +123,6 @@ export const SURVEY_IMAGE_FIT_CLASSES: Readonly<Record<SurveyImageFit, string>> 
   [SurveyImageFit.None]: "object-none",
 };
 
-// The input types the library's text field draws as its own control; the rest are typed as plain text
 // The faces a smiley rating runs through, from the angriest to the happiest, one step of the scale to each face in turn
 export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
   UiIconMeaning.SmileyVeryUnhappy,
@@ -133,6 +132,7 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
   UiIconMeaning.SmileyVeryHappy,
 ];
 
+// The input types the library's text field draws as its own control; the rest are typed as plain text
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<Partial<Record<SurveyTextInputType, UiTextFieldType>>> = {
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
   [SurveyTextInputType.Password]: UiTextFieldType.Password,
