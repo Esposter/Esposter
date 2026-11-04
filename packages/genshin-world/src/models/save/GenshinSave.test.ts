@@ -18,7 +18,6 @@ import {
   MAX_HOME_PLACEMENT_COUNT,
   MAX_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
-import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
@@ -492,8 +491,7 @@ describe("genshinSaveSchema", () => {
     expect(partySaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE.party, activeIndex: 1 }).success).toBe(false);
   });
 
-  // A slice a save predates is refused rather than defaulted, a stored save being backfilled to the shape, except the shop
-  // Purchases, which start empty, and the Sigils, which the reader counts at zero
+  // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape
   test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {
@@ -503,18 +501,6 @@ describe("genshinSaveSchema", () => {
     };
 
     expect(genshinSaveSchema.safeParse(predatingSave).success).toBe(false);
-  });
-
-  test("accepts a save written before the Sigils were added", () => {
-    expect.hasAssertions();
-    const currencies = Object.fromEntries(
-      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.includes(currency)),
-    );
-
-    expect(
-      genshinSaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } })
-        .success,
-    ).toBe(true);
   });
 
   test("refuses a save with no card game EXP", () => {

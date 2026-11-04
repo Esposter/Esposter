@@ -18,7 +18,6 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { getFishingStockKey } from "#src/services/fishing/getFishingStockKey";
-import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { toGenshinSave } from "#src/services/save/toGenshinSave";
@@ -511,18 +510,6 @@ describe(readGenshinSave, () => {
     };
 
     expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
-  });
-
-  test("a save written before the Sigils were added reads each Sigil as zero", () => {
-    expect.hasAssertions();
-    const currencies = Object.fromEntries(
-      Object.entries(EMPTY_CURRENCIES).filter(([currency]) => !SIGIL_CURRENCIES.includes(currency)),
-    );
-    const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
-
-    const { wallet } = readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map());
-
-    expect(SIGIL_CURRENCIES.map((currency) => wallet[currency])).toStrictEqual(SIGIL_CURRENCIES.map(() => 0));
   });
 
   test("a bounty taken and the week's bounty and request claims survive a reload", () => {
