@@ -16,7 +16,6 @@ interface Props {
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node, seed } = defineProps<Props>();
 const id = useId();
-const label = computed(() => node.props.title || node.props.name);
 // The options in the order the reader sees them, so a key is a choice's place in what the select lists
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceKey = (index: number) => `${id}-${index}`;
@@ -64,29 +63,26 @@ const setOtherText = (text: string) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <UiSelect
-      :aria-invalid="error ? true : undefined"
-      :aria-required="node.props.isRequired ? true : undefined"
-      :is-disabled
-      :items
-      :label
-      :model-value="selectedKeys"
-      :placeholder="node.props.placeholder"
-      @update:model-value="(keys) => choose(keys)"
-    />
-    <UiTextField
-      v-if="isOtherChosen"
-      :is-disabled="isDisabled ? true : undefined"
-      is-label-hidden
-      :label="node.props.otherText || 'Other'"
-      :model-value="otherText"
-      @update:model-value="(text) => setOtherText(text)"
-    />
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ title }">
+      <UiSelect
+        :aria-invalid="error ? true : undefined"
+        :aria-required="node.props.isRequired ? true : undefined"
+        :is-disabled
+        :items
+        :label="title"
+        :model-value="selectedKeys"
+        :placeholder="node.props.placeholder"
+        @update:model-value="(keys) => choose(keys)"
+      />
+      <UiTextField
+        v-if="isOtherChosen"
+        :is-disabled="isDisabled ? true : undefined"
+        is-label-hidden
+        :label="node.props.otherText || 'Other'"
+        :model-value="otherText"
+        @update:model-value="(text) => setOtherText(text)"
+      />
+    </template>
   </ResourceSurveyFieldShell>
 </template>

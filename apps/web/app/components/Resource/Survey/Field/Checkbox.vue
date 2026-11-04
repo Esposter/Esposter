@@ -14,7 +14,6 @@ interface Props {
 // Is the one entry that is neither a choice's value nor none, so other needs no second key
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node, seed } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 // The options in the order the reader sees them, which the list draws and a pick is read against
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));
 const choiceValues = computed(() => node.props.choices.map(({ value }) => value));
@@ -67,12 +66,7 @@ const setOtherText = (text: string) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
+  <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, labelledBy }">
       <div :aria-describedby="describedBy" :aria-labelledby="labelledBy" role="group" flex flex-col gap-2>
         <UiCheckbox

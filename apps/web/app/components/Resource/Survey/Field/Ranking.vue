@@ -1,13 +1,11 @@
 <script setup lang="ts">
+import type { SurveyKeyedChoice } from "@/models/resource/survey/SurveyKeyedChoice";
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "survey-engine";
 
+import { getSurveyKeyedChoices } from "@/services/resource/survey/getSurveyKeyedChoices";
 import { getSurveyChoiceText } from "survey-engine";
 
-interface KeyedChoice {
-  choice: SurveyChoice;
-  key: string;
-}
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
@@ -17,14 +15,11 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 // A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
-const keyedChoices = computed<KeyedChoice[]>(() =>
-  node.props.choices.map((choice, index) => ({ choice, key: String(index) })),
-);
+const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 // The answer's order, with any choice it leaves out kept after it, so the list never loses a choice
-const rankedChoices = computed<KeyedChoice[]>(() => {
-  const ranked: KeyedChoice[] = Array.isArray(answer.value)
+const rankedChoices = computed(() => {
+  const ranked: SurveyKeyedChoice<SurveyChoice>[] = Array.isArray(answer.value)
     ? answer.value.flatMap((value) => keyedChoices.value.filter(({ choice }) => choice.value === value))
     : [];
   return [...ranked, ...keyedChoices.value.filter((keyed) => !ranked.includes(keyed))];
@@ -41,13 +36,8 @@ const onReorder = (keys: string[]) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <template #default="{ describedBy, labelledBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, labelledBy, title }">
       <!-- The rows are the choices in their order, each marked with its place; Alt and an arrow moves the focused one -->
       <UiList
         :aria-describedby="describedBy"
@@ -55,7 +45,7 @@ const onReorder = (keys: string[]) => {
         :aria-labelledby="labelledBy"
         :is-reorderable="isDisabled ? undefined : true"
         :items
-        :label
+        :label="title"
         @reorder="(keys) => onReorder(keys)"
       >
         <template #mark="{ item }">{{ items.indexOf(item) + 1 }}</template>

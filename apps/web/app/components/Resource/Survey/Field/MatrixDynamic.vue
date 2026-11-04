@@ -5,6 +5,7 @@ import type { SurveyAnswers, SurveyAnswerValue, SurveyChoice, SurveyMatrixDynami
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
+import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
 import { getSurveyChoiceText, SurveyMatrixCellType } from "survey-engine";
@@ -55,7 +56,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
       <table text-left w-full :aria-describedby="error ? errorId : undefined">
         <caption text-left>
           <span block>
-            {{ node.props.title || node.props.name }}
+            {{ getSurveyQuestionTitle(node.props) }}
             <UiRequiredMark v-if="node.props.isRequired" />
           </span>
           <span v-if="node.props.description" text-sm text-muted block>{{ node.props.description }}</span>

@@ -19,7 +19,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, getRowViews, isDisabled, node, seed } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 const panels = computed(() => getSurveyAnswerRows(answer.value, node.props.panelCount));
 // Outside a runner, as on the Creator's canvas, no condition decides a row, so every template question is drawn with its own flags
 const getTemplateViews = (panel: SurveyAnswers): SurveyPanelRowView[] =>
@@ -47,18 +46,13 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <template #default="{ describedBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, title }">
       <div
         role="group"
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
-        :aria-label="label"
+        :aria-label="title"
         flex
         flex-col
         gap-4

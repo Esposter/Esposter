@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { SurveyAnswerValue, SurveyImageChoice, SurveyImagePickerNode } from "survey-engine";
+import type { SurveyAnswerValue, SurveyImagePickerNode } from "survey-engine";
 
 import { SURVEY_IMAGE_FIT_CLASSES } from "@/services/resource/survey/constants";
+import { getSurveyKeyedChoices } from "@/services/resource/survey/getSurveyKeyedChoices";
 import { getSurveyChoiceText } from "survey-engine";
 
-interface KeyedChoice {
-  choice: SurveyImageChoice;
-  key: string;
-}
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none
   error: string;
@@ -18,11 +15,8 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 // A choice is keyed by its place in the question, since two values may read alike and a list keys its rows by text
-const keyedChoices = computed<KeyedChoice[]>(() =>
-  node.props.choices.map((choice, index) => ({ choice, key: String(index) })),
-);
+const keyedChoices = computed(() => getSurveyKeyedChoices(node.props.choices));
 const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
   keyedChoices.value.map(({ choice, key }) => ({
     hasMarkSlot: true,
@@ -54,13 +48,8 @@ const onSelect = (keys: string[] | undefined = []) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <template #default="{ describedBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, title }">
       <!-- Each picture is a row of the list, so the arrows and Enter or Space pick it as they pick any listbox option -->
       <UiList
         :aria-describedby="describedBy"
@@ -68,7 +57,7 @@ const onSelect = (keys: string[] | undefined = []) => {
         :aria-required="node.props.isRequired ? true : undefined"
         :is-multiple="node.props.multiSelect || undefined"
         :items
-        :label
+        :label="title"
         :model-value="selectedKeys"
         @update:model-value="(keys) => onSelect(keys)"
       >

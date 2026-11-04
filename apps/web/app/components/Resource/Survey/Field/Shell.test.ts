@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import ResourceSurveyFieldShell from "@/components/Resource/Survey/Field/Shell.vue";
 import { mount } from "@vue/test-utils";
+import { surveyTextNodePropsSchema } from "survey-engine";
 import { describe, expect, test } from "vitest";
 
 // A control that takes the shell's description and error as its own, as a field's control does
@@ -12,7 +13,18 @@ describe("resourceSurveyFieldShell", () => {
   const title = "title";
   const mountShell = (props: { description?: string; error?: string; isRequired?: boolean } = {}) =>
     mount(ResourceSurveyFieldShell, {
-      props: { description: "", error: "", isRequired: false, title, ...props },
+      props: {
+        error: props.error ?? "",
+        question: {
+          ...surveyTextNodePropsSchema.parse({
+            description: props.description,
+            isRequired: props.isRequired,
+            name: "a",
+            title,
+          }),
+          id: crypto.randomUUID(),
+        },
+      },
       slots: { default: slot },
     });
 

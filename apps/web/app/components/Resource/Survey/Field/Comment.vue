@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveyCommentNode } from "survey-engine";
 
+import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field and marking it invalid
   error: string;
@@ -10,7 +12,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const title = computed(() => node.props.title || node.props.name);
 // A comment's answer is the text as typed, and an empty box holds no answer
 const comment = computed({
   get: () => (answer.value === undefined ? "" : String(answer.value)),
@@ -27,7 +28,7 @@ const comment = computed({
     :hint="node.props.description"
     :is-required="node.props.isRequired || undefined"
     :is-disabled="isDisabled || undefined"
-    :label="title"
+    :label="getSurveyQuestionTitle(node.props)"
     :maxlength="node.props.maxLength"
     :placeholder="node.props.placeholder"
     :rows="node.props.rows"

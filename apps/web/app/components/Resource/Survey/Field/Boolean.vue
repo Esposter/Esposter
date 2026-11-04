@@ -15,7 +15,6 @@ interface Props {
 // Would read as an answer of No and pre-select that option
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const title = computed(() => node.props.title || node.props.name);
 const isChecked = computed({
   get: () => answer.value === true,
   set: (isOn) => {
@@ -38,8 +37,8 @@ const choice = computed({
 </script>
 
 <template>
-  <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
-    <template #default="{ describedBy, labelledBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, labelledBy, title }">
       <UiSwitch
         v-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Switch"
         v-model="isChecked"

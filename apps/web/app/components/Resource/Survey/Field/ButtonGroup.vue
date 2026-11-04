@@ -13,7 +13,6 @@ interface Props {
 // That is a select's absent value too, since the group's model cannot be undefined
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number | string>[]>(() =>
   node.props.choices.map((choice) => ({ title: getSurveyChoiceText(choice), value: choice.value })),
 );
@@ -26,13 +25,8 @@ const choice = computed<number | string>({
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <template #default="{ describedBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, title }">
       <UiToggleGroup
         v-model="choice"
         :aria-describedby="describedBy"
@@ -40,7 +34,7 @@ const choice = computed<number | string>({
         :aria-required="node.props.isRequired ? true : undefined"
         :is-disabled
         :items
-        :label
+        :label="title"
       />
     </template>
   </ResourceSurveyFieldShell>

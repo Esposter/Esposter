@@ -15,7 +15,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 const items = computed<UiMenuItem<number>[]>(() =>
   Array.from({ length: node.props.rateCount }, (_value, index) => ({ title: String(index + 1), value: index + 1 })),
 );
@@ -35,13 +34,8 @@ const getSmiley = (value: number) =>
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
-    <template #default="{ describedBy }">
+  <ResourceSurveyFieldShell :error :question="node.props">
+    <template #default="{ describedBy, title }">
       <UiToggleGroup
         v-if="node.props.rateType === SurveyRatingType.Labels"
         v-model="rating"
@@ -50,7 +44,7 @@ const getSmiley = (value: number) =>
         :aria-required="node.props.isRequired ? true : undefined"
         :is-disabled
         :items
-        :label
+        :label="title"
       />
       <UiRating
         v-else
@@ -60,7 +54,7 @@ const getSmiley = (value: number) =>
         :aria-required="node.props.isRequired ? true : undefined"
         :count="node.props.rateCount"
         :is-disabled
-        :label
+        :label="title"
       >
         <template #mark="{ isOn, value }">
           <UiIcon

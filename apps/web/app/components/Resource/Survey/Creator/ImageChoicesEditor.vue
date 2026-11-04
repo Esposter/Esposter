@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { getBlockNode } from "headless-block-editor";
-import { surveyImageChoiceSchema, surveyNodeChildren, SurveyNodeType } from "survey-engine";
+import { surveyImageChoiceSchema, SurveyNodeType } from "survey-engine";
 
 interface Props {
   pointer: string;
 }
 
 const { pointer } = defineProps<Props>();
-const surveyCreatorStore = useSurveyCreatorStore();
-const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
-const { updateNodeProps } = useSurveyCreatorCommands();
-const { uploadPicked } = useSurveyFiles();
+const { node, updateNodeProps, uploadPicked } = useSurveyPointerNode(() => pointer);
 // The choices of the picker at the pointer, or none when the node there is not an image picker
 const choices = computed(() => {
-  const node = getBlockNode(surveyDocument.value, pointer, surveyNodeChildren);
-  return node?.type === SurveyNodeType.ImagePicker ? node.props.choices : [];
+  const picker = node.value;
+  return picker?.type === SurveyNodeType.ImagePicker ? picker.props.choices : [];
 });
 // The choices are written whole, so the list the document keeps is the order the editor shows. The list editor holds
 // The rows as a draft, and writes a list only once every row is valid, so a value the list refuses stays as typed
 const { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem } = useSurveyListEditor(
-  computed({ get: () => choices.value, set: (nextChoices) => updateNodeProps(pointer, { choices: nextChoices }) }),
+  computed({ get: () => choices.value, set: (nextChoices) => updateNodeProps({ choices: nextChoices }) }),
   {
     duplicateMessage: "Choice values must be unique",
     getItemError: (choice) =>

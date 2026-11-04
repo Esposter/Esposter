@@ -16,14 +16,12 @@ const getChoiceError = (choice: SurveyChoice) =>
   String(choice.value) === ""
     ? "A choice needs a value"
     : surveyChoiceSchema.safeParse(choice).error?.issues[0]?.message;
-const { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem } = useSurveyListEditor(
-  modelValue,
-  {
-    duplicateMessage: "Choice values must be unique",
-    getItemError: getChoiceError,
-    getKey: (choice) => String(choice.value),
-  },
-);
+const editor = useSurveyListEditor(modelValue, {
+  duplicateMessage: "Choice values must be unique",
+  getItemError: getChoiceError,
+  getKey: (choice) => String(choice.value),
+});
+const { addItems, updateItem } = editor;
 const addText = ref("");
 const addFromField = () => {
   if (addText.value.trim() === "") return;
@@ -47,20 +45,10 @@ const pasteLines = (event: ClipboardEvent) => {
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <span text-sm text-muted>{{ label }}</span>
-    <div
-      v-for="(row, index) of rows"
-      :key="row.id"
-      :aria-label="`${label} ${index + 1}`"
-      role="group"
-      flex
-      gap-2
-      items-start
-      @keydown="(event) => onRowKeydown(event, row.id)"
-    >
+  <ResourceSurveyCreatorListEditor :editor :label>
+    <template #default="{ error, row }">
       <UiTextField
-        :error="errors[index]"
+        :error
         is-label-hidden
         label="Value"
         :model-value="String(row.item.value)"
@@ -74,20 +62,15 @@ const pasteLines = (event: ClipboardEvent) => {
         placeholder="Text"
         @update:model-value="(text) => updateItem(row.id, { text })"
       />
-      <ResourceSurveyCreatorRowActions
-        :index
-        :count="rows.length"
-        @move="(toIndex) => moveItem(row.id, toIndex)"
-        @remove="removeItem(row.id)"
+    </template>
+    <template #add>
+      <ResourceSurveyCreatorAddRowForm
+        v-model="addText"
+        label="Add a choice"
+        placeholder="Value or value|text"
+        @add="addFromField()"
+        @paste="pasteLines"
       />
-    </div>
-    <div aria-live="polite" sr-only>{{ announcement }}</div>
-    <ResourceSurveyCreatorAddRowForm
-      v-model="addText"
-      label="Add a choice"
-      placeholder="Value or value|text"
-      @add="addFromField()"
-      @paste="pasteLines"
-    />
-  </div>
+    </template>
+  </ResourceSurveyCreatorListEditor>
 </template>

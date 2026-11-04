@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyMultipleTextItem } from "survey-engine";
 
-import { surveyMultipleTextItemSchema, SurveyMultipleTextItemInputType } from "survey-engine";
+import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "survey-engine";
 
 interface Props {
   // The list's name, drawn above its rows and named by each row's group, such as "Items"
@@ -11,14 +11,12 @@ interface Props {
 // List and each item's own settings are checked by its schema
 const modelValue = defineModel<SurveyMultipleTextItem[]>({ required: true });
 const { label } = defineProps<Props>();
-const { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem } = useSurveyListEditor(
-  modelValue,
-  {
-    duplicateMessage: "Item names must be unique",
-    getItemError: (item) => surveyMultipleTextItemSchema.safeParse(item).error?.issues[0]?.message,
-    getKey: (item) => item.name,
-  },
-);
+const editor = useSurveyListEditor(modelValue, {
+  duplicateMessage: "Item names must be unique",
+  getItemError: (item) => surveyMultipleTextItemSchema.safeParse(item).error?.issues[0]?.message,
+  getKey: (item) => item.name,
+});
+const { addItems, updateItem } = editor;
 const inputTypeItems = Object.values(SurveyMultipleTextItemInputType).map((inputType) => ({
   title: inputType,
   value: inputType,
@@ -41,29 +39,9 @@ const addFromField = () => {
 </script>
 
 <template>
-  <div flex flex-col gap-2>
-    <span text-sm text-muted>{{ label }}</span>
-    <div
-      v-for="(row, index) of rows"
-      :key="row.id"
-      :aria-label="`${label} ${index + 1}`"
-      role="group"
-      flex
-      gap-2
-      items-start
-      @keydown="(event) => onRowKeydown(event, row.id)"
-    >
-      <UiTextField
-        :error="errors[index]"
-        label="Name"
-        :model-value="row.item.name"
-        @update:model-value="(name) => updateItem(row.id, { name })"
-      />
-      <UiTextField
-        label="Title"
-        :model-value="row.item.title"
-        @update:model-value="(title) => updateItem(row.id, { title })"
-      />
+  <ResourceSurveyCreatorListEditor :editor :label>
+    <template #default="{ error, index, row }">
+      <ResourceSurveyCreatorNameTitleFields :error :item="row.item" @update="(patch) => updateItem(row.id, patch)" />
       <UiSelect
         :items="inputTypeItems"
         :label="`Input type of item ${index + 1}`"
@@ -76,19 +54,14 @@ const addFromField = () => {
         :model-value="row.item.isRequired"
         @update:model-value="(isRequired) => updateItem(row.id, { isRequired })"
       />
-      <ResourceSurveyCreatorRowActions
-        :index
-        :count="rows.length"
-        @move="(toIndex) => moveItem(row.id, toIndex)"
-        @remove="removeItem(row.id)"
+    </template>
+    <template #add>
+      <ResourceSurveyCreatorAddRowForm
+        v-model="addText"
+        label="Add an item"
+        placeholder="Item name"
+        @add="addFromField()"
       />
-    </div>
-    <div aria-live="polite" sr-only>{{ announcement }}</div>
-    <ResourceSurveyCreatorAddRowForm
-      v-model="addText"
-      label="Add an item"
-      placeholder="Item name"
-      @add="addFromField()"
-    />
-  </div>
+    </template>
+  </ResourceSurveyCreatorListEditor>
 </template>

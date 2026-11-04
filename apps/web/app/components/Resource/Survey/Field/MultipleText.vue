@@ -12,7 +12,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 // The answer is a record from each item's name to its text, read as the empty record until one is given
 const answers = useSurveyRecordAnswer(answer);
 const getText = (value: SurveyAnswerValue | undefined) => (typeof value === "string" ? value : "");
@@ -22,12 +21,7 @@ const updateItem = (name: string, text: string) => {
 </script>
 
 <template>
-  <ResourceSurveyFieldShell
-    :description="node.props.description"
-    :error
-    :is-required="node.props.isRequired"
-    :title="label"
-  >
+  <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy" flex flex-col gap-2>
         <UiTextField

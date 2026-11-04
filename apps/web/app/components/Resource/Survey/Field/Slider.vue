@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SurveyAnswerValue, SurveySliderNode } from "survey-engine";
 
+import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
+
 interface Props {
   error: string;
   isDisabled: boolean;
@@ -10,7 +12,6 @@ interface Props {
 // The respondent moves it, so an untouched question stays unanswered
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const label = computed(() => node.props.title || node.props.name);
 const value = computed<number>({
   get: () => (typeof answer.value === "number" ? answer.value : node.props.min),
   set: (next) => {
@@ -29,7 +30,7 @@ const valueText = computed(() => (node.props.showValue ? String(value.value) : "
       :is-disabled
       :is-invalid="error ? true : undefined"
       :is-required="node.props.isRequired || undefined"
-      :label
+      :label="getSurveyQuestionTitle(node.props)"
       :max="node.props.max"
       :min="node.props.min"
       :step="node.props.step"

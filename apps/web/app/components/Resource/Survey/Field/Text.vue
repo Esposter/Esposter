@@ -2,6 +2,7 @@
 import type { SurveyAnswerValue, SurveyTextNode } from "survey-engine";
 
 import { SURVEY_TEXT_FIELD_TYPES } from "@/services/resource/survey/constants";
+import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 import { SurveyTextInputType } from "survey-engine";
 
 interface Props {
@@ -13,7 +14,6 @@ interface Props {
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
 const { error, isDisabled, node } = defineProps<Props>();
-const title = computed(() => node.props.title || node.props.name);
 const isDate = computed(
   () => node.props.inputType === SurveyTextInputType.Date || node.props.inputType === SurveyTextInputType.DatetimeLocal,
 );
@@ -49,7 +49,7 @@ const date = computed<Date | undefined>({
       is-clearable
       :is-disabled="isDisabled || undefined"
       :is-time="isDateTime || undefined"
-      :label="title"
+      :label="getSurveyQuestionTitle(node.props)"
     />
     <UiTextField
       v-else
@@ -57,7 +57,7 @@ const date = computed<Date | undefined>({
       :hint="node.props.description"
       :is-required="node.props.isRequired || undefined"
       :is-disabled="isDisabled || undefined"
-      :label="title"
+      :label="getSurveyQuestionTitle(node.props)"
       :maxlength="node.props.maxLength"
       :model-value="text"
       :placeholder="node.props.placeholder"
