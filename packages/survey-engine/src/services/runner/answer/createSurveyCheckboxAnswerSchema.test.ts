@@ -2,7 +2,11 @@ import type { SurveyCheckboxNode } from "#src/models/SurveyCheckboxNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyCheckboxAnswerSchema } from "#src/services/runner/answer/createSurveyCheckboxAnswerSchema";
-import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_TOO_MANY_SELECTED_MESSAGE } from "#src/services/runner/constants";
+import {
+  SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_NONE_ANSWER,
+  SURVEY_TOO_MANY_SELECTED_MESSAGE,
+} from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
 import { describe, expect, test } from "vitest";
@@ -42,6 +46,6 @@ describe(createSurveyCheckboxAnswerSchema, () => {
 
     const schema = createSurveyCheckboxAnswerSchema(createCheckboxNode({ hasNone: true }));
 
-    expect(getSurveyFirstMessage(schema.safeParse(["none", "a"]))).toBe(SURVEY_INVALID_ANSWER_MESSAGE);
+    expect(getSurveyFirstMessage(schema.safeParse([SURVEY_NONE_ANSWER, "a"]))).toBe(SURVEY_INVALID_ANSWER_MESSAGE);
   });
 });

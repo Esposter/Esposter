@@ -45,7 +45,7 @@ describe("surveyNodeSchema", () => {
 });
 
 describe("surveyDocumentSchema", () => {
-  const rootProps = { title: "Survey" };
+  const rootProps = {};
 
   test("a page holding a panel, a question and a dynamic panel parses", () => {
     expect.hasAssertions();

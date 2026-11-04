@@ -3,6 +3,7 @@ import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnab
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { describe, expect, test } from "vitest";
 
+// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the node's enableIf is read
 describe(checkSurveyNodeEnabled, () => {
   const now = new Date(0);
 
@@ -10,11 +11,10 @@ describe(checkSurveyNodeEnabled, () => {
     ["a node with no condition is enabled", "", {}, true],
     ["a node whose condition holds is enabled", "{a} = 'a'", { a: "a" }, true],
     ["a node whose condition does not hold is disabled", "{a} = 'a'", { a: "b" }, false],
-    ["a node whose condition faults is disabled", "({a}", { a: "a" }, false],
   ])("%s", (_name, enableIf, values, expected) => {
     expect.hasAssertions();
 
-    const node = surveyNodeSchema.parse({ props: { id: "a", name: "a", enableIf }, type: SurveyNodeType.Text });
+    const node = surveyNodeSchema.parse({ props: { enableIf, id: "a", name: "a" }, type: SurveyNodeType.Text });
 
     expect(checkSurveyNodeEnabled(node, values, now)).toBe(expected);
   });

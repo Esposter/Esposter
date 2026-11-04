@@ -3,6 +3,7 @@ import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisi
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { describe, expect, test } from "vitest";
 
+// The condition's own matrix, faults included, lives in checkSurveyExpressionHolds.test.ts, so here only the node's visibleIf is read
 describe(checkSurveyNodeVisible, () => {
   const now = new Date(0);
 
@@ -10,7 +11,6 @@ describe(checkSurveyNodeVisible, () => {
     ["a node with no condition is visible", "", {}, true],
     ["a node whose condition holds is visible", "{a} = 'a'", { a: "a" }, true],
     ["a node whose condition does not hold is hidden", "{a} = 'a'", { a: "b" }, false],
-    ["a node whose condition faults is hidden", "({a}", { a: "a" }, false],
   ])("%s", (_name, visibleIf, values, expected) => {
     expect.hasAssertions();
 

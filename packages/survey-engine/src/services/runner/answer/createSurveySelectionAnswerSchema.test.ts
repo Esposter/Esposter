@@ -1,6 +1,7 @@
 import { createSurveySelectionAnswerSchema } from "#src/services/runner/answer/createSurveySelectionAnswerSchema";
 import {
   SURVEY_INVALID_ANSWER_MESSAGE,
+  SURVEY_NONE_ANSWER,
   SURVEY_TOO_FEW_SELECTED_MESSAGE,
   SURVEY_TOO_MANY_SELECTED_MESSAGE,
 } from "#src/services/runner/constants";
@@ -49,7 +50,7 @@ describe(createSurveySelectionAnswerSchema, () => {
   test("accepts none picked alone when it has one", () => {
     expect.hasAssertions();
 
-    const result = createSurveySelectionAnswerSchema({ choices, hasNone: true }).safeParse(["none"]);
+    const result = createSurveySelectionAnswerSchema({ choices, hasNone: true }).safeParse([SURVEY_NONE_ANSWER]);
 
     expect(result.success).toBe(true);
   });
@@ -57,7 +58,7 @@ describe(createSurveySelectionAnswerSchema, () => {
   test("refuses none picked beside another choice", () => {
     expect.hasAssertions();
 
-    const result = createSurveySelectionAnswerSchema({ choices, hasNone: true }).safeParse(["none", "a"]);
+    const result = createSurveySelectionAnswerSchema({ choices, hasNone: true }).safeParse([SURVEY_NONE_ANSWER, "a"]);
 
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_INVALID_ANSWER_MESSAGE);
   });

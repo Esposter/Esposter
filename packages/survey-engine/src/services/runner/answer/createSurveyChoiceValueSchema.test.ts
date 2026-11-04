@@ -1,5 +1,5 @@
 import { createSurveyChoiceValueSchema } from "#src/services/runner/answer/createSurveyChoiceValueSchema";
-import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
+import { SURVEY_NONE_ANSWER, SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
 import { describe, expect, test } from "vitest";
 
@@ -37,7 +37,7 @@ describe(createSurveyChoiceValueSchema, () => {
   test("accepts the none answer when it has one", () => {
     expect.hasAssertions();
 
-    const result = createSurveyChoiceValueSchema({ choices, hasNone: true }).safeParse("none");
+    const result = createSurveyChoiceValueSchema({ choices, hasNone: true }).safeParse(SURVEY_NONE_ANSWER);
 
     expect(result.success).toBe(true);
   });
@@ -45,7 +45,7 @@ describe(createSurveyChoiceValueSchema, () => {
   test("refuses the none answer when it has none", () => {
     expect.hasAssertions();
 
-    const result = createSurveyChoiceValueSchema({ choices }).safeParse("none");
+    const result = createSurveyChoiceValueSchema({ choices }).safeParse(SURVEY_NONE_ANSWER);
 
     expect(getSurveyFirstMessage(result)).toBe(SURVEY_NOT_A_CHOICE_MESSAGE);
   });

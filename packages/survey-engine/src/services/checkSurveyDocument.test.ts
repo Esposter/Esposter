@@ -15,6 +15,7 @@ import type { SurveyTextNodeProps } from "#src/models/SurveyTextNodeProps";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyRootPropsSchema } from "#src/models/SurveyRootProps";
 import { checkSurveyDocument } from "#src/services/checkSurveyDocument";
+import { SURVEY_NONE_ANSWER } from "#src/services/runner/constants";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
 import { surveyExpressionNodeType } from "#src/services/surveyExpressionNodeType";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
@@ -68,7 +69,7 @@ describe(checkSurveyDocument, () => {
     const radioGroup: SurveyRadioGroupNode = {
       props: {
         ...surveyRadioGroupNodeType.createDefaultProps(),
-        choices: [{ text: "Nothing", value: "none" }],
+        choices: [{ text: "Nothing", value: SURVEY_NONE_ANSWER }],
         hasNone: true,
         id: crypto.randomUUID(),
         name: "a",
@@ -78,7 +79,7 @@ describe(checkSurveyDocument, () => {
 
     expect(checkSurveyDocument(createDocument([createPage([radioGroup])]))).toStrictEqual([
       {
-        message: 'A choice may not take the value "none", since the question offers none under it',
+        message: `A choice may not take the value "${SURVEY_NONE_ANSWER}", since the question offers none under it`,
         pointer: "/content/0/props/children/0/props/choices",
       },
     ]);
@@ -90,7 +91,7 @@ describe(checkSurveyDocument, () => {
     const checkbox: SurveyCheckboxNode = {
       props: {
         ...surveyCheckboxNodeType.createDefaultProps(),
-        choices: [{ text: "None of the above", value: "none" }],
+        choices: [{ text: "None of the above", value: SURVEY_NONE_ANSWER }],
         id: crypto.randomUUID(),
         name: "a",
       },

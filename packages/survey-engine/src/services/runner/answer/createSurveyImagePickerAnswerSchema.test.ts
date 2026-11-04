@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 const createImagePickerNode = (multiSelect: boolean): SurveyImagePickerNode => ({
   props: {
     ...surveyImagePickerNodeType.createDefaultProps(),
-    choices: [{ imageLink: "imageLink", text: "", value: "a" }],
+    choices: [{ imageLink: "", text: "", value: "a" }],
     id: crypto.randomUUID(),
     multiSelect,
   },
