@@ -263,7 +263,7 @@ describe("usePdfAnnotations", () => {
     );
   });
 
-  test("importing a free text past the last page", () => {
+  test("importing a free text past the last page is refused", () => {
     expect.hasAssertions();
 
     const pdfDocument = createDocument([[]]);

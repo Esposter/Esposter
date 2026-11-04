@@ -621,7 +621,7 @@ describe(usePdfViewer, () => {
     scope.stop();
   });
 
-  test("a mode chosen while the document loads", async () => {
+  test("a mode chosen while the document loads is set once the renderer reports its editor", async () => {
     expect.hasAssertions();
 
     const { scope, state } = mountViewer(createDocument(3));
