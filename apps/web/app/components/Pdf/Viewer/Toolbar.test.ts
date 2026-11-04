@@ -2,8 +2,8 @@
 import type { PdfAnnotationsState, PdfViewerState } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.fixture";
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
+import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.test";
+import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
 import PdfViewerToolbar from "@/components/Pdf/Viewer/Toolbar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";

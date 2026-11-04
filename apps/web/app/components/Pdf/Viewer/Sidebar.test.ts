@@ -2,8 +2,8 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { PdfComment, PdfOutline } from "vue-pdfjs-headless";
 
-import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.fixture";
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
+import { createPdfAnnotationsState } from "@/components/Pdf/Viewer/createPdfAnnotationsState.test";
+import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
 import PdfViewerSidebar from "@/components/Pdf/Viewer/Sidebar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { PdfSidebarTab } from "@/models/pdf/PdfSidebarTab";

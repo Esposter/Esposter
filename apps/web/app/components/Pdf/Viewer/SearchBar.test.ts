@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
+import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
 import PdfViewerSearchBar from "@/components/Pdf/Viewer/SearchBar.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";

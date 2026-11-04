@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
+import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
 import PdfViewerThumbnailRail from "@/components/Pdf/Viewer/ThumbnailRail.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";

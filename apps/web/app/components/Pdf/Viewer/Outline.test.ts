@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import type { PdfOutline } from "vue-pdfjs-headless";
 
-import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.fixture";
+import { createPdfViewerState } from "@/components/Pdf/Viewer/createPdfViewerState.test";
 import PdfViewerOutline from "@/components/Pdf/Viewer/Outline.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";

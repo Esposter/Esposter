@@ -1,6 +1,6 @@
 import type { PdfOutline, PdfViewerState } from "vue-pdfjs-headless";
 
-import { vi } from "vitest";
+import { describe, vi } from "vitest";
 import { PdfEditorMode } from "vue-pdfjs-headless";
 
 // The state a viewer's components read, for a six-page document at its fitted width. Its refs hold the values a test
@@ -38,3 +38,5 @@ export const createPdfViewerState = (overrides: Partial<PdfViewerState> = {}): P
   zoomOut: vi.fn<() => void>(),
   ...overrides,
 });
+
+describe.todo("createPdfViewerState");
