@@ -48,7 +48,6 @@
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "headless-block-editor": "workspace:*",
-    "neverthrow": "catalog:",
     "re2js": "catalog:",
     "survey-logic": "workspace:*"
   },

@@ -2124,9 +2124,6 @@ importers:
       headless-block-editor:
         specifier: workspace:*
         version: link:../headless-block-editor
-      neverthrow:
-        specifier: 'catalog:'
-        version: 8.2.0
       re2js:
         specifier: 'catalog:'
         version: 2.9.1
