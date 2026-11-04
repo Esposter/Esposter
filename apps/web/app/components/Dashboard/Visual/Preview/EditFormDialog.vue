@@ -28,8 +28,8 @@ const isChartVisual = computed(
   () => editedItem.value.type !== VisualType.Card && editedItem.value.type !== VisualType.Table && !isGroup.value,
 );
 // A group is made from the palette and keeps its type, so a chart's type picker offers every type but the group's
-const visualTypeItems = computed(() =>
-  VisualTypeCategoryDefinitions.flatMap(({ items }) => items).filter(({ value }) => value !== VisualType.Group),
+const visualTypeItems = VisualTypeCategoryDefinitions.flatMap(({ items }) => items).filter(
+  ({ value }) => value !== VisualType.Group,
 );
 const chartTypeItems = computed(() =>
   VisualTypeChartTypesMap[editedItem.value.type].map((value) => ({

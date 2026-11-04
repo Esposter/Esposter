@@ -8,9 +8,9 @@ import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
   DASHBOARD_NO_COLUMNS,
   DASHBOARD_PUBLISHED_ROW_HEIGHT,
-  DASHBOARD_UNTITLED_GROUP_TITLE,
 } from "@/services/dashboard/constants";
 import { getBreakpointColumnNumber } from "@/services/dashboard/grid/getBreakpointColumnNumber";
+import { getGroupTitle } from "@/services/dashboard/visual/getGroupTitle";
 
 interface Props {
   collision: CollisionMode;
@@ -28,7 +28,7 @@ const emit = defineEmits<DashboardVisualEmits>();
 const container = useTemplateRef("container");
 const { width } = useElementSize(container);
 const title = computed(() => visual.chart.configuration.title);
-// A group always holds its visuals, and the fallback only narrows a field every other type leaves absent
+const groupTitle = computed(() => getGroupTitle(visual));
 const visuals = computed(() => visual.visuals ?? []);
 // The editor's grid is the full twelve columns, and a published group reflows by its own width, as the dashboard does
 const columnNumber = computed(() => (isEditable ? DASHBOARD_NO_COLUMNS : getBreakpointColumnNumber(width.value)));
@@ -36,10 +36,10 @@ const rowHeight = computed(() => (isEditable ? DASHBOARD_EDITOR_ROW_HEIGHT : DAS
 </script>
 
 <template>
-  <div ref="container" flex flex-col size-full role="group" :aria-label="title || DASHBOARD_UNTITLED_GROUP_TITLE">
+  <div ref="container" flex flex-col size-full role="group" :aria-label="groupTitle">
     <!-- The header keeps clear of the corner's menu, and a published group without a title has no header to draw -->
     <header v-if="isEditable || title" py-1 pe-10 ps-3 min-w-0 ui-bar>
-      <p text-sm truncate :class="{ 'text-muted': !title }">{{ title || DASHBOARD_UNTITLED_GROUP_TITLE }}</p>
+      <p text-sm truncate :class="{ 'text-muted': !title }">{{ groupTitle }}</p>
     </header>
     <div flex-1 min-h-0 relative of-y-auto>
       <UiEmptyState

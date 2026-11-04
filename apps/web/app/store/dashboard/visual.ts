@@ -44,13 +44,10 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     }
     return parent.visuals;
   };
-  // A new visual of a type takes the first cell its span fits in within its list, so an added visual never moves the ones there are
-  const createVisual = (type: VisualType = VisualType.Area, parentId?: Visual["id"]) => {
-    const targetVisuals = getNewVisualList(type, parentId);
-    if (!targetVisuals) return;
-
+  // A new visual of a type takes the first cell its span fits in on the dashboard, so an added visual never moves the ones there are
+  const createVisual = (type: VisualType = VisualType.Area) => {
     const span = new Visual({ type });
-    targetVisuals.push(createNewVisual(type, getFirstFreeCell(targetVisuals, DASHBOARD_NO_COLUMNS, span)));
+    visuals.value.push(createNewVisual(type, getFirstFreeCell(visuals.value, DASHBOARD_NO_COLUMNS, span)));
   };
   // A visual the palette dropped on the grid is saved at the cell the grid placed it in
   const addVisual = (type: VisualType, cell: GridCell, parentId?: Visual["id"]) => {

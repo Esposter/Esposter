@@ -15,8 +15,7 @@ const visualStore = useVisualStore();
 const { moveVisual } = visualStore;
 const { visuals } = storeToRefs(visualStore);
 const targets = computed(() => getVisualMoveTargets(visuals.value, visual.id));
-// The dashboard's own list is the empty value, and a group's list is the group's visuals. The store places the visual
-// At the first free cell of the list it moves into
+// A radio option's value is a string, so the dashboard's own option carries "", which the store takes as no group
 const moveTo = (targetGroupId: string) => {
   moveVisual({ id: visual.id }, targetGroupId || undefined);
   isOpen.value = false;

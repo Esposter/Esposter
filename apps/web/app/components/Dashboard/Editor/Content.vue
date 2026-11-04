@@ -63,18 +63,18 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
       :compact-type="dashboard.compactType"
       :row-height="DASHBOARD_EDITOR_ROW_HEIGHT"
       is-editable
-      @commit="(changes) => commitVisuals(changes)"
-      @open="(visual) => openVisual(visual)"
-      @transfer="(transfer) => transferVisual(transfer)"
+      @commit="commitVisuals($event)"
+      @open="openVisual($event)"
+      @transfer="transferVisual($event)"
     >
       <template #default="{ visual }">
         <DashboardVisualPreviewContainer
           :visual
           :collision="dashboard.collision"
           :compact-type="dashboard.compactType"
-          @commit="(changes) => commitVisuals(changes)"
-          @open="(openedVisual) => openVisual(openedVisual)"
-          @transfer="(transfer) => transferVisual(transfer)"
+          @commit="commitVisuals($event)"
+          @open="openVisual($event)"
+          @transfer="transferVisual($event)"
         />
       </template>
     </DashboardGrid>

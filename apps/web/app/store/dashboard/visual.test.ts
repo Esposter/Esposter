@@ -252,10 +252,10 @@ describe(useVisualStore, () => {
 
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Group, visuals: [] })] });
     const visualStore = await setupStore();
-    const { createVisual } = visualStore;
+    const { addVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const group = takeOne(visuals.value);
-    createVisual(VisualType.Bar, group.id);
+    addVisual(VisualType.Bar, { h: 1, w: 1, x: 0, y: 0 }, group.id);
 
     expect(visuals.value).toHaveLength(1);
     expect(group.visuals?.map(({ type }) => type)).toStrictEqual([VisualType.Bar]);
@@ -267,10 +267,10 @@ describe(useVisualStore, () => {
 
     content = new Dashboard({ visuals: createGroupChain(MAX_VISUAL_GROUP_DEPTH + 1) });
     const visualStore = await setupStore();
-    const { createVisual } = visualStore;
+    const { addVisual } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const deepestGroup = takeOne(listVisuals(visuals.value), MAX_VISUAL_GROUP_DEPTH);
-    createVisual(VisualType.Group, deepestGroup.id);
+    addVisual(VisualType.Group, { h: 1, w: 1, x: 0, y: 0 }, deepestGroup.id);
 
     expect(listVisuals(visuals.value)).toHaveLength(MAX_VISUAL_GROUP_DEPTH + 2);
   });
@@ -427,11 +427,11 @@ describe(useVisualStore, () => {
 
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Group, visuals: [] })] });
     const visualStore = await setupStore();
-    const { createVisual, save } = visualStore;
+    const { addVisual, save } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const group = takeOne(visuals.value);
     const editedGroup = createEditedVisual(group, VisualType.Group);
-    createVisual(VisualType.Bar, group.id);
+    addVisual(VisualType.Bar, { h: 1, w: 1, x: 0, y: 0 }, group.id);
     const isSuccessful = await save(editedGroup);
 
     expect(isSuccessful).toBe(true);

@@ -16,17 +16,18 @@ describe(getVisualMoveTargets, () => {
   const outer = new Visual({ type: VisualType.Group, visuals: [card, innerGroup] });
   const tree = [outer, sales, level0];
 
-  test("a visual offers the dashboard and every group outside its own list", () => {
+  // The untitled groups share one label, so the first keeps it and each later one takes the next number, in tree order
+  test("a visual offers the dashboard and every group outside its own list, numbering a repeated title", () => {
     expect.hasAssertions();
 
     expect(getVisualMoveTargets(tree, card.id)).toStrictEqual([
       { title: "Dashboard", value: "" },
       { title: "Untitled group", value: innerGroup.id },
       { title: "Sales", value: sales.id },
-      { title: "Untitled group", value: level0.id },
-      { title: "Untitled group", value: level1.id },
-      { title: "Untitled group", value: level2.id },
-      { title: "Untitled group", value: level3.id },
+      { title: "Untitled group 2", value: level0.id },
+      { title: "Untitled group 3", value: level1.id },
+      { title: "Untitled group 4", value: level2.id },
+      { title: "Untitled group 5", value: level3.id },
     ]);
   });
 
@@ -38,7 +39,7 @@ describe(getVisualMoveTargets, () => {
     expect(getVisualMoveTargets(tree, outer.id)).toStrictEqual([
       { title: "Sales", value: sales.id },
       { title: "Untitled group", value: level0.id },
-      { title: "Untitled group", value: level1.id },
+      { title: "Untitled group 2", value: level1.id },
     ]);
   });
 });

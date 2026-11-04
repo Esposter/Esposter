@@ -17,8 +17,6 @@ interface Props {
 }
 
 // A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
-// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. A touch on a handle
-// Moves the tile too, since resizing is not a touch gesture. They stay unpainted by decision: the outline and cursor show them
 // The handles are drawn after the visual, so the visual's corner marks sit above them at one, and a dragged tile at two
 defineSlots<{ default: () => VNode }>();
 const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
