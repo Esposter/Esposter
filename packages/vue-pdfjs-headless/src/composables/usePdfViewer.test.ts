@@ -70,6 +70,7 @@ describe(usePdfViewer, () => {
   const FIND_STATE_NOT_FOUND = 1;
   const LINK_TARGET_BLANK = 2;
   const CHAPTER_PAGE = 3;
+  const IMAGE_RESOURCES_PATH = "/pdfjs/images/";
 
   type EventBusStub = ReturnType<typeof createEventBus>;
   type LinkServiceStub = ReturnType<typeof createLinkService>;
@@ -87,6 +88,7 @@ describe(usePdfViewer, () => {
     editorModes: number[];
     eventBus?: EventBusStub;
     findEvents: unknown[];
+    imageResourcesPath?: string;
     linkService?: LinkServiceStub;
     scaleWrites: unknown[];
     viewer?: PdfViewerStub;
@@ -139,11 +141,16 @@ describe(usePdfViewer, () => {
     let currentPageNumber = 0;
     let currentScale = 0;
     let currentScaleValue: null | string = null;
+    let hasEditorManager = false;
     let hasPages = false;
     let pagesRotation = 0;
     // The renderer makes a document's pages once its first page loads, and announces them with pagesinit
     eventBus.on("pagesinit", () => {
       hasPages = true;
+    });
+    // The renderer makes its editor manager after a document's first page, and announces it, before which it throws on a mode
+    eventBus.on("annotationeditoruimanager", () => {
+      hasEditorManager = true;
     });
     const viewer = {
       // The renderer's mode is set as an object, and each mode it is set to is kept for a test to read
@@ -151,6 +158,8 @@ describe(usePdfViewer, () => {
         return { mode: stubs.editorModes.at(-1) ?? PdfEditorMode.None };
       },
       set annotationEditorMode({ mode }: { mode: number }) {
+        if (!hasEditorManager) throw new Error("The AnnotationEditor is not enabled.");
+
         stubs.editorModes.push(mode);
       },
       get currentPageNumber() {
@@ -198,10 +207,12 @@ describe(usePdfViewer, () => {
       previousPage: () => {
         viewer.currentPageNumber -= 1;
       },
-      // The renderer resets its page and rotation without dispatching an event, and drops its pages until pagesinit
+      // The renderer resets its page and rotation without dispatching an event, and drops its pages until pagesinit. A new
+      // Document replaces its editor manager
       setDocument: vi.fn<(loaded: null | PDFDocumentProxy) => void>(() => {
         currentPageNumber = 1;
         currentScaleValue = null;
+        hasEditorManager = false;
         hasPages = false;
         pagesRotation = 0;
       }),
@@ -221,9 +232,14 @@ describe(usePdfViewer, () => {
 
     return stubs.linkService;
   };
-  const PDFViewer = function (options: { abortSignal?: AbortSignal; eventBus: EventBusStub }) {
+  const PDFViewer = function (options: {
+    abortSignal?: AbortSignal;
+    eventBus: EventBusStub;
+    imageResourcesPath?: string;
+  }) {
     stubs.abortSignal = options.abortSignal;
     stubs.eventBus = options.eventBus;
+    stubs.imageResourcesPath = options.imageResourcesPath;
     stubs.viewer = createPdfViewerStub(options);
 
     return stubs.viewer;
@@ -237,6 +253,10 @@ describe(usePdfViewer, () => {
       PDFLinkService,
       PDFViewer,
     }) as unknown as PdfViewerApi;
+  // The renderer's editor manager is made after a document's first page, which the stub reports by hand
+  const reportEditorManager = () => {
+    stubs.eventBus?.dispatch("annotationeditoruimanager", {});
+  };
   const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
     const container = window.document.createElement("div");
     const scope = effectScope();
@@ -244,6 +264,7 @@ describe(usePdfViewer, () => {
       usePdfViewer({
         container,
         highlightTerms,
+        imageResourcesPath: IMAGE_RESOURCES_PATH,
         pdfDocument,
         viewer: window.document.createElement("div"),
         viewerApi: createViewerApi(),
@@ -560,13 +581,37 @@ describe(usePdfViewer, () => {
     expect.hasAssertions();
 
     const { scope, state } = mountViewer(createDocument(3));
+    reportEditorManager();
     state.editorMode.value = PdfEditorMode.Ink;
     await nextTick();
     state.editorMode.value = PdfEditorMode.None;
     await nextTick();
 
-    // The document's load sets the mode it starts from, which is none
+    // The renderer's new manager starts in none, which the reader's mode is set on as the manager is reported
     expect(stubs.editorModes).toStrictEqual([PdfEditorMode.None, PdfEditorMode.Ink, PdfEditorMode.None]);
+    scope.stop();
+  });
+
+  test("a mode chosen while the document loads is set once the renderer reports its editor", async () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    state.editorMode.value = PdfEditorMode.Ink;
+    await nextTick();
+
+    // The renderer throws on a mode set before its editor exists, so the mode waits for the report
+    expect(stubs.editorModes).toStrictEqual([]);
+    reportEditorManager();
+    expect(stubs.editorModes).toStrictEqual([PdfEditorMode.Ink]);
+    scope.stop();
+  });
+
+  test("the renderer's annotation icons are read from the image path it is given", () => {
+    expect.hasAssertions();
+
+    const { scope } = mountViewer(createDocument(3));
+
+    expect(stubs.imageResourcesPath).toBe(IMAGE_RESOURCES_PATH);
     scope.stop();
   });
 

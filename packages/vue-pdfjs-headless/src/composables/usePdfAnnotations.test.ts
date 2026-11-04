@@ -19,10 +19,12 @@ interface MountOptions {
   onChange?: (change: PdfAnnotationChange) => void;
 }
 
+// An annotation as pdf.js gives it: a text annotation's comment is its contentsObj's str, and no contents field exists
 interface TestAnnotation {
-  contents?: string;
+  contentsObj?: { str: string };
   subtype: string;
 }
+const createTextAnnotation = (str: string): TestAnnotation => ({ contentsObj: { str }, subtype: "Text" });
 
 // A document whose pages hold the given annotations, each released through the given spy
 // Its storage takes the editor hook the composable sets
@@ -64,8 +66,8 @@ describe("usePdfAnnotations", () => {
     expect.hasAssertions();
 
     const pdfDocument = createDocument([
-      [{ contents: "First", subtype: "Text" }, { subtype: "Link" }],
-      [{ contents: "Second", subtype: "Text" }],
+      [createTextAnnotation("First"), { subtype: "Link" }],
+      [createTextAnnotation("Second")],
     ]);
     const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
     await flushPromises();
@@ -89,9 +91,7 @@ describe("usePdfAnnotations", () => {
     expect.hasAssertions();
 
     const isCommentsWanted = ref(false);
-    const { state } = mountAnnotations(createDocument([[{ contents: "First", subtype: "Text" }]]), {
-      isCommentsWanted,
-    });
+    const { state } = mountAnnotations(createDocument([[createTextAnnotation("First")]]), { isCommentsWanted });
     await flushPromises();
 
     expect(state.comments.value).toBeUndefined();
@@ -114,7 +114,7 @@ describe("usePdfAnnotations", () => {
     await flushPromises();
 
     expect(state.comments.value).toBeUndefined();
-    lateComments.resolve([{ contents: "First", subtype: "Text" }]);
+    lateComments.resolve([createTextAnnotation("First")]);
     await flushPromises();
 
     expect(state.comments.value).toStrictEqual([{ contents: "First", pageNumber: 1 }]);
@@ -142,7 +142,7 @@ describe("usePdfAnnotations", () => {
 
     const cleanup = vi.fn<() => boolean>(() => true);
     const isCommentsWanted = ref(false);
-    mountAnnotations(createDocument([[{ contents: "First", subtype: "Text" }]], cleanup), { isCommentsWanted });
+    mountAnnotations(createDocument([[createTextAnnotation("First")]], cleanup), { isCommentsWanted });
     isCommentsWanted.value = true;
     await flushPromises();
     isCommentsWanted.value = false;
@@ -174,9 +174,9 @@ describe("usePdfAnnotations", () => {
     } as unknown as PDFDocumentProxy;
     const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(replacedDocument);
     const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
-    pdfDocument.value = createDocument([[{ contents: "New", subtype: "Text" }]]);
+    pdfDocument.value = createDocument([[createTextAnnotation("New")]]);
     await flushPromises();
-    lateComments.resolve([{ contents: "Replaced", subtype: "Text" }]);
+    lateComments.resolve([createTextAnnotation("Replaced")]);
     await flushPromises();
 
     expect(state.comments.value).toStrictEqual([{ contents: "New", pageNumber: 1 }]);

@@ -37,6 +37,9 @@ interface UsePdfViewerOptions {
   container: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The terms highlighted on load, searched as one phrase with the terms joined by a space
   highlightTerms?: MaybeRefOrGetter<string[]>;
+  // The URL the renderer's annotation icons are served from, ending in a slash.
+  // The renderer asks for each icon by its name beside this URL, so a path it is not given is requested from the page's root.
+  imageResourcesPath: string;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The renderer's viewer module, the components its viewer is built from
@@ -48,6 +51,7 @@ interface UsePdfViewerOptions {
 export const usePdfViewer = ({
   container,
   highlightTerms = [],
+  imageResourcesPath,
   pdfDocument,
   viewer,
   viewerApi,
@@ -77,6 +81,13 @@ export const usePdfViewer = ({
   let printRoot: HTMLDivElement | undefined;
   // Bumped by every print and by the scope's end, so a print still drawing stops before it reaches the page
   let printGeneration = 0;
+  // The renderer makes its editor manager once a document's first page is read, and a new document replaces it.
+  // A mode set while there is no manager throws, and a throw in a watcher freezes this viewer's rendering.
+  // So the mode is set only once the renderer reports its manager.
+  let isEditorReady = false;
+  const applyEditorMode = () => {
+    if (pdfViewer && isEditorReady) pdfViewer.annotationEditorMode = { mode: editorMode.value };
+  };
 
   const createViewer = (
     currentViewerApi: PdfViewerApi,
@@ -96,6 +107,7 @@ export const usePdfViewer = ({
       container: containerValue,
       eventBus: bus,
       findController: controller,
+      imageResourcesPath,
       linkService: links,
       maxCanvasPixels: PDF_MAX_CANVAS_AREA,
       viewer: viewerElement,
@@ -109,6 +121,12 @@ export const usePdfViewer = ({
     // The renderer takes a preset scale only once its pages exist, which pagesinit announces
     bus.on("pagesinit", () => {
       instance.currentScaleValue = PDF_OPENING_SCALE;
+    });
+    // The renderer reports each editor manager it makes, which is the first point its mode can be set.
+    // A new manager starts in none, so the mode the reader chose is set again on each document.
+    bus.on("annotationeditoruimanager", () => {
+      isEditorReady = true;
+      applyEditorMode();
     });
     bus.on("pagechanging", (event: { pageNumber: number }) => {
       currentPageNumber.value = event.pageNumber;
@@ -169,6 +187,8 @@ export const usePdfViewer = ({
     pagesCount.value = loaded?.numPages ?? 0;
     overlays.value = [];
     outline.value = undefined;
+    // Setting the document replaces the renderer's editor manager, so its mode waits for the next one's report
+    isEditorReady = false;
     pdfViewer.setDocument(loaded ?? null);
     linkService.setDocument(loaded ?? null);
     // The renderer resets its page and rotation without an event, and the find controller reports nothing on reset.
@@ -181,8 +201,6 @@ export const usePdfViewer = ({
     isNotFound.value = false;
     if (!loaded) return;
 
-    // The renderer's mode is reset with its document, so the mode the consumer chose is set again on each one
-    pdfViewer.annotationEditorMode = { mode: editorMode.value };
     loadOutline(loaded);
     // The terms are one phrase the search bar shows, so the highlight and the bar's Next and Previous search the same query
     searchQuery.value = toValue(highlightTerms).join(" ");
@@ -301,10 +319,8 @@ export const usePdfViewer = ({
       applyDocument(loaded);
     },
   );
-  watch(editorMode, (mode) => {
-    // The renderer reads its document to leave a mode, so a mode set before a document loads waits for applyDocument
-    if (pdfViewer && toValue(pdfDocument)) pdfViewer.annotationEditorMode = { mode };
-  });
+  // A mode chosen before the renderer has its editor manager is set when the manager is reported
+  watch(editorMode, applyEditorMode);
   onScopeDispose(() => {
     removePrint();
     if (!pdfViewer) return;

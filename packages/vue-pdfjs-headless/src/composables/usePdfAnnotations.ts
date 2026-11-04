@@ -35,9 +35,10 @@ const readComments = async (loaded: PDFDocumentProxy): Promise<PdfComment[]> => 
       // A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out
       page.cleanup();
 
+      // The text of a text annotation is its contentsObj's str, since pdf.js gives no contents field on an annotation's data
       return annotations
         .filter(({ subtype }) => subtype === "Text")
-        .map(({ contents }) => ({ contents: contents ?? "", pageNumber: pageIndex + 1 }));
+        .map(({ contentsObj }) => ({ contents: contentsObj?.str ?? "", pageNumber: pageIndex + 1 }));
     }),
   );
 
