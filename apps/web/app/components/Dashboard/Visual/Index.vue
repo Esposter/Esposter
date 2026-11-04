@@ -72,7 +72,8 @@ const { copy } = clipboardStore;
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
-      <div flex gap-1 pointer-events-auto right-1 top-1 absolute>
+      <!-- The corner's marks sit above the tile's resize handles, which are drawn over the same corners -->
+      <div flex gap-1 pointer-events-auto right-1 top-1 absolute z-1>
         <!-- The rows are offered only when the visual draws them, so a demo tile or a tile whose read failed has none -->
         <slot name="actions" :dataset="visualPropsData ? resolvedDataset : undefined" />
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
