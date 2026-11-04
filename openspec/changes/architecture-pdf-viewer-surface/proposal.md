@@ -2,7 +2,7 @@
 
 ## Why
 
-The PDF viewer's spec of record and its design describe a sidebar with Outline and Thumbnails tabs, a thumbnail rail, full screen, a watermarked download and rotate left and right items. `apps/web/app/components/Pdf/` holds only `Viewer.vue` and `Thumbnail.vue`, and `Viewer.vue` draws a single Rotate button with no sidebar, full screen or watermark. A spec of record must describe what exists, so these requirements wait here until a build takes them.
+The viewer's target surface, a sidebar with Outline and Thumbnails tabs, a More menu, full screen, a watermarked download and rotate left and right items, is designed in this change's [design](design.md). `apps/web/app/components/Pdf/` holds only `Viewer.vue` and `Thumbnail.vue`, and `Viewer.vue` draws a single Rotate button with no sidebar, full screen or watermark. A spec of record and its design must describe what exists, so these requirements wait here until a build takes them.
 
 ## What Changes
 
@@ -15,4 +15,5 @@ The PDF viewer's spec of record and its design describe a sidebar with Outline a
 ## Impact
 
 - Affected spec: `openspec/specs/architecture/pdf-viewer/spec.md`, whose requirements listed here are removed in this change and added back by its build.
+- Affected design: `openspec/specs/architecture/pdf-viewer/design.md` describes only the built viewer, and its unbuilt surface is this change's `design.md`.
 - Affected code, when built: `apps/web/app/components/Pdf/Viewer.vue` and new components in the same folder, and the `usePdfViewer` calls they make in `packages/vue-pdfjs-headless`.
