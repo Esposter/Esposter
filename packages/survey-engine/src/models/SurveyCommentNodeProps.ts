@@ -23,7 +23,7 @@ export const surveyCommentNodePropsSchema: z.ZodObject<
   }
 > = z.object({
   ...surveyQuestionBasePropsShape,
-  maxLength: z.int().min(1).optional(),
+  maxLength: z.int().positive().optional(),
   placeholder: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   rows: z.int().min(1).max(MAX_SURVEY_COMMENT_ROWS).default(4),
 }) satisfies z.ZodType<OwnProps<SurveyCommentNodeProps>>;

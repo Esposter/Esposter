@@ -22,6 +22,6 @@ export const surveyTagBoxNodePropsSchema: z.ZodObject<
 > = z.object({
   ...surveyQuestionBasePropsShape,
   ...surveyChoiceOptionsPropsShape,
-  maxSelected: z.int().min(1).optional(),
+  maxSelected: z.int().positive().optional(),
   placeholder: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<OwnProps<SurveyTagBoxNodeProps>>;

@@ -32,7 +32,7 @@ export const surveyCheckboxNodePropsSchema: z.ZodObject<
   ...surveyChoiceOptionsPropsShape,
   ...surveyNoneChoicePropsShape,
   hasSelectAll: z.boolean().default(false),
-  maxSelected: z.int().min(1).optional(),
-  minSelected: z.int().min(1).optional(),
+  maxSelected: z.int().positive().optional(),
+  minSelected: z.int().positive().optional(),
   selectAllText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
 }) satisfies z.ZodType<OwnProps<SurveyCheckboxNodeProps>>;
