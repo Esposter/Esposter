@@ -1,5 +1,6 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
@@ -10,6 +11,9 @@ import { takeOne } from "@esposter/shared";
 // A type that draws several values per point has nothing a binding could give it, so the binding goes with the switch
 // Rather than staying saved behind a chart that cannot draw it
 export const setVisualType = (visual: Visual, type: Visual["type"]) => {
+  // A group's type is fixed both ways: a group is never switched to a chart, and a chart is never switched to a group
+  if (visual.type === VisualType.Group || type === VisualType.Group) return;
+
   visual.type = type;
   const chartTypes = VisualTypeChartTypesMap[type];
   if (!chartTypes.includes(visual.chart.type)) visual.chart.type = takeOne(chartTypes);

@@ -32,6 +32,8 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.Card]: () => CardPropsData,
   [VisualType.Column]: () => ColumnPropsData,
   [VisualType.Funnel]: (chartType) => getVisualPropsData(FunnelPropsDataMap, chartType),
+  // A group draws no data of its own, so its demo has no series
+  [VisualType.Group]: () => ({ series: [] }),
   [VisualType.Heatmap]: () => HeatmapPropsData,
   [VisualType.Line]: () => LinePropsData,
   [VisualType.Pie]: () => PiePropsData,

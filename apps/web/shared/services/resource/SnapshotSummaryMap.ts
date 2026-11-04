@@ -1,5 +1,6 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 
+import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { pluralize } from "#shared/util/text/pluralize";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -14,7 +15,11 @@ export const SnapshotSummaryMap: {
   [TType in ResourceType]?: (content: ResourceContent<TType>) => string;
 } = {
   [ResourceType.Blueprint]: ({ entries }) => `${entries.length} ${pluralize("resource", entries.length)}`,
-  [ResourceType.Dashboard]: ({ visuals }) => `${visuals.length} ${pluralize("visual", visuals.length)}`,
+  // A group is a visual too, so the count reads the whole tree
+  [ResourceType.Dashboard]: ({ visuals }) => {
+    const count = listVisuals(visuals).length;
+    return `${count} ${pluralize("visual", count)}`;
+  },
   [ResourceType.Sheet]: ({ data: { columns, rows } }) =>
     `${columns.length} ${pluralize("column", columns.length)} · ${rows.length} ${pluralize("row", rows.length)}`,
   [ResourceType.TodoList]: ({ items }) => `${items.length} ${pluralize("item", items.length)}`,

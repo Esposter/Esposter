@@ -10,7 +10,9 @@ describe("visualTypeItemCategoryDefinitions", () => {
     const values = VisualTypeItemCategoryDefinitions.map(({ value }) => value);
 
     expect(values.slice(0, 2)).toStrictEqual([VisualType.Card, VisualType.Table]);
-    expect(new Set(values).size).toBe(Object.values(VisualType).length);
+    expect(new Set(values)).toStrictEqual(
+      new Set(Object.values(VisualType).filter((visualType) => visualType !== VisualType.Group)),
+    );
   });
 
   test("titles a multi-word type at its word boundaries", () => {

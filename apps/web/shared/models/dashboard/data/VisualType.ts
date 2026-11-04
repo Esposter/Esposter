@@ -10,6 +10,8 @@ export enum VisualType {
   Card = "Card",
   Column = "Column",
   Funnel = "Funnel",
+  // Holds other visuals on a grid of its own, so it draws no chart
+  Group = "Group",
   Heatmap = "Heatmap",
   Line = "Line",
   Pie = "Pie",

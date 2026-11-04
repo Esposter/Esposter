@@ -2,6 +2,7 @@ import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 
 const CommonChartTypes: ChartType[] = [ChartType.Basic];
+const NoChartTypes: ChartType[] = [];
 
 export const VisualTypeChartTypesMap = {
   // A card and a table draw no chart, so their one chart type is the common one, which the edit form does not offer
@@ -13,6 +14,8 @@ export const VisualTypeChartTypesMap = {
   [VisualType.Card]: CommonChartTypes,
   [VisualType.Column]: CommonChartTypes,
   [VisualType.Funnel]: [...CommonChartTypes, ChartType.Pyramid],
+  // A group holds visuals and draws no chart, so no chart type is offered for it
+  [VisualType.Group]: NoChartTypes,
   [VisualType.Heatmap]: CommonChartTypes,
   [VisualType.Line]: CommonChartTypes,
   [VisualType.Pie]: [...CommonChartTypes, ChartType.Donut],

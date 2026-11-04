@@ -11,6 +11,8 @@ export const VisualTypeDatasetShapeMap = {
   [VisualType.Card]: VisualDatasetShape.Single,
   [VisualType.Column]: VisualDatasetShape.Categories,
   [VisualType.Funnel]: VisualDatasetShape.Categories,
+  // A group holds visuals and draws no data, so no binding shape fits it
+  [VisualType.Group]: VisualDatasetShape.None,
   [VisualType.Heatmap]: VisualDatasetShape.Categories,
   [VisualType.Line]: VisualDatasetShape.Categories,
   [VisualType.Pie]: VisualDatasetShape.Labels,

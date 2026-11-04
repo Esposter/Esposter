@@ -1,4 +1,7 @@
 import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { Visual } from "#shared/models/dashboard/data/Visual";
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
@@ -16,6 +19,23 @@ describe(getSnapshotSummary, () => {
     expect.hasAssertions();
 
     expect(getSnapshotSummary(ResourceType.TodoList, "")).toBe("");
+  });
+
+  // A group is a visual of the dashboard too, so the count reads every visual in the tree
+  test(`${ResourceType.Dashboard}: counts every visual in the tree, a group's included`, () => {
+    expect.hasAssertions();
+
+    const dashboard = new Dashboard({
+      visuals: [
+        new Visual({
+          type: VisualType.Group,
+          visuals: [new Visual({ type: VisualType.Bar }), new Visual({ type: VisualType.Table })],
+        }),
+        new Visual({ type: VisualType.Card }),
+      ],
+    });
+
+    expect(getSnapshotSummary(ResourceType.Dashboard, JSON.stringify(dashboard))).toBe("4 visuals");
   });
 
   test(`${ResourceType.Note}: returns no summary for a type that declares none`, () => {

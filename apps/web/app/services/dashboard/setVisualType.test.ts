@@ -37,6 +37,19 @@ describe(setVisualType, () => {
     expect(visual.dataset).toBe(dataset);
   });
 
+  // A group is laid out rather than drawn, so its type is fixed in both directions
+  test("keeps a group's type and never makes a visual a group", () => {
+    expect.hasAssertions();
+
+    const group = new Visual({ type: VisualType.Group, visuals: [] });
+    const bar = new Visual({ type: VisualType.Bar });
+    setVisualType(group, VisualType.Bar);
+    setVisualType(bar, VisualType.Group);
+
+    expect(group.type).toBe(VisualType.Group);
+    expect(bar.type).toBe(VisualType.Bar);
+  });
+
   // A bubble draws x, y and size per point, so the one-value-per-category binding has nothing it could fill
   test("drops the binding when the new visual type draws several values per point", () => {
     expect.hasAssertions();

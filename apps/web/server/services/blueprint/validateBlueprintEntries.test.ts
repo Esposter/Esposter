@@ -1,9 +1,14 @@
 import type { BlueprintEntry } from "#shared/models/resource/blueprint/BlueprintEntry";
 
 import { validateBlueprintEntries } from "#server/services/blueprint/validateBlueprintEntries";
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
+import { Visual } from "#shared/models/dashboard/data/Visual";
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { DatabaseEntityType, RESOURCE_NAME_MAX_LENGTH, ResourceType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, toRawDeep } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (key: string, rest: Partial<BlueprintEntry> = {}): BlueprintEntry => ({
@@ -60,6 +65,41 @@ describe(validateBlueprintEntries, () => {
 
     expect(() => validateBlueprintEntries([entry])).toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid name for entry a").message}]`,
+    );
+  });
+
+  // A group's binding is read by the same walk as a top-level one, so the entry it points at is ordered before this one
+  test("reads the entry a group's bound visual names as a dependency of the dashboard", () => {
+    expect.hasAssertions();
+
+    const dashboard = new Dashboard({
+      visuals: [
+        new Visual({
+          type: VisualType.Group,
+          visuals: [
+            new Visual({
+              dataset: {
+                query: {
+                  series: [{ aggregation: DatasetAggregationType.Count, column: "column" }],
+                  xColumn: "xColumn",
+                },
+                reference: { id: buildBlueprintEntryToken("a"), type: DatasetProviderType.Sheet },
+              },
+            }),
+          ],
+        }),
+      ],
+    });
+    const dashboardEntry = createEntry("b", {
+      content: structuredClone(toRawDeep(dashboard)),
+      type: ResourceType.Dashboard,
+    });
+
+    expect(validateBlueprintEntries([createEntry("a"), dashboardEntry])).toStrictEqual(
+      new Map([
+        ["a", []],
+        ["b", ["a"]],
+      ]),
     );
   });
 

@@ -8,6 +8,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
@@ -69,6 +70,49 @@ describe("dashboardRouter", () => {
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
+      columns: [{ name, type: ColumnType.Number }],
+      rows: [{ [name]: 1 }],
+      totalRows: 1,
+    });
+  });
+
+  // A group's visuals are published as the dashboard's own are, so a binding held inside a group is baked too
+  test("bakes a snapshot for a bound visual inside a group", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, {
+      document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
+      settings: {},
+    });
+    await surveyCaller.createSurveyResponse({
+      isDraft: false,
+      model: { [name]: 1 },
+      pageNo: 0,
+      participantToken: "",
+      partitionKey: newSurvey.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const newResource = await caller.createResource({ name });
+    const dashboard = new Dashboard({
+      visuals: [
+        new Visual({
+          type: VisualType.Group,
+          visuals: [
+            new Visual({
+              dataset: {
+                query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
+                reference: { id: newSurvey.id, type: DatasetProviderType.SurveyResponses },
+              },
+            }),
+          ],
+        }),
+      ],
+    });
+    await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(takeOne(takeOne(publishedContent.content.visuals).visuals ?? []).dataset?.snapshot).toStrictEqual({
       columns: [{ name, type: ColumnType.Number }],
       rows: [{ [name]: 1 }],
       totalRows: 1,

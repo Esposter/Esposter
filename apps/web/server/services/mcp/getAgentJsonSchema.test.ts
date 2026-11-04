@@ -7,7 +7,7 @@ import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/const
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceType, ResourceTypes } from "@esposter/db-schema";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 // Every pointer the schema marks unwritable, "-" for an array's items and "*" for a record's values, each union's
@@ -64,6 +64,12 @@ const richTextPaths = (pointer: string) => [
   `${pointer}/props/content/marks/-/attrs/*`,
 ];
 
+// The one `$ref` an array's items point at, or none when the items are not a single schema
+const readItemsRef = (schema: JSONSchema._JSONSchema | undefined) => {
+  if (typeof schema !== "object" || Array.isArray(schema.items) || typeof schema.items !== "object") return undefined;
+  return schema.items.$ref;
+};
+
 describe(getAgentJsonSchema, () => {
   // An email nests its body one more child deep each level, and each level holds rich text
   const childRichTextPaths = Array.from(
@@ -104,6 +110,22 @@ describe(getAgentJsonSchema, () => {
 
     expect(new Set(readUnwritablePaths(jsonSchema, jsonSchema))).toStrictEqual(
       new Set(ResourceTypeUnwritablePathsMap[type]),
+    );
+  });
+
+  // A group's visuals are the visual schema again, so the tree is described once and nested by reference
+  test("describes a group's visuals as the visual schema again, by reference", () => {
+    expect.hasAssertions();
+
+    const { $defs = {}, properties = {} } = getAgentJsonSchema(
+      ResourceDefinitionMap[ResourceType.Dashboard].contentSchema,
+    );
+    const visualRef = readItemsRef(properties.visuals);
+    assert.exists(visualRef);
+    const visualSchema = $defs[visualRef.replace("#/$defs/", "")];
+
+    expect(readItemsRef(typeof visualSchema === "object" ? visualSchema.properties?.visuals : undefined)).toBe(
+      visualRef,
     );
   });
 

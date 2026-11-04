@@ -3,8 +3,8 @@ import type { ToData } from "@esposter/shared";
 
 import { visualSchema } from "#shared/models/dashboard/data/Visual";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { createUniqueArraySchema } from "@esposter/shared";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 import { z } from "zod";
 
@@ -25,5 +25,27 @@ export const dashboardSchema = z.object({
   ...aItemEntitySchema.shape,
   collision: z.enum(CollisionMode),
   compactType: z.enum(CompactType),
-  visuals: createUniqueArraySchema(visualSchema, "id").max(MAX_RESOURCE_CONTENT_SIZE),
+  // One walk checks what no single visual can see of the others: an id unique across every level, the whole tree under
+  // The cap the top level has always had, and no group nested deeper than the depth cap
+  visuals: z
+    .array(visualSchema)
+    .max(MAX_RESOURCE_CONTENT_SIZE)
+    .superRefine((visuals, context) => {
+      const ids = new Set<string>();
+      let count = 0;
+      const walk = (levelVisuals: typeof visuals, depth: number): void => {
+        for (const visual of levelVisuals) {
+          count += 1;
+          if (ids.has(visual.id)) context.addIssue({ code: "custom", message: "Array items must be unique" });
+          else ids.add(visual.id);
+          if (visual.visuals === undefined) continue;
+          if (depth > MAX_VISUAL_GROUP_DEPTH)
+            context.addIssue({ code: "custom", message: "A group nests deeper than the group depth allows" });
+          walk(visual.visuals, depth + 1);
+        }
+      };
+      walk(visuals, 0);
+      if (count > MAX_RESOURCE_CONTENT_SIZE)
+        context.addIssue({ code: "custom", message: "The visuals across every group exceed the content limit" });
+    }),
 }) satisfies z.ZodType<ToData<Dashboard>>;
