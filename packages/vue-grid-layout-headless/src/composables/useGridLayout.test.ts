@@ -5,6 +5,7 @@ import type { GridCommit } from "#src/models/GridCommit";
 import type { GridGeometry } from "#src/models/GridGeometry";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
+import type { GridRefusal } from "#src/models/GridRefusal";
 import type { GridSpacing } from "#src/models/GridSpacing";
 import type { GridTransfer } from "#src/models/GridTransfer";
 
@@ -43,6 +44,7 @@ describe(useGridLayout, () => {
   // Mounts a grid whose tiles carry their geometry as inline styles, and whose handle resizes from the given edge, so a
   // Test reads where each one is drawn
   const mountGrid = ({
+    checkIsRefused,
     collision = CollisionMode.Push,
     columnNumber: gridColumnNumber = columnNumber,
     compactType = CompactType.Vertical,
@@ -52,6 +54,7 @@ describe(useGridLayout, () => {
     onTransfer,
     spacing: gridSpacing = spacing,
   }: {
+    checkIsRefused?: GridRefusal;
     collision?: CollisionMode;
     columnNumber?: number;
     compactType?: CompactType;
@@ -70,6 +73,7 @@ describe(useGridLayout, () => {
         setup() {
           const root = useTemplateRef<HTMLElement>("root");
           const layout = useGridLayout(root, () => ({
+            checkIsRefused,
             collision,
             columnNumber: gridColumnNumber,
             compactType,
@@ -129,7 +133,7 @@ describe(useGridLayout, () => {
   };
   // The palette sits outside every grid, so an entry is dragged in from a plain element that starts the drag on a press.
   // The returned dispatch fires a pointer event of the given type at that element, and onDrop is the callback the drop calls
-  const mountPalette = (item: TestItem) => {
+  const mountPalette = (item: TestItem, checkIsRefused?: GridRefusal) => {
     const palette = document.createElement("div");
     document.body.append(palette);
     onTestFinished(() => {
@@ -137,7 +141,7 @@ describe(useGridLayout, () => {
     });
     const onDrop = vi.fn<(cell: GridCell, target: HTMLElement) => void>();
     palette.addEventListener("pointerdown", (event) => {
-      startExternalDrag(event, toGridItem(item), onDrop);
+      startExternalDrag(event, toGridItem(item), onDrop, checkIsRefused);
     });
     const dispatch = (type: string, point: { clientX: number; clientY: number }) =>
       palette.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId, ...point }));
@@ -879,6 +883,25 @@ describe(useGridLayout, () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
+  test("a palette entry a grid refuses is neither previewed nor dropped", async () => {
+    expect.hasAssertions();
+
+    // The landing would push the item already in the grid down a row, but the entry is refused before anything is laid out
+    const { grid, onCommit } = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 2, y: 0 }] });
+    await flushPromises();
+    const { dispatch, onDrop } = mountPalette({ h: 2, id: "palette", w: 2, x: 0, y: 0 }, () => true);
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    dispatch("pointerdown", point);
+    dispatch("pointermove", point);
+
+    expect(grid.value?.placeholder.value).toBeUndefined();
+
+    dispatch("pointerup", point);
+
+    expect(onDrop).not.toHaveBeenCalled();
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
   test("a grid that is not editable refuses a palette drop", async () => {
     expect.hasAssertions();
 
@@ -1052,6 +1075,30 @@ describe(useGridLayout, () => {
     const tile = source.wrapper.get(".tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, ...point, pointerId });
+    await tile.trigger("pointerup", { ...point, pointerId });
+
+    expect(onTransfer).not.toHaveBeenCalled();
+    expect(source.onCommit).not.toHaveBeenCalled();
+    expect(target.onCommit).not.toHaveBeenCalled();
+    expect(source.wrapper.get(".tile").attributes("style")).toBe("height: 90px; left: 10px; top: 10px; width: 150px;");
+  });
+
+  test("#21 a grid that refuses the item previews nothing and commits no pushes", async () => {
+    expect.hasAssertions();
+
+    const onTransfer = vi.fn<(transfer: GridTransfer) => void>();
+    const source = mountGrid({ items: [{ h: 2, id: "a", w: 2, x: 0, y: 0 }], onTransfer });
+    // The landing would push the target's item down a row, but the target refuses the item before anything is laid out
+    const target = mountGrid({ checkIsRefused: () => true, items: [{ h: 2, id: "b", w: 2, x: 2, y: 0 }] });
+    await flushPromises();
+    vi.spyOn(document, "elementsFromPoint").mockReturnValue([target.wrapper.element]);
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
+    const tile = source.wrapper.get(".tile");
+    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, ...point, pointerId });
+
+    expect(target.grid.value?.placeholder.value).toBeUndefined();
+
     await tile.trigger("pointerup", { ...point, pointerId });
 
     expect(onTransfer).not.toHaveBeenCalled();

@@ -4,10 +4,14 @@ import type { VueWrapper } from "@vue/test-utils";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
+import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
+import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardPaletteTile from "@/components/Dashboard/Palette/Tile.vue";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
@@ -182,6 +186,44 @@ describe("dashboardPaletteTile", () => {
     expect(visuals.value.map(({ visuals: groupVisuals }) => groupVisuals?.map(({ type }) => type))).toStrictEqual([
       [VisualType.Bar],
     ]);
+    tile.unmount();
+  });
+
+  // A group added to the group at the depth cap would sit one level past it, so the drop is refused before the visual the
+  // Release lands on is pushed aside, and nothing is added
+  test("a group tile dropped on a group at the depth cap adds nothing and pushes nothing", async () => {
+    expect.hasAssertions();
+
+    const chain = createGroupChain(MAX_VISUAL_GROUP_DEPTH + 1);
+    const cappedGroup = takeOne(listVisuals(chain), MAX_VISUAL_GROUP_DEPTH);
+    const child = takeOne(cappedGroup.visuals ?? []);
+    Object.assign(child, { h: 2, w: 2, x: 2, y: 0 });
+    loadDashboard(chain);
+    const groupGrid = await mountSuspended(DashboardGrid, {
+      attachTo: document.body,
+      attrs: { "data-group-id": cappedGroup.id },
+      props: {
+        collision: CollisionMode.Push,
+        columnNumber,
+        compactType: CompactType.Vertical,
+        isEditable: true,
+        rowHeight: 40,
+        visuals: [child],
+      },
+    });
+    onTestFinished(() => {
+      groupGrid.unmount();
+    });
+    const tile = await mountSuspended(DashboardPaletteTile, {
+      attachTo: document.body,
+      props: { title: "Group", type: VisualType.Group },
+    });
+    await dragTileTo(tile, cellPoint, groupGrid.element);
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect(groupGrid.emitted("commit")).toBeUndefined();
+    expect(listVisuals(visuals.value)).toHaveLength(MAX_VISUAL_GROUP_DEPTH + 2);
     tile.unmount();
   });
 });

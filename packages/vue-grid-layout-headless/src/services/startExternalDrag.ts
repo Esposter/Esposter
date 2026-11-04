@@ -1,16 +1,19 @@
 import type { GridCell } from "#src/models/GridCell";
 import type { GridItem } from "#src/models/GridItem";
+import type { GridRefusal } from "#src/models/GridRefusal";
 import type { MountedGrid } from "#src/models/MountedGrid";
 
 import { findGridAt } from "#src/services/findGridAt";
 
 // An item from outside every grid, such as a palette entry, is dragged by its element: the grid under the pointer previews the
 // Cell the item would land on, and the release drops it there, or nowhere when no grid takes it. The drop receives the grid's
-// Root too, so a consumer reads its own data attribute from it to know which group the item landed in
+// Root too, so a consumer reads its own data attribute from it to know which group the item landed in. A grid that the
+// Consumer's checkIsRefused refuses for the item previews nothing over it and takes no drop
 export const startExternalDrag = (
   event: PointerEvent,
   item: GridItem,
   onDrop: (cell: GridCell, target: HTMLElement) => void,
+  checkIsRefused?: GridRefusal,
 ): void => {
   // Only the primary button starts a drag, since a touch or pen contact reports button 0 too
   if (event.button !== 0) return;
@@ -18,6 +21,7 @@ export const startExternalDrag = (
 
   const element = event.currentTarget;
   const { pointerId } = event;
+  const checkIsGridRefused = (grid: MountedGrid) => Boolean(checkIsRefused?.(item, grid.element));
   element.setPointerCapture(pointerId);
   // A cancelled press never releases, so the listeners end on either pointer event rather than on the release alone
   const controller = new AbortController();
@@ -35,7 +39,7 @@ export const startExternalDrag = (
         lastGrid?.clearPreview();
         lastGrid = grid;
       }
-      grid?.preview(item, point);
+      if (grid && !checkIsGridRefused(grid)) grid.preview(item, point);
     },
     { signal },
   );
@@ -48,7 +52,7 @@ export const startExternalDrag = (
       lastGrid?.clearPreview();
       const point = { x: releaseEvent.clientX, y: releaseEvent.clientY };
       const grid = findGridAt(point, element);
-      const cell = grid?.accept(item, point);
+      const cell = grid && !checkIsGridRefused(grid) ? grid.accept(item, point) : undefined;
       if (grid && cell) onDrop(cell, grid.element);
     },
     { signal },

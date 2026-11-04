@@ -1,6 +1,12 @@
 // @vitest-environment nuxt
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
+import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
+import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
+import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
+import { useDashboardStore } from "@/store/dashboard";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
@@ -251,4 +257,47 @@ describe("dashboardGrid", () => {
       ]);
     },
   );
+
+  // The group at the depth cap holds one visual, which the drop lands on. The dragged group holds a group of its own, so a move
+  // Into the cap group would nest it past the cap, and the grid it is dropped on refuses it before that visual is pushed aside
+  test("a body drag into a group its move would nest past the depth cap changes no visual's cell", async () => {
+    expect.hasAssertions();
+
+    const chain = createGroupChain(MAX_VISUAL_GROUP_DEPTH + 1);
+    const cappedGroup = takeOne(listVisuals(chain), MAX_VISUAL_GROUP_DEPTH);
+    const child = takeOne(cappedGroup.visuals ?? []);
+    Object.assign(child, { h: 2, w: 2, x: 0, y: 0 });
+    const movedGroup = new Visual({
+      h: 2,
+      type: VisualType.Group,
+      visuals: [new Visual({ type: VisualType.Group, visuals: [] })],
+      w: 2,
+      x: 0,
+      y: 0,
+    });
+    const visuals = [...chain, movedGroup];
+    const dashboardStore = useDashboardStore();
+    const { dashboard } = storeToRefs(dashboardStore);
+    dashboard.value = new Dashboard({ visuals });
+    const getCells = () => listVisuals(visuals).map(({ h, id, w, x, y }) => ({ h, id, w, x, y }));
+    const cellsBefore = getCells();
+    const wrapper = await mountSuspended(DashboardGrid, {
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [movedGroup] },
+    });
+    const target = await mountSuspended(DashboardGrid, {
+      attrs: { "data-group-id": cappedGroup.id },
+      props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [child] },
+    });
+    stubElementAtPoint(target.element);
+    // The release lands on the child's cell, past the target's padding
+    const releasePoint = { clientX: 10, clientY: 10 };
+    const tile = wrapper.get(".dashboard-grid-tile");
+    await tile.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
+    await tile.trigger("pointermove", { buttons: 1, ...releasePoint, pointerId });
+    await tile.trigger("pointerup", { ...releasePoint, pointerId });
+
+    expect(target.emitted("commit")).toBeUndefined();
+    expect(wrapper.emitted("transfer")).toBeUndefined();
+    expect(getCells()).toStrictEqual(cellsBefore);
+  });
 });

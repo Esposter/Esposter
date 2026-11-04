@@ -2,12 +2,16 @@ import type { CollisionMode } from "#src/models/CollisionMode";
 import type { CompactType } from "#src/models/CompactType";
 import type { GridCommit } from "#src/models/GridCommit";
 import type { GridItem } from "#src/models/GridItem";
+import type { GridRefusal } from "#src/models/GridRefusal";
 import type { GridSpacing } from "#src/models/GridSpacing";
 import type { GridTransfer } from "#src/models/GridTransfer";
 
 // What a grid lays out and how its gestures read the pointer. A consumer passes these as a getter, so a changed prop is
 // Read the next time the grid lays out
 export interface GridLayoutOptions<T extends GridItem = GridItem> {
+  // Whether this grid refuses an item dragged into it, from another grid or from outside. A refused item is previewed nowhere
+  // Over the grid and lands nothing, so the grid never lays out a landing for an item it will not take
+  checkIsRefused?: GridRefusal;
   // What a dropped item does to the items it lands on
   collision: CollisionMode;
   columnNumber: number;

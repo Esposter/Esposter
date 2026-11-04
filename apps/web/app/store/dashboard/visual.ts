@@ -2,13 +2,12 @@ import type { GridCell } from "vue-grid-layout-headless";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { findVisualList } from "#shared/services/dashboard/findVisualList";
-import { getVisualDepth } from "#shared/services/dashboard/getVisualDepth";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
-import { checkIsMoveTooDeep } from "@/services/dashboard/visual/checkIsMoveTooDeep";
+import { checkIsGroupTooDeep } from "@/services/dashboard/visual/checkIsGroupTooDeep";
+import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
 import { createNewVisual } from "@/services/dashboard/visual/createNewVisual";
 import { findVisual } from "@/services/dashboard/visual/findVisual";
 import { getVisualList } from "@/services/dashboard/visual/getVisualList";
@@ -45,7 +44,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       createAlert("The visual to hold it is not a group", "error");
       return undefined;
     }
-    if (type === VisualType.Group && getVisualDepth(visuals.value, parentId) + 1 > MAX_VISUAL_GROUP_DEPTH) {
+    if (type === VisualType.Group && checkIsGroupTooDeep(visuals.value, parentId)) {
       createAlert("A group cannot nest any deeper", "error");
       return undefined;
     }
@@ -148,29 +147,19 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     return isSuccessful;
   };
   // Moves a visual, with every visual it holds, into another group's list at the cell given, or into the dashboard's own
-  // List when there is no target group. A group cannot move into itself or into a group it holds, and a move that would put
-  // A group past the depth cap is refused. Within one list the grid commits the move, not this
+  // List when there is no target group. A move the move rule refuses changes nothing. Within one list the grid commits the
+  // Move, not this
   const moveVisual = (ids: { id: Visual["id"] }, targetGroupId: undefined | Visual["id"], cell: GridCell) => {
     const dashboard = dashboardStore.dashboard;
     const source = findVisualList(dashboard.visuals, ids.id);
     const visual = findVisual(dashboard.visuals, ids);
     if (!source || !visual) return;
-
-    const movedVisuals = listVisuals([visual]);
-    if (targetGroupId !== undefined && movedVisuals.some((movedVisual) => movedVisual.id === targetGroupId)) {
-      createAlert("A group cannot move into itself or a group it holds", "error");
+    if (checkIsMoveRefused(dashboard.visuals, visual.id, targetGroupId)) {
+      createAlert("The visual cannot move there", "error");
       return;
     }
+
     const targetGroup = targetGroupId === undefined ? undefined : findVisual(dashboard.visuals, { id: targetGroupId });
-    if (targetGroupId !== undefined && !targetGroup?.visuals) {
-      createAlert("The visual to move into is not a group", "error");
-      return;
-    }
-    if (checkIsMoveTooDeep(dashboard.visuals, visual.id, targetGroupId)) {
-      createAlert("A group cannot nest any deeper", "error");
-      return;
-    }
-
     removeVisualFromList(dashboard, source.group, ids.id);
     Object.assign(visual, cell);
     getVisualList(dashboard, targetGroup).push(visual);

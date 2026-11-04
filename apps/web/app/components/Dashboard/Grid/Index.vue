@@ -5,7 +5,9 @@ import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_COMMANDS, DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
+import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
+import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { useGridLayout } from "vue-grid-layout-headless";
 
@@ -22,7 +24,11 @@ defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 const { collision, columnNumber, compactType, isEditable, rowHeight, visuals } = defineProps<Props>();
 const emit = defineEmits<DashboardVisualEmits>();
 const grid = useTemplateRef("grid");
+const visualStore = useVisualStore();
+const { visuals: dashboardVisuals } = storeToRefs(visualStore);
 const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, tiles } = useGridLayout(grid, () => ({
+  // A body drag is refused by the group it is dropped on when the move would put the visual in itself or nest it past the cap
+  checkIsRefused: (item, target) => checkIsMoveRefused(dashboardVisuals.value, item.id, target.dataset.groupId),
   collision,
   columnNumber,
   compactType,

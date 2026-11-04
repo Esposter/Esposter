@@ -12,6 +12,7 @@ export type * from "#src/models/GridLayout";
 export type * from "#src/models/GridLayoutOptions";
 export type * from "#src/models/GridPlaceholder";
 export type * from "#src/models/GridPoint";
+export type * from "#src/models/GridRefusal";
 export type * from "#src/models/GridSpacing";
 export type * from "#src/models/GridStep";
 export type * from "#src/models/GridTile";

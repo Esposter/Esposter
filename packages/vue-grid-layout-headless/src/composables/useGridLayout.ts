@@ -116,10 +116,10 @@ export const useGridLayout = <T extends GridItem>(
     return { cell: landedLayout.find(({ id }) => id === cell.id) ?? cell, isRefused: false, layout: landedLayout };
   };
   // An item dropped with its top-left under the point lands in the columns and below the top, on the layout it is not yet
-  // Part of, so its collisions resolve as a move's do
+  // Part of, so its collisions resolve as a move's do. A grid that refuses the item has no drop preview, so it lands nothing
   const getDropPreview = (item: GridItem, point: GridPoint): GridPreview | undefined => {
     const element = root.value;
-    if (!element || !getOptions().isEditable) return undefined;
+    if (!element || !getOptions().isEditable || getOptions().checkIsRefused?.(item, element)) return undefined;
 
     const { left, top } = element.getBoundingClientRect();
     const { padding } = getOptions().spacing;
