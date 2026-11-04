@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SurveyPlaceableNode } from "survey-engine";
 
-import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { SurveyNodeType } from "survey-engine";
 
 interface Props {
@@ -12,21 +11,12 @@ interface Props {
 }
 
 const { node, pointer } = defineProps<Props>();
-const surveyCreatorStore = useSurveyCreatorStore();
-const { selectedPointer } = storeToRefs(surveyCreatorStore);
-const { select } = useSurveyCreatorCommands();
+const { getSelectionBindings } = useSurveyCanvasSelection();
 </script>
 
 <template>
   <!-- A question is drawn by its field with the pointer events off, so a click lands on this element and selects it -->
-  <div
-    :class="{ 'ui-selected': selectedPointer === pointer }"
-    ui-ring-outside
-    rd="[--ui-container-radius]"
-    tabindex="0"
-    @click.stop="select(pointer)"
-    @keydown.enter.self="select(pointer)"
-  >
+  <div :="getSelectionBindings(pointer)" ui-ring-outside rd="[--ui-container-radius]" tabindex="0">
     <div v-if="node.type === SurveyNodeType.Panel" p-3 b-border rd="[--ui-container-radius]" flex flex-col gap-3>
       <h3 v-if="node.props.title" ui-title>{{ node.props.title }}</h3>
       <ResourceSurveyCreatorCanvasNode

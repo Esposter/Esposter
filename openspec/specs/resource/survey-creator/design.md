@@ -56,6 +56,7 @@ flowchart TD
 | `apps/web/app/components/Resource/Survey/Runner.vue`             | the runner the preview draws                                                               |
 | `apps/web/app/store/survey/creator.ts`                           | the document, history, preview flag and selection                                          |
 | `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`    | one core command per gesture, applied as patches                                           |
+| `apps/web/app/composables/survey/useSurveyCanvasSelection.ts`    | the bindings a canvas page and element take: drawn as chosen, chosen by a click or Enter   |
 | `apps/web/app/composables/survey/useSurveyCreatorAutosave.ts`    | the autosave queue                                                                         |
 | `apps/web/app/store/survey/index.ts`                             | the save path the autosave goes through                                                    |
 | `apps/web/app/services/pageBuilder/getRecordedHistory.ts`        | folds a run of edits to one prop into one history entry                                    |
