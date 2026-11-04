@@ -8,9 +8,8 @@ import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {
-  // Set while the respondent is still answering, and absent once they submit: every read of a survey's responses asks
-  // For the key to be absent, which a row stored before drafts were marked also satisfies. Declared, so a submitted
-  // Row carries no key rather than an own `undefined`
+  // Set while the respondent is still answering, and absent once they submit — the state every read of a survey's
+  // Responses asks for. Declared, so a submitted row carries no key rather than an own `undefined`
   declare isDraft?: true;
   model: Record<string, unknown> = {};
   modelVersion = 0;
@@ -34,6 +33,7 @@ export const surveyResponseEntitySchema = z.object({
   isDraft: z.literal(true).optional(),
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
-  pageNo: z.int().nonnegative().default(0),
+  pageNo: z.int().nonnegative(),
+  // An empty token is not stored, so a row without one reads back as ""
   participantToken: z.union([z.literal(""), z.uuid()]).default(""),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

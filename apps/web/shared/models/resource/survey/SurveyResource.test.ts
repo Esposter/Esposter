@@ -31,12 +31,6 @@ describe("surveyResourceSchema", () => {
     expect(surveyResourceSchema.safeParse({ document: createSurveyDocument(), settings: {} }).success).toBe(true);
   });
 
-  test("refuses the retired model string, which nothing converts", () => {
-    expect.hasAssertions();
-
-    expect(surveyResourceSchema.safeParse({ model: '{"pages":[]}', settings: {} }).success).toBe(false);
-  });
-
   test("refuses a document the save check reports, at the question it names", () => {
     expect.hasAssertions();
 

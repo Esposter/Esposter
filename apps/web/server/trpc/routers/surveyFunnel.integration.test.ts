@@ -103,13 +103,17 @@ describe("surveyFunnel", () => {
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1 },
+      pageNo: 0,
       participantToken: firstParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
     });
     const secondResponse = await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1 },
+      pageNo: 0,
       participantToken: secondParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -117,7 +121,9 @@ describe("surveyFunnel", () => {
 
     await expect(
       surveyCaller.createSurveyResponse({
+        isDraft: false,
         model: { a: 1 },
+        pageNo: 0,
         participantToken: crypto.randomUUID(),
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
@@ -165,8 +171,10 @@ describe("surveyFunnel", () => {
     // Closing takes effect without re-publishing, so the participant URL stays alive and says so
     await expect(
       surveyCaller.updateSurveyResponse({
+        isDraft: false,
         model: { a: 1 },
         modelVersion: firstResponse.modelVersion,
+        pageNo: 0,
         participantToken: firstParticipant.token,
         partitionKey: survey.id,
         rowKey: firstResponse.rowKey,

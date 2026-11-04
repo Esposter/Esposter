@@ -4,7 +4,6 @@ import { z } from "zod";
 
 export const updateSurveyResponseInputSchema = surveyResponseEntitySchema
   .pick({ model: true, modelVersion: true, pageNo: true, participantToken: true, partitionKey: true, rowKey: true })
-  // Whether this save leaves the response in progress, false for the one that submits it. Absent is a submit, which is
-  // What every save meant before drafts were marked, so a tab still running that bundle keeps its meaning
-  .extend({ isDraft: z.boolean().default(false), model: surveyResponseModelSchema });
+  // Whether this save leaves the response in progress, false for the one that submits it
+  .extend({ isDraft: z.boolean(), model: surveyResponseModelSchema });
 export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInputSchema>;

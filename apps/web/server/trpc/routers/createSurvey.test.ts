@@ -9,7 +9,7 @@ import { surveyDocumentSchema, SurveyNodeType } from "survey-engine";
 import { describe } from "vitest";
 
 // A survey with its content written — the shape every suite that answers one or binds a program to it starts
-// From. The content is the schema's input, so a suite that wants the prefaulted settings passes the document alone
+// From. The content is the schema's input, so it carries its settings as well as its document
 export const createSurvey = async (
   surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>,
   name: string,

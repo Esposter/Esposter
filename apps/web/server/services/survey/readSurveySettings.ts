@@ -9,6 +9,7 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 // Switching its response mode takes effect without re-publishing every already-sent participant link
 export const readSurveySettings = async (id: ResourceInResource["id"]): Promise<SurveySettings> => {
   const content = await readResourceContent(surveyResourceSchema, id);
-  // A survey saved before settings existed, or never saved at all, collects on the defaults
-  return content?.settings ?? surveySettingsSchema.parse({});
+  // A survey never saved has no content, so it collects on the defaults
+  if (!content) return surveySettingsSchema.parse({});
+  return content.settings;
 };

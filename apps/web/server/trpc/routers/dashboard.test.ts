@@ -38,9 +38,12 @@ describe("dashboardRouter", () => {
 
     const newSurvey = await createPublishedSurvey(surveyCaller, name, {
       document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
+      settings: {},
     });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { [name]: 1 },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -81,9 +84,12 @@ describe("dashboardRouter", () => {
         { name, type: SurveyNodeType.Rating },
         { name: unreadName, type: SurveyNodeType.Text },
       ]),
+      settings: {},
     });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { [name]: 1, [unreadName]: unreadName },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });

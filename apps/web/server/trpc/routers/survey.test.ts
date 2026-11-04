@@ -81,7 +81,14 @@ describe("surveyRouter", () => {
   // A response is always the same envelope — one answer under a fresh row key — and the token is the only part
   // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
   const createSurveyResponse = (partitionKey: string, answer: number, participantToken = "") =>
-    caller.createSurveyResponse({ model: { a: answer }, participantToken, partitionKey, rowKey: crypto.randomUUID() });
+    caller.createSurveyResponse({
+      isDraft: false,
+      model: { a: answer },
+      pageNo: 0,
+      participantToken,
+      partitionKey,
+      rowKey: crypto.randomUUID(),
+    });
   // An edit addresses the response it is editing, so the row identifies itself rather than being restated
   const updateSurveyResponse = (
     surveyResponse: Awaited<ReturnType<typeof createSurveyResponse>>,
@@ -89,8 +96,10 @@ describe("surveyRouter", () => {
     participantToken = "",
   ) =>
     caller.updateSurveyResponse({
+      isDraft: false,
       model: { a: answer },
       modelVersion: surveyResponse.modelVersion,
+      pageNo: 0,
       participantToken,
       partitionKey: surveyResponse.partitionKey,
       rowKey: surveyResponse.rowKey,
@@ -183,33 +192,6 @@ describe("surveyRouter", () => {
     `);
   });
 
-  // The retired string model is not converted: a save still holding it is refused, not saved as an empty survey
-  test("refuses a save in the retired model shape", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-
-    await expect(
-      saveSurveyContent(newResource.id, newResource.contentVersion, {
-        model: "{}",
-        settings,
-      } as unknown as SurveyResource),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "code": "unrecognized_keys",
-          "keys": [
-            "model"
-          ],
-          "path": [
-            "content"
-          ],
-          "message": "Unrecognized key: \\"model\\""
-        }
-      ]]
-    `);
-  });
-
   test("clears its response partition when the resource is purged", async () => {
     expect.hasAssertions();
 
@@ -286,7 +268,9 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
+        isDraft: false,
         model: { a: largeAnswer, b: largeAnswer, c: largeAnswer, d: largeAnswer },
+        pageNo: 0,
         participantToken: "",
         partitionKey: newResource.id,
         rowKey: crypto.randomUUID(),
@@ -323,8 +307,10 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.updateSurveyResponse({
+        isDraft: false,
         model: newSurveyResponse.model,
         modelVersion: newSurveyResponse.modelVersion,
+        pageNo: 0,
         participantToken: "",
         partitionKey: newSurveyResponse.partitionKey,
         rowKey: newSurveyResponse.rowKey,
@@ -339,6 +325,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
+      isDraft: false,
       model: { a: 0 },
       pageNo: 0,
       participantToken: "",
@@ -347,6 +334,7 @@ describe("surveyRouter", () => {
     });
     // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
     const updatedSurveyResponse = await caller.updateSurveyResponse({
+      isDraft: false,
       model: { a: 0 },
       modelVersion: newSurveyResponse.modelVersion,
       pageNo: 1,
@@ -363,6 +351,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
+      isDraft: false,
       model: { a: 0 },
       pageNo: 2,
       participantToken: "",
@@ -373,6 +362,7 @@ describe("surveyRouter", () => {
     // Navigating back and re-saving unchanged answers must not regress the stored resume page
     await expect(
       caller.updateSurveyResponse({
+        isDraft: false,
         model: { a: 0 },
         modelVersion: newSurveyResponse.modelVersion,
         pageNo: 1,
@@ -787,6 +777,7 @@ describe("surveyRouter", () => {
     const draftSurveyResponse = await caller.createSurveyResponse({
       isDraft: true,
       model: { a: 0 },
+      pageNo: 0,
       partitionKey: newResource.id,
       rowKey: crypto.randomUUID(),
     });
@@ -795,8 +786,10 @@ describe("surveyRouter", () => {
     expect(draftCount).toStrictEqual({ count: 0, isCapped: false });
 
     await caller.updateSurveyResponse({
+      isDraft: false,
       model: draftSurveyResponse.model,
       modelVersion: draftSurveyResponse.modelVersion,
+      pageNo: 0,
       partitionKey: draftSurveyResponse.partitionKey,
       rowKey: draftSurveyResponse.rowKey,
     });
@@ -814,6 +807,7 @@ describe("surveyRouter", () => {
       isDraft: true,
       model: { a: 1 },
       modelVersion: newSurveyResponse.modelVersion,
+      pageNo: 0,
       partitionKey: newSurveyResponse.partitionKey,
       rowKey: newSurveyResponse.rowKey,
     });
@@ -837,7 +831,9 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
+        isDraft: false,
         model: { rating: 9 },
+        pageNo: 0,
         participantToken: "",
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
@@ -862,6 +858,7 @@ describe("surveyRouter", () => {
       caller.createSurveyResponse({
         isDraft: true,
         model: {},
+        pageNo: 0,
         participantToken: "",
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),
@@ -869,7 +866,9 @@ describe("surveyRouter", () => {
     ).resolves.toHaveProperty("isDraft", true);
     await expect(
       caller.createSurveyResponse({
+        isDraft: false,
         model: {},
+        pageNo: 0,
         participantToken: "",
         partitionKey: survey.id,
         rowKey: crypto.randomUUID(),

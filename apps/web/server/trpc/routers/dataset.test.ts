@@ -58,7 +58,7 @@ describe("datasetRouter", () => {
     MockTableDatabase.clear();
   });
 
-  const setupSurvey = () => createPublishedSurvey(surveyCaller, name, { document });
+  const setupSurvey = () => createPublishedSurvey(surveyCaller, name, { document, settings: {} });
   // A survey response's submission time is its save time, so the clock is pinned to the epoch once the survey is
   // Published — a version published at the epoch is not newer than the epoch its snapshot is read back against
   const submittedAt = new Date(0).toISOString();
@@ -70,7 +70,9 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1, b: true, c: "" },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -92,7 +94,13 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     await Promise.all(
       Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
-        surveyCaller.createSurveyResponse({ model: { a: 1 }, partitionKey: newSurvey.id, rowKey: crypto.randomUUID() }),
+        surveyCaller.createSurveyResponse({
+          isDraft: false,
+          model: { a: 1 },
+          pageNo: 0,
+          partitionKey: newSurvey.id,
+          rowKey: crypto.randomUUID(),
+        }),
       ),
     );
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
@@ -120,7 +128,9 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1 },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -140,10 +150,13 @@ describe("datasetRouter", () => {
           type: SurveyNodeType.Checkbox,
         },
       ]),
+      settings: {},
     });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { c: ["red", 2] },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });
@@ -156,10 +169,12 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const questionDocument = createSurveyDocumentWith([{ name: "submittedAt", type: SurveyNodeType.Text }]);
-    const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument });
+    const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument, settings: {} });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { submittedAt: "answer" },
+      pageNo: 0,
       partitionKey: newSurvey.id,
       rowKey: crypto.randomUUID(),
     });

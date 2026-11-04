@@ -268,7 +268,9 @@ describe("programRouter", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1 },
+      pageNo: 0,
       participantToken: respondedParticipant.token,
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),
@@ -305,7 +307,9 @@ describe("programRouter", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
+      isDraft: false,
       model: { a: 1 },
+      pageNo: 0,
       participantToken: "",
       partitionKey: survey.id,
       rowKey: crypto.randomUUID(),

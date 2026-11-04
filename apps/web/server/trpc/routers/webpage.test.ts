@@ -127,6 +127,7 @@ describe("webpageRouter", () => {
 
     const newSurvey = await createSurvey(surveyCaller, name, {
       document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
+      settings: {},
     });
     const newResource = await caller.createResource({ name });
     await caller.saveResourceContent({
