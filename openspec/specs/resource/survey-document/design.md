@@ -75,7 +75,7 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 
 | File                                                                       | Role                                                                                                |
 | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `packages/survey-engine/package.json`                                      | the private package's manifest                                                                      |
+| `packages/survey-engine/package.json`                                      | the package's manifest                                                                              |
 | `packages/survey-engine/src/models/SurveyNodeType.ts`                      | the kinds, by their type tags                                                                       |
 | `packages/survey-engine/src/models/SurveyDocument.ts`                      | the document type: the core's `BlockDocument` over the node union, the root props and the page node |
 | `packages/survey-engine/src/models/SurveyRootProps.ts`                     | the root's props and the calculated values they hold                                                |

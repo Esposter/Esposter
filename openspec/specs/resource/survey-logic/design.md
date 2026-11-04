@@ -93,7 +93,7 @@ The package answers the recorded SurveyJS value for every fixture row except the
 
 | File                                                                        | Role                                                                                                         |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `packages/survey-logic/package.json`                                        | the private package's manifest                                                                               |
+| `packages/survey-logic/package.json`                                        | the package's manifest                                                                                       |
 | `packages/survey-logic/README.md`                                           | the public surface, every implemented function and the deliberately absent ones                              |
 | `packages/survey-logic/src/services/tokenizeSurveyExpression.ts`            | reads the source into tokens, or the first fault with its position                                           |
 | `packages/survey-logic/src/services/parseSurveyExpression.ts`               | parses the tokens into a tree by power, refusing tokens left over                                            |
