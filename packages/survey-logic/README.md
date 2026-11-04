@@ -6,7 +6,7 @@ It parses and evaluates the survey's expression language: the conditions that sh
 
 The package has no live SurveyJS. It does not depend on SurveyJS, and the values it is held to were recorded from SurveyJS's expression runner into fixtures that its tests replay.
 
-Design notes live in [the survey logic design](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-logic/design.md).
+Design notes live in [the survey logic design](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/survey-logic/design.md).
 
 ## Table of Contents
 
@@ -20,15 +20,20 @@ Design notes live in [the survey logic design](https://github.com/Esposter/Espos
 
 | Export                                                                                        | Kind     | Purpose                                                                                                                                              |
 | :-------------------------------------------------------------------------------------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at                                        |
-| `tokenizeSurveyExpression`                                                                    | function | Reads an expression's source into the tokens the parser reads                                                                                        |
-| `runSurveyExpression`                                                                         | function | Parses an expression and evaluates it over a context whose answers are already read by `toSurveyLogicAnswers`, or returns the parse's fault          |
 | `checkSurveyExpression`                                                                       | function | Refuses an expression that does not parse, calls a function the package lacks, or calls an array function's filter form, naming the first such fault |
+| `evaluateSurveyExpression`                                                                    | function | Evaluates a parsed expression over the context's answers                                                                                             |
+| `MAX_SURVEY_EXPRESSION_LENGTH`                                                                | constant | The most characters an expression source may hold; a longer source is refused at its first character past the limit, and nothing throws              |
+| `parseSurveyExpression`                                                                       | function | Parses an expression's source into its tree, or into the first fault with the character position it starts at                                        |
+| `runSurveyExpression`                                                                         | function | Parses a source and evaluates it over a context already read as answers, or returns the parse's fault                                                |
 | `SurveyExpressionNode`                                                                        | type     | A parsed expression, each node told apart by its `type`                                                                                              |
 | `SurveyExpressionNodeType`, `SurveyExpressionBinaryOperator`, `SurveyExpressionUnaryOperator` | enum     | The node types and the operators a tree holds                                                                                                        |
-| `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                                                                    |
+| `SurveyLogicContext`                                                                          | type     | What an expression reads: the answers and calculated values, the row scopes, and the clock the caller passes                                         |
 | `SurveyLogicError`                                                                            | type     | The message and the character position a parse is refused for                                                                                        |
-| `MAX_SURVEY_EXPRESSION_LENGTH`                                                                | constant | The most characters an expression source may hold; a longer source is refused at its first character past the limit, and nothing throws              |
+| `SurveyLogicStoredValue`                                                                      | type     | A value as storage holds it, where a null may appear and reads as unanswered                                                                         |
+| `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                                                                    |
+| `tokenizeSurveyExpression`                                                                    | function | Reads an expression's source into its tokens, or returns the first fault                                                                             |
+| `toSurveyLogicAnswer`                                                                         | function | Reads one stored value as an answer at every depth, with a stored null read as unanswered                                                            |
+| `toSurveyLogicAnswers`                                                                        | function | Reads a record of stored answers as answers, each at every depth: the one boundary where a stored null reads as unanswered                           |
 
 ## <a name="functions">🧮 Functions</a>
 
