@@ -60,7 +60,7 @@ The package SHALL zoom in steps, to fit, and by pinch or Ctrl with the wheel abo
 - **THEN** the scale stays at the largest
 - **AND** zooming in is reported as unavailable
 
-#### Zooming out at the smallest scale
+#### Scenario: Zooming out at the smallest scale
 
 - **GIVEN** a document at the renderer's smallest scale
 - **WHEN** the reader tries to zoom out
@@ -173,7 +173,7 @@ The package SHALL give the document's outline as bookmarks and draw a page's thu
 - **THEN** the second thumbnail is marked as current
 - **AND** a thumbnail out of view is not drawn
 
-#### A drawn thumbnail turns with the pages
+#### Scenario: A drawn thumbnail turns with the pages
 
 - **GIVEN** a thumbnail already drawn in the sidebar
 - **WHEN** the document is rotated a quarter turn
