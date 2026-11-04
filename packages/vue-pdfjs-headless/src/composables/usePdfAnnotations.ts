@@ -101,7 +101,8 @@ export const usePdfAnnotations = ({ onChange, pdfDocument, viewer }: UsePdfAnnot
     const loaded = toValue(pdfDocument);
     if (!loaded) return err("No document is open to import into");
 
-    return readXfdf(xfdf).andThen((freeTexts) => {
+    // The ids the document already holds are taken by the reader, so an imported free text named as one keeps an id of its own
+    return readXfdf(xfdf, new Set(readFreeTexts(loaded).map(({ id }) => id))).andThen((freeTexts) => {
       const stray = freeTexts.find(({ pageNumber }) => pageNumber > loaded.numPages);
       if (stray)
         return err(

@@ -7,28 +7,36 @@ const parseCoordinate = (text: string) => (text.trim() === "" ? Number.NaN : Num
 const checkRectangle = (coordinates: number[]): coordinates is [number, number, number, number] =>
   coordinates.length === 4 && coordinates.every((coordinate) => Number.isFinite(coordinate));
 
-// The annotation at an index is named by its position where the file gives it no name
-const readFreeText = (element: Element, index: number): Result<PdfFreeText, string> => {
+// A free text keeps its name as its id unless the name is empty or already held, and then it takes an id of its own, so
+// No free text replaces another that holds the same id
+const readFreeText = (element: Element, index: number, usedIds: Set<string>): Result<PdfFreeText, string> => {
   const page = element.getAttribute("page") ?? "";
   const coordinates = (element.getAttribute("rect") ?? "").split(",").map((text) => parseCoordinate(text));
   if (!/^\d+$/u.test(page)) return err(`Free text ${index + 1} has no valid page`);
   if (!checkRectangle(coordinates)) return err(`Free text ${index + 1} has no valid rect`);
 
+  const name = element.getAttribute("name") ?? "";
+  const id = name === "" || usedIds.has(name) ? crypto.randomUUID() : name;
+  usedIds.add(id);
+
   return ok({
     contents: element.querySelector("contents")?.textContent ?? "",
-    id: element.getAttribute("name") ?? String(index),
+    id,
     pageNumber: Number(page) + 1,
     rect: coordinates,
   });
 };
 
-// Reads the free-text annotations of an XFDF file. A file that cannot be read is an error naming the problem, and it
-// Gives no annotations, so a caller that stops on the error changes nothing
-export const readXfdf = (xfdf: string): Result<PdfFreeText[], string> => {
+// Reads the free-text annotations of an XFDF file. The ids already held in the document are passed in, so a free text
+// Named as one of them takes an id of its own. A file that cannot be read is an error naming the problem, and it gives no
+// Annotations, so a caller that stops on the error changes nothing
+export const readXfdf = (xfdf: string, takenIds: ReadonlySet<string>): Result<PdfFreeText[], string> => {
   const xfdfDocument = new DOMParser().parseFromString(xfdf, "application/xml");
   if (xfdfDocument.querySelector("parsererror")) return err("The XFDF is not well-formed XML");
 
+  const usedIds = new Set(takenIds);
+
   return Result.combine(
-    Array.from(xfdfDocument.querySelectorAll("freetext"), (element, index) => readFreeText(element, index)),
+    Array.from(xfdfDocument.querySelectorAll("freetext"), (element, index) => readFreeText(element, index, usedIds)),
   );
 };

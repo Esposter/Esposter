@@ -177,4 +177,44 @@ describe("usePdfAnnotations", () => {
     expect([...pdfDocument.annotationStorage][0]).toStrictEqual(["pdfjs_internal_editor_0", drawn]);
     expect(pdfDocument.annotationStorage.size).toBe(2);
   });
+
+  test("importing two free texts with no name stores both", () => {
+    expect.hasAssertions();
+
+    const pdfDocument = createDocument([[]]);
+    const { state } = mountAnnotations(pdfDocument);
+
+    expect(
+      state.importXfdf(
+        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="" page="0" rect="72,300,200,320"/><freetext name="" page="0" rect="72,300,200,320"/></annots></xfdf>`,
+      ),
+    ).toStrictEqual(ok(undefined));
+    expect(pdfDocument.annotationStorage.size).toBe(2);
+  });
+
+  test("importing two free texts that share a name stores both", () => {
+    expect.hasAssertions();
+
+    const pdfDocument = createDocument([[]]);
+    const { state } = mountAnnotations(pdfDocument);
+
+    expect(
+      state.importXfdf(
+        `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"/><freetext name="a" page="0" rect="72,300,200,320"/></annots></xfdf>`,
+      ),
+    ).toStrictEqual(ok(undefined));
+    expect(pdfDocument.annotationStorage.size).toBe(2);
+  });
+
+  test("importing a free text named as one already imported stores both", () => {
+    expect.hasAssertions();
+
+    const pdfDocument = createDocument([[]]);
+    const { state } = mountAnnotations(pdfDocument);
+    const xfdf = `<xfdf xmlns="http://ns.adobe.com/xfdf/"><annots><freetext name="a" page="0" rect="72,300,200,320"/></annots></xfdf>`;
+
+    expect(state.importXfdf(xfdf)).toStrictEqual(ok(undefined));
+    expect(state.importXfdf(xfdf)).toStrictEqual(ok(undefined));
+    expect(pdfDocument.annotationStorage.size).toBe(2);
+  });
 });
