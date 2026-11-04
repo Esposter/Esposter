@@ -192,4 +192,5 @@ flowchart LR
   route_user_id_ --> route_post_update_id_
   route_user_id_ --> route_user_settings
   route_user_settings --> route_login
+  route_view_type_id_ --> route_resource_explorer_id_blade_
 ```
