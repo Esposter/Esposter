@@ -11,7 +11,6 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { SurveyNodeType } from "survey-engine";
@@ -31,47 +30,6 @@ describe("dashboardRouter", () => {
 
   afterEach(() => {
     MockTableDatabase.clear();
-  });
-
-  test("bakes dataset snapshot into published dashboard", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await createPublishedSurvey(surveyCaller, name, {
-      document: createSurveyDocumentWith([{ name, type: SurveyNodeType.Rating }]),
-      settings: {},
-    });
-    await surveyCaller.createSurveyResponse({
-      isDraft: false,
-      model: { [name]: 1 },
-      pageNo: 0,
-      participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
-    });
-
-    const newResource = await caller.createResource({ name });
-
-    expect(newResource.type).toBe(ResourceType.Dashboard);
-
-    const dashboard = new Dashboard({
-      visuals: [
-        new Visual({
-          dataset: {
-            query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
-            reference: { id: newSurvey.id, type: DatasetProviderType.SurveyResponses },
-          },
-        }),
-      ],
-    });
-    await caller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
-    await caller.publishResource({ id: newResource.id });
-    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
-
-    expect(takeOne(publishedContent.content.visuals).dataset?.snapshot).toStrictEqual({
-      columns: [{ name, type: ColumnType.Number }],
-      rows: [{ [name]: 1 }],
-      totalRows: 1,
-    });
   });
 
   // The snapshot is a public read, so it carries the columns the chart draws and none of the others the source holds —

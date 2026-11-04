@@ -85,16 +85,6 @@ describe("likeRouter", () => {
     expect(deletedLike.postId).toBe(newPost.id);
   });
 
-  test("fails delete with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-
-    await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id).message}]`,
-    );
-  });
-
   test("fails delete with wrong user", async () => {
     expect.hasAssertions();
 

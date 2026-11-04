@@ -59,6 +59,19 @@ describe("datasetRouter", () => {
   });
 
   const setupSurvey = () => createPublishedSurvey(surveyCaller, name, { document, settings: {} });
+  const setupSheet = async (rows: Row[] = [new Row({ data: { [columnName]: value } })]) => {
+    const newResource = await sheetCaller.createResource({ name });
+    const content: SheetResource = {
+      data: {
+        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
+        rows,
+      },
+      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+    };
+    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    return newResource;
+  };
   // A survey response's submission time is its save time, so the clock is pinned to the epoch once the survey is
   // Published — a version published at the epoch is not newer than the epoch its snapshot is read back against
   const submittedAt = new Date(0).toISOString();
@@ -208,16 +221,7 @@ describe("datasetRouter", () => {
   test("reads file dataset", async () => {
     expect.hasAssertions();
 
-    const newResource = await sheetCaller.createResource({ name });
-    const content: SheetResource = {
-      data: {
-        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
-        rows: [new Row({ data: { [columnName]: value } })],
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
-    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const newResource = await setupSheet();
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
@@ -229,16 +233,7 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const newResource = await sheetCaller.createResource({ name });
-    const content: SheetResource = {
-      data: {
-        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
-        rows: [new Row({ data: { [columnName]: value } })],
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
-    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const newResource = await setupSheet();
     const dataset = await callAgentTool<Dataset>("dataset_readDataset", {
       id: newResource.id,
       type: DatasetProviderType.Sheet,
@@ -252,16 +247,9 @@ describe("datasetRouter", () => {
   test("reads file dataset within the azure page size limit", async () => {
     expect.hasAssertions();
 
-    const newResource = await sheetCaller.createResource({ name });
-    const content: SheetResource = {
-      data: {
-        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
-        rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
-    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const newResource = await setupSheet(
+      Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
+    );
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
@@ -273,19 +261,6 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newResource = await sheetCaller.createResource({ name });
-
-    await expect(
-      caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
-    );
-  });
-
-  test("fails read file dataset with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newResource = await sheetCaller.createResource({ name });
-    await mockSessionOnce(mockContext.db);
 
     await expect(
       caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),

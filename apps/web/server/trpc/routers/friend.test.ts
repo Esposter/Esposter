@@ -86,6 +86,7 @@ describe("friendRouter", () => {
     );
   });
 
+  // A name substring reaches every account, so a result carries nothing private to the user it names
   test("searches users by name", async () => {
     expect.hasAssertions();
 
@@ -95,16 +96,6 @@ describe("friendRouter", () => {
 
     expect(searchedUsers).toHaveLength(1);
     expect(takeOne(searchedUsers).id).toBe(user.id);
-  });
-
-  // A name substring reaches every account, so a result carries nothing private to the user it names
-  test("searches users with no column private to them", async () => {
-    expect.hasAssertions();
-
-    const user = getMockSession().user;
-    await mockSessionOnce(mockContext.db);
-    const searchedUsers = await friendCaller.searchUsers(user.name);
-
     expect(Object.keys(takeOne(searchedUsers)).toSorted()).toStrictEqual(Object.keys(PublicUserColumns).toSorted());
   });
 

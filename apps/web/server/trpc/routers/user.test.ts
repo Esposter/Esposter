@@ -93,6 +93,21 @@ describe("userRouter", () => {
 
     return otherSession;
   };
+  // An accepted delete has ended the caller's sessions, marked the account and published the sweep once
+  const expectAccountDeleted = async () => {
+    const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
+    const deleteAccountEvents = MockEventGridDatabase.get("");
+    assert.exists(deleteAccountEvents);
+
+    await expect(
+      mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } }),
+    ).resolves.toStrictEqual([]);
+    expect(user?.deletionRequestedAt).toStrictEqual(new Date());
+    expect(deleteAccountEvents).toHaveLength(1);
+    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
+    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
+    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
+  };
   // An export as the handler leaves it once its archive is committed, owned by the given person
   const insertReadyDataExport = async (ownerId: string, expiresAt: Date) =>
     takeOne(
@@ -120,6 +135,7 @@ describe("userRouter", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
     getMockRevokeSession().mockReset();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
@@ -154,18 +170,7 @@ describe("userRouter", () => {
 
     await caller.deleteAccount();
 
-    const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
-    const deleteAccountEvents = MockEventGridDatabase.get("");
-    assert.exists(deleteAccountEvents);
-
-    await expect(
-      mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } }),
-    ).resolves.toStrictEqual([]);
-    expect(user?.deletionRequestedAt).toStrictEqual(new Date());
-    expect(deleteAccountEvents).toHaveLength(1);
-    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
-    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
-    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
+    await expectAccountDeleted();
   });
 
   // The marker is set before the sweep is published, so a publish that fails must fail the request and leave the caller
@@ -192,18 +197,7 @@ describe("userRouter", () => {
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
     await caller.deleteAccount();
 
-    const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
-    const deleteAccountEvents = MockEventGridDatabase.get("");
-    assert.exists(deleteAccountEvents);
-
-    await expect(
-      mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } }),
-    ).resolves.toStrictEqual([]);
-    expect(user?.deletionRequestedAt).toStrictEqual(new Date());
-    expect(deleteAccountEvents).toHaveLength(1);
-    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
-    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
-    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
+    await expectAccountDeleted();
   });
 
   test("reads empty statuses with default values", async () => {

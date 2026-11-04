@@ -97,7 +97,9 @@ describe("webpageRouter", () => {
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(copyBlobSpy).not.toHaveBeenCalled();
-    expect(publishedContent.content.html).toContain(url);
+    expect(publishedContent.content.html).toBe(
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>.image { max-width: 100%; height: auto; }</style></head><body><img alt="" class="image" role="presentation" src="${url}"></body></html>`,
+    );
   });
 
   // The working copy's image is the one the published page names, so unpublishing leaves the file for the owner's editor
@@ -106,8 +108,9 @@ describe("webpageRouter", () => {
 
     const newResource = await caller.createResource({ name });
     const url = addAsset(newResource.id);
+    const webpageEditor = new WebpageEditor({ content: [createTestImageNode(url)] });
     await caller.saveResourceContent({
-      content: new WebpageEditor({ content: [createTestImageNode(url)] }),
+      content: webpageEditor,
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
@@ -116,9 +119,10 @@ describe("webpageRouter", () => {
     await caller.unpublishResource({ id: newResource.id });
 
     const assetBlobName = getResourceFileBlobName(newResource.id, hash);
+    const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(assetBlobName)).toBe(true);
-    expect(JSON.stringify(await caller.readResourceContent({ id: newResource.id }))).toContain(url);
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 
   // The survey invite's survey is indexed as a link when the page saves, so the survey's own delete reads the page as its consumer

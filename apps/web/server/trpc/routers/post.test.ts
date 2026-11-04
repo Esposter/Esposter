@@ -47,10 +47,6 @@ describe("postRouter", () => {
   ];
   const updatedDescription = "updatedDescription";
   const value = 1;
-  const sortBy: SortItem<keyof PostInPost>[] = [
-    { key: "likeCount", order: SortOrder.Desc },
-    { key: "id", order: SortOrder.Desc },
-  ];
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -73,6 +69,7 @@ describe("postRouter", () => {
     expect(newPost.description).toBe(description);
   });
 
+  // The feed is public, so an author rides along with only what anyone may see of them — never their email
   test("reads", async () => {
     expect.hasAssertions();
 
@@ -80,16 +77,7 @@ describe("postRouter", () => {
     const post = await postCaller.readPost(newPost.id);
 
     expect(post).toStrictEqual(newPost);
-  });
-
-  // The feed is public, so an author rides along with only what anyone may see of them — never their email
-  test("reads a post's author with no column private to them", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-    const { user } = await postCaller.readPost(newPost.id);
-
-    expect(Object.keys(user).toSorted()).toStrictEqual(Object.keys(PublicUserColumns).toSorted());
+    expect(Object.keys(post.user).toSorted()).toStrictEqual(Object.keys(PublicUserColumns).toSorted());
   });
 
   test("reads empty posts", async () => {
@@ -365,7 +353,7 @@ describe("postRouter", () => {
     await blockCaller.createBlock(blockedUser.id);
     const post = await postCaller.readPost(blockedPost.id);
 
-    expect(post.id).toBe(blockedPost.id);
+    expect(post).toStrictEqual(blockedPost);
   });
 
   test("reads posts sorted by top with cursor", async () => {
@@ -374,8 +362,8 @@ describe("postRouter", () => {
     const firstPost = await postCaller.createPost({ title });
     const secondPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: secondPost.id, value });
-    const firstPage = await postCaller.readPosts({ limit: 1, sortBy });
-    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy });
+    const firstPage = await postCaller.readPosts({ limit: 1, sortBy: TOP_SORT_BY });
+    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy: TOP_SORT_BY });
 
     expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondPost.id]);
     expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstPost.id]);
@@ -387,8 +375,8 @@ describe("postRouter", () => {
     const newPostIds = await Promise.all(
       Array.from({ length: 3 }, async () => (await postCaller.createPost({ title })).id),
     );
-    const firstPage = await postCaller.readPosts({ limit: 2, sortBy });
-    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy });
+    const firstPage = await postCaller.readPosts({ limit: 2, sortBy: TOP_SORT_BY });
+    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy: TOP_SORT_BY });
 
     expect(
       [...firstPage.items, ...secondPage.items]
