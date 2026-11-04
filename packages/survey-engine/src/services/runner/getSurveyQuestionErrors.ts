@@ -4,8 +4,8 @@ import type { SurveyPageError } from "#src/models/SurveyPageError";
 import type { SurveyLogicContext } from "survey-logic";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
-import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
 import { checkIsSurveyAnsweringNode } from "#src/services/runner/checkIsSurveyAnsweringNode";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEmpty";
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";

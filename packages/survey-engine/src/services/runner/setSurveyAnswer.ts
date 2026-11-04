@@ -1,7 +1,7 @@
 import type { SurveyAnswerValue } from "#src/models/SurveyAnswerValue";
 import type { SurveyRunnerState } from "#src/models/SurveyRunnerState";
 
-import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEmpty";
 
 // The state with one answer set. An empty value removes the answer, so the record holds only answers somebody gave
 export const setSurveyAnswer = (

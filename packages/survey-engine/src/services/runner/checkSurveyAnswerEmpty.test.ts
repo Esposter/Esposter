@@ -1,4 +1,4 @@
-import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEmpty";
 import { describe, expect, test } from "vitest";
 
 describe(checkSurveyAnswerEmpty, () => {

@@ -1,4 +1,4 @@
-import { checkSurveyAnswerEmpty } from "#src/services/runner/answer/checkSurveyAnswerEmpty";
+import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEmpty";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { z } from "zod";
 
