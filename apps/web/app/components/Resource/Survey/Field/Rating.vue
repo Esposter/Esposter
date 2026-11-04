@@ -42,7 +42,7 @@ const getSmiley = (value: number) =>
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
-        :is-disabled
+        :is-disabled="isDisabled || undefined"
         :items
         :label="title"
       />
@@ -53,7 +53,7 @@ const getSmiley = (value: number) =>
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
         :count="node.props.rateCount"
-        :is-disabled
+        :is-disabled="isDisabled || undefined"
         :label="title"
       >
         <template #mark="{ isOn, value }">

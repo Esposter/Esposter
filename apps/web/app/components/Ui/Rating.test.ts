@@ -11,7 +11,7 @@ describe("uiRating", () => {
 
     const count = 5;
     const label = "label";
-    const mountRating = (props: { isDisabled?: boolean; modelValue: number | string }) => {
+    const mountRating = (props: { isDisabled?: true; modelValue: number | string }) => {
       const component = mount(UiRating, {
         attachTo: document.body,
         props: {

@@ -7,7 +7,7 @@ import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
 
 interface Props {
-  isDisabled?: boolean;
+  isDisabled?: true;
   // Each choice shows its mark alone, its title its accessible name and its tooltip at once, as an icon button's
   // Label is: a rail of emoji categories
   isIconOnly?: true;

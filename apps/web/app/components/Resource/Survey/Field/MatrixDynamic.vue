@@ -57,7 +57,7 @@ const setRow = (rowIndex: number, row: SurveyAnswers) => {
 // A dropdown and a rating cell choose from the same options and write the answer the same way, so both take these
 const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers, rowIndex: number) => ({
   "aria-invalid": invalid.value,
-  isDisabled,
+  isDisabled: isDisabled || undefined,
   items: takeOne(choiceItemsMap.value, column.name),
   label: column.title || column.name,
   modelValue: getChoiceKey(row[column.name]),

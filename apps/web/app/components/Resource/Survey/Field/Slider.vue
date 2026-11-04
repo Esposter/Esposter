@@ -27,7 +27,7 @@ const valueText = computed(() => (node.props.showValue ? String(value.value) : "
     <span v-if="node.props.description" text-sm text-muted>{{ node.props.description }}</span>
     <UiSlider
       v-model="value"
-      :is-disabled
+      :is-disabled="isDisabled || undefined"
       :is-invalid="error ? true : undefined"
       :is-required="node.props.isRequired || undefined"
       :label="getSurveyQuestionTitle(node.props)"

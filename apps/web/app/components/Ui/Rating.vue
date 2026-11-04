@@ -7,7 +7,7 @@ interface Props {
   // How many steps the scale has, each named by its number from one
   count: number;
   // Held at the disabled opacity, where a step is neither chosen nor previewed
-  isDisabled?: boolean;
+  isDisabled?: true;
   // The group's accessible name: what its steps choose between
   label: string;
 }

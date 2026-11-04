@@ -32,7 +32,7 @@ const choice = computed<number | string>({
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
-        :is-disabled
+        :is-disabled="isDisabled || undefined"
         :items
         :label="title"
       />

@@ -3,7 +3,7 @@ import { Slider } from "@vuetify/v0";
 
 interface Props {
   // Held at the disabled opacity, where the thumb takes no press and no key
-  isDisabled?: boolean;
+  isDisabled?: true;
   // Marks the thumb invalid for assistive technology and tints the track in the error colour, as an invalid text field is
   isInvalid?: true;
   // Hides the label from sight, where it still names the thumb for speech
