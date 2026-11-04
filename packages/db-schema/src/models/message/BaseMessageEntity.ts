@@ -42,12 +42,13 @@ export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
   ).shape,
-  files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]),
+  files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH),
   isEdited: z.literal(true).optional(),
   isForward: z.literal(true).optional(),
   isPinned: z.literal(true).optional(),
+  // An empty value is not stored, so a current row can lack any of these three and reads back as its default
   mentions: createUniqueArraySchema(selectUserInAuthSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
   message: sanitizedMessageSchema.default(""),
   replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
-  type: standardMessageTypeSchema.default(MessageType.Message),
+  type: standardMessageTypeSchema,
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;
