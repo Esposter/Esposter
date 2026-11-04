@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 
 interface Props {
   label: string;
@@ -20,6 +21,6 @@ const emit = defineEmits<{ add: []; paste: [event: ClipboardEvent] }>();
       :placeholder
       @paste="(event: ClipboardEvent) => emit('paste', event)"
     />
-    <UiButton :disabled="addText.trim() === ''" type="submit" :variant="UiButtonVariant.Quiet">Add</UiButton>
+    <UiButton :disabled="checkIsBlankSource(addText)" type="submit" :variant="UiButtonVariant.Quiet">Add</UiButton>
   </UiForm>
 </template>
