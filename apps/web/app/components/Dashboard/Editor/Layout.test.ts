@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
+import type { Mock } from "vitest";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
@@ -31,14 +32,15 @@ describe("dashboardEditorLayout", () => {
   const columnPitch = 80;
   const pointerId = 1;
   // Typed with the input the handler receives, so a test can assert what a choice saved
-  let saveResourceContent: ReturnType<
-    typeof vi.fn<(options: { input: { content: Pick<Dashboard, "collision" | "compactType"> } }) => ResourceInResource>
-  >;
+  type SaveResourceContent = (options: {
+    input: { content: Pick<Dashboard, "collision" | "compactType"> };
+  }) => ResourceInResource;
+  let saveResourceContent: Mock<SaveResourceContent>;
   const loadDashboard = async (visuals: Visual[] = []) => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    saveResourceContent = vi.fn<
-      (options: { input: { content: Pick<Dashboard, "collision" | "compactType"> } }) => ResourceInResource
-    >(() => createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Dashboard }));
+    saveResourceContent = vi.fn<SaveResourceContent>(() =>
+      createResourceListItem({ contentVersion: 1, id: resourceId, type: ResourceType.Dashboard }),
+    );
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Dashboard }),
       publication: null,
