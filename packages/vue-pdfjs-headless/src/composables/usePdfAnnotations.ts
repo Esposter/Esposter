@@ -62,7 +62,8 @@ const readFreeTexts = (loaded: PDFDocumentProxy): PdfFreeText[] =>
   }).flat();
 
 // An imported free text is stored as the renderer's own free text, so the save writes it like one drawn. It is keyed
-// Apart from the renderer's numbered editors, which an imported name could otherwise replace
+// Apart from the renderer's numbered editors, which an imported name could otherwise replace, by the XFDF prefix and the
+// Free text's id
 const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
   for (const { contents, id, pageNumber, rect } of freeTexts)
     loaded.annotationStorage.setValue(
