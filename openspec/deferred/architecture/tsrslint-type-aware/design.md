@@ -1,16 +1,16 @@
 # tsrslint type-aware lint
 
-`@maschwenk/tsrslint` is a Rust port of tsgolint on tsrs that oxlint reaches through `OXLINT_TSGOLINT_PATH`, which `vp lint` honors. It runs the same 61 type-aware rules with the same findings as `oxlint-tsgolint`.
+tsrs's own type-aware linter, `tsrs --lint` launched as `tsrs-lint` (first the third-party `@maschwenk/tsrslint`), is a Rust port of tsgolint that oxlint reaches through `OXLINT_TSGOLINT_PATH`, which `vp lint` honors. It runs the same 61 type-aware rules with the same findings as `oxlint-tsgolint`, and tsrs 0.21.0 ships it.
 
 ## Why not
 
-**It is faster and lighter on Linux only.** It lints the packages tree about three times faster in about half the memory. It ships no Windows binary, so Windows would keep tsgolint and the pass would run on two backends.
+**The speed is real and the platform gap is closed.** It lints a sample of the packages tree about twice as fast, and the launcher runs on Windows through its `.cmd` shim. The path is a setting either way: oxlint finds its backend only as the `oxlint-tsgolint` package or through the variable, so the value is the `.cmd` launcher on Windows and the extensionless one elsewhere.
 
-**It cannot read a content mapper.** It cannot read a tsconfig carrying a content mapper: tsrs refuses a mapper unless `--runExternalCode` is passed, and tsrslint's headless mode takes no such flag. `packages/vue-phaserjs`, `packages/genshin-world` and `packages/genshin-interface` carry the `vize` mapper in `tsconfig.vue.json`, so each reports `tsconfig-error` and the lint exits 1.
+**It cannot read a content mapper.** It cannot read a tsconfig carrying a content mapper: tsrs refuses a mapper unless `--runExternalCode` is passed, and `tsrs --lint` rejects that flag as an unknown option and has no environment switch for it. `packages/vue-phaserjs`, `packages/genshin-world` and `packages/genshin-interface` carry the `vize` mapper in `tsconfig.vue.json`, so each reports `tsconfig-error` and the lint exits 1. Leaving the three out would drop their other oxlint rules too, since `ignorePatterns` is the only per-file lever.
 
 ## Revisit when
 
-tsrslint accepts the flag that lets tsrs read a content mapper, **or** oxlint ships tsrs as a backend of its own ([oxc-project/tsrs 378](https://github.com/oxc-project/tsrs/issues/378)). Either one removes the tsconfig error; the Windows gap remains until a binary ships there.
+`tsrs --lint` accepts a way to run a content mapper, a flag or a variable, **or** oxlint ships tsrs as a backend of its own ([oxc-project/tsrs 378](https://github.com/oxc-project/tsrs/issues/378)). Either one removes the tsconfig error, and then the swap is the path setting, marked with a `@TODO` to drop once oxlint finds the backend itself, plus removing `oxlint-tsgolint` and the `vite-plus>oxlint-tsgolint` override, which vite-plus's hard dependency on it makes necessary.
 
 ## Key files
 
