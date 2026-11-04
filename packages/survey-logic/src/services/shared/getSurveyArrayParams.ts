@@ -7,8 +7,8 @@ import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyArrayItems } from "#src/services/shared/getSurveyArrayItems";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
-// Reads an array function's arguments as SurveyJS does: the array or matrix values, the field's name, and a third text that names a field to return when it holds no condition characters.
-// An item counts only when its field reads as a number
+// Reads an array function's arguments: the array or matrix values, the field's name, and a third text that names a field to
+// Return when it holds no condition characters. An item counts only when its field reads as a number (R4)
 export const getSurveyArrayParams = (args: SurveyLogicValue[]): SurveyLogicArrayParams | undefined => {
   const [data, name, returnCandidate] = args;
   if (args.length < 2 || args.length > 4 || typeof name !== "string") return undefined;

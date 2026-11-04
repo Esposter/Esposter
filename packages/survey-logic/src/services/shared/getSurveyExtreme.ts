@@ -1,5 +1,5 @@
-// The candidate no later one replaces, starting from the first. A tie keeps the earlier candidate, since SurveyJS replaces
-// Only on a strict comparison
+// The candidate no later one replaces, starting from the first. A tie keeps the earlier candidate, because a later one
+// Replaces the best only when it is strictly better
 export const getSurveyExtreme = <T>(
   candidates: T[],
   checkReplaces: (best: T, candidate: T) => boolean,

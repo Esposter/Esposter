@@ -9,8 +9,8 @@ export const roundFunction: SurveyLogicFunction = (args) => {
   if (numberWithPrecision === undefined) return undefined;
 
   const [number, precision] = numberWithPrecision;
-  // The scaled value is nudged up by Number.EPSILON before Math.round, as SurveyJS does.
-  // That nudge rounds a half away from zero, where Math.round alone would send -2.5 to -2.
+  // The scaled value is nudged up by Number.EPSILON before Math.round, so a half rounds away from zero (R5).
+  // Math.round alone would send -2.5 to -2.
   const scale = 10 ** precision;
 
   return toSurveyLogicResult(Math.round(number * scale * (1 + Number.EPSILON)) / scale);

@@ -10,7 +10,7 @@ import { evaluateLogicOperator } from "#src/services/evaluator/operators/evaluat
 import { evaluateMembershipOperator } from "#src/services/evaluator/operators/evaluateMembershipOperator";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Both operands are read before the operator applies, as SurveyJS reads them.
+// Both operands are read before the operator applies.
 // So a call on the right is read even when the left operand settles the result
 export const evaluateBinary = (
   node: SurveyExpressionBinaryNode,
