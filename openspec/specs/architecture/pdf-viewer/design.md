@@ -26,7 +26,7 @@ flowchart TD
 
 ## Surface
 
-The viewer draws a toolbar, a search row, the password field when the document asks for one, and the pages, all in `Viewer.vue`. The sidebar, the More menu, full screen, the watermarked download and rotation left and right are not built; they are in the [PDF viewer surface change](../../../changes/architecture-pdf-viewer-surface/design.md), see the `Not built` section below.
+The viewer's root, `Pdf/Viewer/Index.vue`, draws a toolbar, a search row, the password field when the document asks for one, and the pages. The toolbar holds the sidebar toggle, the page and zoom controls and a More menu of the occasional commands; the sidebar lists the outline and the thumbnails; a watermark dialog asks the text of a download. Every control is built, so nothing on the surface waits (see `Not built`).
 
 ### The controls
 
@@ -80,20 +80,17 @@ The viewer adds no key handling of its own. Each control is a button or a field 
 
 ## Not built
 
-The following are designed and not built. They are in the [PDF viewer surface change](../../../changes/architecture-pdf-viewer-surface/design.md), which owns their surface, layout, states and decisions until its build moves them here.
-
-- **The sidebar and its toggle**, with an Outline tab and a Thumbnails tab.
-- **The More menu**, and the moves of Rotate, Print, Download, Fit width, Fit page, Actual size, Match case and Whole word into it.
-- **Rotate left and Rotate right**, in place of Rotate.
-- **Full screen** of the whole viewer.
-- **The download with a watermark** and its dialog.
-- **The zoom readout**, which resets to fit the width, in place of the two text zoom buttons' scale and Fit width.
+Nothing in the viewer's surface is unbuilt. The sidebar and its toggle, the More menu, rotation left and right, full screen, the download with a watermark and the zoom readout are all in `Pdf/Viewer/`, each with its tests. The change that designed them, the PDF viewer surface change, is archived under `openspec/changes/archive/`, and its decisions are kept under `Decisions` below.
 
 ## Decisions
 
 The viewer's own decisions, its state, its overlay geometry, its scroll, its search and its print, are the package's, in its [design](../../vue-pdfjs-headless/viewer/design.md). The app's decision is the one below.
 
-- **Highlight on load is the caller's option, with no caller yet.** The package's `usePdfViewer` takes `highlightTerms`, and `Viewer.vue` does not pass it. No place in the app opens a PDF from a search result with a query: a message search result shows its attachment as a preview, and a preview opens its message and not the viewer. So the option is exposed and passed by no one, which the Notes say.
+- **Highlight on load is the caller's option, with no caller yet.** The package's `usePdfViewer` takes `highlightTerms`, and the viewer's root forwards it from its own prop, which no caller passes. No place in the app opens a PDF from a search result with a query: a message search result shows its attachment as a preview, and a preview opens its message and not the viewer. So the option is exposed and passed by no one, which the Notes say.
+- **The sidebar's choices are remembered in the browser.** Its open or closed state and its tab use the app's local storage keys, so a reader who keeps the thumbnails open sees them again. It starts closed at a phone's width and open otherwise, and overlays the pages at a phone's width.
+- **Full screen is the whole viewer, not the scrolling pages.** The package's container is the scroll region, so full screen on it would hide the toolbar and the sidebar. The app takes full screen on the viewer's root with the browser's own composable, and the package keeps no fullscreen state.
+- **The download with a watermark is a dialog, not a popover, because it asks for a value before it makes a file.** A popover would hide the pages it sits over.
+- **Thumbnails turn with the pages.** A rail that stayed upright under a rotated page would show a different document from the one on screen.
 
 ## Key files
 
@@ -119,6 +116,6 @@ The viewer's own decisions, its state, its overlay geometry, its scroll, its sea
 
 ## Notes
 
-- The `fullscreen` permissions grant in `apps/web/configuration/security.ts` is the call view's: its stage calls `requestFullscreen` on its own element. The viewer has no full screen of its own yet (see `Not built`).
+- The `fullscreen` permissions grant in `apps/web/configuration/security.ts` is the call view's: its stage calls `requestFullscreen` on its own element. The viewer's full screen is the browser's own on its root (`Pdf/Viewer/Index.vue`), and leaving it on Escape is the browser's behaviour, which no app test pins.
 - The package's `usePdfViewer` takes `highlightTerms`, and no caller passes it. Nothing in the app opens a viewer from a search with a query, so the option is the seam a later search result would pass through.
 - Annotation editing and comments are the [PDF annotations change](../../vue-pdfjs-headless/annotations/design.md)'s, and are not on this surface.
