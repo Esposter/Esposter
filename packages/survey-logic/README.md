@@ -28,6 +28,7 @@ Design notes live in [the survey logic design](https://github.com/Esposter/Espos
 | `SurveyExpressionNodeType`, `SurveyExpressionBinaryOperator`, `SurveyExpressionUnaryOperator` | enum     | The node types and the operators a tree holds                                                                                                        |
 | `SurveyLogicValue`                                                                            | type     | The values an expression reads and computes, where `undefined` is an empty answer                                                                    |
 | `SurveyLogicError`                                                                            | type     | The message and the character position a parse is refused for                                                                                        |
+| `MAX_SURVEY_EXPRESSION_LENGTH`                                                                | constant | The most characters an expression source may hold; a longer source is refused at its first character past the limit, and nothing throws              |
 
 ## <a name="functions">🧮 Functions</a>
 

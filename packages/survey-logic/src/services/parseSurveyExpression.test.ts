@@ -2,6 +2,7 @@ import type { SurveyExpressionNode } from "#src/models/SurveyExpressionNode";
 
 import { SurveyExpressionBinaryOperator } from "#src/models/SurveyExpressionBinaryOperator";
 import { SurveyExpressionNodeType } from "#src/models/SurveyExpressionNodeType";
+import { MAX_SURVEY_EXPRESSION_LENGTH } from "#src/services/constants";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
 import { exhaustiveGuard, noop } from "@esposter/shared";
 import { ok } from "neverthrow";
@@ -147,6 +148,12 @@ describe(parseSurveyExpression, () => {
     ["the removed spelling && is not an operator", "{a} && {b}", "Unexpected character &", 4],
     ["the removed spelling || is not an operator", "{a} || {b}", "Unexpected character |", 4],
     ["the removed prefix ! is not an operator", "!{a}", "Unexpected character !", 0],
+    [
+      "a source one character past the length limit",
+      `${"1+".repeat(MAX_SURVEY_EXPRESSION_LENGTH / 2)}1`,
+      "The expression is too long",
+      MAX_SURVEY_EXPRESSION_LENGTH,
+    ],
   ])("%s is an error at its position", (_title, source, message, position) => {
     expect.hasAssertions();
 
