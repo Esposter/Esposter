@@ -1,9 +1,14 @@
 import { addSurveyLogicMonths } from "#src/services/shared/addSurveyLogicMonths";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyLogicDayNumber } from "#src/services/shared/getSurveyLogicDayNumber";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 
 // The length of each time unit in milliseconds, counted on the wall clock
-const millisecondsPerUnitMap: Record<string, number> = { hours: 3_600_000, minutes: 60_000, seconds: 1000 };
+const millisecondsPerUnitMap: Record<string, number> = {
+  hours: 3_600_000,
+  minutes: 60_000,
+  seconds: MILLISECONDS_PER_SECOND,
+};
 
 // The time from one wall-clock date to another in a unit: the calendar days, the whole months or years, or the hours, minutes
 // Or seconds rounded up. The order of the two dates does not matter. Undefined for a unit the language does not know
