@@ -8,7 +8,7 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 
 - [ ] [Survey runner and Creator accessibility](../../specs/resource/survey-fields/design.md) — owed: the owner's one screen-reader listening to the runner's errors and the Creator's list editors; reported and open: a required multiple-text item left empty does not stop a submit or show an error (the engine's answer check, not the field), and a text field's focus is a 10% accent tint at about 1.1:1 against its surround with its ring left transparent, which is a design call on the focus indicator
 
-- [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show
+- [ ] [Browser suite for the resource editors](../../specs/resource/whiteboard/design.md) — a package browser suite, since layout claims wait for one (the `testing` skill): the whiteboard canvas and PNG export, the Note image width cap, and the page builder's colour probe on a non-sRGB colour, none of which happy-dom can show; and three dashboard cases, by their names in [the dashboard-grid spec](../../specs/resource/dashboard-grid/spec.md): 'Handles are hidden while a visual is not pointed at or focused' (the handles of an idle visual), 'A visual shows an outline when pointed at or focused' (the accent outline), and 'A published visual shows no outline' (none on the published page)
 
 ## Later
 

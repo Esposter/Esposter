@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { ResourceInResource } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -7,11 +8,17 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
+import DashboardGridTile from "@/components/Dashboard/Grid/Tile.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
 import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
-import { DASHBOARD_GRID_COMMANDS } from "@/services/dashboard/constants";
+import {
+  DASHBOARD_EDITOR_ROW_HEIGHT,
+  DASHBOARD_GRID_COMMANDS,
+  DASHBOARD_GRID_MARGIN,
+} from "@/services/dashboard/constants";
+import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -31,28 +38,9 @@ describe("dashboardEditorContent", () => {
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
 
-  // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at.
   // Stubbed once for the file: an `unstubAllGlobals` after each test would also unstub the fetch `setupMswTrpc` stubs
   beforeAll(() => {
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        readonly #callback: ResizeObserverCallback;
-
-        constructor(callback: ResizeObserverCallback) {
-          this.#callback = callback;
-        }
-
-        disconnect() {}
-        observe(target: Element) {
-          const entries = [{ contentRect: { height: 0, width: gridWidth }, target }] as ResizeObserverEntry[];
-          queueMicrotask(() => {
-            this.#callback(entries, this);
-          });
-        }
-        unobserve() {}
-      },
-    );
+    stubGridWidth(gridWidth);
   });
   beforeEach(() => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
@@ -83,8 +71,9 @@ describe("dashboardEditorContent", () => {
     assert(menu);
     await menu.get(menuLabel).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
+    // A toggle item is a menuitemcheckbox, so the prefix reaches every row the menu lists
     await menu
-      .findAll('[role="menuitem"]')
+      .findAll('[role^="menuitem"]')
       .find((item) => item.text() === title)
       ?.trigger("click");
     await flushPromises();
@@ -165,6 +154,34 @@ describe("dashboardEditorContent", () => {
     expect({ commits: wrapper.findComponent(DashboardGrid).emitted("commit"), id: editedItem.value?.id }).toStrictEqual(
       { commits: undefined, id: cardVisual.id },
     );
+  });
+
+  // Fit height is saved with the visual, and the rows it then takes are the rows its content draws
+  // Its content needs two rows, so a table five rows tall takes two
+  test("turning on fit height for a table", async () => {
+    expect.hasAssertions();
+
+    const saveResourceContent = vi.fn<
+      (options: { input: { content: { visuals: Pick<Visual, "isAutoHeight">[] } } }) => ResourceInResource
+    >(() => createResource(1));
+    trpcMsw.dashboard.saveResourceContent.mutation(saveResourceContent);
+    const table = new Visual({ h: 5, type: VisualType.Table });
+    const wrapper = await mountEditor([table]);
+    await pickTileMenuItem(wrapper, table.id, "Fit height to content");
+    // The tile reports the height its content draws, two rows of the editor's cells with the gap between them
+    takeOne(wrapper.findAllComponents(DashboardGridTile)).vm.$emit(
+      "measure",
+      DASHBOARD_EDITOR_ROW_HEIGHT * 2 + DASHBOARD_GRID_MARGIN,
+    );
+    await flushPromises();
+    const visualStore = useVisualStore();
+    const { visuals } = storeToRefs(visualStore);
+
+    expect({
+      h: takeOne(visuals.value).h,
+      isAutoHeight: takeOne(visuals.value).isAutoHeight,
+      saved: saveResourceContent.mock.lastCall?.[0].input.content.visuals.map(({ isAutoHeight }) => isAutoHeight),
+    }).toStrictEqual({ h: 2, isAutoHeight: true, saved: [true] });
   });
 
   // A visual released over a group's grid is moved into that group, and the grid it was released on names the group

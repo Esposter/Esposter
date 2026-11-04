@@ -6,11 +6,13 @@ import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
+import { stubElementAtPoint } from "@/services/dashboard/grid/stubElementAtPoint.test";
+import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
 
 // The package's grid is kept as it is and only watched, so a test reads the options each grid is laid out with
@@ -23,14 +25,6 @@ vi.mock(import("vue-grid-layout-headless"), async (importOriginal) => {
   };
 });
 
-// A DOM without layout has no hit test, so the element under a release is the one the test names, as a browser would
-const stubElementAtPoint = (element: Element) => {
-  document.elementsFromPoint = () => [element];
-  onTestFinished(() => {
-    Reflect.deleteProperty(document, "elementsFromPoint");
-  });
-};
-
 describe("dashboardGrid", () => {
   // Twelve columns across 970px with the dashboard's 10px gap and padding start 80px apart, and rows 40px high 50px apart
   const columnNumber = 12;
@@ -41,27 +35,9 @@ describe("dashboardGrid", () => {
   const collision = CollisionMode.Push;
   const compactType = CompactType.Vertical;
 
+  // The observer reports the width the test lays the grid out at, since a DOM without layout never reports one
   beforeEach(() => {
-    // A DOM without layout never reports the grid's width, so the observer reports the width the test lays it out at
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        readonly #callback: ResizeObserverCallback;
-
-        constructor(callback: ResizeObserverCallback) {
-          this.#callback = callback;
-        }
-
-        disconnect() {}
-        observe() {
-          const entries = [{ contentRect: { height: 0, width: gridWidth } }] as ResizeObserverEntry[];
-          queueMicrotask(() => {
-            this.#callback(entries, this);
-          });
-        }
-        unobserve() {}
-      },
-    );
+    stubGridWidth(gridWidth);
   });
   afterEach(() => {
     vi.restoreAllMocks();
@@ -76,10 +52,7 @@ describe("dashboardGrid", () => {
       props: { collision, columnNumber, compactType, isEditable: true, rowHeight, visuals: [visual] },
     });
     // A DOM without layout has no hit test, so the release hits the grid it was pressed on, as a browser would
-    document.elementsFromPoint = () => [wrapper.element];
-    onTestFinished(() => {
-      Reflect.deleteProperty(document, "elementsFromPoint");
-    });
+    stubElementAtPoint(wrapper.element);
     const tile = wrapper.get(".dashboard-grid-tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { buttons: 1, clientX: columnPitch, clientY: 0, pointerId });
@@ -97,28 +70,41 @@ describe("dashboardGrid", () => {
     expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 2, y: 0 }]]]);
   });
 
-  test("opening a dashboard draws each visual at its saved cell and size", async () => {
+  // The full-width visual holds the first row, so the target stays in its row
+  // The visual at the right has only empty rows above it in its columns, so it rises through them
+  test("opening a dashboard", async () => {
     expect.hasAssertions();
 
-    // A full-width visual above the target keeps it from compacting up into the first row
     const wrapper = await mountSuspended(DashboardGrid, {
       props: {
         collision,
         columnNumber,
         compactType,
         rowHeight,
-        visuals: [new Visual({ h: 1, w: columnNumber, x: 0, y: 0 }), new Visual({ h: 2, w: 2, x: 3, y: 1 })],
+        visuals: [
+          new Visual({ h: 1, w: columnNumber, x: 0, y: 0 }),
+          new Visual({ h: 2, w: 2, x: 3, y: 1 }),
+          new Visual({ h: 1, w: 2, x: 8, y: 3 }),
+        ],
       },
     });
-    const tile = takeOne(wrapper.findAll(".dashboard-grid-tile"), 1);
-    assert(tile.element instanceof HTMLElement);
 
-    expect({
-      height: tile.element.style.height,
-      left: tile.element.style.left,
-      top: tile.element.style.top,
-      width: tile.element.style.width,
-    }).toStrictEqual({ height: "90px", left: "250px", top: "60px", width: "150px" });
+    expect(
+      wrapper.findAll(".dashboard-grid-tile").map((tile) => {
+        assert(tile.element instanceof HTMLElement);
+
+        return {
+          height: tile.element.style.height,
+          left: tile.element.style.left,
+          top: tile.element.style.top,
+          width: tile.element.style.width,
+        };
+      }),
+    ).toStrictEqual([
+      { height: "40px", left: "10px", top: "10px", width: "950px" },
+      { height: "90px", left: "250px", top: "60px", width: "150px" },
+      { height: "40px", left: "650px", top: "60px", width: "150px" },
+    ]);
   });
 
   test("scrolling a published dashboard on a phone", async () => {
