@@ -1,7 +1,7 @@
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
 import { MAX_DECIMAL_PLACES } from "#src/services/constants";
-import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
+import { getSurveyOptionalArgument } from "#src/services/shared/getSurveyOptionalArgument";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 
 // The number and the precision a rounding function reads from its arguments (R5): the first value is the number, and the second
@@ -10,7 +10,7 @@ import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 export const getSurveyNumberWithPrecision = (args: SurveyLogicValue[]): [number, number] | undefined => {
   const [value, precisionValue] = args;
   const number = toSurveyLogicNumber(value);
-  const precision = checkIsSurveyLogicValueEmpty(precisionValue) ? 0 : toSurveyLogicNumber(precisionValue);
+  const precision = getSurveyOptionalArgument(precisionValue, 0, toSurveyLogicNumber);
   if (number === undefined || precision === undefined) return undefined;
   if (!Number.isInteger(precision) || precision < 0 || precision > MAX_DECIMAL_PLACES) return undefined;
 

@@ -1,6 +1,6 @@
 import type { SurveyLogicFunction } from "#src/models/SurveyLogicFunction";
 
-import { checkIsSurveyLogicValueEmpty } from "#src/services/shared/checkIsSurveyLogicValueEmpty";
+import { getSurveyOptionalArgument } from "#src/services/shared/getSurveyOptionalArgument";
 import { toSurveyLogicDate } from "#src/services/shared/toSurveyLogicDate";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
 import { toSurveyLogicWallClock } from "#src/services/shared/toSurveyLogicWallClock";
@@ -13,7 +13,7 @@ export const todayFunction: SurveyLogicFunction = (args, context) => {
 
   if (args.length === 1) {
     // An empty shift moves nothing
-    const days = checkIsSurveyLogicValueEmpty(args[0]) ? 0 : toSurveyLogicNumber(args[0]);
+    const days = getSurveyOptionalArgument(args[0], 0, toSurveyLogicNumber);
     if (days === undefined) return undefined;
 
     date.setUTCDate(date.getUTCDate() + days);
