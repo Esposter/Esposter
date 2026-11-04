@@ -16,5 +16,6 @@ export type * from "#src/models/GridSpacing";
 export type * from "#src/models/GridStep";
 export type * from "#src/models/GridTile";
 export * from "#src/models/ResizeEdge";
+export * from "#src/placement/checkChangesHeight";
 export * from "#src/placement/getFirstFreeCell";
 export * from "#src/services/startExternalDrag";

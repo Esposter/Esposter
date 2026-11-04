@@ -4,7 +4,7 @@ import type { GridGeometry, GridPoint, GridStep } from "vue-grid-layout-headless
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
 import { getKeyStep } from "@/services/dashboard/grid/getKeyStep";
 import { takeOne } from "@esposter/shared";
-import { ResizeEdge } from "vue-grid-layout-headless";
+import { checkChangesHeight, ResizeEdge } from "vue-grid-layout-headless";
 
 interface Props {
   geometry: GridGeometry;
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 const tile = useTemplateRef("tile");
 const edges = Object.values(ResizeEdge);
 // An auto-height tile's height is its content's, so only the handles that move its sides are drawn for it
-const widthEdges = [ResizeEdge.East, ResizeEdge.West];
+const widthEdges = edges.filter((edge) => !checkChangesHeight(edge));
 useResizeObserver(tile, (entries) => {
   if (!isAutoHeight) return;
 
