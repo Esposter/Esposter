@@ -1,6 +1,6 @@
 import type { SurveyPageNode, SurveyPlaceableNode } from "survey-engine";
 
-import { surveyPageNodeType, SurveyNodeType } from "survey-engine";
+import { SurveyNodeType, surveyPageNodeType } from "survey-engine";
 import { describe } from "vitest";
 
 export const createSurveyTestPage = (children: SurveyPlaceableNode[], visibleIf = ""): SurveyPageNode => ({
