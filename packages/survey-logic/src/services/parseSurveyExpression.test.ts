@@ -61,15 +61,10 @@ describe(parseSurveyExpression, () => {
 
   test.each([
     ["{a} or {b}", "or({a}, {b})"],
-    ["{a} || {b}", "or({a}, {b})"],
     ["{a} and {b}", "and({a}, {b})"],
-    ["{a} && {b}", "and({a}, {b})"],
     ["not {a}", "not({a})"],
-    ["!{a}", "not({a})"],
     ["{a} = 1", "equal({a}, 1)"],
-    ["{a} == 1", "equal({a}, 1)"],
     ["{a} != 1", "notEqual({a}, 1)"],
-    ["{a} <> 1", "notEqual({a}, 1)"],
     ["{a} < 1", "less({a}, 1)"],
     ["{a} <= 1", "lessOrEqual({a}, 1)"],
     ["{a} > 1", "greater({a}, 1)"],
@@ -92,14 +87,15 @@ describe(parseSurveyExpression, () => {
     expect(getShapeOf(source)).toBe(shape);
   });
 
-  // A higher power binds tighter, and a chain of one operator groups to the left, the power included
+  // A higher power binds tighter, a chain of one operator groups to the left, and a chain of `^` groups to the right.
+  // A unary minus takes the power in its operand, so it binds looser than `^`
   test.each([
     ["1 + 2 * 3", "add(1, multiply(2, 3))"],
     ["1 * 2 + 3", "add(multiply(1, 2), 3)"],
     ["1 - 2 - 3", "subtract(subtract(1, 2), 3)"],
-    ["2 ^ 3 ^ 2", "power(power(2, 3), 2)"],
+    ["2 ^ 3 ^ 2", "power(2, power(3, 2))"],
     ["2 ^ 3 * 2", "multiply(power(2, 3), 2)"],
-    ["-2 ^ 2", "power(negate(2), 2)"],
+    ["-2 ^ 2", "negate(power(2, 2))"],
     ["2 ^ -2", "power(2, negate(2))"],
     ["not {a} = 1", "not(equal({a}, 1))"],
     ["not {a} and {b}", "and(not({a}), {b})"],
@@ -146,6 +142,11 @@ describe(parseSurveyExpression, () => {
     ["a call missing its comma", "round(1 2)", "Expected , or ) to close the call opened here", 8],
     ["a character no token starts with", "{a} & {b}", "Unexpected character &", 4],
     ["an empty reference", "{}", "Expected a question name between { and }", 1],
+    ["the removed spelling == is not an operator", "{a} == 1", "Expected an expression", 5],
+    ["the removed spelling <> is not an operator", "{a} <> 1", "Expected an expression", 5],
+    ["the removed spelling && is not an operator", "{a} && {b}", "Unexpected character &", 4],
+    ["the removed spelling || is not an operator", "{a} || {b}", "Unexpected character |", 4],
+    ["the removed prefix ! is not an operator", "!{a}", "Unexpected character !", 0],
   ])("%s is an error at its position", (_title, source, message, position) => {
     expect.hasAssertions();
 

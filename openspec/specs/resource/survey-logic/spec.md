@@ -40,10 +40,10 @@ An expression over a record of answers SHALL evaluate to the value SurveyJS's ex
 - **WHEN** the expression `{matrix.row1.col1} = 7` is evaluated
 - **THEN** the value is true
 
-#### Scenario: A chain of powers groups to the left
+#### Scenario: A chain of powers groups to the right
 
 - **WHEN** the expression `2 ^ 3 ^ 2` is evaluated
-- **THEN** the value is 64
+- **THEN** the value is 512
 
 ### Requirement: A malformed expression is refused with the position of the fault
 

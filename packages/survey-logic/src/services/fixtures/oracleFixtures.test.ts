@@ -67,6 +67,10 @@ describe("the oracle fixtures", () => {
     "case-sensitive": "Names are case-sensitive here, where SurveyJS ignores case",
     "date-time-end":
       "SurveyJS answers NaN for a date-time end with an hours, minutes or seconds unit; this package answers the real difference",
+    "power-grouping":
+      "Power groups to the right: a chain of `^` is read from its last power, where SurveyJS groups the chain to the left",
+    "unary-minus":
+      "A unary minus binds looser than `^`, so `-2 ^ 2` is the negation of a square, where SurveyJS squares a negation",
     "numeric-arithmetic":
       "Arithmetic is numeric: an empty, boolean, list or record operand has no result, `+` joins only two texts that are not numbers, and a division or remainder by zero has none",
     "one-absent-value":

@@ -170,7 +170,7 @@ describe(evaluateSurveyExpression, () => {
     ["a list is truthy for or", "[0] or 0", {}, [0]],
     ["and binds tighter than or", "{a} and {b} or {c}", { a: 1, b: 0, c: "z" }, "z"],
     ["comparisons bind tighter than and and or", "{a} = 1 and {b} = 2 or {c} = 3", { a: 1, b: 2, c: 9 }, true],
-    ["an empty answer is true under the bang operator", "!{a}", { a: null }, true],
+    ["an empty answer is true under not", "not {a}", { a: null }, true],
   ])("%s gives %s", (_title, source, values, expected) => {
     expect.hasAssertions();
 
@@ -236,10 +236,10 @@ describe(evaluateSurveyExpression, () => {
     ["a remainder by zero has no result", "5 % 0", {}, undefined],
     ["a remainder by numeric text divides", "7 % '2'", {}, 1],
     ["a remainder of an unanswered question has no result", "{a} % 3", {}, undefined],
-    ["a power of a negative base binds tighter than the exponent", "-2 ^ 2", {}, 4],
+    ["a unary minus binds looser than a power", "-2 ^ 2", {}, -4],
     ["a power with a negative exponent", "2 ^ -2", {}, 0.25],
     ["a power", "2 ^ 3", {}, 8],
-    ["a chain of powers groups to the left", "2 ^ 3 ^ 2", {}, 64],
+    ["a chain of powers groups to the right", "2 ^ 3 ^ 2", {}, 512],
     ["a power binds tighter than a product", "2 ^ 3 * 2", {}, 16],
     ["a power of numeric texts", "'2' ^ '3'", {}, 8],
     ["a power of text that is not a number has no result", "'a' ^ 2", {}, undefined],

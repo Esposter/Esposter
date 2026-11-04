@@ -13,7 +13,7 @@ import { takeOne } from "@esposter/shared";
 import { ok } from "neverthrow";
 
 // Takes each operator at the cursor that binds at least as tightly as the minimum power, with its right operand, so
-// `a - b - c` and `a ^ b ^ c` both group to the left. A postfix operator has no right operand to take
+// `a - b - c` groups to the left and `a ^ b ^ c` to the right. A postfix operator has no right operand to take
 export const parseBinaryOperators = (
   state: SurveyExpressionParserState,
   left: SurveyExpressionNode,
@@ -39,7 +39,7 @@ export const parseBinaryOperators = (
   if (binary === undefined || binary.power < minimumPower) return ok(left);
 
   state.index++;
-  return parse(state, binary.power + 1).andThen((right) => {
+  return parse(state, binary.rightAssociative ? binary.power : binary.power + 1).andThen((right) => {
     const node: SurveyExpressionNode = {
       left,
       operator: binary.operator,
