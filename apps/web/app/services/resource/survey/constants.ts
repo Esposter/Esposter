@@ -4,6 +4,7 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import { SurveyConditionJoin } from "@/models/resource/survey/SurveyConditionJoin";
 import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditionOperator";
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "survey-engine";
 import { SurveyExpressionBinaryOperator } from "survey-logic";
@@ -123,6 +124,15 @@ export const SURVEY_IMAGE_FIT_CLASSES: Readonly<Record<SurveyImageFit, string>> 
 };
 
 // The input types the library's text field draws as its own control; the rest are typed as plain text
+// The faces a smiley rating runs through, from the angriest to the happiest, one step of the scale to each face in turn
+export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
+  UiIconMeaning.SmileyVeryUnhappy,
+  UiIconMeaning.SmileyUnhappy,
+  UiIconMeaning.SmileyNeutral,
+  UiIconMeaning.SmileyHappy,
+  UiIconMeaning.SmileyVeryHappy,
+];
+
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<Partial<Record<SurveyTextInputType, UiTextFieldType>>> = {
   [SurveyTextInputType.Number]: UiTextFieldType.Number,
   [SurveyTextInputType.Password]: UiTextFieldType.Password,

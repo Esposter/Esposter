@@ -259,6 +259,9 @@ export default defineConfig({
       "data-[variant=Quiet]:bg-transparent data-[variant=Quiet]:shadow-none data-[variant=Quiet]:text-muted",
       "data-[variant=Quiet]:hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] data-[variant=Quiet]:hover:text-text",
       "data-[variant=Quiet]:aria-pressed:bg-accent data-[variant=Quiet]:aria-pressed:text-background data-[variant=Quiet]:aria-checked:bg-accent data-[variant=Quiet]:aria-checked:text-background",
+      // A step of a rating scale is its mark alone: no surface, no overlay under the pointer and no fill while chosen, since the
+      // Scale fills the marks up to the step it shows. It takes the colour of the scale it sits in
+      "data-[variant=Rating]:bg-transparent data-[variant=Rating]:shadow-none data-[variant=Rating]:text-current data-[variant=Rating]:hover:[background-image:none] data-[variant=Rating]:hover:[filter:none] data-[variant=Rating]:active:[background-image:none] data-[variant=Rating]:aria-checked:bg-transparent data-[variant=Rating]:aria-checked:text-current",
     ].join(" "),
     // A card: a thing a reader picks among others as a whole — a post, a type to create, a type's count, a recent
     // Resource — rather than a row of a list or a menu. A frame, padded, that takes the style's hover as a button does

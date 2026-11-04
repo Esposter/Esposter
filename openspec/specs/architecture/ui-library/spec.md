@@ -255,6 +255,24 @@ A grid or calendar SHALL move focus one cell or day at a time with the arrow key
 - **THEN** the day is announced as disabled
 - **AND** the day is not chosen
 
+### Requirement: A rating scale is a radio group that previews the steps under the pointer
+
+A rating scale SHALL be one radio group of its numbered steps, each step's mark drawn by its caller with whether the step is filled, and the steps up to the step under the pointer SHALL be filled while the pointer rests on it.
+
+#### Scenario: Hovering a step fills the steps up to it until the pointer leaves
+
+- **GIVEN** a scale of five steps with its choice at two
+- **WHEN** the pointer rests on the fourth step and then leaves the scale
+- **THEN** the first four steps are filled while the pointer rests on the fourth
+- **AND** only the first two are filled once it leaves
+
+#### Scenario: A disabled scale neither changes its choice nor previews
+
+- **GIVEN** a scale that is disabled
+- **WHEN** the reader clicks a step or the pointer rests on one
+- **THEN** the choice does not change
+- **AND** no step is previewed
+
 ### Requirement: Text fields report failing rules beside the field
 
 A text field SHALL mark itself invalid and point at its failing message, and the form around it SHALL count its failing rules as the reader types.

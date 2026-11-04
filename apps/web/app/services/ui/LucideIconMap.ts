@@ -2,7 +2,7 @@
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 // Lucide's class for every meaning, which Nuxt UI and shadcn ship by default: standard's icons, and Genshin's, whose
-// Line icons sit on its capsules as the game's do
+// Line icons sit on its capsules as the game's do. Lucide draws no filled star, so the filled one is Material's
 export const LucideIconMap = {
   [UiIconMeaning.Achievement]: "i-lucide:trophy",
   [UiIconMeaning.AddFriend]: "i-lucide:user-plus",
@@ -148,6 +148,11 @@ export const LucideIconMap = {
   [UiIconMeaning.SkipBackward]: "i-lucide:chevrons-left",
   [UiIconMeaning.SkipForward]: "i-lucide:chevrons-right",
   [UiIconMeaning.SlashCommand]: "i-lucide:square-slash",
+  [UiIconMeaning.SmileyHappy]: "i-lucide:smile",
+  [UiIconMeaning.SmileyNeutral]: "i-lucide:meh",
+  [UiIconMeaning.SmileyUnhappy]: "i-lucide:frown",
+  [UiIconMeaning.SmileyVeryHappy]: "i-lucide:laugh",
+  [UiIconMeaning.SmileyVeryUnhappy]: "i-lucide:angry",
   [UiIconMeaning.Snap]: "i-lucide:magnet",
   [UiIconMeaning.SoftBan]: "i-lucide:user-x",
   [UiIconMeaning.SortAscending]: "i-lucide:arrow-up-narrow-wide",
@@ -155,6 +160,8 @@ export const LucideIconMap = {
   [UiIconMeaning.Spacer]: "i-lucide:move-vertical",
   [UiIconMeaning.Speaker]: "i-lucide:speaker",
   [UiIconMeaning.StandardStyle]: "i-lucide:shapes",
+  [UiIconMeaning.Star]: "i-lucide:star",
+  [UiIconMeaning.StarFilled]: "i-mdi:star",
   [UiIconMeaning.Stop]: "i-lucide:square",
   [UiIconMeaning.StopScreenShare]: "i-lucide:screen-share-off",
   [UiIconMeaning.Storage]: "i-lucide:database",

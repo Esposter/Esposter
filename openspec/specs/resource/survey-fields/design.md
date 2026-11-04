@@ -30,7 +30,7 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 | `checkbox`      | `Checkbox.vue`      | one `UiCheckbox` per choice, with select all (mixed while some are chosen), none and other, in a group                                                                                                                                     |
 | `tagbox`        | `TagBox.vue`        | `UiSelect` in multiple mode over the choices, with an other option and its text field                                                                                                                                                      |
 | `buttongroup`   | `ButtonGroup.vue`   | `UiToggleGroup` over the choices                                                                                                                                                                                                           |
-| `rating`        | `Rating.vue`        | `UiToggleGroup` of the numbers from one to the scale's count, with the minimum and maximum descriptions beneath it                                                                                                                         |
+| `rating`        | `Rating.vue`        | `UiToggleGroup` of the numbers from one to the scale's count for labels; `UiRating` of stars, or of one face per step, for the other two types; the minimum and maximum descriptions beneath it in every type                              |
 | `ranking`       | `Ranking.vue`       | a reorderable `UiList` of the choices in the answer's order, each row marked with its place; Alt with Up or Down moves the focused row, announced through the list's live region                                                           |
 | `slider`        | `Slider.vue`        | `UiSlider`, inert and faded while disabled, with its value text when the question shows its value                                                                                                                                          |
 | `matrix`        | `Matrix.vue`        | a table with a row per row choice, each row a `UiRadioGroup` over the column choices                                                                                                                                                       |
@@ -41,6 +41,10 @@ Most fields draw their question through `Field/Shell.vue`, which draws the title
 | `expression`    | `Expression.vue`    | the calculated value as read-only text, rounded and formatted by its display format                                                                                                                                                        |
 | `html`          | `Html.vue`          | the markup, sanitised, with no answer                                                                                                                                                                                                      |
 | `image`         | `Image.vue`         | the picture with its alternative text, and nothing when it has no link                                                                                                                                                                     |
+
+## Surface
+
+A rating shows one of three scales, and the leanest form of each is what the respondent meets. **Labels** is the numbered segment track, unchanged. **Stars** draws no track and no number: an outlined star for each step, muted, and the chosen star and every star before it filled in the accent. Hovering a star fills the stars up to it, and leaving the scale returns them to the answer, so the pointer previews the answer before it is given. Focus is the document's focus ring on the one star that holds the choice, and the arrow keys move it. **Smileys** draws one face per step, from the angriest at the first step to the happiest at the last, muted, with the chosen face in the accent; no hover preview, since a face is read whole. Both picture types take the field's invalid state as the control's error colour and the shell's alert beneath it, and a disabled scale is faded and inert. On a narrow screen a scale longer than the width wraps its steps onto a second line rather than overflowing. The minimum and maximum descriptions stay beneath every type, since they are the question's own words for its ends.
 
 ## Decisions
 
@@ -65,7 +69,6 @@ Each gap is a change to the UI library, and each field works around it as the ta
 - The radio group and the select have no invalid state, and the select has no placeholder. The shell draws the error beside them.
 - The library has no required prop, so the shell draws the required mark, and the matrix dynamic caption draws its own.
 - There is no per-cell radio group and no tile group of images: a matrix's rows are radio groups, and the image picker is a list of rows.
-- No icon names a star or a face, so the rating draws numbers in every rate type and its `rateType` has no meaning yet.
 
 ## Key files
 
@@ -81,4 +84,5 @@ Each gap is a change to the UI library, and each field works around it as the ta
 | `apps/web/app/services/resource/survey/withSurveyAnswer.ts`        | a row's record with one answer set, or cleared                                                      |
 | `apps/web/app/services/survey/getSurveyFieldHint.ts`               | the hint under a text field: its description, and the required word after it                        |
 | `apps/web/app/components/Ui/`                                      | the UI library the fields are drawn from                                                            |
+| `apps/web/app/components/Ui/Rating.vue`                            | a rating scale of numbered steps, filled by the caller's mark up to the pointer or the choice       |
 | `apps/web/app/components/Ui/setupUiStyle.test.ts`                  | the helper that runs a field's component test once per design style                                 |

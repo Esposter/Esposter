@@ -32,6 +32,37 @@ A question field SHALL show the message the runner gives its question beside the
 - **THEN** the message is shown as an alert beside the field
 - **AND** the input is marked invalid
 
+### Requirement: A rating question draws the scale its type names
+
+A rating question SHALL draw its steps as numbers, as stars or as faces, as its scale type names, and each step SHALL be named by its number.
+
+#### Scenario: A star scale fills up to the chosen star
+
+- **GIVEN** a rating question of five stars with its answer at three
+- **WHEN** the question is drawn
+- **THEN** the first three stars are filled and the last two are outlined
+- **AND** each star is named by its number
+
+#### Scenario: A star scale previews the stars up to the pointer and returns to the answer
+
+- **GIVEN** a star scale with its answer at one
+- **WHEN** the pointer rests on the fourth star and then leaves the scale
+- **THEN** the first four stars are filled while it rests there
+- **AND** only the first star is filled once it leaves
+
+#### Scenario: A smiley scale draws one face per step with the chosen face in the accent
+
+- **GIVEN** a rating question of five faces with its answer at four
+- **WHEN** the question is drawn
+- **THEN** each step draws a face, running from the angriest face at the first step to the happiest at the last
+- **AND** the face of the chosen step is drawn in the accent colour while the others are muted
+
+#### Scenario: A rating scale is chosen by the arrow keys
+
+- **GIVEN** a star scale with its answer at two
+- **WHEN** the respondent presses the right arrow on it
+- **THEN** the answer holds three
+
 ### Requirement: The page renderer walks a survey's pages and shows what blocks a move
 
 The page renderer SHALL move a respondent between a survey's visible pages and, when a move is refused, show the refusal as an alert and move focus to the first question that blocks it.
