@@ -5,6 +5,7 @@ import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefus
 import { findVisualLocation } from "@/services/dashboard/visual/findVisualLocation";
 import { getGroupTitle } from "@/services/dashboard/visual/getGroupTitle";
 
+const DASHBOARD_OPTION_TITLE = "Dashboard";
 // The lists a visual can move to from its own list, as radio options whose value is the group's id, and "" for the
 // Dashboard's own list.
 // A group is never offered for the visual's own list, and a group the move rule refuses is not offered.
@@ -14,13 +15,12 @@ export const getVisualMoveTargets = (visuals: Visual[], id: Visual["id"]) => {
   if (!location) return [];
 
   const groups = listVisuals(visuals).filter(
-    (group) =>
-      group.visuals !== undefined && group.id !== location.group?.id && !checkIsMoveRefused(visuals, id, group.id),
+    (group) => group.id !== location.group?.id && !checkIsMoveRefused(visuals, id, group.id),
   );
   // Every group's own title is reserved before any suffix is chosen.
-  // So a numbered label never equals a title another group holds
+  // So a numbered label never equals a title another group holds, and the dashboard's own option is taken from the start
   const reservedTitles = new Set(groups.map((group) => getGroupTitle(group)));
-  const takenLabels = new Set<string>();
+  const takenLabels = new Set<string>(location.group ? [DASHBOARD_OPTION_TITLE] : []);
   const groupTargets = groups.map((group) => {
     const title = getGroupTitle(group);
     let label = title;
@@ -29,5 +29,5 @@ export const getVisualMoveTargets = (visuals: Visual[], id: Visual["id"]) => {
     takenLabels.add(label);
     return { title: label, value: group.id };
   });
-  return location.group ? [{ title: "Dashboard", value: "" }, ...groupTargets] : groupTargets;
+  return location.group ? [{ title: DASHBOARD_OPTION_TITLE, value: "" }, ...groupTargets] : groupTargets;
 };

@@ -63,4 +63,19 @@ describe(getVisualMoveTargets, () => {
       { title: "Sales 2", value: literalSales2.id },
     ]);
   });
+
+  // The dashboard's own option is read as a label from the start, so a group titled as it is numbered apart from it
+  test("a group titled as the dashboard's option is numbered beside it", () => {
+    expect.hasAssertions();
+
+    const dashboardTitledGroup = new Visual({ type: VisualType.Group, visuals: [] });
+    dashboardTitledGroup.chart.configuration.title = "Dashboard";
+    const groupedCard = new Visual({ type: VisualType.Card });
+    const holder = new Visual({ type: VisualType.Group, visuals: [groupedCard] });
+
+    expect(getVisualMoveTargets([holder, dashboardTitledGroup], groupedCard.id)).toStrictEqual([
+      { title: "Dashboard", value: "" },
+      { title: "Dashboard 2", value: dashboardTitledGroup.id },
+    ]);
+  });
 });
