@@ -34,12 +34,6 @@ The package SHALL set the renderer's editor mode to none, free text, ink, highli
 - **WHEN** the consumer sets the mode to ink
 - **THEN** the renderer's editor mode is ink once the renderer reports its editor
 
-#### Scenario: A document is editable only once the renderer reports its editor manager
-
-- **GIVEN** a document open in the viewer
-- **WHEN** the renderer has reported no editor manager for it
-- **THEN** the viewer reports that the document is not editable
-
 #### Scenario: Drawing reports a change
 
 - **GIVEN** the editor mode is ink

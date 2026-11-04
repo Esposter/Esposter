@@ -17,8 +17,6 @@ export interface PdfViewerState {
   fitWidth: () => void;
   followBookmark: (item: PdfOutline[number]) => void;
   goToPage: (pageNumber: number) => void;
-  // Whether the renderer made an editor manager for the document, which a document whose permissions withhold changes never gets
-  isEditable: ComputedRef<boolean>;
   isMatchCase: Ref<boolean>;
   isNotFound: Ref<boolean>;
   isWholeWord: Ref<boolean>;

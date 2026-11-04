@@ -17,7 +17,6 @@ export const createPdfViewerState = (overrides: Partial<PdfViewerState> = {}): P
   fitWidth: vi.fn<() => void>(),
   followBookmark: vi.fn<PdfViewerState["followBookmark"]>(),
   goToPage: vi.fn<PdfViewerState["goToPage"]>(),
-  isEditable: computed(() => true),
   isMatchCase: ref(false),
   isNotFound: ref(false),
   isWholeWord: ref(false),

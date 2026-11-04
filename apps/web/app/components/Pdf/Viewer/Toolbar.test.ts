@@ -225,20 +225,6 @@ describe("pdfViewerToolbar", () => {
       ).toStrictEqual(["true", "true", "true"]);
     });
 
-    test("a document the renderer cannot edit leaves Add text and Import annotations unavailable", async () => {
-      expect.hasAssertions();
-
-      const component = await openMenu(
-        mountToolbar({ viewer: createPdfViewerState({ isEditable: computed(() => false) }) }),
-      );
-
-      expect(
-        ["Add text", "Import annotations", "Export annotations"].map((title) =>
-          getMenuItem(component, title)?.attributes("aria-disabled"),
-        ),
-      ).toStrictEqual(["true", "true", undefined]);
-    });
-
     test("going to a page", async () => {
       expect.hasAssertions();
 
