@@ -222,7 +222,7 @@ catalog:
   sharp: ^0.35.5
   sirv: ^3.0.2
   superjson: ^2.2.6
-  temporal-polyfill: ^1.0.6
+  temporal-polyfill: ^1.0.7
   three: ^0.187.0
   three-globe: ^2.45.6
   three-mesh-bvh: ^0.9.18
