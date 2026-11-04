@@ -1,4 +1,4 @@
-// How a yes or no question draws its answer, each the control SurveyJS draws for it
+// How a yes or no question draws its answer: as a switch, a checkbox or radio buttons
 export enum SurveyBooleanDisplayStyle {
   Switch = "switch",
   Checkbox = "checkbox",

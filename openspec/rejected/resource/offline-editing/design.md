@@ -4,4 +4,4 @@ Editing resources offline (service-worker cache + queued saves that sync on reco
 
 ## Why not
 
-The resource model is deliberately one write path with optimistic concurrency on a single `contentVersion` — queued offline saves guarantee stale-version conflicts and demand merge semantics per content type (canvas JSON, SurveyJS models), which is CRDT territory the single-owner design explicitly avoids ([resource collaboration](../../../deferred/resource/document-collaboration/design.md) defers the same machinery for the same reason). An editor that is a web app about your cloud resources being online is an acceptable constraint.
+The resource model is deliberately one write path with optimistic concurrency on a single `contentVersion` — queued offline saves guarantee stale-version conflicts and demand merge semantics per content type (canvas JSON, survey documents), which is CRDT territory the single-owner design explicitly avoids ([resource collaboration](../../../deferred/resource/document-collaboration/design.md) defers the same machinery for the same reason). An editor that is a web app about your cloud resources being online is an acceptable constraint.

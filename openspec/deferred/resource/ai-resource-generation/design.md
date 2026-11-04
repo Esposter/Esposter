@@ -1,6 +1,6 @@
 # AI resource generation
 
-"Describe your survey" → a generated SurveyJS model; same idea for dashboards and emails — an LLM-backed create path.
+"Describe your survey" → a generated survey document; same idea for dashboards and emails — an LLM-backed create path.
 
 ## Why deferred
 

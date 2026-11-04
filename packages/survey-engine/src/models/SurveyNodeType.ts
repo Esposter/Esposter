@@ -1,4 +1,4 @@
-// Each node type a survey holds, named by the type tag its node carries in the document, which is the tag SurveyJS gives it
+// Each node type a survey holds, named by the type tag its node carries in the document, which an exported document and the dataset's column rules read
 export enum SurveyNodeType {
   Page = "page",
   Panel = "panel",
