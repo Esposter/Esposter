@@ -7,6 +7,7 @@ import type {
   SurveyPanelRowView,
 } from "survey-engine";
 
+import { withSurveyRequired } from "@/services/resource/survey/withSurveyRequired";
 import { SurveyNodeType } from "survey-engine";
 
 interface Props {
@@ -29,6 +30,10 @@ const answer = computed(() => ("name" in view.node.props ? answers[view.node.pro
 const updateAnswer = (value: SurveyAnswerValue | undefined) => {
   if ("name" in view.node.props) emit("answer", view.node.props.name, value);
 };
+// The question as its field draws it, with the required flag the runner decides, so its mark follows its requiring condition. A panel draws no field
+const fieldNode = computed(() =>
+  view.node.type === SurveyNodeType.Panel ? undefined : withSurveyRequired(view.node, view.isRequired),
+);
 </script>
 
 <template>
@@ -48,7 +53,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
       @answer="(name, value) => emit('answer', name, value)"
     />
   </fieldset>
-  <div v-else :data-pointer="view.pointer" flex gap-2 items-start>
+  <div v-else-if="fieldNode" :data-pointer="view.pointer" flex gap-2 items-start>
     <span v-if="questionNumbers.get(view.pointer)" text-muted shrink-0>{{ questionNumbers.get(view.pointer) }}.</span>
     <div flex-1 min-w-0>
       <ResourceSurveyField
@@ -56,7 +61,7 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
         :get-row-views
         :is-disabled="isDisabled || !view.isEnabled"
         :model-value="answer"
-        :node="view.node"
+        :node="fieldNode"
         :seed
         @update:model-value="(value) => updateAnswer(value)"
       />

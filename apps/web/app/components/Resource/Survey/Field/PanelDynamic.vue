@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import type {
-  SurveyAnswers,
-  SurveyAnswerValue,
-  SurveyPanelDynamicNode,
-  SurveyPanelRowView,
-  SurveyTemplateNode,
-} from "survey-engine";
+import type { SurveyAnswers, SurveyAnswerValue, SurveyPanelDynamicNode, SurveyPanelRowView } from "survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyAnswerRows } from "@/services/resource/survey/getSurveyAnswerRows";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
+import { withSurveyRequired } from "@/services/resource/survey/withSurveyRequired";
 
 interface Props {
   error: string;
@@ -35,17 +30,12 @@ const getTemplateViews = (panel: SurveyAnswers): SurveyPanelRowView[] =>
         isRequired: "isRequired" in question.props && question.props.isRequired,
         node: question,
       }));
-// A field marks the required flag of its own node, so a row hands its field the node carrying the flag its row decides
-const withRowRequired = <T extends SurveyTemplateNode>(question: T, isRequired: boolean): T => ({
-  ...question,
-  props: { ...question.props, isRequired },
-});
 // Each panel with the template questions its row shows, each drawn with the flags the row decides
 const rows = computed(() =>
   panels.value.map((panel) => ({
     fields: getTemplateViews(panel).map((view) => ({
       isDisabled: isDisabled || !view.isEnabled,
-      node: withRowRequired(view.node, view.isRequired),
+      node: withSurveyRequired(view.node, view.isRequired),
     })),
     panel,
   })),

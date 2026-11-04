@@ -35,6 +35,11 @@ const createRowsDocument = (template: SurveyTemplateNode[]) => {
 const findRows = (component: VueWrapper) => component.findAll('[role="group"] > div');
 const findRowLabels = (component: VueWrapper) =>
   findRows(component).map((row) => row.findAll("label").map((label) => label.text()));
+// A question's label starts with its title, and carries the required mark once the question is required
+const findLabel = (component: VueWrapper, title: string) =>
+  component.findAll("label").find((label) => label.text().startsWith(title));
+const findButton = (component: VueWrapper, text: string) =>
+  component.findAll("button").find((button) => button.text() === text);
 
 describe("runner", () => {
   // A field loads on demand through a dynamic import, which is module I/O rather than a microtask
@@ -127,6 +132,76 @@ describe("runner", () => {
       expect(component.findAll("[data-pointer]")).toHaveLength(1);
     });
 
+    test("a question whose requiring condition holds draws the required mark and blocks the next page", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createSurveyTestDocument([
+            createSurveyTestPage([
+              createSurveyTestQuestion("a"),
+              createSurveyTestQuestion("b", { requiredIf: "{a} = 'yes'" }),
+            ]),
+            createSurveyTestPage([createSurveyTestQuestion("c")]),
+          ]),
+        },
+      });
+      await flushPromises();
+      await component.get("input").setValue("yes");
+      await flushPromises();
+
+      const label = findLabel(component, "b");
+      assert.exists(label);
+      expect(label.text()).toContain("required");
+
+      const nextButton = findButton(component, "Next");
+      assert.exists(nextButton);
+      await nextButton.trigger("click");
+      await flushPromises();
+
+      expect(component.get('[role="alert"]').text()).toBe(SURVEY_REQUIRED_MESSAGE);
+      expect(findLabel(component, "c")).toBeUndefined();
+
+      const requiredInput = component.findAll("input")[1];
+      assert.exists(requiredInput);
+      await requiredInput.setValue("answered");
+      await nextButton.trigger("click");
+      await flushPromises();
+
+      expect(findLabel(component, "c")).toBeDefined();
+    });
+
+    test("a question stops drawing the required mark when its requiring condition stops holding", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(Runner, {
+        props: {
+          document: createSurveyTestDocument([
+            createSurveyTestPage([
+              createSurveyTestQuestion("a"),
+              createSurveyTestQuestion("b", { requiredIf: "{a} = 'yes'" }),
+            ]),
+            createSurveyTestPage([createSurveyTestQuestion("c")]),
+          ]),
+          initialAnswers: { a: "yes" },
+        },
+      });
+      await flushPromises();
+      await component.get("input").setValue("no");
+      await flushPromises();
+
+      const label = findLabel(component, "b");
+      assert.exists(label);
+      expect(label.text()).not.toContain("required");
+
+      const nextButton = findButton(component, "Next");
+      assert.exists(nextButton);
+      await nextButton.trigger("click");
+      await flushPromises();
+
+      expect(findLabel(component, "c")).toBeDefined();
+    });
+
     test("a row shows only the template question its own answer shows", async () => {
       expect.hasAssertions();
 
@@ -189,7 +264,7 @@ describe("runner", () => {
       expect(firstRow.text()).toContain("required");
       expect(secondRow.text()).not.toContain("required");
 
-      const completeButton = component.findAll("button").find((button) => button.text() === "Complete");
+      const completeButton = findButton(component, "Complete");
       assert.exists(completeButton);
       await completeButton.trigger("click");
       await flushPromises();
