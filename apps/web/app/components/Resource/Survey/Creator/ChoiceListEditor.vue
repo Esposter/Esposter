@@ -41,7 +41,7 @@ const pasteLines = (event: ClipboardEvent) => {
 </script>
 
 <template>
-  <ResourceSurveyCreatorListEditor :editor :label>
+  <ResourceSurveyCreatorListEditor :editor :label noun="choice">
     <template #default="{ error, row }">
       <UiTextField
         :error

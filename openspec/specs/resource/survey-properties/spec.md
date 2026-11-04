@@ -16,11 +16,17 @@ The property panel of a choice question SHALL let the owner add, reorder and rem
 - **WHEN** the owner adds a third choice and moves it to the top with the keyboard
 - **THEN** the question's choices list the new choice first
 
-#### Scenario: Owner removes a choice
+#### Scenario: removing a row asks first, and removes it once confirmed
 
 - **GIVEN** a radio group question with two choices selected in the Creator
-- **WHEN** the owner removes the first choice
+- **WHEN** the owner removes the first choice and confirms the ask
 - **THEN** the question's choices list only the second choice
+
+#### Scenario: declining leaves the row
+
+- **GIVEN** a radio group question with two choices selected in the Creator
+- **WHEN** the owner removes the first choice and cancels the ask
+- **THEN** the question's choices list both choices, unchanged
 
 #### Scenario: Owner pastes several lines as choices
 
@@ -49,8 +55,20 @@ The property panel of a dynamic matrix SHALL let the owner add, rename and remov
 #### Scenario: Owner adds, renames and removes a matrix column
 
 - **GIVEN** a dynamic matrix question selected in the Creator
-- **WHEN** the owner adds a column titled "Often", renames it to "Sometimes" and removes it
+- **WHEN** the owner adds a column titled "Often", renames it to "Sometimes" and removes it, confirming the ask
 - **THEN** the matrix's columns follow each of those changes
+
+#### Scenario: removing a row asks first, and removes it once confirmed
+
+- **GIVEN** a dynamic matrix question with two columns selected in the Creator
+- **WHEN** the owner removes the first column and confirms the ask
+- **THEN** the matrix's columns list only the second column
+
+#### Scenario: declining leaves the row
+
+- **GIVEN** a dynamic matrix question with two columns selected in the Creator
+- **WHEN** the owner removes the first column and cancels the ask
+- **THEN** the matrix's columns list both columns, unchanged
 
 ### Requirement: A dynamic matrix column's cell type is set in the property panel
 

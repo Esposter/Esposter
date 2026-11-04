@@ -34,7 +34,7 @@ const addFromField = () => {
 </script>
 
 <template>
-  <ResourceSurveyCreatorListEditor :editor :label>
+  <ResourceSurveyCreatorListEditor :editor :label noun="item">
     <template #default="{ error, index, row }">
       <ResourceSurveyCreatorNameTitleFields :error :item="row.item" @update="(patch) => updateItem(row.id, patch)" />
       <UiSelect

@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import ResourceSurveyCreatorMatrixColumnsEditor from "@/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
 import UiForm from "@/components/Ui/Form.vue";
@@ -7,6 +9,9 @@ import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { SurveyMatrixCellType } from "survey-engine";
 import { describe, expect, test } from "vitest";
+
+const getButtonByText = (component: VueWrapper, text: string) =>
+  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
   test("a column added, renamed and removed reaches the list", async () => {
@@ -19,7 +24,8 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
     await wrapper.vm.$nextTick();
     wrapper.findAllComponents(UiTextField)[0]?.vm.$emit("update:modelValue", "Sometimes");
     await wrapper.vm.$nextTick();
-    await wrapper.find('button[aria-label="Remove row 1"]').trigger("click");
+    await wrapper.find('button[aria-label="Remove column 1"]').trigger("click");
+    await getButtonByText(wrapper, "Remove")?.trigger("click");
     await wrapper.vm.$nextTick();
 
     expect(wrapper.emitted("update:modelValue")).toHaveLength(3);
@@ -30,6 +36,55 @@ describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
       [{ cellType: SurveyMatrixCellType.Text, choices: [], isRequired: false, name: "Sometimes", title: "Often" }],
     ]);
     expect(wrapper.emitted("update:modelValue")?.[2]).toStrictEqual([[]]);
+  });
+
+  test("removing a row asks first, and removes it once confirmed", async () => {
+    expect.hasAssertions();
+    const often = {
+      cellType: SurveyMatrixCellType.Text,
+      choices: [],
+      isRequired: false,
+      name: "Often",
+      title: "Often",
+    };
+    const sometimes = {
+      cellType: SurveyMatrixCellType.Text,
+      choices: [],
+      isRequired: false,
+      name: "Sometimes",
+      title: "Sometimes",
+    };
+    const wrapper = await mountSuspended(ResourceSurveyCreatorMatrixColumnsEditor, {
+      props: { label: "Columns", modelValue: [often, sometimes] },
+    });
+    await wrapper.find('button[aria-label="Remove column 1"]').trigger("click");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+
+    await getButtonByText(wrapper, "Remove")?.trigger("click");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[sometimes]]);
+  });
+
+  test("declining leaves the row", async () => {
+    expect.hasAssertions();
+    const often = {
+      cellType: SurveyMatrixCellType.Text,
+      choices: [],
+      isRequired: false,
+      name: "Often",
+      title: "Often",
+    };
+    const wrapper = await mountSuspended(ResourceSurveyCreatorMatrixColumnsEditor, {
+      props: { label: "Columns", modelValue: [often] },
+    });
+    await wrapper.find('button[aria-label="Remove column 1"]').trigger("click");
+    await getButtonByText(wrapper, "Cancel")?.trigger("click");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
   test("a dynamic matrix column's cell type is set, and a choice cell takes its own choices", async () => {

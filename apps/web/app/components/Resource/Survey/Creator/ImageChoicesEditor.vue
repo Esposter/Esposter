@@ -14,7 +14,7 @@ const choices = computed(() => {
 });
 // The choices are written whole, so the list the document keeps is the order the editor shows. The list editor holds
 // The rows as a draft, and writes a list only once every row is valid, so a value the list refuses stays as typed
-const { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows, updateItem } = useSurveyListEditor(
+const editor = useSurveyListEditor(
   computed({ get: () => choices.value, set: (nextChoices) => updateNodeProps({ choices: nextChoices }) }),
   {
     duplicateMessage: "Choice values must be unique",
@@ -25,6 +25,7 @@ const { addItems, announcement, errors, moveItem, onRowKeydown, removeItem, rows
     getKey: (choice) => String(choice.value),
   },
 );
+const { addItems, updateItem } = editor;
 // A picked image adds a choice, since a choice cannot be saved without its picture. Its value is a fresh id, which
 // Keeps it unique among the choices, since a respondent's answer holds the value
 const addChoice = (files: File[]) =>
@@ -33,20 +34,10 @@ const replaceImage = (id: string, files: File[]) => uploadPicked(files, (imageLi
 </script>
 
 <template>
-  <div flex flex-col gap-4>
-    <div aria-live="polite" sr-only>{{ announcement }}</div>
-    <div
-      v-for="(row, index) of rows"
-      :key="row.id"
-      :aria-label="`Choice ${index + 1}`"
-      role="group"
-      flex
-      flex-col
-      gap-2
-      @keydown="(event) => onRowKeydown(event, row.id)"
-    >
+  <ResourceSurveyCreatorListEditor :editor label="Choices" noun="choice">
+    <template #default="{ error, index, row }">
       <UiTextField
-        :error="errors[index]"
+        :error
         :label="`Value of choice ${index + 1}`"
         :model-value="String(row.item.value)"
         @update:model-value="(value) => updateItem(row.id, { value })"
@@ -56,27 +47,22 @@ const replaceImage = (id: string, files: File[]) => uploadPicked(files, (imageLi
         :model-value="row.item.text"
         @update:model-value="(text) => updateItem(row.id, { text })"
       />
+    </template>
+    <template #below="{ index, row }">
       <UiFileField
         accept="image/*"
         :label="`Replace image of choice ${index + 1}`"
         :model-value="[]"
         @update:model-value="(files) => replaceImage(row.id, files)"
       />
-      <div flex gap-1>
-        <ResourceSurveyCreatorRowActions
-          noun="choice"
-          :index
-          :count="rows.length"
-          @move="(toIndex) => moveItem(row.id, toIndex)"
-          @remove="removeItem(row.id)"
-        />
-      </div>
-    </div>
-    <UiFileField
-      accept="image/*"
-      label="Add a choice from an image"
-      :model-value="[]"
-      @update:model-value="(files) => addChoice(files)"
-    />
-  </div>
+    </template>
+    <template #add>
+      <UiFileField
+        accept="image/*"
+        label="Add a choice from an image"
+        :model-value="[]"
+        @update:model-value="(files) => addChoice(files)"
+      />
+    </template>
+  </ResourceSurveyCreatorListEditor>
 </template>

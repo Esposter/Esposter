@@ -1,9 +1,14 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import UiForm from "@/components/Ui/Form.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
+
+const getButtonByText = (component: VueWrapper, text: string) =>
+  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorChoiceListEditor", () => {
   test("an added choice is written, and moving it up one place is a second write", async () => {
@@ -58,17 +63,36 @@ describe("resourceSurveyCreatorChoiceListEditor", () => {
     ]);
   });
 
-  test("a removed row is written without its choice", async () => {
+  test("removing a row asks first, and removes it once confirmed", async () => {
     expect.hasAssertions();
     const red = { text: "Red", value: "red" };
     const blue = { text: "Blue", value: "blue" };
     const wrapper = await mountSuspended(ResourceSurveyCreatorChoiceListEditor, {
       props: { label: "Choices", modelValue: [red, blue] },
     });
-    await wrapper.find('button[aria-label="Remove row 1"]').trigger("click");
+    await wrapper.find('button[aria-label="Remove choice 1"]').trigger("click");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+
+    await getButtonByText(wrapper, "Remove")?.trigger("click");
     await wrapper.vm.$nextTick();
 
     expect(wrapper.emitted("update:modelValue")?.[0]).toStrictEqual([[blue]]);
+  });
+
+  test("declining leaves the row", async () => {
+    expect.hasAssertions();
+    const red = { text: "Red", value: "red" };
+    const blue = { text: "Blue", value: "blue" };
+    const wrapper = await mountSuspended(ResourceSurveyCreatorChoiceListEditor, {
+      props: { label: "Choices", modelValue: [red, blue] },
+    });
+    await wrapper.find('button[aria-label="Remove choice 1"]').trigger("click");
+    await getButtonByText(wrapper, "Cancel")?.trigger("click");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
   test("an edited value that is refused stays in its field, unwritten", async () => {

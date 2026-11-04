@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument } from "survey-engine";
 
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
@@ -44,6 +45,9 @@ const createDocument = (imageLinks: string[]) =>
     ],
     root: { props: {} },
   });
+
+const getButtonByText = (component: VueWrapper, text: string) =>
+  component.findAll("button").find((button) => button.text() === text);
 
 const getChoices = (document: SurveyDocument, pointer: string) => {
   const node = getBlockNode(document, pointer, surveyNodeChildren);
@@ -97,9 +101,44 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
 
     const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
     await component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await getButtonByText(component, "Remove")?.trigger("click");
     await flushPromises();
 
     expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["b"]);
+  });
+
+  test("removing a row asks first, and removes it once confirmed", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument(["a", "b"]));
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+    await component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await flushPromises();
+
+    expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a", "b"]);
+
+    await getButtonByText(component, "Remove")?.trigger("click");
+    await flushPromises();
+
+    expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["b"]);
+  });
+
+  test("declining leaves the row", async () => {
+    expect.hasAssertions();
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { load } = surveyCreatorStore;
+    load(createDocument(["a", "b"]));
+    const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
+
+    const component = await mountSuspended(ResourceSurveyCreatorImageChoicesEditor, { props: { pointer } });
+    await component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await getButtonByText(component, "Cancel")?.trigger("click");
+    await flushPromises();
+
+    expect(getChoices(surveyDocument.value, pointer).map(({ value }) => value)).toStrictEqual(["a", "b"]);
   });
 
   test("a value that repeats another choice's value is flagged and not written, and the field keeps what was typed", async () => {
@@ -138,6 +177,7 @@ describe("resourceSurveyCreatorImageChoicesEditor", () => {
     component.getComponent(UiFileField).vm.$emit("update:modelValue", [new File(["a"], "a")]);
     await flushPromises();
     await component.get('[aria-label="Remove choice 1"]').trigger("click");
+    await getButtonByText(component, "Remove")?.trigger("click");
     await flushPromises();
     await sweep(surveyDocument.value);
 

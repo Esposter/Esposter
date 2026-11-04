@@ -33,7 +33,7 @@ const isChoiceCellType = (cellType: SurveyMatrixCellType) =>
 </script>
 
 <template>
-  <ResourceSurveyCreatorListEditor :editor :label>
+  <ResourceSurveyCreatorListEditor :editor :label noun="column">
     <template #default="{ error, index, row }">
       <ResourceSurveyCreatorNameTitleFields :error :item="row.item" @update="(patch) => updateItem(row.id, patch)" />
       <UiSelect
