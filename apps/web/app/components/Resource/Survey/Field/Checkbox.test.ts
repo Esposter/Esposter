@@ -34,6 +34,17 @@ describe("resourceSurveyFieldCheckbox", () => {
       type: SurveyNodeType.Checkbox,
     });
 
+    test("names its group by the question's title and the required word, where it is required", () => {
+      expect.hasAssertions();
+
+      const component = mount(ResourceSurveyFieldCheckbox, {
+        props: { error: "", isDisabled: false, modelValue: [1], node: createNode({ isRequired: true }), seed },
+      });
+      const labelledBy = component.get('[role="group"]').attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe(`${title} * required`);
+    });
+
     test("is a named group of checkboxes, each saying whether it is checked", () => {
       expect.hasAssertions();
 

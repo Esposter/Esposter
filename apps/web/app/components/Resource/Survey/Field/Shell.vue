@@ -8,9 +8,10 @@ interface Props {
   title: string;
 }
 
-defineSlots<{ default: (props: { describedBy?: string }) => VNode }>();
+defineSlots<{ default: (props: { describedBy?: string; labelledBy: string }) => VNode }>();
 const { description, error, isRequired, title } = defineProps<Props>();
 const id = useId();
+const titleId = useId();
 const descriptionId = `${id}-description`;
 const errorId = `${id}-error`;
 // The description and the error a control is described by, so a reader of speech hears both with it
@@ -21,12 +22,12 @@ const describedBy = computed(
 
 <template>
   <div flex flex-col gap-1>
-    <span text-sm text-muted>
+    <span :id="titleId" text-sm text-muted>
       {{ title }}
       <UiRequiredMark v-if="isRequired" />
     </span>
     <span v-if="description" :id="descriptionId" text-sm text-muted>{{ description }}</span>
-    <slot :described-by />
+    <slot :described-by :labelled-by="titleId" />
     <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>
   </div>
 </template>

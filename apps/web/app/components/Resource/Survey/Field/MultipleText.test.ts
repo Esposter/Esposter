@@ -43,7 +43,7 @@ describe("resourceSurveyFieldMultipleText", () => {
       expect(component.findAll("label").map((label) => label.text())).toStrictEqual(itemTitles);
     });
 
-    test("marks each item's label with the required mark when the question is required", async () => {
+    test("marks each item's label with the required mark when the question is required, and each item says so", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
@@ -51,8 +51,12 @@ describe("resourceSurveyFieldMultipleText", () => {
       });
 
       expect(component.findAll("label").map((label) => label.text())).toStrictEqual(
-        itemTitles.map((itemTitle) => `${itemTitle} * required`),
+        itemTitles.map((itemTitle) => `${itemTitle} *`),
       );
+      expect(component.findAll("input").map((input) => input.attributes("aria-required"))).toStrictEqual([
+        "true",
+        "true",
+      ]);
     });
 
     test("draws an email item as an email field", async () => {

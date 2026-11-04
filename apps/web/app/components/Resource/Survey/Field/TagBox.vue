@@ -72,6 +72,7 @@ const setOtherText = (text: string) => {
   >
     <UiSelect
       :aria-invalid="error ? true : undefined"
+      :aria-required="node.props.isRequired ? true : undefined"
       :is-disabled
       :items
       :label

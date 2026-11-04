@@ -39,6 +39,17 @@ describe("resourceSurveyFieldRadioGroup", () => {
       expect(component.findAll('[role="radio"]')).toHaveLength(choices.length);
     });
 
+    test("says it is required through aria-required", () => {
+      expect.hasAssertions();
+
+      const node = createNode();
+      const component = mount(SurveyFieldRadioGroup, {
+        props: { error: "", isDisabled: false, node: { ...node, props: { ...node.props, isRequired: true } }, seed },
+      });
+
+      expect(component.get('[role="radiogroup"]').attributes("aria-required")).toBe("true");
+    });
+
     test("lists its choices in descending text order when its choices are ordered so", () => {
       expect.hasAssertions();
 

@@ -39,13 +39,14 @@ const choice = computed({
 
 <template>
   <ResourceSurveyFieldShell :description="node.props.description" :error :is-required="node.props.isRequired" :title>
-    <template #default="{ describedBy }">
+    <template #default="{ describedBy, labelledBy }">
       <UiSwitch
         v-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Switch"
         v-model="isChecked"
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-label="title"
+        :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         :label="stateLabel"
         is-label-shown
@@ -54,6 +55,7 @@ const choice = computed({
         v-else-if="node.props.displayStyle === SurveyBooleanDisplayStyle.Radio"
         v-model="choice"
         :aria-invalid="error ? true : undefined"
+        :aria-required="node.props.isRequired ? true : undefined"
         :is-disabled
         :items
         :label="title"
@@ -64,6 +66,7 @@ const choice = computed({
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-label="title"
+        :aria-labelledby="labelledBy"
         :disabled="isDisabled"
         :label="stateLabel"
         is-label-shown

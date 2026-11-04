@@ -73,8 +73,16 @@ const setOtherText = (text: string) => {
     :is-required="node.props.isRequired"
     :title="label"
   >
-    <template #default="{ describedBy }">
-      <div :aria-describedby="describedBy" :aria-label="label" role="group" flex flex-col gap-2>
+    <template #default="{ describedBy, labelledBy }">
+      <div
+        :aria-describedby="describedBy"
+        :aria-label="label"
+        :aria-labelledby="labelledBy"
+        role="group"
+        flex
+        flex-col
+        gap-2
+      >
         <UiCheckbox
           v-if="node.props.hasSelectAll && choiceValues.length > 0"
           is-label-shown

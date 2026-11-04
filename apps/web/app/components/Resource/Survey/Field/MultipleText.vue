@@ -28,8 +28,16 @@ const updateItem = (name: string, text: string) => {
     :is-required="node.props.isRequired"
     :title="label"
   >
-    <template #default="{ describedBy }">
-      <div role="group" :aria-describedby="describedBy" :aria-label="label" flex flex-col gap-2>
+    <template #default="{ describedBy, labelledBy }">
+      <div
+        role="group"
+        :aria-describedby="describedBy"
+        :aria-label="label"
+        :aria-labelledby="labelledBy"
+        flex
+        flex-col
+        gap-2
+      >
         <UiTextField
           v-for="item of node.props.items"
           :key="item.name"

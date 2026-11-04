@@ -59,7 +59,7 @@ describe("resourceSurveyFieldText", () => {
       expect(control.attributes("autocomplete")).toBe("email");
     });
 
-    test("marks a required question's label with the required mark, and no hint word", () => {
+    test("marks a required question's label with the required mark, and says it is required through the input", () => {
       expect.hasAssertions();
 
       const node = createNode();
@@ -67,7 +67,8 @@ describe("resourceSurveyFieldText", () => {
         props: { error: "", isDisabled: false, node: { ...node, props: { ...node.props, isRequired: true } } },
       });
 
-      expect(component.get("label").text()).toBe(`${title} * required`);
+      expect(component.get("label").text()).toBe(`${title} *`);
+      expect(component.get("input").attributes("aria-required")).toBe("true");
     });
 
     test("answers a number question with a number", async () => {

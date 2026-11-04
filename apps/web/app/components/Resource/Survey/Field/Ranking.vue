@@ -47,11 +47,12 @@ const onReorder = (keys: string[]) => {
     :is-required="node.props.isRequired"
     :title="label"
   >
-    <template #default="{ describedBy }">
+    <template #default="{ describedBy, labelledBy }">
       <!-- The rows are the choices in their order, each marked with its place; Alt and an arrow moves the focused one -->
       <UiList
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
+        :aria-labelledby="labelledBy"
         :is-reorderable="isDisabled ? undefined : true"
         :items
         :label

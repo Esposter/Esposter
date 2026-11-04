@@ -65,6 +65,7 @@ const onSelect = (keys: string[] | undefined = []) => {
       <UiList
         :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
+        :aria-required="node.props.isRequired ? true : undefined"
         :is-multiple="node.props.multiSelect || undefined"
         :items
         :label
