@@ -1,4 +1,4 @@
-// Synonyms such as `==` and `=` share one member, so no tree holds the spelling the expression was written with
+// One member per operator, so no tree holds the spelling the expression was written with
 export enum SurveyExpressionBinaryOperator {
   Add = "add",
   AllOf = "allOf",
