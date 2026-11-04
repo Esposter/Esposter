@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
+import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import ResourceSurveyCreatorMatrixColumnsEditor from "@/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
 import UiForm from "@/components/Ui/Form.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
@@ -9,9 +8,6 @@ import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { SurveyMatrixCellType } from "survey-engine";
 import { describe, expect, test } from "vitest";
-
-const getButtonByText = (component: VueWrapper, text: string) =>
-  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorMatrixColumnsEditor", () => {
   test("a column added, renamed and removed reaches the list", async () => {

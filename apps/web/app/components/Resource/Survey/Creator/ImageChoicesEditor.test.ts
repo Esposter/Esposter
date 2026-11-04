@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument } from "survey-engine";
 
+import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import UiFileField from "@/components/Ui/FileField.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
@@ -45,9 +45,6 @@ const createDocument = (imageLinks: string[]) =>
     ],
     root: { props: {} },
   });
-
-const getButtonByText = (component: VueWrapper, text: string) =>
-  component.findAll("button").find((button) => button.text() === text);
 
 const getChoices = (document: SurveyDocument, pointer: string) => {
   const node = getBlockNode(document, pointer, surveyNodeChildren);

@@ -2,6 +2,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
 
+import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -42,9 +43,6 @@ const getFieldByLabel = (component: VueWrapper, label: string) => {
     ?.attributes("for");
   return component.get(`[id="${id}"]`);
 };
-
-const getButtonByText = (component: VueWrapper, text: string) =>
-  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorLogicBuilder", () => {
   test("adding a row and typing its value writes the condition the row reads", async () => {

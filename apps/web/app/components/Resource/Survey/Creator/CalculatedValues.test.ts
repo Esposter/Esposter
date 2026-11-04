@@ -3,6 +3,7 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { SurveyDocument, SurveyNode } from "survey-engine";
 
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
+import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -47,9 +48,6 @@ const getFieldByLabel = (component: VueWrapper, label: string) => {
     ?.attributes("for");
   return component.get(`[id="${id}"]`);
 };
-
-const getButtonByText = (component: VueWrapper, text: string) =>
-  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorCalculatedValues", () => {
   test("a name that collides with a question is refused with the survey check's message and saves nothing", async () => {

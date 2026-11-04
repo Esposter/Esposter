@@ -1,14 +1,10 @@
 // @vitest-environment nuxt
-import type { VueWrapper } from "@vue/test-utils";
-
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
+import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import UiForm from "@/components/Ui/Form.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-
-const getButtonByText = (component: VueWrapper, text: string) =>
-  component.findAll("button").find((button) => button.text() === text);
 
 describe("resourceSurveyCreatorChoiceListEditor", () => {
   test("an added choice is written, and moving it up one place is a second write", async () => {
