@@ -19,17 +19,7 @@ const device = vi.hoisted(() => ({ isPhone: false }));
 vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
   const actual = await importOriginal();
 
-  return {
-    ...actual,
-    useUiDisplay: () => ({
-      ...actual.useUiDisplay(),
-      mdAndDown: {
-        get value() {
-          return device.isPhone;
-        },
-      },
-    }),
-  };
+  return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), mdAndDown: shallowRef(device.isPhone) }) };
 });
 // The package's viewer is kept as it is and only watched, so a test reads the options the dialog hands it
 vi.mock(import("vue-pdfjs-headless"), async (importOriginal) => {
