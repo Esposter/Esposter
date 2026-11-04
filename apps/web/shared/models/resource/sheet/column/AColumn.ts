@@ -26,8 +26,8 @@ export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema:
   z.object({
     ...aNamedItemEntitySchema.shape,
     ...descriptionSchema.shape,
-    isHidden: z.boolean().default(false),
-    size: z.int().nonnegative().default(0),
-    sourceName: z.string().max(MAX_RESOURCE_CONTENT_SIZE).default("").readonly(),
+    isHidden: z.boolean(),
+    size: z.int().nonnegative(),
+    sourceName: z.string().max(MAX_RESOURCE_CONTENT_SIZE).readonly(),
     type: typeSchema.readonly(),
   });
