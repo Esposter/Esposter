@@ -42,19 +42,31 @@ The package SHALL set the renderer's editor mode to none, free text, ink, highli
 
 ### Requirement: Comments are listed
 
-The package SHALL list a document's text annotations as its comments, each with its page. The package does not add comments: the renderer's save writes no text annotation, so a comment added would not reach a download.
+The package SHALL list a document's text annotations as its comments, each with its page, once the consumer wants them, and SHALL read them no sooner. The package does not add comments: the renderer's save writes no text annotation, so a comment added would not reach a download.
 
 #### Scenario: Listing a document's comments
 
 - **GIVEN** a document with two text annotations, on pages one and two
-- **WHEN** it is opened
+- **WHEN** its comments are wanted
 - **THEN** the comment list holds both, each with its page
 
 #### Scenario: A document with no comments
 
 - **GIVEN** a document with no text annotations
-- **WHEN** it is opened
+- **WHEN** its comments are wanted
 - **THEN** the comment list is empty
+
+#### Scenario: Comments are not read until they are wanted
+
+- **GIVEN** a document with a text annotation
+- **WHEN** it is opened without its comments being wanted
+- **THEN** the comment list stays empty
+
+#### Scenario: A document replaced while its comments are read
+
+- **GIVEN** a document whose comments are still being read
+- **WHEN** another document replaces it
+- **THEN** the comment list holds only the new document's comments
 
 ### Requirement: Free texts are exchanged as XFDF
 

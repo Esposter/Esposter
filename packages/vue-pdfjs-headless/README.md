@@ -56,7 +56,7 @@ usePdfPage({ canvas, pageNumber: 1, pdfDocument });
 | `PdfSource`         | type       | A document, given by its URL, its bytes or a file that the reader picked                                       |
 | `PdfViewerState`    | interface  | The viewer's pages, zoom, rotation, search, download and print, as state and actions                           |
 | `readXfdf`          | function   | Reads the free-text annotations of an XFDF file, or returns an error that names what is wrong with it          |
-| `usePdfAnnotations` | composable | Exports the reader's comments and free-text annotations to XFDF, and imports them from XFDF                    |
+| `usePdfAnnotations` | composable | Lists the reader's comments once they are wanted, and imports and exports free texts as XFDF                   |
 | `usePdfDocument`    | composable | Loads a document from a source through the consumer's renderer. Its password prompt and its failure are state. |
 | `usePdfPage`        | composable | Draws one page of a loaded document into a canvas, at the canvas's width and the device's pixel ratio          |
 | `usePdfThumbnails`  | composable | One thumbnail per page. A thumbnail's page is loaded and drawn only while its row is in view of the sidebar.   |

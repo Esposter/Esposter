@@ -10,6 +10,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import { PDF_EDITOR_KEY_PREFIX, PDF_FREE_TEXT_COLOR, PDF_FREE_TEXT_FONT_SIZE } from "#src/services/constants";
 import { createFreeTextEntry } from "#src/services/createFreeTextEntry";
+import { getPdfPages } from "#src/services/getPdfPages";
 import { readXfdf } from "#src/xfdf/readXfdf";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
@@ -17,6 +18,8 @@ import { err, ok } from "neverthrow";
 import { shallowRef, toValue, watch } from "vue";
 
 interface UsePdfAnnotationsOptions {
+  // Whether the comments are wanted. A document's comments are read the first time they are, and not before
+  isCommentsWanted?: MaybeRefOrGetter<boolean>;
   // Called for each annotation the reader draws, with the mode it was drawn in and its page
   onChange?: (change: PdfAnnotationChange) => void;
   pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>;
@@ -25,16 +28,20 @@ interface UsePdfAnnotationsOptions {
 
 // A text annotation is a comment, and each page's text annotations are read in page order
 const readComments = async (loaded: PDFDocumentProxy): Promise<PdfComment[]> => {
-  const pages = await Promise.all(
-    Array.from({ length: loaded.numPages }, (_value, pageIndex) => loaded.getPage(pageIndex + 1)),
-  );
-  const annotations = await Promise.all(pages.map((page) => page.getAnnotations()));
+  const pages = await getPdfPages(loaded);
+  const pageComments = await Promise.all(
+    pages.map(async (page, pageIndex) => {
+      const annotations = await page.getAnnotations();
+      // A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out
+      page.cleanup();
 
-  return annotations.flatMap((pageAnnotations, pageIndex) =>
-    pageAnnotations
-      .filter(({ subtype }) => subtype === "Text")
-      .map(({ contents }) => ({ contents: contents ?? "", pageNumber: pageIndex + 1 })),
+      return annotations
+        .filter(({ subtype }) => subtype === "Text")
+        .map(({ contents }) => ({ contents: contents ?? "", pageNumber: pageIndex + 1 }));
+    }),
   );
+
+  return pageComments.flat();
 };
 
 // Pdf.js types its storage's editor hook as null, though it calls the hook as a function, so the hook is assigned here
@@ -79,7 +86,12 @@ const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
     );
 };
 
-export const usePdfAnnotations = ({ onChange, pdfDocument, viewer }: UsePdfAnnotationsOptions): PdfAnnotationsState => {
+export const usePdfAnnotations = ({
+  isCommentsWanted = false,
+  onChange,
+  pdfDocument,
+  viewer,
+}: UsePdfAnnotationsOptions): PdfAnnotationsState => {
   const comments = shallowRef<PdfComment[]>([]);
   const loadComments = getSynchronizedFunction(async (loaded: PDFDocumentProxy) => {
     await getResultAsync(async () => {
@@ -129,6 +141,18 @@ export const usePdfAnnotations = ({ onChange, pdfDocument, viewer }: UsePdfAnnot
         const drawn: undefined | { pageIndex: number } = [...loaded.annotationStorage].at(-1)?.[1];
         if (drawn) onChange?.({ kind, pageNumber: drawn.pageIndex + 1 });
       });
+    },
+    { immediate: true },
+  );
+  // The document whose comments were last asked for, so each document's comments are read once, the first time they are
+  // Wanted. A document that replaces it is a different one, so its comments are read when they are wanted
+  let commentsDocument: PDFDocumentProxy | undefined;
+  watch(
+    [() => toValue(pdfDocument), () => toValue(isCommentsWanted)],
+    ([loaded, isWanted]) => {
+      if (!loaded || !isWanted || loaded === commentsDocument) return;
+
+      commentsDocument = loaded;
       loadComments(loaded);
     },
     { immediate: true },

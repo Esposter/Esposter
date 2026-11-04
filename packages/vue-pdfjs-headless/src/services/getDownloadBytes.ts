@@ -2,18 +2,19 @@ import type { PDFDocumentProxy } from "pdfjs-dist";
 
 import { PDF_EDITOR_KEY_PREFIX, PDF_WATERMARK_COLOR, PDF_WATERMARK_FONT_SIZE } from "#src/services/constants";
 import { createFreeTextEntry } from "#src/services/createFreeTextEntry";
+import { getPdfPages } from "#src/services/getPdfPages";
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Stores the watermark on every page as a free-text annotation, and returns the keys it stored them under
 const addWatermark = async (pdfDocument: PDFDocumentProxy, watermark: string): Promise<string[]> => {
   const { annotationStorage } = pdfDocument;
-  const pages = await Promise.all(
-    Array.from({ length: pdfDocument.numPages }, (_value, pageIndex) => pdfDocument.getPage(pageIndex + 1)),
-  );
+  const pages = await getPdfPages(pdfDocument);
 
   return pages.map((page, pageIndex) => {
     // A free text's rectangle is in the page's unturned user space, so the band is laid across that box's middle
     const [left = 0, bottom = 0, right = 0, top = 0] = page.view;
+    // The box is all the page is read for here, so its proxy is released once the box is read
+    page.cleanup();
     const middle = (bottom + top) / 2;
     const id = `watermark${pageIndex}`;
     const key = `${PDF_EDITOR_KEY_PREFIX}${id}`;

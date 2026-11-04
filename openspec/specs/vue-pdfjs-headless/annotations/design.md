@@ -38,6 +38,7 @@ An untouched document's storage is empty, so "the storage has changed" is its si
 - **XFDF carries free texts.** Ink, highlight, stamp and comments are not written or read. XFDF does not name the colour or size of a free text, so an imported one takes the renderer's defaults.
 - **Imports are keyed apart from drawn editors, and a page past the end is refused.** pdf.js numbers its editors from zero, so an imported free text named `0` would replace the first drawn annotation; imports are stored under their own key namespace instead. A free text on a page that does not exist makes the renderer's save fail for the whole download, so the import checks the page count before it stores anything. A drawn editor has no element id until a page saves it, so the export takes its id from the key the renderer stores it under.
 - **An imported free text keeps its name as its id only while the name is free.** XFDF names are optional and may repeat, and an import is stored under its id, so an unnamed free text, or one named as an id the document already holds, takes a generated id instead. Without it the second free text would replace the first under one key. The export writes the id back as the name.
+- **Comments are read when wanted, once for each document.** `usePdfAnnotations` reads a document's text annotations the first time its `isCommentsWanted` is true for that document, so a document nobody reads comments of reads none. A page's proxy is released once its annotations are read, since the document keeps the proxies it hands out for its life.
 - **Reading XFDF returns a `Result`.** A file that is not well-formed, or a free text with no valid page or rectangle, returns an error that names the problem and imports nothing.
 - **The watermark is written at save, not drawn on screen.** Drawing it into the page canvas was rejected: the mark would never reach the downloaded file, which is where a watermark is for. It is stored on every page before the save and removed after it, so the pages on screen never hold it. It is laid across the middle of the page's unturned box, so the band crosses a page turned a quarter as well.
 - **The editor mode is the renderer's, applied when a document loads.** The renderer resets its mode with its document, so the mode is set again on each load.
@@ -51,6 +52,7 @@ The package's annotation files:
 packages/vue-pdfjs-headless/src/composables/usePdfAnnotations.ts  editor mode, change events, comments, XFDF import and export
 packages/vue-pdfjs-headless/src/xfdf/                             readXfdf and writeXfdf, framework-free
 packages/vue-pdfjs-headless/src/services/getDownloadBytes.ts      original bytes, or the saved bytes with a watermark stored for the save
+packages/vue-pdfjs-headless/src/services/getPdfPages.ts           every page of a document, for the reads that take them all
 packages/vue-pdfjs-headless/src/services/createFreeTextEntry.ts   the storage entry the renderer saves as a free text
 packages/vue-pdfjs-headless/src/models/                           PdfAnnotationChange, PdfAnnotationsState, PdfComment, PdfEditorMode, PdfFreeText, PdfFreeTextEntry
 ```

@@ -22,6 +22,7 @@ describe(getDownloadBytes, () => {
   // A page with a quarter turn of its own: pdf.js's viewport is the turned page, while its view box is the unturned one
   const createTurnedDocument = () => {
     const page = {
+      cleanup: vi.fn<PDFPageProxy["cleanup"]>(() => true),
       getViewport: () => ({ height: PAGE_WIDTH, width: PAGE_HEIGHT }),
       rotate: 90,
       view: [0, 0, PAGE_WIDTH, PAGE_HEIGHT],

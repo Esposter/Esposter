@@ -49,6 +49,7 @@ const createPage = (
   render: PDFPageProxy["render"] = vi.fn<PDFPageProxy["render"]>(() => createRenderTask(Promise.resolve())),
 ): PDFPageProxy =>
   ({
+    cleanup: () => true,
     getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
     render,
     view: [0, 0, PAGE_WIDTH, PAGE_HEIGHT],

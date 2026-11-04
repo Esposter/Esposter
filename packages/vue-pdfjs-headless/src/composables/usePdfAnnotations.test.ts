@@ -2,6 +2,7 @@
 import type { PdfAnnotationChange } from "#src/models/PdfAnnotationChange";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
 import type { PDFDocumentProxy } from "pdfjs-dist";
+import type { MaybeRefOrGetter } from "vue";
 
 import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfAnnotations } from "#src/composables/usePdfAnnotations";
@@ -10,19 +11,25 @@ import { writeXfdf } from "#src/xfdf/writeXfdf";
 import { flushPromises } from "@vue/test-utils";
 import { err, ok } from "neverthrow";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
-import { effectScope, ref } from "vue";
+import { effectScope, ref, shallowRef } from "vue";
+
+interface MountOptions {
+  isCommentsWanted?: MaybeRefOrGetter<boolean>;
+  onChange?: (change: PdfAnnotationChange) => void;
+}
 
 interface TestAnnotation {
   contents?: string;
   subtype: string;
 }
 
-// A document whose pages hold the given annotations, and whose storage the composable can take the editor hook of
-const createDocument = (pagesAnnotations: TestAnnotation[][]) =>
+// A document whose pages hold the given annotations, each released through the given spy
+// Its storage takes the editor hook the composable sets
+const createDocument = (pagesAnnotations: TestAnnotation[][], cleanup = vi.fn<() => boolean>(() => true)) =>
   ({
     annotationStorage: createAnnotationStorage(),
     getPage: (pageNumber: number) =>
-      Promise.resolve({ getAnnotations: () => Promise.resolve(pagesAnnotations[pageNumber - 1]) }),
+      Promise.resolve({ cleanup, getAnnotations: () => Promise.resolve(pagesAnnotations[pageNumber - 1]) }),
     numPages: pagesAnnotations.length,
   }) as unknown as PDFDocumentProxy;
 // The renderer calls its storage's editor hook with the mode of an editor it stored, or with null when it removes one
@@ -35,11 +42,14 @@ const reportEditor = (pdfDocument: PDFDocumentProxy, kind: null | PdfEditorMode)
 
 describe("usePdfAnnotations", () => {
   const scopes: ReturnType<typeof effectScope>[] = [];
-  const mountAnnotations = (pdfDocument: PDFDocumentProxy, onChange?: (change: PdfAnnotationChange) => void) => {
+  const mountAnnotations = (
+    pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
+    { isCommentsWanted = false, onChange }: MountOptions = {},
+  ) => {
     const viewer = { editorMode: ref(PdfEditorMode.None) } as unknown as PdfViewerState;
     const scope = effectScope();
     scopes.push(scope);
-    const state = scope.run(() => usePdfAnnotations({ onChange, pdfDocument, viewer }));
+    const state = scope.run(() => usePdfAnnotations({ isCommentsWanted, onChange, pdfDocument, viewer }));
     assert(state);
 
     return { state, viewer };
@@ -56,7 +66,7 @@ describe("usePdfAnnotations", () => {
       [{ contents: "First", subtype: "Text" }, { subtype: "Link" }],
       [{ contents: "Second", subtype: "Text" }],
     ]);
-    const { state } = mountAnnotations(pdfDocument);
+    const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
     await flushPromises();
 
     expect(state.comments.value).toStrictEqual([
@@ -68,10 +78,71 @@ describe("usePdfAnnotations", () => {
   test("a document with no comments", async () => {
     expect.hasAssertions();
 
-    const { state } = mountAnnotations(createDocument([[{ subtype: "Link" }]]));
+    const { state } = mountAnnotations(createDocument([[{ subtype: "Link" }]]), { isCommentsWanted: true });
     await flushPromises();
 
     expect(state.comments.value).toStrictEqual([]);
+  });
+
+  test("comments are read once they are wanted, not before", async () => {
+    expect.hasAssertions();
+
+    const isCommentsWanted = ref(false);
+    const { state } = mountAnnotations(createDocument([[{ contents: "First", subtype: "Text" }]]), {
+      isCommentsWanted,
+    });
+    await flushPromises();
+
+    expect(state.comments.value).toStrictEqual([]);
+    isCommentsWanted.value = true;
+    await flushPromises();
+
+    expect(state.comments.value).toStrictEqual([{ contents: "First", pageNumber: 1 }]);
+  });
+
+  test("a document's comments are read once, however often they are wanted again", async () => {
+    expect.hasAssertions();
+
+    const cleanup = vi.fn<() => boolean>(() => true);
+    const isCommentsWanted = ref(false);
+    mountAnnotations(createDocument([[{ contents: "First", subtype: "Text" }]], cleanup), { isCommentsWanted });
+    isCommentsWanted.value = true;
+    await flushPromises();
+    isCommentsWanted.value = false;
+    await flushPromises();
+    isCommentsWanted.value = true;
+    await flushPromises();
+
+    expect(cleanup).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  test("each page's proxy is released once its comments are read", async () => {
+    expect.hasAssertions();
+
+    const cleanup = vi.fn<() => boolean>(() => true);
+    mountAnnotations(createDocument([[], []], cleanup), { isCommentsWanted: true });
+    await flushPromises();
+
+    expect(cleanup).toHaveBeenCalledTimes(2);
+  });
+
+  test("a document replaced while its comments are read is not shown with the replaced one's comments", async () => {
+    expect.hasAssertions();
+
+    const lateComments = Promise.withResolvers<TestAnnotation[]>();
+    const replacedDocument = {
+      annotationStorage: createAnnotationStorage(),
+      getPage: () => Promise.resolve({ cleanup: () => true, getAnnotations: () => lateComments.promise }),
+      numPages: 1,
+    } as unknown as PDFDocumentProxy;
+    const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(replacedDocument);
+    const { state } = mountAnnotations(pdfDocument, { isCommentsWanted: true });
+    pdfDocument.value = createDocument([[{ contents: "New", subtype: "Text" }]]);
+    await flushPromises();
+    lateComments.resolve([{ contents: "Replaced", subtype: "Text" }]);
+    await flushPromises();
+
+    expect(state.comments.value).toStrictEqual([{ contents: "New", pageNumber: 1 }]);
   });
 
   test("#61 Drawing reports a change", () => {
@@ -79,7 +150,7 @@ describe("usePdfAnnotations", () => {
 
     const onChange = vi.fn<(change: PdfAnnotationChange) => void>();
     const pdfDocument = createDocument([[], []]);
-    mountAnnotations(pdfDocument, onChange);
+    mountAnnotations(pdfDocument, { onChange });
     // The renderer stores an editor as it is drawn, on the page it is drawn on
     pdfDocument.annotationStorage.setValue("editor1", { pageIndex: 1 });
     reportEditor(pdfDocument, PdfEditorMode.Ink);
@@ -93,7 +164,7 @@ describe("usePdfAnnotations", () => {
 
     const onChange = vi.fn<(change: PdfAnnotationChange) => void>();
     const pdfDocument = createDocument([[]]);
-    mountAnnotations(pdfDocument, onChange);
+    mountAnnotations(pdfDocument, { onChange });
     reportEditor(pdfDocument, null);
 
     expect(onChange).not.toHaveBeenCalled();
