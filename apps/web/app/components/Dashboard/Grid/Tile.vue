@@ -16,8 +16,8 @@ interface Props {
   offset: GridPoint;
 }
 
-// A tile is one tab stop of an editable grid. Its eight handles are drawn only on hover or focus, and a press on one
-// Resizes from that edge or corner, while a press on the rest of the tile moves it
+// A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
+// A press on one resizes from that edge or corner, while a press on the rest of the tile moves it. Their paint is an open roadmap item
 defineSlots<{ default: () => VNode }>();
 const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
 const emit = defineEmits<{
