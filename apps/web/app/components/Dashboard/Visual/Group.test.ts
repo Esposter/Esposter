@@ -3,6 +3,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardVisualGroup from "@/components/Dashboard/Visual/Group.vue";
+import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -25,25 +26,7 @@ describe("dashboardVisualGroup", () => {
 
   // A DOM without layout never reports the width, so the observers report the width the group lays out at
   beforeEach(() => {
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        readonly #callback: ResizeObserverCallback;
-
-        constructor(callback: ResizeObserverCallback) {
-          this.#callback = callback;
-        }
-
-        disconnect() {}
-        observe() {
-          const entries = [{ contentRect: { height: 0, width: gridWidth } }] as ResizeObserverEntry[];
-          queueMicrotask(() => {
-            this.#callback(entries, this);
-          });
-        }
-        unobserve() {}
-      },
-    );
+    stubGridWidth(gridWidth);
   });
   afterEach(() => {
     vi.unstubAllGlobals();

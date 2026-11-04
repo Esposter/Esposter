@@ -9,6 +9,8 @@ import { createGroupChain } from "#shared/services/dashboard/createGroupChain.te
 import { listVisuals } from "#shared/services/dashboard/listVisuals";
 import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardPaletteTile from "@/components/Dashboard/Palette/Tile.vue";
+import { stubElementAtPoint } from "@/services/dashboard/grid/stubElementAtPoint.test";
+import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { takeOne } from "@esposter/shared";
@@ -43,7 +45,7 @@ describe("dashboardPaletteTile", () => {
   };
   // A press on the tile, a move and a release at the point, the way a browser delivers a palette drag
   const dragTileTo = async (tile: VueWrapper, point: { x: number; y: number }, elementAtPoint: Element) => {
-    document.elementsFromPoint = () => [elementAtPoint];
+    stubElementAtPoint(elementAtPoint);
     const button = tile.get("button");
     await button.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0, pointerId });
     await button.trigger("pointermove", { buttons: 1, clientX: point.x, clientY: point.y, pointerId });
@@ -52,28 +54,9 @@ describe("dashboardPaletteTile", () => {
   };
 
   beforeEach(() => {
-    vi.stubGlobal(
-      "ResizeObserver",
-      class {
-        readonly #callback: ResizeObserverCallback;
-
-        constructor(callback: ResizeObserverCallback) {
-          this.#callback = callback;
-        }
-
-        disconnect() {}
-        observe(target: Element) {
-          const entries = [{ contentRect: { height: 0, width: gridWidth }, target }] as ResizeObserverEntry[];
-          queueMicrotask(() => {
-            this.#callback(entries, this);
-          });
-        }
-        unobserve() {}
-      },
-    );
+    stubGridWidth(gridWidth);
   });
   afterEach(() => {
-    Reflect.deleteProperty(document, "elementsFromPoint");
     vi.unstubAllGlobals();
   });
 
