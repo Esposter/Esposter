@@ -2,9 +2,9 @@
 import { Slider } from "@vuetify/v0";
 
 interface Props {
-  // Named for assistive technology alone, where the section it sits in already says what it sets
   // Held at the disabled opacity, where the thumb takes no press and no key
   isDisabled?: boolean;
+  // Named for assistive technology alone, where the section it sits in already says what it sets
   isLabelHidden?: true;
   label: string;
   // A live reading drawn along the track as a fraction of it, which the thumb is set against: a microphone's level
