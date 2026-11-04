@@ -1,7 +1,7 @@
 import type { BlockNodeProps, OwnProps } from "headless-block-editor";
 
 import { SurveyImageFit } from "#src/models/SurveyImageFit";
-import { MAX_SURVEY_TEXT_LENGTH, MAX_SURVEY_URL_LENGTH } from "#src/services/constants";
+import { MAX_SURVEY_IMAGE_SIZE, MAX_SURVEY_TEXT_LENGTH, MAX_SURVEY_URL_LENGTH } from "#src/services/constants";
 import { surveyConditionSchema } from "#src/services/surveyConditionSchema";
 import { surveyNameSchema } from "#src/services/surveyNameSchema";
 import { z } from "zod";
@@ -29,9 +29,9 @@ export const surveyImageNodePropsSchema: z.ZodObject<{
 }> = z.object({
   altText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
   imageFit: z.enum(SurveyImageFit).default(SurveyImageFit.Contain),
-  imageHeight: z.int().positive().optional(),
+  imageHeight: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
   imageLink: z.string().max(MAX_SURVEY_URL_LENGTH).default(""),
-  imageWidth: z.int().positive().optional(),
+  imageWidth: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
   name: surveyNameSchema,
   visibleIf: surveyConditionSchema,
 }) satisfies z.ZodType<OwnProps<SurveyImageNodeProps>>;

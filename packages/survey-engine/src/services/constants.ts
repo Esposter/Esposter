@@ -14,6 +14,8 @@ export const MAX_SURVEY_MATRIX_COLUMN_COUNT = 50;
 export const MAX_SURVEY_MATRIX_ROW_COUNT = 100;
 // The most characters a text field may hold: a title, a description, a label, a choice's text or an error message
 export const MAX_SURVEY_TEXT_LENGTH = 1000;
+// The largest a picture's width or height may be drawn, in pixels, so a picture cannot outgrow the screen it is read on
+export const MAX_SURVEY_IMAGE_SIZE = 2048;
 // The most characters a block of HTML or a completion page's markup may hold
 export const MAX_SURVEY_HTML_LENGTH = 20_000;
 // The most characters an expression may hold, the longest a condition or a calculated value takes

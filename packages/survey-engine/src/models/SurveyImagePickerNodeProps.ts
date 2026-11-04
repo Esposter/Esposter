@@ -5,7 +5,7 @@ import type { OwnProps } from "headless-block-editor";
 import { surveyImageChoiceSchema } from "#src/models/SurveyImageChoice";
 import { SurveyImageFit } from "#src/models/SurveyImageFit";
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";
-import { MAX_SURVEY_CHOICE_COUNT } from "#src/services/constants";
+import { MAX_SURVEY_CHOICE_COUNT, MAX_SURVEY_IMAGE_SIZE } from "#src/services/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -33,8 +33,8 @@ export const surveyImagePickerNodePropsSchema: z.ZodObject<
   ...surveyQuestionBasePropsShape,
   choices: createUniqueArraySchema(surveyImageChoiceSchema, "value").max(MAX_SURVEY_CHOICE_COUNT).default([]),
   imageFit: z.enum(SurveyImageFit).default(SurveyImageFit.Contain),
-  imageHeight: z.int().positive().optional(),
-  imageWidth: z.int().positive().optional(),
+  imageHeight: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
+  imageWidth: z.int().positive().max(MAX_SURVEY_IMAGE_SIZE).optional(),
   multiSelect: z.boolean().default(false),
   showLabel: z.boolean().default(true),
 }) satisfies z.ZodType<OwnProps<SurveyImagePickerNodeProps>>;
