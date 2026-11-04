@@ -42,4 +42,25 @@ describe(getVisualMoveTargets, () => {
       { title: "Untitled group 2", value: level1.id },
     ]);
   });
+
+  // A numbered label never equals a title another group holds, so the literal "Sales 2" keeps its own label and the repeated
+  // "Sales" takes the next free number
+  test("a numbered label skips a title another group already holds", () => {
+    expect.hasAssertions();
+
+    const firstSales = new Visual({ type: VisualType.Group, visuals: [] });
+    firstSales.chart.configuration.title = "Sales";
+    const secondSales = new Visual({ type: VisualType.Group, visuals: [] });
+    secondSales.chart.configuration.title = "Sales";
+    const literalSales2 = new Visual({ type: VisualType.Group, visuals: [] });
+    literalSales2.chart.configuration.title = "Sales 2";
+    const looseCard = new Visual({ type: VisualType.Card });
+    const numbered = [looseCard, firstSales, secondSales, literalSales2];
+
+    expect(getVisualMoveTargets(numbered, looseCard.id)).toStrictEqual([
+      { title: "Sales", value: firstSales.id },
+      { title: "Sales 3", value: secondSales.id },
+      { title: "Sales 2", value: literalSales2.id },
+    ]);
+  });
 });

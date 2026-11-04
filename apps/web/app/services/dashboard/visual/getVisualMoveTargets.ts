@@ -12,17 +12,20 @@ export const getVisualMoveTargets = (visuals: Visual[], id: Visual["id"]) => {
   const location = findVisualLocation(visuals, id);
   if (!location) return [];
 
-  const titleCounts = new Map<string, number>();
-  const groupTargets = listVisuals(visuals)
-    .filter(
-      (group) =>
-        group.visuals !== undefined && group.id !== location.group?.id && !checkIsMoveRefused(visuals, id, group.id),
-    )
-    .map((group) => {
-      const title = getGroupTitle(group);
-      const titleCount = (titleCounts.get(title) ?? 0) + 1;
-      titleCounts.set(title, titleCount);
-      return { title: titleCount === 1 ? title : `${title} ${titleCount}`, value: group.id };
-    });
+  const groups = listVisuals(visuals).filter(
+    (group) =>
+      group.visuals !== undefined && group.id !== location.group?.id && !checkIsMoveRefused(visuals, id, group.id),
+  );
+  // Every group's own title is reserved before any suffix is chosen, so a numbered label never equals a title another group holds
+  const reservedTitles = new Set(groups.map((group) => getGroupTitle(group)));
+  const takenLabels = new Set<string>();
+  const groupTargets = groups.map((group) => {
+    const title = getGroupTitle(group);
+    let label = title;
+    for (let number = 2; takenLabels.has(label) || (label !== title && reservedTitles.has(label)); number++)
+      label = `${title} ${number}`;
+    takenLabels.add(label);
+    return { title: label, value: group.id };
+  });
   return location.group ? [{ title: "Dashboard", value: "" }, ...groupTargets] : groupTargets;
 };
