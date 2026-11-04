@@ -10,7 +10,8 @@ interface Props {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { filename, viewer } = defineProps<Props>();
-// The text is asked before the one download it stamps, and nothing is saved for an empty text
+// The text is asked before the one download it stamps, and nothing is saved for an empty text. A text of only spaces is
+// Empty too, so the field's rules refuse it and the form's validity holds the download
 const watermark = ref("");
 </script>
 
@@ -22,6 +23,10 @@ const watermark = ref("");
     :submit="() => viewer.download(filename, watermark)"
     title="Download with watermark"
   >
-    <UiTextField v-model="watermark" label="Watermark text" :rules="[UiRules.required('Enter the watermark text')]" />
+    <UiTextField
+      v-model="watermark"
+      label="Watermark text"
+      :rules="[UiRules.required('Enter the watermark text'), UiRules.pattern(/\S/u, 'Enter the watermark text')]"
+    />
   </StyledFormDialog>
 </template>

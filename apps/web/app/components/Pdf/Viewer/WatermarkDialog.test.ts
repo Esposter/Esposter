@@ -38,6 +38,17 @@ describe("pdfViewerWatermarkDialog", () => {
       expect(getButton("Download")?.hasAttribute("disabled")).toBe(true);
     });
 
+    test("a watermark of only spaces cannot be downloaded", async () => {
+      expect.hasAssertions();
+
+      const { component } = mountDialog();
+      await flushPromises();
+      await component.get("input").setValue("   ");
+      await flushPromises();
+
+      expect(getButton("Download")?.hasAttribute("disabled")).toBe(true);
+    });
+
     test("downloading with a watermark saves the document with that text", async () => {
       expect.hasAssertions();
 
