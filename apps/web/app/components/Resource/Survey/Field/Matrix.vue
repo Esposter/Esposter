@@ -42,7 +42,7 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
               <td>
                 <UiRadioGroup
                   :aria-invalid="error ? true : undefined"
-                  :aria-required="node.props.isRequired ? true : undefined"
+                  :aria-required="node.props.isAllRowRequired ? true : undefined"
                   :is-disabled
                   :items="columnItems"
                   :label="getSurveyChoiceText(row)"

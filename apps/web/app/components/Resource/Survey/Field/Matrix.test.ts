@@ -15,10 +15,12 @@ describe("resourceSurveyFieldMatrix", () => {
     const error = "error";
     const id = crypto.randomUUID();
     const title = "title";
-    const node: SurveyMatrixNode = {
+    const createNode = (isRequired: boolean, isAllRowRequired: boolean): SurveyMatrixNode => ({
       props: {
         ...surveyMatrixNodePropsSchema.parse({
           columns: [{ value: -1 }, { value: 0 }],
+          isAllRowRequired,
+          isRequired,
           name: "a",
           rows: [{ value: 0 }, { value: 0.1 }],
           title,
@@ -26,7 +28,8 @@ describe("resourceSurveyFieldMatrix", () => {
         id,
       },
       type: SurveyNodeType.Matrix,
-    };
+    });
+    const node = createNode(false, false);
 
     test("is a group named by the question's title, whose rows are radio groups named by their choices", async () => {
       expect.hasAssertions();
@@ -41,6 +44,32 @@ describe("resourceSurveyFieldMatrix", () => {
       expect(component.findAll('[role="radiogroup"]').map((group) => group.attributes("aria-label"))).toStrictEqual([
         "0",
         "0.1",
+      ]);
+    });
+
+    test("says each row is required through aria-required when every row is required", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldMatrix, {
+        props: { error: "", isDisabled: false, node: createNode(false, true) },
+      });
+
+      expect(component.findAll('[role="radiogroup"]').map((group) => group.attributes("aria-required"))).toStrictEqual([
+        "true",
+        "true",
+      ]);
+    });
+
+    test("says no row is required when only the question is, since a row is required by its own rule", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldMatrix, {
+        props: { error: "", isDisabled: false, node: createNode(true, false) },
+      });
+
+      expect(component.findAll('[role="radiogroup"]').map((group) => group.attributes("aria-required"))).toStrictEqual([
+        undefined,
+        undefined,
       ]);
     });
 

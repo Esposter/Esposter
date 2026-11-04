@@ -29,7 +29,7 @@ const updateItem = (name: string, text: string) => {
           :key="item.name"
           :is-disabled="isDisabled || undefined"
           :is-invalid="error ? true : undefined"
-          :is-required="node.props.isRequired || undefined"
+          :is-required="item.isRequired || undefined"
           :label="item.title || item.name"
           :model-value="getText(answers[item.name])"
           :type="SURVEY_TEXT_FIELD_TYPES[item.inputType]"

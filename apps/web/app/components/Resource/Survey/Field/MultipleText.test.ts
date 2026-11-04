@@ -17,11 +17,12 @@ describe("resourceSurveyFieldMultipleText", () => {
     const itemTitles = ["A", "B"];
     const text = "text";
     const title = "title";
-    const node: SurveyMultipleTextNode = {
+    const createNode = (isRequired = false, isFirstItemRequired = false): SurveyMultipleTextNode => ({
       props: {
         ...surveyMultipleTextNodePropsSchema.parse({
+          isRequired,
           items: [
-            { inputType: "text", name: "a", title: "A" },
+            { inputType: "text", isRequired: isFirstItemRequired, name: "a", title: "A" },
             { inputType: "text", name: "b", title: "B" },
           ],
           name: "a",
@@ -30,7 +31,8 @@ describe("resourceSurveyFieldMultipleText", () => {
         id,
       },
       type: SurveyNodeType.MultipleText,
-    };
+    });
+    const node = createNode();
 
     test("is a group named by the question's title, whose inputs are named by their titles", async () => {
       expect.hasAssertions();
@@ -45,19 +47,31 @@ describe("resourceSurveyFieldMultipleText", () => {
       expect(component.findAll("label").map((label) => label.text())).toStrictEqual(itemTitles);
     });
 
-    test("marks each item's label with the required mark when the question is required, and each item says so", async () => {
+    test("marks an item required by its own flag, though its question is optional", async () => {
       expect.hasAssertions();
 
       const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
-        props: { error: "", isDisabled: false, node: { ...node, props: { ...node.props, isRequired: true } } },
+        props: { error: "", isDisabled: false, node: createNode(false, true) },
       });
 
-      expect(component.findAll("label").map((label) => label.text())).toStrictEqual(
-        itemTitles.map((itemTitle) => `${itemTitle} *`),
-      );
+      expect(component.findAll("label").map((label) => label.text())).toStrictEqual(["A *", "B"]);
       expect(component.findAll("input").map((input) => input.attributes("aria-required"))).toStrictEqual([
         "true",
-        "true",
+        undefined,
+      ]);
+    });
+
+    test("leaves an item optional inside a required question, since each item says whether it is required", async () => {
+      expect.hasAssertions();
+
+      const component = await mountSuspended(ResourceSurveyFieldMultipleText, {
+        props: { error: "", isDisabled: false, node: createNode(true) },
+      });
+
+      expect(component.findAll("label").map((label) => label.text())).toStrictEqual(itemTitles);
+      expect(component.findAll("input").map((input) => input.attributes("aria-required"))).toStrictEqual([
+        undefined,
+        undefined,
       ]);
     });
 
