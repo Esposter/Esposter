@@ -32,7 +32,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   isPinned?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: UserInAuth["id"][] = [];
-  declare message: string;
+  message = "";
   replyRowKey: "" | ReverseTickedTimestamp = "";
   declare rowKey: ReverseTickedTimestamp;
   type = MessageType.Message as TType;
@@ -46,10 +46,8 @@ export const baseMessageEntitySchema = z.object({
   isEdited: z.literal(true).optional(),
   isForward: z.literal(true).optional(),
   isPinned: z.literal(true).optional(),
-  // Compatibility defaults for rows written before these fields existed: every current writer sets all three
-  // (an empty value is stored as written), so they stay only until a backfill writes them
-  mentions: createUniqueArraySchema(selectUserInAuthSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
-  message: sanitizedMessageSchema.default(""),
-  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
+  mentions: createUniqueArraySchema(selectUserInAuthSchema.shape.id).max(MENTION_MAX_LENGTH),
+  message: sanitizedMessageSchema,
+  replyRowKey: reverseTickedTimestampSchema.or(z.literal("")),
   type: standardMessageTypeSchema,
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

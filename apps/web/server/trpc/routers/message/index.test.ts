@@ -725,7 +725,7 @@ describe("messageRouter", () => {
     await messageCaller.deleteMessage(compositeKey);
 
     await expect(
-      messageCaller.forwardMessage({ ...compositeKey, roomIds: [forwardedRoom.id] }),
+      messageCaller.forwardMessage({ message: "", ...compositeKey, roomIds: [forwardedRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(compositeKey)).message}]`,
     );
@@ -742,7 +742,7 @@ describe("messageRouter", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
-    await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
+    await messageCaller.forwardMessage({ message: "", ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
@@ -765,7 +765,7 @@ describe("messageRouter", () => {
     const bytesBeforeForward = await readStorageBytesUsed();
     assert.exists(bytesBeforeForward);
 
-    await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
+    await messageCaller.forwardMessage({ message: "", ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
     await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeForward + size);
   });
@@ -786,7 +786,7 @@ describe("messageRouter", () => {
     vi.spyOn(MockBlobClient.prototype, "beginCopyFromURL").mockRejectedValueOnce(new Error(" "));
 
     await expect(
-      messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] }),
+      messageCaller.forwardMessage({ message: "", ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError:  ]`);
 
     await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeForward);
@@ -868,6 +868,7 @@ describe("messageRouter", () => {
 
     await expect(
       messageCaller.forwardMessage({
+        message: "",
         ...getCompositeKey(source),
         roomIds: [firstFilteredRoom.id, secondFilteredRoom.id],
       }),
@@ -890,7 +891,7 @@ describe("messageRouter", () => {
     await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      messageCaller.forwardMessage({ ...getCompositeKey(source), roomIds: [filteredRoom.id] }),
+      messageCaller.forwardMessage({ message: "", ...getCompositeKey(source), roomIds: [filteredRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     await mockSessionOnce(mockContext.db, member);
@@ -1272,7 +1273,7 @@ describe("messageRouter", () => {
     const subscription = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
       () => subscription,
-      () => messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [roomId] }),
+      () => messageCaller.forwardMessage({ message: "", ...getCompositeKey(newMessage), roomIds: [roomId] }),
     );
 
     assert(isTrackedEnvelope<MessageEntity[]>(trackedData));
@@ -1445,7 +1446,7 @@ describe("messageRouter", () => {
     const source = await messageCaller.createMessage({ message: createOwnMentionMessage(), roomId, timeZone });
     await roomCaller.updateRoom({ id: roomId, slowmodeMs: 2 });
     const member = await createMember();
-    const forwardInput = { ...getCompositeKey(source), roomIds: [roomId] };
+    const forwardInput = { message: "", ...getCompositeKey(source), roomIds: [roomId] };
 
     await mockSessionOnce(mockContext.db, member);
     vi.advanceTimersByTime(1);

@@ -12,7 +12,16 @@ export const createMessageEntity = <T extends CreateMessageInput>(
 ): InstanceType<MessageTypeEntityMap[T["type"]]> => {
   const createdAt = new Date();
   const { roomId, ...rest } = input;
-  const init = { ...rest, createdAt, partitionKey: roomId, rowKey: getReverseTickedTimestamp(), updatedAt: createdAt };
+  // A field the writer leaves undefined takes the entity's own default: copied over it, the field would be stored
+  // As no property at all
+  const definedRest = Object.fromEntries(Object.entries(rest).filter(([, value]) => value !== undefined));
+  const init = {
+    ...definedRest,
+    createdAt,
+    partitionKey: roomId,
+    rowKey: getReverseTickedTimestamp(),
+    updatedAt: createdAt,
+  };
   const MessageEntityClass = MessageTypeEntityMap[input.type] as new (
     entityInit: typeof init,
   ) => InstanceType<MessageTypeEntityMap[T["type"]]>;

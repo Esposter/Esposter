@@ -1,3 +1,4 @@
+import type { TableEntity } from "@azure/data-tables";
 import type { CompositeKey } from "@esposter/azure";
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
@@ -14,7 +15,7 @@ const createTableClients = (createEntityError?: Error) => {
     deleteEntity: vi.fn<() => Promise<object>>(() => Promise.resolve({})),
   };
   const messageClient = {
-    createEntity: vi.fn<() => Promise<object>>(() =>
+    createEntity: vi.fn<(entity: TableEntity) => Promise<object>>(() =>
       createEntityError ? Promise.reject(createEntityError) : Promise.resolve({}),
     ),
   };
@@ -74,5 +75,55 @@ describe(createMessage, () => {
     const [indexEntity] = takeOne(messageAscendingMock.createEntity.mock.calls);
 
     expect(messageAscendingMock.deleteEntity).toHaveBeenCalledExactlyOnceWith(ROOM_ID, indexEntity.rowKey);
+  });
+
+  // The defaults a row carries whatever its writer leaves out, as the Table stores them: an undefined field is no
+  // Property at all, so a row would read back without it
+  const storedDefaults = { mentions: "[]", message: "", replyRowKey: "" };
+
+  test.each([
+    MessageType.Call,
+    MessageType.EditRoom,
+    MessageType.Message,
+    MessageType.PinMessage,
+    MessageType.Poll,
+    MessageType.System,
+  ])("stores a %s message with its mentions, message and reply row key present", async (type) => {
+    expect.hasAssertions();
+
+    const { messageAscendingClient, messageClient, messageMock } = createTableClients();
+    await createMessage(messageClient, messageAscendingClient, {
+      message: undefined,
+      replyRowKey: undefined,
+      roomId: ROOM_ID,
+      type,
+      userId: crypto.randomUUID(),
+    });
+    const [storedEntity] = takeOne(messageMock.createEntity.mock.calls);
+
+    expect({
+      mentions: storedEntity.mentions,
+      message: storedEntity.message,
+      replyRowKey: storedEntity.replyRowKey,
+    }).toStrictEqual(storedDefaults);
+  });
+
+  test("stores a webhook message with its mentions, message and reply row key present", async () => {
+    expect.hasAssertions();
+
+    const { messageAscendingClient, messageClient, messageMock } = createTableClients();
+    await createMessage(messageClient, messageAscendingClient, {
+      appUser: { id: crypto.randomUUID() },
+      message: undefined,
+      roomId: ROOM_ID,
+      type: MessageType.Webhook,
+    });
+    const [storedEntity] = takeOne(messageMock.createEntity.mock.calls);
+
+    expect({
+      mentions: storedEntity.mentions,
+      message: storedEntity.message,
+      replyRowKey: storedEntity.replyRowKey,
+    }).toStrictEqual(storedDefaults);
   });
 });
