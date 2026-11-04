@@ -25,10 +25,14 @@ export const getSurveyOrderedChoices = (
       return choices;
     case SurveyChoicesOrder.Random: {
       const random = createSeededRandom(hashSurveySeed(seed));
-      const remaining = [...choices];
       const shuffled: SurveyChoice[] = [];
+      let remaining = choices;
 
-      while (remaining.length > 0) shuffled.push(...remaining.splice(Math.floor(random() * remaining.length), 1));
+      while (remaining.length > 0) {
+        const index = Math.floor(random() * remaining.length);
+        shuffled.push(...remaining.slice(index, index + 1));
+        remaining = remaining.toSpliced(index, 1);
+      }
 
       return shuffled;
     }

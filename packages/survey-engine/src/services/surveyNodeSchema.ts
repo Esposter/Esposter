@@ -204,14 +204,14 @@ export const surveyTemplateNodeSchema: z.ZodType<SurveyTemplateNode> = z.discrim
   "type",
   surveyTemplateNodeOptions,
   createAcceptedTypesError(SURVEY_TEMPLATE_NODE_TYPES),
-);
+) satisfies z.ZodType<SurveyTemplateNode>;
 
 // The nodes a page or a panel accepts: every question and a panel
 export const surveyPlaceableNodeSchema: z.ZodType<SurveyPlaceableNode> = z.discriminatedUnion(
   "type",
   [...surveyTemplateNodeOptions, surveyPanelDynamicNodeSchemaValue, surveyPanelNodeSchemaValue],
   createAcceptedTypesError(SURVEY_PLACEABLE_NODE_TYPES),
-);
+) satisfies z.ZodType<SurveyPlaceableNode>;
 
 // A page, the only node the root accepts
 export const surveyPageNodeSchema: z.ZodType<SurveyPageNode> = surveyPageNodeSchemaValue;
@@ -226,4 +226,4 @@ export const surveyNodeSchema: z.ZodType<SurveyNode> = z.discriminatedUnion(
     surveyPageNodeSchemaValue,
   ],
   createAcceptedTypesError([...SURVEY_ROOT_NODE_TYPES, ...SURVEY_PLACEABLE_NODE_TYPES]),
-);
+) satisfies z.ZodType<SurveyNode>;
