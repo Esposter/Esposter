@@ -47,16 +47,10 @@ const setPanel = (panelIndex: number, panel: SurveyAnswers) => {
 
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
-    <template #default="{ describedBy, title }">
-      <div
-        role="group"
-        :aria-describedby="describedBy"
-        :aria-invalid="error ? true : undefined"
-        :aria-label="title"
-        flex
-        flex-col
-        gap-4
-      >
+    <!-- A group takes neither aria-invalid nor aria-required, so it is named by its title, which carries the required word,
+    And described by the error, the one message the shell draws for the panel, since a row's controls would each repeat it -->
+    <template #default="{ describedBy, labelledBy }">
+      <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy" flex flex-col gap-4>
         <div v-for="(row, panelIndex) of rows" :key="panelIndex" p-4 flex flex-col gap-4 ui-frame>
           <ResourceSurveyField
             v-for="field of row.fields"
