@@ -91,17 +91,14 @@ export const usePageBuilderContent = <
     draftValue.value = value;
     const targetValue = target.value;
     if (!targetValue || checkIsDeepEqual(value, savedValue.value)) return;
-    if (!targetValue.propsSchema.safeParse(value).success) return;
+
+    // The form edits a part of the props, so the props that are written are the ones checked
+    const props = { ...targetValue.props, ...value };
+    if (!targetValue.propsSchema.safeParse(props).success) return;
 
     applyEdit(
       toValue(resourceId),
-      [
-        {
-          op: JsonPatchOperationType.Replace,
-          path: `${targetValue.pointer}/props`,
-          value: { ...targetValue.props, ...value },
-        },
-      ],
+      [{ op: JsonPatchOperationType.Replace, path: `${targetValue.pointer}/props`, value: props }],
       "Edit block",
       targetValue.interactionId,
     ).match(noop, console.error);
