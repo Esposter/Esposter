@@ -14,6 +14,7 @@ interface Props {
 // The control the kind draws is the default slot's, given the pick the choice answer makes and the title the shell draws
 defineSlots<{
   default: (props: {
+    describedBy?: string;
     items: UiMenuItem<string>[];
     pick: (key: string | undefined) => void;
     selectedKey?: string;
@@ -31,8 +32,8 @@ const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherTex
 
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
-    <template #default="{ title }">
-      <slot :items :pick :selected-key :title />
+    <template #default="{ describedBy, title }">
+      <slot :described-by :items :pick :selected-key :title />
       <UiTextField
         v-if="isOther"
         :is-disabled="isDisabled || undefined"

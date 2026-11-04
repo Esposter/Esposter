@@ -6,7 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { SurveyChoicesOrder, SurveyNodeType, surveyRadioGroupNodePropsSchema } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRadioGroup", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -17,6 +17,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
       { text: "b", value: "b" },
       { text: "c", value: "c" },
     ];
+    const description = "a";
     const error = "message";
     const title = "Favourite colour";
     const seed = crypto.randomUUID();
@@ -94,6 +95,32 @@ describe("resourceSurveyFieldRadioGroup", () => {
       const component = mount(SurveyFieldRadioGroup, { props: { error, isDisabled: false, node: createNode(), seed } });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
+    });
+
+    test("is described by the question's description, then its error", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldRadioGroup, {
+        props: {
+          error,
+          isDisabled: false,
+          node: {
+            props: {
+              ...surveyRadioGroupNodePropsSchema.parse({ choices, description, name: "a", title }),
+              id: crypto.randomUUID(),
+            },
+            type: SurveyNodeType.RadioGroup,
+          },
+          seed,
+        },
+      });
+      const describedBy = component.get('[role="radiogroup"]').attributes("aria-describedby");
+      assert.exists(describedBy);
+
+      expect(describedBy.split(" ").map((id) => component.get(`[id="${id}"]`).text())).toStrictEqual([
+        description,
+        error,
+      ]);
     });
   });
 });

@@ -66,8 +66,9 @@ const setOtherText = (text: string) => {
 
 <template>
   <ResourceSurveyFieldShell :error :question="node.props">
-    <template #default="{ title }">
+    <template #default="{ describedBy, title }">
       <UiSelect
+        :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
         :is-disabled

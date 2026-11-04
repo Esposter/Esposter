@@ -16,8 +16,9 @@ const { error, isDisabled, node, seed } = defineProps<Props>();
 
 <template>
   <ResourceSurveyFieldSingleChoice v-model="answer" :error :is-disabled :node :seed>
-    <template #default="{ items, pick, selectedKey, title }">
+    <template #default="{ describedBy, items, pick, selectedKey, title }">
       <UiRadioGroup
+        :aria-describedby="describedBy"
         :aria-invalid="error ? true : undefined"
         :aria-required="node.props.isRequired ? true : undefined"
         :is-disabled

@@ -6,7 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldTagBox", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -16,6 +16,7 @@ describe("resourceSurveyFieldTagBox", () => {
       { text: "", value: 1 },
       { text: "", value: 2 },
     ];
+    const description = "a";
     const error = "error";
     const seed = crypto.randomUUID();
     const title = "Favourite colour";
@@ -119,6 +120,21 @@ describe("resourceSurveyFieldTagBox", () => {
       await flushPromises();
 
       expect(component.get('[role="alert"]').text()).toBe(error);
+    });
+
+    test("is described by the question's description, then its error", () => {
+      expect.hasAssertions();
+
+      const component = mount(ResourceSurveyFieldTagBox, {
+        props: { error, isDisabled: false, modelValue: [], node: createNode({ description }), seed },
+      });
+      const describedBy = component.get('[role="combobox"]').attributes("aria-describedby");
+      assert.exists(describedBy);
+
+      expect(describedBy.split(" ").map((id) => component.get(`[id="${id}"]`).text())).toStrictEqual([
+        description,
+        error,
+      ]);
     });
   });
 });

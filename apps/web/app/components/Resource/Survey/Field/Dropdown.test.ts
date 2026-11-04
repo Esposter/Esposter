@@ -6,7 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
 import { surveyDropdownNodePropsSchema, SurveyNodeType } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldDropdown", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -17,6 +17,7 @@ describe("resourceSurveyFieldDropdown", () => {
       { text: "b", value: "b" },
       { text: "c", value: "c" },
     ];
+    const description = "a";
     const error = "message";
     const title = "Favourite colour";
     const seed = crypto.randomUUID();
@@ -80,6 +81,32 @@ describe("resourceSurveyFieldDropdown", () => {
       const component = mount(SurveyFieldDropdown, { props: { error, isDisabled: false, node: createNode(), seed } });
 
       expect(component.get('[role="alert"]').text()).toBe(error);
+    });
+
+    test("is described by the question's description, then its error", () => {
+      expect.hasAssertions();
+
+      const component = mount(SurveyFieldDropdown, {
+        props: {
+          error,
+          isDisabled: false,
+          node: {
+            props: {
+              ...surveyDropdownNodePropsSchema.parse({ choices, description, name: "a", title }),
+              id: crypto.randomUUID(),
+            },
+            type: SurveyNodeType.Dropdown,
+          },
+          seed,
+        },
+      });
+      const describedBy = component.get('[role="combobox"]').attributes("aria-describedby");
+      assert.exists(describedBy);
+
+      expect(describedBy.split(" ").map((id) => component.get(`[id="${id}"]`).text())).toStrictEqual([
+        description,
+        error,
+      ]);
     });
   });
 });
