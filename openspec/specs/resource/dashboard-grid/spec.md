@@ -23,8 +23,8 @@ A published dashboard SHALL reflow to fewer columns on a narrower screen, and SH
 
 #### Scenario: Opening a dashboard on a phone
 
-- **GIVEN** a dashboard laid out over twelve columns
-- **WHEN** it is opened on a screen too narrow for twelve
+- **GIVEN** a dashboard laid out over the editor's full set of columns
+- **WHEN** it is opened on a screen too narrow for all of them
 - **THEN** its visuals fill the fewer columns that screen takes
 - **AND** no two visuals overlap
 - **AND** none extends past the grid's last column
@@ -102,7 +102,7 @@ The editor SHALL let the owner resize a visual from any of its eight edges and c
 - **THEN** its top and right edges move
 - **AND** its bottom and left edges stay where they were
 
-#### Scenario: A touch press on a handle moves the visual
+#### Scenario: a touch press on a handle moves the visual
 
 - **GIVEN** a visual in the editor
 - **WHEN** the owner touches its handle and drags
@@ -142,7 +142,7 @@ The editor SHALL move a focused visual one cell per arrow key, and resize it one
 - **WHEN** the owner presses the right arrow key
 - **THEN** the visual moves one column right and the step is saved
 
-#### Scenario: Resizing with Shift and an arrow key
+#### Scenario: shift with the down arrow saves a focused visual one row taller
 
 - **GIVEN** a visual focused in the editor
 - **WHEN** the owner presses Shift and the down arrow key
@@ -154,13 +154,13 @@ The editor SHALL move a focused visual one cell per arrow key, and resize it one
 - **WHEN** the owner presses Shift and the down arrow key
 - **THEN** the visual does not change and nothing is saved
 
-#### Scenario: A step past the grid's edge changes nothing
+#### Scenario: an arrow key that would move a visual past the grid's last column saves nothing
 
 - **GIVEN** a visual in the last column of the grid
 - **WHEN** the owner presses the right arrow key
 - **THEN** the visual does not move and nothing is saved
 
-#### Scenario: A step onto another visual under block overlap is refused
+#### Scenario: an arrow key onto another visual under block overlap saves nothing
 
 - **GIVEN** the collision setting is Block overlap and a visual beside the focused one
 - **WHEN** the owner presses the arrow key that would move the focused visual onto it
@@ -170,7 +170,7 @@ The editor SHALL move a focused visual one cell per arrow key, and resize it one
 
 The editor SHALL add a visual of a palette tile's type where the tile is dropped on the grid, and SHALL add it at the first free cell when the tile is pressed or activated from the keyboard.
 
-#### Scenario: Dropping a tile onto the grid
+#### Scenario: a tile dropped on the grid adds a visual where it is released
 
 - **GIVEN** an empty dashboard in the editor
 - **WHEN** the owner drags the Bar tile from the palette and releases it over the third column of the first row
@@ -182,13 +182,13 @@ The editor SHALL add a visual of a palette tile's type where the tile is dropped
 - **WHEN** the owner activates the Table tile from the keyboard
 - **THEN** a Table visual is saved at the first free cell, which is beside the existing visual
 
-#### Scenario: A tile released outside the grid adds nothing
+#### Scenario: a tile released outside the grid adds nothing
 
 - **GIVEN** the owner drags the Line tile from the palette
 - **WHEN** the tile is released outside the grid
 - **THEN** no visual is added
 
-#### Scenario: A tile released on a visual under block overlap adds nothing
+#### Scenario: a tile released on a visual under block overlap adds nothing
 
 - **GIVEN** the collision setting is Block overlap
 - **WHEN** the owner drags a palette tile and releases it over an existing visual
@@ -215,7 +215,7 @@ The editor SHALL offer Fit height to content only for a table visual, which then
 - **THEN** the visual takes the two rows its content needs
 - **AND** the setting is saved with the visual
 
-#### Scenario: A chart has no fit height item
+#### Scenario: a chart's menu offers no fit height to content
 
 - **GIVEN** a bar chart visual in the editor
 - **WHEN** the owner opens the visual's menu
@@ -246,7 +246,7 @@ The editor SHALL offer a Layout control that sets how visuals pack, upward, side
 - **THEN** the visual keeps the gap above it
 - **AND** the choice is saved
 
-#### Scenario: A save the server refuses reverts the choice
+#### Scenario: a save the server refuses takes the choice back to the one it had
 
 - **GIVEN** the owner chose Swap places in the Layout control
 - **WHEN** the save of the dashboard is refused
@@ -495,7 +495,7 @@ A visual's menu SHALL offer Move to where the visual has a group or the dashboar
 
 #### Scenario: a group offers no group inside it and no group that would nest it past the cap
 
-- **GIVEN** a group holding another group, and a chain of four groups on the dashboard
+- **GIVEN** a group holding another group, and a chain of groups to the depth cap on the dashboard
 - **WHEN** the owner opens the outer group's Move to
 - **THEN** the menu lists no group the outer group would take past the depth cap
 - **AND** the menu lists no group the outer group holds

@@ -20,7 +20,7 @@ export class MyEntity extends AzureEntity {
 
 ## What a write stores
 
-`serializeEntity` stores an empty string as `""` and an empty array as `"[]"`, and stores a property whose value is `undefined` as no property, so the row reads back without it. `Object.assign(this, init)` copies an own `undefined` over a class default, so an entity built from an input that carries an `undefined` key stores nothing for that field: `createMessageEntity` drops the undefined keys of its input before building, so a class default always applies. A schema default on an entity is legitimate only where a current writer still produces the absence (`openspec/specs/architecture/persisted-data-latest-shape-only/design.md`, the Azure Table paragraph).
+`serializeEntity` stores an empty string as `""` and an empty array as `"[]"`, and stores a property whose value is `undefined` as no property, so the row reads back without it. `Object.assign(this, init)` copies an own `undefined` over a class default, so an entity built from an input that carries an `undefined` key stores nothing for that field: `createMessageEntity` drops the undefined keys of its input before building, so a class default always applies. Which schema defaults a stored entity may keep is the `backfills` skill's call (`.agents/skills/backfills/SKILL.md`).
 
 ## Soft-delete
 
