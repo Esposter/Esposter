@@ -3,7 +3,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { DashboardVisualEmits } from "@/models/dashboard/DashboardVisualEmits";
 import type { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-import { DASHBOARD_GRID_COMMANDS, DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
+import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { getGeometryStyle } from "@/services/dashboard/grid/getGeometryStyle";
 import { checkIsMoveRefused } from "@/services/dashboard/visual/checkIsMoveRefused";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
@@ -42,8 +42,6 @@ const { gridHeight, placeholder, reportContentHeight, startGesture, stepItem, ti
   rowHeight,
   spacing: { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN },
 }));
-// The keys a focused visual takes are listed here, since the grid handles them and binds no shortcut
-useCommands(() => (isEditable ? DASHBOARD_GRID_COMMANDS : []));
 </script>
 
 <template>

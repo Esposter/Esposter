@@ -10,10 +10,12 @@ import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
+import { DASHBOARD_GRID_COMMANDS } from "@/services/dashboard/constants";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { useResourceStore } from "@/store/resource";
+import { useCommandStore } from "@/store/ui/command";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -185,6 +187,17 @@ describe("dashboardEditorContent", () => {
     expect(
       wrapper.findAllComponents(DashboardVisualPreviewActionsMenu).map((menu) => menu.props("visual").id),
     ).toStrictEqual([cardVisual.id, group.id]);
+  });
+
+  // A group draws an editable grid of its own, and each grid takes the same keys, so the editor lists each one once
+  test("lists each dashboard command once, though a group draws its own editable grid", async () => {
+    expect.hasAssertions();
+
+    await mountEditor([new Visual({ type: VisualType.Group, visuals: [new Visual({ type: VisualType.Card })] })]);
+    const commandStore = useCommandStore();
+    const { commands } = storeToRefs(commandStore);
+
+    expect(commands.value.map(({ id }) => id)).toStrictEqual(DASHBOARD_GRID_COMMANDS.map(({ id }) => id));
   });
 
   // A group's delete names it and counts every visual it takes with it, down its whole tree

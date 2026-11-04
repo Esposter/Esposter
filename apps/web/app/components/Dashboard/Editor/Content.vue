@@ -4,7 +4,11 @@ import type { DashboardGridTransfer } from "@/models/dashboard/DashboardGridTran
 import type { GridBlock } from "vue-grid-layout-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { DASHBOARD_EDITOR_ROW_HEIGHT, DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
+import {
+  DASHBOARD_EDITOR_ROW_HEIGHT,
+  DASHBOARD_GRID_COMMANDS,
+  DASHBOARD_NO_COLUMNS,
+} from "@/services/dashboard/constants";
 import { findVisual } from "@/services/dashboard/visual/findVisual";
 import { getVisualDeleteDescription } from "@/services/dashboard/visual/getVisualDeleteDescription";
 import { useDashboardStore } from "@/store/dashboard";
@@ -19,6 +23,8 @@ const { editedItem, visuals } = storeToRefs(visualStore);
 const { deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
+// Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it holds
+useCommands(DASHBOARD_GRID_COMMANDS);
 // The dashboard's grid and every group's grid write through these, so a nested commit, open or transfer is the same write
 // By id as the dashboard's own, wherever the visual sits
 const commitVisuals = (changes: GridBlock[]) => {
