@@ -60,6 +60,8 @@
   :root,
   [data-theme] {
     --ui-field-background: color-mix(in srgb, var(--ui-text) 6%, transparent);
+    /* An invalid field's tint: the error colour a step into the field, derived on each theme scope as the field is */
+    --ui-field-invalid-background: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
     accent-color: var(--ui-accent);
     caret-color: var(--ui-accent);
     scrollbar-color: var(--ui-border) var(--ui-background);

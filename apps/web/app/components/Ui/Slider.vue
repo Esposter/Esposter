@@ -142,7 +142,7 @@ useEventListener(["pointerup", "pointercancel"], () => {
 
 /* An invalid track is tinted in the error colour, as an invalid text field is, under the thumb that carries the mark */
 .track[data-invalid] {
-  background-color: color-mix(in srgb, var(--ui-error) 12%, var(--ui-field-background));
+  background-color: var(--ui-field-invalid-background);
 }
 
 .thumb[data-state="dragging"] {
