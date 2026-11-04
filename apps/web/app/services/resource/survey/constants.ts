@@ -6,7 +6,9 @@ import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditio
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { SurveyImageFit, SurveyMultipleTextItemInputType, SurveyNodeType, SurveyTextInputType } from "survey-engine";
+import type { SurveyMultipleTextItemInputType } from "survey-engine";
+
+import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "survey-engine";
 import { SurveyExpressionBinaryOperator } from "survey-logic";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
@@ -133,7 +135,7 @@ export const SURVEY_SMILEY_MEANINGS: readonly UiIconMeaning[] = [
 ];
 
 // The input types the library's text field draws as its own control, for a text question and for each item of a multiple
-// text question, which takes a narrower list of them; the rest are typed as plain text
+// Text question, which takes a narrower list of them; the rest are typed as plain text
 export const SURVEY_TEXT_FIELD_TYPES: Readonly<
   Partial<Record<SurveyMultipleTextItemInputType | SurveyTextInputType, UiTextFieldType>>
 > = {
