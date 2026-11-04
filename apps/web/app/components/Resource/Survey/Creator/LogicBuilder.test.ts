@@ -4,11 +4,12 @@ import type { SurveyDocument, SurveyPlaceableNode } from "survey-engine";
 
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
 import LogicBuilder from "@/components/Resource/Survey/Creator/LogicBuilder.vue";
+import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding the given text questions, each with the condition it shows under
 const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocument => ({
@@ -107,7 +108,12 @@ describe("resourceSurveyCreatorLogicBuilder", () => {
     const component = await mountSuspended(LogicBuilder);
 
     await component.get('[aria-label="Remove condition"]').trigger("click");
-    await getButtonByText(component, "Cancel")?.trigger("click");
+
+    expect(component.findComponent(UiConfirmDialog).props("modelValue")).toBe(true);
+
+    const cancelButton = getButtonByText(component, "Cancel");
+    assert.exists(cancelButton);
+    await cancelButton.trigger("click");
     await flushPromises();
 
     expect(surveyCreatorStore.selectedNode?.props.visibleIf).toBe("{a} = 'yes'");
