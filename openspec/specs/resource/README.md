@@ -90,12 +90,12 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
 - [Page builder canvas](page-builder/canvas/design.md) — the frame a page is drawn in at its device widths, with its overlays and the pointer, keyboard and layers paths that move its nodes
 - [Page builder style panel](page-builder/style-panel/design.md) — each node's styles kept per breakpoint and state, emitted as its own rules and edited through the library's controls
-- [Page builder performance and proof](page-builder/performance-and-proof/design.md) — the targets the page builder's editors hold, and how their output is proved against the published page; the browser proofs are owed
+- [Page builder performance and proof](page-builder/performance-and-proof/design.md) — the targets the page builder's editors hold, and how their output is proved against the published page
 - [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile
 - [Page builder undo as patches](page-builder/undo-as-patches/design.md) — each open resource's undo and redo as JSON Patch operations with their inverses, one entry per interaction, cleared on reload
 - [Page builder critique](page-builder/critique/design.md) — the deterministic checks over a webpage's document (contrast, fixed widths, survey invites), shown by the editor's Check panel and answered to an agent under the Resources scope
 
-Open work is in the [roadmap](../../changes/resource-roadmap/tasks.md); the Azure-portal-parity designs it references live under [proposals](../../changes/). Ideas we chose not to pursue are under [deferred](../../deferred/resource/) (with revisit triggers) and [rejected](../../rejected/resource/). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](sheet/README.md).
+Designs not yet built are under [proposals](../../changes/). Ideas we chose not to pursue are under [deferred](../../deferred/resource/) (with revisit triggers) and [rejected](../../rejected/resource/). The grid editor keeps its own roadmap, deferred and rejected pages beside it, under [sheet editor](sheet/README.md).
 
 ## Shipped log
 
