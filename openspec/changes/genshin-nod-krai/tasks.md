@@ -1,7 +1,7 @@
 ## 1. Sky and isles
 
 - [ ] 1.1 Draw the regional moon override in Nod-Krai's night sky, with its size and brightness set from the references. Verify: a test named after the scenario 'The moon looks larger at night in Nod-Krai', written first and seen failing.
-- [ ] 1.2 Draw Lempo Isle, Hiisi Island and Paha Isle as separate outlines on the world map, with the Moontide Sea between them. Verify: tests named after the scenarios 'Each isle has its own outline on the world map' and 'The Moontide Sea belongs to Nod-Krai'.
+- [ ] 1.2 Draw Lempo Isle, Hiisi Island and Paha Isle as separate outlines on the world map, with the Moontide Sea between them. The Moontide Sea's outline is empty today, one of a dozen the [roadmap](../genshin-roadmap/tasks.md) names. Verify: tests named after the scenarios 'Each isle has its own outline on the world map' and 'The Moontide Sea belongs to Nod-Krai'.
 
 ## 2. Kits
 
