@@ -22,7 +22,9 @@ The family's gaps are listed in its design. Each gap an open change or roadmap i
 
 ## Waiting on
 
-- The owner's further official packs, for the pack task only. The rest needs no input.
+- The owner's further official packs, for task 6.1 only.
+- A PC for the game exports that tasks 4.2, 6.2 and 8.1 need (G5, G10 and G14's blocks not held here). Those tasks wait on it when only a Mac is at hand.
+- Paimon's official pack, which menu Paimon's task 2.1 waits on and this change links rather than tasks.
 
 ## Impact
 
