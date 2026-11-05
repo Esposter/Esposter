@@ -15,3 +15,7 @@ export const FRAME_STATS_INTERVAL = 10;
 export const MAX_DEV_GIVE_COUNT = 999_999;
 // The most names a refused name lists as the nearest it is
 export const MAX_DEV_NAME_SUGGESTION_COUNT = 5;
+// One frame of a 60 Hz screen, which a scripted session's clock steps by, so a wait is a count of these
+export const SCRIPTED_FRAME_MS = 1000 / 60;
+// The instant a scripted clock starts at, fixed so the world's daily resets fall on the same frames in every run
+export const SCRIPTED_START_MS = Temporal.Instant.from("2026-01-01T00:00:00Z").epochMilliseconds;
