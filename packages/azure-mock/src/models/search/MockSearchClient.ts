@@ -28,6 +28,7 @@ import { searchDocuments } from "#src/services/search/searchDocuments";
 import { selectSearchDocumentFields } from "#src/services/search/selectSearchDocumentFields";
 import { sortDocuments } from "#src/services/search/sortDocuments";
 import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
+import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import { getOrCreate } from "@esposter/shared";
 
 /**
@@ -149,10 +150,11 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   // The service upserts on the document key (`RowKey`, the key the messages index is built on), so a document whose
   // Key is already indexed replaces that one rather than sitting beside it in every result and count
   uploadDocuments(documents: TModel[], _options?: UploadDocumentsOptions): Promise<IndexDocumentsResult> {
+    const rowKeyName = serializeKey(CompositeKeyPropertyNames.rowKey);
     for (const document of documents) {
-      const key = (document as Record<string, unknown>).rowKey;
+      const key = (document as Record<string, unknown>)[rowKeyName];
       const index = this.documents.findIndex(
-        (existingDocument) => (existingDocument as Record<string, unknown>).rowKey === key,
+        (existingDocument) => (existingDocument as Record<string, unknown>)[rowKeyName] === key,
       );
       if (index === -1) this.documents.push(document);
       else this.documents[index] = document;

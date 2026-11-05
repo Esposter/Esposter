@@ -15,15 +15,25 @@ describe(MockSearchClient, () => {
 
     const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
-      { "": " ", " ": "", rowKey: "0" },
-      { "": "", " ": " ", rowKey: "1" },
+      { "": " ", " ": "", RowKey: "0" },
+      { "": "", " ": " ", RowKey: "1" },
     ]);
     const { count, results } = await client.search(" ", { includeTotalCount: true, searchFields: [""] });
     const documents: Record<string, unknown>[] = [];
     for await (const { document } of results) documents.push(document);
 
     expect(count).toBe(1);
-    expect(takeOne(documents).rowKey).toBe("0");
+    expect(takeOne(documents).RowKey).toBe("0");
+  });
+
+  test("indexes each document whose RowKey differs from the others'", async () => {
+    expect.hasAssertions();
+
+    const client = new MockSearchClient(indexName);
+    await client.uploadDocuments([{ RowKey: "0" }, { RowKey: "1" }]);
+    const { count } = await client.search("*", { includeTotalCount: true });
+
+    expect(count).toBe(2);
   });
 
   // The service keys a document by RowKey and upserts on it, so re-feeding a key leaves one document, holding the latest
@@ -31,14 +41,14 @@ describe(MockSearchClient, () => {
     expect.hasAssertions();
 
     const client = new MockSearchClient(indexName);
-    await client.uploadDocuments([{ message: "a", rowKey: "0" }]);
-    await client.uploadDocuments([{ message: "b", rowKey: "0" }]);
+    await client.uploadDocuments([{ message: "a", RowKey: "0" }]);
+    await client.uploadDocuments([{ message: "b", RowKey: "0" }]);
     const { count, results } = await client.search("*", { includeTotalCount: true });
     const documents: Record<string, unknown>[] = [];
     for await (const { document } of results) documents.push(document);
 
     expect(count).toBe(1);
-    expect(documents).toStrictEqual([{ message: "b", rowKey: "0" }]);
+    expect(documents).toStrictEqual([{ message: "b", RowKey: "0" }]);
   });
 
   // The service names a composite key as the index stores it, so a filter on the partition reads the capitalized field
@@ -93,14 +103,14 @@ describe(MockSearchClient, () => {
 
     const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
-      { "": [{ "": " " }], rowKey: "0" },
-      { "": [{ "": "" }], rowKey: "1" },
+      { "": [{ "": " " }], RowKey: "0" },
+      { "": [{ "": "" }], RowKey: "1" },
     ]);
     const { count, results } = await client.search(" ", { includeTotalCount: true, searchFields: ["/"] });
     const documents: Record<string, unknown>[] = [];
     for await (const { document } of results) documents.push(document);
 
     expect(count).toBe(1);
-    expect(takeOne(documents).rowKey).toBe("0");
+    expect(takeOne(documents).RowKey).toBe("0");
   });
 });
