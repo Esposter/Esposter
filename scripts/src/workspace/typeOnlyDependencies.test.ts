@@ -7,6 +7,7 @@ import { parseSourceUnlinked } from "#src/services/shared/parseSourceUnlinked";
 import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -57,7 +58,7 @@ describe("typeOnlyDependencies", () => {
           collectUsage(statement, valueNames, typeNames);
   };
 
-  test("list a name only its types are imported from in devDependencies", () => {
+  test("list a name only its types are imported from in devDependencies", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const packages = readWorkspacePackages(REPOSITORY_ROOT)
