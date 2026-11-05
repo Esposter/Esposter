@@ -91,6 +91,15 @@
     },
     {
       "attribution": {},
+      "bytes": 14415804,
+      "name": "yt-03U40x2YNwc-world-hud-hidden.mp4",
+      "range": { "end": 20, "start": 0 },
+      "sha256": "dcea85410e10364a0cea5a60a69967503d5ec31db5700f08370ab41d730bda58",
+      "source": "https://www.youtube.com/watch?v=03U40x2YNwc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 152587259,
       "name": "yt-0z3OdjIBuo8-wow-completionist.mp4",
       "range": { "end": 252, "start": 0 },
@@ -104,6 +113,15 @@
       "name": "yt-1SqmdXbIhLs-reputation-guide.mp4",
       "sha256": "bf818ffb27dfafd83b2f54b74765b7654c64cbe1fbd3b8b5d568da00b7b26335",
       "source": "https://www.youtube.com/watch?v=1SqmdXbIhLs",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 31213334,
+      "name": "yt-1c4pE7BYdWs-chest-seal-pyro.mp4",
+      "range": { "end": 150, "start": 100 },
+      "sha256": "a067f61449a615a5a4249a09db1f91a773683e9d0ae30a6678b5dcbf5299aff9",
+      "source": "https://www.youtube.com/watch?v=1c4pE7BYdWs",
       "sourceFormat": "mp4"
     },
     {
@@ -128,6 +146,15 @@
       "name": "yt-4VkVOwpPgwE-settings-controls.mp4",
       "sha256": "756f1386246b8d35f8d5918f0d501b9e273447aa6b619048eba3bbb196753fe7",
       "source": "https://www.youtube.com/watch?v=4VkVOwpPgwE",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 10886051,
+      "name": "yt-4nEHlRl3TIk-archive-screen.mp4",
+      "range": { "end": 673, "start": 650 },
+      "sha256": "758b36ff0fbf3db5598460b772f5e3e5ee16618997d4f4c7e94567e28c8c1579",
+      "source": "https://www.youtube.com/watch?v=4nEHlRl3TIk",
       "sourceFormat": "mp4"
     },
     {
@@ -177,6 +204,15 @@
       "name": "yt-73MIt1DK8kc-world-teleport.mp4",
       "sha256": "9ceafe09e42d5bec095100bb5108bef041322608dbf602895b6c59cbd33275bb",
       "source": "https://www.youtube.com/watch?v=73MIt1DK8kc",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 29022023,
+      "name": "yt-7O2XEUZTNxc-world-snow.mp4",
+      "range": { "end": 60, "start": 0 },
+      "sha256": "e233dd1eab547e76ccb052d3fa08f787d4f776aa21a8d13fb7ee12a40945deed",
+      "source": "https://www.youtube.com/watch?v=7O2XEUZTNxc",
       "sourceFormat": "mp4"
     },
     {
@@ -326,6 +362,15 @@
     },
     {
       "attribution": {},
+      "bytes": 14649985,
+      "name": "yt-J8w5cNnHo0Q-quest-multi-objective.mp4",
+      "range": { "end": 535, "start": 508 },
+      "sha256": "5d4d808b10a074e21cd6e204ddf51effda4a03c81df479d34f7eaa800ce61bcd",
+      "source": "https://www.youtube.com/watch?v=J8w5cNnHo0Q",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 10538894,
       "name": "yt-JeWZtXJ7cfM-exploration-steps.mp4",
       "sha256": "de2411ebc9b8b7e463a25f0488a1d058e81535c3d71baec2e9c93b03a092c0a1",
@@ -415,6 +460,15 @@
     },
     {
       "attribution": {},
+      "bytes": 61359640,
+      "name": "yt-OrIH7yMj3e8-spiral-abyss-chamber.mp4",
+      "range": { "end": 100, "start": 0 },
+      "sha256": "e7298a57e60e1070af943f53e0b38ca04398f55629a373efa39910bdb93b7516",
+      "source": "https://www.youtube.com/watch?v=OrIH7yMj3e8",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
       "bytes": 38652233,
       "name": "yt-Osaylns8nyk-spiral-abyss-chamber.mp4",
       "sha256": "006757b54d709454c7e90c1c0c5935ba67c20d5f2cbd5d1a2342a4e6abdc2c11",
@@ -443,6 +497,15 @@
       "name": "yt-P13s7kSmVOE-world-level-lower.mp4",
       "sha256": "c30846542e68a3489bf03c8c806dd5399a6d7c8c9765df56acea29efa22073d9",
       "source": "https://www.youtube.com/watch?v=P13s7kSmVOE",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 10417712,
+      "name": "yt-Pb0ugVuVMtY-world-attacks.mp4",
+      "range": { "end": 30, "start": 13 },
+      "sha256": "5299ee30998e8451c3228a04915680cc1cefd5b4a721d8cc708a7f9914c47f88",
+      "source": "https://www.youtube.com/watch?v=Pb0ugVuVMtY",
       "sourceFormat": "mp4"
     },
     {
@@ -516,6 +579,15 @@
       "name": "yt-Y1JClvDETcU-ore-crystal-easier.mp4",
       "sha256": "3da3d7d5966eee30e8d5e948396c539b33cc5f843d73d428517eea4f16a61e5e",
       "source": "https://www.youtube.com/watch?v=Y1JClvDETcU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 3712733,
+      "name": "yt-YzigcCZX0zg-book-reader.mp4",
+      "range": { "end": 108, "start": 78 },
+      "sha256": "bb0ae96f5c0dcfcb57a947db0920add56a4145f3684232cafd70c72021832510",
+      "source": "https://www.youtube.com/watch?v=YzigcCZX0zg",
       "sourceFormat": "mp4"
     },
     {
@@ -612,6 +684,15 @@
       "name": "yt-b6YZXYBegKA-statue-blessing.mp4",
       "sha256": "48fc474048306017b5ee016f08d1b90fc70673b7cfed2ff1e34666f04f7d94e0",
       "source": "https://www.youtube.com/watch?v=b6YZXYBegKA",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 22944070,
+      "name": "yt-bkZ3LRXeYPw-spiral-abyss-two-halves.mp4",
+      "range": { "end": 200, "start": 170 },
+      "sha256": "9941a389425af6bed14d8c4055e2ba97b402212c9b92d2ec46fdfdbb3a7dfc3c",
+      "source": "https://www.youtube.com/watch?v=bkZ3LRXeYPw",
       "sourceFormat": "mp4"
     },
     {
@@ -878,6 +959,15 @@
       "name": "yt-sQNqMfmfkZU-splash-opening.mp4",
       "sha256": "19b7b2458ed3d5d7b0fc5f7079cc5f2f5b6c5f44aacfc3385f2b30d7f712f531",
       "source": "https://www.youtube.com/watch?v=sQNqMfmfkZU",
+      "sourceFormat": "mp4"
+    },
+    {
+      "attribution": {},
+      "bytes": 3307384,
+      "name": "yt-tFkGln8Q1y4-character-details.mp4",
+      "range": { "end": 22, "start": 6 },
+      "sha256": "d93303d3162862c72ef6b0ea01dd0747a33508eaa18504ca89a88d8f23e2e031",
+      "source": "https://www.youtube.com/watch?v=tFkGln8Q1y4",
       "sourceFormat": "mp4"
     },
     {
