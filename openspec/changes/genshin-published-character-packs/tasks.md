@@ -6,7 +6,7 @@
 
 ## 2. Game text
 
-- [ ] 2.1 Add the downloading line (id 1323480176), the failure line (id 3595641979) and Retry as `GameTextKey` members and write them in every language. Verify: `pnpm -C scripts genshin:text write` leaves `packages/genshin-text/src/generated` changed only by these three keys and the key sort test passes.
+- [x] 2.1 Add the downloading line (id 1323480176), the failure line (id 3595641979) and Retry as `GameTextKey` members and write them in every language. Verify: `pnpm -C scripts genshin:text write` leaves `packages/genshin-text/src/generated` changed only by these three keys and the key sort test passes.
 
 ## 3. Download services
 
@@ -17,9 +17,9 @@
 
 ## 4. Opening and loading screen
 
-- [ ] 4.1 Start the preload when the opening mounts and expose bytes loaded, bytes pending, failure and retry from a composable. Verify: a test mounting the opening with an empty cache and a fetch stub showing the preload begins at mount, seen failing first.
+- [x] 4.1 Start the preload when the opening mounts and expose bytes loaded, bytes pending, failure and retry from a composable. Verify: a test mounting the opening with an empty cache and a fetch stub showing the preload begins at mount, seen failing first.
 - [x] 4.2 Compose the host's bar from the bytes while any are pending and the thirds after. Verify: tests named after the scenarios 'Size shows beside the bar while bytes are pending' and 'Nothing pending shows no size' on the bar's value, seen failing first.
-- [ ] 4.3 Draw the downloading line, the bytes over the bytes in the reader's language and the failure line with Retry on the startup loading screen. Verify: the screen's fixture renders with pending bytes, with none and with a failure.
+- [x] 4.3 Draw the downloading line, the bytes over the bytes in the reader's language and the failure line with Retry on the startup loading screen. Verify: the screen's fixture renders with pending bytes, with none and with a failure.
 
 ## 5. The world draws the model
 
