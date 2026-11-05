@@ -1,5 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 0
 x-model: claude-sonnet-5-5
 x-touches:
   [
