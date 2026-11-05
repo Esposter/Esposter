@@ -4,7 +4,8 @@
 
 ## 2. Wiki pages
 
-- [ ] 2.1 [phase 0] Add a step that fetches into the wiki cache the six enemy family pages the cached Enemy page names and the Hilichurl Fighter page, through the wiki's API, and leaves any page already cached untouched. Verify: a test named after the scenario "A cached enemy page is not fetched again", written first and seen failing; then the step's dry run lists each page with whether it is cached, and a run leaves all seven in the wiki cache folder.
+- [ ] 2.1 [phase 0] Add a step that fetches into the wiki cache the six enemy family pages the cached Enemy page names, the Hilichurl Fighter page and the Anemo Hypostasis and Perpetual Mechanical Array boss pages, through the wiki's API, and leaves any page already cached untouched. Verify: a test named after the scenario "A cached enemy page is not fetched again", written first and seen failing; then the step's dry run lists each page with whether it is cached, and a run leaves every page it lists in the wiki cache folder.
+- [ ] 2.2 [phase 4] Map each family label that a camp names to the variants its wiki family page lists, in the family-label map the camps read, in place of the hand-edited entries that leave most families out. Verify: a test named after the scenario "Every family label a camp names maps to a variant its page lists", written first and seen failing; then `pnpm -C scripts genshin:assets enemy-camps --dry-run` names each camp's enemy kinds, with none left unmapped.
 
 ## 3. Drops, attacks and the draw
 
@@ -14,7 +15,7 @@
 
 ## 4. Animation states
 
-- [ ] 4.1 [phase 0] Read a monster's Animator controller into each state, the clip it plays and the events that clip holds, printed by the monsters subcommand. Verify: a test over a small controller fixture, written first and seen failing; then the dry run prints the Hilichurl Fighter's states and the clip of its normal attack, which the export holds with no events.
+- [ ] 4.1 [phase 0] Read a monster's Animator controller into each state, the clip it plays and the events that clip holds, printed by the monsters subcommand, and export each clip the states play through `genshin:assets timings`, so the events are read from the export. Verify: a test over a small controller fixture, written first and seen failing; then the dry run prints the Hilichurl Fighter's states and the clip of its normal attack, which the export holds with no events, and `pnpm -C scripts genshin:assets timings "^Ani_Monster_Hili_"` writes the Hilichurl clips beside it.
 
 ## 5. The body and the telegraph
 
