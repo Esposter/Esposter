@@ -25,7 +25,7 @@ flowchart TD
    - **The reference.** `pnpm -C scripts recreation clip --directory {data-root}/genshin-parity/captures https://www.youtube.com/watch?v=a4_J84iMqR0 --from 0 --to 60 --name time`. The first still showing the dial at rest with nothing hovered is picked by hand from the clip, cut into the references, and named in `ParityReferenceMap` as `"menu-time": { source: "yt-a4_J84iMqR0-time.mp4 at <second>", screen: "MenuTime" }`; no contact sheet.
    - **The screen.** `components/Menu/Time/Index.vue` with `Index.fixture.ts` draws the dial, the hour it points at and the Confirm button, laid out in the reference's own pixels as `Menu/Paimon` is, with its words as `GameTextKey`s found by `pnpm -C scripts genshin:text find "<regex>"` and written with `genshin:text write`. A pointer dragged round the dial adds its turns to the advance, and Confirm emits `confirm` with `getTimeTargetMinutes`'s result.
    - **The wiring.** `World/Windrise` adds `gameClock` to its `defineExpose`, and `World/Session` fills `#[ScreenKind.Time]` with `MenuTime`, setting `windrise.value.gameClock.minutes` on `confirm` and closing back to the world.
-   - **The check.** `pnpm -C scripts genshin:parity compare menu-time` writes its row, and the comparison is queued for the user's eyes.
+   - **The check.** `pnpm -C scripts genshin:parity compare menu-time` writes its row, which stands as measured.
 
 ## Key files
 

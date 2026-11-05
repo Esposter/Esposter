@@ -7,8 +7,8 @@
 
 ## 2. Surface
 
-- [x] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console; the owner presses the key in the dev server.
-- [ ] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats; the owner's eyes judge the layout.
+- [x] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console.
+- [ ] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats.
 - [ ] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface'; `pnpm -C apps/web build` output holds no `createDevRegistry`.
 
 ## 3. Handles
@@ -23,5 +23,5 @@
 
 ## 5. Scenarios and convention
 
-- [x] 5.1 Write the first scenarios for the features that already exist (a boss fight, every chest tier, night at Windrise, a full bag), one file each. Verify: `services/dev/scenarios/constants.test.ts` runs each scenario's lines through `createDevRegistry` against stubbed handles and every line reports success; the owner checks them in game.
+- [x] 5.1 Write the first scenarios for the features that already exist (a boss fight, every chest tier, night at Windrise, a full bag), one file each. Verify: `services/dev/scenarios/constants.test.ts` runs each scenario's lines through `createDevRegistry` against stubbed handles and every line reports success.
 - [x] 5.2 Add the rule that a feature change registers its scenario, or states why it has none, to the `building-proposals` skill and to the openspec design rules. Verify: `git grep -n scenario .agents/skills/building-proposals` finds the rule and `openspec validate --strict` passes for this change.

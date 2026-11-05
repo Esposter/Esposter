@@ -21,7 +21,7 @@ The player gets a realm to furnish and live in, entered from the Serenitea Pot o
 ## Waiting on
 
 - Recordings the page lists as not yet found: the realm stores' fill rate and the Trust Rank queues.
-- The pond's fish rate: the game's text gives a pond's fish no growth rate, so growth stays provisional at none, a rate being a Manual verification question (the change's `x-waiting`). The count is the wiki's.
+- The pond's fish rate: the game's text gives a pond's fish no growth rate, so growth stays provisional at none (the change's `x-waiting`). The count is the wiki's.
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact

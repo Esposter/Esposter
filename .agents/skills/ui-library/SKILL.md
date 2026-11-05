@@ -22,7 +22,7 @@ The look is a design style — standard, the default, voxel or Genshin — besid
 
 - **A feature never names a style** — it reaches the look through a surface rule, a token or an icon meaning; `useUiStyle` and `data-ui-style` are the library's alone (`references/design-styles.md`).
 - **A drawing no token can express belongs to the library**, keyed on `useUiStyle` with the same DOM and roles in every style (`references/design-styles.md`).
-- **A new library component's test runs once per style** through `setupUiStyle`, and the eye check of a handed-over unit covers both styles in both modes.
+- **A new library component's test runs once per style** through `setupUiStyle`, and the driven-browser look at a finished unit covers both styles in both modes.
 
 ## Three layers
 

@@ -20,7 +20,7 @@ flowchart TD
   G -->|off| G
   G -->|holds| N{"Sound: music by listen, effects by their fitted bands"}
   N -->|off| N
-  N -->|holds| A["Acceptance: compare's perceptual score and the user's eye"]
+  N -->|holds| A["Acceptance: compare's perceptual score"]
   UI -->|holds| A
   A --> V["Approve in the visual suite"]
   V --> R["Record: investigations in the reference's topics, conventions in the skill"]

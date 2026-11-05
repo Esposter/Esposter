@@ -82,8 +82,6 @@ An area's roadmap is the change `<area>-roadmap`, with `skip_specs: true`. Its `
 
 A roadmap exists only while its area has open work. When the last item is built, moved to a change or decided against, the `<area>-roadmap` folder is deleted in the same change, never kept with an empty `## Later`.
 
-The Genshin roadmap's `## Manual verification` list is one line per item (the question, a link to the page that holds its source, the one fact to judge it by), its detail a decision on that page; `scripts/src/workspace/manualVerification.test.ts` enforces it, since a hundred paragraph-long questions cannot be read as a batch.
-
 ## Lifecycle map
 
 | State                     | Location                          | Action                                                                                                       |

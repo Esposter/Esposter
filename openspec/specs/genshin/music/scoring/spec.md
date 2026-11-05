@@ -1,6 +1,6 @@
 ## Purpose
 
-How a render of the login's music is judged against the game's own decoded sound, by pitch agreement and each octave band's level gap, with the other measures the parity commands read, and what their numbers are worth. The approval is by ear, since the score cannot hear.
+How a render of the login's music is judged against the game's own decoded sound, by pitch agreement and each octave band's level gap, with the other measures the parity commands read, and what their numbers are worth. The score cannot hear how a mix sounds.
 
 ## Requirements
 
@@ -66,15 +66,6 @@ No fixed gain per octave band SHALL ship, since a band gain fitted to half a seg
 
 - **WHEN** a band gain is fitted to half a segment's frames and scored on the other half
 - **THEN** it leaves about as much distance as no gain, so none ships
-
-### Requirement: Approval by ear
-
-A step SHALL be approved by ear once its numbers improve, since the score cannot hear how a mix sounds.
-
-#### Scenario: Numbers improve
-
-- **WHEN** a step improves its numbers
-- **THEN** the user's ear decides whether it sounds right
 
 ### Requirement: Attack shares count jumps between frames
 

@@ -129,7 +129,7 @@ const emit = defineEmits<{ upgrade: [index: number] }>();
 }
 
 /* The next level's phase, cost and the reason it cannot rise, beside the Upgrade. Their place and size are provisional,
-   queued for the user's eyes against the recording */
+   until a recording shows them */
 .detail {
   display: flex;
   flex-direction: column;

@@ -11,7 +11,7 @@
 
 ## 3. Look
 
-- [ ] 3.1 Place the frame by its measured rects, and compare its look with the weapon-levelling reference clip. Verify: the comparison is run by the `genshin-parity` loop and queued for the user's eyes.
+- [ ] 3.1 Place the frame by its measured rects, and compare its look with the weapon-levelling reference clip. Verify: the comparison is run by the `genshin-parity` loop.
 
 ## 4. Passive
 

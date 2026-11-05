@@ -25,9 +25,9 @@ No headless Chrome, no CDP, no screenshot after each edit, no poll loop for asyn
 
 1. **For a styling change, generate the CSS and read it** — a form that generates nothing is the finding (`references/css-generation.md`).
 2. **A component test, when it is cheap.** If the behaviour mounts under the repo's default Vitest setup and the assertions are about rendered structure or state a user depends on, write one — `testing` owns the conventions.
-3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, a third-party component's internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
+3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, a third-party component's internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology.
 4. **A driven browser, once, after the edits,** when the claim is one no test reaches: hit-testing, drag and drop, a second visit to a page, a Phaser or three.js lifecycle (`references/driven-browser.md`).
-5. **The user's own eyes** are the acceptance check for layout. Hand over what changed and what to look at, rather than claiming a look you did not take.
+5. **A layout claim no test and no driven browser reaches stays unverified**, and the report says so. Nothing is handed to the user to look at: nobody checks a layout by hand, so a look you did not take is never claimed.
 
 Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the steps above happened.
 

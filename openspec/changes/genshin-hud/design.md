@@ -5,7 +5,7 @@ The [HUD](../../specs/genshin/hud/design.md) is built with its pieces and their 
 ## Decisions
 
 - **The quest tracker has no rect, so it stays provisionally placed** until the game's tree gives it one. It is the one piece the fitted layout does not place.
-- **The judgements the roadmap holds stay there.** The stamina flash's share under an eighth, the uncharged burst in the keys' layout and the gold decided against for the burst fill wait on the roadmap's manual verification, and this page does not restate them.
+- **The open judgements stay in the HUD spec.** The stamina pulse's start under an eighth and the uncharged burst in the keys' layout are provisional, and the burst fill's element tone, not gold, is decided; each stands with its basis in the [HUD spec](../../specs/genshin/hud/design.md), which this page does not restate.
 
 ## Scope and order
 

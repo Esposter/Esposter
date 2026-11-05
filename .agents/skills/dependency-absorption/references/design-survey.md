@@ -22,4 +22,4 @@ The replacement's own design page gets a **Design sources** section with one lin
 
 ## What it does not replace
 
-The design pass in the `ui-library` skill (`references/design-pass.md`) still runs before the unit is handed over, and the eye check still confirms the result. The survey decides the arrangement before code exists; it does not sign the finished surface off.
+The design pass in the `ui-library` skill (`references/design-pass.md`) still runs before the unit is handed over, and the driven-browser look still confirms the result. The survey decides the arrangement before code exists; it does not sign the finished surface off.

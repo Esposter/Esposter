@@ -87,8 +87,8 @@ Provisional and unmeasured: the pill's right end (the column's 318 units, since 
 
 ## Notes
 
-- **Three values wait on the roadmap.** All three are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s Manual verification list, and the clips that would measure the last two stay on its References sought list.
-- **The order, the held F and the drops' stand-ins are this page's reading of the game.** The wiki documents neither how the game orders several prompts nor whether a held F repeats. Nearest first, a held F that repeats its pick up and spheres for drops are the readings closest to play; the tips clip's evenly spaced pick ups bear out the repeat, and the Manual verification confirms or replaces the rest.
+- **Three values are provisional.** The clips that would measure the last two stay on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
+- **The order, the held F and the drops' stand-ins are this page's reading of the game.** The wiki documents neither how the game orders several prompts nor whether a held F repeats. Nearest first, a held F that repeats its pick up and spheres for drops are the readings closest to play; the tips clip's evenly spaced pick ups bear out the repeat, and the rest stays this page's reading until a recording settles it.
 
 ## Sources
 

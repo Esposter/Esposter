@@ -20,6 +20,6 @@ export const staminaTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Whether a body treading still water strokes, read off a recording of the meter in still deep water; it is charged as stroking, a best estimate on the roadmap's Manual verification list",
+    "Whether a body treading still water strokes, read off a recording of the meter in still deep water; it is charged as stroking, a best estimate list",
   ],
 };

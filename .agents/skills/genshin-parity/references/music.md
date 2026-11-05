@@ -15,7 +15,7 @@ Read when recreating a piece of the game's music, or when changing the fit, the 
 7. **Layer its recordings.** `genshin:parity instruments` solves which recorded instrument and level each voice plays over its synthesized note, under the expression just fitted, and publishes a segment's layering and its recordings only where the mix lies nearer the game than the synthesizer alone, with its pitch agreement kept (`openspec/specs/genshin/sampled-instruments/design.md`). A fit writes every voice's recordings empty, so this follows each fit, and `genshin:parity expression` is run once more after it.
 8. **Play it.** A component that renders nothing creates an `AudioContext`, decodes the piece's recordings (`loadMusicRecordings`) from the URL its host passes it, starts the engine's `createMusicPlayer` over the data and the recordings, and resumes on the first pointer or key (`Login/Music`). Its fixture is `isMotionOnly`, which puts it on the parity page for scoring.
 9. **Score it.** `genshin:parity listen` renders each segment offline through that screen and scores it against the game's own decoded sound. Commit `ParityMusicScores.snapshot.md` with the change that moved it.
-10. **Hand it to the user's ear.** The session cannot hear. The numbers say what changed, and the user approves how it sounds.
+10. **The numbers are the verdict.** The session cannot hear and nobody listens by hand, so the report names what the listening score moved and nothing more is claimed about how it sounds.
 
 ## Rules
 

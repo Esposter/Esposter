@@ -22,4 +22,4 @@ Each of these is a finding in review, whatever the placement rules and the `ui-l
 
 ## Checking it
 
-Hand the finished surface to the user with the states to look at and the reference product's screen to compare it with (the `run-app` skill). Each difference they name is either a finding or a deviation with its reason.
+Drive the finished surface in a browser through its states and set it beside the reference product's screen (the `run-app` skill). Each difference is either a finding or a deviation with its reason.

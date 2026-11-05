@@ -87,6 +87,6 @@ export const locomotionTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "The glide's forward speed and its sink, the glider's height, the plunge's speed, the step, the steepest walkable slope, the capsule's radius, the wading depth's share of the body's height and the slide down ground too steep to stand on, which no clip or field holds, each a best estimate on the roadmap's Manual verification list until a recording's motion pass reads it",
+    "The glide's forward speed and its sink, the glider's height, the plunge's speed, the step, the steepest walkable slope, the capsule's radius, the wading depth's share of the body's height and the slide down ground too steep to stand on, which no clip or field holds, each a best estimate until a recording's motion pass reads it",
   ],
 };

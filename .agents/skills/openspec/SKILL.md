@@ -53,7 +53,7 @@ description: Apply when creating, updating or referencing any spec, design, prop
 - **Plain GFM in a `.md` file**, no frontmatter (`references/markdown-format.md`). A change's metadata is its `.openspec.yaml` (`references/change-metadata.md`).
 - **Mechanical follow-through.** A backticked path or code name is a claim the tree holds it, checked by the workspace tests; a moved file, a renamed name and an added page each owe a step (`references/moves-and-renames.md`).
 - **A revision re-reads the page's own summary** — the lead and the consequences, against what the body now says (`references/revisions.md`).
-- **Tests enforce the structure** — links, diagram labels, cited paths, the change's model and the Manual verification shape fail `pnpm test` in `scripts` (`references/spec-tests.md`).
+- **Tests enforce the structure** — links, diagram labels, cited paths, and the change's model fail `pnpm test` in `scripts` (`references/spec-tests.md`).
 
 ## Writing style
 

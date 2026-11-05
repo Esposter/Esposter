@@ -1,6 +1,6 @@
 # Parity
 
-The Genshin area recreates the game's own screens, so "does it look right" has an exact answer: the game. Parity is the loop that asks it. It is built for an agent, which reads images but drives no browser of its own: every step is one command that prints numbers and writes an image the agent reads (`scripts/src/services/genshinParity/commands/genshinParityCommand.ts`, `scripts/package.json` `genshin:parity`). The user's eye stays the final check. The loop is fast enough that nobody has to wait on that check (see Open).
+The Genshin area recreates the game's own screens, so "does it look right" has an exact answer: the game. Parity is the loop that asks it. It is built for an agent, which reads images but drives no browser of its own: every step is one command that prints numbers and writes an image the agent reads (`scripts/src/services/genshinParity/commands/genshinParityCommand.ts`, `scripts/package.json` `genshin:parity`).
 
 ## How it works
 
@@ -45,5 +45,5 @@ The interface is rebuilt from screenshots, which its overlay compare is meant to
 
 ## Open
 
-- [ ] **The loop is fast enough that nobody has to wait on the user's check** — no source yet: no timing of a loop run is recorded in the parity folder or in its benches.
+- [ ] **The loop is fast enough to run on every change** — no source yet: no timing of a loop run is recorded in the parity folder or in its benches.
 - [ ] **The overlay compare holds the rebuilt interface exactly** — no source yet: no overlay compare result is cited, and `scripts/src/services/genshinParity/commands/overlayCommand.ts` is the command, not a score.

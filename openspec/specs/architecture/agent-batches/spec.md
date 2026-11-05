@@ -112,7 +112,7 @@ The main session SHALL settle every call that does not need the user before brie
 
 #### Scenario: Calls only the user can make are asked together
 
-- **GIVEN** questions about taste, money, licensing or the user's own eyes and ears
+- **GIVEN** questions about taste, money or licensing
 - **WHEN** the main session has them all
 - **THEN** they are asked to the user in a single batch
 

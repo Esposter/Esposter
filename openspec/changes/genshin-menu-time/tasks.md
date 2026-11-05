@@ -13,4 +13,4 @@
 
 ## 4. Check
 
-- [ ] 4.1 Compare the Time screen's fixture with its reference. Verify: `pnpm -C scripts genshin:parity compare menu-time` writes its row, queued for the user's eyes.
+- [ ] 4.1 Compare the Time screen's fixture with its reference. Verify: `pnpm -C scripts genshin:parity compare menu-time` writes its row.

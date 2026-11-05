@@ -19,7 +19,7 @@
 
 - [ ] 4.1 Start the preload when the opening mounts and expose bytes loaded, bytes pending, failure and retry from a composable. Verify: a test mounting the opening with an empty cache and a fetch stub showing the preload begins at mount, seen failing first.
 - [x] 4.2 Compose the host's bar from the bytes while any are pending and the thirds after. Verify: tests named after the scenarios 'Size shows beside the bar while bytes are pending' and 'Nothing pending shows no size' on the bar's value, seen failing first.
-- [ ] 4.3 Draw the downloading line, the bytes over the bytes in the reader's language and the failure line with Retry on the startup loading screen. Verify: the screen's fixture renders with pending bytes, with none and with a failure; the owner's eyes judge the look against the game's own downloading line.
+- [ ] 4.3 Draw the downloading line, the bytes over the bytes in the reader's language and the failure line with Retry on the startup loading screen. Verify: the screen's fixture renders with pending bytes, with none and with a failure.
 
 ## 5. The world draws the model
 

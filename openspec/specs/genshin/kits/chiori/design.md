@@ -26,7 +26,7 @@ flowchart LR
 
 - **Her ascension passives are not built.** They add to her Tamoto and to her sweep and burst, and the kit framework has no hook for them yet, so they are left out rather than approximated.
 - **Her constellations are not built.** Their effects, including the Kinu her burst calls and the constructs her Geo passives depend on, have no hook in the kit framework yet, so none is approximated.
-- **The hold's threshold is the framework's default half second**, as no source gives Chiori's. The [spec](spec.md) keeps it provisional, and the roadmap's Manual verification list asks whether the half second is right.
+- **The hold's threshold is the framework's default half second**, as no source gives Chiori's. The [spec](spec.md) keeps it provisional.
 
 ## Key files
 
