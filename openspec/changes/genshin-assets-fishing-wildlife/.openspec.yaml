@@ -1,0 +1,22 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-phase: 6
+x-model: claude-haiku-5-5
+x-needs: [game-install, game-exports, media-engine]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/services/genshinParity/**",
+    "scripts/src/models/genshinAssets/**",
+    "packages/genshin-world/src/services/fishing/**",
+    "packages/genshin-world/src/services/wildlife/**",
+    "packages/genshin-world/src/components/Fishing/**",
+    "packages/genshin-world/src/components/World/Wildlife/**",
+    "packages/genshin-world/src/components/Archive/**",
+    "packages/genshin-world/src/services/dev/scenarios/**",
+    "packages/genshin-world/src/generated/gameDataLock.json",
+    "packages/genshin-engine/src/kits/**",
+    "packages/genshin-interface/src/components/InteractionPrompts/**",
+    "packages/genshin-text/src/**",
+    "openspec/changes/genshin-roadmap/**",
+  ]
