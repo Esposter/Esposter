@@ -20,7 +20,6 @@ import AutoImport from "unplugin-auto-import/rolldown";
 // A private package keeps the base's `dts: false`, for the reason the base gives: nothing types against its `dist`.
 export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {}): UserConfig =>
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
-    // @TODO: https://github.com/ubugeeei-prod/vize/issues/11907 — the declarations carry the checker's `ImportMeta` globals; drop the types ceiling's headroom and the leak with a release that shares the helper modules
     ...(readPackageManifest().private
       ? {}
       : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),
