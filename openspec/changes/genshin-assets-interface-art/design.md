@@ -94,7 +94,7 @@ Each kind runs in the order the [derived assets](../../specs/genshin/derived-ass
 **Flat mark, emblem or ornament (one or two tones)**
 
 - **Find:** `pnpm -C scripts genshin:parity screens <title>` lists a wiki article's whole-screen stills, and `pnpm -C scripts genshin:parity recordings clip <url> --from <s> --to <s> --name <name>` cuts a section of a video.
-- **Trace:** `pnpm -C scripts genshin:parity probe <reference> <x> <y> <width> <height>` finds the box and the ink, then `pnpm -C scripts genshin:parity trace <reference or "File:Title"> <x> <y> <width> <height> <scale> [inkShare]` traces it. Scale 3 suits inner detail and 8 an ornament, as the glyph rules set.
+- **Trace:** `pnpm -C scripts genshin:parity probe <reference> <x> <y> <width> <height>` finds the box and the ink, then `pnpm -C scripts genshin:parity trace <reference or "File:Title"> <x> <y> <width> <height> <scale> [inkShare]` traces it. Scale 3 suits inner detail, as the glyph rules set; 8 for an ornament is this design's own choice, which the glyph rules do not state.
 - **Record:** dividing the path by the scale into the reference's pixels, and writing it into the component's keyed map, is **no command yet** (task 1.2). The path map's shape is the one `InterfaceIconPathMap` holds.
 - **Prove:** a reference is named in the parity reference map and written with `pnpm -C scripts genshin:parity references pack`, then `pnpm -C scripts genshin:parity compare <reference>` scores it and `pnpm -C scripts genshin:parity approve <screen>` writes its image.
 
