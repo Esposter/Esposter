@@ -10,7 +10,7 @@ The package follows the webpage document in the page builder file for file: a no
 flowchart TD
   KIND["one node type per kind: props schema, form, defaults, label"] --> SCHEMA["surveyNodeSchema: a discriminated union on the type tag, strict props"]
   KIND --> MAP["definition map: a kind missing from either half fails the typecheck"]
-  MAP --> REG["registry: the root takes pages, a page takes elements, a template takes every kind but a panel"]
+  MAP --> REG["registry: the root takes pages, a page takes elements, a template takes all but panels"]
   SCHEMA --> DOC["surveyDocumentSchema: createBlockDocumentSchema, shape then ids and node limit"]
   REG --> DOC
   DOC --> CHECK{"checkSurveyDocument: unique names, expressions that parse, no none value taken"}
