@@ -167,7 +167,7 @@ Distant and low ground SHALL fade toward the sky's colour while the peaks stand 
 
 ### Requirement: Bloom glows only the brightest light and only where asked
 
-Bloom SHALL add a glow only to light brighter than nearly white, and only in a scene that asks for it.
+Bloom SHALL add a glow only to light brighter than the game's bloom threshold, and only in a scene that asks for it.
 
 #### Scenario: The sun glows in a scene that asks for bloom
 

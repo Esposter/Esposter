@@ -129,6 +129,8 @@ interface Props {
   heldScrolled?: number;
   // The bridges' and the pillars' hulls, and where each stands
   hulls: LoginHulls;
+  // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
+  isBloomed?: boolean;
   isDoorLit: boolean;
   // The walkway's paving, carved and painted over its tops
   paving: LoginPavingData;
@@ -159,6 +161,7 @@ const {
   door,
   heldScrolled,
   hulls,
+  isBloomed = true,
   isDoorLit,
   paving,
   qualityTier,
@@ -406,11 +409,12 @@ cloudSeaMaterial.colorNode = mix(
 const cloudSeaPosition: [number, number, number] = [0, LOGIN_CLOUD_SEA_HEIGHT, 0];
 const cloudSeaRotation: [number, number, number] = [-Math.PI / 2, 0, 0];
 const cloudSeaGeometryArgs: [number, number] = [LOGIN_CLOUD_SEA_SIZE, LOGIN_CLOUD_SEA_SIZE];
-// No grade and no bloom: every colour of the login is measured off its references through the tone mapping alone, the
-// Sky's, the haze's and the stone's light, so the frame is drawn through that alone and each inverts exactly
+// No grade: every colour of the login is measured off its references through the tone mapping, the sky's, the haze's and
+// The stone's light. The bloom is the game's own, lifting only what is past its threshold, and a reference that reads it
+// Against its frame without it is opened with `isBloomed` off
 usePostPipeline(
   () => qualityTier,
-  { fogUniforms, isBloomed: false, postUniforms, stoneLight: loginStoneLight },
+  { fogUniforms, isBloomed, postUniforms, stoneLight: loginStoneLight },
   () => LoginOcclusionRadiusMap[timeOfDay],
   skyUniforms,
   cloudLayer,

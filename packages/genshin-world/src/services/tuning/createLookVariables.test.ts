@@ -46,7 +46,7 @@ describe(createLookVariables, () => {
     expect(options.postUniforms.outlineThickness.value).toBe(0.005);
   });
 
-  test("names each look variable and its kind, in the panel's order, without a bloom or god rays pass", () => {
+  test("names each look variable and its kind, in the panel's order, without a god rays pass", () => {
     expect.hasAssertions();
 
     const variables = createLookVariables(createOptions(), {});

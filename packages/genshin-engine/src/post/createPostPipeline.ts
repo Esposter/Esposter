@@ -5,13 +5,13 @@ import type { Node } from "three/webgpu";
 import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
+import { createGameBloomNode } from "#src/post/createGameBloomNode";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
 import { createSightNode } from "#src/post/createSightNode";
 import { toneMapGenshinNode } from "#src/post/toneMapGenshinNode";
 import { UnsignedByteType } from "three";
 import { bilateralBlur } from "three/examples/jsm/tsl/display/BilateralBlurNode.js";
-import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { depthAwareBlend } from "three/examples/jsm/tsl/display/depthAwareBlend.js";
 import { godrays } from "three/examples/jsm/tsl/display/GodraysNode.js";
 import { lut3D } from "three/examples/jsm/tsl/display/Lut3DNode.js";
@@ -31,9 +31,6 @@ import {
 } from "three/tsl";
 import { RenderPipeline } from "three/webgpu";
 
-const BLOOM_STRENGTH = 0.35;
-const BLOOM_RADIUS = 0.4;
-const BLOOM_THRESHOLD = 0.85;
 const MIN_VIEW_DISTANCE = 0.001;
 // The frame after the scene, in the order light meets the eye:
 // 1. One pass draws the scene with every toon material's outline, the outline thinning past its fade distance, darkened
@@ -41,7 +38,7 @@ const MIN_VIEW_DISTANCE = 0.001;
 // 2. God rays are marched through the sun's shadow at half resolution, blurred, and blended in the sun's colour
 // 3. The height fog hazes what lies far or low, the outlines with it
 // 4. Where a scene has a sight, its reach mutes what is not lit and shows what is in the colour it is lit in
-// 5. Bloom lifts only what is brighter than nearly white: the sun, glints and elemental light
+// 5. Bloom lifts only what is brighter than the game's threshold, as its own programs draw it: the sun, glints and elemental light
 // 6. The grade maps display colours through the region's LUT, so it follows the tone mapping rather than feeding it
 // TRAA resolves the scene's edges before the tone mapping, from a velocity target the scene pass writes beside its
 // Colour; SMAA smooths the graded frame instead, for a tier that pays for neither
@@ -127,10 +124,9 @@ export const createPostPipeline = ({
   let bloomedNode: Node<"vec4"> = sightedNode;
 
   if (isBloomed && isBloomEnabled) {
-    const bloomNode = bloom(sightedNode, BLOOM_STRENGTH, BLOOM_RADIUS, BLOOM_THRESHOLD);
+    const bloomNode = createGameBloomNode(sightedNode);
     passNodes.push(bloomNode);
     bloomedNode = sightedNode.add(bloomNode);
-    postPipeline.bloomNode = bloomNode;
   }
 
   let resolvedNode: Node<"vec4"> = bloomedNode;

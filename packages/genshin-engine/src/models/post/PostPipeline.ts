@@ -1,4 +1,3 @@
-import type BloomNode from "three/examples/jsm/tsl/display/BloomNode.js";
 import type GodraysNode from "three/examples/jsm/tsl/display/GodraysNode.js";
 import type { RenderPipeline } from "three/webgpu";
 
@@ -7,7 +6,6 @@ import type { RenderPipeline } from "three/webgpu";
 // Awaiting `compileAsync` waits for the next frame's draw of the view, outlines included, and for the GPU to finish it, so
 // A host awaits it before it shows and the view it first shows builds no material or pipeline mid-frame
 export interface PostPipeline {
-  bloomNode?: BloomNode;
   compileAsync: () => Promise<void>;
   dispose: () => void;
   godraysNode?: GodraysNode;

@@ -19,6 +19,9 @@ export const openWitnessPage = async (
   width: number = STRUCTURE_WIDTH,
   // The only meshes the witness keeps, for a page that draws a few of a component's parts (`ParityPageOptions`)
   witnessMeshes?: readonly string[],
+  // Props the page is opened with over its reference's own, for a shot of the same state with one prop changed, such as
+  // The login's frame without its bloom
+  propOverrides?: Record<string, unknown>,
 ): Promise<{
   checkIsScored: (pixel: number, width: number) => boolean;
   close: () => Promise<void>;
@@ -40,7 +43,7 @@ export const openWitnessPage = async (
     .toBuffer();
   const { close, page } = await openParityPage({
     height,
-    props: reference.props,
+    props: { ...reference.props, ...propOverrides },
     screen: reference.screen,
     width,
     witness,

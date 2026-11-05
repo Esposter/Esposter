@@ -57,6 +57,9 @@ export const DISPLAY_CONTRAST_GATE = 0.1;
 // The bloom's reading covers the reference's pixels within this many of one it shows at the curve's white, and
 // Compares our frame with the bloom drawn and with it off over them
 export const BLOOM_REACH_PIXELS = 32;
+// The bloom's reading closes at zero: the drawn bloom reads closer to the reference's brightest pixels than none does
+// where it is negative, and a positive reading is a miss, reported and never tuned away
+export const BLOOM_READING_GATE = 0;
 // The light pass reads a reference's shadows at this width, where its gate, two of a 1080-line recording's pixels,
 // Spans more than one
 export const SHADOW_WIDTH = 1280;

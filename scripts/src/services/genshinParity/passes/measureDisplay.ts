@@ -4,9 +4,11 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityP
 import { computeLightPlaneResidual } from "#src/services/genshinParity/display/computeLightPlaneResidual";
 import { readDisplaySamples } from "#src/services/genshinParity/display/readDisplaySamples";
 import { solveToneContrast } from "#src/services/genshinParity/display/solveToneContrast";
-import { DISPLAY_CONTRAST_GATE } from "#src/services/genshinParity/passes/constants";
+import { computeBloomReading } from "#src/services/genshinParity/passes/computeBloomReading";
+import { BLOOM_READING_GATE, DISPLAY_CONTRAST_GATE, DISPLAY_WIDTH } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
+import { readBloomFrames } from "#src/services/genshinParity/passes/readBloomFrames";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { GENSHIN_TONE_CONTRAST } from "genshin-engine";
 
@@ -19,11 +21,13 @@ const MIN_SAMPLE_COUNT = 3;
 // (`readDisplaySamples`), and the tone curve's contrast its light lies flattest under (`solveToneContrast`). Its reading
 // Is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well apart,
 // And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light pass
-// Solves, so no reference measures it
+// Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over each reference's brightest
+// Pixels, our frame drawn with the game's bloom less ours drawn without it, gated at zero where the drawn bloom closes
 export const measureDisplay = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   await fetchReferences();
   const measures: ParityPassMeasure[] = [];
-  for (const referenceId of getCurrentBuildReferenceIds(component)) {
+  const referenceIds = getCurrentBuildReferenceIds(component);
+  for (const referenceId of referenceIds) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const samples = await readDisplaySamples(referenceId, component, MIN_DISPLAY);
     if (samples.length < MIN_SAMPLE_COUNT) {
@@ -50,6 +54,17 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
           value: residual === 0 ? 0 : (shippedResidual - residual) / residual,
         },
       ],
+    });
+  }
+  for (const referenceId of referenceIds) {
+    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
+    const { bloomed, height, reference, unbloomed } = await readBloomFrames(referenceId, component);
+    const reading = computeBloomReading(reference, bloomed, unbloomed, DISPLAY_WIDTH, height);
+    measures.push({
+      notes: [
+        `${referenceId}: the drawn bloom less none reads ${reading.toFixed(3)} ΔE over the reference's brightest pixels, negative where it closes`,
+      ],
+      readings: [{ gate: BLOOM_READING_GATE, name: `${referenceId} bloom's reading`, unit: "ΔE", value: reading }],
     });
   }
   return mergeParityPassMeasures(measures);

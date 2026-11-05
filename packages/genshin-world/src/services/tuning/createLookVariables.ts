@@ -3,7 +3,6 @@ import type { GenshinTuningOptions } from "#src/models/tuning/GenshinTuningOptio
 import type { PostPipeline } from "genshin-engine";
 import type { Except } from "type-fest";
 
-import { createBloomVariables } from "#src/services/tuning/createBloomVariables";
 import { createFogVariables } from "#src/services/tuning/createFogVariables";
 import { createGodRaysVariables } from "#src/services/tuning/createGodRaysVariables";
 import { createGradeVariables } from "#src/services/tuning/createGradeVariables";
@@ -15,7 +14,7 @@ import { createWaterVariables } from "#src/services/tuning/createWaterVariables"
 import { createWindVariables } from "#src/services/tuning/createWindVariables";
 
 // The look's every uniform as a development variable, in the panel's sections of it, so the hour, clouds, wind, ramp, rim,
-// Outline, fog, water, grade, god rays and bloom are set against reference screenshots rather than guessed. A ramp or a
+// Outline, fog, water, grade and god rays are set against reference screenshots rather than guessed. A ramp or a
 // Grade is written into its texture at once; nothing is saved, and a value that looks right is copied into the region's
 // Constants
 export const createLookVariables = (
@@ -23,7 +22,7 @@ export const createLookVariables = (
     GenshinTuningOptions,
     "devRegistry" | "getRenderer" | "isTemporalAntialiasingOn" | "postPipeline" | "sun"
   >,
-  { bloomNode, godraysNode }: Pick<PostPipeline, "bloomNode" | "godraysNode">,
+  { godraysNode }: Pick<PostPipeline, "godraysNode">,
 ): DevVariable[] => [
   ...createSkyVariables(options),
   ...createWindVariables(options),
@@ -34,5 +33,4 @@ export const createLookVariables = (
   ...createWaterVariables(options),
   ...createGradeVariables(options),
   ...createGodRaysVariables({ godraysNode, postUniforms: options.postUniforms }),
-  ...createBloomVariables({ bloomNode }),
 ];
