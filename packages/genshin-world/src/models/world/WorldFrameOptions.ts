@@ -37,7 +37,7 @@ export interface WorldFrameOptions {
   showCursor: () => void;
   stepAbyss: (step: WorldChallengeStep) => void;
   stepAutoRecover: (step: {
-    deltaMilliseconds: number;
+    deltaSeconds: number;
     getMaxHealth: (characterId: number) => number | undefined;
     isNearStatue: boolean;
     party: Party;

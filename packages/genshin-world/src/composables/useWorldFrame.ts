@@ -85,15 +85,15 @@ export const useWorldFrame = ({
   };
   // The player's reach in the world: the Oculus the body touches is collected, the statue in reach restores the party,
   // And the interactable the prompts select is acted on
-  const stepInteraction = (deltaMilliseconds: number) => {
-    const interactable = readInteraction(inputState, deltaMilliseconds);
+  const stepInteraction = (deltaSeconds: number) => {
+    const interactable = readInteraction(inputState, deltaSeconds);
     const touchedOculus = findTouchedOculus();
     if (touchedOculus) collectOculus(OCULUS_REGION_ID, touchedOculus);
     const isNearStatue = interactionPrompts.value.interactables.some(
       ({ id, kind }) =>
         kind === InteractionKind.Activate && unlockedLandmarkIds.value.has(id) && getStatueRegionId(id) !== undefined,
     );
-    stepAutoRecover({ deltaMilliseconds, getMaxHealth: getMemberMaxHealth, isNearStatue, party });
+    stepAutoRecover({ deltaSeconds, getMaxHealth: getMemberMaxHealth, isNearStatue, party });
     dispatchInteraction(interactable);
   };
   const stepFrame = ({ delta, elapsed }: { delta: number; elapsed: number }) => {

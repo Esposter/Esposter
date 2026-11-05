@@ -47,12 +47,12 @@ export const useWorldRestorativePower = ({ unlockedLandmarkIds }: { unlockedLand
   );
   // Auto-recover runs once a stand by a statue's base reaches its dwell, with the switch on
   const stepAutoRecover = ({
-    deltaMilliseconds,
+    deltaSeconds,
     getMaxHealth,
     isNearStatue,
     party,
   }: {
-    deltaMilliseconds: number;
+    deltaSeconds: number;
     getMaxHealth: (characterId: number) => number | undefined;
     isNearStatue: boolean;
     party: Party;
@@ -60,7 +60,7 @@ export const useWorldRestorativePower = ({ unlockedLandmarkIds }: { unlockedLand
     const autoRecoverStep = advanceAutoRecoverDwell(
       autoRecoverDwell,
       isNearStatue && autoRecoverSetting.value.isOn,
-      deltaMilliseconds,
+      deltaSeconds,
     );
     autoRecoverDwell = autoRecoverStep.dwell;
     if (autoRecoverStep.isDue)
