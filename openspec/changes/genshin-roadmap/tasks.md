@@ -160,6 +160,8 @@ The References sought are the items below that name a clip or still file (a `.mk
 
   Asset: help question mark | needed by: Mail, the menus' help buttons | form: mark | seen in: mail-screen, at the header's right | source: the client's menu icon set; cannot be shipped | note: drawn bare
 
+  Asset: header close mark | needed by: Mail | form: mark | seen in: mail-screen, the close mark across the header | source: the client's menu icon set; cannot be shipped | note: drawn bare
+
   Asset: sender person mark | needed by: Mail (list rows) | form: mark | seen in: mail-screen, before each sender | source: the client's icon set; cannot be shipped | note: drawn bare
 
   Asset: gold star mark | needed by: Mail (the pinned row and the foot's star disc), Achievements | form: mark | seen in: mail-screen, the list's star and the foot's disc | source: the client's icon set; cannot be shipped | note: drawn bare, the disc has no icon
