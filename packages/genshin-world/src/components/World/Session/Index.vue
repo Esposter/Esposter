@@ -142,7 +142,7 @@ import { CharacterMenuTab, GAME_CREAM, InventorySort, ItemCategory } from "gensh
 import { GameTextKey } from "genshin-text";
 import { Group, PCFShadowMap, Vector3 } from "three";
 
-interface Props extends Omit<WorldScreenProps, "isHeld">, WorldTables {}
+interface Props extends WorldScreenProps, WorldTables {}
 
 const {
   accountAvatarUrl,

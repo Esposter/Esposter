@@ -65,11 +65,6 @@ const sessionProps = computed(() => {
   return rest;
 });
 const tables = shallowRef<WorldTables>();
-// The gate is the screen's alone, so the session takes every other prop the host gives
-const sessionProps = computed(() => {
-  const { isHeld: _isHeld, ...rest } = props;
-  return rest;
-});
 // The deployed team the save holds, whose kits the world reads before it opens: a new player's starting team, as a new
 // Player's save holds it
 const { characters: savedCharacters, party } = props.save ?? EMPTY_GENSHIN_SAVE;
