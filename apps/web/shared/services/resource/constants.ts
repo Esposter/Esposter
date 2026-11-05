@@ -43,9 +43,6 @@ export const ASSET_GRACE_MS = Temporal.Duration.from({ hours: 1 }).total("millis
 // That landed just after the decision read as older than it. Moving the stamp back keeps such a blob, and a later release
 // Collects it once it is unreferenced
 export const ASSET_DECISION_CLOCK_MARGIN_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
-// Counting-only: while this is off, release computes the unreferenced assets, logs their count and deletes nothing.
-// Read through a function so the rollout flips one return value, and so a suite can hold it either way
-export const checkIsAssetCollectionEnabled = (): boolean => false;
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;
 // Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction —

@@ -71,7 +71,7 @@ An uploaded asset SHALL be deleted only when no stored version and no working co
 
 #### Scenario: Collecting the last reference deletes the asset and credits the owner
 
-- **GIVEN** an image is referenced by one stored version only, the working copy no longer embeds it, and the counting-only period is not in effect
+- **GIVEN** an image is referenced by one stored version only, and the working copy no longer embeds it
 - **WHEN** that version is collected
 - **THEN** the image is deleted
 - **AND** the owner's storage usage falls by the size of the image
@@ -116,17 +116,6 @@ A save of the working copy SHALL leave referenced every asset the stored content
 - **WHEN** the owner's next successful save embeds only the first image
 - **THEN** the second image is no longer referenced by the working copy
 - **AND** the first image is still referenced throughout
-
-### Requirement: Collection waits out a counting-only period
-
-An asset that no stored version references SHALL remain stored while collection is in its counting-only period.
-
-#### Scenario: An unreferenced asset stays stored during the counting-only period
-
-- **GIVEN** the counting-only period is in effect
-- **WHEN** the last version referencing an image is collected
-- **THEN** the image remains stored
-- **AND** the image is counted as unreferenced
 
 ### Requirement: Deletion waits out the grace window
 
@@ -178,14 +167,3 @@ An anonymous request for an asset SHALL be served only while the resource is pub
 - **GIVEN** a published page does not reference an image the working copy uses
 - **WHEN** an anonymous request opens the image's address
 - **THEN** the request is refused as unauthenticated
-
-### Requirement: Counting-only period deletes nothing
-
-While collection is in its counting-only period, release SHALL compute the unreferenced set and log its count, and SHALL delete nothing.
-
-#### Scenario: Counting-only logs the unreferenced count
-
-- **GIVEN** the counting-only period is in effect
-- **WHEN** a version holding two assets is collected
-- **THEN** no asset is deleted
-- **AND** the count of unreferenced assets is logged

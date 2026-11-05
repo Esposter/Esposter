@@ -22,19 +22,10 @@ import {
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
-import { noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-// The collection flag is a constant, so the suite reads it through a getter the tests move: counting-only is the value
-// Production ships, and the collecting scenarios turn it on for themselves
-const { collectionState } = vi.hoisted(() => ({ collectionState: { isEnabled: false } }));
-
-vi.mock(import("#shared/services/resource/constants"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  checkIsAssetCollectionEnabled: () => collectionState.isEnabled,
-}));
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
 
@@ -88,7 +79,6 @@ describe(releaseResourceAssets, () => {
 
   beforeEach(async () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    collectionState.isEnabled = false;
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
@@ -110,7 +100,6 @@ describe(releaseResourceAssets, () => {
   test("an asset embedded in a stored version is kept while the version lives", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
     vi.setSystemTime(graceElapsedAt);
@@ -124,7 +113,6 @@ describe(releaseResourceAssets, () => {
   test("collecting one version keeps an asset another version uses", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
     await writeVersion(2, getAssetContent(assetHash));
@@ -140,7 +128,6 @@ describe(releaseResourceAssets, () => {
   test("an asset an element names by its bare file id is kept while the version lives", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(assetHash));
     vi.setSystemTime(graceElapsedAt);
@@ -153,7 +140,6 @@ describe(releaseResourceAssets, () => {
   test("an asset only an older retained version names is kept", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(assetHash));
     await writeVersion(2, getFileIdContent());
@@ -167,7 +153,6 @@ describe(releaseResourceAssets, () => {
   test("an asset no retained version names is deleted", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(otherAssetHash));
     vi.setSystemTime(graceElapsedAt);
@@ -184,7 +169,6 @@ describe(releaseResourceAssets, () => {
   test("an asset the working copy names is kept", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await mockContext.db.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
     vi.setSystemTime(graceElapsedAt);
@@ -199,7 +183,6 @@ describe(releaseResourceAssets, () => {
   test("collecting the last reference deletes the asset and credits the owner", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
     const { assetHashes } = await deleteVersion(1);
@@ -214,45 +197,14 @@ describe(releaseResourceAssets, () => {
     });
   });
 
-  test("an unreferenced asset stays stored during the counting-only period", async () => {
-    expect.hasAssertions();
-
-    await uploadAsset(assetHash);
-    vi.setSystemTime(graceElapsedAt);
-
-    await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
-
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
-    expect(
-      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(getResourceFileBlobName(resource.id, assetHash)),
-    ).toBe(true);
-  });
-
   // An upload that dedupes onto an object touches it, and the save that names it can land a moment later
   test("a re-uploaded asset is kept through the grace window", async () => {
     expect.hasAssertions();
 
-    collectionState.isEnabled = true;
     await uploadAsset(assetHash);
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
-  });
-
-  test("counting-only logs the unreferenced count", async () => {
-    expect.hasAssertions();
-
-    const infoSpy = vi.spyOn(console, "info").mockImplementation(noop);
-    await uploadAsset(assetHash);
-    await uploadAsset(otherAssetHash);
-    await writeVersion(1, getAssetContent(assetHash, otherAssetHash));
-    const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(graceElapsedAt);
-
-    await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
-
-    expect(infoSpy).toHaveBeenCalledWith("unreferenced assets counted", { count: 2, resourceId: resource.id });
     expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
 });

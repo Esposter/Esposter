@@ -37,8 +37,8 @@ import {
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
-import { jsonDateParse, noop, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { MockContainerDatabase, MockEventGridDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { PositionedElementType } from "headless-block-editor";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -184,6 +184,7 @@ describe(saveResourceContent, () => {
     vi.restoreAllMocks();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockContainerDatabase.clear();
+    MockEventGridDatabase.clear();
     MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
@@ -505,7 +506,6 @@ describe(saveResourceContent, () => {
     const webpage = await createWebpage();
     await uploadAssetBlob(webpage.id, assetHash);
     await uploadAssetBlob(webpage.id, otherAssetHash);
-    const infoSpy = vi.spyOn(console, "info").mockImplementation(noop);
     await saveResourceContent(ctx, {
       content: createWebpageContent(webpage.id, [assetHash, otherAssetHash]),
       resource: webpage,
@@ -513,12 +513,15 @@ describe(saveResourceContent, () => {
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
 
-    // Past the grace window the upload restarted, so the dropped asset is counted rather than kept
+    // Past the grace window the upload restarted, so the dropped asset is deleted rather than kept
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ASSET_GRACE_MS));
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
-    expect(infoSpy).toHaveBeenCalledWith("unreferenced assets counted", { count: 1, resourceId: webpage.id });
+    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toMatchObject({
+      blobNames: [getResourceFileBlobName(webpage.id, otherAssetHash)],
+      containerName: AzureContainer.ResourceAssets,
+    });
   });
 
   test("references the file a whiteboard image names by its bare id", async () => {

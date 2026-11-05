@@ -6,11 +6,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
-import {
-  ASSET_DECISION_CLOCK_MARGIN_MS,
-  ASSET_GRACE_MS,
-  checkIsAssetCollectionEnabled,
-} from "#shared/services/resource/constants";
+import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { checkIsNotFound } from "@esposter/db";
 import {
   AzureContainer,
@@ -74,12 +70,6 @@ export const releaseResourceAssets = async (
     return graceChecks.filter(({ isWithinGrace }) => !isWithinGrace).map(({ hash }) => hash);
   });
 
-  // Counting-only computes the same set and deletes none of it, so a period of counting shows what collection would
-  // Have taken before it is allowed to take anything
-  if (!checkIsAssetCollectionEnabled()) {
-    console.info("unreferenced assets counted", { count: unreferencedHashes.length, resourceId });
-    return;
-  }
   // Best-effort and after the transaction: nothing here is written, and a failed publish leaves the blob stored and
   // Charged until the next release names it again
   await publishBlobDeletion(
