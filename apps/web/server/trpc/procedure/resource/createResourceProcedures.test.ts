@@ -22,6 +22,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import {
+  ASSET_DECISION_CLOCK_MARGIN_MS,
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
@@ -772,9 +773,9 @@ describe(createResourceProcedures, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  // The file's blob is named by its hash and the delete hands that hash to the release path. Nothing is published for
-  // Deletion here, so the image is still in the container for the release to decide on
-  test("removing an image from the working copy keeps it on the published page", async () => {
+  // The file's blob is named by its hash and the delete hands that hash to the release path. No row names the file, so
+  // The release decides to delete it and publishes the deletion; the Function performs it, so the blob is still here
+  test("deleting a file no row names publishes its deletion", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
@@ -786,7 +787,13 @@ describe(createResourceProcedures, () => {
       ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
     );
 
-    expect(blobDeletionEvents).toStrictEqual([]);
+    expect(blobDeletionEvents.map(({ data }) => data)).toStrictEqual([
+      {
+        blobNames: [blobName],
+        containerName: AzureContainer.ResourceAssets,
+        decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+      },
+    ]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(true);
   });
 

@@ -17,7 +17,11 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
-import { ASSET_GRACE_MS, SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
+import {
+  ASSET_DECISION_CLOCK_MARGIN_MS,
+  ASSET_GRACE_MS,
+  SNAPSHOT_INTERVAL_MS,
+} from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
@@ -518,9 +522,10 @@ describe(saveResourceContent, () => {
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
-    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toMatchObject({
+    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
       blobNames: [getResourceFileBlobName(webpage.id, otherAssetHash)],
       containerName: AzureContainer.ResourceAssets,
+      decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
     });
   });
 
