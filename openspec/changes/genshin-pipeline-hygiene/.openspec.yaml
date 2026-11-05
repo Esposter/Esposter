@@ -1,0 +1,15 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-phase: 0
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/shared-node/src/services/cache/**",
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/services/genshinParity/**",
+    "scripts/src/services/recreation/animeStudio/**",
+    "scripts/src/services/fleet/data/**",
+    "scripts/src/services/gameData/**",
+    "packages/genshin-world/parity/**",
+    "packages/genshin-world/src/services/**",
+  ]

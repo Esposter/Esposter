@@ -1,0 +1,17 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-phase: 0
+x-model: claude-haiku-5-5
+x-needs: [game-install]
+x-touches:
+  [
+    "scripts/src/services/provenance/**",
+    "scripts/src/services/producerStamp/**",
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/services/genshinText/**",
+    "scripts/src/services/gameData/**",
+    "scripts/src/services/recreation/animeStudio/**",
+    "scripts/src/services/recreation/video/**",
+    "scripts/src/services/shared/**",
+    "scripts/src/services/fleet/data/**",
+  ]
