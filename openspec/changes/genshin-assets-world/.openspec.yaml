@@ -1,0 +1,16 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-phase: 0
+x-needs: [game-exports, game-install]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/fit/**",
+    "scripts/src/services/genshinAssets/shared/**",
+    "scripts/src/models/genshinAssets/shared/**",
+    "scripts/src/services/genshinParity/commands/**",
+    "packages/genshin-world/src/components/World/**",
+    "packages/genshin-world/src/models/world/**",
+    "packages/genshin-world/src/services/sumeru/**",
+    "openspec/changes/genshin-roadmap/**",
+  ]
