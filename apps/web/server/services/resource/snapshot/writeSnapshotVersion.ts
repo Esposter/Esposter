@@ -9,6 +9,7 @@ import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSn
 import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
 import { getSnapshotUrlAssetHashes } from "#server/services/resource/snapshot/getSnapshotUrlAssetHashes";
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
+import { readReferencedAssetHashes } from "#server/services/resource/snapshot/readReferencedAssetHashes";
 import { readSnapshotAnchor } from "#server/services/resource/snapshot/readSnapshotAnchor";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { touchSnapshotAssets } from "#server/services/resource/snapshot/touchSnapshotAssets";
@@ -52,8 +53,16 @@ export const writeSnapshotVersion = async (
     // Touched before the object is written, so a refused version leaves no object behind either. A published version is
     // What a reader is served, so it is refused while a url of this resource's own file names one the store does not hold.
     // A bare id is never refused, since a 64-hex token can be a digest in text rather than a file. Any other channel keeps
-    // What the user wrote, since a revision or a restore naming a gone file is data rather than a broken page
-    const missingAssetHashes = await touchSnapshotAssets(id, assetHashes);
+    // What the user wrote, since a revision or a restore naming a gone file is data rather than a broken page.
+    // A touch restarts the grace window of an asset nothing references, so only the assets no row of the resource names
+    // Are touched, which keeps a document of pasted digests at one touch each the first time rather than on every write.
+    // A url of the resource's own file is asked of the store whatever names it, because the refusal needs its answer
+    const referencedAssetHashes = await readReferencedAssetHashes(tx, id);
+    const touchedAssetHashes = new Set([
+      ...urlAssetHashes,
+      ...[...assetHashes].filter((assetHash) => !referencedAssetHashes.has(assetHash)),
+    ]);
+    const missingAssetHashes = await touchSnapshotAssets(id, touchedAssetHashes);
     const isUrlAssetMissing = [...urlAssetHashes].some((assetHash) => missingAssetHashes.has(assetHash));
     if (channel === SnapshotChannel.Published && isUrlAssetMissing)
       throw new InvalidOperationError(

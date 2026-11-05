@@ -16,7 +16,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(writeSnapshotVersion, () => {
@@ -73,6 +73,61 @@ describe(writeSnapshotVersion, () => {
     ).resolves.toBeUndefined();
     await expect(mockContext.db.select().from(resourceVersionAssetsInResource)).resolves.toStrictEqual([]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.size ?? 0).toBe(0);
+  });
+
+  // A touch restarts the grace window of an asset nothing references. The digests are what a document of pasted hashes
+  // Holds: tokens no file backs, each costing one request the first time a row names it and none after
+  test("touches an asset no row names once, and none a row already names", async () => {
+    expect.hasAssertions();
+
+    const digests = Array.from({ length: 5 }, (_value, index) => `${index}`.repeat(64));
+    const serializedContent = JSON.stringify({ text: digests.join(" ") });
+    const setMetadata = vi.spyOn(MockBlobClient.prototype, "setMetadata");
+
+    await writeSnapshotVersion(
+      mockContext.db,
+      resource,
+      { channel: SnapshotChannel.Revisions, version: 1 },
+      serializedContent,
+    );
+
+    expect(setMetadata).toHaveBeenCalledTimes(digests.length);
+
+    setMetadata.mockClear();
+    await writeSnapshotVersion(
+      mockContext.db,
+      resource,
+      { channel: SnapshotChannel.Revisions, version: 2 },
+      serializedContent,
+    );
+
+    expect(setMetadata).not.toHaveBeenCalled();
+  });
+
+  // The refusal needs to know whether the file is stored, which no row can say. A row named it when the revision was
+  // Taken, and the file was deleted since
+  test("refuses a published version naming a missing file that an earlier version's row names", async () => {
+    expect.hasAssertions();
+
+    const missingAssetUrl = getResourceAssetUrl(getResourceFileBlobName(resource.id, missingAssetHash));
+    const serializedContent = JSON.stringify({ sections: [{ image: missingAssetUrl, type: "image" }] });
+    await writeSnapshotVersion(
+      mockContext.db,
+      resource,
+      { channel: SnapshotChannel.Revisions, version: 1 },
+      serializedContent,
+    );
+
+    await expect(
+      writeSnapshotVersion(
+        mockContext.db,
+        resource,
+        { channel: SnapshotChannel.Published, version: 1 },
+        serializedContent,
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
+    );
   });
 
   // Only a url of this resource's own file is held to the refusal. A bare id can be a digest in text rather than a file,

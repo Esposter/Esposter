@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The images a note holds: added from its menu, by paste or by drop, kept at a resource asset address with alt text, and shown in a published note only from that address.
+The images a note holds: added from its menu, by paste or by drop, kept at a resource asset address with alt text, and shown in a published note only from that address. An image renders at its natural size, capped at the column width by the rich-text typography; that cap is shipped and has no requirement or scenario below, since a scenario is a test's name and a layout claim waits for a browser suite ([design](design.md)).
 
 ## Requirements
 
