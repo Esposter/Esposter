@@ -21,9 +21,10 @@ Finish Genius Invokation TCG beyond its tutorial: every card's effect, seated op
 
 ## Capabilities
 
-- **genshin/genius-invokation** (new)
+- **genshin/genius-invokation/decks** (each card's effect as the game's card data gives it, and its cost)
+- **genshin/genius-invokation/duel-board** (the talks that offer a duel, the Adventure Rank gate, the board's names for a screen reader)
+- **genshin/genius-invokation/progression** (new: the Player Level, the rewards a won duel pays, the Card Shop)
 - **genshin/genius-invokation/rules** (the round limit)
-- **genshin/genius-invokation/duel-board** (the board's names for a screen reader)
 
 ## Waiting on
 
