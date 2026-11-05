@@ -2,7 +2,7 @@
 
 ## Why
 
-Genshin Impact's continent of seven nations is not in the app. This program rebuilds the game's world as a recreation the reader can explore: as close to its regions as careful reference can make it, its look and sky built first, then its regions one by one, then its features one at a time.
+Genshin Impact's continent of seven nations is not in the app. This program rebuilds the game's world as a recreation the reader can explore: as close to its regions as careful reference can make it, built in the phases the [phases change](../genshin-phases/design.md) gives: its look and sky first, then its playable core and its regions one by one, then its systems.
 
 ## What Changes
 
@@ -12,7 +12,7 @@ Build the Genshin recreation as the Genshin page's world: an explorable continen
 - Characters are drawn only from the official HoYoverse models, which the app publishes under the owner's statement that HoYoverse permits it.
 - Each frame's acceptance is its perceptual score against its game references.
 - Each region is built on the shared world engine, adding its palette, building kit, flora, weather and landmarks.
-- The play features and then the game's systems are built one page each, in the order their pages give.
+- Each feature and system is built one page at a time, in the phase its row in the design's table of pages names.
 - Multiplayer is not part of the world; co-op stays deferred.
 - The world carries no payment and no HoYoverse branding in its chrome.
 

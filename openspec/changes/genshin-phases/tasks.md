@@ -23,4 +23,4 @@
 
 ## 5. The program page
 
-- [ ] 5.1 Replace the program page's four phase tables with the phases and gates here, keeping its pages as the units each phase holds. Verify: `pnpm exec openspec validate genshin-program --strict --no-interactive` passes and the program's table of pages names each page's phase.
+- [x] 5.1 Replace the program page's four phase tables with the phases and gates here, keeping its pages as the units each phase holds. Verify: `pnpm exec openspec validate genshin-program --strict --no-interactive` passes and the program's table of pages names each page's phase.
