@@ -17,7 +17,6 @@ export interface SecurityHeaders {
   strictTransportSecurity?: false | StrictTransportSecurity;
   xContentTypeOptions?: false | string;
   xDNSPrefetchControl?: false | string;
-  xDownloadOptions?: false | string;
   xFrameOptions?: false | XFrameOptions;
   xPermittedCrossDomainPolicies?: false | string;
 }

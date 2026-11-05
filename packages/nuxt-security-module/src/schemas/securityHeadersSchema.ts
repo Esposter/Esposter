@@ -21,7 +21,6 @@ export const securityHeadersSchema: z.ZodType<SecurityHeaders> = z.strictObject(
   strictTransportSecurity: z.union([strictTransportSecurityOptionsSchema, z.literal(false)]).optional(),
   xContentTypeOptions: z.union([headerValueSchema, z.literal(false)]).optional(),
   xDNSPrefetchControl: z.union([headerValueSchema, z.literal(false)]).optional(),
-  xDownloadOptions: z.union([headerValueSchema, z.literal(false)]).optional(),
   xFrameOptions: z.union([z.enum(XFrameOptions), z.literal(false)]).optional(),
   xPermittedCrossDomainPolicies: z.union([headerValueSchema, z.literal(false)]).optional(),
 });

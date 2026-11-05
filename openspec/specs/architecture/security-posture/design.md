@@ -32,7 +32,7 @@ flowchart TD
 
 ### Embedder policy
 
-The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](../../nuxt-security-module/defaults-review/design.md) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `server/plugins/nuxtAssets.ts` adds the production policy to built JavaScript requests under `/_nuxt/` through Nitro's request hook before Nitro handles the static asset.
+The module sends `Cross-Origin-Embedder-Policy` on rendered pages only, never on a static asset, with the value its [defaults review](../../nuxt-security-module/defaults-review/design.md) records for each environment. A page under an embedder policy can start a dedicated worker only when the worker's script sends one as well, so without it every `?worker` import fails in production and nowhere else. `server/plugins/nuxtAssets.ts` adds the policy to built JavaScript requests under `/_nuxt/` in every environment through Nitro's request hook before Nitro handles the static asset.
 
 A route-rule pattern would overlap Nuxt AI Ready's `/**.md` cache rule, which is why the policy is set in the hook instead.
 

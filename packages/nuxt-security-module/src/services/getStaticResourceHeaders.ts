@@ -10,7 +10,6 @@ export const getStaticResourceHeaders = (headers: SecurityHeaders): Record<strin
     referrerPolicy: headers.referrerPolicy,
     strictTransportSecurity: headers.strictTransportSecurity,
     xContentTypeOptions: headers.xContentTypeOptions,
-    xDownloadOptions: headers.xDownloadOptions,
     xFrameOptions: headers.xFrameOptions,
     xPermittedCrossDomainPolicies: headers.xPermittedCrossDomainPolicies,
   });

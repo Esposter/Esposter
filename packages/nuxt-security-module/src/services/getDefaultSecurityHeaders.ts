@@ -67,7 +67,6 @@ export const getDefaultSecurityHeaders = (isDevelopment: boolean, isStrict: bool
   strictTransportSecurity: { includeSubdomains: true, maxAge: 63072000, preload: false },
   xContentTypeOptions: "nosniff",
   xDNSPrefetchControl: "off",
-  xDownloadOptions: "noopen",
   xFrameOptions: XFrameOptions.SameOrigin,
   xPermittedCrossDomainPolicies: "none",
 });

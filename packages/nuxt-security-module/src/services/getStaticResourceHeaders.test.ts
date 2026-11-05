@@ -10,7 +10,6 @@ describe(getStaticResourceHeaders, () => {
       "Referrer-Policy": "no-referrer",
       "Strict-Transport-Security": "max-age=63072000; includeSubDomains",
       "X-Content-Type-Options": "nosniff",
-      "X-Download-Options": "noopen",
       "X-Frame-Options": "SAMEORIGIN",
       "X-Permitted-Cross-Domain-Policies": "none",
     });

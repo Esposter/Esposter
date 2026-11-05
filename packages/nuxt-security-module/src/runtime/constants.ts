@@ -16,7 +16,6 @@ export const SECURITY_HEADER_NAMES: Readonly<Record<keyof SecurityHeaders, strin
   strictTransportSecurity: "Strict-Transport-Security",
   xContentTypeOptions: "X-Content-Type-Options",
   xDNSPrefetchControl: "X-DNS-Prefetch-Control",
-  xDownloadOptions: "X-Download-Options",
   xFrameOptions: "X-Frame-Options",
   xPermittedCrossDomainPolicies: "X-Permitted-Cross-Domain-Policies",
 };
