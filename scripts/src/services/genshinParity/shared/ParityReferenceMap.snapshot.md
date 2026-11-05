@@ -39,7 +39,7 @@ committed.
 | `forge-screen-queues`                  | `ForgeScreen`               |                                                                          3.22% | 0.803 |  1.75% | 0.1522 |
 | `forge-screen-refused`                 | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
 | `forge-screen-weapons-done`            | `ForgeScreen`               |                                     pending: no screenshot of this variant yet |       |        |        |
-| `gcg-duel-board`                       | `GcgScreen`                 |                                                                          7.74% | 0.570 |  3.85% | 0.3115 |
+| `gcg-duel-board`                       | `GcgScreen`                 |                                                                          7.62% | 0.573 |  3.68% | 0.3097 |
 | `handbook-experience`                  | `HandbookScreen`            |                                                                          4.17% | 0.958 |  1.97% | 0.2110 |
 | `health-notice`                        | `SplashHealthNotice`        |                                                                          6.17% | 0.964 |  1.51% | 0.1780 |
 | `health-notice-japanese`               | `SplashHealthNotice`        |                                                                          8.38% | 0.873 |  1.54% | 0.2395 |

@@ -43,8 +43,9 @@ const emit = defineEmits<{ select: [] }>();
 </template>
 
 <style scoped>
-/* The card's art is not drawn: its plate is the mean colour of the six cards' art in the frame, and its frame is the cream
-   border the game draws. The game shows no name on a card in this frame, so the name is only the button's label */
+/* The card's art is not drawn: its plate is the mean colour of the six cards' art in the frame at each height (the top
+   quarter's, then down the card), and its frame is the cream border the game draws. The game shows no name on a card in
+   this frame, so the name is only the button's label */
 .character {
   --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;
@@ -53,7 +54,7 @@ const emit = defineEmits<{ select: [] }>();
   padding: 0;
   border: calc(var(--unit) * 3) solid #e6dcc6;
   border-radius: calc(var(--unit) * 10);
-  background: #8e8593;
+  background: linear-gradient(#908389 12%, #887c8a 37%, #8b8190 62%, #9b9cb2 88%);
   box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 6) rgb(0 0 0 / 0.35);
   color: #f5ecd6;
   cursor: inherit;

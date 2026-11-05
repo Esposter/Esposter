@@ -26,7 +26,7 @@ const emit = defineEmits<{ select: [] }>();
 
 <style scoped>
 /* A card's frame is measured off the game's frame at 1080 high: its cream border, and its plate the mean of the hand's
-   visible art. Its cost is the game's hexagon, and its name is only the button's label */
+   visible art down the card's top half. Its cost is the game's hexagon, and its name is only the button's label */
 .card {
   --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;
@@ -36,7 +36,7 @@ const emit = defineEmits<{ select: [] }>();
   padding: 0;
   border: calc(var(--unit) * 3) solid #ead7be;
   border-radius: calc(var(--unit) * 10);
-  background: #bcb7ac;
+  background: linear-gradient(#929b93, #9ba29a 25%, #c2c2b9 53%);
   box-shadow: 0 calc(var(--unit) * 2) calc(var(--unit) * 6) rgb(0 0 0 / 0.35);
   color: #fdf3f3;
   cursor: inherit;
