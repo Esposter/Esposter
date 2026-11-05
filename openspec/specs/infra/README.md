@@ -4,7 +4,7 @@
 
 - [Azure Pulumi layout](azure-pulumi-layout/design.md) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
 - [Branch namespaces](branch-namespaces/design.md) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
-- [Claude interface](claude-interface/README.md) — Claude Code given a personality, a voice and a working surface: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, a set of mods in the persona's colours, and the agent console that works the terminal's sessions from a page of the app.
+- [Claude interface](claude-interface/README.md) — Claude Code given a personality and a voice: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, and a set of mods in the persona's colours.
 - [Cost & Security Posture](cost-and-security-posture/design.md) — the budget guard cycle and why each hardening step is deliberately deferred.
 - [Event Grid dead-letter](eventgrid-dead-letter/design.md) — failed deliveries land in a blob container whose writes push-trigger an automatic, attempt-capped replay.
 - [Observability](observability/design.md) — why App Insights and Log Analytics are deliberately not provisioned, and what the estate relies on instead.
@@ -38,5 +38,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Branch namespaces** — a branch's name is the whole convention for who may create and push it, enforced by rulesets. → [Branch namespaces](branch-namespaces/design.md)
 - **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Azure Pulumi layout](azure-pulumi-layout/design.md)
 - **Claude interface** — a persona plugin and spoken replies for one workspace package; the desktop stage stays two proposals behind a gate of use. → [Claude interface](claude-interface/README.md)
-- **Agent console** — the terminal's working surface moved into a page of the app, its gaps to full parity named on the parity page. → [Agent console](claude-interface/agent-console/README.md)
 - **Genshin mods** — the mods and the delegation guard run on the function hooks, so nothing is written into the person's settings. → [Genshin mods](claude-interface/genshin-mods/README.md)

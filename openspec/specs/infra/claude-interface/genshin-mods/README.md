@@ -59,7 +59,6 @@ flowchart LR
 
 ## Notes
 
-- The agent console does not show mods. It drives sessions through the Agent SDK and draws its own page, so the band reaches the terminal and the desktop app alone.
 - The mods API is labelled early access and moves between releases; `claude plugin validate` on the plugin after every engine update is where a change shows first.
 
 ## Sources

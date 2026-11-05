@@ -6,9 +6,9 @@ Every surface is written for the least technical person who will ever use it. If
 
 - **One way through.** A surface offers one path to its job. A second path for experts — a command, a pasted address, an advanced toggle — is a second thing the novice has to decide against, so it lives in the docs or a README, never beside the simple path.
 - **No plumbing on screen.** No addresses, ports, tokens, file paths, commands, IDs or JSON, unless the thing being shown is that plumbing. A detail the product needs is the product's to handle; a detail the reader must check for safety is said in plain words (_this link connects to another computer_), not shown raw.
-- **Steps are what the reader does, in order.** A task of more than one action is a numbered list, one action per step, naming the words the reader will see on screen (_More info_, _Run anyway_, _Hold Ctrl and click the link_) rather than describing them.
+- **Steps are what the reader does, in order.** A task of more than one action is a numbered list, one action per step, naming the words the reader will see on screen (_More info_, _Run anyway_) rather than describing them.
 - **Plain words, and the fewest of them.** Everyday words over technical ones, a short sentence over a long one, and nothing that explains how the product works inside. A sentence that only an expert needs is cut from the surface, not shortened.
-- **Every step that can fail says what to do next**, in the same plain words: _Close any other host window, then open this file again_, never an error code or a stack.
+- **Every step that can fail says what to do next**, in the same plain words: _Close any other window, then open this file again_, never an error code or a stack.
 - **Remove the step before explaining it.** When a step needs explaining, first ask whether it can go: an unzip becomes one file, a pasted address becomes a link, a link becomes a button. The explanation is what is left once nothing more can be removed.
 
 ```mermaid
@@ -20,10 +20,6 @@ flowchart TD
   E -->|no| W[Rewrite it in plain words, or split it into steps]
   W --> E
 ```
-
-## The worked case
-
-Connecting the [agent console](../../infra/claude-interface/agent-console/README.md) to a computer is three numbered steps with one button. The terminal route, a command and a pasted address, assumes Node, pnpm, a terminal and an idea of what an address with a token is, so it is not on the screen. The steps are _Download the host_, _Open the file you downloaded_, _Hold Ctrl and click the link in it_. The download is one file rather than a zip, because a zip opened on Windows looks runnable yet leaves its program cut off from the files it needs ([host installer](../../infra/claude-interface/agent-console/host-installer/design.md)). The command and the pasted address still exist, in the package README, for the reader who wants them.
 
 ## Where this sits
 

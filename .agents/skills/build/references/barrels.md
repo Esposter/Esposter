@@ -18,7 +18,7 @@ What makes it work looks redundant until it is gone:
 
 ## A name exported twice is a type error, never a silent drop
 
-Every line is `export *`, so two modules exporting the same name are an ambiguity TypeScript reports as `TS2308` — in the package's own typecheck, and in every consumer resolving its source. That is why the generator is ours and not ctix's: ctix resolved the same collision by dropping the name from the barrel with a warning and exit 0, so a rename could remove a public export with `publint`, `attw`, `deps.onlyImport` and typecheck all green. A module listed beside a hand-written barrel that re-exports it — `agent-console-server`'s `contracts` — is no collision, because both paths reach the same binding.
+Every line is `export *`, so two modules exporting the same name are an ambiguity TypeScript reports as `TS2308` — in the package's own typecheck, and in every consumer resolving its source. That is why the generator is ours and not ctix's: ctix resolved the same collision by dropping the name from the barrel with a warning and exit 0, so a rename could remove a public export with `publint`, `attw`, `deps.onlyImport` and typecheck all green. A module listed beside a hand-written barrel that re-exports it — `genshin-interface`'s `save` — is no collision, because both paths reach the same binding.
 
 Generation is **unguarded** — it runs on every build. It reads as a function of the source file list, and a skip keyed on that list would save milliseconds while trusting a key to see every way the output can move; CI's task cache already replays `dist` and the barrels together, keyed on every file the build read.
 
@@ -26,7 +26,7 @@ Generation is **unguarded** — it runs on every build. It reads as a function o
 
 ## A subpath entry is a hand-written barrel
 
-The generated barrel is the package's `.` entry and reaches every module. A second entry that must reach only part of the package — `agent-console-server`'s `contracts`, the wire a browser imports without the node half — is a hand-written file of `export * from` lines at `src/<entry>.ts`, named for the `dist/<entry>.js` the entry builds to. The generated barrel lists it too, harmlessly, for the reason above.
+The generated barrel is the package's `.` entry and reaches every module. A second entry that must reach only part of the package — `genshin-interface`'s `save`, the save's own entry, which the app's server loads without the interface's components — is a hand-written file of `export * from` lines at `src/<entry>.ts`, named for the `dist/<entry>.js` the entry builds to. The generated barrel lists it too, harmlessly, for the reason above.
 
 ## Why the packages are not built more concurrently
 

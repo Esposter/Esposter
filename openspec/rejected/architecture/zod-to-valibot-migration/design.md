@@ -10,8 +10,6 @@ Moving every schema in the repository from Zod to Valibot, along with the JSON S
 
 **The schema forms lean on what Zod ships.** The form pipeline turns a schema into JSON Schema with `z.toJSONSchema` and reads the typed `layout` metadata the app declares on `GlobalMeta`. Zod copies every metadata field into that output and takes a pipe's output side. Valibot's converter is a separate package whose guide lists transformations as unsupported, and the repository normalizes strings with a transform piped into a refined schema in every form. The metadata would be rebuilt as actions, and whether the converter keeps a normalized field's constraints would have to be proven field by field.
 
-**Zod stays installed regardless.** The Claude Agent SDK, which the agent console depends on, declares Zod as a peer dependency, so the tree would hold both validators and the migration would remove neither.
-
 **There is no incremental path.** A Zod schema cannot sit inside a Valibot object or the reverse, so the `.shape` spreads and `satisfies z.ZodType<T>` declarations that compose the models cannot straddle the two, and the no-compatibility-debt skill refuses to keep an old form beside its replacement. The move would be one change across every package at once, and it would break the public types of the published packages that expose Zod schemas.
 
 ## Sources
@@ -20,4 +18,3 @@ Moving every schema in the repository from Zod to Valibot, along with the JSON S
 - [Valibot JSON Schema guide](https://valibot.dev/guides/json-schema/) — Valibot: transformations listed as unsupported by the converter.
 - [Zod JSON Schema](https://zod.dev/json-schema) — Zod: metadata copied into the output, and the output side taken for a pipe.
 - [Drizzle v1.0.0-beta.15 release notes](https://github.com/drizzle-team/drizzle-orm/releases/tag/v1.0.0-beta.15) — Drizzle: the separate validator packages folded into `drizzle-orm`.
-- [Claude Agent SDK package metadata](https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk/latest) — npm: the SDK's peer dependency on Zod.

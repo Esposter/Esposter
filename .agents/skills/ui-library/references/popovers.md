@@ -4,7 +4,7 @@ Read when a component opens a panel through `usePopover` — a popover, a menu, 
 
 **A popover's open state is the ref handed to `usePopover`, never a mirror of the one it returns.** Its `isOpen` option takes the component's own `defineModel` and owns the rest: an immediate watch shows or hides the panel from the ref, and its `toggle` listener writes a light dismiss or a `popovertarget` press back into it. So the library writes no watcher between the two — a watcher each way echoes a parent's write back as an `update:` and misses a panel mounted open (`apps/web/app/components/Ui/Popover.vue`, `apps/web/app/components/Ui/Menu/Index.vue`).
 
-A manual popover whose openness is derived takes a `computed` with a `noop` setter, since only its own show and hide ever write it (`apps/web/app/components/Ui/CaretPopover.vue`, `apps/web/app/components/Ui/Suggestions.vue`).
+A manual popover whose openness is derived takes a `computed` with a `noop` setter, since only its own show and hide ever write it (`apps/web/app/components/Ui/CaretPopover.vue`).
 
 The panel cannot refuse an open by leaving the model alone: `popovertarget` opens it before the ref is written.
 

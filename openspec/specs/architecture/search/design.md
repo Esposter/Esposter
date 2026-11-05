@@ -67,7 +67,7 @@ Boost the field a user is most likely to be naming — the title in the command 
 
 A small list searched as a whole — the slash commands, the explorer's pages and services, a friend picker — goes through `searchItems` (`app/services/search/searchItems.ts`), which builds that index over the fields a caller names and ranks the hits; an index tuned to its data (emoji) or kept in registration order (the command palette) builds its own.
 
-**Find-in-text is not search.** Filtering a log for the literal characters typed — the agent console's conversation filter, a sheet column's "contains" operation — is a substring match, as Ctrl+F is: a tokenized prefix index would miss a term inside a word (`Error` in `TypeError`), which is exactly what the reader is looking for there.
+**Find-in-text is not search.** Filtering a list for the literal characters typed — a sheet column's "contains" operation — is a substring match, as Ctrl+F is: a tokenized prefix index would miss a term inside a word (`Error` in `TypeError`), which is exactly what the reader is looking for there.
 
 This branch has no `isPending` and no abort, because there is nothing asynchronous to track. It is not an exception to the ban — the ban is on re-rolling the _server_ query lifecycle — and it is not a licence to hand-roll the index either.
 

@@ -2,14 +2,12 @@
 
 ## Why
 
-Genshin Impact's continent of seven nations is not in the app. The agent console's world is a voxel realm of the console's own invention, so the game's regions, look and systems are absent. This program rebuilds the game's world as a recreation the reader can explore: as close to its regions as careful reference can make it, its look and sky built first, then its regions one by one, then its features one at a time.
+Genshin Impact's continent of seven nations is not in the app. This program rebuilds the game's world as a recreation the reader can explore: as close to its regions as careful reference can make it, its look and sky built first, then its regions one by one, then its features one at a time.
 
 ## What Changes
 
-Build the Genshin recreation as the agent console's world: an explorable continent in the app, rebuilt region by region from the game's own data, with its features copied one page at a time.
+Build the Genshin recreation as the Genshin page's world: an explorable continent in the app, rebuilt region by region from the game's own data, with its features copied one page at a time.
 
-- **BREAKING:** the Genshin world replaces the agent console's voxel world at `/genshin` outright, and no voxel option is kept.
-- The console's Claude sessions keep working over the Genshin world.
 - The app's bundle ships no game model, texture, sound or image file; its geometry, textures and shaders are authored in the repository, and the game's own files reach the reader only by a download from the published containers at the startup loading screen.
 - Characters are drawn only from the official HoYoverse models, which the app publishes under the owner's statement that HoYoverse permits it.
 - Each frame's acceptance is its perceptual score against its game references.
@@ -28,4 +26,4 @@ Build the Genshin recreation as the agent console's world: an explorable contine
 
 ## Impact
 
-The agent console's `/genshin` page and the world behind it, which replaces the voxel world. The shared world engine, the regions' packages and the play-feature and game-system pages built on them. The hosted game data the world reads by key, and the references held outside the repository.
+The `/genshin` page and the world behind it. The shared world engine, the regions' packages and the play-feature and game-system pages built on them. The hosted game data the world reads by key, and the references held outside the repository.

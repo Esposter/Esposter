@@ -2,7 +2,7 @@
 
 ## Why
 
-The repository as a voxel city the person walked their character through, each folder a district and each file a building — rejected, because the console's world is Genshin's continent and has no place for a second map of the code.
+The repository as a voxel city the person walked their character through, each folder a district and each file a building — rejected, because the world is Genshin's continent and has no place for a second map of the code.
 
 ## What Changes
 

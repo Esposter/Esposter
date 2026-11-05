@@ -37,7 +37,6 @@ flowchart TD
 | :----------------------------------------------- | :------------------------------ | :---------------------------------------------------- |
 | `UiDataTable` rows — resources, survey responses | The row's `onOpen`              | The selection checkbox, a favorite star, action menus |
 | A dashboard visual's tile                        | Its edit dialog                 | The edit and delete corner, the dialog itself         |
-| The agent console's tool calls and thinking      | Folding or unfolding the block  | Text a reader selects                                 |
 | A TodoList's task row                            | The todo's detail dialog        | Nothing — the notes stay in the dialog                |
 | Posts and comments                               | Nothing — the title is the link | Their rendered description and its links              |
 

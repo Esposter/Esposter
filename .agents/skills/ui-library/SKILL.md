@@ -14,7 +14,7 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
 - **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`openspec/specs/architecture/ui-library/design.md`, "Rejected").
-- **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is pinned by the agent console; why one look was rejected is in `openspec/specs/architecture/design-language/design.md`, "Design styles".
+- **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is the game's own; why one look was rejected is in `openspec/specs/architecture/design-language/design.md`, "Design styles".
 
 ## A look is a style, not the library
 

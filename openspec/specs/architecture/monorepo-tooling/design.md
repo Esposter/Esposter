@@ -226,7 +226,7 @@ What a Windows machine needs that a clone, two logins and the install do not giv
 - **AnimeStudio** has no Windows build or fetch command: its build script is osx-arm64 only, so the Windows command line is unpacked by hand and named by `GENSHIN_ANIMESTUDIO_CLI`; the Oodle hook it needs is the committed patch under `scripts/src/services/recreation/animeStudio/patches`.
 - **`ffmpeg`** is read from `PATH` by the media-engine check; the capture encoder `h264_amf` needs an AMD GPU.
 - **Fleet** machines also need an SSH key for the peer and a `{state-root}/peers.json`, which no repository file writes; `{state-root}/machine.json` is written by `pnpm ai:fleet:profile`.
-- **Ports** the repository binds are 3011 (the genshin parity page, which `GENSHIN_PARITY_PORT` probes first), 3000 (the app) and 7437 (the agent console host).
+- **Ports** the repository binds are 3011 (the genshin parity page, which `GENSHIN_PARITY_PORT` probes first) and 3000 (the app).
 
 `pnpm ai:setup` checks the facts above on Windows, each in its own row, and prints what to do for one that is not in place; it installs none of them. Edge is the existing Microsoft Edge row, which every platform checks. The Railway CLI is not checked, since its deploy checks are not Genshin work, and the fleet profile is checked Genshin-only.
 

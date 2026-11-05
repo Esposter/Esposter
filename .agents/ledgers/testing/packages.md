@@ -10,7 +10,6 @@
 | `vue-phaserjs`                                       | 2026-10-25 · Haiku 5.5  |                                                                    |
 | `configuration`, `infra`                             | 2026-10-26              |                                                                    |
 | `keyframe-store`                                     | 2026-10-25 · Haiku 5.5  |                                                                    |
-| `agent-console-server`                               | 2026-10-26              |                                                                    |
 | `genshin-persona`                                    | 2026-10-26              | its mocks are hoisted factories, typed off the source              |
 | `genshin-engine`                                     | 2026-10-26              |                                                                    |
 | `genshin-world/parity`                               | 2026-10-29 · Haiku 5.5  |                                                                    |

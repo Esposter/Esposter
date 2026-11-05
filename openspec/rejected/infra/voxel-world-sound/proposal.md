@@ -2,7 +2,7 @@
 
 ## Why
 
-Footsteps by the block under the player and the door heard where it stood, in the agent console's voxel world — rejected, because every sound it keyed on was a voxel's.
+Footsteps by the block under the player and the door heard where it stood, in a voxel world — rejected, because every sound it keyed on was a voxel's.
 
 ## What Changes
 

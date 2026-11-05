@@ -32,7 +32,7 @@ flowchart LR
 - **`Item.onClick`'s event is optional.** A suggestion runs an item with no pointer or key event, so the type says so rather than passing a placeholder.
 - **The popover passes its own title, `BLOCKS`.** It shares the `/` character, `SuggestionTrigger.Slash`, with the composer's slash commands, so a title keyed by the trigger would head both `COMMANDS`; each list hands `getSuggestionListTitle` its title instead.
 - **The extension is added in the editor, not in `getNoteExtensions`.** That set also builds the published `generateHTML` render, which must not carry a suggestion plugin.
-- **The list draws in the editor's caret popover** through `RichTextEditorSuggestions`, which the Note editor hosts beside its menu bar, so the page's theme scope reaches the list.
+- **The list draws in the editor's caret popover** through `RichTextEditorSuggestions`, which the Note editor hosts beside its menu bar, so the page's theme reaches the list.
 - **No slash menu in the message composer.** Its `/` stays the message slash commands.
 - **Embeds and database blocks are left out** (`/table`, `/image`, `/page`), since each is a new node type with its own design.
 

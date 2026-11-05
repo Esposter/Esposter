@@ -50,9 +50,9 @@ A link SHALL be drawn in the info colour and underlined while hovered.
 - **WHEN** the reader hovers it
 - **THEN** the link is underlined
 
-### Requirement: The app offers three design styles that never move the layout
+### Requirement: The app offers two design styles that never move the layout
 
-The app SHALL offer three design styles, and switching between them SHALL NOT move any control.
+The app SHALL offer two design styles, and switching between them SHALL NOT move any control.
 
 #### Scenario: Switching style leaves every control in place
 
@@ -78,9 +78,9 @@ A design style SHALL change how surfaces are drawn, and SHALL NOT change their s
 
 #### Scenario: Each style gives every control the same size and spacing
 
-- **GIVEN** a page is laid out in each of the three styles
+- **GIVEN** a page is laid out in each of the two styles
 - **WHEN** the layouts are compared
-- **THEN** every control has the same size and spacing in all three
+- **THEN** every control has the same size and spacing in both
 
 ### Requirement: A feature's own code never chooses a design style
 
@@ -97,16 +97,6 @@ A feature's own code SHALL NOT choose a design style, so any difference in look 
 - **GIVEN** a feature names a style-specific detail in its own markup
 - **WHEN** the repository's checks run
 - **THEN** the check fails
-
-### Requirement: A region can pin its own mode and style
-
-A region SHALL be able to pin its own mode and style, and it SHALL draw in them wherever it sits on the page.
-
-#### Scenario: The agent console keeps the Genshin style on any page
-
-- **GIVEN** the agent console is open inside a page in the standard style
-- **WHEN** its panels are drawn
-- **THEN** the panels draw in the Genshin style
 
 ### Requirement: The standard style separates surfaces by tone rather than outline
 

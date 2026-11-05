@@ -137,7 +137,7 @@ It is the convergence test [engineering loops](../../architecture/engineering-lo
 
 A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on `ai/queue`, where the review workflow reviews it before fast-forwarding `main` to it ([review](../../infra/review/design.md)). In Esposter the drain is also a step of what a session runs next when nothing is asked, placed by [engineering loops](../../architecture/engineering-loops/design.md), since the owner wrote each follow-up down or accepted a session writing it.
 
-A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up, started by the [agent console](../../infra/claude-interface/agent-console/README.md)'s host, would keep each one clean — a step deferred until a drain has been seen to degrade.
+A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up would keep each one clean — a step deferred until a drain has been seen to degrade.
 
 ## What is deliberately not in it
 

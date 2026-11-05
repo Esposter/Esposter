@@ -31,7 +31,6 @@ flowchart TD
 
 - **The screens of features the world lacks**, among them the shop, the events, the battle pass, co-op, friends, mail and notices, and the Miliastra Wonderland's functions. Their entries are drawn disabled once their system is open, until each screen is built, and are not drawn while their system is not open.
 - **The shortcut wheel.** It offers the same screens as the menu and earns its place once the menu holds enough of them to choose from; its binding is read already.
-- **The agent console's entries.** Where the console's sessions are reached from in the game's style is the console's rebuild, its own page.
 
 ## Key files
 

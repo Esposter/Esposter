@@ -11,7 +11,6 @@ Composable shape and, first, the primitives that already own a job: ordering ove
 | `app/composables/dungeons`, `app/composables/clicker`      | 2026-10-05 · Opus 5.5 | Phaser-driven; frame loops are not async ordering                                 |
 | `app/store` as call sites                                  | 2026-10-05 · Opus 5.5 | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
 | `app/composables/ui`                                       | 2026-10-05 · Opus 5.5 |                                                                                   |
-| `app/composables/agentConsole`                             | 2026-10-05 · Opus 5.5 |                                                                                   |
 
 ## The find recipe
 

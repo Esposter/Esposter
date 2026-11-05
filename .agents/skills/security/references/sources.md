@@ -18,7 +18,7 @@ Read when a risk has no owner in `references/owasp-top-10.md`, when a defence is
 - OWASP API Security Top 10 (2023) — https://api-security.owasp.org/editions/2023/en/0x11-t10/ — tRPC is an API. Object-level and property-level authorization, and unrestricted resource consumption, are the entries a procedure hits most.
 - OWASP ASVS 5.0 — https://owasp.org/www-project-application-security-verification-standard — the requirement-level checklist to read when a whole subsystem (auth, uploads, sessions) is being designed rather than reviewed.
 - OWASP Top 10 CI/CD Security Risks — https://owasp.org/www-project-top-10-ci-cd-security-risks — for `.github/`, the review workflow and Renovate.
-- OWASP Top 10 for LLM Applications — https://genai.owasp.org/llm-top-10/ — for the agent console and anything that hands text to a model with tools.
+- OWASP Top 10 for LLM Applications — https://genai.owasp.org/llm-top-10/ — for anything that hands text to a model with tools.
 - CWE Top 25 — https://cwe.mitre.org/top25/ — the weakness ids a finding can cite.
 
 ## OWASP cheat sheets
@@ -57,7 +57,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
   - https://cheatsheetseries.owasp.org/cheatsheets/XS_Leaks_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html
 - Realtime:
-  - https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html — Web PubSub, the agent console socket
+  - https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html — Web PubSub
 - Abuse and availability:
   - https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Bot_Management_and_Anti-Automation_Cheat_Sheet.html
@@ -81,7 +81,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
   - https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/GitHub_Actions_Security_Cheat_Sheet.html
 - AI and agents:
-  - https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html — the agent console
+  - https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/MCP_Security_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html — code this repo's sessions write

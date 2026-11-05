@@ -8,22 +8,16 @@ Every surface is written for the least technical person who will use it — one 
 
 Each surface SHALL offer exactly one path to its job, and any expert alternative SHALL live outside the surface in the documentation.
 
-#### Scenario: Connecting a computer to the agent console
+#### Scenario: A surface with an expert route shows only its one path
 
-- **GIVEN** a reader who wants to connect the agent console to a computer
-- **WHEN** the reader opens the connection screen
-- **THEN** only the download and open steps are shown
-- **AND** the command-line route is not shown on the screen
+- **GIVEN** a surface with one path to its job and an expert route to the same job
+- **WHEN** the reader opens the surface
+- **THEN** only the one path is shown
+- **AND** the expert route is not shown on the screen
 
 ### Requirement: A surface shows no plumbing
 
 A surface SHALL NOT show addresses, ports, tokens, file paths, commands, identifiers or raw data unless showing that detail is the purpose of the surface.
-
-#### Scenario: A connection is established
-
-- **GIVEN** a reader whose computer has just connected
-- **WHEN** the connection screen updates
-- **THEN** no address or token is shown on the screen
 
 #### Scenario: A link leads to another computer
 
@@ -46,11 +40,11 @@ A task of more than one action SHALL be shown as numbered steps, one action per 
 
 Every step that can fail SHALL tell the reader in plain words what to do next, and SHALL NOT show an error code or a stack.
 
-#### Scenario: A file opened while another host window is open
+#### Scenario: A failed step says what to do next
 
-- **GIVEN** a host window already open on the computer
-- **WHEN** the reader opens the downloaded file
-- **THEN** the screen says to close the other host window and then open the file again
+- **GIVEN** a step on a surface fails
+- **WHEN** the failure is shown
+- **THEN** the screen says in plain words what to do next
 - **AND** no error code is shown
 
 ### Requirement: A step is removed before it is explained

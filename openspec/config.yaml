@@ -4,7 +4,7 @@ schema: spec-driven
 
 # Short project facts every artifact prompt should know. AGENTS.md already loads for agents, so only add what it does not say.
 context: |
-  Product: Esposter, a social platform monorepo (chat, Genshin tooling, agent console).
+  Product: Esposter, a social platform monorepo (chat, Genshin tooling).
   Stack: TypeScript strict; Nuxt + Vue front, tRPC and Nitro server routes, Drizzle over PostgreSQL, Azure Table and Blob, Azure Functions, Pinia, Vitest.
   Language: English
   Contract: canonical commands and architecture live in AGENTS.md at the repo root; OpenSpec holds requirements and decisions only.

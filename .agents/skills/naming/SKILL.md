@@ -81,7 +81,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 ## Environment Variables
 
-- **A value in a namespace the machine shares carries the product's prefix; the identifier holding it never does** — `HOST_SCHEME = "esposter-host"`, `SESSION_SECRET_ENVIRONMENT_VARIABLE = "ESPOSTER_SESSION_SECRET"`, never `"host"` or `"SESSION_SECRET"`, and our own text drops the name. `naming/no-site-name-literal` reports a string spelling it out (`references/shared-namespaces.md`)
+- **A value in a namespace the machine shares carries the product's prefix; the identifier holding it never does** — `CLIPBOARD_MARKER` = `${SITE_NAME.toLowerCase()}-page-builder`, never a bare `page-builder`, and our own text drops the name. `naming/no-site-name-literal` reports a string spelling it out (`references/shared-namespaces.md`)
 - **Our own env var values are always the strings `"true"` / `"false"`** — never `"0"` / `"1"` (`references/env-values.md`)
 
 ## Import Aliases

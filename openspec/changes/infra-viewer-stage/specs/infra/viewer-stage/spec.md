@@ -74,6 +74,12 @@ The persona SHALL play the motion mapped to attention wanted on the model, SHALL
 - **WHEN** a turn ends
 - **THEN** no motion is sent to the viewer
 
+#### Scenario: A stored motion map with a moment missing reads that moment as unmapped
+
+- **GIVEN** the stored configuration holds a motion for one moment and none for the other
+- **WHEN** the persona reads the configuration
+- **THEN** the other moment reads as unmapped and the first keeps its motion
+
 ### Requirement: A tap on the model replays the last line without synthesizing it again
 
 The viewer's tap SHALL replay the last line the character spoke, without synthesizing that line again.

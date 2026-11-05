@@ -21,4 +21,4 @@
 
 ## 5. Absent motion shape
 
-- [ ] 5.1 Store an unmapped moment as `""` rather than deleting its key with `undefined`, so the motion map is a full record of the two moments and reads by truthiness. The reader's defaults, the verb's empty map, `getViewerReaction`'s return type and the stored file format change in the same commit, and `ViewerConfiguration.ts`'s `Partial<Record<…>>` shape goes with them. Verify: a test named after the scenario this adds to the spec delta, written first and seen failing, with the stored file of the previous shape read and rewritten.
+- [x] 5.1 Store an unmapped moment as `""` rather than deleting its key with `undefined`, so the motion map is a full record of the two moments and reads by truthiness. The reader's defaults, the verb's empty map, `getViewerReaction`'s return type and the stored file format change in the same commit, and `ViewerConfiguration.ts`'s `Partial<Record<…>>` shape goes with them. Verify: a test named after the scenario this adds to the spec delta, written first and seen failing, with the stored file of the previous shape read and rewritten.

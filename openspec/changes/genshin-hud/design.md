@@ -18,7 +18,6 @@ The [HUD](../../specs/genshin/hud/design.md) is built with its pieces and their 
 ## What this does not propose
 
 - **The pieces of features the world lacks**: the chat, the Events and Battle Pass shortcuts, the shortcuts' badges and the latency.
-- **The agent console's bar.** The console is hidden from the game until it is rebuilt in the game's style, which is its own page's.
 
 ## Key files
 

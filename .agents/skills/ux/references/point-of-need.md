@@ -16,9 +16,7 @@ clicks before adding the button.
 **A scene's prop is an entry point too.** A thing in a game world, a map pin or a diagram node that opens a panel
 the page's own chrome already opens is the same second copy, only better disguised: it reads as depth and plays as
 a detour, since the person has to walk to it for what one button gives them anywhere. A scene carries only the
-actions it is the one place for — acting on the scene itself — and leaves the rest to the chrome. The agent
-console's world holds nothing that opens a console tab
-(`openspec/specs/infra/claude-interface/agent-console/console-overlay/design.md`, Settled).
+actions it is the one place for — acting on the scene itself — and leaves the rest to the chrome.
 
 ## Every feature has two surfaces
 

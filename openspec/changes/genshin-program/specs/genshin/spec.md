@@ -1,26 +1,15 @@
 ## ADDED Requirements
 
-### Requirement: The Genshin world replaces the console's voxel world
+### Requirement: The Genshin page shows the Genshin world
 
-The agent console's Genshin page SHALL show the Genshin world in place of the voxel world, with no voxel option offered.
+The Genshin page SHALL show the Genshin world, with no voxel option offered.
 
 #### Scenario: The Genshin page opens the Genshin world
 
-- **GIVEN** the reader opens the Genshin page of the agent console
+- **GIVEN** the reader opens the Genshin page
 - **WHEN** the page loads
 - **THEN** the Genshin world is shown
 - **AND** no voxel world or voxel option is offered
-
-### Requirement: Console sessions keep working over the Genshin world
-
-The agent console's Claude sessions SHALL remain reachable and usable while the Genshin world is shown.
-
-#### Scenario: A console session stays reachable over the world
-
-- **GIVEN** a Claude session is running in the agent console
-- **WHEN** the reader views the Genshin world
-- **THEN** the session remains reachable from the console
-- **AND** its messages continue to arrive
 
 ### Requirement: The bundle ships no game asset, and game assets download once at startup
 

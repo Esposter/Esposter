@@ -6,7 +6,6 @@
 | `apps/infra`                                         | 2026-10-14 · Haiku 5.5  |                                    |
 | `apps/web/app`                                       | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
 | `apps/web/app/components`                            | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
-| `apps/web/app/components/AgentConsole`               | 2026-10-14 · Haiku 5.5  |                                    |
 | `apps/web/app/components/App`                        | 2026-10-14 · Haiku 5.5  |                                    |
 | `apps/web/app/components/Dungeons`                   | 2026-10-14 · Haiku 5.5  |                                    |
 | `apps/web/app/components/Message`                    | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
@@ -31,7 +30,6 @@
 | `apps/web/server/trpc`                               | 2026-10-29 · Sonnet 5.5 |                                    |
 | `apps/web/shared`                                    | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages`                                           | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
-| `packages/agent-console-server`                      | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/azure-mock`                                | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/db`                                        | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/db-schema`                                 | 2026-10-14 · Haiku 5.5  |                                    |

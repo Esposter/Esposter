@@ -11,9 +11,7 @@
 | `services/{app,auth,route,router,trpc,notification,google}` + `composables/{data,shared}`                                 | 2026-10-05 · Opus 5.5 |       |
 | `services/{styled,entity,zod,ajv,jsonSchema,compiler,shared,azure,cache,file}` + `util/date` + the matching `composables` | 2026-10-05 · Opus 5.5 |       |
 | `Ui/`                                                                                                                     | 2026-10-05 · Opus 5.5 |       |
-| `AgentConsole/`                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `services/ui` + `composables/ui` + `store/ui`                                                                             | 2026-10-05 · Opus 5.5 |       |
-| `services/agentConsole` + `composables/agentConsole` + `store/agentConsole`                                               | 2026-10-05 · Opus 5.5 |       |
 
 `app/components/Styled` belongs to `shared.md`, not here, and `app/models/{dungeons,message,resource}` to the
 ledger of the feature that owns them.

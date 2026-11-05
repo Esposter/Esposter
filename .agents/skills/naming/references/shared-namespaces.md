@@ -4,7 +4,7 @@ Read when choosing a value that lives outside the repository's own code — a UR
 
 ## The rule
 
-**An identifier is generic; a value in a namespace the machine shares carries the product's prefix.** The code names the concept (`HOST_SCHEME`, `SESSION_SECRET_ENVIRONMENT_VARIABLE`) and never the product. The value that constant holds names the product (`esposter-host`, `"ESPOSTER_SESSION_SECRET"`) whenever other programs write into the same space. The prefix is not branding. It is what keeps two programs from claiming one name.
+**An identifier is generic; a value in a namespace the machine shares carries the product's prefix.** The code names the concept (`CLIPBOARD_MARKER`) and never the product. The value that constant holds names the product (`${SITE_NAME.toLowerCase()}-page-builder`) whenever other programs write into the same space. The prefix is not branding. It is what keeps two programs from claiming one name.
 
 A value needs the prefix when the namespace it lives in is shared:
 
@@ -15,7 +15,7 @@ A value needs the prefix when the namespace it lives in is shared:
 | Folder in the user's app data or home         | `Host` or `.agent` collides with any other program's folder, and an uninstall removes files that were never ours                                                                                                    |
 | Process or window title                       | The reader tells windows apart by it; `session` says nothing about whose                                                                                                                                            |
 
-A value that lives only inside something the repo owns — an enum member's value on its own wire, a column name, a query key on its own route — takes no prefix, since nothing else writes there. **Neither does text shown inside our own surface.** A message printed in the host's window or shown on the page is already ours, so it says _Could not start the host_, never _Could not start the Esposter host_. The product name appears only where the reader chooses among other programs' names: the browser's _Open Esposter Host?_ prompt, which shows the scheme's registered name, and a window title in the taskbar.
+A value that lives only inside something the repo owns — an enum member's value on its own wire, a column name, a query key on its own route — takes no prefix, since nothing else writes there. **Neither does text shown inside our own surface.** A message shown on the page is already ours, so it says _Could not save the note_, never _Could not save the Esposter note_. The product name appears only where the reader chooses among other programs' names: a window title in the taskbar.
 
 ## How to apply
 

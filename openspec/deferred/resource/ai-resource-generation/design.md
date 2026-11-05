@@ -4,7 +4,7 @@
 
 ## Why deferred
 
-No user-facing feature generates resource content with an LLM: the agent console runs Claude Code sessions through the Agent SDK as a developer tool. A generated create path would introduce a paid external dependency, prompt/output validation against each type's content schema, and abuse controls, as the first user-facing AI feature — a platform decision, not a create-form enhancement. The structured content models (SurveyJS JSON, visual definitions) make it _feasible_, which is exactly why it should wait for a deliberate decision rather than sneak in.
+No user-facing feature generates resource content with an LLM. A generated create path would introduce a paid external dependency, prompt/output validation against each type's content schema, and abuse controls, as the first user-facing AI feature — a platform decision, not a create-form enhancement. The structured content models (SurveyJS JSON, visual definitions) make it _feasible_, which is exactly why it should wait for a deliberate decision rather than sneak in.
 
 ## Revisit when
 

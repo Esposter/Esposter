@@ -42,19 +42,13 @@ The app SHALL tell browsers to use HTTPS for its host and subdomains for two yea
 
 ### Requirement: App pages can be framed only by the same origin
 
-App pages SHALL be frameable only by pages from the same origin, so that the agent console's side pane can show app pages.
+App pages SHALL be frameable only by pages from the same origin.
 
 #### Scenario: A page from another site cannot frame an app page
 
 - **GIVEN** a page on another site that embeds an app page in a frame
 - **WHEN** the frame loads
 - **THEN** the browser refuses to display the app page
-
-#### Scenario: The agent console's side pane displays an app page
-
-- **GIVEN** an app page open in the agent console's side pane
-- **WHEN** the pane loads it
-- **THEN** the app page is displayed
 
 ### Requirement: Browser features the app does not use are denied
 

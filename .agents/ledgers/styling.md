@@ -33,7 +33,6 @@ What a component looks like rather than how it is composed: attributify props ov
 | `app/pages`, `app/layouts`                                                           | 2026-10-05 · Opus 5.5  | page-level layout; region sizing and the sidebar/panel rules                       |
 | `uno.config.ts`                                                                      | 2026-10-05 · Opus 5.5  | the UnoCSS rule set behind the attributify vocabulary                              |
 | `app/components/Ui`                                                                  | 2026-10-05 · Opus 5.5  |                                                                                    |
-| `app/components/AgentConsole`                                                        | 2026-10-05 · Opus 5.5  |                                                                                    |
 
 ## Exclusions
 

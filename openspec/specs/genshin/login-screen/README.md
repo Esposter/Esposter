@@ -1,6 +1,6 @@
 # Login screen
 
-The game opens on its login screen once the health notice has faded (`packages/genshin-world/src/components/Splash/HealthNotice/Index.vue`). The console's opening shows it at the same place, in the same stages and at the game's own timings (`packages/genshin-world/src/services/login/constants.ts`).
+The game opens on its login screen once the health notice has faded (`packages/genshin-world/src/components/Splash/HealthNotice/Index.vue`). The app's opening shows it at the same place, in the same stages and at the game's own timings (`packages/genshin-world/src/services/login/constants.ts`).
 
 The screen is one scene and one interface laid over it (`packages/genshin-world/src/components/Login/Screen/Index.vue`). This page holds what the stages share and how the scene is fitted and judged; each feature has its own page:
 
@@ -89,7 +89,7 @@ flowchart TD
 - [ ] **The scene alone, as a reference shows it with no interface, is silent** — no source yet: no scene-only reference with its audio is kept in `{data-root}/genshin-parity/captures/`.
 - [ ] **The night title is the wiki's `File:Moon - Title screen - Night.png`** — no source yet: the still's image is not in `{data-root}/cache/genshin-wiki/`, and its File page, cached as `{data-root}/cache/genshin-wiki/Page_File:Moon_-_Title_screen_-_Night.png.json`, gives only a screenshot template, so a frame of `{data-root}/genshin-parity/captures/login-night.mkv` beside the still's image is what would confirm it as the title. The video at https://www.youtube.com/watch?v=D-iWDjSOL-s is the dawn recording (`{data-root}/genshin-parity/captures/yt-D-iWDjSOL-s-login-dawn.mp4`), not the night's. Nine frames of `{data-root}/genshin-parity/captures/login-night.mkv` over 0 to 213 s show a moonlit scene with no title text, and the still's image is not on disk to compare.
 - [ ] **The game opens on its login screen once the health notice has faded** — no source yet: a recording of the English client's launch through the health notice, with the openings under `{data-root}/genshin-parity/captures/` not yet read for it
-- [ ] **The console's opening shows the login at the same place, stages and timings** — no source yet: a recording of the console's opening, and no file under `{data-root}/genshin-parity/captures/` names a console
+- [ ] **The app's opening shows the login at the same place, stages and timings** — no source yet: a recording of the app's opening, and no file under `{data-root}/genshin-parity/captures/` names one
 - [ ] **Its music plays from the start, looping as the game's does** — no source yet: a recording of the login's music starting as the screen shows; `{data-root}/genshin-parity/extracted/login/music/playlist.json` holds the loop (`isLooping`) and the first piece at `playAt` 0, not the moment playback begins
 - [ ] **Recordings of another build stand the walkway's far end about 30 rows lower than the current build's** — no source yet: those recordings are not measured against the current build's walkway here.
 - [ ] **The wiki's four title stills fit no single camera centred on them** — no source yet: the stills are not in `{data-root}/cache/genshin-wiki/`, and the wiki API returns page text, not images, so a fit needs their PNGs in `{data-root}/genshin-parity/references/` first.
