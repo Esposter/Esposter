@@ -17,6 +17,7 @@ import { useWorldQuestsStore } from "#src/store/quests";
 import { useWorldScreenStore } from "#src/store/screen";
 import { useWorldSessionStore } from "#src/store/session";
 import { useWorldStatuesStore } from "#src/store/statues";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { InputAction } from "genshin-engine";
 import { InteractionKind } from "genshin-interface";
 import { storeToRefs } from "pinia";
@@ -122,19 +123,17 @@ export const useWorldFrame = ({
     else elementalSight.isOn = false;
     if (checkIsWorldInPlay()) stepWorldPuzzles(delta, characterBody.position);
     if (checkIsWorldInPlay()) drawDayOutcrops(getWorldNow(), kitContext.random);
+    // The challenges keep their clocks in milliseconds, where the frame's delta is in seconds
+    const deltaMilliseconds = delta * MILLISECONDS_PER_SECOND;
     const transitionAttacks = stepDomainChallenge({
-      deltaMilliseconds: delta,
+      deltaMilliseconds,
       isPartyDown: false,
       isPlaying: checkIsWorldInPlay() && domainClaimOffers.value === undefined,
     });
-    const trialReturnPose = stepTrial({
-      deltaMilliseconds: delta,
-      isPartyDown: false,
-      isPlaying: checkIsWorldInPlay(),
-    });
+    const trialReturnPose = stepTrial({ deltaMilliseconds, isPartyDown: false, isPlaying: checkIsWorldInPlay() });
     if (trialReturnPose) jumpTo(trialReturnPose);
     stepAbyss({
-      deltaMilliseconds: delta,
+      deltaMilliseconds,
       isPartyDown: false,
       isPlaying: checkIsWorldInPlay() && abyssChoices.value === undefined,
     });
