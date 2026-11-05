@@ -17,20 +17,6 @@ The shapes and the flow are built: see [flowing water](../../specs/genshin/flowi
 - **Two surfaces over the same ground are each a river.** Liyue's `Slums_01` and `Slums_02` lie over the same place at different heights. Each is fitted as its own courses. The drawing draws every course the fit holds, so the two overlap in the world where their courses do; whether that shows as doubled water is for the eye-check at integration, and a rule to pick one is not fitted yet (provisional).
 - **A river is drawn as a ribbon in the water's material, beside the still water.** Each course is one ribbon, its bend foam read from the vertices the ribbon writes (`createRiverMaterial`), mounted with the still water and the falls (`World/Rivers`). A region whose game export stands in leaves its rivers out, as it leaves its falls out, so the shared filter is `getOwnRegionData`. The river draws still until its flow is read, since the water material takes one flow for the whole surface and a river's direction changes along its course.
 
-## Still to build
-
-1. **The rivers' flow**: a river's ribbon draws still. Its direction and speed come from the game's water material where the export holds them, or are measured off a recording of the river in the motion pass. The material takes one flow per surface, so a per-course flow needs the material to read it per vertex first.
-
-## Deferred compute
-
-- No other region's witness holds a water surface, so the rivers outside Liyue are not fitted. The falls outside the capitals are fitted from their own witnesses: Inazuma, Sumeru and Natlan hold 58, 49 and 2 fall placements, and `fit <region> --only waterfalls` writes their `waterfalls`.
-- The mist and foam pool particles are not built: their emitter and their statistics are judged against a recording of the game's falls.
-- How tight a bend gathers full foam on its outer bank is provisional, fitted to a recording of a bending river once its course is placed.
-
-## Open questions
-
-- **The turn's sign is not settled by the data.** The axis turn is `scripts/src/services/genshinAssets/shared/readObjMesh.ts` (x negated back) and `scripts/src/services/genshinAssets/shared/toRightHanded.ts` (z mirrored), applied by `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`. The fit's vertices equal the placement's transform after the turn to 4.5e-13 m, which confirms the arithmetic and does not fix the sign: the other sign choices move a lip by up to 7.5 m and an across direction by up to 163 degrees. A check of each fall's foot against the splash mesh beneath it favours the code's sign by median distance (6.0 m against 9.8 to 12.2 m) but not by the count under 5 m (16 against 17, the code's sign first). What would settle it is a reference frame of a fall seen from a known side, or the game's own fall direction for that fall.
-
 ## Notes
 
 - **Swimming is play.** Moving through the water, with its stamina, waits for the phase-three character controller.
