@@ -147,7 +147,6 @@ catalog:
   codemirror: ^6.0.2
   crossws: ^0.4.17
   defu: ^6.1.7
-  diff: ^9.0.0
   drizzle-kit: 1.0.0-rc.5
   drizzle-orm: 1.0.0-rc.5
   emojilib: ^4.0.3
