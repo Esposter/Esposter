@@ -9,10 +9,8 @@ import type { Party } from "#src/models/party/Party";
 import type { RewardRouting } from "#src/models/reward/RewardRouting";
 
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
-import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
-import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { countRewardItem } from "#src/services/reward/countRewardItem";
+import { gainDeployedCompanionshipExp } from "#src/services/reward/gainDeployedCompanionshipExp";
 import { routeRewardItems } from "#src/services/reward/routeRewardItems";
 
 // The state after a commission claim's rewards are routed: the Adventure EXP its items hold through the rank, the
@@ -45,12 +43,7 @@ export const routeCommissionClaim = (
   if (!routed) return undefined;
   return {
     adventureExp: routed.adventureExp,
-    characters: gainCompanionshipExp(
-      characters,
-      getDeployedCharacterIds(party),
-      countRewardItem(items, COMPANIONSHIP_EXP_ITEM_ID),
-      friendshipLevels,
-    ),
+    characters: gainDeployedCompanionshipExp(characters, items, party, friendshipLevels),
     inventory: routed.inventory,
     wallet: routed.wallet,
   };
