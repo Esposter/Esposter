@@ -687,6 +687,7 @@ useWorldDevHandles({
   getGameClock: () => windrise.value?.gameClock,
   getKills: () => archiveKillsMap.value,
   getLandmarks: () => jumpLandmarks.value,
+  getScreenKind: () => screenKind.value,
   getWeather: () => windrise.value?.areaWeather,
   jumpTo,
   party,

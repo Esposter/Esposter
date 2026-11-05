@@ -1,6 +1,7 @@
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { Party } from "#src/models/party/Party";
+import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
@@ -16,6 +17,7 @@ export interface WorldDevHandleOptions {
   getGameClock: () => GameClock | undefined;
   getKills: () => ArchiveKills;
   getLandmarks: () => readonly Landmark[];
+  getScreenKind: () => ScreenKind;
   getWeather: () => undefined | WeatherKind;
   jumpTo: (pose: WorldJumpPose) => void;
   party: Party;

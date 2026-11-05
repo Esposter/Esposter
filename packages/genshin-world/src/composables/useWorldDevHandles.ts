@@ -2,6 +2,7 @@ import type { WorldDevHandleOptions } from "#src/models/world/WorldDevHandleOpti
 
 import { createHealCommand } from "#src/services/dev/commands/createHealCommand";
 import { createKillsCommand } from "#src/services/dev/commands/createKillsCommand";
+import { createScreenCommand } from "#src/services/dev/commands/createScreenCommand";
 import { createStateCommand } from "#src/services/dev/commands/createStateCommand";
 import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
 import { createTimeCommand } from "#src/services/dev/commands/createTimeCommand";
@@ -20,6 +21,7 @@ export const useWorldDevHandles = ({ devRegistry, ...options }: WorldDevHandleOp
       commands: [
         createHealCommand(options),
         createKillsCommand(options),
+        createScreenCommand(options),
         createStateCommand(options),
         createTeleportCommand(options),
         createTimeCommand(options),
