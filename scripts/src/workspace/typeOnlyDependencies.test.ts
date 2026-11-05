@@ -3,7 +3,7 @@ import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getChildren } from "#src/services/shared/getChildren";
-import { parseSource } from "#src/services/shared/parseSource";
+import { parseSourceUnlinked } from "#src/services/shared/parseSourceUnlinked";
 import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
@@ -23,6 +23,8 @@ const getLoadablePackageName = (specifier: string): string | undefined =>
 describe("typeOnlyDependencies", () => {
   const SOURCE_PATH_REGEX = /\.(?:[cm]?[jt]s|vue)$/u;
   const NON_SOURCE_PATH_REGEX = /\.(?:bench|test-d|test|typebench)\.ts$|\.d\.[cm]?ts$|\/(?:fixtures|tests?)\//u;
+  // Only a source that writes `import(` can hold a dynamic import or an import type, and either sits anywhere in its tree
+  const IMPORT_CALL_REGEX = /\bimport\s*\(/u;
 
   // Records, per package name, whether the source loads it as a value (a static import, a re-export or a dynamic
   // `import()`) or only names its types
@@ -39,31 +41,51 @@ describe("typeOnlyDependencies", () => {
     for (const child of getChildren(node)) collectUsage(child, valueNames, typeNames);
   };
 
+  // A static import or re-export stands among a program's statements, or in a `declare module` block among them, so a
+  // Source that writes no `import(` is read from those statements and never walked whole
+  const collectScriptUsage = (script: string, valueNames: Set<string>, typeNames: Set<string>): void => {
+    const program = parseSourceUnlinked(script);
+    if (IMPORT_CALL_REGEX.test(script)) collectUsage(program, valueNames, typeNames);
+    else
+      for (const statement of program.body)
+        if (
+          statement.type === "ImportDeclaration" ||
+          statement.type === "ExportAllDeclaration" ||
+          (statement.type === "ExportNamedDeclaration" && statement.source) ||
+          statement.type === "TSModuleDeclaration"
+        )
+          collectUsage(statement, valueNames, typeNames);
+  };
+
   test("list a name only its types are imported from in devDependencies", () => {
     expect.hasAssertions();
 
-    const misplaced = readWorkspacePackages(REPOSITORY_ROOT)
+    const packages = readWorkspacePackages(REPOSITORY_ROOT)
       .filter(({ manifest }) => manifest.private && manifest.dependencies)
-      .flatMap(({ directory, manifest, workspaceDirectory }) => {
-        const packagePath = workspaceDirectory ? `${workspaceDirectory}/${directory}` : directory;
-        const valueNames = new Set<string>();
-        const typeNames = new Set<string>();
-        const sourcePaths = readSweepFilePaths(packagePath).filter(
-          (path) => SOURCE_PATH_REGEX.test(path) && !NON_SOURCE_PATH_REGEX.test(path),
-        );
-        for (const path of sourcePaths) {
-          const text = readFileSync(join(REPOSITORY_ROOT, path), "utf8");
-          const scripts = path.endsWith(".vue")
-            ? readVueSegments(text)
-                .filter(({ isScript }) => isScript)
-                .map(({ text: script }) => script)
-            : [text];
-          for (const script of scripts) collectUsage(parseSource(script), valueNames, typeNames);
-        }
-        return Object.keys(manifest.dependencies ?? {})
-          .filter((name) => typeNames.has(name) && !valueNames.has(name))
-          .map((name) => `${manifest.name} -> ${name}`);
-      });
+      .map(({ directory, manifest, workspaceDirectory }) => ({
+        manifest,
+        packagePath: workspaceDirectory ? `${workspaceDirectory}/${directory}` : directory,
+      }));
+    // One listing for every package: git walks its index once, where a spawn for each package pays the process start again
+    const sourcePaths = readSweepFilePaths(...packages.map(({ packagePath }) => packagePath)).filter(
+      (path) => SOURCE_PATH_REGEX.test(path) && !NON_SOURCE_PATH_REGEX.test(path),
+    );
+    const misplaced = packages.flatMap(({ manifest, packagePath }) => {
+      const valueNames = new Set<string>();
+      const typeNames = new Set<string>();
+      for (const path of sourcePaths.filter((sourcePath) => sourcePath.startsWith(`${packagePath}/`))) {
+        const text = readFileSync(join(REPOSITORY_ROOT, path), "utf8");
+        const scripts = path.endsWith(".vue")
+          ? readVueSegments(text)
+              .filter(({ isScript }) => isScript)
+              .map(({ text: script }) => script)
+          : [text];
+        for (const script of scripts) collectScriptUsage(script, valueNames, typeNames);
+      }
+      return Object.keys(manifest.dependencies ?? {})
+        .filter((name) => typeNames.has(name) && !valueNames.has(name))
+        .map((name) => `${manifest.name} -> ${name}`);
+    });
 
     expect(misplaced).toStrictEqual([]);
   });
