@@ -26,7 +26,7 @@ flowchart LR
 - **Upload** — the standard two-step SAS flow ([file uploads](../../architecture/file-uploads/design.md)), addressed by content: the client hashes the file, and the server either returns the address as already held, with no PUT, or signs a create-only PUT target scoped to `{id}/files/{hash}`. The client builds the stable url from that address with no second round trip. `useUploadResourceFile(type, id)` owns this once for every consumer. The address and its dedupe are [content-addressed assets](../content-addressed-assets/design.md).
 - **Serving** — `GET /api/resource-assets/{encodedPath}`: parse and validate (`parseResourceAssetPath`), rate limit, authorize, then 302 to a short-lived read SAS with `Cache-Control: private, max-age` just under `RESOURCE_ASSET_SAS_DURATION_MS` so a browser-cached redirect can never outlive its signature. No existence probe — Azure itself 404s a missing blob.
 - **Publish** — nothing is copied and no url is rewritten. The published version's reference rows name the hashes its content embeds, so the published page serves the working copy's own files, and a file the owner later deletes stays for as long as the publication names it. Survey has no publish transform; Webpage bakes its rendered document into the snapshot, and Email keeps its compiled-html check and its dataset strip ([publishing](../../architecture/publishing/design.md)).
-- **Duplicate** — `duplicateResource` runs `cloneContentAssets` against `{newId}`: every referenced file the caller can read is copied to the copy's own `{newId}/files/{hash}`, so the copy is fully self-contained — its editor can delete files, and deleting or unpublishing the original never strands it. A file the copy already holds under the same hash is not copied again. The clone drops the source resource id from the destination path, which is also why the rewrite is a per-url map, never a prefix replace — content can legitimately carry foreign-id urls (duplicated or blueprint-deployed content).
+- **Duplicate** — `duplicateResource` runs `cloneContentAssets` against `{newId}`: every file the content names, by url or by a bare id, that the caller can read is copied to the copy's own `{newId}/files/{hash}`, so the copy is fully self-contained — its editor can delete files, and deleting or unpublishing the original never strands it. A file the copy already holds under the same hash is not copied again. The clone drops the source resource id from the destination path, which is also why the rewrite is a per-url map, never a prefix replace — content can legitimately carry foreign-id urls (duplicated or blueprint-deployed content).
 - **Teardown** — assets need no per-asset teardown, but it is **purge** that provides it, not delete. `deleteResource` only stamps `deletedAt`, so every `{id}/files/…` blob survives the whole [Recycle bin](../recycle-bin/design.md) window — which is exactly what lets a restore hand back a resource with its images intact — and `purgeResource` is what takes the `{id}/` directory wholesale ([blob lifecycle](../../architecture/blob-lifecycle/design.md)). What the delay costs is storage, not exposure: `readResourceAccess` matches only a resource row with a null `deletedAt`, and `softDeleteResources` drops the publication row in the same transaction, so both the owner-only path and the anonymous published path stop answering the moment the resource is deleted. A new asset-bearing capability under `{id}/` therefore needs no delete-time cleanup, but anything it puts outside that directory does. `deleteFile` exists for removing one asset while the resource lives on (the survey's Editor sweeping an image no question holds any longer); it hands that one address to the release, which keeps the file while any version names it. The client recovers the blob path from the stable url and ignores anything outside this resource's files directory.
 
 ## Authorization matrix
@@ -57,20 +57,20 @@ Reads have no procedure — they go through the `/api/resource-assets` endpoint.
 
 ## Key files
 
-| File                                                                               | Role                                                             |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                         | blob name → stable url (closed charset)                          |
-| `apps/web/shared/services/resource/parseResourceAssetPath.ts`                      | the single decoder/validator                                     |
-| `apps/web/server/api/resource-assets/[...path].get.ts`                             | authorize + 302 to a minutes-scale SAS                           |
-| `apps/web/server/services/resource/cloneContentAssets.ts`                          | duplicate's copy of referenced files + url rewrite               |
-| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`                | may this caller read this asset path                             |
-| `apps/web/server/services/resource/readResourceAccess.ts`                          | the resource's ownership and publication, read once per resource |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                       | `fileAssets` declarations                                        |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`              | conditionally spread asset procedures                            |
-| `packages/db-schema/src/services/azure/container/getResourceFilesDirectoryName.ts` | the `{id}/files` directory, spelled once for both apps           |
-| `packages/db-schema/src/services/azure/container/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` blob name, spelled once for both apps    |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`                       | upload round-trip, returns the stable url                        |
-| `apps/web/app/composables/resource/useDeleteResourceFile.ts`                       | stable url to blob path, then `deleteFile`                       |
+| File                                                                               | Role                                                                   |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `apps/web/shared/services/resource/getResourceAssetUrl.ts`                         | blob name → stable url (closed charset)                                |
+| `apps/web/shared/services/resource/parseResourceAssetPath.ts`                      | the single decoder/validator                                           |
+| `apps/web/server/api/resource-assets/[...path].get.ts`                             | authorize + 302 to a minutes-scale SAS                                 |
+| `apps/web/server/services/resource/cloneContentAssets.ts`                          | duplicate's copy of the files its urls and bare ids name + url rewrite |
+| `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`                | may this caller read this asset path                                   |
+| `apps/web/server/services/resource/readResourceAccess.ts`                          | the resource's ownership and publication, read once per resource       |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                       | `fileAssets` declarations                                              |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`              | conditionally spread asset procedures                                  |
+| `packages/db-schema/src/services/azure/container/getResourceFilesDirectoryName.ts` | the `{id}/files` directory, spelled once for both apps                 |
+| `packages/db-schema/src/services/azure/container/getResourceFileBlobName.ts`       | the `{id}/files/{hash}` blob name, spelled once for both apps          |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`                       | upload round-trip, returns the stable url                              |
+| `apps/web/app/composables/resource/useDeleteResourceFile.ts`                       | stable url to blob path, then `deleteFile`                             |
 
 ## Notes
 

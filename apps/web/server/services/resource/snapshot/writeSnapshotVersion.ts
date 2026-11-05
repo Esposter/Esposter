@@ -7,6 +7,7 @@ import { collectSnapshotObjects } from "#server/services/resource/snapshot/colle
 import { createSnapshotKeyframeStore } from "#server/services/resource/snapshot/createSnapshotKeyframeStore";
 import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
+import { getSnapshotUrlAssetHashes } from "#server/services/resource/snapshot/getSnapshotUrlAssetHashes";
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotAnchor } from "#server/services/resource/snapshot/readSnapshotAnchor";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
@@ -29,8 +30,8 @@ import { and, eq } from "drizzle-orm";
 // Takes its version inside a transaction and the charge locks the ledger row and then the user's, which a
 // Transaction must not be held open across (openspec/specs/resource/storage-quotas/design.md)
 //
-// The version's asset references are written with its row, from a scan of the same content. A version naming an asset
-// That is no longer stored is refused before anything is written (openspec/specs/resource/content-addressed-assets/design.md)
+// The version's asset references are written with its row, from a scan of the same content. A published version whose url
+// Names a file it no longer stores is refused before anything is written (openspec/specs/resource/content-addressed-assets/design.md)
 export const writeSnapshotVersion = async (
   db: Context["db"] | Transaction,
   resource: Pick<ResourceInResource, "id" | "type">,
@@ -44,14 +45,17 @@ export const writeSnapshotVersion = async (
   const { id } = resource;
   const keyframeStore = await createSnapshotKeyframeStore(id);
   const summary = getSnapshotSummary(resource.type, serializedContent);
-  const assetHashes = getSnapshotAssetHashes(id, jsonDateParse(serializedContent));
+  const assetHashes = getSnapshotAssetHashes(serializedContent);
+  const urlAssetHashes = getSnapshotUrlAssetHashes(id, jsonDateParse(serializedContent));
   const { previousVersion, releasedAssetHashes, writtenVersion } = await db.transaction(async (tx) => {
     await lockSnapshotObjects(tx, id);
     // Touched before the object is written, so a refused version leaves no object behind either. A published version is
-    // What a reader is served, so it is refused while it names a gone file; any other channel keeps what the user wrote,
-    // Since a revision or a restore of content naming one is data rather than a broken page
+    // What a reader is served, so it is refused while a url of this resource's own file names one the store does not hold.
+    // A bare id is never refused, since a 64-hex token can be a digest in text rather than a file. Any other channel keeps
+    // What the user wrote, since a revision or a restore naming a gone file is data rather than a broken page
     const missingAssetHashes = await touchSnapshotAssets(id, assetHashes);
-    if (channel === SnapshotChannel.Published && missingAssetHashes.size > 0)
+    const isUrlAssetMissing = [...urlAssetHashes].some((assetHash) => missingAssetHashes.has(assetHash));
+    if (channel === SnapshotChannel.Published && isUrlAssetMissing)
       throw new InvalidOperationError(
         Operation.Create,
         DatabaseEntityType.Resource,

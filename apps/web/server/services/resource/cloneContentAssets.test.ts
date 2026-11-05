@@ -100,7 +100,13 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, destinationResourceId);
+    const clonedContent = await cloneContentAssets(
+      createDatabase(true),
+      userId,
+      content,
+      sourceResourceId,
+      destinationResourceId,
+    );
 
     await expect(getBlobNames(`${destinationResourceId}/`)).resolves.toStrictEqual([destinationBlobName]);
     expect(clonedContent).toStrictEqual({ html: `<img src="${getResourceAssetUrl(destinationBlobName)}">` });
@@ -112,7 +118,13 @@ describe(cloneContentAssets, () => {
 
     const url = getResourceAssetUrl(sourceBlobName);
     const content = { html: `<img src="${url}"><img src="${url}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, destinationResourceId);
+    const clonedContent = await cloneContentAssets(
+      createDatabase(true),
+      userId,
+      content,
+      sourceResourceId,
+      destinationResourceId,
+    );
 
     await expect(getBlobNames(`${destinationResourceId}/`)).resolves.toStrictEqual([destinationBlobName]);
     expect(clonedContent).toStrictEqual({
@@ -126,7 +138,13 @@ describe(cloneContentAssets, () => {
 
     await containerClient.getBlockBlobClient(destinationBlobName).upload(destinationBlobName, 1);
     const content = { html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(true), userId, content, destinationResourceId);
+    const clonedContent = await cloneContentAssets(
+      createDatabase(true),
+      userId,
+      content,
+      sourceResourceId,
+      destinationResourceId,
+    );
 
     await expect(getBlobNames(`${destinationResourceId}/`)).resolves.toStrictEqual([destinationBlobName]);
     expect(clonedContent).toStrictEqual({ html: `<img src="${getResourceAssetUrl(destinationBlobName)}">` });
@@ -138,7 +156,13 @@ describe(cloneContentAssets, () => {
     expect.hasAssertions();
 
     const content = { html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` };
-    const clonedContent = await cloneContentAssets(createDatabase(false), userId, content, destinationResourceId);
+    const clonedContent = await cloneContentAssets(
+      createDatabase(false),
+      userId,
+      content,
+      sourceResourceId,
+      destinationResourceId,
+    );
 
     await expect(getBlobNames(`${destinationResourceId}/`)).resolves.toStrictEqual([]);
     expect(clonedContent).toStrictEqual({ html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` });
@@ -150,11 +174,29 @@ describe(cloneContentAssets, () => {
     const content = {
       html: `<img src="${getResourceAssetUrl(sourceBlobName)}"><img src="${getResourceAssetUrl(otherSourceBlobName)}">`,
     };
-    await cloneContentAssets(createDatabase(true), userId, content, destinationResourceId);
+    await cloneContentAssets(createDatabase(true), userId, content, sourceResourceId, destinationResourceId);
 
     expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
       [destinationBlobName, `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${otherHash}`].toSorted(),
     );
+  });
+
+  // A whiteboard names its image by the bare hash of its file, with no url for the url scan to find, so the copy must take
+  // The file the element names in the form it is stored
+  test("duplicating a whiteboard copies the file its element names by bare id", async () => {
+    expect.hasAssertions();
+
+    const content = { elements: [{ fileId: hash }] };
+    const clonedContent = await cloneContentAssets(
+      createDatabase(true),
+      userId,
+      content,
+      sourceResourceId,
+      destinationResourceId,
+    );
+
+    await expect(getBlobNames(`${destinationResourceId}/`)).resolves.toStrictEqual([destinationBlobName]);
+    expect(clonedContent).toStrictEqual(content);
   });
 
   // The rows the readability answer reads, in a real database, so the counts below are the queries production runs
@@ -209,7 +251,7 @@ describe(cloneContentAssets, () => {
     const findFirstPublication = vi.spyOn(db.query.resourcePublicationsInResource, "findFirst");
     const findFirstPublishedAsset = vi.spyOn(db.query.resourceVersionAssetsInResource, "findFirst");
 
-    await cloneContentAssets(db, userId, threeAssetContent, destinationResourceId);
+    await cloneContentAssets(db, userId, threeAssetContent, sourceResourceId, destinationResourceId);
 
     expect(findFirstResource).toHaveBeenCalledTimes(1);
     expect(findFirstPublication).not.toHaveBeenCalled();
@@ -225,7 +267,7 @@ describe(cloneContentAssets, () => {
     const findFirstPublication = vi.spyOn(db.query.resourcePublicationsInResource, "findFirst");
     const findFirstPublishedAsset = vi.spyOn(db.query.resourceVersionAssetsInResource, "findFirst");
 
-    await cloneContentAssets(db, userId, threeAssetContent, destinationResourceId);
+    await cloneContentAssets(db, userId, threeAssetContent, sourceResourceId, destinationResourceId);
 
     expect(findFirstResource).toHaveBeenCalledTimes(1);
     expect(findFirstPublication).toHaveBeenCalledTimes(1);

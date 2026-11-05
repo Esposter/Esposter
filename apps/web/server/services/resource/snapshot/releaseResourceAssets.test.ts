@@ -36,6 +36,8 @@ vi.mock(import("#shared/services/resource/constants"), async (importOriginal) =>
   checkIsAssetCollectionEnabled: () => collectionState.isEnabled,
 }));
 
+const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
+
 describe(releaseResourceAssets, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
@@ -132,6 +134,51 @@ describe(releaseResourceAssets, () => {
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  // A whiteboard image stores the hash of its file as a bare id, so the url scan that once counted it never saw it
+  test("an asset an element names by its bare file id is kept while the version lives", async () => {
+    expect.hasAssertions();
+
+    collectionState.isEnabled = true;
+    await uploadAsset(assetHash);
+    await writeVersion(1, getFileIdContent(assetHash));
+    vi.setSystemTime(graceElapsedAt);
+
+    await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  test("an asset only an older retained version names is kept", async () => {
+    expect.hasAssertions();
+
+    collectionState.isEnabled = true;
+    await uploadAsset(assetHash);
+    await writeVersion(1, getFileIdContent(assetHash));
+    await writeVersion(2, getFileIdContent());
+    vi.setSystemTime(graceElapsedAt);
+
+    await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  test("an asset no retained version names is deleted", async () => {
+    expect.hasAssertions();
+
+    collectionState.isEnabled = true;
+    await uploadAsset(assetHash);
+    await writeVersion(1, getFileIdContent(otherAssetHash));
+    vi.setSystemTime(graceElapsedAt);
+
+    await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
+
+    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
+      blobNames: [getResourceFileBlobName(resource.id, assetHash)],
+      containerName: AzureContainer.ResourceAssets,
+      decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
+    });
   });
 
   test("an asset the working copy names is kept", async () => {

@@ -40,6 +40,7 @@ import {
 import { jsonDateParse, noop, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
+import { PositionedElementType } from "headless-block-editor";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
@@ -518,6 +519,36 @@ describe(saveResourceContent, () => {
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
     expect(infoSpy).toHaveBeenCalledWith("unreferenced assets counted", { count: 1, resourceId: webpage.id });
+  });
+
+  test("references the file a whiteboard image names by its bare id", async () => {
+    expect.hasAssertions();
+
+    const whiteboard = takeOne(
+      await mockContext.db
+        .insert(resourcesInResource)
+        .values({ name, type: ResourceType.Whiteboard, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+
+    await saveResourceContent(ctx, {
+      content: {
+        elements: [
+          {
+            fileId: assetHash,
+            height: 100,
+            id: crypto.randomUUID(),
+            type: PositionedElementType.Image,
+            width: 100,
+            x: 0,
+            y: 0,
+          },
+        ],
+      },
+      resource: whiteboard,
+    });
+
+    await expect(readWorkingAssetHashes(whiteboard.id)).resolves.toStrictEqual([assetHash]);
   });
 
   test("stores content naming an asset that is not stored, and references it", async () => {

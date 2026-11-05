@@ -150,8 +150,8 @@ export const saveResourceContent = async (
   // - it commits: the new links are written after, once the content they describe is durable
   //
   // The assets the content embeds, named by the working copy's reference rows before the upload and settled to them
-  // After it. Scanned from the parsed content, the same value the blob is serialized from
-  const assetHashes = getSnapshotAssetHashes(id, parsedContent);
+  // After it. Scanned from the serialized content, the bytes the blob is written from
+  const assetHashes = getSnapshotAssetHashes(serializedContent);
   await reserveWorkingAssets(ctx.db, id, assetHashes);
   // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
   // Must never advance the version every client caches against. A first write has no version to protect, and

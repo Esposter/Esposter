@@ -87,6 +87,13 @@ A stored version or the working copy whose content embeds an asset address in an
 - **THEN** the image is referenced by that version
 - **AND** the image is not deleted while the version is stored
 
+#### Scenario: A whiteboard image keeps its file through the bare id its element stores
+
+- **GIVEN** a whiteboard's image element stores an uploaded image's file id and no url
+- **WHEN** a version of the whiteboard is stored
+- **THEN** the image is referenced by that version
+- **AND** the image is not deleted while the version is stored
+
 ### Requirement: Saving the working copy keeps every asset its content embeds
 
 A save of the working copy SHALL leave referenced every asset the stored content embeds. A save that fails after it has reserved its assets SHALL leave a surplus of references rather than fewer than the stored content embeds, and the next successful save SHALL settle that surplus.
@@ -131,16 +138,23 @@ An asset SHALL NOT be deleted within a grace window after it was last written or
 - **WHEN** a collection runs
 - **THEN** the asset is kept
 
-### Requirement: A published version never names a missing asset
+### Requirement: A published version never names a missing asset by url
 
-Publishing content whose references include an asset that no longer exists SHALL fail with the refusal "cannot store content naming a missing asset", rather than publish a page with a broken asset. Saving the working copy, a revision and a restore SHALL accept such a reference as the owner's data: the content is written as the owner wrote it, and the reference is kept as a row so the rows still name what the stored blob embeds.
+Publishing content whose urls name an asset that no longer exists SHALL fail with the refusal "cannot store content naming a missing asset", rather than publish a page with a broken asset. Saving the working copy, a revision and a restore SHALL accept such a reference as the owner's data: the content is written as the owner wrote it, and the reference is kept as a row so the rows still name what the stored blob embeds.
 
 #### Scenario: A publish racing a file delete fails cleanly
 
-- **GIVEN** a publish reads content that embeds an image
+- **GIVEN** a publish reads content whose url names an image
 - **WHEN** the owner deletes the image before the version is stored
 - **THEN** the publish fails with a retryable error
 - **AND** no published version is stored that names the image
+
+#### Scenario: A publish naming a bare file id that no file backs is stored
+
+- **GIVEN** a publish reads content that holds a bare file id no stored file backs
+- **WHEN** the owner publishes that content
+- **THEN** the publish succeeds
+- **AND** the published version names the file id as a reference
 
 #### Scenario: A save naming a missing asset is stored as the owner's data
 

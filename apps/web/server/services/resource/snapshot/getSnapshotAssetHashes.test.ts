@@ -1,64 +1,49 @@
 import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(getSnapshotAssetHashes, () => {
   const resourceId = crypto.randomUUID();
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const assetUrl = getResourceAssetUrl(`${resourceId}/files/${assetHash}`);
 
-  // The scan reads every string whatever the schema, so each content shape that can embed an image is its own case:
-  // A block-editor image, a choice's picture, an html string carrying the url, and a list nested inside objects
-  test.each([
-    ["webpage", { sections: [{ image: assetUrl, type: "image" }], title: "" }],
-    ["survey", { pages: [{ questions: [{ choices: [{ image: assetUrl }] }] }] }],
-    ["email", { html: `<img src="${assetUrl}" />` }],
-    ["note", { content: [{ attrs: { src: assetUrl }, type: "image" }], type: "doc" }],
-    ["nested", { a: { b: { c: [{ d: [assetUrl] }] } } }],
-  ])("finds the asset a %s embeds", (_title, content) => {
+  // A whiteboard image stores the hash of its file as the bare id of the element, with no url for a scan of urls to read
+  test("finds the file an element names by its bare id", () => {
     expect.hasAssertions();
 
-    expect(getSnapshotAssetHashes(resourceId, content)).toStrictEqual(new Set([assetHash]));
-  });
-
-  test("collects each asset once however many urls name it", () => {
-    expect.hasAssertions();
-
-    expect(getSnapshotAssetHashes(resourceId, { first: assetUrl, second: [assetUrl] })).toStrictEqual(
+    expect(getSnapshotAssetHashes(JSON.stringify({ elements: [{ fileId: assetHash }] }))).toStrictEqual(
       new Set([assetHash]),
     );
   });
 
-  test("ignores an asset of another resource", () => {
+  test("finds the file a url names", () => {
     expect.hasAssertions();
 
-    const otherResourceAssetUrl = getResourceAssetUrl(`${crypto.randomUUID()}/files/${assetHash}`);
-
-    expect(getSnapshotAssetHashes(resourceId, { src: otherResourceAssetUrl })).toStrictEqual(new Set());
+    expect(getSnapshotAssetHashes(JSON.stringify({ sections: [{ image: assetUrl }] }))).toStrictEqual(
+      new Set([assetHash]),
+    );
   });
 
-  // A last segment that is not a lowercase content address names no object the store holds
-  test("ignores a last segment that is not a lowercase content address", () => {
+  // The address is a whole token: a run of letters or digits that merely contains it names no file
+  test.each([
+    ["a digit before it", `0${assetHash}`],
+    ["a letter after it", `${assetHash}g`],
+  ])("ignores an address with %s", (_description, fileId) => {
     expect.hasAssertions();
 
-    const uppercaseAssetUrl = getResourceAssetUrl(`${resourceId}/files/${assetHash.toUpperCase()}`);
-
-    expect(getSnapshotAssetHashes(resourceId, { src: uppercaseAssetUrl })).toStrictEqual(new Set());
+    expect(getSnapshotAssetHashes(JSON.stringify({ fileId }))).toStrictEqual(new Set());
   });
 
-  // A foreign absolute url carrying our prefix is not a reference: the lookbehind refuses it, so it is never read
-  test("ignores a foreign absolute url that carries the asset prefix", () => {
+  test("ignores an uppercase address", () => {
     expect.hasAssertions();
 
-    expect(getSnapshotAssetHashes(resourceId, { src: `https://cdn.example.com${assetUrl}` })).toStrictEqual(new Set());
+    expect(getSnapshotAssetHashes(JSON.stringify({ fileId: assetHash.toUpperCase() }))).toStrictEqual(new Set());
   });
 
-  test("reads an own-origin absolute url as the asset it addresses", () => {
+  test("collects each asset once however many times it occurs", () => {
     expect.hasAssertions();
 
-    vi.stubEnv("BASE_URL", "https://esposter.test");
-
-    expect(getSnapshotAssetHashes(resourceId, { src: `https://esposter.test${assetUrl}` })).toStrictEqual(
+    expect(getSnapshotAssetHashes(JSON.stringify({ fileId: assetHash, src: assetUrl }))).toStrictEqual(
       new Set([assetHash]),
     );
   });
@@ -66,6 +51,6 @@ describe(getSnapshotAssetHashes, () => {
   test("answers an empty set for content that embeds no asset", () => {
     expect.hasAssertions();
 
-    expect(getSnapshotAssetHashes(resourceId, { items: [], title: "" })).toStrictEqual(new Set());
+    expect(getSnapshotAssetHashes(JSON.stringify({ items: [], title: "" }))).toStrictEqual(new Set());
   });
 });

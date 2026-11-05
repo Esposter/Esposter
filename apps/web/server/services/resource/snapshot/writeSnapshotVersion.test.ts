@@ -74,4 +74,29 @@ describe(writeSnapshotVersion, () => {
     await expect(mockContext.db.select().from(resourceVersionAssetsInResource)).resolves.toStrictEqual([]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.size ?? 0).toBe(0);
   });
+
+  // Only a url of this resource's own file is held to the refusal. A bare id can be a digest in text rather than a file,
+  // And another resource's url names a file this one never serves, so neither is refused, though both still keep the row
+  test.each([
+    ["a bare file id that no file backs", JSON.stringify({ fileId: missingAssetHash })],
+    [
+      "another resource's url to a file this one does not hold",
+      JSON.stringify({ src: getResourceAssetUrl(getResourceFileBlobName(crypto.randomUUID(), missingAssetHash)) }),
+    ],
+  ])("stores a published version naming %s", async (_description, serializedContent) => {
+    expect.hasAssertions();
+
+    await writeSnapshotVersion(
+      mockContext.db,
+      resource,
+      { channel: SnapshotChannel.Published, version: 1 },
+      serializedContent,
+    );
+
+    await expect(
+      mockContext.db
+        .select({ assetHash: resourceVersionAssetsInResource.assetHash })
+        .from(resourceVersionAssetsInResource),
+    ).resolves.toStrictEqual([{ assetHash: missingAssetHash }]);
+  });
 });

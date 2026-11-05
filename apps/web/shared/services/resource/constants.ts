@@ -22,8 +22,14 @@ export const CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE = new InvalidOperationError
 // Also the ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
 // Document might one day cross. No string or list inside a document can outgrow the document holding it
 export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
+// The address of an uploaded file is the lowercase hex SHA-256 of its bytes, and this source is the one place that class
+// And length are written, so every regex that matches an address derives from it
+const ASSET_HASH_SOURCE = String.raw`[\da-f]{64}`;
 // The address of an uploaded file: the lowercase hex SHA-256 of its bytes, the last segment of its blob name
-export const ASSET_HASH_REGEX = /^[0-9a-f]{64}$/u;
+export const ASSET_HASH_REGEX = new RegExp(String.raw`^${ASSET_HASH_SOURCE}$`, "u");
+// An address anywhere in a serialized document, matched as a whole token: the characters either side must be neither
+// Letters nor digits, so a hash inside a longer run of them names no file. Global flag, so it is read only via matchAll
+export const ASSET_HASH_TOKEN_REGEX = new RegExp(String.raw`(?<![\dA-Za-z])${ASSET_HASH_SOURCE}(?![\dA-Za-z])`, "gu");
 // How long after the last revision the next save is worth keeping one of. Autosave fires on every coalesced
 // Keystroke batch, so without a throttle a working session would take a revision per batch — burning the
 // Owner's storage quota while they type and growing a listing nothing bounds. One per interval is the ceiling,

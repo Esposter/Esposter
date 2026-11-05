@@ -1,15 +1,8 @@
-import type { ResourceInResource } from "@esposter/db-schema";
+import { ASSET_HASH_TOKEN_REGEX } from "#shared/services/resource/constants";
 
-import { collectResourceAssetPaths } from "#server/services/resource/collectResourceAssetPaths";
-
-// The asset hashes a serialized content value embeds for one resource. Every string is visited whatever the content
-// Type, since the scan does not look at the schema, so a version whose content embeds an asset in any shape keeps it.
-// Only a path that parses and names this resource's own file counts: another resource's file, a published-directory
-// Path and a last segment that is not a content address name no reference to keep
-export const getSnapshotAssetHashes = (resourceId: ResourceInResource["id"], content: unknown): Set<string> => {
-  const { resourceAssetPaths } = collectResourceAssetPaths(content);
-  const assetHashes = new Set<string>();
-  for (const { hash, resourceId: assetResourceId } of resourceAssetPaths.values())
-    if (assetResourceId === resourceId) assetHashes.add(hash);
-  return assetHashes;
-};
+// The content addresses a serialized document carries, each taken wherever it occurs as a whole token: a url's last
+// Segment, a bare id an element stores, or a string a future shape holds. The scan reads no schema, so it misses no
+// Shape. Release reads no document, so the scan runs where each document is written and the rows that write takes
+// Carry its result
+export const getSnapshotAssetHashes = (serializedContent: string): Set<string> =>
+  new Set(Array.from(serializedContent.matchAll(ASSET_HASH_TOKEN_REGEX), (match) => match[0]));

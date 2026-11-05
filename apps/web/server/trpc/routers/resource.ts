@@ -163,7 +163,13 @@ export const resourceRouter = router({
         // The blob is written on first save, so missing content just means there is nothing to copy yet
         if (content === undefined) return;
 
-        const clonedContent = await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, content, newResource.id);
+        const clonedContent = await cloneContentAssets(
+          ctx.db,
+          ctx.getSessionPayload.user.id,
+          content,
+          ctx.resource.id,
+          newResource.id,
+        );
         // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
         // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
         // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
