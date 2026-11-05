@@ -1,7 +1,7 @@
 ## 1. Provenance
 
 - [ ] 1.1 Write the one stamp writer and its reader: the schema, the game version read from the install's config, the tool's version and SHA-256, the operating system, the command, and a reader that refuses a stamp of another version or none. Verify: `provenance.test.ts` written first and seen failing, asserting 'A written export carries its stamp beside it', 'A reader reports output made before a later change to its producer', 'A fit refuses an export stamped with another game version', 'A fit refuses an export with no stamp' and 'The map is remade for another game version'.
-- [ ] 1.2 Make every writer call the one stamp writer and delete `producer.json`: the extraction, witness, inventory, avatar, shaders (with the operating system's build), clips, playlist, interface, city areas, the fits and the lock. Verify: `extractComponent.test.ts` written first and seen failing, asserting 'An extraction leaves no earlier stamp file' and 'A written export carries its stamp beside it'.
+- [ ] 1.2 Make every writer call the one stamp writer and delete `producer.json`: the extraction, witness, inventory, avatar, shaders (with the operating system's build), clips, playlist, interface, city areas, scene scripts, the fits and the lock. Verify: `extractComponent.test.ts` written first and seen failing, asserting 'An extraction leaves no earlier stamp file' and 'A written export carries its stamp beside it'.
 
 ## 2. Pinned sources
 
