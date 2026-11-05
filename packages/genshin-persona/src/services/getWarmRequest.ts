@@ -12,4 +12,4 @@ export const getWarmRequest = (
   name: string,
   personaCard: PersonaCard | undefined,
   language: VoiceLanguage,
-): SpeechRequest => getSpeechRequest(VoiceRequestType.Warm, name, personaCard, language, [WARM_TEXT]);
+): SpeechRequest => getSpeechRequest(VoiceRequestType.Warm, name, personaCard, language, `> ${WARM_TEXT}`);

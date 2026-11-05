@@ -107,7 +107,7 @@ export const voiceCommand: SubCommandsDef[string] = defineCommand({
 
     writeVoiceLanguage(dub);
     await sendVoiceRequest(
-      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, dub, [VOICE_PROOF_TEXT]),
+      getSpeechRequest(VoiceRequestType.Speak, character.name, personaCard, dub, `> ${VOICE_PROOF_TEXT}`),
     );
     console.log(strings.spoke(character.displayName, device ?? ""));
   },

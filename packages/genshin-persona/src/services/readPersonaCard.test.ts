@@ -1,6 +1,6 @@
 import { MODULE_EXTENSION, PERSONA_CARDS_DIRECTORY } from "#src/services/constants";
 import { getPersonaCardName } from "#src/services/getPersonaCardName";
-import { getSpokenLines } from "#src/services/getSpokenLines";
+import { getSpokenLine } from "#src/services/getSpokenLine";
 import { readGenshinDb } from "#src/services/readGenshinDb";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readdirSync } from "node:fs";
@@ -33,7 +33,7 @@ describe(readPersonaCard, () => {
     const unspokenGreetings = cards
       .filter((card) => card !== undefined)
       .map(({ greeting }) => greeting)
-      .filter((greeting) => getSpokenLines(`> ${greeting}`).join("\n") !== greeting);
+      .filter((greeting) => getSpokenLine(`> ${greeting}`) !== greeting);
 
     expect(unspokenGreetings).toStrictEqual([]);
   });

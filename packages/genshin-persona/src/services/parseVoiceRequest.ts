@@ -9,7 +9,7 @@ import { parseJsonObject } from "#src/services/parseJsonObject";
 // On the machine can write to, so every field is checked before the synthesizer acts on it. A line that is not
 // JSON at all throws, and the server answers that as it answers any request that fails
 export const parseVoiceRequest = (line: string): undefined | VoiceRequest => {
-  const { index, isFinal, language, lines, messageId, name, stem, turnId, type, volume } = parseJsonObject(line);
+  const { index, isFinal, language, markdown, messageId, name, stem, turnId, type, volume } = parseJsonObject(line);
   if (type === VoiceRequestType.Stop) return { type };
   if (
     (type !== VoiceRequestType.Speak && type !== VoiceRequestType.Warm) ||
@@ -23,11 +23,10 @@ export const parseVoiceRequest = (line: string): undefined | VoiceRequest => {
     typeof index !== "number" ||
     !Number.isInteger(index) ||
     index < 0 ||
-    !Array.isArray(lines) ||
-    !lines.every((item) => typeof item === "string") ||
+    typeof markdown !== "string" ||
     typeof volume !== "number" ||
     !checkIsVolume(String(volume))
   )
     return undefined;
-  else return { index, isFinal, language, lines, messageId, name, stem, turnId, type, volume };
+  else return { index, isFinal, language, markdown, messageId, name, stem, turnId, type, volume };
 };

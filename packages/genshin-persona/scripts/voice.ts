@@ -20,6 +20,7 @@ import { createAudioPlayer } from "#src/services/createAudioPlayer";
 import { createClipDecoder } from "#src/services/createClipDecoder";
 import { createReadingPlayer } from "#src/services/createReadingPlayer";
 import { createReplyQueue } from "#src/services/createReplyQueue";
+import { createSpokenLineReader } from "#src/services/createSpokenLineReader";
 import { createViewerOpener } from "#src/services/createViewerOpener";
 import { createViewerPlayer } from "#src/services/createViewerPlayer";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
@@ -89,10 +90,18 @@ const readSpeaker = async (request: SpeechRequest) => {
   speakers.set(key, encoded);
   return encoded;
 };
+// The spoken lines of a piece are read where the pieces run in index order, since the fence a piece sits in was opened
+// By a piece before it
+const readSpokenLines = createSpokenLineReader();
 // Each line is synthesized while the one before it plays; a warm has no player and speaks nothing, and a piece with
 // No line in it is only its place in the reply
-const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, checkIsSuperseded: () => boolean) => {
-  if (request.lines.length === 0) return VoiceStatus.Ok;
+const speak = async (
+  request: SpeechRequest,
+  lines: string[],
+  player: AudioPlayer | undefined,
+  checkIsSuperseded: () => boolean,
+) => {
+  if (lines.length === 0) return VoiceStatus.Ok;
 
   const synthesizer = await synthesizerLoad;
   const speaker = await readSpeaker(request);
@@ -116,7 +125,7 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
   };
   let playback: Promise<void> = Promise.resolve();
   let status: VoiceStatus = VoiceStatus.Ok;
-  for (const line of request.lines) {
+  for (const line of lines) {
     // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     const clip = await synthesizer.synthesize(line, speaker);
     if (!clip) {
@@ -145,13 +154,14 @@ const speak = async (request: SpeechRequest, player: AudioPlayer | undefined, ch
 // The player is spawned before the first line is synthesized, so its start is paid under that synthesis rather than
 // In front of the first sound. A request that throws is dropped and keeps the engine
 const queue = createReplyQueue(async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
-  const isSpoken = request.type === VoiceRequestType.Speak && request.lines.length > 0;
+  const lines = readSpokenLines(request);
+  const isSpoken = request.type === VoiceRequestType.Speak && lines.length > 0;
   // A viewer on file carries the reading, with the stock player behind it; with none, the reading is the stock player's
   const viewer = isSpoken ? await viewerOpener.open() : undefined;
   let player: AudioPlayer | undefined;
   if (isSpoken)
     player = viewer ? createReadingPlayer(viewer, createAudioPlayer, VIEWER_SOUND_FORM) : createAudioPlayer();
-  const [outcome] = await Promise.allSettled([speak(request, player, checkIsSuperseded)]);
+  const [outcome] = await Promise.allSettled([speak(request, lines, player, checkIsSuperseded)]);
   if (outcome?.status === "fulfilled" && outcome.value === VoiceStatus.Superseded) player?.stop?.();
   await player?.close();
   if (outcome?.status === "fulfilled") return outcome.value;

@@ -15,6 +15,18 @@ A reply's spoken lines SHALL be its blockquote lines, and no other part of a rep
 - **THEN** only the blockquote lines are spoken
 - **AND** the plain answer is shown on screen only
 
+#### Scenario: Code fenced across pieces
+
+- **GIVEN** a reply's fenced code block opens in one piece and closes in a later one, with a line of the code beginning with `>`
+- **WHEN** the pieces are read
+- **THEN** no line of the code is spoken
+
+#### Scenario: Piece after a missing one
+
+- **GIVEN** a reply's code fence opens in one piece and the piece after that one has not arrived
+- **WHEN** the piece after the missing one is read
+- **THEN** its blockquote lines are spoken
+
 ### Requirement: Spoken lines are read in the character's own voice on this machine
 
 Each spoken line SHALL be read in the character's own cloned voice by an engine running on this machine, with no service behind it.
