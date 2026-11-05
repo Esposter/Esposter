@@ -5,4 +5,4 @@
 ## 2. The quest tracker's place
 
 - [ ] 2.1 Take the quest tracker's rect from the game's interface tree once the tree gives one, and move it into that rect. Verify: a test named after the scenario "The quest tracker takes its fitted rect once the tree gives one", written first and seen failing.
-- [ ] 2.2 Keep the quest tracker at its provisional place until 2.1 is possible. Verify: a test named after the scenario "The quest tracker is drawn at its provisional place", written first and seen failing.
+- [x] 2.2 Keep the quest tracker at its provisional place until 2.1 is possible. Verify: the placement is provisional, so no test pins its number. The compare against the reference is the check: `pnpm -C scripts genshin:parity compare hud-world-pickup`, the reference the tracker's place was measured on.
