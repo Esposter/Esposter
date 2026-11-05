@@ -3,13 +3,6 @@ packages:
   - packages/*
   - scripts
 
-# A recursive run reports every project's result rather than stopping at the first failure and killing the rest,
-# Because almost every one here is a check: a check reads the tree and produces nothing, so a bailed run hides
-# However many failures sat behind the first, and each one hidden is another full round of fix-and-rerun. The run
-# Still exits non-zero, so nothing is swallowed. `build:packages` is the exception and passes `--bail` itself,
-# Since a later build consumes what an earlier one produced and the failures after it would be that one restated.
-bail: false
-
 allowBuilds:
   "@parcel/watcher": true
   esbuild: true
@@ -26,8 +19,13 @@ allowBuilds:
 # `pnpm dedupe` would; a frozen install (CI) never rewrites it.
 # The lockfile records these settings, so a `pnpm run` after a frozen install does not start a second install
 autoDedupe: true
-lockfile:
-  includeResolutionSettings: true
+
+# A recursive run reports every project's result rather than stopping at the first failure and killing the rest,
+# Because almost every one here is a check: a check reads the tree and produces nothing, so a bailed run hides
+# However many failures sat behind the first, and each one hidden is another full round of fix-and-rerun. The run
+# Still exits non-zero, so nothing is swallowed. `build:packages` is the exception and passes `--bail` itself,
+# Since a later build consumes what an earlier one produced and the failures after it would be that one restated.
+bail: false
 
 catalog:
   "@arethetypeswrong/core": ^0.18.5
@@ -53,9 +51,9 @@ catalog:
   "@dxup/nuxt": ^0.5.10
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.15
-  "@fission-ai/openspec": ^1.16.0
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
+  "@fission-ai/openspec": ^1.16.0
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
@@ -92,8 +90,8 @@ catalog:
   "@tiptap/extension-file-handler": ^3.32.2
   "@tiptap/extension-image": ^3.32.2
   "@tiptap/extension-list": ^3.32.2
-  "@tiptap/extension-table": ^3.32.2
   "@tiptap/extension-mention": ^3.32.2
+  "@tiptap/extension-table": ^3.32.2
   "@tiptap/extensions": ^3.32.2
   "@tiptap/html": ^3.32.2
   "@tiptap/pm": ^3.32.2
@@ -204,12 +202,12 @@ catalog:
   playwright: ^1.64.1
   postgres: ^4.0.0
   publint: ^0.3.25
-  rou3: ^1.0.0
   rate-limiter-flexible: ^11.2.4
   re2js: ^2.9.1
   read-excel-file: ^9.3.14
   rolldown: ^1.2.16
   rollup-plugin-visualizer: ^7.1.2
+  rou3: ^1.0.0
   rxjs: ^7.8.2
   sax: ^1.6.1
   sharp: ^0.35.5
@@ -241,9 +239,13 @@ catalog:
   web-push: ^3.6.7
   write-excel-file: ^4.1.1
   zod: ^4.6.7
+
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
+
+lockfile:
+  includeResolutionSettings: true
 
 minimumReleaseAge: 0
 
@@ -253,15 +255,15 @@ nodeOptions: --max-old-space-size=8192 --trace-warnings
 
 overrides:
   nitro: npm:nitro-nightly@latest
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
   oxc-parser: "catalog:"
-  vite: "catalog:"
   # @TODO: no upstream issue — phaser4-rex-plugins 4.2.0 still declares i18next-http-backend `^3.0.5`, below the patched 4.0.2
   # of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it once rexrainbow/phaser3-rex-notes declares a patched range
   phaser4-rex-plugins>i18next-http-backend: ^4.0.10
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
+  vite: "catalog:"
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.
   vite-plus>@oxlint/plugins: "catalog:"
@@ -277,7 +279,6 @@ overrides:
   vite-plus>oxlint-tsgolint: "catalog:"
   vite-plus>vitest: "catalog:"
 
-shellEmulator: true
 permissions:
   "@nuxtjs/seo":
     skills: true
@@ -289,3 +290,5 @@ permissions:
     skills: true
   phaser:
     skills: true
+
+shellEmulator: true
