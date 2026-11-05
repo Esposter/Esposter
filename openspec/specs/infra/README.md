@@ -39,3 +39,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Azure Pulumi layout](azure-pulumi-layout/design.md)
 - **Claude interface** — a persona plugin and spoken replies for one workspace package; the desktop stage stays two proposals behind a gate of use. → [Claude interface](claude-interface/README.md)
 - **Genshin mods** — the mods and the delegation guard run on the function hooks, so nothing is written into the person's settings. → [Genshin mods](claude-interface/genshin-mods/README.md)
+- **Agent console retirement** — the console's code, specs and ideas are removed and the host package is unpublished from npm; the executable stays on the releases that carried it. → [Agent console](../../rejected/infra/agent-console/design.md)

@@ -2,7 +2,7 @@
 
 Three workflows tag, publish and release a version, and they share one finishing job list. `Release.yaml` is the nightly that ships `main`, so only what a review has passed reaches npm. `RecoverRelease.yaml` finishes a tag as soon as it is pushed, whether a manual `pnpm release` pushed it or a previous run did not finish it. `FinishRelease.yaml` is the reusable job list both call. The versioning mechanics and the `pnpm release:gate` gates are owned by [monorepo tooling](../monorepo-tooling/design.md); this page is the job graph.
 
-Every finish is idempotent, so a version reaches npm only from a run that tagged it, and a release is made public only after its versions are on npm. The Windows host is attached to the draft before the release goes public.
+Every finish is idempotent, so a version reaches npm only from a run that tagged it, and a release is made public only after its versions are on npm.
 
 ```mermaid
 flowchart TD
@@ -28,15 +28,15 @@ flowchart TD
 
 ## Gates
 
-| Gate                              | Where                                   | Effect                                                                                  |
-| --------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- |
-| Unfinished latest tag             | `Release.yaml` `check`                  | The night after a failed or manual release finishes that tag before anything new        |
-| Commits since the latest tag      | `Release.yaml` `check`                  | A quiet night skips every job                                                           |
-| One release at a time             | workflow `concurrency` (`release`)      | Nightly and tag-triggered runs share one group, so they never race onto the same tag    |
-| Gates before the version          | `pnpm release:gate`                     | A failed gate bumps, tags and publishes nothing                                         |
-| Only a version bump reaches main  | `Release.yaml` `push`                   | The bundle must be a fast-forward that changes only versions and changelogs             |
-| npm success before the public tag | `FinishRelease.yaml` `draft`, `publish` | The draft exists only after `packages`, and the release goes public only after the host |
-| Already-public release            | `FinishRelease.yaml` `draft`            | A re-run takes no further asset and does not publish twice                              |
+| Gate                              | Where                                   | Effect                                                                                              |
+| --------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Unfinished latest tag             | `Release.yaml` `check`                  | The night after a failed or manual release finishes that tag before anything new                    |
+| Commits since the latest tag      | `Release.yaml` `check`                  | A quiet night skips every job                                                                       |
+| One release at a time             | workflow `concurrency` (`release`)      | Nightly and tag-triggered runs share one group, so they never race onto the same tag                |
+| Gates before the version          | `pnpm release:gate`                     | A failed gate bumps, tags and publishes nothing                                                     |
+| Only a version bump reaches main  | `Release.yaml` `push`                   | The bundle must be a fast-forward that changes only versions and changelogs                         |
+| npm success before the public tag | `FinishRelease.yaml` `draft`, `publish` | The draft exists only after `packages`, and the release goes public only after its packages publish |
+| Already-public release            | `FinishRelease.yaml` `draft`            | A re-run does not publish a version twice                                                           |
 
 ## Notes
 
@@ -52,7 +52,7 @@ flowchart TD
 | --------------------------------------- | ------------------------------------------------------------------------------ |
 | `.github/workflows/Release.yaml`        | the nightly: `check`, `version`, `push` and `finish` on the tag                |
 | `.github/workflows/RecoverRelease.yaml` | the tag-triggered and dispatched finish                                        |
-| `.github/workflows/FinishRelease.yaml`  | the reusable finish: publish missing versions, draft, host, public last        |
+| `.github/workflows/FinishRelease.yaml`  | the reusable finish: publish missing versions, draft, public last              |
 | `.github/workflows/MergeMain.yaml`      | the push to `main` that starts the review run merging it back into `ai/queue`  |
 | `.github/actions/install-projects`      | the install step every publish and check job shares                            |
 | `lerna.json`                            | the workspace globs lerna versions and publishes                               |

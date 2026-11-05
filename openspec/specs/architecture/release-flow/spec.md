@@ -1,6 +1,6 @@
 ## Purpose
 
-The release workflows: the nightly that ships `main`, the tag-triggered recovery that finishes a tag as soon as it is pushed, and the reusable finish both call: the packages publish, the draft GitHub release, the host attachment and the gate that makes the release public.
+The release workflows: the nightly that ships `main`, the tag-triggered recovery that finishes a tag as soon as it is pushed, and the reusable finish both call: the packages publish, the draft GitHub release and the gate that makes the release public.
 
 ## Requirements
 
@@ -44,32 +44,31 @@ The version, the tag, the registry publish and the draft release SHALL happen in
 - **THEN** no review run starts
 - **AND** no draft release is created
 
-### Requirement: The release goes public only after the packages publish and the host attaches
+### Requirement: The release goes public only after the packages publish
 
-A GitHub release SHALL become public only after its packages have reached the registry and the Windows host has been attached to its draft.
+A GitHub release SHALL become public only after its packages have reached the registry.
 
-#### Scenario: Every package publishes and the host attaches
+#### Scenario: Every package publishes
 
-- **GIVEN** the packages published and the host build succeeded
+- **GIVEN** the packages published
 - **WHEN** the publish job runs
 - **THEN** the draft release becomes public
 
-#### Scenario: The host build fails
+#### Scenario: A package fails to publish
 
-- **GIVEN** the host build fails
+- **GIVEN** a package fails to publish
 - **WHEN** the publish job is due to run
 - **THEN** the draft release stays a draft
 
 ### Requirement: A re-run does not publish a version twice
 
-A re-run of the finish SHALL NOT publish a version the registry already has, and SHALL NOT attach a second host asset to a release that is already public.
+A re-run of the finish SHALL NOT publish a version the registry already has.
 
 #### Scenario: The release is already public
 
 - **GIVEN** the release is already public
 - **WHEN** the finish is run again
-- **THEN** no further host asset is attached
-- **AND** no version is published a second time
+- **THEN** no version is published a second time
 
 ### Requirement: A tag whose release is unfinished is finished before anything new ships
 
