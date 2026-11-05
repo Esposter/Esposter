@@ -13,7 +13,7 @@ import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants
 export const grantRewardItems = (
   wallet: Wallet,
   inventory: Inventory,
-  rewards: ItemCount[],
+  rewards: readonly ItemCount[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): undefined | { inventory: Inventory; wallet: Wallet } => {

@@ -9,13 +9,14 @@ import type { ResinCost } from "#src/models/originalResin/ResinCost";
 import { CONDENSED_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
-import { claimOriginalResin } from "#src/services/originalResin/claimOriginalResin";
-import { grantRewardItems } from "#src/services/reward/grantRewardItems";
+import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
+import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
+import { routeRewardItems } from "#src/services/reward/routeRewardItems";
 
 // The one claim every resin reward goes through, whatever challenge pays it: a cost of Original Resin, or of Condensed
-// Resin where its count is above zero, and the reward list the challenge drew. Original Resin pays its Adventure EXP
-// Through `claimOriginalResin`, and the reward list is granted as `grantRewardItems` grants it. Undefined where the cost
-// Is not held, or the bag cannot take every item whole, which keeps the resin or the Condensed Resin in hand
+// Resin where its count is above zero, and the reward list the challenge drew. The Original Resin spent gives its Adventure
+// EXP, and the reward list is taken in through `routeRewardItems`. Undefined where the cost is not held, or the bag cannot
+// take every item whole, which keeps the resin or the Condensed Resin in hand
 export const claimResinReward = (
   adventureRankTables: AdventureRankTables,
   wallet: Wallet,
@@ -28,30 +29,31 @@ export const claimResinReward = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): ResinClaim | undefined => {
-  let paid: ResinClaim | undefined;
   if (cost.condensedResinCount > 0) {
-    if (countInventoryItem(inventory.items, CONDENSED_RESIN_ITEM_ID) >= cost.condensedResinCount)
-      paid = {
-        adventureExp,
-        inventory: {
-          ...inventory,
-          items: takeInventoryItems(inventory.items, CONDENSED_RESIN_ITEM_ID, cost.condensedResinCount),
-        },
-        wallet,
-      };
-  } else {
-    const claimedResin = claimOriginalResin(
+    if (countInventoryItem(inventory.items, CONDENSED_RESIN_ITEM_ID) < cost.condensedResinCount) return undefined;
+    return routeRewardItems(
       adventureRankTables,
-      wallet,
-      cost.resin,
       adventureExp,
+      0,
       completedMainQuestIds,
-      now,
+      wallet,
+      { ...inventory, items: takeInventoryItems(inventory.items, CONDENSED_RESIN_ITEM_ID, cost.condensedResinCount) },
+      rewards,
+      names,
+      materialDataMap,
     );
-    if (claimedResin) paid = { adventureExp: claimedResin.adventureExp, inventory, wallet: claimedResin.wallet };
   }
-  if (!paid) return undefined;
-  const granted = grantRewardItems(paid.wallet, paid.inventory, rewards, names, materialDataMap);
-  if (!granted) return undefined;
-  return { adventureExp: paid.adventureExp, ...granted };
+  const spentWallet = spendOriginalResin(wallet, cost.resin, now);
+  if (!spentWallet) return undefined;
+  return routeRewardItems(
+    adventureRankTables,
+    adventureExp,
+    cost.resin * ADVENTURE_EXP_PER_RESIN,
+    completedMainQuestIds,
+    spentWallet,
+    inventory,
+    rewards,
+    names,
+    materialDataMap,
+  );
 };

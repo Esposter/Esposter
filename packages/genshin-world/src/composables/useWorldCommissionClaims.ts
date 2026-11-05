@@ -1,9 +1,9 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
-import type { CommissionRouting } from "#src/models/commission/CommissionRouting";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
+import type { RewardRouting } from "#src/models/reward/RewardRouting";
 import type { ComputedRef, Ref } from "vue";
 
 import { claimCommissionWithPoints } from "#src/services/commission/claimCommissionWithPoints";
@@ -46,7 +46,7 @@ export const useWorldCommissionClaims = ({
   const { inventory, wallet, worldNow } = storeToRefs(worldSessionStore);
   const { getWorldNow, setInventory, setWallet } = worldSessionStore;
   // Where a routing's items land: the Adventure EXP, the characters, the bag and the wallet
-  const writeRouting = (routing: CommissionRouting) => {
+  const writeRouting = (routing: RewardRouting) => {
     adventureExp.value = routing.adventureExp;
     characters.value = routing.characters;
     setInventory(routing.inventory);

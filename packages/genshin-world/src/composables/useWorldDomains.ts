@@ -50,6 +50,7 @@ import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
+import { useWorldFriendshipStore } from "#src/store/friendship";
 import { useWorldMapStore } from "#src/store/map";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldScreenStore } from "#src/store/screen";
@@ -107,7 +108,10 @@ export const useWorldDomains = ({
   random: () => number;
 }) => {
   const worldPartyStore = useWorldPartyStore();
+  const { characters } = storeToRefs(worldPartyStore);
   const { party } = worldPartyStore;
+  const worldFriendshipStore = useWorldFriendshipStore();
+  const { friendshipLevels } = storeToRefs(worldFriendshipStore);
   const worldScreenStore = useWorldScreenStore();
   const { closeScreen } = worldScreenStore;
   const worldMapStore = useWorldMapStore();
@@ -413,7 +417,8 @@ export const useWorldDomains = ({
   // Choosing a claim spends its resin and grants the tree's items. The tree is claimed once, by the offer's claims
   const chooseDomainTreeClaim = (offer: BlossomClaimOffer, now: Temporal.Instant) => {
     const arena = domainArena.value;
-    if (!arena || !isDomainTreeRaised.value) return;
+    // A claim waits until the Friendship levels load, since its Companionship EXP has no top to stop at without them
+    if (!arena || !isDomainTreeRaised.value || !friendshipLevels.value) return;
     domainClaimOffers.value = undefined;
     // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to draw
     // From is refused with the resin still held
@@ -425,6 +430,9 @@ export const useWorldDomains = ({
     ).flat();
     const claim = claimPetrifiedTree(
       adventureRankTables,
+      characters.value,
+      friendshipLevels.value,
+      party,
       wallet.value,
       inventory.value,
       offer,
@@ -456,6 +464,7 @@ export const useWorldDomains = ({
     setWallet(claim.wallet);
     setInventory(nextInventory);
     adventureExp.value = claim.adventureExp;
+    characters.value = claim.characters;
     isDomainTreeRaised.value = false;
   };
 
