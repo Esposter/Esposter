@@ -2,7 +2,7 @@
 
 ### Requirement: No picture the game draws is shipped
 
-The app SHALL NOT ship any picture the game draws, such as a portrait, a card face, a banner or a hall picture. A stand-in SHALL fill the place of each such picture.
+The app SHALL NOT ship any picture the game draws, such as a portrait, a card face, a banner or a hall picture, and a stand-in fills the place of each such picture.
 
 #### Scenario: A screen with a portrait holds a stand-in
 
