@@ -10,7 +10,7 @@ Movement is kinematic, so collision is a query service the controller asks; a so
 
 ## An ignorePatterns entry for the engine's TSL
 
-The engine's TSL lints in about a second, and a new exclusion needs a file measured to hang the type-aware pass; the current `ignorePatterns` state is owned by `.agents/skills/oxlint/references/ignore-patterns.md`.
+A new exclusion needs a file measured to hang the type-aware pass; the current `ignorePatterns` state is owned by `.agents/skills/oxlint/references/ignore-patterns.md`.
 
 ## The word teyvat in any name
 
