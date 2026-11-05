@@ -154,7 +154,7 @@ These are the game's art, which cannot ship. Each row names the stand-in that dr
 
 Group 1, the foundations, comes first: its commands and the two components are read by every later group. Groups 2 to 4 are independent once group 1 holds. Group 5, the roadmap, comes last, since its `Asset:` lines name the pieces the stand-ins replace.
 
-This change holds phase 6, its `x-phase`, because more of its tasks hold phase 6 than any other phase: they are stand-ins and system pieces. The commands hold phase 0, the challenge words and the bag icons hold phase 2, and the likeness fits, the motion numbers and the world art lines hold phase 7. Each task carries its phase after its number.
+This change holds phase 0, its `x-phase`, because its lowest open task does: the commands and the datasets they publish hold phase 0, the challenge words and the bag icons hold phase 2, the stand-ins and system pieces hold phase 6, and the likeness fits, the motion numbers and the world art lines hold phase 7. Each task carries its phase after its number.
 
 Playtest: a player reaches the cast and the animals, so two playtest scenarios name the states they show, one for the cast and one for the wildlife and props. Each is a file in the dev scenarios folder, listed in that folder's constants, and the first task that needs it creates it. Pet drawing waits on [genshin-wildlife](../genshin-wildlife/design.md) task 5.1, and no task here waits on it.
 

@@ -1,6 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-phase: 7
+x-phase: 0
 x-model: claude-haiku-5-5
 x-needs: [game-exports, game-install, media-engine]
 x-touches:

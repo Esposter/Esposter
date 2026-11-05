@@ -7,9 +7,10 @@ describe(parseProposalMetadata, () => {
 
     expect(
       parseProposalMetadata(
-        'schema: spec-driven\nx-needs: [game-install, "game-exports"]\nx-touches: [apps/a/*.vue, "apps/b/**"]\nx-waiting: "the namecard art (the other machine)"\n',
+        'schema: spec-driven\naffected_areas: [genshin]\nx-needs: [game-install, "game-exports"]\nx-touches: [apps/a/*.vue, "apps/b/**"]\nx-waiting: "the namecard art (the other machine)"\n',
       ),
     ).toStrictEqual({
+      areas: ["genshin"],
       needs: ["game-install", "game-exports"],
       phase: undefined,
       touches: ["apps/a/*.vue", "apps/b/**"],
@@ -22,13 +23,14 @@ describe(parseProposalMetadata, () => {
 
     expect(
       parseProposalMetadata('schema: spec-driven\nx-touches:\n  [\n    "apps/a/**",\n    "apps/b/**",\n  ]\n'),
-    ).toStrictEqual({ needs: [], phase: undefined, touches: ["apps/a/**", "apps/b/**"], waiting: "" });
+    ).toStrictEqual({ areas: [], needs: [], phase: undefined, touches: ["apps/a/**", "apps/b/**"], waiting: "" });
   });
 
   test("reads the phase a change names as its integer", () => {
     expect.hasAssertions();
 
     expect(parseProposalMetadata("schema: spec-driven\nx-phase: 3\n")).toStrictEqual({
+      areas: [],
       needs: [],
       phase: 3,
       touches: [],
@@ -40,6 +42,7 @@ describe(parseProposalMetadata, () => {
     expect.hasAssertions();
 
     expect(parseProposalMetadata("schema: spec-driven\n")).toStrictEqual({
+      areas: [],
       needs: [],
       phase: undefined,
       touches: [],

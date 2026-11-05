@@ -13,17 +13,21 @@ const PHASE_REGEX = /^\d+$/u;
 // Integer, so a word or a fraction fails the regex and a number past the last phase fails the range
 const ProposalMetadataSchema = z
   .object({
+    affected_areas: z.array(z.string()).default([]),
     "x-needs": z.array(z.string()).default([]),
     "x-phase": z.string().regex(PHASE_REGEX).transform(Number).pipe(z.int().min(0).max(MAX_GENSHIN_PHASE)).optional(),
     "x-touches": z.array(z.string()).default([]),
     "x-waiting": z.string().default(""),
   })
-  .transform(({ "x-needs": needs, "x-phase": phase, "x-touches": touches, "x-waiting": waiting }) => ({
-    needs,
-    phase,
-    touches,
-    waiting,
-  })) satisfies z.ZodType<ProposalMetadata>;
+  .transform(
+    ({ affected_areas: areas, "x-needs": needs, "x-phase": phase, "x-touches": touches, "x-waiting": waiting }) => ({
+      areas,
+      needs,
+      phase,
+      touches,
+      waiting,
+    }),
+  ) satisfies z.ZodType<ProposalMetadata>;
 
 // The fleet's fields a change's `.openspec.yaml` names, each defaulted when absent, and its phase, undefined when it
 // Names none. A change naming none of them is ready to build with only its Key files as its touch set
