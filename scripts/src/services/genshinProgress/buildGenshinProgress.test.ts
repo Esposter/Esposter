@@ -1,0 +1,138 @@
+import { ComputeKind } from "#src/models/fleet/ComputeKind";
+import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
+import { buildGenshinProgress } from "#src/services/genshinProgress/buildGenshinProgress";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
+
+describe(buildGenshinProgress, () => {
+  test("A phase's progress counts its units by kind", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [
+          { blockers: [], kind: ComputeKind.Screen, needs: [], phase: 2 },
+          { blockers: [], kind: ComputeKind.Screen, needs: [[]], phase: 2 },
+          { blockers: [], kind: ComputeKind.Region, needs: [[]], phase: 2 },
+        ],
+        changes: [],
+        roadmap: { items: [], names: new Map([[2, "The interface"]]) },
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 2)).toStrictEqual({
+      name: "The interface",
+      phase: 2,
+      rows: [
+        { blocked: 0, done: 1, firstBlocker: "", kind: ComputeKind.Screen, runnable: 1, units: 2, waiting: 0 },
+        { blocked: 0, done: 0, firstBlocker: "", kind: ComputeKind.Region, runnable: 1, units: 1, waiting: 0 },
+      ],
+    });
+  });
+
+  test("A compute area with only waiting items counts as waiting and names its first blocker", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [{ blockers: ["a plate", "a clip"], kind: ComputeKind.Scene, needs: [], phase: 1 }],
+        changes: [],
+        roadmap: { items: [], names: new Map() },
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 1).rows).toStrictEqual([
+      { blocked: 0, done: 0, firstBlocker: "a plate", kind: ComputeKind.Scene, runnable: 0, units: 1, waiting: 1 },
+    ]);
+  });
+
+  test("A compute area whose every queue item needs a capability this machine lacks is blocked on the other machine", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [{ blockers: [], kind: ComputeKind.Pieces, needs: [["game-install"]], phase: 3 }],
+        changes: [],
+        roadmap: { items: [], names: new Map() },
+      },
+      ["linux"],
+    );
+
+    expect(takeOne(phases, 3).rows).toStrictEqual([
+      { blocked: 1, done: 0, firstBlocker: "", kind: ComputeKind.Pieces, runnable: 0, units: 1, waiting: 0 },
+    ]);
+  });
+
+  test("A change counts each open task in its own task's phase, and never a done one", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [],
+        changes: [
+          {
+            needs: [],
+            phase: 2,
+            tasks: [
+              { isDone: false, number: "1.1", phase: 2 },
+              { isDone: false, number: "1.2", phase: 4 },
+              { isDone: true, number: "1.3", phase: 2 },
+            ],
+            waiting: "",
+          },
+        ],
+        roadmap: { items: [], names: new Map() },
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 2).rows).toStrictEqual([
+      { blocked: 0, done: 0, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 1, units: 1, waiting: 0 },
+    ]);
+    expect(takeOne(phases, 4).rows).toStrictEqual([
+      { blocked: 0, done: 0, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 1, units: 1, waiting: 0 },
+    ]);
+  });
+
+  test("A change with no open task counts as done in its own phase", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [],
+        changes: [{ needs: [], phase: 6, tasks: [{ isDone: true, number: "1.1", phase: 6 }], waiting: "" }],
+        roadmap: { items: [], names: new Map() },
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 6).rows).toStrictEqual([
+      { blocked: 0, done: 1, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 0, units: 1, waiting: 0 },
+    ]);
+  });
+
+  test("A roadmap item counts under its phase, done or open by its checkbox", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [],
+        changes: [],
+        roadmap: {
+          items: [
+            { isDone: true, phase: 0 },
+            { isDone: false, phase: 0 },
+          ],
+          names: new Map(),
+        },
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 0).rows).toStrictEqual([
+      { blocked: 0, done: 1, firstBlocker: "", kind: GenshinProgressKind.Item, runnable: 1, units: 2, waiting: 0 },
+    ]);
+  });
+});

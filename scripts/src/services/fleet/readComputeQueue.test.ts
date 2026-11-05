@@ -14,11 +14,11 @@ describe(readComputeQueue, () => {
     "",
     "## Phases",
     "",
-    "| Area | Page | Phase |",
-    "| :--- | :--- | :---: |",
-    "| Alpha | [Alpha](a/design.md) | 4 |",
-    "| Beta | [Beta](b/design.md) | 1 |",
-    "| Charlie | [Charlie](c/design.md) | 6 |",
+    "| Area | Page | Kind | Phase |",
+    "| :--- | :--- | :--- | :---: |",
+    "| Alpha | [Alpha](a/design.md) | Screen | 4 |",
+    "| Beta | [Beta](b/design.md) | Region | 1 |",
+    "| Charlie | [Charlie](c/design.md) | Scene | 6 |",
     "",
   ].join("\n");
 

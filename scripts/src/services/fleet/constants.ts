@@ -55,6 +55,8 @@ export const COMPUTE_QUEUE_WAITING_HEADING = "## Waiting";
 // The folder's index, whose Phases table holds a row per area's page naming the phase the page's items hold
 export const COMPUTE_QUEUE_INDEX_FILE = "README.md";
 export const COMPUTE_QUEUE_PHASE_HEADING = "## Phases";
+// The blocker a waiting item shows when its line names none, so the report says so rather than printing a blank
+export const COMPUTE_UNNAMED_BLOCKER = "none named on its line";
 // The last Genshin phase: a change or a compute page that names a phase past it names none
 export const MAX_GENSHIN_PHASE = 7;
 // A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`

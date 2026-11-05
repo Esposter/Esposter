@@ -1,3 +1,4 @@
+import { GENSHIN_ROADMAP_FILE } from "#src/services/genshinProgress/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -6,7 +7,7 @@ import { describe, expect, test } from "vitest";
 // The roadmap is grouped by the phase each open item holds, so an open item under no phase heading is one no phase's
 // gate counts and no progress report can place. A ticked item is a record of a finished one and needs no phase
 describe("roadmapPhases", () => {
-  const ROADMAP_PATH = join(REPOSITORY_ROOT, "openspec", "changes", "genshin-roadmap", "tasks.md");
+  const ROADMAP_PATH = join(REPOSITORY_ROOT, GENSHIN_ROADMAP_FILE);
   const HEADING_REGEX = /^#{1,2} /u;
   const PHASE_HEADING_REGEX = /^## Phase [0-7]: .+$/u;
   const OPEN_ITEM_REGEX = /^\s*- \[ \] /u;

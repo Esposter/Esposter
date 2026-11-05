@@ -55,6 +55,7 @@
     "ai:setup": "vpx src/setup/index.ts",
     "ai:skills:extract": "vpx src/skills/extract/index.ts",
     "ai:gcsim:configs": "vpx src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts",
+    "ai:genshin:progress": "vpx src/genshin/progress/index.ts",
     "ai:sweep:constant-scope": "node src/sweeps/constantScope/index.ts",
     "ai:sweep:duplicate-code": "vpx src/sweeps/duplicateCode/index.ts",
     "ai:sweep:duplicate-prose": "node src/sweeps/duplicateProse/index.ts",

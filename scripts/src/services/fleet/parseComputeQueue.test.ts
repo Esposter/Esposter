@@ -31,12 +31,50 @@ describe(parseComputeQueue, () => {
       parseComputeQueue(
         "## Queue\n\n- [ ] `[cpu]` **Untagged.** Writes `a.ts`.\n\n## Waiting\n\n- [ ] `[page]` **Waiting, no id.**",
       ),
-    ).toStrictEqual({ entries: [], skipped: 2 });
+    ).toStrictEqual({ entries: [], skipped: 2, waiting: [] });
+  });
+
+  test("reads each waiting item with the blocker its line names, or the fallback when it names none", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseComputeQueue(
+        [
+          "## Queue",
+          "",
+          "## Waiting",
+          "",
+          "- [ ] `[page]` {waits-run} needs parity-page — **Waits.** Waits on a plate.",
+          "- [ ] `[page]` {blocked-run} — **Blocked.** Reads `a.png`. — blocked: no reference names its buttons",
+          "- [ ] `[page]` {input-run} — **Input.** input missing: a recording of the shafts. Measure: x",
+          "- [ ] `[page]` {unnamed-run} — **Unnamed.** Reads `a.png`.",
+        ].join("\n"),
+      ).waiting.map(({ id, waiting }) => ({ id, waiting })),
+    ).toStrictEqual([
+      { id: "waits-run", waiting: "a plate" },
+      { id: "blocked-run", waiting: "no reference names its buttons" },
+      { id: "input-run", waiting: "a recording of the shafts" },
+      { id: "unnamed-run", waiting: "none named on its line" },
+    ]);
+  });
+
+  test("reads the waiting items of a page with no queue heading, since a page may hold only waiting items", () => {
+    expect.hasAssertions();
+
+    expect(
+      parseComputeQueue(
+        "# Wish\n\n## Waiting\n\n- [ ] `[page]` {wish-run} — **Wish.** Waits on a plate.\n",
+      ).waiting.map(({ id }) => id),
+    ).toStrictEqual(["wish-run"]);
   });
 
   test("reads no items from a page with no queue heading", () => {
     expect.hasAssertions();
 
-    expect(parseComputeQueue("## Opening\n\n- [ ] `[cpu]` {elsewhere} — x")).toStrictEqual({ entries: [], skipped: 0 });
+    expect(parseComputeQueue("## Opening\n\n- [ ] `[cpu]` {elsewhere} — x")).toStrictEqual({
+      entries: [],
+      skipped: 0,
+      waiting: [],
+    });
   });
 });

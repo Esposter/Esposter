@@ -47,6 +47,7 @@
     "ai:fleet:status": "pnpm -C scripts ai:fleet:status",
     "ai:format": "pnpm -C scripts ai:format",
     "ai:gcsim:configs": "pnpm -C scripts ai:gcsim:configs",
+    "ai:genshin:progress": "pnpm -C scripts ai:genshin:progress",
     "ai:identifiers:rename": "pnpm -C scripts ai:identifiers:rename",
     "ai:land": "pnpm -C scripts ai:land",
     "ai:machine:watch": "pnpm -C scripts ai:machine:watch",

@@ -37,34 +37,34 @@ The fleet reads every page here except this one, and an id that two pages share 
 
 ## Phases
 
-| Area                                  | Page                                 | Phase |
-| :------------------------------------ | :----------------------------------- | :---- |
-| The capitals' city areas              | [Capitals](capitals/design.md)       | 5     |
-| The character screen and its menu     | [Character](character/design.md)     | 2     |
-| The crafting table and screen         | [Crafting](crafting/design.md)       | 2     |
-| The dialogue box                      | [Dialogue](dialogue/design.md)       | 2     |
-| Fontaine                              | [Fontaine](fontaine/design.md)       | 5     |
-| The card game's duel board            | [Gcg](gcg/design.md)                 | 6     |
-| The adventurer handbook               | [Handbook](handbook/design.md)       | 2     |
-| Inazuma                               | [Inazuma](inazuma/design.md)         | 5     |
-| The interaction pill                  | [Interaction](interaction/design.md) | 2     |
-| The interface pieces without a screen | [Interface](interface/design.md)     | 2     |
-| The inventory screen                  | [Inventory](inventory/design.md)     | 2     |
-| Liyue                                 | [Liyue](liyue/design.md)             | 5     |
-| The login screen                      | [Login](login/design.md)             | 1     |
-| The map screen                        | [Map](map/design.md)                 | 2     |
-| Mondstadt                             | [Mondstadt](mondstadt/design.md)     | 4     |
-| Natlan                                | [Natlan](natlan/design.md)           | 5     |
-| Nod-Krai                              | [Nod-Krai](nod-krai/design.md)       | 5     |
-| The Paimon menu                       | [Paimon](paimon/design.md)           | 2     |
-| The quest screen                      | [Quest](quest/design.md)             | 2     |
-| The settings screen                   | [Settings](settings/design.md)       | 2     |
-| Snezhnaya                             | [Snezhnaya](snezhnaya/design.md)     | 5     |
-| Sumeru                                | [Sumeru](sumeru/design.md)           | 5     |
-| The game's text in every language     | [Text](text/design.md)               | 0     |
-| The first scene, Windrise             | [Windrise](windrise/design.md)       | 1     |
-| The wish screen                       | [Wish](wish/design.md)               | 2     |
-| The world's playable pieces           | [World](world/design.md)             | 3     |
+| Area                                  | Page                                 | Kind    | Phase |
+| :------------------------------------ | :----------------------------------- | :------ | :---: |
+| The capitals' city areas              | [Capitals](capitals/design.md)       | Region  |   5   |
+| The character screen and its menu     | [Character](character/design.md)     | Screen  |   2   |
+| The crafting table and screen         | [Crafting](crafting/design.md)       | Screen  |   2   |
+| The dialogue box                      | [Dialogue](dialogue/design.md)       | Pieces  |   2   |
+| Fontaine                              | [Fontaine](fontaine/design.md)       | Region  |   5   |
+| The card game's duel board            | [Gcg](gcg/design.md)                 | Screen  |   6   |
+| The adventurer handbook               | [Handbook](handbook/design.md)       | Screen  |   2   |
+| Inazuma                               | [Inazuma](inazuma/design.md)         | Region  |   5   |
+| The interaction pill                  | [Interaction](interaction/design.md) | Pieces  |   2   |
+| The interface pieces without a screen | [Interface](interface/design.md)     | Pieces  |   2   |
+| The inventory screen                  | [Inventory](inventory/design.md)     | Screen  |   2   |
+| Liyue                                 | [Liyue](liyue/design.md)             | Region  |   5   |
+| The login screen                      | [Login](login/design.md)             | Scene   |   1   |
+| The map screen                        | [Map](map/design.md)                 | Screen  |   2   |
+| Mondstadt                             | [Mondstadt](mondstadt/design.md)     | Region  |   4   |
+| Natlan                                | [Natlan](natlan/design.md)           | Region  |   5   |
+| Nod-Krai                              | [Nod-Krai](nod-krai/design.md)       | Region  |   5   |
+| The Paimon menu                       | [Paimon](paimon/design.md)           | Screen  |   2   |
+| The quest screen                      | [Quest](quest/design.md)             | Screen  |   2   |
+| The settings screen                   | [Settings](settings/design.md)       | Screen  |   2   |
+| Snezhnaya                             | [Snezhnaya](snezhnaya/design.md)     | Region  |   5   |
+| Sumeru                                | [Sumeru](sumeru/design.md)           | Region  |   5   |
+| The game's text in every language     | [Text](text/design.md)               | Dataset |   0   |
+| The first scene, Windrise             | [Windrise](windrise/design.md)       | Scene   |   1   |
+| The wish screen                       | [Wish](wish/design.md)               | Screen  |   2   |
+| The world's playable pieces           | [World](world/design.md)             | Pieces  |   3   |
 
 ## Bars
 

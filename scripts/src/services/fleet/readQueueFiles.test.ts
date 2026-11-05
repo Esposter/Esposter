@@ -12,9 +12,9 @@ describe(readQueueFiles, () => {
   const INDEX_TEXT = [
     "## Phases",
     "",
-    "| Area | Page | Phase |",
-    "| :--- | :--- | :---: |",
-    "| Genshin | [Genshin](genshin/design.md) | 1 |",
+    "| Area | Page | Kind | Phase |",
+    "| :--- | :--- | :--- | :---: |",
+    "| Genshin | [Genshin](genshin/design.md) | Screen | 1 |",
     "",
   ].join("\n");
   const PAGE_PATH = "compute/genshin/design.md";
