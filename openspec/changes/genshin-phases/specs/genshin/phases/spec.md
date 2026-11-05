@@ -54,6 +54,18 @@ A unit SHALL count as done only when the check its kind defines passes, and a un
 - **WHEN** the report reads the quest's check
 - **THEN** the check prints as not measurable
 
+#### Scenario: A scripted session plays a quest to its end across a save and a load
+
+- **GIVEN** a quest unit and the scripted-session harness
+- **WHEN** the harness plays the quest from a script with a save and a load in the middle
+- **THEN** the quest reaches its end and what it changed in the world persists across the load
+
+#### Scenario: A system with no finished screen is not done
+
+- **GIVEN** a system whose scenarios pass and no finished screen reaches it
+- **WHEN** the system's check is read
+- **THEN** the system is not done
+
 ### Requirement: Progress is computed from the tree
 
 The progress report SHALL derive every phase's counts from the checkboxes, the compute pages and the units' needs, and no page SHALL restate a count.
