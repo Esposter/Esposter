@@ -63,6 +63,7 @@
     "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
+    "@azure/search-documents": "catalog:",
     "@azure/service-bus": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",

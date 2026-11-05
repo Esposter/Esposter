@@ -831,6 +831,9 @@ importers:
       '@azure/identity':
         specifier: 'catalog:'
         version: 4.14.1(supports-color@8.1.1)
+      '@azure/search-documents':
+        specifier: 'catalog:'
+        version: 13.0.0(supports-color@8.1.1)
       '@azure/service-bus':
         specifier: 'catalog:'
         version: 7.10.0(supports-color@8.1.1)

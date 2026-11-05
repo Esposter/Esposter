@@ -15,7 +15,7 @@ vi.mock(import("#src/services/genshinParity/reference/restoreManifestFiles"), ()
   ),
 }));
 
-describe(referencesRestoreCommand, () => {
+describe("referencesRestoreCommand", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

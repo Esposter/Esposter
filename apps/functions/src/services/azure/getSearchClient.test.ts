@@ -1,8 +1,12 @@
-import type { SearchIndex } from "@esposter/db-schema";
+import type { SearchClient } from "@azure/search-documents";
+import type { SearchIndex, SearchIndexDocumentMap } from "@esposter/db-schema";
 
 import { MockSearchClient } from "azure-mock";
 import { describe } from "vitest";
 
-export const getSearchClient = (index: SearchIndex) => new MockSearchClient(index);
+export const getSearchClient = <TIndex extends SearchIndex>(
+  index: TIndex,
+): SearchClient<SearchIndexDocumentMap[TIndex]> =>
+  new MockSearchClient(index) as unknown as SearchClient<SearchIndexDocumentMap[TIndex]>;
 
 describe.todo("getSearchClient");
