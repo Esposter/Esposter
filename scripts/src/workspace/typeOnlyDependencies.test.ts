@@ -10,18 +10,18 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-/**
- * A private package is built into one artifact, so its `dependencies` are the names its code loads and its
- * `devDependencies` are the names only its types, tests and tooling reach. A name its non-test sources import only as
- * types is erased by the build and belongs in `devDependencies`. A published package is the other case: a type in its
- * signature is one its consumers resolve, so it keeps the name in `dependencies`.
- */
 const getPackageName = (specifier: string): string | undefined => {
   if (/^(?:\.|#|node:)/u.test(specifier)) return undefined;
   const [scopeOrName = "", name = ""] = specifier.split("/");
   return scopeOrName.startsWith("@") ? `${scopeOrName}/${name}` : scopeOrName;
 };
 
+/**
+ * A private package is built into one artifact, so its `dependencies` are the names its code loads and its
+ * `devDependencies` are the names only its types, tests and tooling reach. A name its non-test sources import only as
+ * types is erased by the build and belongs in `devDependencies`. A published package is the other case: a type in its
+ * signature is one its consumers resolve, so it keeps the name in `dependencies`.
+ */
 describe("typeOnlyDependencies", () => {
   const SOURCE_PATH_REGEX = /\.(?:cjs|mjs|js|mts|ts|vue)$/u;
   const NON_SOURCE_PATH_REGEX = /\.(?:bench|test-d|test|typebench)\.ts$|\.d\.ts$|\/(?:fixtures|tests?)\//u;
