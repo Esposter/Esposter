@@ -142,7 +142,7 @@ flowchart LR
 - **The icon export writes into the weapons' own exports folder.** Rejected: the references folder the namecards export uses. A component's fits read its own exports, and the references are the parity loop's committed set.
 - **A row whose mesh is missing stays unpaired.** Rejected: pairing by the weapon's English name. Some rows have textures and materials under their folder name and no mesh of that name in the index, so a name guess would give one weapon another's blade.
 - **The trail is measured from the captures, not from the effect meshes.** Rejected: exporting the effect meshes first. Their shape is one source of a trail, but the gate reads the frames, and the meshes can be exported later if the ribbon misses.
-- **The Mac runs no step that reads the install until its acceptance is recorded.** Rejected: running the exports on this Mac now. The acceptance has never run, so its counts are not the Windows CLI's, and a mismatch would only show after the publish.
+- **The Mac runs no export step that reads the install until its acceptance is recorded.** The map and index it already holds are its own output, read by the commands above. Rejected: running the exports on this Mac now. The acceptance has never run, so its counts are not the Windows CLI's, and a mismatch would only show after the publish.
 
 ## Notes
 
