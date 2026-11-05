@@ -76,20 +76,20 @@ The pane is where the sins are read. The band keeps one summary line, and the pa
 
 ```text
 Seven sins                                          prompts scored 214
-Pride    ████████████████▒▒▒▒▒     62%  ±9   ▂▃▅▆▇▇█
-Greed    ███████▒▒▒                28%  ±7   █▇▆▅▄▃▂
-Wrath    ██▒▒                       9%  ±5   ▁▁▁▂▁▁▁
-Envy     █████████▒▒▒▒▒▒▒          41%  ±8   ▃▃▄▄▅▄▅
-Lust     ████████████▒▒▒           52%  ±8   ▆▅▅▆▇▆▅
-Gluttony ██████▒▒▒▒▒▒              22%  ±6   ▂▃▂▂▂▃▂
-Sloth    ███████████▒▒▒▒           46%  ±9   ▇▆▆▅▅▅▄
+Pride    ████████████████▒▒▒▒▒     62%  ±9   ▂▂▃▃▃▃▄▄▄▄▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇▇▇▇█
+Greed    ███████▒▒▒                28%  ±7   █▇▇▇▆▆▆▆▅▅▅▅▄▄▄▄▃▃▃▃▃▃▃▂▂▂▂▂▂▂
+Wrath    ██▒▒                       9%  ±5   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▂
+Envy     █████████▒▒▒▒▒▒▒          41%  ±8   ▃▃▄▄▅▄▅▃▃▄▄▃▄▅▅▄▃▃▄▄▅▄▅▄▃▃▄▄▅▃
+Lust     ████████████▒▒▒           52%  ±8   ▆▅▅▆▇▆▅▅▆▆▇▆▅▅▆▇▇▆▅▅▆▆▇▆▅▅▆▆▇▆
+Gluttony ██████▒▒▒▒▒▒              22%  ±6   ▂▃▂▂▂▃▂▂▃▂▂▂▃▂▂▂▂▃▂▂▃▂▂▂▃▂▂▂▂▃
+Sloth    ███████████▒▒▒▒           46%  ±9   ▇▆▆▅▅▅▄▄▅▅▄▄▄▅▅▄▄▃▄▄▅▄▄▅▅▄▄▄▅▅
 ```
 
 The numbers above are illustrative. Each row is one sin, in the same order every time:
 
 - **The bar** is the score. The solid run runs to $S_k$, and the lighter run runs from $S_k$ to $S_k + \sigma_k$, so the spread reads as the tail of the same bar and never as a separate series.
 - **The label** is the sin's name, the score and the spread in figures. Every bar is named and valued, so identity never rests on colour.
-- **The trend** is the last thirty prompts as eight glyph heights, from `▁` to `█`.
+- **The trend** is the last thirty prompts as thirty glyph heights, one per prompt, from `▁` to `█`.
 
 The panel is opened by the band's `p` button and closed by the person through the engine's own mark. The engine places it: docked beside the transcript where the surface is wide enough, otherwise inline above the prompt. Once the switch is off the pane says so and draws no bars, so it never shows the scores of a mod that is off.
 
