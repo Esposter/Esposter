@@ -24,10 +24,17 @@ The game's static datasets SHALL be stored as records each named by the hash of 
 
 #### Scenario: A real rerun lists each account before it stores
 
-- **GIVEN** the lock already names the hash of every record of a dataset
+- **GIVEN** the dataset holds records and the lock already names the hash of every one
 - **WHEN** its builder runs again as a real publish
 - **THEN** each account is listed
 - **AND** only the blobs an account lacks are stored
+
+#### Scenario: An empty publication makes no request and leaves the lock as it is
+
+- **GIVEN** the publication holds no records and the lock would stay as it is
+- **WHEN** its builder runs as a real publish
+- **THEN** no account is listed and no request is made to storage
+- **AND** the lock is left as it is
 
 ### Requirement: The published lock is the only switch to new data
 
