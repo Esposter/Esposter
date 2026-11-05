@@ -7,7 +7,7 @@
 
 ## 2. Nod-Krai
 
-- [ ] 2.1 Read Nod-Krai's residents and their night spots from the wiki's NPC pages with `pnpm -C scripts genshin:assets residents`, which rewrites the regions' data. Verify: a test named after the scenario 'A Nod-Krai resident keeps the wiki's hours'.
+- [ ] 2.1 [phase 5] Read Nod-Krai's residents and their night spots from the wiki's NPC pages with `pnpm -C scripts genshin:assets residents`, which rewrites the regions' data. Verify: a test named after the scenario 'A Nod-Krai resident keeps the wiki's hours'.
 
 ## 3. Vendors
 
