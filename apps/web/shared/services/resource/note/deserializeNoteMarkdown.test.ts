@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { JSONContent } from "@tiptap/core";
 
 import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";

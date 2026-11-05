@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useSurveyListEditor } from "@/composables/survey/useSurveyListEditor";
 import { describe, expect, test } from "vitest";
 

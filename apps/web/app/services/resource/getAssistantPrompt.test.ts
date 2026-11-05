@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 import { ResourceType } from "@esposter/db-schema";
 import { SITE_NAME } from "@esposter/shared";

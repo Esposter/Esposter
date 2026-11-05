@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useResourceSelection } from "@/composables/resource/list/useResourceSelection";
 import { describe, expect, test } from "vitest";
 

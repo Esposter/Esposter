@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useDebouncedFilter } from "@/composables/resource/list/useDebouncedFilter";
 import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
