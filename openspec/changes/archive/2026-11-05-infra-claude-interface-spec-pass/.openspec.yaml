@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [infra]
+x-model: claude-sonnet-5-5
+skip_specs: true
