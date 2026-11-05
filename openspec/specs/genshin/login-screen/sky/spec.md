@@ -20,7 +20,7 @@ The frame SHALL be drawn through the game's own tone curve with no grade, and wi
 #### Scenario: Frame is drawn
 
 - **WHEN** a frame is drawn
-- **THEN** only the tone curve is applied to it
+- **THEN** the game's bloom is added and the tone curve is applied to it, with no grade
 
 ### Requirement: Night white balance
 

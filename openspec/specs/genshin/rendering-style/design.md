@@ -29,7 +29,7 @@ flowchart TD
   SG -->|yes| SGL["Elemental Sight"]
   SG -->|no| B{Bloom on the tier?}
   SGL --> B
-  B -->|yes| BL[Add what is brighter than nearly white]
+  B -->|yes| BL[Add the light past the game's bloom threshold]
   B -->|no| AA
   BL --> AA{TRAA on the tier?}
   AA -->|yes| T[TRAA from the velocity target, then tone mapping, then the grade]
