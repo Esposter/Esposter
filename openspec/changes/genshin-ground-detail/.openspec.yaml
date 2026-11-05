@@ -1,4 +1,5 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 1
 x-model: claude-opus-5-5
 x-needs: [game-exports]
