@@ -34,6 +34,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
+vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 vi.mock(
