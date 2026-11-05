@@ -1,3 +1,4 @@
+import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { Party } from "#src/models/party/Party";
 import type { Catalogue } from "#src/models/world/Catalogue";
@@ -13,6 +14,7 @@ export interface WorldDevHandleOptions {
   devRegistry?: DevRegistry;
   getCharacterName: (characterId: number) => string;
   getGameClock: () => GameClock | undefined;
+  getKills: () => ArchiveKills;
   getLandmarks: () => readonly Landmark[];
   getWeather: () => undefined | WeatherKind;
   jumpTo: (pose: WorldJumpPose) => void;

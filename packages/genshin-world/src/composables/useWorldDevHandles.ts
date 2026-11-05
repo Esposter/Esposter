@@ -1,6 +1,7 @@
 import type { WorldDevHandleOptions } from "#src/models/world/WorldDevHandleOptions";
 
 import { createHealCommand } from "#src/services/dev/commands/createHealCommand";
+import { createKillsCommand } from "#src/services/dev/commands/createKillsCommand";
 import { createStateCommand } from "#src/services/dev/commands/createStateCommand";
 import { createTeleportCommand } from "#src/services/dev/commands/createTeleportCommand";
 import { createTimeCommand } from "#src/services/dev/commands/createTimeCommand";
@@ -18,6 +19,7 @@ export const useWorldDevHandles = ({ devRegistry, ...options }: WorldDevHandleOp
     unregister = devRegistry.register({
       commands: [
         createHealCommand(options),
+        createKillsCommand(options),
         createStateCommand(options),
         createTeleportCommand(options),
         createTimeCommand(options),

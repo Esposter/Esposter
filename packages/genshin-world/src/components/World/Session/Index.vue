@@ -685,6 +685,7 @@ useWorldDevHandles({
   devRegistry,
   getCharacterName,
   getGameClock: () => windrise.value?.gameClock,
+  getKills: () => archiveKillsMap.value,
   getLandmarks: () => jumpLandmarks.value,
   getWeather: () => windrise.value?.areaWeather,
   jumpTo,

@@ -57,6 +57,7 @@ packages/genshin-world/src/services/dev/scenarios/
 ## Notes
 
 - The first world commands are those the world has the state for: `state`, `teleport` (a landmark, a region or coordinates, through the pose the map overlay's jump uses), `time`, `timescale` and `heal`. `weather` waits: the shown weather is a read-only result of the area's own chain, with no writable state to set. `god` waits: the world has no invulnerability state. `noclip` waits: the free camera moves the camera, not the character's body. The save's commands (`give`, `level`, `ar` and `unlock`) come with task 3.2. A command whose state does not exist yet is added by the change that builds that state, with its scenario.
+- `kills` is a read the scripted-session harness uses, registered by the session with its other commands: it answers the defeats the Archive counts, every Living Being's count added up.
 - Nothing here changes a rule a player meets; a command writes the same save fields the game's own acts write.
 
 ## Sources
