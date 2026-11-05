@@ -432,6 +432,9 @@ catalogs:
     '@vitest/coverage-v8':
       specifier: ^5.1.0
       version: 5.1.0
+    '@vizejs/native':
+      specifier: ^0.690.0
+      version: 0.690.0
     '@vizejs/unplugin':
       specifier: ^0.690.0
       version: 0.690.0
@@ -2430,6 +2433,9 @@ importers:
       '@typesafe-ai/sdk':
         specifier: 'catalog:'
         version: 0.7.0
+      '@vizejs/native':
+        specifier: 'catalog:'
+        version: 0.690.0
       '@webgpu/types':
         specifier: 'catalog:'
         version: 0.1.74

@@ -105,6 +105,7 @@
     "@types/node": "catalog:",
     "@types/three": "catalog:",
     "@typesafe-ai/sdk": "catalog:",
+    "@vizejs/native": "catalog:",
     "@webgpu/types": "catalog:",
     "azure-mock": "workspace:*",
     "genshin-engine": "workspace:*",

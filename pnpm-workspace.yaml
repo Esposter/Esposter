@@ -127,6 +127,7 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
+  "@vizejs/native": ^0.690.0
   "@vizejs/unplugin": ^0.690.0
   "@vizejs/vite-plugin": ^0.690.0
   "@vue/compiler-core": ^3.5.44

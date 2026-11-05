@@ -1,9 +1,10 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
 import { getImportedPackageName } from "#src/services/dependencies/score/getImportedPackageName";
-import { REPOSITORY_ROOT, VUE_SCRIPT_BODY_REGEX } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getChildren } from "#src/services/shared/getChildren";
 import { parseSource } from "#src/services/shared/parseSource";
+import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
@@ -52,7 +53,11 @@ describe("typeOnlyDependencies", () => {
         );
         for (const path of sourcePaths) {
           const text = readFileSync(join(REPOSITORY_ROOT, path), "utf8");
-          const scripts = path.endsWith(".vue") ? (text.match(VUE_SCRIPT_BODY_REGEX) ?? []) : [text];
+          const scripts = path.endsWith(".vue")
+            ? readVueSegments(text)
+                .filter(({ isScript }) => isScript)
+                .map(({ text: script }) => script)
+            : [text];
           for (const script of scripts) collectUsage(parseSource(script), valueNames, typeNames);
         }
         return Object.keys(manifest.dependencies ?? {})

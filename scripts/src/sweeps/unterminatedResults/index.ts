@@ -1,4 +1,5 @@
-import { REPOSITORY_ROOT, VUE_SCRIPT_BODY_REGEX } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { readVueSegments } from "#src/services/shared/readVueSegments";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
 import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";
@@ -11,15 +12,10 @@ timeCommand("ai:sweep:unterminated-results");
 const NOT_LINE_BREAK_REGEX = /[^\n]/gu;
 // A `.vue` file is markup around its `<script>` bodies, which the TypeScript parser cannot read. Everything outside
 // A body is blanked and every line break kept, so a call's offset and line are still the file's own
-const maskOutsideScript = (text: string): string => {
-  let masked = "";
-  let cursor = 0;
-  for (const match of text.matchAll(VUE_SCRIPT_BODY_REGEX)) {
-    masked += text.slice(cursor, match.index).replaceAll(NOT_LINE_BREAK_REGEX, " ") + match[0];
-    cursor = match.index + match[0].length;
-  }
-  return masked + text.slice(cursor).replaceAll(NOT_LINE_BREAK_REGEX, " ");
-};
+const maskOutsideScript = (text: string): string =>
+  readVueSegments(text)
+    .map(({ isScript, text: segment }) => (isScript ? segment : segment.replaceAll(NOT_LINE_BREAK_REGEX, " ")))
+    .join("");
 
 // Prints rather than exits non-zero, like the other sweep scans: a hit is a chain to read against what the
 // Enclosing function does with it, and the ledger carries the standing exclusions
