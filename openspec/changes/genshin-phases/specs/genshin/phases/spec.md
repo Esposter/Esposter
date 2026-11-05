@@ -10,6 +10,18 @@ Every open Genshin change and every open item of the Genshin roadmap SHALL name 
 - **WHEN** its metadata is read
 - **THEN** it names exactly one phase
 
+#### Scenario: A task holds its change's phase unless it names another
+
+- **GIVEN** a change at phase 4 with a task marked phase 6 and a task with no marker
+- **WHEN** the tasks' phases are read
+- **THEN** the marked task holds phase 6 and the other holds phase 4
+
+#### Scenario: A change's pick phase is its lowest open task's
+
+- **GIVEN** a change at phase 4 whose only open task is marked phase 6
+- **WHEN** the fleet reads the change's phase
+- **THEN** the change is offered at phase 6
+
 #### Scenario: An open roadmap item sits in a phase section
 
 - **GIVEN** the Genshin roadmap with an open item
