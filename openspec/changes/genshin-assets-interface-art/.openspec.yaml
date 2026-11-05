@@ -1,0 +1,16 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-phase: 0
+x-model: claude-haiku-5-5
+x-needs: [game-install, game-exports, parity-page]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/commands/**",
+    "scripts/src/services/genshinAssets/colours/**",
+    "scripts/src/services/genshinAssets/sprites/**",
+    "scripts/src/services/genshinParity/shared/**",
+    "packages/genshin-interface/src/components/ItemTile/**",
+    "packages/genshin-world/src/components/Map/Drawing/Mark/**",
+    "packages/genshin-world/src/components/Character/AttributeList/**",
+    "openspec/changes/genshin-roadmap/**",
+  ]
