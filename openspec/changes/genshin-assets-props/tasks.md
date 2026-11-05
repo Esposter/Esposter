@@ -1,0 +1,34 @@
+## 1. Shared process
+
+- [ ] 1.1 [phase 0] Give the props a component in the component enum and its map, with no roots, a name pattern for the prefab names and the world screen. Verify: a test beside the component map asserts the props entry names its pattern and screen, written first and seen failing.
+- [ ] 1.2 [phase 0] Add a subcommand beside the UI-block lookup that searches the game's own index for a mesh name and prints each path ID with its block, refusing a name it does not find. Verify: a test over a three-line index fixture, written first and seen failing; then on this Mac the Common chest's name prints one block.
+- [ ] 1.3 [phase 0] Add a props entry to the fit map that runs each kind's outline fit, the visual hull for a solid kind and the lathe for a round one, with a dry run. Verify: a fit test over a small mesh fixture, written first and seen failing; `pnpm -C scripts genshin:assets fit props --dry-run` prints the same counts when run twice.
+- [ ] 1.4 [phase 0] Add a props member to the hosted datasets, a builder that returns one record per kind under its own key, and the lock keys a publish writes. Verify: `pnpm -C scripts genshin:assets fit props --dry-run` names each kind's key and makes no request; after a publish, `pnpm -C scripts genshin:data verify` passes.
+- [ ] 1.5 [phase 0] Build the prop-level check: one fitted prop drawn at its reference's camera and scored by the compare command, with the reference committed beside it. Verify: `pnpm -C scripts genshin:parity compare` over a fixture prop reference writes its row.
+- [ ] 1.6 [phase 0] Let the statue fit take any region's Goddess prefab and key its record by region, in place of the entry that wires it to Windrise alone. Verify: `pnpm -C scripts genshin:assets fit windrise --only statue --dry-run` prints the same counts before and after the change, and a test asserts the region key.
+
+## 2. Windrise
+
+- [ ] 2.1 [phase 0] Build the comparison of a scene's witness with a recorded frame, then compare the Windrise statue and the oak with the statue-resonance recording at its camera. Verify: `pnpm -C scripts genshin:parity compare` writes one row for the statue and one for the oak, each with its score and bar.
+
+## 3. Placement data
+
+- [ ] 3.1 [phase 4] Add the two Mora labels as chest kinds in the chests builder and publish their rows per region, Mondstadt first. Verify: `pnpm -C scripts genshin:assets chests --dry-run` lists the Mora rows it would publish for Mondstadt, and a builder test over a label fixture, written first and seen failing.
+- [ ] 3.2 [phase 5] Read each region's chest record in the world, not Mondstadt's alone, and offer its unopened chests on F. Verify: a store test reads the Liyue chest record through the reader, written first and seen failing.
+- [ ] 3.3 [phase 5] Add one region at a time to the list of regions the waypoints command writes, once its map fit passes its bar, and draw its waypoints as the stand-in landmark. Verify: `pnpm -C scripts genshin:assets points-fit` prints the region's residual under its bar, and `pnpm -C scripts genshin:assets waypoints --dry-run` names its rows.
+- [ ] 3.4 [phase 5] On the PC, export the Goddess statue prefab of Liyue, Natlan, Snezhnaya and Sumeru, each name found with the lookup from task 1.2, and fit each with the statue fit from task 1.6. Fontaine, Inazuma and Nod-Krai are left to their roadmap items. Verify: `pnpm -C scripts genshin:assets fit <region> --only statue --dry-run` prints each region's counts.
+
+## 4. Models
+
+- [ ] 4.1 [phase 7] Build the props kit in the engine, which draws a kind's fitted outline in its colour through the existing box and stacked-lathe generators, and have the world components draw a kind's published record through it, keeping the stand-in for a kind with none. Verify: a kit test over a fixture record, written first and seen failing, and a component test named after the scenario "A prop of a published kind stands as its fitted shape".
+- [ ] 4.2 [phase 7] On the PC, export the Common chest's prefab, named from its dump row, and fit its outline; each other tier and the Buried chest take the same step for their own prefab. Verify: the fit's dry run prints its counts, the record publishes under its kind's key, and `pnpm -C scripts genshin:data verify` passes.
+- [ ] 4.3 [phase 7] On the PC, export one prefab for each seal kind, vines, ice and rock, and fit each. Verify: each kind's dry run prints its counts, and `pnpm -C scripts genshin:parity compare` scores the sealed chest frame of the chest-seal-pyro recording against its bar.
+- [ ] 4.4 [phase 7] On the PC, export the Wooden and Stone Pile Mora chest prefabs and fit each. Verify: each dry run prints its counts; no recording of a Mora chest is on disk, so the reference is a public clip's frame found by search, and `pnpm -C scripts genshin:parity compare` scores it.
+- [ ] 4.5 [phase 7] On the PC, export the Anemoculus prefab and fit its outline, and read each Oculus kind's colour from its export. Verify: the dry run prints one outline and one colour for each of the eight kinds.
+- [ ] 4.6 [phase 7] On the PC, export the commonest gather prefab of each region and the crystal chunk prefab, and fit each. Verify: each dry run prints its counts.
+- [ ] 4.7 [phase 7] On the PC, export one Elemental Monument prefab and fit it, then compare the monument with the Mondstadt pillars recording. Verify: `pnpm -C scripts genshin:parity compare` scores the monument frame within its bar.
+- [ ] 4.8 [phase 7] On the PC, export one ley line blossom prefab and fit its outline. Verify: the dry run prints its counts, and the record publishes under its kind's key.
+- [ ] 4.9 [phase 7] On the PC, export one prefab for each crafting bench kind the bench places name, and the forge's prefab, and fit each. Verify: each dry run prints its counts.
+- [ ] 4.10 [phase 7] On the PC, export one waypoint prefab from its transport point template and fit it. Verify: the dry run prints its counts, and `pnpm -C scripts genshin:parity compare` scores a waypoint clip on disk against its bar.
+- [ ] 4.11 [phase 7] On the PC, export one domain entrance prefab, named from its entrance's dungeon row, and fit it. Verify: the dry run prints its counts.
+- [ ] 4.12 [phase 7] On the PC, export the Frostbearing Tree prefab and fit it with the tree kit's fit. Verify: the dry run prints its counts, and the record publishes under its kind's key.
