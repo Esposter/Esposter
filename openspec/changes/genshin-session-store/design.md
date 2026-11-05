@@ -90,7 +90,7 @@ Over `packages/genshin-world`, from the commit before the session store to the m
 - **A new peer.** `genshin-world` becomes a Pinia peer, as `vue-phaserjs` lists it, since a store is a singleton the app and the package must share.
 - **Tests install Pinia.** A composable tested with plain arguments needs an active Pinia and a seeded store.
 - **Every mount installs Pinia.** The world screen's visual and browser suites mount the session.
-- **State is no longer visible in a call's arguments.** A composable's reads are in its body. The store's typed state and the lint rules on store use are what keep that readable.
+- **State is read in a composable's body, not passed in a call's arguments.** The store's typed state and the lint rules on store use are what keep that readable.
 
 ## Where it stops and what follows
 

@@ -48,7 +48,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 
 ## Open questions
 
-- **The attachments show one item where the reference shows two.** The cause is that the table no longer holds the 2024 mails the reference draws.
+- **The attachments show one item where the reference shows two.** The cause is that the table holds none of the 2024 mails the reference draws.
 
 ## Key files
 
