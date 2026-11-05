@@ -53,7 +53,7 @@ const emit = defineEmits<{ concede: [] }>();
   height: calc(var(--unit) * 56);
   border: calc(var(--unit) * 3) solid #c99a4a;
   border-radius: 50%;
-  background: #7d5a36;
+  background: #a8a094;
 }
 
 .record {

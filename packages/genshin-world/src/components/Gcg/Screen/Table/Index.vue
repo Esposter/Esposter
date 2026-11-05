@@ -15,7 +15,8 @@
   background: #343340;
 }
 
-/* The table's texture is not drawn, so its inner half is the frame's mean table colour at each radius from the centre */
+/* The table's texture is not drawn, so its inner half is the frame's mean table colour at each radius from the centre. The
+   light the crest casts down the table's top centre is a glow over it, and the bottom border is the frame's greyer one */
 .table {
   position: absolute;
   top: calc(var(--unit) * 72);
@@ -23,20 +24,23 @@
   bottom: calc(var(--unit) * 76);
   left: calc(var(--unit) * 46);
   border: calc(var(--unit) * 22) solid #7d5a36;
+  border-bottom-color: #5e5950;
   border-radius: calc(var(--unit) * 40);
-  background: radial-gradient(
-    calc(var(--unit) * 1000) calc(var(--unit) * 700) at 50% 50%,
-    #9db8b2 0%,
-    #97b2ac 10%,
-    #95aba4 20%,
-    #87a19f 30%,
-    #7f9a99 40%,
-    #7a9390 50%,
-    #6d8b8a 56%,
-    #597474 73%,
-    #557070 80%,
-    #435d5e 92%,
-    #3e5352 100%
-  );
+  background:
+    radial-gradient(calc(var(--unit) * 260) calc(var(--unit) * 200) at 50% 27%, rgb(255 255 255 / 0.14), transparent),
+    radial-gradient(
+      calc(var(--unit) * 1000) calc(var(--unit) * 700) at 50% 50%,
+      #9db8b2 0%,
+      #97b2ac 10%,
+      #95aba4 20%,
+      #87a19f 30%,
+      #7f9a99 40%,
+      #7a9390 50%,
+      #6d8b8a 56%,
+      #597474 73%,
+      #557070 80%,
+      #435d5e 92%,
+      #3e5352 100%
+    );
 }
 </style>

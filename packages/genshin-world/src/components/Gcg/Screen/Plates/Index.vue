@@ -65,6 +65,6 @@
   width: calc(var(--unit) * 84);
   height: calc(var(--unit) * 84);
   border-color: #c99a4a;
-  background: #ece3c8;
+  background: #c8aa82;
 }
 </style>

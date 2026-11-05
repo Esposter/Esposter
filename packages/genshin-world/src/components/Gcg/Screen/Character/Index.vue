@@ -98,7 +98,7 @@ const emit = defineEmits<{ select: [] }>();
   place-items: center;
   border: calc(var(--unit) * 3) solid #d9b061;
   border-radius: 50%;
-  background: #f5eedd;
+  background: #b3ada3;
   color: #2a2a2a;
   font-size: calc(var(--unit) * 30);
   font-weight: 700;

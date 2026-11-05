@@ -167,7 +167,11 @@ const battleLabel = computed(() =>
 .gcg-screen {
   --hover-duration: v-bind(INTERACTION_HOVER_DURATION);
   --rest-duration: v-bind(INTERACTION_REST_DURATION);
-  background: #524236;
+  /* The top band is lighter at its centre, where the game's crest stands, and the bottom band greyer toward the right: each
+     is a glow fitted to its band's mean over the base colour */
+  background:
+    radial-gradient(calc(var(--unit) * 520) calc(var(--unit) * 60) at 50% 0, #cfc6b2, transparent),
+    radial-gradient(calc(var(--unit) * 480) calc(var(--unit) * 60) at 70% 100%, #5c5248, transparent), #524236;
 }
 
 .opponent-row {
