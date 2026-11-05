@@ -59,7 +59,10 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
     poiseType: PoiseType.HumanoidDemiboss,
   },
   [EnemyKindId.ConstructionSpecialistMek]: { energyDrops: [], poiseType: PoiseType.Minion },
+  // Provisional: the wiki's Fallen Character page gives its attacks as Cryo ("Cryo Abyss Mage's Cryo attacks"), its own
+  // Attacks section not read yet
   [EnemyKindId.CryoAbyssMage]: {
+    attackElement: Element.Cryo,
     element: Element.Cryo,
     energyDrops: createParticleDrops([75, 50, 25]),
     poiseType: PoiseType.HumanoidGrunt,
@@ -112,9 +115,9 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   },
   [EnemyKindId.GoldenWolflord]: { energyDrops: createParticleDrops([75, 50, 25, 0]), poiseType: PoiseType.Boss },
   [EnemyKindId.GoldflameQucusaurTyrant]: { element: Element.Pyro, energyDrops: [], poiseType: PoiseType.Boss },
+  [EnemyKindId.GroundedHydroshroom]: { element: Element.Hydro, energyDrops: [], poiseType: PoiseType.Minion },
   // Provisional: the wiki's Hilichurl Fighter page gives its damage type and every attack in its Attacks section as
   // Physical DMG, so the kind has no attack element
-  [EnemyKindId.GroundedHydroshroom]: { element: Element.Hydro, energyDrops: [], poiseType: PoiseType.Minion },
   [EnemyKindId.HilichurlFighter]: {
     enemyDropFamily: EnemyDropFamily.Hilichurls,
     energyDrops: createParticleDrops([60, 0]),

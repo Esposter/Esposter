@@ -22,7 +22,7 @@
 
 ## 5. Enemy attack elements
 
-- [ ] 5.1 Author each enemy kind's attack element from its wiki Attacks section, once a placed kind has an elemental attack, so a landed strike applies it to the struck member. No kind in EnemyKindTraitsMap sets `attackElement` yet (the branch in `strikePartyMember` runs only under a test's override), and Hilichurl Fighter's attacks are all Physical. Verify: a test named after the scenario 'An enemy kind with an elemental attack applies it to the struck member' passes against the authored kind, not an override.
+- [ ] 5.1 Author each enemy kind's attack element from its wiki Attacks section, once a placed kind has an elemental attack, so a landed strike applies it to the struck member. Cryo Abyss Mage now sets `attackElement` from the wiki's Fallen Character tip, but the other placed kinds' Attacks sections are not readable yet (not in the wiki cache, live page HTTP 402), so the box stays open; Anemo Slime is unauthored for want of a source, and Hilichurl Fighter's attacks are all Physical. Verify: a test named after the scenario 'An enemy kind with an elemental attack applies it to the struck member' passes against the authored kind, not an override.
 
 ## 6. Application's aura decay scale
 

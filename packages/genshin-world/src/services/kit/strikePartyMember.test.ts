@@ -12,7 +12,6 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ELEMENTAL_SHIELD_ABSORPTION } from "#src/services/combat/shield/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
-import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -20,7 +19,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -41,11 +40,6 @@ describe(strikePartyMember, () => {
     level: 1,
   };
   const characterIdCombatantMap = new Map([[1, combatant]]);
-  const hilichurlFighterTraits = EnemyKindTraitsMap[EnemyKindId.HilichurlFighter];
-
-  afterEach(() => {
-    EnemyKindTraitsMap[EnemyKindId.HilichurlFighter] = hilichurlFighterTraits;
-  });
 
   test("takes the share of the member's Max HP that an enemy's strike does through its defence", () => {
     expect.hasAssertions();
@@ -113,12 +107,11 @@ describe(strikePartyMember, () => {
     expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
   });
 
-  test("an enemy's strike applies its attack element to the member it strikes", () => {
+  test("An enemy kind with an elemental attack applies it to the struck member", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    EnemyKindTraitsMap[EnemyKindId.HilichurlFighter] = { ...hilichurlFighterTraits, attackElement: Element.Cryo };
-    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const enemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, enemyKindId: EnemyKindId.CryoAbyssMage }, "");
 
     strikePartyMember(enemyTables, party, enemy, combatant, { effects: [] }, characterIdCombatantMap);
 
