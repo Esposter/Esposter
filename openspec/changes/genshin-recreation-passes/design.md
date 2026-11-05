@@ -115,18 +115,20 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 ## Key files
 
-| File                                                                     | Role after the change                                                                               |
-| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | The passes' measures, run in order by `passes`, each held to its gate                               |
-| `scripts/src/services/genshinParity/passes/runParityPasses.ts`           | Runs the measures in the passes' order and stops at the first red one, the pass a stand-off reopens |
-| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.ts`       | Names the frozen pass a later run moved, which reopens by its own run                               |
-| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`    | The light pass's shadows' edges, priced and solved for the sun's direction                          |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                                            |
-| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff                        |
-| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                                                  |
-| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles                            |
-| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                                            |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                                                  |
+| File                                                                     | Role after the change                                                                                                                                                                   |
+| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | The passes' measures, run in order by `passes`, each held to its gate                                                                                                                   |
+| `scripts/src/services/genshinParity/passes/runParityPasses.ts`           | Runs the measures in the passes' order and stops at the first red one, the pass a stand-off reopens                                                                                     |
+| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.ts`       | Names the frozen pass a later run moved, which reopens by its own run                                                                                                                   |
+| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`    | The light pass's shadows' edges, priced and solved for the sun's direction                                                                                                              |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                                                                                                                                |
+| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff                                                                                                            |
+| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                                                                                                                                      |
+| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles                                                                                                                |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                                                                                                                                |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                                                                                                                                      |
+| `scripts/src/services/genshinParity/passes/computeBloomRegion.ts`        | The reference's pixels within `BLOOM_REACH_PIXELS` of one at the curve's white, the bloom's reading region                                                                              |
+| `scripts/src/services/genshinParity/passes/computeBloomReading.ts`       | The bloom's reading over that region: ours with the bloom drawn less ours with it off, in CIELab, negative where it closes. `measureDisplay` calls it once the drawn bloom exists (1.1) |
 
 ## Notes
 
