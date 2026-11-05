@@ -117,3 +117,29 @@ The Character screen's model SHALL rise over the Attributes tab's opening over t
 - **GIVEN** the Attributes tab has finished opening
 - **WHEN** the player stays on the tab
 - **THEN** the model holds the place it rose to
+
+### Requirement: A clip's motion is held as the sampled loop of each bone track
+
+Each fitted clip SHALL be held as its bone tracks sampled over one loop of a few samples.
+
+#### Scenario: A clip's bone track is sampled over its loop
+
+- **GIVEN** a clip with a bone track
+- **WHEN** the clip is fitted
+- **THEN** the track's values are held at each sample of its loop, and a rerun holds the same samples
+
+### Requirement: A character's state plays its fitted loop as its pose
+
+A character's state SHALL play its fitted loop as its pose where one is held, and keeps the procedural pose where none is.
+
+#### Scenario: A state with a fitted loop plays its own pose
+
+- **GIVEN** a character whose fitted record holds a loop for the state
+- **WHEN** the character is in the state
+- **THEN** the fitted loop is drawn as the character's pose
+
+#### Scenario: A state with no fitted loop keeps the procedural pose
+
+- **GIVEN** a character whose fitted record holds no loop for the state
+- **WHEN** the character is in the state
+- **THEN** the procedural pose is drawn
