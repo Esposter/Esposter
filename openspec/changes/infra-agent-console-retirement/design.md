@@ -20,7 +20,7 @@ The order is fixed by what each step depends on. An unpublish before the release
 
 - **Unpublish, not deprecate.** A deprecated package stays installable and keeps a page announcing something that no longer exists, so a stranger can still run a host for a page that is gone. Deprecation lost for that reason.
 - **Eligibility is checked the day it runs.** npm allows an unpublish after the first days only while the package has no dependents in the registry, one owner and a weekly download count under its limit, and the count sat close under the limit when this was written, so the route can close on its own. If it closes, the only route left is deprecation, and that is the owner's call.
-- **Each step waits for the owner's explicit go.** An unpublish cannot be undone, no unpublished version can be published again, and the name is held for a day and then free to anyone. Deleting a release asset is as final. The host's own uninstall command is run on the owner's machine first, since it removes the registered link and the installed copy that the executable put there.
+- **Each step waits for an explicit go, and is run by whoever the owner hands it to,** not by the session that removed the code. An unpublish cannot be undone, no unpublished version can be published again, and the name is held for a day and then free to anyone. Deleting a release asset is as final. The host's own uninstall command is run on the owner's machine first, since it removes the registered link and the installed copy that the executable put there.
 
 ## Key files
 

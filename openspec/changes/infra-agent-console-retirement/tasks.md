@@ -1,7 +1,7 @@
 ## 1. Take it down
 
-- [ ] 1.1 With the removal on `main` and a release run without the package, check the package is still eligible, then unpublish every version on the owner's go. Verify: `npm view agent-console-server` answers not found.
-- [ ] 1.2 Run the host's own uninstall command on the owner's machine, then delete the host executable from the releases that carry it on the owner's go. Verify: `gh release view` lists no host executable on any release.
+- [ ] 1.1 With the removal on `main` and a release run without the package, check the package is still eligible, then unpublish every version by whoever the owner hands it to, on their go. Verify: `npm view agent-console-server` answers not found.
+- [ ] 1.2 Run the host's own uninstall command on the owner's machine, then delete the host executable from the releases that carry it by whoever the owner hands it to, on their go. Verify: `gh release view` lists no host executable on any release.
 
 ## 2. Close
 

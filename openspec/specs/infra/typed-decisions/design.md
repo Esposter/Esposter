@@ -30,9 +30,10 @@ The first box reaches further than it looks. Where the repository already holds 
 
 ## Where it decides
 
-| Judgement                                        | What it saves              |
-| :----------------------------------------------- | :------------------------- |
-| Which of the five triage roles is this issue in? | A person reading the issue |
+| Judgement                                           | What it saves                                                                                                                                              |
+| :-------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Which of the five triage roles is this issue in?    | A person reading the issue                                                                                                                                 |
+| How strongly does a prompt show each of seven sins? | A fork of the session's model for seven scores, on every prompt, which the [sins mod](../claude-interface/genshin-mods/sins/design.md) answers in one call |
 
 Conflicts are not asked of this tier. A conflict has to be _edited_, and a typed decision returns a decision, never an artefact.
 
