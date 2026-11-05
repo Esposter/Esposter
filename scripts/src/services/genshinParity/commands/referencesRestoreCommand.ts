@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { CAPTURES_DIRECTORY } from "#src/services/genshinParity/game/constants";
 import { parsePublicRecordingName } from "#src/services/genshinParity/reference/parsePublicRecordingName";
 import { readManifestFile } from "#src/services/genshinParity/reference/readManifestFile";
 import { restoreManifestFiles } from "#src/services/genshinParity/reference/restoreManifestFiles";
@@ -19,7 +18,7 @@ export const referencesRestoreCommand: SubCommandsDef[string] = defineCommand({
     // A recording is not stored, so each is printed as the clip to run for it: its range when its row names one
     for (const { name, range, source } of manifest.recordings)
       console.log(
-        `next  recreation clip --directory ${CAPTURES_DIRECTORY} ${source} --from ${range?.start ?? "<from>"} --to ${range?.end ?? "<to>"} --name ${parsePublicRecordingName(name)?.name ?? name}`,
+        `next  pnpm -C scripts genshin:parity recordings clip "${source}" --from ${range?.start ?? "<from>"} --to ${range?.end ?? "<to>"} --name ${parsePublicRecordingName(name)?.name ?? name}`,
       );
   },
 });

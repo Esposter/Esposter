@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { recordingsBackfillCommand } from "#src/services/genshinParity/commands/recordingsBackfillCommand";
+import { recordingsClipCommand } from "#src/services/genshinParity/commands/recordingsClipCommand";
 import { defineCommand } from "citty";
 
 export const recordingsCommand: SubCommandsDef[string] = defineCommand({
@@ -8,5 +9,5 @@ export const recordingsCommand: SubCommandsDef[string] = defineCommand({
     description: "Keep the public recordings in the captures folder as manifest rows, each fetched again by its id",
     name: "recordings",
   },
-  subCommands: { backfill: recordingsBackfillCommand },
+  subCommands: { backfill: recordingsBackfillCommand, clip: recordingsClipCommand },
 });
