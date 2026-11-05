@@ -2,6 +2,7 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 import type { SurveyNode } from "#src/models/SurveyNode";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkSurveyMinimumWithinMaximum } from "#src/services/checkSurveyMinimumWithinMaximum";
 import { checkSurveyNoneChoice } from "#src/services/checkSurveyNoneChoice";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
 import { checkSurveyQuestion } from "#src/services/checkSurveyQuestion";
@@ -19,6 +20,20 @@ export const checkSurveyNodes = (
     const nodePointer = `${listPointer}/${index}`;
     if (node.type === SurveyNodeType.RadioGroup || node.type === SurveyNodeType.Checkbox)
       checkSurveyNoneChoice(node.props, nodePointer, issues);
+    if (node.type === SurveyNodeType.Checkbox)
+      checkSurveyMinimumWithinMaximum(
+        node.props.minSelected,
+        node.props.maxSelected,
+        getBlockPropPointer(nodePointer, "minSelected"),
+        issues,
+      );
+    if (node.type === SurveyNodeType.MatrixDynamic)
+      checkSurveyMinimumWithinMaximum(
+        node.props.minRowCount,
+        node.props.maxRowCount,
+        getBlockPropPointer(nodePointer, "minRowCount"),
+        issues,
+      );
     switch (node.type) {
       case SurveyNodeType.Expression:
         checkSurveyQuestion(node.props, nodePointer, names, issues);

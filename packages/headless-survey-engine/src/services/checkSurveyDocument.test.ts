@@ -3,6 +3,7 @@ import type { SurveyCheckboxNode } from "#src/models/SurveyCheckboxNode";
 import type { SurveyDocument } from "#src/models/SurveyDocument";
 import type { SurveyExpressionNode } from "#src/models/SurveyExpressionNode";
 import type { SurveyHtmlNode } from "#src/models/SurveyHtmlNode";
+import type { SurveyMatrixDynamicNode } from "#src/models/SurveyMatrixDynamicNode";
 import type { SurveyPageNode } from "#src/models/SurveyPageNode";
 import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode";
 import type { SurveyPanelNode } from "#src/models/SurveyPanelNode";
@@ -19,6 +20,7 @@ import { SURVEY_NONE_ANSWER } from "#src/services/runner/constants";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
 import { surveyExpressionNodeType } from "#src/services/surveyExpressionNodeType";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
+import { surveyMatrixDynamicNodeType } from "#src/services/surveyMatrixDynamicNodeType";
 import { surveyPageNodeType } from "#src/services/surveyPageNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
 import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
@@ -99,6 +101,50 @@ describe(checkSurveyDocument, () => {
     };
 
     expect(checkSurveyDocument(createDocument([createPage([checkbox])]))).toStrictEqual([]);
+  });
+
+  test("a checkbox whose minimum selection is above its maximum is refused, at its minimum", () => {
+    expect.hasAssertions();
+
+    const checkbox: SurveyCheckboxNode = {
+      props: {
+        ...surveyCheckboxNodeType.createDefaultProps(),
+        id: crypto.randomUUID(),
+        maxSelected: 1,
+        minSelected: 3,
+        name: "a",
+      },
+      type: SurveyNodeType.Checkbox,
+    };
+
+    expect(checkSurveyDocument(createDocument([createPage([checkbox])]))).toStrictEqual([
+      {
+        message: "The minimum 3 is above the maximum 1, so no answer could meet both",
+        pointer: "/content/0/props/children/0/props/minSelected",
+      },
+    ]);
+  });
+
+  test("a dynamic matrix whose minimum row count is above its maximum is refused, at its minimum", () => {
+    expect.hasAssertions();
+
+    const matrix: SurveyMatrixDynamicNode = {
+      props: {
+        ...surveyMatrixDynamicNodeType.createDefaultProps(),
+        id: crypto.randomUUID(),
+        maxRowCount: 3,
+        minRowCount: 5,
+        name: "a",
+      },
+      type: SurveyNodeType.MatrixDynamic,
+    };
+
+    expect(checkSurveyDocument(createDocument([createPage([matrix])]))).toStrictEqual([
+      {
+        message: "The minimum 5 is above the maximum 3, so no answer could meet both",
+        pointer: "/content/0/props/children/0/props/minRowCount",
+      },
+    ]);
   });
 
   test("two questions sharing a name are refused, naming the second", () => {
