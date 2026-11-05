@@ -33,7 +33,8 @@ The proposals report (`pnpm ai:proposals:report`) groups the open changes by the
 | `scripts/src/workspace/openspecIndexes.test.ts`           | Every capability is linked from the area README, or the capability's design, above it               |
 | `scripts/src/services/workspace/readHandWrittenPages.ts`  | The pages every prose check reads: the tree short of its archive, the agent tree and the READMEs    |
 | `scripts/src/services/openspec/getOpenSpecOwners.ts`      | The capability or change a page belongs to, so the pages of one owner may share text                |
-| `scripts/src/services/proposals/readProposalSummaries.ts` | The open changes the proposals report reads, each with its area and metadata                        |
+| `scripts/src/services/proposals/readProposalChanges.ts`   | Reads each open change once, its metadata parsed and its phase picked, cheapest first               |
+| `scripts/src/services/proposals/readProposalSummaries.ts` | The open proposals' summaries the proposals report reads, each taken from its change                |
 
 ## Notes
 

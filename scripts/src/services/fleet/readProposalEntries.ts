@@ -3,30 +3,21 @@ import type { QueueFile } from "#src/models/fleet/QueueFile";
 
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { parseKeyFilePaths } from "#src/services/fleet/parseKeyFilePaths";
-import { parseProposalMetadata } from "#src/services/fleet/parseProposalMetadata";
-import { PROPOSAL_DESIGN_FILE, PROPOSAL_METADATA_FILE, PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
 import { getProposalArea } from "#src/services/proposals/getProposalArea";
-import { readProposalSummaries } from "#src/services/proposals/readProposalSummaries";
+import { readProposalChanges } from "#src/services/proposals/readProposalChanges";
 
-// Each open proposal unit as an entry: its id is its change's, its area the id's first segment. Its touch set is the
-// Paths its design's Key files table names plus the globs its metadata adds, and its needs and waiting are the
-// Metadata's own, empty when the change names none
-export const readProposalEntries = (files: readonly QueueFile[]): FleetEntry[] => {
-  const pathTextMap = new Map(files.map(({ path, text }) => [path, text]));
-  return readProposalSummaries(files).map(({ id, phase }) => {
-    const design = pathTextMap.get(`${PROPOSALS_DIRECTORY}/${id}/${PROPOSAL_DESIGN_FILE}`) ?? "";
-    const metadata = pathTextMap.get(`${PROPOSALS_DIRECTORY}/${id}/${PROPOSAL_METADATA_FILE}`) ?? "";
-    const { needs, touches, waiting } = parseProposalMetadata(metadata);
-    return {
-      area: getProposalArea(id),
-      id,
-      kind: FleetEntryKind.Unit,
-      lane: "",
-      line: "",
-      needs,
-      phase,
-      touches: [...parseKeyFilePaths(design), ...touches],
-      waiting,
-    };
-  });
-};
+// Each open proposal unit as an entry, cheapest first: its id is its change's, its area the id's first segment, and its
+// Phase the one its change is picked at. Its touch set is the paths its design's Key files table names plus the globs its
+// Metadata adds, and its needs and waiting are the metadata's own, empty when the change names none
+export const readProposalEntries = (files: readonly QueueFile[]): FleetEntry[] =>
+  readProposalChanges(files).map(({ design, metadata, summary: { id, phase } }) => ({
+    area: getProposalArea(id),
+    id,
+    kind: FleetEntryKind.Unit,
+    lane: "",
+    line: "",
+    needs: metadata.needs,
+    phase,
+    touches: [...parseKeyFilePaths(design), ...metadata.touches],
+    waiting: metadata.waiting,
+  }));
