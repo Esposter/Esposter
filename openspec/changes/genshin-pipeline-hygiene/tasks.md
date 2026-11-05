@@ -1,6 +1,6 @@
 ## 1. Paths
 
-- [ ] 1.1 Make the data root one constant in the shared-node package, derive the content cache, the parity folder, the tools folder and the fleet's parity default from it, and drop the Downloads defaults, except the Windows CLI's, which genshin-pipeline-provenance task 3.1 removes. Verify: `dataRoot.test.ts` written first and seen failing, asserting 'Every machine root derives from one data root'.
+- [ ] 1.1 Make the data root one constant in the shared-node package, derive the content cache, the parity folder, the tools folder and the fleet's parity default from it, and drop the Downloads defaults, except the Windows CLI's, which genshin-pipeline-provenance task 3.1 removes, and hold the Windows install folder in that same one place rather than in a constant of its own. Verify: `dataRoot.test.ts` written first and seen failing, asserting 'Every machine root derives from one data root'.
 - [ ] 1.2 Write block links and map sources relative to the data root, replacing each absolute symlink. Verify: `linkBlockFiles.test.ts` written first and seen failing, asserting 'An export holds no absolute machine path' and 'A block link resolves under another data root'.
 
 ## 2. Records
@@ -17,5 +17,5 @@
 ## 4. Extraction, fleet and lock
 
 - [ ] 4.1 Make the interface, playlist, inventory and witness writers clear the folders they own before they write, as the clips, shaders and avatar writers already do. Verify: `clearOwnedFolders.test.ts` written first and seen failing, asserting 'Re-extracting leaves no stale file' and 'A writer clears only the folder it owns'.
-- [ ] 4.2 Make the fleet copy decide each file by a content digest, and copy a link as the data it points at. Verify: `fleetCopy.test.ts` written first and seen failing, asserting 'A file of equal size and time but other content is copied' and 'A link is copied as the data it points at'.
+- [ ] 4.2 Make the fleet copy decide each file by a content digest, copy a link as the data it points at, and remove a file only the target holds. Verify: `fleetCopy.test.ts` written first and seen failing, asserting 'A file of equal size and time but other content is copied', 'A link is copied as the data it points at' and 'A file only the target holds is removed'.
 - [ ] 4.3 Make `genshin:data verify` compare the generated lock with the committed lock, and fail on a difference. Verify: `verifyCommand.test.ts` written first and seen failing, asserting 'Verify fails when the lock differs from the committed lock' and 'Verify passes when the lock matches the committed lock'.

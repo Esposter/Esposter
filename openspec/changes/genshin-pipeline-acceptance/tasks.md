@@ -1,6 +1,6 @@
 ## 1. Decoders and the game-running guard
 
-- [ ] 1.1 Commit the Windows build's reference block counts beside the build, and accept the macOS build only at those counts (the Windows counts need the PC, after genshin-pipeline-provenance task 2.4 and task 3.1). Verify: `checkAnimeStudioParity.test.ts` written first and seen failing, asserting 'The Windows counts are committed beside the build' and 'A Mac build whose counts differ from the Windows counts is refused'.
+- [ ] 1.1 Commit the reference block counts and the SHA-256 of three exports, from the Windows build and from the macOS build run once with `pnpm -C scripts genshin:animestudio:build`, beside the build, and accept the macOS build only at the Windows counts (the Windows counts need the PC, after genshin-pipeline-provenance task 2.4 and task 3.1). Verify: `checkAnimeStudioParity.test.ts` written first and seen failing, asserting 'The Windows counts are committed beside the build' and 'A Mac build whose counts differ from the Windows counts is refused'.
 - [ ] 1.2 Add the macOS branch to the game-running guard as a process check. Verify: `checkIsGameRunning.test.ts` written first and seen failing, asserting 'A block run refuses while the game is running on macOS' and 'A block run proceeds when the game is not running on macOS'.
 
 ## 2. Measured values
