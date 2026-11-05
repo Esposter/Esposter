@@ -1,6 +1,7 @@
 schema: spec-driven
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
+x-waiting: "2.1 waits on camps that carry their scene groups' ids, which the spawned places change does not write; 2.2 waits on 2.1 and on the area's own groups being extracted from the dump, which no build reads yet; 6.4 waits on the chest-to-domain and chest-to-quest links the dump's label tree does not hold; 6.6 waits on a per-quest source for the Encounter Points of World quests, Hangout first completions, Event quests and each event's budget, since the wiki gives per-version totals; 6.10 waits on the Plumes of Purifying Light's item id, which the dump's tables do not name, and on a wiki amount for the Mnemonic Cluster"
 x-touches:
   [
     "packages/genshin-world/src/services/commission/**",
