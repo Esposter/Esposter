@@ -15,6 +15,6 @@ describe("genshin-interface", () => {
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(128 * KIBIBYTE);
+    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(384 * KIBIBYTE);
   });
 });

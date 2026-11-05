@@ -6,8 +6,8 @@ No check reads a README's code fences: no tsconfig includes them, and CI typeche
 
 ## The compiler per example
 
-- **`.ts`** — `tsrs --fast -p <config>`, the compiler the packages' `typecheck` script runs (`tsrs --fast`). It takes a tsc-style config, and `tsrs` cannot read `.vue`.
-- **`.vue`** — `vue-tsc --noEmit -p <config>`, from `apps/web/node_modules/.bin/vue-tsc` (the catalog version). `apps/web`, `genshin-interface`, `vue-phaserjs` and `genshin-world` declare it, as `catalog:`; `genshin-interface`, `vue-phaserjs` and `genshin-world` typecheck through `tsrs`, so no package's own typecheck runs it, and `apps/web`'s own typecheck is `nuxt typecheck`, so this copy is for a README example only.
+- **`.ts`** — `tsrs --fast -p <config>`, the compiler the packages' `typecheck` script runs (`tsrs --fast`). It takes a tsc-style config.
+- **`.vue`** — `tsrs --fast --runExternalCode -p <config>`, the compiler the Vue packages' `typecheck` scripts run over their own tsconfig. `tsrs` reads a `.vue` file only through a content mapper, so the config names `vize` in `contentMappers`, and `--runExternalCode` lets `tsrs` run it.
 - The repo's TypeScript has removed `baseUrl` from the config, so map the package's name with `paths`.
 
 ## Steps
@@ -33,9 +33,9 @@ No check reads a README's code fences: no tsconfig includes them, and CI typeche
    }
    ```
 
-   A `.vue` config replaces `files` with `"include": ["./*.vue"]`. Write the paths with the drive letter, a colon and a forward slash: `cygpath -m` converts a Git Bash path to that form, and `tsrs` reads a `/c/…` path as relative.
+   A `.vue` config replaces `files` with `"include": ["./*.vue"]` and adds `"contentMappers": [{ "package": "vize", "extensions": [".vue"] }]` at its top level, the entry the Vue packages' tsconfigs carry. Write the paths with the drive letter, a colon and a forward slash: `cygpath -m` converts a Git Bash path to that form, and `tsrs` reads a `/c/…` path as relative.
 
-3. **Run it.** A `.ts` example: from the package directory, `pnpm exec tsrs --fast -p <config>`. A `.vue` example: from the package directory, `../../apps/web/node_modules/.bin/vue-tsc --noEmit -p .readme-check/tsconfig.json`. A pass is exit 0; the `TNB ACTIVE` banner is not an error.
+3. **Run it.** A `.ts` example: from the package directory, `pnpm exec tsrs --fast -p <config>`. A `.vue` example: from the package directory, `pnpm exec tsrs --fast --runExternalCode -p .readme-check/tsconfig.json`. A pass is exit 0; the `TNB ACTIVE` banner is not an error.
 4. **Prove the checker can fail.** Add one line, `const planted: number = "x";`, to the copy, rerun, and expect a `TS2322` error with a non-zero exit. Remove the line after. A zero exit alone proves nothing, since a config that matches no file passes too.
 5. **Remove the scratch.** Delete `.readme-check/` and the scratchpad files. `git status` must show no untracked file under the package.
 

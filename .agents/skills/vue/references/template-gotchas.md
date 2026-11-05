@@ -1,6 +1,6 @@
 # Template Gotchas
 
-Read when a directive or slot renders nothing, when vue-tsc reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Some template forms compile and are still wrong — rendering nothing while typechecking cleanly, or losing a guard's narrowing at a closure — and a cast on a type-only import is right all along, though vue-tsc's error names it in place of the value usage that caused it.
+Read when a directive or slot renders nothing, when the type check reports a template identifier it should be able to see, or when a guarded value goes `possibly undefined` inside an inline handler. Some template forms compile and are still wrong — rendering nothing while typechecking cleanly, or losing a guard's narrowing at a closure — and a cast on a type-only import is right all along, though the checker's error names it in place of the value usage that caused it.
 
 ## `v-html` only on a plain element
 
@@ -60,4 +60,4 @@ nested closure.
 
 `$event as FooType` works on a type-only import; never widen it to a value import for the cast's sake. Only a template _value_ usage (enum member access, a `v-for` source, a call) needs one.
 
-When vue-tsc reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage elsewhere in the template, not the cast.
+When the type check reports TS2551 `Property 'X' does not exist on type '{ …ctx… }'` on a template identifier, the culprit is a value usage elsewhere in the template, not the cast.

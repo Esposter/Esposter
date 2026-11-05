@@ -6,7 +6,7 @@ Read when running a script from `apps/web`, or reaching past `typecheck` (`nuxt 
 | ---------------- | ------------------------------------------------------------------ |
 | `pnpm lint`      | CI/check-only lint verification                                    |
 | `pnpm lint:fix`  | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck` | TypeScript type checking — never `tsrs` or `vue-tsc` directly      |
+| `pnpm typecheck` | TypeScript type checking — never `tsrs` directly                   |
 | `pnpm test`      | Run this package's tests in watch mode                             |
 | `pnpm dev`       | Start dev server, after bringing each package it loads up to date  |
 | `pnpm bench`     | Run this package's benchmarks                                      |

@@ -14,9 +14,7 @@ export const inlineFontFace = async (rule: CSSFontFaceRule) => {
     throw new InvalidOperationError(Operation.Read, inlineFontFace.name, `Could not read font ${fontUrl.href}`);
   const contentType = response.headers.get("content-type") ?? "font/woff2";
   const fontData = encodeBase64(new Uint8Array(await response.arrayBuffer()));
-  // @TODO: no upstream issue — TypeScript 7.1's DOM typings give a font face's descriptors no iterator, so the spread the linter asks for does not type; spread them again once they do
-  // oxlint-disable-next-line unicorn/prefer-spread -- the descriptors are array-like, which `Array.from` types
-  const descriptors = Array.from(rule.style)
+  const descriptors = Array.from({ length: rule.style.length }, (_value, index) => rule.style.item(index))
     .filter((property) => property !== "src")
     .map((property) => `${property}:${rule.style.getPropertyValue(property)}`);
   return `@font-face{${descriptors.join(";")};src:url("data:${contentType};base64,${fontData}")}`;

@@ -82,10 +82,12 @@
     "tsdown": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vitest-browser-vue": "catalog:",
-    "vue-tsc": "catalog:"
+    "vitest-browser-vue": "catalog:"
   },
   "peerDependencies": {
     "vue": "catalog:"
+  },
+  "inlinedDependencies": {
+    "vize": "0.684.0"
   }
 }

@@ -6,11 +6,11 @@
 
 ## 2. Vue checks
 
-- [ ] 2.1 Carry the Vue checks through `vize`, as the sibling change [architecture-vize-vue-typecheck](../architecture-vize-vue-typecheck/tasks.md) plans. Verified by that change's gates passing.
+- [x] 2.1 Carry the Vue checks through `vize`, as the sibling change [architecture-vize-vue-typecheck](../archive/2026-11-05-architecture-vize-vue-typecheck/tasks.md) planned. Done: every Vue type check and every `.vue` declaration runs through `tsrs` with the `vize` mapper, and no package depends on `vue-tsc`. Verified by that change's gates passing.
 
-## 3. The override and `vue-tsc`
+## 3. The override
 
-- [ ] 3.1 Retire `vue-tsc` and the `typescript-native-bridge` override once the Vue checks run on the Rust path everywhere. Verified by no `vue-tsc` dependency and no override entry remaining in the manifests.
+- [ ] 3.1 Retire the `typescript-native-bridge` override once `typescript-eslint`, the `attw` gate and `rolldown-plugin-dts` no longer read the classic `typescript` API. Verified by no override entry remaining in the manifests.
 
 ## 4. The `typescript` package
 

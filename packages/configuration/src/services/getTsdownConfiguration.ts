@@ -97,7 +97,7 @@ export const getTsdownConfiguration = ({
       // From `private` rather than opting in per package also means it cannot be forgotten. What it leaves
       // Behind is full programs only where one is unavoidable: every published package extends
       // `tsconfig.library.json` and emits per file under `isolatedDeclarations`, except the Vue packages, whose
-      // `.vue` declarations belong to vue-tsc and have no per-file path to take at all — see
+      // `.vue` declarations come from the content mapper and have no per-file path to take at all — see
       // `getTsdownConfigurationVue`, which loads the whole program on purpose. The slow path is exactly the packages
       // That cannot avoid it, and a new published package taking it would have to have left the library preset.
       mergeConfig(commonConfiguration, { dts: false })

@@ -93,8 +93,7 @@
     "type-fest": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vitest-browser-vue": "catalog:",
-    "vue-tsc": "catalog:"
+    "vitest-browser-vue": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",
@@ -109,6 +108,7 @@
     "zod": "catalog:"
   },
   "inlinedDependencies": {
-    "type-fest": "5.10.0"
+    "type-fest": "5.10.0",
+    "vize": "0.684.0"
   }
 }

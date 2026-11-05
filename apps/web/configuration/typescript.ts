@@ -12,8 +12,6 @@ import type { NuxtConfig } from "nuxt/schema";
 export const typescript: NuxtConfig["typescript"] = {
   tsConfig: {
     compilerOptions: { customConditions: ["source"], noUnusedLocals: true },
-    // @TODO: no upstream issue — Nuxt types `tsConfig` without `contentMappers`, the key `tsrs` reads to compile `.vue` files
-    // @ts-expect-error TS2353: `contentMappers` is not a known property of Nuxt's `tsConfig`
     contentMappers: [{ extensions: [".vue"], package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },

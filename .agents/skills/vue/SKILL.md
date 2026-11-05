@@ -42,7 +42,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
 - **Event modifiers over raw event methods** (`vue/no-restricted-syntax`); the exceptions and the one banned call are on `references/template-bindings.md`.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
-- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
+- **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or the type check cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
 ## Props, Refs & Computed
 
@@ -88,7 +88,7 @@ Every rendered date is a `<NuxtTime>`; the date-formatting ban inside a `.vue` a
 - `references/ordering.md` — when laying out a `<script setup>` block's macros and declarations, or an element's attributes.
 - `references/inline-handlers.md` — when naming, extracting or reviewing a function used once.
 - `references/forms.md` — when an input needs the split binding, or a form handles both create and edit.
-- `references/template-gotchas.md` — when a directive or slot renders nothing, or vue-tsc cannot see a template identifier.
+- `references/template-gotchas.md` — when a directive or slot renders nothing, or the type check cannot see a template identifier.
 - `references/computed-extraction.md` — before extracting or inlining any `computed`.
 - `references/auth-session.md` — when anything needs the signed-in user.
 - `references/watch-decision-tree.md` — before writing any `watch`, or when a local `ref` mirrors a prop or store value.

@@ -2,7 +2,7 @@
 
 ## Context
 
-The current arrangement is recorded in [monorepo tooling](../../specs/architecture/monorepo-tooling/design.md) under "TypeScript compiler": plain `tsc` everywhere (`vue-tsc` where a package holds `.vue` files), and the `typescript` package overridden onto `typescript-native-bridge`, so the classic API runs the Go compiler in-process. That section states that no `tsgo` invocation remains in any script, and that the override is the whole switch. This change moves away from that arrangement in phases, and the archived spec will rewrite the section as built.
+The arrangement is recorded in [monorepo tooling](../../specs/architecture/monorepo-tooling/design.md) under "TypeScript compiler": every package's `typecheck` runs `tsrs`, with the Vue files checked through the vize content mapper, and the `typescript` package is overridden onto `typescript-native-bridge`, so the classic API runs the Go compiler in-process. This change moves the checks onto `tsrs` in phases, and the override is the part the phases keep.
 
 ## Decisions
 
@@ -28,11 +28,11 @@ The owner files the upstream report. The reproduction is the shape above, with t
 
 `vize` checks `.vue` files through a content mapper declared in `tsconfig` (`contentMappers` with `"package": "vize"`), and its README runs that mapper through `tsrs`. Its own README marks it experimental, and its type checking requires `typescript@beta`, so it does not remove the `typescript` package. `tsrs` runs content mappers from the CLI, but its language server does not run them, so editor diagnostics for `.vue` files are not covered by this path.
 
-Rejected: removing `vue-tsc` now. `vue-tsc` reads the classic API that the override provides, so the override cannot go until a replacement covers every `vue-tsc` use.
+Rejected: removing `vue-tsc` ahead of a replacement for the Vue checks. Removing it alone would not let the override go, since the override serves other classic-API readers too (phases 3 and 4).
 
 ### Phase 3 and 4: the override and the `typescript` package
 
-The override stays while `vue-tsc`, `@volar/typescript` and the editor read the classic API. The `typescript` package stays while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `scripts/` no longer imports it. `tsrs`'s `ast` subpaths export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text, so the in-process uses moved to `oxc-parser` instead: `scripts/src/services/shared/parseSource.ts` parses a source and throws when it does not parse, and every `scripts/` check reads the tree through it. The parser choice is recorded here because it is the dependency decision that unblocked the `scripts/` part of phase 4.
+The override stays while `typescript-eslint`, `attw`, `rolldown-plugin-dts` and the editor read the classic API. The `typescript` package stays while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `scripts/` no longer imports it. `tsrs`'s `ast` subpaths export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text, so the in-process uses moved to `oxc-parser` instead: `scripts/src/services/shared/parseSource.ts` parses a source and throws when it does not parse, and every `scripts/` check reads the tree through it. The parser choice is recorded here because it is the dependency decision that unblocked the `scripts/` part of phase 4.
 
 ## Mechanism
 
@@ -41,11 +41,11 @@ Each phase is gated. A later phase cannot start on an earlier one's assumption, 
 ```mermaid
 flowchart TD
   P1["Phase 1: plain tsc to tsrs --fast"] --> G1{"workspace typecheck green through the package scripts"}
-  G1 -->|"yes"| P2["Phase 2: vize content mapper spike on one Vue package"]
+  G1 -->|"yes"| P2["Phase 2: the Vue checks and declarations through the vize content mapper"]
   G1 -->|"no"| R1["keep the failing package on tsc, record the diagnostic upstream"]
-  P2 --> G2{"diagnostics match vue-tsc on that package"}
-  G2 -->|"yes, everywhere"| P3["Phase 3: retire vue-tsc and the override"]
-  G2 -->|"no"| KEEP["keep vue-tsc and the override"]
+  P2 --> G2{"nothing reads the classic typescript API through the override"}
+  G2 -->|"yes"| P3["Phase 3: retire the override"]
+  G2 -->|"no"| KEEP["keep the override"]
   P3 --> G3{"nothing in-process needs the typescript package"}
   G3 -->|"yes"| P4["Phase 4: drop the typescript package"]
   G3 -->|"no"| KEEP2["keep the package, replace each use that can move"]

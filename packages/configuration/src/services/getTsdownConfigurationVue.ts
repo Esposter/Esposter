@@ -8,24 +8,22 @@ import Vize from "@vizejs/unplugin/rolldown";
 import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 
-// The packages that ship `.vue` files build through tsdown like every other: Vize compiles the components and
-// `dts.tsc.vue` hands declaration generation to vue-tsc. `vizeOptions` reaches the compiler, for a package whose templates
-// Hold elements a renderer rather than Vue resolves, such as TresJS's `TresMesh`, which it names in `customElements`.
-// Reaching rolldown through vite would do the same two jobs behind a second build path, free to drift from this one.
+// The packages that ship `.vue` files build through tsdown like every other: Vize compiles the components, and
+// `tsrs` generates the declarations with the content mapper the package's tsconfig names, so a `.vue` file is typed by
+// The same pair that checks it. `vizeOptions` reaches the compiler, for a package whose templates hold elements a
+// Renderer rather than Vue resolves, such as TresJS's `TresMesh`, which it names in `customElements`. Reaching rolldown
+// Through vite would do the same two jobs behind a second build path, free to drift from this one.
 //
-// `eager` is what makes auto-imports typeable. The declaration build seeds its TypeScript program from the
-// Entrypoints alone, and `auto-imports.d.ts` is an ambient file no entrypoint imports — so without this,
-// `defineStore` and friends are unresolved and every store's declaration collapses to `any` in the shipped
-// `.d.ts`, silently, while `vue-tsc` still passes. `eager` loads every file the tsconfig lists instead, which
-// Is how the tsconfig's own `include` picks the ambient file up. That is why this build alone names a tsconfig: the
-// Package's `tsconfig.build.json` adds `tsconfig.build.base.json`'s excludes, so the tests stay out of the program —
-// The declarations come out the same either way, and the build takes a good deal longer with them in.
+// The program is the tsconfig's, and that is why this build alone names one: the package's `tsconfig.build.json` adds
+// `tsconfig.build.base.json`'s excludes, so the tests stay out of the program, and `auto-imports.d.ts`, an ambient file
+// No entrypoint imports, is in it through the tsconfig's own `include`. `runExternalCode` lets `tsrs` run the mapper.
 // A private package keeps the base's `dts: false`, for the reason the base gives: nothing types against its `dist`.
 export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {}): UserConfig =>
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
+    // @TODO: https://github.com/ubugeeei-prod/vize/issues/11907 — the declarations carry the checker's `ImportMeta` globals; drop the types ceiling's headroom and the leak with a release that shares the helper modules
     ...(readPackageManifest().private
       ? {}
-      : { dts: { tsc: { eager: true, vue: true }, tsconfig: "tsconfig.build.json" } }),
+      : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),
     // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },

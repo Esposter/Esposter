@@ -199,7 +199,6 @@
     "unplugin-pwa-nuxt": "workspace:*",
     "unstorage": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "vitest": "catalog:"
   }
 }
