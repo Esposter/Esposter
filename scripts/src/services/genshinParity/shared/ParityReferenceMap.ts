@@ -283,9 +283,31 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "CharacterScreen",
     source: "session-2.mp4 at 155s",
   },
-  // The same frame's band across the top, the name, the portraits and the Geo emblem, clear of the scene
+  // The same frame's band across the top, the name, the portraits and the Geo emblem, clear of the scene. The mask
+  // Leaves out the game's portrait art inside each ring, which the app draws only as a disc; the rings, the discs, the
+  // Name, the emblem, the keys and the close button are scored
   "character-attributes-top": {
     isBackdrop: true,
+    mask: [
+      { height: 34, width: 3440, x: 0, y: 0 },
+      { height: 56, width: 829, x: 0, y: 34 },
+      { height: 56, width: 73, x: 885, y: 34 },
+      { height: 56, width: 71, x: 1014, y: 34 },
+      { height: 56, width: 72, x: 1141, y: 34 },
+      { height: 56, width: 77, x: 1269, y: 34 },
+      { height: 56, width: 70, x: 1402, y: 34 },
+      { height: 56, width: 76, x: 1528, y: 34 },
+      { height: 56, width: 69, x: 1660, y: 34 },
+      { height: 56, width: 69, x: 1785, y: 34 },
+      { height: 56, width: 72, x: 1910, y: 34 },
+      { height: 56, width: 76, x: 2038, y: 34 },
+      { height: 56, width: 70, x: 2170, y: 34 },
+      { height: 56, width: 69, x: 2296, y: 34 },
+      { height: 56, width: 74, x: 2421, y: 34 },
+      { height: 56, width: 66, x: 2551, y: 34 },
+      { height: 56, width: 767, x: 2673, y: 34 },
+      { height: 45, width: 3440, x: 0, y: 90 },
+    ],
     plate: getCharacterScreenPlate("Attributes"),
     region: { height: 135, width: 3440, x: 0, y: 0 },
     screen: "CharacterScreen",
