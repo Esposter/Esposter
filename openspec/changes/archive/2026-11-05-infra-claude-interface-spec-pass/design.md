@@ -1,6 +1,6 @@
 # Claude interface spec pass
 
-Built on [the console's retirement](../infra-agent-console-retirement/design.md), which removes the code and the console's own pages and sweeps every mention. This pass is the judgement that sweep cannot make: which surviving statements were true only because the console existed. It follows the per-area pass the [openspec skill](../../../.claude/skills/openspec/SKILL.md) describes, one area at a time and in the main session, since triage needs one head and the pages share an index and a roadmap.
+Built on [the console's retirement](../../infra-agent-console-retirement/design.md), which removes the code and the console's own pages and sweeps every mention. This pass is the judgement that sweep cannot make: which surviving statements were true only because the console existed. It follows the per-area pass the [openspec skill](../../../../.claude/skills/openspec/SKILL.md) describes, one area at a time and in the main session, since triage needs one head and the pages share an index and a roadmap.
 
 ## What a mechanical sweep leaves behind
 

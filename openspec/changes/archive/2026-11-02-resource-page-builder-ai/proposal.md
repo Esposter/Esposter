@@ -37,7 +37,7 @@ The sixth row is the in-product assistant itself, which hands any of rows 2 to 4
 ## Notes on cost, data and injection
 
 - **Hosted model calls are rejected.** Any of rows 2 to 5 run server-side would bill Esposter for a model call, which the free rule forbids. The bounded alternative is the one already named: the person's session, on the subscription they already have.
-- **Hosted sessions are not offered for these features.** The [hosted sessions](../../infra-agent-console-anthropic-hosted-sessions/proposal.md) change bills the reader's own API key, which is metered to them, so it is not the free path these features use.
+- **Hosted sessions are not offered for these features.** The hosted sessions change (removed with the agent console) bills the reader's own API key, which is metered to them, so it is not the free path these features use.
 - **Data to a model.** Rows 2 to 5 send the document and its images to the person's session. An email's bound dataset holds recipients' rows, and a session reading a Sheet would send them too. The critique sends nothing anywhere, so this is a risk the assistant rows must state when they are designed.
 - **Prompt injection.** Text in a document, and especially pasted text, can carry instructions to a session. The defence the assistant rows rely on is the one the content tools already have: a key scoped to the Resources scope, every write validated against the type's schema and reversible through its inverse operations.
 
