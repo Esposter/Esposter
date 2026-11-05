@@ -51,8 +51,8 @@ describe(publishGameData, () => {
     expect.hasAssertions();
 
     const result = await publishGameData({
-      containerClientMap: createContainerClientMap(),
       currentLock: emptyLock,
+      getContainerClientMap: createContainerClientMap,
       publication,
       scopes,
     });
@@ -74,9 +74,19 @@ describe(publishGameData, () => {
 
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
-      await publishGameData({ containerClientMap, currentLock: emptyLock, publication, scopes }),
+      await publishGameData({
+        currentLock: emptyLock,
+        getContainerClientMap: () => containerClientMap,
+        publication,
+        scopes,
+      }),
     );
-    const rerun = await publishGameData({ containerClientMap, currentLock, publication, scopes });
+    const rerun = await publishGameData({
+      currentLock,
+      getContainerClientMap: () => containerClientMap,
+      publication,
+      scopes,
+    });
 
     expect(rerun).toStrictEqual({
       outcome: GameDataPublishOutcome.Published,
@@ -92,13 +102,23 @@ describe(publishGameData, () => {
 
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
-      await publishGameData({ containerClientMap, currentLock: emptyLock, publication, scopes }),
+      await publishGameData({
+        currentLock: emptyLock,
+        getContainerClientMap: () => containerClientMap,
+        publication,
+        scopes,
+      }),
     );
     const record = takeOne(planGameDataPublication(publication).records);
     const prodBlobs = MockContainerDatabase.get(GameDataTarget.Prod);
     prodBlobs?.delete(getGameDataBlobName(record.dataset, record.hash));
 
-    const rerun = await publishGameData({ containerClientMap, currentLock, publication, scopes });
+    const rerun = await publishGameData({
+      currentLock,
+      getContainerClientMap: () => containerClientMap,
+      publication,
+      scopes,
+    });
 
     expect(rerun).toStrictEqual({
       outcome: GameDataPublishOutcome.Published,
@@ -115,13 +135,23 @@ describe(publishGameData, () => {
 
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
-      await publishGameData({ containerClientMap, currentLock: emptyLock, publication, scopes }),
+      await publishGameData({
+        currentLock: emptyLock,
+        getContainerClientMap: () => containerClientMap,
+        publication,
+        scopes,
+      }),
     );
     const changedPublication: GameDataPublication = {
       ...publication,
       indexes: { "profile/English": { ...publication.indexes["profile/English"], "10000003": { name: "c" } } },
     };
-    const result = await publishGameData({ containerClientMap, currentLock, publication: changedPublication, scopes });
+    const result = await publishGameData({
+      currentLock,
+      getContainerClientMap: () => containerClientMap,
+      publication: changedPublication,
+      scopes,
+    });
 
     expect(result).toStrictEqual({
       outcome: GameDataPublishOutcome.Published,
@@ -136,15 +166,15 @@ describe(publishGameData, () => {
     expect.hasAssertions();
 
     await publishGameData({
-      containerClientMap: createContainerClientMap(),
       currentLock: emptyLock,
+      getContainerClientMap: createContainerClientMap,
       publication,
       scopes,
     });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await publishGameData({
-      containerClientMap: createContainerClientMap(),
       currentLock: emptyLock,
+      getContainerClientMap: createContainerClientMap,
       publication,
       scopes,
     });
@@ -178,16 +208,16 @@ describe(publishGameData, () => {
     };
     const first = getPlannedLock(
       await publishGameData({
-        containerClientMap: createContainerClientMap(),
         currentLock: emptyLock,
+        getContainerClientMap: createContainerClientMap,
         publication: ascending,
         scopes,
       }),
     );
     const second = getPlannedLock(
       await publishGameData({
-        containerClientMap: createContainerClientMap(),
         currentLock: emptyLock,
+        getContainerClientMap: createContainerClientMap,
         publication: descending,
         scopes,
       }),
@@ -213,6 +243,51 @@ describe(publishGameData, () => {
     expect(MockContainerDatabase.size).toBe(0);
   });
 
+  // An empty publication that leaves the lock as it is stores and lists nothing, so it returns before any account is
+  // Created, and the credential that would create one is never made
+  test("an empty publication makes no request and leaves the lock as it is", async () => {
+    expect.hasAssertions();
+
+    const getContainerClientMap = vi.fn<() => Record<GameDataTarget, ContainerClient>>(createContainerClientMap);
+    const result = await publishGameData({
+      currentLock: emptyLock,
+      getContainerClientMap,
+      publication: { indexes: {}, objects: {} },
+      scopes,
+    });
+
+    expect(result).toStrictEqual({ outcome: GameDataPublishOutcome.Empty });
+    expect(getContainerClientMap).not.toHaveBeenCalled();
+  });
+
+  // The lock can change with no upload: a scope that names entries the lock holds drops them when nothing replaces them
+  test("an empty publication that drops a scope's entries still publishes the lock", async () => {
+    expect.hasAssertions();
+
+    const containerClientMap = createContainerClientMap();
+    const currentLock = getPlannedLock(
+      await publishGameData({
+        currentLock: emptyLock,
+        getContainerClientMap: () => containerClientMap,
+        publication,
+        scopes,
+      }),
+    );
+    const result = await publishGameData({
+      currentLock,
+      getContainerClientMap: () => containerClientMap,
+      publication: { indexes: {}, objects: {} },
+      scopes,
+    });
+
+    expect(result).toStrictEqual({
+      outcome: GameDataPublishOutcome.Published,
+      plannedLock: emptyLock,
+      storedObjectCount: 0,
+      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 0 },
+    });
+  });
+
   // An account that refuses a write must leave the lock where it was, which the caller only moves once this resolves
   test("rejects when an account refuses a write", async () => {
     expect.hasAssertions();
@@ -223,7 +298,7 @@ describe(publishGameData, () => {
     });
 
     await expect(
-      publishGameData({ containerClientMap, currentLock: emptyLock, publication, scopes }),
+      publishGameData({ currentLock: emptyLock, getContainerClientMap: () => containerClientMap, publication, scopes }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
 

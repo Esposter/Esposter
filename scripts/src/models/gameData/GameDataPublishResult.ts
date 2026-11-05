@@ -18,4 +18,5 @@ export type GameDataPublishResult =
       storedObjectCount: number;
       uploadedCountMap: Record<GameDataTarget, number>;
     }
+  | { outcome: GameDataPublishOutcome.Empty }
   | { outcome: GameDataPublishOutcome.Unchanged };

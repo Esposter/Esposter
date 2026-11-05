@@ -10,7 +10,8 @@ import { summarizeGameDataChanges } from "#src/services/gameData/summarizeGameDa
 
 // One generator's publish: the scopes it replaces are stored in both accounts, and the lock is committed only once both have
 // Them. A dry run stores nothing and needs no credential, and its note adds what it would change against the published
-// Records. Returns a note of what the step did to the lock
+// Records. A publication that stores nothing and leaves the lock as it is creates no account, so it needs no credential
+// Either. Returns a note of what the step did to the lock
 export const publishGameDataStep = async ({
   isDryRun,
   publication,
@@ -19,17 +20,18 @@ export const publishGameDataStep = async ({
   const label = scopes.join(", ");
   const currentLock = await readGameDataLock();
   const result = await publishGameData({
-    containerClientMap: isDryRun
+    currentLock,
+    getContainerClientMap: isDryRun
       ? undefined
-      : {
+      : () => ({
           [GameDataTarget.Dev]: createGameDataContainerClient(GameDataTarget.Dev),
           [GameDataTarget.Prod]: createGameDataContainerClient(GameDataTarget.Prod),
-        },
-    currentLock,
+        }),
     publication,
     scopes,
   });
   if (result.outcome === GameDataPublishOutcome.Unchanged) return `${label}: unchanged, no request made`;
+  if (result.outcome === GameDataPublishOutcome.Empty) return `${label}: nothing published, no request made`;
   if (result.outcome === GameDataPublishOutcome.DryRun)
     return [
       `${label}: dry run, ${result.storedObjectCount} records would be published`,

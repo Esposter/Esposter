@@ -17,8 +17,8 @@ import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } 
 // Lock and commit. The caller commits only once this resolves: a failure in either account throws before then, so the
 // Committed lock never names data a Reader cannot fetch, and a rerun converges on the same objects.
 export const publishGameData = async ({
-  containerClientMap,
   currentLock,
+  getContainerClientMap,
   publication,
   scopes,
 }: PublishGameDataOptions): Promise<GameDataPublishResult> => {
@@ -30,11 +30,10 @@ export const publishGameData = async ({
   if (outsideScopeKey !== undefined)
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeGameDataLock(currentLock, scopes, plan.lock);
-  // A dry run stops before any account, so it needs no credential and writes nothing. A real publish always lists the
-  // Accounts, since the lock can name a blob an account has lost, and each account stores only the blobs it lacks
-  if (!containerClientMap) {
-    if (formatGameDataLock(nextLock) === formatGameDataLock(currentLock))
-      return { outcome: GameDataPublishOutcome.Unchanged };
+  const isLockUnchanged = formatGameDataLock(nextLock) === formatGameDataLock(currentLock);
+  // A dry run stops before any account, so it needs no credential and writes nothing
+  if (!getContainerClientMap) {
+    if (isLockUnchanged) return { outcome: GameDataPublishOutcome.Unchanged };
     return {
       nextLock,
       outcome: GameDataPublishOutcome.DryRun,
@@ -42,6 +41,11 @@ export const publishGameData = async ({
       storedObjectCount: plan.records.length,
     };
   }
+  // A publication that stores no object and leaves the lock as it is returns before any account is created, so it lists
+  // None and needs no credential. Any other real publish lists each account, since the lock can name a blob an account
+  // Has lost, and each account stores only the blobs it lacks
+  if (plan.records.length === 0 && isLockUnchanged) return { outcome: GameDataPublishOutcome.Empty };
+  const containerClientMap = getContainerClientMap();
   const compressedJsonMap = new Map<string, Promise<Buffer>>();
   // Compressed once per object and shared by both accounts, which hold the same bytes
   const getCompressedJson = (record: GameDataRecord) => {
