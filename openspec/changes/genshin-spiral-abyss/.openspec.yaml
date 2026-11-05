@@ -1,6 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-model: claude-haiku-5-5
+x-model: claude-sonnet-5-5
 x-needs: [game-exports]
 x-touches:
   [
