@@ -114,7 +114,7 @@ These gaps are owned by an open change, a roadmap item or a built spec's own ope
 - **The attack timings.** The [character kits](../genshin-character-kits/design.md) design, at its reference entries, reads the attack timings from `genshin:assets timings`. This change fits the motion; the kit keeps the durations.
 - **The packs' publish.** The [published packs](../../specs/genshin/characters/published-packs/design.md) design owns the command and its not-built items. The owner's supply of each pack is the input G1 waits on.
 - **Residents' places.** The [resident schedules](../genshin-resident-schedules/design.md) change places residents and their hours. It names no body, so G12 is not in its scope.
-- **Every family's shipping check.** The [derived assets](../../specs/genshin/derived-assets/design.md) Open items hold the check that the deployed build holds no game mesh, texture or export. The Traveler's game model is drawn only in development, and that check is the one that keeps it so.
+- **Every family's shipping check.** The [derived assets](../../specs/genshin/derived-assets/spec.md) Open items hold the check that the deployed build holds no game mesh, texture or export. The Traveler's game model is drawn only in development, and that check is the one that keeps it so.
 - **The dump's revision.** The [game text](../../specs/genshin/game-text/design.md) Open items record that no file states the revision of the community dump. G12's record names the dump's revision once that is recorded.
 - **The drawing page's own items.** The [drawing](../../specs/genshin/characters/drawing/design.md) Open list holds the mesh oracle and the rain. They are not this family's gaps, and they stay on that page.
 
