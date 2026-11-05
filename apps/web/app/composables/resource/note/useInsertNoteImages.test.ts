@@ -51,7 +51,7 @@ describe(useInsertNoteImages, () => {
   test.each([
     ["at the caret", 8, undefined],
     ["where it is dropped", 1, 8],
-  ])("choosing an image from the menu adds it to the note, %s", async (_title, caretPosition, dropPosition) => {
+  ])("an image goes in %s", async (_title, caretPosition, dropPosition) => {
     expect.hasAssertions();
 
     uploadResourceFileMock.mockResolvedValue(assetUrl);

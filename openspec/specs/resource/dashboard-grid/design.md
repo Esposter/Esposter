@@ -28,7 +28,7 @@ Every visible control of the dashboard, in the editor and on the published page,
 | Group header           | Names a group, and its press moves the group                                                          | every view           | the top of a group's frame: always in the editor, and on the published page when the group is titled                         | A press inside a group's grid belongs to that grid, so the header and the frame are the group's own place to be grabbed |
 | Group drop area        | Says how to fill an empty group                                                                       | once per empty group | the empty group's grid, in the editor only                                                                                   | An empty group is a blank box until a visual is in it, so it names the two ways in                                      |
 
-Nothing else is visible. The published page keeps its title, Export PNG and the visuals; the palette, the Layout control, the visual menu and the keys do not render for a viewer.
+Nothing else is visible. The published page keeps its title, Export PNG and the visuals; the palette, the Layout control, the visual menu and the keys do not render for a viewer. A published visual is not marked for an outline, so none is drawn when the pointer moves over it.
 
 ### Layout, desktop and phone
 

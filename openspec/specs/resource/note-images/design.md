@@ -28,7 +28,7 @@ The published view shows an image only when its source is a resource asset addre
 - **No image from a url.** Notion embeds a link, but an external `src` is the one form the sanitizer drops. Owning the bytes keeps a published page working after the source moves.
 - **No resize handles or captions.** They are Notion's ceiling, and an image renders at its natural size, capped at the column width.
 - **No image in the message composer.** The composer's attachments are files on their own path ([file uploads](../../architecture/file-uploads/design.md)), and the sanitizer's image allowance stays out of the composer.
-- **Not built: the column cap has no test.** The cap is the image rule in the rich-text typography, and the scenario "A wide image is capped at the column width" has no test behind it. Happy-dom lays out no box, and the app has no browser suite, so a layout claim about the app's own components waits until their code is extracted into a package that has one (`.agents/skills/testing/references/test-environment.md`).
+- **The column cap has no test.** The cap is the image rule in the rich-text typography, and happy-dom lays out no box, so a layout claim about the app's own components waits until their code is extracted into a package that has one (`.agents/skills/testing/references/test-environment.md`).
 
 ## Key files
 

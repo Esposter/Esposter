@@ -14,20 +14,31 @@ import { surveyInviteNodeType } from "#shared/services/pageBuilder/surveyInviteN
 import { describe, expect, test } from "vitest";
 
 describe("surveyInviteNodeType", () => {
-  test("a type's output matches for every edge value", () => {
+  const href = getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID);
+
+  test("visitor clicks an invite on a published page", () => {
     expect.hasAssertions();
 
-    const invites: SurveyInviteNode[] = [
-      { props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
-      { props: { id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
-    ];
-    const href = getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID);
+    const invite: SurveyInviteNode = {
+      props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
+      type: WebpageNodeType.SurveyInvite,
+    };
 
-    expect(
-      invites.map((invite) => serializeHtml([surveyInviteNodeType.render(invite, {}, TEST_CONTEXT)])),
-    ).toStrictEqual([
+    expect(serializeHtml([surveyInviteNodeType.render(invite, {}, TEST_CONTEXT)])).toBe(
       `<a class="survey-invite" href="${href}">${TEST_LABEL}</a>`,
+    );
+  });
+
+  test("label with markup characters", () => {
+    expect.hasAssertions();
+
+    const invite: SurveyInviteNode = {
+      props: { id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID },
+      type: WebpageNodeType.SurveyInvite,
+    };
+
+    expect(serializeHtml([surveyInviteNodeType.render(invite, {}, TEST_CONTEXT)])).toBe(
       `<a class="survey-invite" href="${href}">&lt;b&gt;&amp;</a>`,
-    ]);
+    );
   });
 });

@@ -5,6 +5,7 @@ import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { MjmlDocument } from "mjml-blocks";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { toMergeField } from "@/services/emailEditor/toMergeField";
@@ -16,6 +17,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { getBlockNode } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
 
@@ -221,6 +223,25 @@ describe(usePageBuilderDrag, () => {
       TEXT_TWO,
     ]);
     expect(announce.mock.calls).toStrictEqual([[`Inserted ${TEXT_TITLE}`]]);
+  });
+
+  test("owner drops a survey invite", async () => {
+    expect.hasAssertions();
+    const { drag, pageBuilderCanvasStore, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+
+    drag.vm.startPaletteDrag(WebpageNodeType.SurveyInvite, pointerAt("pointerdown", 0, 0), () =>
+      createGeometry(TEXT_ONE),
+    );
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
+    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+
+    expect(document && getBlockNode(document, `${COLUMN_SLOT}/1`, webpageKind.children)).toStrictEqual({
+      props: { id: insertedId, label: "Survey", surveyId: NO_SURVEY_ID },
+      type: WebpageNodeType.SurveyInvite,
+    });
   });
 
   test("dropping a block where no slot accepts it cancels the drop", async () => {

@@ -164,9 +164,8 @@ describe("pageBuilderContentPanel", () => {
     component.unmount();
   });
 
-  test("an invite offers only the published surveys, and binds the one chosen", async () => {
-    expect.hasAssertions();
-
+  // A survey invite's picker over one published survey and one that is not, as the survey list answers its query
+  const mountInvitePicker = async (kind: typeof emailKind | typeof webpageKind) => {
     const resourceId = crypto.randomUUID();
     const published = createResourceListItem({ type: ResourceType.Survey });
     const unpublished = createResourceListItem({ type: ResourceType.Survey });
@@ -178,11 +177,21 @@ describe("pageBuilderContentPanel", () => {
     }));
     trpcMsw.resource.readResource.query(() => publishedInList);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
+    if (kind === emailKind)
+      pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
+    else pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind, resourceId } });
     await flushPromises();
+
+    return { component, pageBuilderDocumentStore, published, resourceId };
+  };
+
+  test("owner binds a published survey", async () => {
+    expect.hasAssertions();
+
+    const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(webpageKind);
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
       hasMore: false,
@@ -197,25 +206,23 @@ describe("pageBuilderContentPanel", () => {
     component.unmount();
   });
 
+  test("an unpublished survey is not offered", async () => {
+    expect.hasAssertions();
+
+    const { component, published } = await mountInvitePicker(webpageKind);
+
+    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
+      hasMore: false,
+      items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+    });
+
+    component.unmount();
+  });
+
   test("an email's invite offers only the published surveys, and binds the one chosen", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
-    const published = createResourceListItem({ type: ResourceType.Survey });
-    const unpublished = createResourceListItem({ type: ResourceType.Survey });
-    const publishedInList = { ...published, publication: createPublication(published.id) };
-    const unpublishedInList = { ...unpublished, publication: null };
-    trpcMsw.survey.readResources.query(({ input }) => ({
-      hasMore: false,
-      items: input?.isPublished ? [publishedInList] : [publishedInList, unpublishedInList],
-    }));
-    trpcMsw.resource.readResource.query(() => publishedInList);
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
-    await flushPromises();
+    const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(emailKind);
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
       hasMore: false,
@@ -230,7 +237,7 @@ describe("pageBuilderContentPanel", () => {
     component.unmount();
   });
 
-  test("a bound survey that is no longer published is flagged, not offered, and keeps its id", async () => {
+  test("a bound survey is unpublished later", async () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
@@ -254,7 +261,7 @@ describe("pageBuilderContentPanel", () => {
     component.unmount();
   });
 
-  test("with no published survey the picker says so, offers no blank choice, and writes no id", async () => {
+  test("no published survey to offer", async () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();

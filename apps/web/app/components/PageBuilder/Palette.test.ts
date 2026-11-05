@@ -10,6 +10,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { SurveyNodeType } from "headless-survey-engine";
 import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -58,6 +59,20 @@ describe("pageBuilderPalette", () => {
     expect(component.findAllComponents(UiIcon).map((icon) => icon.props("meaning"))).toStrictEqual(
       types.map((type) => kind.icons[type]),
     );
+  });
+
+  // The webpage has no form nodes, so a survey invite is how a published page collects answers. A survey's input kinds
+  // Are the only form nodes there are, and none of them is in the palette's categories
+  test("owner browses the webpage editor's nodes", () => {
+    expect.hasAssertions();
+
+    const surveyNodeTypes: string[] = Object.values(SurveyNodeType);
+
+    expect(
+      webpageKind.paletteCategories
+        .flatMap<string>(({ types }) => types)
+        .filter((type) => surveyNodeTypes.includes(type)),
+    ).toStrictEqual([]);
   });
 
   test("a merge field inserts a text carrying its column's token into the selected column", async () => {

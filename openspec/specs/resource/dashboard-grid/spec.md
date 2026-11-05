@@ -124,18 +124,6 @@ The editor SHALL let the owner resize a visual from any of its eight edges and c
 - **WHEN** the owner drags its bottom edge down
 - **THEN** the visual keeps its height and nothing is saved
 
-#### Scenario: Handles are hidden while a visual is not pointed at or focused
-
-- **GIVEN** a visual in the editor that the pointer is not over and that has no focus
-- **WHEN** the owner looks at it
-- **THEN** no resize handle is drawn
-
-#### Scenario: A visual shows an outline when pointed at or focused
-
-- **GIVEN** a visual in the editor
-- **WHEN** the pointer moves over it or it takes focus
-- **THEN** a thin outline shows that it can be resized
-
 #### Scenario: A published visual shows no outline
 
 - **GIVEN** a visual on the published page
@@ -434,7 +422,7 @@ The published view, the snapshot summary, the resource links, the agent's schema
 - **WHEN** the dashboard is published
 - **THEN** the published visual inside the group carries the snapshot of its binding
 
-#### Scenario: dashboard: counts every visual in the tree, a group's included
+#### Scenario: Dashboard: counts every visual in the tree, a group's included
 
 - **GIVEN** a dashboard holding a group with two visuals and one visual outside it
 - **WHEN** a snapshot of the dashboard is summarized

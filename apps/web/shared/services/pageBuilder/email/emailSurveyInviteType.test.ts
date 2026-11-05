@@ -14,7 +14,7 @@ import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInvite
 import { describe, expect, test } from "vitest";
 
 describe("emailSurveyInviteType", () => {
-  test("the survey invite renders as a button linking to the survey at the origin", () => {
+  test("recipient clicks an invite in a sent email", () => {
     expect.hasAssertions();
 
     const surveyInvite: EmailSurveyInviteNode = {
@@ -30,5 +30,16 @@ describe("emailSurveyInviteType", () => {
       content: TEST_LABEL,
       tagName: "mj-button",
     });
+  });
+
+  test("label with markup characters in an email", () => {
+    expect.hasAssertions();
+
+    const surveyInvite: EmailSurveyInviteNode = {
+      props: { id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID },
+      type: EmailNodeType.SurveyInvite,
+    };
+
+    expect(emailSurveyInviteType.render(surveyInvite, {}, TEST_CONTEXT).content).toBe("&lt;b&gt;&amp;");
   });
 });

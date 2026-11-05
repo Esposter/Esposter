@@ -43,11 +43,16 @@ describe("dashboardGridTile", () => {
     ]);
   });
 
-  test("an editable tile is marked for its outline, and a read-only tile is not", () => {
+  test("a published visual shows no outline", () => {
+    expect.hasAssertions();
+
+    expect(createTile({ isEditable: undefined }).attributes("data-editable")).toBeUndefined();
+  });
+
+  test("an editable tile is marked for its outline", () => {
     expect.hasAssertions();
 
     expect(createTile().attributes("data-editable")).toBe("true");
-    expect(createTile({ isEditable: undefined }).attributes("data-editable")).toBeUndefined();
   });
 
   test("a read-only tile has no handles and no tab stop", () => {

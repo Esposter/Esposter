@@ -34,16 +34,6 @@ A webpage invite SHALL show its label as the button's text, and SHALL NOT render
 - **WHEN** the page is rendered
 - **THEN** the label appears as literal text
 
-### Requirement: A webpage invite carries no per-visitor identity
-
-A webpage invite SHALL link to the plain public survey address, with no token identifying the visitor.
-
-#### Scenario: Visitor clicks an invite on a published page
-
-- **GIVEN** a published webpage with a survey invite
-- **WHEN** a visitor clicks the button
-- **THEN** the visitor opens the plain public survey address
-
 ### Requirement: The webpage editor offers no form nodes
 
 The webpage editor SHALL offer no form nodes, so a survey invite is how a published page collects answers.
@@ -53,17 +43,6 @@ The webpage editor SHALL offer no form nodes, so a survey invite is how a publis
 - **GIVEN** the webpage editor is open
 - **WHEN** the owner browses its palette
 - **THEN** no form nodes are listed
-
-### Requirement: Surveys are not embedded inline
-
-A published webpage SHALL NOT embed a survey inline, and SHALL offer a button to the survey instead.
-
-#### Scenario: Owner adds a survey to a webpage
-
-- **GIVEN** the owner adds a survey to a webpage
-- **WHEN** the page is published
-- **THEN** the survey appears as a button
-- **AND** no survey form is embedded in the page
 
 ### Requirement: An email survey invite is a button to the survey
 
@@ -94,7 +73,6 @@ The survey invite SHALL offer only the owner's published surveys, by title. Choo
 - **GIVEN** an owner with a published survey and an unbound survey invite on a webpage
 - **WHEN** the owner chooses the survey by its title
 - **THEN** the invite is bound to that survey
-- **AND** the page saves the survey as a link from the page
 
 #### Scenario: An unpublished survey is not offered
 
