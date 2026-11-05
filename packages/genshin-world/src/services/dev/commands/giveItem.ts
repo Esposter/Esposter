@@ -2,13 +2,9 @@ import type { DevSaveOutcome } from "#src/models/dev/DevSaveOutcome";
 import type { DevSaveTables } from "#src/models/dev/DevSaveTables";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
-import { Currency } from "#src/models/inventory/Currency";
 import { MAX_DEV_GIVE_COUNT } from "#src/services/dev/constants";
-import { resolveDevName } from "#src/services/dev/resolveDevName";
+import { resolveDevItem } from "#src/services/dev/resolveDevItem";
 import { addRewardItem } from "#src/services/inventory/addRewardItem";
-import { CurrencyItemIdMap, WALLET_ITEM_IDS } from "#src/services/inventory/constants";
-import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
-import { getItemName } from "#src/services/inventory/getItemName";
 import { toInventory } from "#src/services/save/toInventory";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toWallet } from "#src/services/save/toWallet";
@@ -32,14 +28,7 @@ export const giveItem = (
   { count, item }: GiveItemArguments,
   tables: Pick<DevSaveTables, "gameText" | "materialDataMap" | "nameText" | "reliquaryPieceEntryMap" | "weaponDataMap">,
 ): DevSaveOutcome => {
-  const currencyCandidates = Object.values(Currency).map((currency) => ({
-    id: CurrencyItemIdMap[currency],
-    name: tables.gameText[CurrencyGameTextKeyMap[currency]],
-  }));
-  const materialCandidates = [...tables.materialDataMap.values()]
-    .filter(({ id }) => !WALLET_ITEM_IDS.includes(id))
-    .map(({ id, nameTextId }) => ({ id, name: getItemName(nameTextId, tables.nameText) }));
-  const resolution = resolveDevName([...currencyCandidates, ...materialCandidates], ({ name }) => name, item, "item");
+  const resolution = resolveDevItem(item, tables);
   if (!resolution.ok) return resolution;
 
   const { id, name } = resolution.entry;

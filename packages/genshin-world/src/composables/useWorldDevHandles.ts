@@ -1,5 +1,6 @@
 import type { WorldDevHandleOptions } from "#src/models/world/WorldDevHandleOptions";
 
+import { createBagCommand } from "#src/services/dev/commands/createBagCommand";
 import { createHealCommand } from "#src/services/dev/commands/createHealCommand";
 import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand";
 import { createKillsCommand } from "#src/services/dev/commands/createKillsCommand";
@@ -23,6 +24,7 @@ export const useWorldDevHandles = ({ devRegistry, inputTarget, ...options }: Wor
 
     unregister = devRegistry.register({
       commands: [
+        createBagCommand(options),
         createHealCommand(options),
         createHoldCommand({
           onFrame: (listener) => {
