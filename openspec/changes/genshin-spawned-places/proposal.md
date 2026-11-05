@@ -11,7 +11,7 @@ Each region holds the places the servers spawn, fitted from the official map, wi
 - Each kind's fitted map points enter region data at their fitted positions. Only fitted places are written; the map's own data stays a reference.
 - Each fitted place stands on the ground beneath it, on the top of the landmark that holds it, or on its layer's floor. A place whose ground cannot be found is reported and not given a guessed height.
 - Enemy marks on the map are clustered by distance into camps, each enemy taking its family's kind and an estimated level, and the clustered camps replace Mondstadt's stand-in camp.
-- Each kind's count in each region is checked against the wiki's count, and any shortfall or surplus is reported per kind.
+- Each region's Oculus and chest counts are checked against the wiki's counts, and any shortfall or surplus is reported per kind.
 
 ## Capabilities
 
@@ -20,7 +20,6 @@ Each region holds the places the servers spawn, fitted from the official map, wi
 ## Waiting on
 
 - Game data: `game-exports` (per the change's needs).
-- Each kind's wiki count, which lands as that kind's page does.
 
 ## Impact
 

@@ -11,4 +11,7 @@
 
 ## 3. Counts
 
-- [ ] 3.1 Check each kind's count in each region against the wiki's count and report the difference. Oculi and chests are checked (`reportKindCount`). Enemy kinds stay open: the wiki's Hilichurl family page, the Mondstadt region page and a wiki search give no per-region count of any enemy kind (checked with the browser User-Agent from the wave notes). Verify: tests named after 'A kind short of the wiki's count is reported' and 'A kind matching the wiki's count reports nothing'.
+- [x] 3.1 Check each region's Oculi and chests against the wiki's count and report the difference per kind
+      (`reportKindCount`, called by `buildOculusPlaces.ts` and `buildChestPlaces.ts`). Enemy kinds are not checked, since
+      the wiki gives no per-region count for them. Verify: tests named after 'A kind short of the wiki's count is reported'
+      and 'A kind matching the wiki's count reports nothing'.

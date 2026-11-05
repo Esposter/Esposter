@@ -94,9 +94,9 @@ Each enemy's estimated level SHALL be drawn from the world level band of its reg
 - **THEN** each level is the region's band's estimate
 - **AND** the level is recorded as provisional
 
-### Requirement: Each kind's count in each region is checked against the wiki's count
+### Requirement: Each Oculus and chest count in each region is checked against the wiki's count
 
-Each kind's count of places in each region SHALL be checked against the wiki's count, with each shortfall or surplus reported per kind.
+Each region's Oculus and chest counts SHALL be checked against the wiki's counts, with each shortfall or surplus reported per kind.
 
 #### Scenario: A kind short of the wiki's count is reported
 

@@ -15,6 +15,8 @@ Finish Genius Invokation TCG beyond its tutorial: every card's effect, seated op
 - Each Player Level opens the challenger games its level unlocks.
 - Winning a duel pays the opponent's cards and Lucky Coins, and the Card Shop sells cards for Lucky Coins.
 - The card game opens at Adventure Rank 32 with its tutorial quest.
+- A duel with no winner concedes at the start of Round 15, as the game's round limit text gives it.
+- A character and a card are announced to a screen reader with their numbers, worded from the game's labels.
 - Duels against other players are not part of this change.
 
 ## Capabilities

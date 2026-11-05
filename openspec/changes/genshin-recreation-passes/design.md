@@ -16,6 +16,7 @@ The interface did not have this problem. Its pieces are placed from the game's o
 - **The recording's colour enters only for what exists at run time.** Layout, shape, motion a clip holds and surface are the game's own data, so they are judged against the game's own exports through the witness render, aligned to the pixel and free of any light. A recording's camera, and any motion no clip holds (a flight a script drives, the walkway's rise), live only in that recording, and are read off it through the frozen layout alone: its landmarks located in the frame and its outlines overlaid, with no colour of the recording in the reading. The display transform, the light, the atmosphere and the sounds are set at run time, and only for them is the recording's colour consulted, each pass over a mask where only its own unknown moves the reading.
 - **Random content is judged by its statistics.** Clouds, wisps and anything else the game scatters is matched by its cover by height, its size and its colour spread, never by a pixel score.
 - **The frame's perceptual score is acceptance.** Once every gate holds, `compare` scores each reference. A frame that still stands off names a pass whose measure missed something, which is the measure's defect to fix.
+- **A stand-off names its pass by the run that stops at the first red one.** On a reference that stands off, the reference's component runs through the passes in their dependency order with `runParityPasses` over `ParityPassMeasureMap.ts`, and the run stops at the first pass outside its gate, which is the pass reopened. A pass with no measure yet stops the run there, as it does in `passes`. `findMovedFrozenPass.ts` names the other case, a frozen pass that a later run moves. Rejected: mapping the worst compare cells to the pass that owns their content kind, since that needs a table from cell to pass the repo does not hold; and printing the stand-off for the operator to reopen by hand, since the run already says which pass is red.
 - **Ceilings order the work inside a pass, never across passes.** Within one pass, the items are worked largest first by what they could recover, as `rank` prices them; a term in a later pass waits for every earlier gate however large it is.
 - **The layout reads a placement in pixels by its pairs, before any render.** Each fitted part beside the export nearest it, both carried as the scene carries their family in a current build's reference's state, at every copy of a row the scene repeats it along, and projected from the scene's camera there, read only where the export lands on the frame and gated at a recording's two pixels of softness. A family with no part on a reference's frame has nothing to read there and is skipped for it, said so in the pass's notes, while a family on no reference's frame at all is a miss, since no frame has placed it. The camera is the next pass's, but a camera a little off moves both points of a pair alike, so their gap reads the placement alone. A family's outline in pixels is the shape pass's, drawn at the same camera, so the layout needs none.
 - **The light reads the sun's direction on its shadows' edges over flat receivers.** The receivers are the exports' parts facing up; the reference's shadow on them is its shading, its colour over the exports' albedo, split by Otsu's threshold; ours is the exports' occluders cast by the scene's own shadow map from the direction tried. The two edges are priced both ways in the reference's pixels and gated as any place on the frame is, and the direction is solved by its heading and its height over the horizon from the scene's, solved on an older build's reference seen from its own camera, itself solved on its landmarks.
@@ -51,7 +52,7 @@ flowchart TD
   A -->|"within noise, frozen"| N{"10 Audio: each sound's bands"}
   REC --> N
   N -->|"within noise, frozen"| X["Acceptance: compare's perceptual score"]
-  X -->|"stands off"| W["The pass whose measure missed it reopens"]
+  X -->|"stands off"| W["The first pass outside its gate, run in order on that reference, reopens"]
 ```
 
 The interface runs beside these as a pass of its own, placed from the rect tree, moved by its clips and compared over the recording's frame, as [parity](../../specs/genshin/parity/README.md) describes.
@@ -114,16 +115,18 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 ## Key files
 
-| File                                                                     | Role after the change                                                        |
-| :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | The passes' measures, run in order by `passes`, each held to its gate        |
-| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`    | The light pass's shadows' edges, priced and solved for the sun's direction   |
-| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                     |
-| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff |
-| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                           |
-| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles     |
-| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                     |
-| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                           |
+| File                                                                     | Role after the change                                                                               |
+| :----------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/passes/ParityPassMeasureMap.ts`      | The passes' measures, run in order by `passes`, each held to its gate                               |
+| `scripts/src/services/genshinParity/passes/runParityPasses.ts`           | Runs the measures in the passes' order and stops at the first red one, the pass a stand-off reopens |
+| `scripts/src/services/genshinParity/passes/findMovedFrozenPass.ts`       | Names the frozen pass a later run moved, which reopens by its own run                               |
+| `scripts/src/services/genshinParity/witness/solveReferenceShadows.ts`    | The light pass's shadows' edges, priced and solved for the sun's direction                          |
+| `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`        | The references every pass is judged over                                                            |
+| `packages/genshin-world/parity/witness/renderWitnessTargets.ts`          | Draws our parts' albedo and glow beside the exports', for the surface's diff                        |
+| `scripts/src/services/genshinParity/witness/rankReferenceGains.ts`       | Orders the work inside a pass, never across passes                                                  |
+| `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` | The layout pass's frozen invariants, grown to every placement it settles                            |
+| `scripts/src/services/genshinAssets/fit/fitSoundEffect.ts`               | The fit every matched sound goes through                                                            |
+| `packages/genshin-engine/src/post/createPostPipeline.ts`                 | Draws the display transform the display pass finds                                                  |
 
 ## Notes
 

@@ -48,12 +48,10 @@ Each built task names the test it was written first in, and each test is a scena
 - [ ] 5.4 The panel's parity reference and its approval, once the reference frame is fetched and its compare is clean.
       Waits on a browser run.
 
-- [ ] 5.5 The set block's heading with two sets worn. `setName` takes the set of the first active bonus, while
-      `setBonusLines` lists the bonuses of every active set, so a mixed loadout (two pieces of each of two sets) headings
-      the lines of both with one set's name (`packages/genshin-world/src/components/Character/Screen/Index.vue`, `setName`).
-      Choose between a name over each set's own lines and a heading shown only while one set is worn, against the game's
-      reference for a mixed loadout. Verify: a test named after the chosen scenario, seen failing first. Blocked on that
-      choice and a reference frame of a mixed loadout.
+- [x] 5.5 The set block names each worn set over its own lines. The panel groups the active bonuses by set
+      (`packages/genshin-world/src/components/Character/Screen/Artifacts/Index.vue`), and the set block draws each group's
+      name above its lines, so a mixed loadout (two pieces of each of two sets) shows both names. Verify: the visual
+      suite's `twoSets` variant of `CharacterMenuArtifacts` draws each set's name over its own lines.
 
 ## 6. The bag, the main stat and the lock
 
@@ -84,4 +82,6 @@ Each built task names the test it was written first in, and each test is a scena
 
 ## 7. The picker's reset
 
-- [ ] 7.1 Decide which component clears the Enhance picker's fodder and ore choice when its Enhance button opens it. Open: `Character/Screen/Artifacts/Index.vue` declares `enhanceFodderIds` and `enhanceMaterialCounts` only to clear them in its Enhance handler, while `Character/Screen/Index.vue` already sets `enhanceSlot` at that point. Moving the reset to the parent would drop the two pass-through bindings from the panel, but the parent and panel comments record the panel as the owner on purpose, so the move is a design call and is not made here.
+- [x] 7.1 The panel clears the Enhance picker's fodder and ore choice when its Enhance button opens the picker, in its
+      Enhance handler (`packages/genshin-world/src/components/Character/Screen/Artifacts/Index.vue`). The parent holds only
+      the picked slot.

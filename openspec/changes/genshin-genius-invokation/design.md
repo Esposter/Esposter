@@ -1,6 +1,6 @@
 # Genius Invokation TCG
 
-The card game's rules engine is built, so [Genius Invokation TCG](../../specs/genshin/genius-invokation/README.md) is what stands. This proposal is what is left of it: each card's module, the duel screen opened from a resident's talk, and the duels, decks and rewards the game gives beyond the tutorial. The talk it is opened from is the [dialogue](../../specs/genshin/dialogue/design.md)'s, which is built.
+The card game's rules engine is built, so [Genius Invokation TCG](../../specs/genshin/genius-invokation/README.md) is what stands. This proposal is what is left of it: each card's module, the duel screen opened from a resident's talk, the duels, decks and rewards the game gives beyond the tutorial, the round limit, and the board's names for a screen reader. The talk it is opened from is the [dialogue](../../specs/genshin/dialogue/design.md)'s, which is built.
 
 ## Decisions
 
@@ -39,6 +39,8 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **Chang the Ninth counts a skill once.** Its Inspiration is one per skill that dealt Physical or Piercing DMG or triggered a reaction, however many hits it landed; at three it is discarded and its side draws two.
 - **Mushroom Pizza holds two statuses.** Its event gives the target a one-round food status (333007, in the food list, so one food a Round) and the dump's Mushroom Pizza (In Effect) status (303305). The In Effect status heals its owner at each End Phase and is spent after two; it is not a food, so it does not bar food in later Rounds.
 - **Lightning Stiletto is a combat action.** `GcgCardModule.isCombatAction` marks a card whose play passes the turn, as a combat skill or switch does; `playGcgCard` passes it once the card resolves. Every other card stays a fast action. The dump gives the Stiletto a Combat Action token, so it is the first card flagged.
+- **A duel with no winner concedes at the start of Round 15.** The duel ends with no winner, both sides losing, when Round 15 would begin, before its roll, as the game's Round Limit text gives it: "If a winner has not been decided by the start of Round 15, both sides will lose." A winner the fourteenth round's end phase decides still stands, since that phase runs first. Rejected: conceding after the fifteenth round's end phase, which `endGcgRound` does today, since that plays a fifteenth round the game's text does not start and concedes only after its draws.
+- **A character and a card are announced with their numbers.** A character's accessible name is its name with its HP, energy and shield, and a card's is its name with its dice cost. Each number is worded by its game label from `GameTextKey`, as every label a screen reader says is worded (the `genshin-text` skill), and the words reach the two components as props from the host that resolved the language. The names stay the card game's own records. HP is `GameTextKey.Health` (`FIGHT_PROP_CUR_HP`, "HP"). The English interface text holds no key for Energy, Shield or the dice cost, so those keys are added by the machine holding the game install, found with `pnpm -C scripts genshin:text find` over its text maps. Until a label has its key, its number is read alone. Rejected: the bare name, which is what both buttons read now and which leaves the numbers out of what a screen-reader user hears; and the bare name with `aria-describedby` carrying the numbers, since a description sits outside the name the button announces, so a user who hears only the name still misses them.
 
 ## Scope and order
 
@@ -51,6 +53,10 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 3. **The other opponent decks**, the invitationals', the tavern challengers' and the rest the duel rows name, each given the modules its cards and skills need. The decks the early duels play are built, and the as-built page records them. Each is published as its `gcg/deck<id>` record and read through `GcgDeckLoaderMap`. Left: the 7.1 dump holds a card list (`cardList`, a plain name the reader reads as it is) for 783 of its 1132 decks and none for the other 349, among them the challengers' decks 12103, 13001, 14002, 12105 and 13003. No other table or field holds deck cards, so no mapping recovers them. The wiki does not either: the stage pages of Uncle Tian, Karpillia, Nasrin, Jifang and Qiuyue name each opponent's lineup of characters and no cards, and the Deck Menu page describes the player's own decks. Of the 349, 252 are all-monster decks, the shape of Ellin's 11002, whose spec says it holds no cards; the other 91 hold player characters and no list, which the dump does not explain. A deck with no list is not published with cards until those 91 are explained.
 4. **Invitationals, tavern challengers, the Card Shop, and the EXP the duels pay into the Player Level.** Built: the Card Shop's slice, `shops/gcgCardShop`, takes shop 217's 330 goods, all priced in Lucky Coins (104 sell a card, and 226 sell items the card table does not hold). A bought card goes into the bag, since no collection state exists yet. Of the normal week-level challengers' 38 decks (Marjorie and Ellin excluded), 10 hold a card list and 28 hold none. Built: 11105, with every card modelled, and 12005, with its created cards modelled too (Sacred Cryo Pearl, Ice Lotus, Jade Screen, Stellar Restoration and Lightning Stiletto). Lightning Stiletto's Electro Infusion, its discard of copies already in hand and its combat action are modelled. Left: the other eight decks with lists hold 55 unmodelled cards, and their created cards name 29 more.
 
+5. **The round limit.** Left: `endGcgRound` concedes a duel with no winner at the start of Round 15, before its roll, instead of after the fifteenth round's end phase, and the end-phase test is replaced (task 5.1).
+
+6. **Screen-reader names on the board.** Left: the character and card components name their numbers as the Decisions give, with each label's key where it has one (task 6.1).
+
 ## Data and measures
 
 - **Read from the game's tables:** the `GCG*` tables and the configs under `BinOutput/GCG`. The tables are fetched into the dump beside the standard rule's, and only the slices a duel loads are written into the world.
@@ -59,10 +65,13 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 
 ## Key files
 
-| File                                                             | Role after the change                                                              |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/components/World/Session/Index.vue`  | Begins a resident's talk, its talks the quests' until the merged list is passed in |
-| `scripts/src/services/genshinAssets/residents/writeResidents.ts` | Writes each resident's talk id, not yet the talk's own lines                       |
+| File                                                                   | Role after the change                                                              |
+| :--------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/components/World/Session/Index.vue`        | Begins a resident's talk, its talks the quests' until the merged list is passed in |
+| `packages/genshin-world/src/services/gcg/endGcgRound.ts`               | Concedes a duel with no winner at the start of Round 15                            |
+| `packages/genshin-world/src/components/Gcg/Screen/Character/Index.vue` | A character's accessible name, with its HP, energy and shield                      |
+| `packages/genshin-world/src/components/Gcg/Screen/Card/Index.vue`      | A card's accessible name, with its dice cost                                       |
+| `scripts/src/services/genshinAssets/residents/writeResidents.ts`       | Writes each resident's talk id, not yet the talk's own lines                       |
 
 ## Sources
 
