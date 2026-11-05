@@ -9,7 +9,7 @@
 
 ## 2. Windrise
 
-- [ ] 2.1 [phase 0] Build the comparison of a scene's witness with a recorded frame, then compare the Windrise statue and the oak with the statue-resonance recording at its camera. Verify: `pnpm -C scripts genshin:parity compare` writes one row for the statue and one for the oak, each with its score and bar.
+- [ ] 2.1 [phase 0] Build the comparison of a scene's witness with a recorded frame, then compare the Windrise statue and the oak with the statue-resonance recording and the statue-blessing recording, each at its camera. Verify: `pnpm -C scripts genshin:parity compare` writes one row for the statue and one for the oak against each recording, each with its score and bar.
 
 ## 3. Placement data
 
@@ -18,6 +18,7 @@
 - [ ] 3.3 [phase 5] Add one region at a time to the list of regions the waypoints command writes, once its map fit passes its bar, and draw its waypoints as the stand-in landmark. Verify: `pnpm -C scripts genshin:assets points-fit` prints the region's residual under its bar, and `pnpm -C scripts genshin:assets waypoints --dry-run` names its rows.
 - [ ] 3.4 [phase 7] On the PC, export the Goddess statue prefab of Liyue, Natlan, Snezhnaya and Sumeru, each name found with the lookup from task 1.2, and fit each with the statue fit from task 1.6. Fontaine, Inazuma and Nod-Krai are left to their roadmap items. Verify: `pnpm -C scripts genshin:assets fit <region> --only statue --dry-run` prints each region's counts.
 - [ ] 3.5 [phase 4] Read Mondstadt's scene-3 gadget groups from the block scripts the install holds, so its chests, gather points and puzzles take the game's own placements in place of the public map's. The installed client's Lua block holds no group script (genshin-gathering task 2.1), so the first step is to find the block that holds them and write it into the scene-groups design. Verify: a test named after the scenario 'A scene's gadget group is read from its block script', written first and seen failing, then the scene-groups design names the block that holds Mondstadt's groups.
+- [ ] 3.6 [phase 6] Decide where each region's forge is placed. Mondstadt's blacksmith is read from its scene group's Blacksmith point, as [forging](../genshin-forging/design.md) task 1.1 places it, and each other region takes its forge from a source this task names, either the same group records or another. Verify: the design's Decisions name the source each region's forge placements come from and the one rejected with its reason, and forging task 2.4 reads its placements from that source.
 
 ## 4. Models
 
@@ -30,7 +31,7 @@
 - [ ] 4.7 [phase 7] On the PC, export one Elemental Monument prefab and fit it, then compare the monument with the Mondstadt pillars recording. Verify: `pnpm -C scripts genshin:parity compare` scores the monument frame within its bar.
 - [ ] 4.8 [phase 7] On the PC, export one ley line blossom prefab and fit its outline. Verify: the dry run prints its counts, and the record publishes under its kind's key.
 - [ ] 4.9 [phase 7] On the PC, export one prefab for each crafting bench kind the bench places name, and the forge's prefab, and fit each. Verify: each dry run prints its counts.
-- [ ] 4.10 [phase 7] On the PC, export one waypoint prefab from its transport point template and fit it. Verify: the dry run prints its counts, and `pnpm -C scripts genshin:parity compare` scores a waypoint clip on disk against its bar.
+- [ ] 4.10 [phase 7] On the PC, export one waypoint prefab from its transport point template, fit it and publish its record under its kind's key, which the props kit of task 4.1 draws for the waypoints in place of the stand-in landmark. Verify: the dry run prints its counts, the record publishes and `pnpm -C scripts genshin:data verify` passes, and `pnpm -C scripts genshin:parity compare` scores a waypoint clip on disk against its bar.
 - [ ] 4.11 [phase 7] On the PC, export one domain entrance prefab, named from its entrance's dungeon row, and fit it. Verify: the dry run prints its counts.
 - [ ] 4.12 [phase 7] On the PC, export the Frostbearing Tree prefab and fit it with the tree kit's fit. Verify: the dry run prints its counts, and the record publishes under its kind's key.
 - [ ] 4.13 [phase 4] Add Mondstadt's gate and door part to the Building kit, fitted with the visual-hull fit from the gate and door meshes its extract already holds, and draw it in the deployed build, which draws no gate part today. Verify: a test named after the scenario 'A gate is drawn from its fitted hull in the deployed build', written first and seen failing, and `pnpm -C scripts genshin:assets fit <component> --only gates --dry-run` prints its counts.
