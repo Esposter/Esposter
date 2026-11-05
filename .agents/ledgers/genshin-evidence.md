@@ -5,7 +5,6 @@ Find recipe: a page is open if either test holds. Test one: `git grep -l "no sou
 | Unit                                                                   | Swept                   | Notes |
 | :--------------------------------------------------------------------- | :---------------------- | :---- |
 | `openspec/specs/genshin/enemies/design.md`                             | 2026-10-26 · Haiku 5.5  |       |
-| `openspec/specs/genshin/characters/player-packs/design.md`             | 2026-10-26 · Haiku 5.5  |       |
 | `openspec/specs/genshin/characters/drawing/design.md`                  | 2026-10-26 · Haiku 5.5  |       |
 | `openspec/specs/genshin/game-text/design.md`                           | 2026-10-26 · Haiku 5.5  |       |
 | `openspec/specs/genshin/characters/shading/design.md`                  | 2026-10-26 · Haiku 5.5  |       |
