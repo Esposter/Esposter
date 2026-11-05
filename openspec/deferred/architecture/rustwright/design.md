@@ -5,7 +5,7 @@ Rustwright is Skyvern's Chromium automation engine written in Rust. It speaks th
 Two things in the repo drive a browser, and both are Playwright's:
 
 - **The parity tooling** in `scripts` opens the parity page in the machine's Edge, shoots frames, reads the page's own measurements and profiles it (`scripts/src/services/genshinParity/shared/openParityPage.ts`). It holds the `playwright` dependency and about forty modules import it.
-- **Vitest's browser mode** runs every `*.browser.test.ts` suite through `@vitest/browser-playwright`, which `packages/configuration/src/services/getVitestBrowserConfiguration.ts` configures once for the Genshin packages.
+- **Vitest's browser mode** runs every `*.browser.test.ts` suite through `@vitest/browser-playwright`, which `packages/configuration/src/services/getVitestBrowserConfiguration.ts` configures once for every package whose browser config calls it: the two Genshin packages, `genshin-interface` and `genshin-world`, and `vue-canvas-frame-headless`.
 
 A full replacement has to cover both, so the smaller consumer, the parity tooling, sets the order and the larger one, the Vitest provider, sets the cost.
 
