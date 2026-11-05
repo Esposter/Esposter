@@ -2,17 +2,6 @@
 
 Open work, each item linking its proposal. Ideas parked behind a revisit trigger live in [deferred](../../deferred/infra/) instead. Rationale lives in [Cost & Security Posture](../../specs/infra/cost-and-security-posture/design.md) and `apps/infra/docs/`.
 
-## Open
-
-- [ ] [Dependency admission](../../specs/architecture/dependency-admission/design.md) — the heavy engines by the client bytes `pnpm ai:dependencies:score --sort bundle` reads from the app's real build; the rewrites that hold behaviour of their own become headless published packages, as the [PDF viewer package](../archive/2026-10-18-architecture-pdf-viewer-package/design.md) and the dashboard grid did
-- [ ] A runnable command that names the data root — the clip, parity and text commands in the `genshin-menu-quit-prompt` and `genshin-menu-time` tasks and designs write `{data-root}/…` as a placeholder the shell does not expand, and `scripts/src/services/recreation/commands/clipCommand.ts` takes its `--directory` verbatim, so a verbatim run writes into a literal `{data-root}` folder. Decide the one form a command carries, an environment variable the tools read or a substitution the tools make, against the placeholder rule in [repo-owned-facts](../../../.agents/skills/openspec/references/repo-owned-facts.md) ("Machine roots"), and apply it to every such page in the same change
-- [ ] [Spoken replies' fence state](../../specs/infra/claude-interface/spoken-replies/design.md) — a piece that opens inside a fenced block an earlier piece opened reads that code's `>` opening line as spoken, because the stateless hook never sees the fence's opening; carry the fence state across pieces, or hold a piece until its fence closes
-- [ ] [Spoken replies' first sound](../../specs/infra/claude-interface/spoken-replies/design.md) — the paragraph saying nothing streams, so a line's first sound follows its whole synthesis, is accurate for today's engine and goes stale when the multilingual change streams by clause; rewrite it in the change that ships the streaming
-- [ ] [Account deletion's search index](../../specs/user/account-deletion/design.md) — add the index purge to the sweep
-- [ ] [Nuxt security verdicts](../../specs/nuxt-security-module/defaults-review/design.md) — the verdicts marked "Undecided" wait on a "phase 2" that reads OWASP's and the upstream's sources, and no roadmap row tracks that phase; track the phase here, with the sources it reads
-- [ ] [PDF annotations' comments](../../specs/vue-pdfjs-headless/annotations/design.md) — comments cannot be added, because the renderer's save drops text annotations; on each pdf.js bump, rerun the probe that stores a text annotation entry and reloads the file, and add `addComment` with its requirement in the spec once a bump keeps them
-- [ ] [PDF annotations' upstream](../../specs/vue-pdfjs-headless/annotations/design.md) — file the pdf.js "Object already resolved" reproduction upstream by hand, with two free texts in one `saveDocument` call on the pinned pdf.js, run with the legacy build in Node, and link the issue from the design; then `gh issue view` each annotation issue on both trackers, judge it against this capability, and update the package page's Upstream table
-
 ## Blocked (the character voice still switched on after two weeks of daily use)
 
 - [ ] [The viewer as the stage](../infra-viewer-stage/design.md) — each spoken line a bubble and a sound on the model in the desktop viewer already running, through its local socket, and the terminal's attention hooks moving the model; no window built

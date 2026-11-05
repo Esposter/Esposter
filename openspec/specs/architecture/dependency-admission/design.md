@@ -6,7 +6,7 @@ This page owns the **rule** for what a third-party package must earn, and the **
 
 ## What actually costs us
 
-The instinct is that dependencies cost bytes. They mostly do not — the bundler drops what nothing imports, and the packages that dominate installed size are the engines we would never write: the game engine, the PDF renderer, the diagram renderer, the survey builder. Weight is a symptom worth reading, not the charge.
+The instinct is that dependencies cost bytes. They mostly do not — the bundler drops what nothing imports, and the packages that dominate installed size are the engines we would never write: the game engine, the PDF renderer, the diagram renderer, the survey builder. Weight is a symptom worth reading, not the charge. The client bundle report finds the exception to read for: a library that keeps a whole namespace alive. `drizzle-orm`'s zod integration uses the zod namespace as a value, so a client that reaches drizzle through the schema barrel ships all of zod's locale modules as well, about as many bytes again as drizzle itself.
 
 Three costs are real:
 
