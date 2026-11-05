@@ -14,7 +14,7 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Dialogue](dialogue/design.md)       | the dialogue box's five states, scored over their backdrop                              |
 | [Fontaine](fontaine/design.md)       | Fontaine's region, from its base ground to its frame score                              |
 | [Gcg](gcg/design.md)                 | the Genius Invokation duel board over its whole frame                                   |
-| [Handbook](handbook/design.md)       | the adventurer handbook's experience page over its whole frame                          |
+| [Handbook](handbook/design.md)       | the adventurer handbook's experience page over what the page draws                      |
 | [Inazuma](inazuma/design.md)         | Inazuma's region, from its base ground to its frame score                               |
 | [Interaction](interaction/design.md) | the interaction pill and the selection's move                                           |
 | [Interface](interface/design.md)     | the interface components with no parity-page screen yet                                 |

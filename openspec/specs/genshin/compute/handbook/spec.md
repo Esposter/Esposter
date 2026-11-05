@@ -6,7 +6,7 @@ The adventurer handbook's runs: its experience page compared over the whole fram
 
 ### Requirement: The adventurer handbook's experience page
 
-The adventurer handbook's experience page SHALL be compared over its whole frame, its score reported against the global default difference bar, and its image written by approve.
+The adventurer handbook's experience page SHALL be compared over what the page draws (the frame less the game's art its mask leaves out), its score reported against the global default difference bar, and its image written by approve.
 
 #### Scenario: An experience page above the bar still gets its image
 
