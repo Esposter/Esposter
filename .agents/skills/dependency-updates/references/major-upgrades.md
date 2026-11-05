@@ -46,7 +46,7 @@ Beyond `references/bump-follow-through.md` — which is the same list for a patc
 
 - A dependency of `packages/configuration` (tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
 - A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so CI's typecheck over `apps/web` is the one check that catches a removed export the grep in §2 missed — which makes that grep the local half of the audit, run in full.
-- A major that moves bytes into a `dist/` grows the bundle size ceilings past their numbers. Read the diff of the config snapshot (`apps/web/uno.config.test.ts`) before it is regenerated, and raise a ceiling only as `.agents/skills/build/references/dist-size.md` sets out — after a fresh build, by the change that outgrows it, never to absorb a jump. `references/bump-follow-through.md` owns the order.
+- A major that moves bytes into a `dist/` moves the bundle size ceilings, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `references/bump-follow-through.md` owns the order, and `.agents/skills/build/references/dist-size.md` owns how a ceiling is raised.
 
 ## 5. One commit per pass
 
