@@ -17,3 +17,7 @@
 ## 4. Art
 
 - [ ] 4.1 [phase 7] Write each row of the not-shippable table that no open item names into the roadmap as an Asset line under the item it blocks, with its stand-in named. Verify: `pnpm -C scripts exec vitest run src/workspace/openspecLinks.test.ts` passes, and each row whose last column names this task has an Asset line in `openspec/changes/genshin-roadmap/tasks.md`.
+
+## 5. Still water
+
+- [ ] 5.1 [phase 4] Fit each region's still-water level from its tile placements the way Windrise's level is read, beginning with Mondstadt, and mount a water surface at each fitted level in the regions in reach. Blocked on the water prefab exports the flowing-water change waits on, so the task starts once they are placed. Verify: a test named after the scenario 'A region's still water sits at the level its tiles give', written first and seen failing, then `pnpm -C scripts genshin:assets fit <component> --only water --dry-run` prints the level.
