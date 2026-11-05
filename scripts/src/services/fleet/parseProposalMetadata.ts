@@ -1,5 +1,6 @@
 import type { ProposalMetadata } from "#src/models/fleet/ProposalMetadata";
 
+import { MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 import { readFieldValue } from "#src/services/fleet/readFieldValue";
 import { z } from "zod";
 
@@ -7,14 +8,13 @@ import { z } from "zod";
 const FIELD_REGEX = /^(?<key>[a-z][\w-]*):(?<value>.*(?:\n[ \t].*)*)$/gmu;
 const LINE_BREAK_REGEX = /\s*\n\s*/gu;
 const PHASE_REGEX = /^\d+$/u;
-const MAX_PHASE = 7;
 
 // OpenSpec keeps its own keys and leaves an `x-` key to the tools that read it. A phase is read off its text as an
 // Integer, so a word or a fraction fails the regex and a number past the last phase fails the range
 const ProposalMetadataSchema = z
   .object({
     "x-needs": z.array(z.string()).default([]),
-    "x-phase": z.string().regex(PHASE_REGEX).transform(Number).pipe(z.int().min(0).max(MAX_PHASE)).optional(),
+    "x-phase": z.string().regex(PHASE_REGEX).transform(Number).pipe(z.int().min(0).max(MAX_GENSHIN_PHASE)).optional(),
     "x-touches": z.array(z.string()).default([]),
     "x-waiting": z.string().default(""),
   })

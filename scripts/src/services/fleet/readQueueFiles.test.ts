@@ -8,6 +8,15 @@ import { describe, expect, test } from "vitest";
 
 describe(readQueueFiles, () => {
   const { commitFile, getCwd, publish, switchTo } = setupFixtureRepository();
+  const INDEX_PATH = "compute/README.md";
+  const INDEX_TEXT = [
+    "## Phases",
+    "",
+    "| Area | Page | Phase |",
+    "| :--- | :--- | :---: |",
+    "| Genshin | [Genshin](genshin/design.md) | 1 |",
+    "",
+  ].join("\n");
   const PAGE_PATH = "compute/genshin/design.md";
   const DONE_LINE = "- [ ] `[cpu]` {done-run} — **Done.**";
   const OPEN_LINE = "- [ ] `[cpu]` {open-run} — **Open.**";
@@ -15,6 +24,7 @@ describe(readQueueFiles, () => {
   test("reads an item another worker finished off origin as gone, while a checkout behind origin still lists it", () => {
     expect.hasAssertions();
 
+    commitFile(INDEX_PATH, INDEX_TEXT);
     const staleSha = commitFile(PAGE_PATH, `## Queue\n\n${DONE_LINE}\n${OPEN_LINE}\n`);
     commitFile(PAGE_PATH, `## Queue\n\n${OPEN_LINE}\n`);
     publish(QUEUE_BRANCH, "HEAD");

@@ -35,6 +35,37 @@ The fleet reads every page here except this one, and an id that two pages share 
 | [Wish](wish/design.md)               | the single pull and the ten results, frame by frame                                     |
 | [World](world/design.md)             | teleports, weather, thunderstorms, lightning, the ores and the scripted props           |
 
+## Phases
+
+| Area                                  | Page                                 | Phase |
+| :------------------------------------ | :----------------------------------- | :---- |
+| The capitals' city areas              | [Capitals](capitals/design.md)       | 5     |
+| The character screen and its menu     | [Character](character/design.md)     | 2     |
+| The crafting table and screen         | [Crafting](crafting/design.md)       | 2     |
+| The dialogue box                      | [Dialogue](dialogue/design.md)       | 2     |
+| Fontaine                              | [Fontaine](fontaine/design.md)       | 5     |
+| The card game's duel board            | [Gcg](gcg/design.md)                 | 6     |
+| The adventurer handbook               | [Handbook](handbook/design.md)       | 2     |
+| Inazuma                               | [Inazuma](inazuma/design.md)         | 5     |
+| The interaction pill                  | [Interaction](interaction/design.md) | 2     |
+| The interface pieces without a screen | [Interface](interface/design.md)     | 2     |
+| The inventory screen                  | [Inventory](inventory/design.md)     | 2     |
+| Liyue                                 | [Liyue](liyue/design.md)             | 5     |
+| The login screen                      | [Login](login/design.md)             | 1     |
+| The map screen                        | [Map](map/design.md)                 | 2     |
+| Mondstadt                             | [Mondstadt](mondstadt/design.md)     | 4     |
+| Natlan                                | [Natlan](natlan/design.md)           | 5     |
+| Nod-Krai                              | [Nod-Krai](nod-krai/design.md)       | 5     |
+| The Paimon menu                       | [Paimon](paimon/design.md)           | 2     |
+| The quest screen                      | [Quest](quest/design.md)             | 2     |
+| The settings screen                   | [Settings](settings/design.md)       | 2     |
+| Snezhnaya                             | [Snezhnaya](snezhnaya/design.md)     | 5     |
+| Sumeru                                | [Sumeru](sumeru/design.md)           | 5     |
+| The game's text in every language     | [Text](text/design.md)               | 0     |
+| The first scene, Windrise             | [Windrise](windrise/design.md)       | 1     |
+| The wish screen                       | [Wish](wish/design.md)               | 2     |
+| The world's playable pieces           | [World](world/design.md)             | 3     |
+
 ## Bars
 
 The bars the region passes and the area pages' pass items share, each gate named by its constant.

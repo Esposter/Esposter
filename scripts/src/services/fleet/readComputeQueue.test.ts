@@ -7,13 +7,27 @@ describe(readComputeQueue, () => {
     "## Queue\n\n- [ ] `[cpu]` {alpha-run} needs game-install — **Alpha.** Writes `a/b.json`.\n\n## Waiting\n\n";
   const PAGE_B =
     "## Queue\n\n- [ ] `[page]` {beta-run} needs parity-page — **Beta.**\n\n## Waiting\n\n- [ ] `[cpu]` {gamma-run} — **Gamma.**\n";
+  const INDEX = [
+    "## Queue",
+    "",
+    "- [ ] `[cpu]` {index-run} — **Index.**",
+    "",
+    "## Phases",
+    "",
+    "| Area | Page | Phase |",
+    "| :--- | :--- | :---: |",
+    "| Alpha | [Alpha](a/design.md) | 4 |",
+    "| Beta | [Beta](b/design.md) | 1 |",
+    "| Charlie | [Charlie](c/design.md) | 6 |",
+    "",
+  ].join("\n");
 
-  test("reads every area's design but neither the index nor a spec, the runnable items of each in path order", () => {
+  test("A compute item takes its area's phase from its page's row, the designs read in path order", () => {
     expect.hasAssertions();
 
     expect(
       readComputeQueue([
-        { path: "compute/README.md", text: "## Queue\n\n- [ ] `[cpu]` {index-run} — **Index.**\n" },
+        { path: "compute/README.md", text: INDEX },
         { path: "compute/b/spec.md", text: "## Queue\n\n- [ ] `[cpu]` {spec-run} — **Spec.**\n" },
         { path: "compute/b/design.md", text: PAGE_B },
         { path: "compute/a/design.md", text: PAGE_A },
@@ -27,6 +41,7 @@ describe(readComputeQueue, () => {
           lane: "cpu",
           line: "- [ ] `[cpu]` {alpha-run} needs game-install — **Alpha.** Writes `a/b.json`.",
           needs: ["game-install"],
+          phase: 4,
           touches: ["a/b.json"],
           waiting: "",
         },
@@ -37,6 +52,7 @@ describe(readComputeQueue, () => {
           lane: "page",
           line: "- [ ] `[page]` {beta-run} needs parity-page — **Beta.**",
           needs: ["parity-page"],
+          phase: 1,
           touches: [],
           waiting: "",
         },
@@ -45,11 +61,25 @@ describe(readComputeQueue, () => {
     });
   });
 
+  test("A compute item takes its area's phase, and a page with no row fails the read naming the page", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      readComputeQueue([
+        { path: "compute/README.md", text: INDEX },
+        { path: "compute/d/design.md", text: PAGE_A },
+      ]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: compute/d/design.md, its area has no row in the Phases table of the compute README]`,
+    );
+  });
+
   test("throws on an id two designs share", () => {
     expect.hasAssertions();
 
     expect(() =>
       readComputeQueue([
+        { path: "compute/README.md", text: INDEX },
         { path: "compute/a/design.md", text: PAGE_A },
         { path: "compute/c/design.md", text: PAGE_A },
       ]),

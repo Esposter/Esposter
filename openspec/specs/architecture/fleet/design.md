@@ -44,7 +44,7 @@ The profile's `id` and `areas` are never overwritten once the user has set them.
 
 An entry is one unit of work a machine may take, from two sources, both read off `ai/queue` as origin holds it, fetched fresh. The checkout's own copy is never read: one behind origin still lists an item another machine finished and deleted, and would offer it again.
 
-- **The compute queue.** Each open item under the **Queue** heading of a design in `openspec/specs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. An item under **Waiting** is not offered.
+- **The compute queue.** Each open item under the **Queue** heading of a design in `openspec/specs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. Its phase is the one its design's row in the compute README's `## Phases` table names, and a design with no row fails the read. An item under **Waiting** is not offered.
 - **The open changes** under `openspec/changes/`, the units `pnpm ai:proposals:report` reads, a program and a roadmap excepted. A change's touch set is its Key files table plus the `x-touches` globs its `.openspec.yaml` names, and a change with an `x-waiting` blocker is not offered.
 
 An entry is taken when the machine has its needs, its area is lent, it is not waiting, no live claim holds it, and its touch set overlaps no live claim's. Two entries whose paths do not overlap run in parallel on different machines; two that do wait for each other. Nothing takeable means the machine stays idle.
@@ -85,7 +85,8 @@ No export or recording is ever committed, published or sent to a hosted service.
 | `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and reads a failed push by where the remote holds the ref  |
 | `scripts/src/services/fleet/runFleetRefGit.ts`        | Runs a git call to origin's fleet refs under the fleet's bound, so a stalled network fails it            |
 | `scripts/src/services/fleet/parseComputeQueue.ts`     | Reads one compute page's open items, with their ids, needs and written paths, under its queue heading    |
-| `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page, and throws on an id two pages share                                            |
+| `scripts/src/services/fleet/parseComputePhases.ts`    | Reads the compute index's Phases table: a row's page folder and phase, a phase off the list dropped      |
+| `scripts/src/services/fleet/readComputeQueue.ts`      | Reads every compute page's items with its row's phase, and throws on a shared id or a page with no row   |
 | `scripts/src/services/fleet/readQueueFiles.ts`        | Reads a folder's files off origin's `ai/queue` in one `git cat-file --batch`, never off the checkout     |
 | `scripts/src/services/machine/readLastPush.ts`        | Reads the last commit this machine's git identity landed on origin/ai/queue, which its heartbeat carries |
 | `scripts/src/services/machine/watchMachine.ts`        | Samples the machine each minute and pushes its heartbeat every ten minutes                               |

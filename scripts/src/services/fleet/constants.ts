@@ -52,6 +52,11 @@ export const COMPUTE_QUEUE_DIRECTORY = "openspec/specs/genshin/compute";
 export const COMPUTE_QUEUE_PAGE_FILE = "design.md";
 export const COMPUTE_QUEUE_HEADING = "## Queue";
 export const COMPUTE_QUEUE_WAITING_HEADING = "## Waiting";
+// The folder's index, whose Phases table holds a row per area's page naming the phase the page's items hold
+export const COMPUTE_QUEUE_INDEX_FILE = "README.md";
+export const COMPUTE_QUEUE_PHASE_HEADING = "## Phases";
+// The last Genshin phase: a change or a compute page that names a phase past it names none
+export const MAX_GENSHIN_PHASE = 7;
 // A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WORKER_NAME_REGEX: RegExp = /^[\w-]+$/u;
