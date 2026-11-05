@@ -20,3 +20,4 @@
 ## 5. Pets and each region's animals
 
 - [ ] 5.1 [phase 5] Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design.
+- [ ] 5.2 [phase 5] Decide the pets' spawn source, either a label of the official map's Animals subtree or the Serenitea Pot's animal table, and record the choice in the design's Decisions with the source not taken and why. Verify: the design's Decisions name the source the pet kind's spawns read from, the one rejected and its reason, and task 5.1 names that source.
