@@ -31,7 +31,7 @@ import { Vector3 } from "three";
 </template>
 ```
 
-The app reaches the form through `Visual/Gem/Index.vue`. The production client throws `Class constructor z cannot be invoked without 'new'` during hydration of `/about`, which the server HTML cannot show.
+The app reaches the form through `Visual/Gem/Index.vue`. The production client throws `Class constructor z cannot be invoked without 'new'` during hydration of `/about`, which the server HTML cannot show. The report is [ubugeeei-prod/vize#11915](https://github.com/ubugeeei-prod/vize/issues/11915); the compiler's identifier collector wraps the identifier alone, and its newer writer already parenthesises a constructor.
 
 ### The server HTML differs from Vue's compiler on two routes
 
@@ -39,7 +39,7 @@ Compared with the baseline's server HTML, with attribute order, class order, non
 
 ### The module cannot resolve props types from packages without declarations
 
-`defineProps<T>()` fails when `T` is imported from `@esposter/db-schema`. That package is private and its build emits no `.d.ts`, so its types resolve only through the tsconfig `source` condition, which Vize does not read. The production build fails with `Cannot resolve imported macro type ... from @esposter/db-schema` until the affected components are excluded with `compiler.exclude`. Those are the link-preview components under `apps/web/app/components/Message/Model/Message/LinkPreview/`, and Nuxt's compiler takes them. The dev server logs the same errors and keeps serving.
+`defineProps<T>()` fails when `T` is imported from `@esposter/db-schema`. That package is private and its build emits no `.d.ts`, so its types resolve only through the tsconfig `source` condition, which Vize does not read. The production build fails with `Cannot resolve imported macro type ... from @esposter/db-schema` until the affected components are excluded with `compiler.exclude`. Those are the link-preview components under `apps/web/app/components/Message/Model/Message/LinkPreview/`, and Nuxt's compiler takes them. The dev server logs the same errors and keeps serving. The compile-side resolver reads a `paths` entry and a `types` target, not the `source` condition, so either one resolves the package. The report is [ubugeeei-prod/vize#11918](https://github.com/ubugeeei-prod/vize/issues/11918).
 
 ### Nuxt's builder keeps `@vitejs/plugin-vue`
 
