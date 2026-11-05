@@ -13,7 +13,7 @@ on:
 
 permissions: read-all
 
-# A run waits behind an earlier one rather than racing it onto the same tag. RecoverRelease.yaml shares this group
+# A run waits behind an earlier one rather than racing it onto the same tag
 concurrency:
   group: release
   cancel-in-progress: false
@@ -131,10 +131,13 @@ jobs:
     permissions:
       contents: read
     steps:
+      # Full history, so `git bundle verify` finds the commit the bundle was built on: a shallow checkout fails it on a
+      # main that moved, before the check that names that cause
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          fetch-depth: 0
           persist-credentials: false
 
       - name: 📥 Download the bundle

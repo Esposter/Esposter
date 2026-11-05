@@ -1,18 +1,18 @@
 ## Purpose
 
-The release workflows: the nightly that ships `main`, the tag-triggered recovery that finishes a tag as soon as it is pushed, and the reusable finish both call: the packages publish, the draft GitHub release and the gate that makes the release public.
+The release workflow `Release.yaml`: the nightly that ships `main`, the dispatch that finishes an unfinished tag at once, and the reusable finish it calls: the packages publish, the draft GitHub release and the gate that makes the release public.
 
 ## Requirements
 
-### Requirement: Only the release workflows publish a release
+### Requirement: Only the release workflow publishes a release
 
-Only the release workflows SHALL tag a release, publish packages to the registry and create a GitHub release, and the nightly and the tag-triggered recovery SHALL share the one finish that does so.
+Only the release workflow SHALL tag a release, publish packages to the registry and create a GitHub release, and it SHALL do so through the one shared finish.
 
 #### Scenario: A release is made
 
 - **GIVEN** a release is made
 - **WHEN** it is tagged, published and drafted
-- **THEN** the nightly release workflow or the tag-triggered recovery performs every one of those steps through the shared finish
+- **THEN** the release workflow performs every one of those steps through the shared finish
 
 ### Requirement: A quiet night skips the release
 
@@ -82,19 +82,13 @@ The nightly SHALL finish the latest tag first when that tag's GitHub release is 
 - **AND** no version is bumped and no gate is rerun
 - **AND** no new version is released that night
 
-### Requirement: A pushed version tag is finished as soon as it is pushed
+### Requirement: A dispatch finishes an unfinished tag at once
 
-A version tag SHALL be finished by the tag-triggered recovery when it is pushed, and a dispatch SHALL finish a named tag the same way.
+A dispatch of the release workflow SHALL finish the latest tag when its GitHub release is missing or still a draft, without waiting for the nightly.
 
-#### Scenario: A tag is pushed
+#### Scenario: A dispatch finds an unfinished tag
 
-- **GIVEN** a `v*.*.*` tag is pushed
-- **WHEN** the tag-triggered recovery starts
-- **THEN** it finishes that tag through the shared finish
-- **AND** it waits behind any nightly run holding the release group
-
-#### Scenario: A dispatch names a tag
-
-- **GIVEN** a version tag whose release is unfinished
-- **WHEN** the recovery is dispatched with that tag
-- **THEN** it finishes that tag through the shared finish
+- **GIVEN** the latest tag's GitHub release is still a draft
+- **WHEN** the release workflow is dispatched
+- **THEN** the run finishes that tag through the shared finish
+- **AND** no version is bumped
