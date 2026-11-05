@@ -5,7 +5,6 @@ import { surveyBooleanNodePropsSchema } from "#src/models/SurveyBooleanNodeProps
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
 // A yes or no question, whose form and props are one schema and whose defaults are that schema's own
-// The type is written out so the schema's shape survives into the emitted declaration
 export const surveyBooleanNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyBooleanNode>["createDefaultProps"];
   formSchema: typeof surveyBooleanNodePropsSchema;

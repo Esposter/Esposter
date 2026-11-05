@@ -5,7 +5,6 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { surveyRadioGroupNodePropsSchema } from "#src/models/SurveyRadioGroupNodeProps";
 
 // A radio group, whose form and props are one schema and whose defaults are that schema's own
-// The type is written out so the schema's shape survives into the emitted declaration
 export const surveyRadioGroupNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyRadioGroupNode>["createDefaultProps"];
   formSchema: typeof surveyRadioGroupNodePropsSchema;

@@ -5,7 +5,6 @@ import { surveyExpressionNodePropsSchema } from "#src/models/SurveyExpressionNod
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
 // A calculated value. Its form and its props share one schema, since every prop is one its owner edits, and its defaults are the schema's own
-// The type is written out so the schema's shape survives into the emitted declaration
 export const surveyExpressionNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyExpressionNode>["createDefaultProps"];
   formSchema: typeof surveyExpressionNodePropsSchema;

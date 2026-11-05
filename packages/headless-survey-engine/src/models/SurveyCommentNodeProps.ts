@@ -2,11 +2,8 @@ import type { SurveyQuestionBaseProps } from "#src/models/SurveyQuestionBaseProp
 import type { OwnProps } from "headless-block-editor";
 
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";
-import { MAX_SURVEY_TEXT_LENGTH } from "#src/services/constants";
+import { MAX_SURVEY_COMMENT_ROW_COUNT, MAX_SURVEY_TEXT_LENGTH } from "#src/services/constants";
 import { z } from "zod";
-
-// The most rows a comment's box may show, so a box cannot take over the page it sits on
-const MAX_SURVEY_COMMENT_ROWS = 20;
 
 // The props of a comment question: a box of text, sized in rows and optionally bounded in characters
 export interface SurveyCommentNodeProps extends SurveyQuestionBaseProps {
@@ -25,5 +22,5 @@ export const surveyCommentNodePropsSchema: z.ZodObject<
   ...surveyQuestionBasePropsShape,
   maxLength: z.int().positive().optional(),
   placeholder: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
-  rows: z.int().min(1).max(MAX_SURVEY_COMMENT_ROWS).default(4),
+  rows: z.int().min(1).max(MAX_SURVEY_COMMENT_ROW_COUNT).default(4),
 }) satisfies z.ZodType<OwnProps<SurveyCommentNodeProps>>;

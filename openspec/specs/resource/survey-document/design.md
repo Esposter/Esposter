@@ -10,7 +10,7 @@ The package follows the webpage document in the page builder file for file: a no
 flowchart TD
   KIND["one node type per kind: props schema, form, defaults, label"] --> SCHEMA["surveyNodeSchema: a discriminated union on the type tag, strict props"]
   KIND --> MAP["definition map: a kind missing from either half fails the typecheck"]
-  MAP --> REG["registry: the root takes pages, a page takes elements, a template takes questions"]
+  MAP --> REG["registry: the root takes pages, a page takes elements, a template takes every kind but a panel"]
   SCHEMA --> DOC["surveyDocumentSchema: createBlockDocumentSchema, shape then ids and node limit"]
   REG --> DOC
   DOC --> CHECK{"checkSurveyDocument: unique names, expressions that parse, no none value taken"}
@@ -24,7 +24,7 @@ The survey resource's content schema runs the document schema, and only where it
 
 **Node types.** `SurveyNodeType` is a string enum with one short lowercase tag per kind. A tag is the stored identity of its kind, since a saved document names each node by its tag, so a tag stays fixed once a survey holds it. The containers are `page` and `panel`. The question kinds are `text`, `comment`, `boolean`, `radiogroup`, `dropdown`, `checkbox`, `tagbox`, `rating`, `ranking`, `matrix`, `matrixdynamic`, `paneldynamic`, `multipletext`, `slider`, `buttongroup`, `imagepicker`, `expression`, `html` and `image`.
 
-**Slots.** A page and a panel hold a `children` slot, and a dynamic panel holds a `template` slot. The root accepts pages only. A page and a panel accept panels and every question kind. A template accepts every question kind except a dynamic panel, which bounds the recursion at one level.
+**Slots.** A page and a panel hold a `children` slot, and a dynamic panel holds a `template` slot. The root accepts pages only. A page and a panel accept panels and every question kind. A template accepts every kind except the two panel kinds, which bounds the recursion at one level.
 
 **The root's props.** `title`, `description`, `logo`, `accentColor` and `backgroundColor` are strings that are empty when absent, and the two colours are `#rrggbb` strings. `showProgressBar` is `off`, `top` or `bottom` and defaults to `off`. `isQuestionNumbersVisible` defaults to false. `completedHtml`, `completeText`, `pageNextText` and `pagePrevText` are strings that are empty when absent. `calculatedValues` is a list of `{ name, expression, includeIntoResult }` with unique names.
 

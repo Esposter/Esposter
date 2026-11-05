@@ -177,8 +177,8 @@ const surveyTextNodeSchemaValue = z.object({
   type: z.literal(SurveyNodeType.Text),
 }) satisfies z.ZodType<SurveyTextNode>;
 
-// The questions a dynamic panel's template accepts: every question but a dynamic panel
-// One tuple feeds the template, placeable and survey unions, so a question added here reaches all three
+// The nodes a dynamic panel's template accepts: every kind but the two panel kinds
+// One tuple feeds the template, placeable and survey unions, so a node added here reaches all three
 const surveyTemplateNodeOptions = [
   surveyTextNodeSchemaValue,
   surveyCommentNodeSchemaValue,

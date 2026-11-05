@@ -11,7 +11,7 @@ export const SURVEY_PLACEABLE_NODE_TYPES: SurveyPlaceableNode["type"][] = Object
   (type): type is SurveyPlaceableNode["type"] => type !== SurveyNodeType.Page,
 );
 
-// The types a dynamic panel's template accepts: every question but a dynamic panel, and no panel
+// The types a dynamic panel's template accepts: every type but the two panel types
 export const SURVEY_TEMPLATE_NODE_TYPES: SurveyTemplateNode["type"][] = SURVEY_PLACEABLE_NODE_TYPES.filter(
   (type): type is SurveyTemplateNode["type"] => type !== SurveyNodeType.Panel && type !== SurveyNodeType.PanelDynamic,
 );

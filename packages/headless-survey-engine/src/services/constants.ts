@@ -8,6 +8,10 @@ export const MAX_SURVEY_NODE_COUNT = 1500;
 export const MAX_SURVEY_CHOICE_COUNT = 200;
 // The most inputs one multiple text question holds, so the question stays a form a respondent fills in one pass
 export const MAX_SURVEY_MULTIPLE_TEXT_ITEM_COUNT = 50;
+// The most rows a comment's box may show, so a box cannot take over the page it sits on
+export const MAX_SURVEY_COMMENT_ROW_COUNT = 20;
+// The most panels a dynamic panel may hold, the bound every panel count is held to
+export const MAX_SURVEY_PANEL_COUNT = 20;
 // The most columns a dynamic matrix may hold, so each row a respondent adds stays readable across the screen
 export const MAX_SURVEY_MATRIX_COLUMN_COUNT = 50;
 // The most rows a dynamic matrix may hold, the bound every row count is held to

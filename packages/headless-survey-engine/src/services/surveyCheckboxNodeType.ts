@@ -5,7 +5,6 @@ import { surveyCheckboxNodePropsSchema } from "#src/models/SurveyCheckboxNodePro
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
 // A checkboxes question, whose form and props are one schema and whose defaults are that schema's own
-// The type is written out so the schema's shape survives into the emitted declaration
 export const surveyCheckboxNodeType: {
   createDefaultProps: SurveyNodeTypeDefinition<SurveyCheckboxNode>["createDefaultProps"];
   formSchema: typeof surveyCheckboxNodePropsSchema;
