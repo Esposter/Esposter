@@ -61,6 +61,8 @@ export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>
 // The text between a `.vue` file's `<script>` tags, quoted attributes and all. The rename and the
 // Unterminated-results scan read through it: two readers parsing an attribute differently would disagree on which block
 // A call sits in. The scans of a whole `.vue` file for names or duplicates read it as it is, template included.
+// A parser read the same script text from every tracked `.vue` file: vize's `parseSfc` in about the same time, with
+// Its offsets in UTF-8 bytes, and `@vue/compiler-sfc` several times slower. Neither earns a dependency over this.
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const VUE_SCRIPT_BODY_REGEX: RegExp = /(?<=<script\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?(?=<\/script\s*>)/gu;
 
