@@ -41,9 +41,8 @@ export const AzureFunctionIsIdempotentMap = {
   // Indistinguishable message into the room rather than repairing the first.
   [AzureFunction.ProcessWebhook]: false,
   [AzureFunction.PurgeDeletedResources]: true,
-  // Enumerates every survey row at the moment it runs, with no time bound, so a replay hours after a failed run would
-  // Purge the surveys created since. Running it again is the owner's decision, so a dead letter waits in quarantine
-  // For the owner to publish the event again rather than being republished by the replay.
+  // Publishes a ProcessWebhook event for the webhook's message, and ProcessWebhook is not idempotent, so a replay of
+  // This push would post the message a second time. The dead letter waits in quarantine for a person to decide.
   [AzureFunction.PushWebhook]: false,
   // Sets the ledger row's counted bytes to what storage reports and moves the counter by the difference it
   // Observed, so a redelivery computes a zero delta rather than double-counting. The replay gate never reads
