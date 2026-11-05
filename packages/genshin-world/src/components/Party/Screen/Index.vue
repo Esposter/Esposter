@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
 import type { CharacterData } from "#src/models/character/CharacterData";
+import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { Party } from "#src/models/party/Party";
 import type { PartySetupSlot } from "genshin-interface";
 import type { GameText } from "genshin-text";
@@ -10,6 +11,7 @@ import { DEFAULT_PARTY_TEAM_NAME_GAME_TEXT_KEYS } from "#src/services/party/cons
 import { deployPartyTeam } from "#src/services/party/deployPartyTeam";
 import { ElementMarkColorMap } from "#src/services/party/ElementMarkColorMap";
 import { getPartyTeamSlots } from "#src/services/party/getPartyTeamSlots";
+import { getSelectableCharacterIds } from "#src/services/party/getSelectableCharacterIds";
 import { quickSetupPartyTeam } from "#src/services/party/quickSetupPartyTeam";
 import { GameScreen, PartySetupScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -19,6 +21,9 @@ interface Props {
   characterDataMap: ReadonlyMap<number, CharacterData>;
   // The characters the player holds, in the order they are listed, which Quick Setup picks from
   characters: Character[];
+  // The readers of the published character packs by the character each is of. Quick Setup offers only the characters
+  // that have one, since a party member with none is drawn as the Traveler
+  characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   gameText: GameText;
   // The names of the characters in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
@@ -28,7 +33,8 @@ interface Props {
   travelerName: string;
 }
 
-const { characterDataMap, characters, gameText, nameText, party, travelerName } = defineProps<Props>();
+const { characterDataMap, characterPackReaders, characters, gameText, nameText, party, travelerName } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Party Setup opens on the deployed team, and the arrows step from there
 const teamIndex = ref(party.deployedTeamIndex);
@@ -77,13 +83,7 @@ const stepTeam = (step: number) => {
       @deploy="deployPartyTeam(party, teamIndex)"
       @next="stepTeam(1)"
       @previous="stepTeam(-1)"
-      @quick-setup="
-        quickSetupPartyTeam(
-          party,
-          teamIndex,
-          characters.map(({ id }) => id),
-        )
-      "
+      @quick-setup="quickSetupPartyTeam(party, teamIndex, getSelectableCharacterIds(characters, characterPackReaders))"
     />
   </GameScreen>
 </template>

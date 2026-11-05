@@ -89,3 +89,13 @@ The world's screen SHALL read the game's tables as soon as the player's save and
 - **GIVEN** the held screen's tables have arrived
 - **WHEN** the screen is released
 - **THEN** its session mounts and the screen signals ready
+
+### Requirement: The party offers only characters with a published pack
+
+The party picker SHALL offer a team only the characters the player holds that the index lists a pack for, so every party member is drawn from its own model.
+
+#### Scenario: Character without a published pack is not selectable
+
+- **GIVEN** the player holds a character the index lists no pack for
+- **WHEN** the player runs Quick Setup on a team
+- **THEN** that character is not added to the team

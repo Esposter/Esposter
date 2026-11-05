@@ -1430,6 +1430,7 @@ useWorldSaveSync({
       <template #[ScreenKind.PartySetup]>
         <PartyScreen
           :character-data-map="statTables.characterDataMap"
+          :character-pack-readers="characterPackReaders"
           :characters
           :game-text
           :name-text

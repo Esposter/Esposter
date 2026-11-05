@@ -18,6 +18,12 @@ const LEVEL_CAP = 90;
 
 export const props = {
   characterDataMap,
+  // Each team member has a pack, so Quick Setup may offer every one of them
+  characterPackReaders: new Map(
+    TEAM_CHARACTER_IDS.map(
+      (characterId) => [characterId, { characterId, key: "", readFile: () => Promise.resolve(undefined) }] as const,
+    ),
+  ),
   characters: TEAM_CHARACTER_IDS.map((id) => ({
     ...createCharacter(id, characterDataMap),
     ascension: LEVEL_CAP_ASCENSION,
