@@ -10,7 +10,7 @@ The great oak's outline, depth and normal SHALL each stay within the floor the e
 
 #### Scenario: An oak whose crown outline is not drawn cannot reach the floor
 
-- **GIVEN** the crown and the buried roots of the great oak are not drawn
+- **GIVEN** the crown of the great oak is not outlined
 - **WHEN** the oak's envelope is compared against its export
 - **THEN** the outline does not reach its floor
 
