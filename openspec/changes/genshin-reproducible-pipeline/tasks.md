@@ -16,6 +16,7 @@
 - [ ] 3.2 Install the vkd3d compiler through `installPinnedTool` and remove its `VKD3D_COMPILER` and `PATH` fallback. Verify: `disassembleWithVkd3d.test.ts` written first and seen failing, asserting 'A stage ignores a tool of the same name on the PATH'.
 - [ ] 3.3 Pin the macOS vgmstream archive beside the Windows one, and choose the archive by platform. Verify: `resolveVgmstream.test.ts` written first and seen failing, asserting 'A tool whose archive fails its SHA-256 is refused' and 'A stage ignores a tool of the same name on the PATH'.
 - [ ] 3.4 Pin the macOS ffmpeg archive, read the gcsim kits without the GitHub CLI, and name the system `tar` and `sysctl` by their paths. Verify: `resolveFfmpeg.test.ts` written first and seen failing, asserting 'A stage ignores a tool of the same name on the PATH'.
+- [ ] 3.5 Decide whether the system `tar` and `sysctl` are pinned like the other tools or exempt from the pinned-archive requirement, since `installPinnedTool` runs the system `tar` and the requirement forbids an unpinned tool. Write the choice into the requirement's scenarios and the design's tools decision, and make task 3.4 follow it. Verify: the requirement, the design and task 3.4 name the same rule for `tar` and `sysctl`, and a scenario covers it.
 
 ## 4. Paths
 
