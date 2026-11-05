@@ -75,7 +75,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The measurement
 
-`pnpm ai:voice-match` re-runs per dub against the new engine, `--write` regenerates the map's likeness column, and the dtype comparison the [reference selection](../../../specs/infra/claude-interface/reference-selection/design.md) notes record is redone on the same one character. The stems do not move — a reference is chosen from the wiki's clips before any engine speaks — so the re-run costs synthesis time and nothing else. The regenerated map commits with the trailer a generated artifact carries.
+`pnpm ai:voice-match` re-runs per dub against the new engine, `--write` regenerates the map's likeness column, and the dtype comparison the [spoken replies](../../../specs/infra/claude-interface/spoken-replies/design.md) design records is redone on the same one character. The stems do not move — a reference is chosen from the wiki's clips before any engine speaks — so the re-run costs synthesis time and nothing else. The regenerated map commits with the trailer a generated artifact carries.
 
 ## Failure semantics
 
@@ -139,13 +139,3 @@ The existing files the work touches, with the role each plays after the change.
 - Cut each sentence at its clause punctuation and start playback at the first clause. Verify: a test named after the scenario 'Playback starts at the first clause of a long sentence' written first and seen failing.
 - Hear one Chinese sentence through the Chinese token before the Chinese path is declared working. Verify: the `voice` verb speaks a Chinese sentence, and the person hears it.
 - Check for supersession before each clause's synthesis, and decide whether a clause can be cancelled mid-generation, taking the signal through `VoiceSynthesizer.synthesize` if so. Verify: a test named after the scenario 'A superseded reply stops before its next clause' written first and seen failing.
-
-## Requirements when revived
-
-- Japanese and Korean spoken lines are spoken in their own language
-- A sentence with Latin letters is spoken as English
-- A sentence in a script no model reads is not spoken and is logged
-- A spoken line is split into sentences at every script's sentence endings
-- A sentence starts playing after its first clause is synthesized
-- The dub still names the voice and the text names the language
-- A superseded reply stops before its next clause
