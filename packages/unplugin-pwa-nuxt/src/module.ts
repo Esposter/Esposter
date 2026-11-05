@@ -24,7 +24,7 @@ declare module "@nuxt/schema" {
 }
 
 const pwaModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
-  defaults: ({ options }) => ({ base: options.app.baseURL, scope: options.app.baseURL }),
+  defaults: ({ options }) => ({ base: options.app.baseURL }),
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "pwa", name: MODULE_NAME },
   setup({ periodicSyncForUpdates, ...pwaOptions }, nuxt) {
     if (pwaOptions.disable) return;
