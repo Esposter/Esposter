@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **dashboard:** a refused move or group drop changes no visual before it lands ([23fbb33](https://github.com/Esposter/Esposter/commit/23fbb33d425f5f548859ee3c61bb7f4f1aeb4853))
+* **vue-grid-layout-headless:** a body drag released over no grid commits in its own grid ([35dd54b](https://github.com/Esposter/Esposter/commit/35dd54b5331fdb3007fbd4c810413ed51eb6a356))
+* **vue-grid-layout-headless:** a grid that refuses a body drag no longer freezes the source's own preview ([3098b72](https://github.com/Esposter/Esposter/commit/3098b72f9c39eca273c5a440553fb64c65eaa520))
+* **vue-grid-layout-headless:** a grid unmounted mid-drag clears the preview it drew on another grid ([84295e6](https://github.com/Esposter/Esposter/commit/84295e658cd3d1eb248e4ab57cf45b052784c4e3))
+* **vue-grid-layout-headless:** a layout change under a held palette preview drops it, so the next move redraws on the new layout ([54a43b2](https://github.com/Esposter/Esposter/commit/54a43b214fc6d9e81d5075398c1e7d6c91cac7db))
+* **vue-grid-layout-headless:** a palette drag within its cell keeps its preview, and the preview type lives in models ([13d0066](https://github.com/Esposter/Esposter/commit/13d00667101cca7dfd66f7314e8eac82e590648a))
+* **vue-grid-layout-headless:** a step past the grid changes nothing, and an auto-height item keeps its height ([0696920](https://github.com/Esposter/Esposter/commit/06969207c72bed6054d69e1137d348a0f88994ea))
+* **vue-grid-layout-headless:** a swap checks the dropped item's extent as well as the other's, so neither ends past the last column ([9798fc4](https://github.com/Esposter/Esposter/commit/9798fc414dd04ca25374878ec2a32dd4fdc28f24))
+* **vue-grid-layout-headless:** a swap that would run the other item past the last column pushes it instead ([2e9a065](https://github.com/Esposter/Esposter/commit/2e9a065106accab92bcaea8debaf8633ccd4b0c4))
+* **vue-grid-layout-headless:** a touch press on a handle moves the item, decided once in the grid ([ab92911](https://github.com/Esposter/Esposter/commit/ab92911f23ac9f2e348b4d0df065a9a4e95ce8b4))
+* **web:** a touch press on a handle moves its visual, since a touch does not resize ([b5e4a60](https://github.com/Esposter/Esposter/commit/b5e4a6027e7a254e041c77fa586ea50d6a839300))
+
+### Features
+
+* **vue-grid-layout-headless:** a body drag hands its item to another grid through onTransfer ([c281039](https://github.com/Esposter/Esposter/commit/c281039554b9017cf65bee74b2d8a40dde797ee0))
+* **vue-grid-layout-headless:** a drop from outside hands the grid's root element to its callback ([5cbb974](https://github.com/Esposter/Esposter/commit/5cbb9745d77653d347eddf1ecc91e9fa9f113559))
+* **vue-grid-layout-headless:** a solid item keeps its cell, so a landing over it is refused under every mode ([8ae21e5](https://github.com/Esposter/Esposter/commit/8ae21e5b9ddc19bb960e04c28bfc984af1437864))
+* **web:** the dashboard grid draws the controls its package builds ([d691bdf](https://github.com/Esposter/Esposter/commit/d691bdf4c4c0087270c95a68211f9f91a11e13d0))
+
+### Reverts
+
+* the PDF viewer and dashboard grid features return, to be given their UI ([acf134b](https://github.com/Esposter/Esposter/commit/acf134b2b3fba5ae9843d6de5297cecf2b34129b))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

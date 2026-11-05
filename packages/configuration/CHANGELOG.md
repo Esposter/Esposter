@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **configuration:** the zod namespace rule refuses z under another name ([27a6c83](https://github.com/Esposter/Esposter/commit/27a6c83831527413edee8e1974a923398139be85))
+* **vue:** every component's macros stand at the top of its script in the skill's order, which a lint rule now holds ([2d3b35b](https://github.com/Esposter/Esposter/commit/2d3b35b36269be715e8305e3a0a1e749f3d8a2d3))
+
+### Features
+
+* **lint:** an unpaired min(0) or min(1) and a nonempty() on a Zod schema are lint errors ([f094e7d](https://github.com/Esposter/Esposter/commit/f094e7d32bdaae572c0ad1904206e857a71228dc))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **infra:** the Actions allow-list pins only actions a workflow calls ([be0ceff](https://github.com/Esposter/Esposter/commit/be0ceffc708df8c724d889c3af82b53df17dae38))
+* **infra:** the production origin is one constant the two Azure resources share ([09159ac](https://github.com/Esposter/Esposter/commit/09159ac71df096eaf78d74e80d8ba619496ad24a))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Features

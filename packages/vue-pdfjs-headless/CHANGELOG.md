@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **lint:** the workspace lint reds clear, with the boolean checks named check*, the pdf test helpers at module scope and the polling in the console test replaced ([9d0acf1](https://github.com/Esposter/Esposter/commit/9d0acf16c78727dfa15cbf50b0ba921d944cbd78))
+* **pdf-viewer:** a document the renderer cannot edit disables Add text and Import annotations ([3e95cc4](https://github.com/Esposter/Esposter/commit/3e95cc4420b922ff5c8f9fa3705ae2ac6719778d))
+* **pdf:** the import picks one file through the shared picker, so the file just imported imports again ([9a2d5e9](https://github.com/Esposter/Esposter/commit/9a2d5e97ececa697abd0b26d209b1ac7b9ddf73f))
+* **vue-pdfjs-headless:** a document's comments are read once they are wanted, and each page is released after its comments ([91afde3](https://github.com/Esposter/Esposter/commit/91afde330c3cae783d2dc3f7c928484350f70a10))
+* **vue-pdfjs-headless:** a thumbnail loads its page once its row is in view, and keeps the page after ([38087cf](https://github.com/Esposter/Esposter/commit/38087cf41fb9fe90039dc1a15c2616fd0a4cf29f))
+* **vue-pdfjs-headless:** an imported free text is drawn on its page and saved once ([c5e3511](https://github.com/Esposter/Esposter/commit/c5e35116704df2593261c66676d65606efdc36f7))
+* **vue-pdfjs-headless:** an imported free text keeps its name as its id only while the name is free ([21fd071](https://github.com/Esposter/Esposter/commit/21fd071f0e2a1e8b17860d37fbf051fc3878566e))
+* **vue-pdfjs-headless:** an XFDF free text with no contents is refused ([5ea9859](https://github.com/Esposter/Esposter/commit/5ea985999162cdd569b487679c1989f68fd29e36))
+* **vue-pdfjs-headless:** pages keep their own turn, and zoom and reset hold the package's range ([c3b1f28](https://github.com/Esposter/Esposter/commit/c3b1f28cd04d3484f6012d900361e8ecffe8fe8f))
+* **vue-pdfjs-headless:** the editor mode is set once the renderer reports its editor manager, and comments read their text from contentsObj ([a25f3b7](https://github.com/Esposter/Esposter/commit/a25f3b7f179f27d9e47b813cb9d033c9f4868de3))
+
+### Features
+
+* **pdf-viewer:** the viewer mounts the annotation tools and a Comments tab ([e24a685](https://github.com/Esposter/Esposter/commit/e24a6859d6467339623ec12f2d423fe93d39e77f))
+* **web:** the PDF viewer draws its outline, thumbnails, rotation, full screen, zoom reset, search options and watermark ([7d95e29](https://github.com/Esposter/Esposter/commit/7d95e2968694c57a51e016dc001e631890042286))
+
+### Reverts
+
+* the PDF viewer and dashboard grid features return, to be given their UI ([acf134b](https://github.com/Esposter/Esposter/commit/acf134b2b3fba5ae9843d6de5297cecf2b34129b))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

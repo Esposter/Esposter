@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **build:** a Vue package's components keep their type imports, since the declaration build names a slot type only through one ([1a8b590](https://github.com/Esposter/Esposter/commit/1a8b5905eb1a268b813f95880653ed8a2c1d47ad))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+* **vue-phaserjs:** a cleared game is gone from the store, so the next game set is read back ([6232df9](https://github.com/Esposter/Esposter/commit/6232df9008d7a8f7d9797e149202bad7026c3138))
+* **vue-phaserjs:** a component's lifecycle listener stops when the component unmounts, except its shutdown ([aa674ab](https://github.com/Esposter/Esposter/commit/aa674ab5bac44f68cd5f7b964dfef3c0b580dc23))
+* **vue-phaserjs:** a game unmounted before ready is destroyed with no Phaser throw under test ([61903c6](https://github.com/Esposter/Esposter/commit/61903c663372b4be87d0b9568cd00f979f906cb1))
+* **vue-phaserjs:** a game's scene keys clear when the game is set or cleared, so a return finds no stale scene ([db59a3d](https://github.com/Esposter/Esposter/commit/db59a3d4a0a3499e113f8e8ee23c6ee28942d5d3))
+* **vue-phaserjs:** a nine slice's four slices follow their configuration ([62838f1](https://github.com/Esposter/Esposter/commit/62838f1efe8a3ca6679024b8ec2fd6eb7cb8ea7d))
+* **vue-phaserjs:** a paused or loading scene shuts down when its component unmounts or the root moves on ([cdae7c6](https://github.com/Esposter/Esposter/commit/cdae7c6963784207943240a2a81685c59f5774a3))
+* **vue-phaserjs:** a tilemap built by a key change before its scene creates is destroyed, so one is held ([472e844](https://github.com/Esposter/Esposter/commit/472e844a60959eb7ad245232d3a4e45c3582da87))
+* **vue-phaserjs:** a tween on a destroyed game object still completes, and a replaced one never does ([ce7bf12](https://github.com/Esposter/Esposter/commit/ce7bf12a44db7c84bb3599d760c286749543af75))
+* **vue-phaserjs:** a video's undefined muted or volume leaves it as it is ([98fdac7](https://github.com/Esposter/Esposter/commit/98fdac71305b3c34348581feb67ef43d9383bf58))
+* **vue-phaserjs:** an isometric shape's size and height follow their configuration ([e51005d](https://github.com/Esposter/Esposter/commit/e51005d394e8b1ec145a3765408339ebd468ff53))
+* **vue-phaserjs:** an update to undefined emits the game object's own value, as setup does ([98218ee](https://github.com/Esposter/Esposter/commit/98218eefa77b7bd350debda7df144e446893e8c1))
+* **vue-phaserjs:** one unmount flag guards the setters, and the lifecycle README says a handler ends with its component ([b6ab5ec](https://github.com/Esposter/Esposter/commit/b6ab5ec456074c4cd2cd877c8efa2268a6611ebd))
+* **vue-phaserjs:** the external Tiled loader caches a copy of the tilemap object, so a second visit to the dungeons loads ([9032db8](https://github.com/Esposter/Esposter/commit/9032db89b68d3954cb5e7abbc133a6faa163394a))
+* **vue-phaserjs:** the two comments open on prose, not on a Phaser method name ([845033f](https://github.com/Esposter/Esposter/commit/845033f1fcb6b2facafd65dd529f71b22fcfdd3e))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

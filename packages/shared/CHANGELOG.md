@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **db:** a blob deletion wave rethrows every failure, not only the first ([57adced](https://github.com/Esposter/Esposter/commit/57adcedaf40b714697b7355f789b9891dc5c6acb))
+* **lint:** the workspace lint reds clear, with the boolean checks named check*, the pdf test helpers at module scope and the polling in the console test replaced ([9d0acf1](https://github.com/Esposter/Esposter/commit/9d0acf16c78727dfa15cbf50b0ba921d944cbd78))
+* **shared:** a destroyed panzoom sends no event, even from a listener that destroys it mid-change ([a6181f2](https://github.com/Esposter/Esposter/commit/a6181f2f28cbc6a670d2d36a4b86f1f613180be4))
+* **shared:** a destroyed panzoom writes nothing and sends panzoomend last ([40b4110](https://github.com/Esposter/Esposter/commit/40b4110333fcfecfdd0a9a55a518a871770eaf98))
+* **shared:** a panzoom inside a shadow root from another window resolves to the host ([f26e180](https://github.com/Esposter/Esposter/commit/f26e180e1069df487d99bcbc41991fe212d6c49e))
+* **shared:** a panzoom's resetStyle leaves the transform origin at the centre ([93538ad](https://github.com/Esposter/Esposter/commit/93538ad0d4cd93bace7967b1372c54849e59a805))
+* **shared:** a wheel event a refused zoom leaves is not default-prevented ([277cf31](https://github.com/Esposter/Esposter/commit/277cf316cd7c5a25cbeeffcbd2584e6548d59f2b))
+* **shared:** containment ignores a zero side, caps inside at the minimum, and rounds before it contains ([44d820a](https://github.com/Esposter/Esposter/commit/44d820a292866e62fae70e4674ec3e0e82da7bdc))
+* **shared:** now reads the platform clock, so any worker can evaluate the shared barrel, and the service worker's evaluation is tested instead of linted ([b7242c7](https://github.com/Esposter/Esposter/commit/b7242c732c763f1d607f552c3cf218b7002eaebb))
+* **shared:** one pinch frame over the pointer map, one zoom step for in and out, one inset read per side ([85981c5](https://github.com/Esposter/Esposter/commit/85981c5decc921f87cea20ad6bbf6e5cb74434ba))
+* **shared:** only a primary-button release arms the click swallower, and a press clears it ([43edfbc](https://github.com/Esposter/Esposter/commit/43edfbc1c1f3c324310c13a4f29010d4dfa5c1f6))
+* **shared:** remove the origin option, since the element's centre is the origin every measure assumes ([f0813e4](https://github.com/Esposter/Esposter/commit/f0813e447f188ff16d8de7c123a372592acef4be))
+* **shared:** setOptions with a new canvas moves the listeners and the cursor to the new target ([67c3b77](https://github.com/Esposter/Esposter/commit/67c3b77d279b50db51c78ee9b52f9019a70cda3c))
+* **shared:** settleAll refuses a concurrency limit that is not a whole number of at least one ([9599b67](https://github.com/Esposter/Esposter/commit/9599b67e49e603976a4b6829c794df5a903fb7ae))
+* **shared:** the gesture comment states the threshold a pinch's remaining pointer is gated by ([e95f2dd](https://github.com/Esposter/Esposter/commit/e95f2ddb2525782493902b34c683eddbc7890bdd))
+* **shared:** two fingers on one point start no pinch, so the scale never divides by zero ([5cfad46](https://github.com/Esposter/Esposter/commit/5cfad46b63ccacdbcfe60825c5838ad3562346e8))
+
+### Features
+
+* **shared:** the panzoom calls that move an element are the state, the styles and the methods, each written through the core ([54310de](https://github.com/Esposter/Esposter/commit/54310ded35c9c69d15540914493e382909b4f1f6))
+* **shared:** the panzoom core clamps scale and pan under containment, and computes the focal pan and the zoom steps ([68125ce](https://github.com/Esposter/Esposter/commit/68125cec26b2997c4dd9aebbe8d038b278c4e24a))
+* **shared:** the panzoom core fits, covers and centres the element, scales pinches and wheel steps proportionally, and holds the tracker's rows as tests ([ac20fa2](https://github.com/Esposter/Esposter/commit/ac20fa2364c9ef216ce270441dbb8556e2f86433))
+* **shared:** the panzoom events and the inline style record are the shell's, each event carries the values after its change ([dffd7d7](https://github.com/Esposter/Esposter/commit/dffd7d70ac1be0d525a6289c1c5769f10f233679))
+* **shared:** the panzoom gestures and createPanzoom are the instance a caller holds, with pointer capture, a drag threshold, a filter and a click swallowed after a drag ([22402e7](https://github.com/Esposter/Esposter/commit/22402e79c20b109e0e359023babe3c87efe20e22)), closes [#441](https://github.com/Esposter/Esposter/issues/441) [#452](https://github.com/Esposter/Esposter/issues/452) [#674](https://github.com/Esposter/Esposter/issues/674) [#129](https://github.com/Esposter/Esposter/issues/129) [#197](https://github.com/Esposter/Esposter/issues/197) [#609](https://github.com/Esposter/Esposter/issues/609) [#546](https://github.com/Esposter/Esposter/issues/546) [#63](https://github.com/Esposter/Esposter/issues/63) [#643](https://github.com/Esposter/Esposter/issues/643) [#671](https://github.com/Esposter/Esposter/issues/671) [#683](https://github.com/Esposter/Esposter/issues/683) [#654](https://github.com/Esposter/Esposter/issues/654) [#651](https://github.com/Esposter/Esposter/issues/651) [#652](https://github.com/Esposter/Esposter/issues/652) [#474](https://github.com/Esposter/Esposter/issues/474) [#693](https://github.com/Esposter/Esposter/issues/693) [#646](https://github.com/Esposter/Esposter/issues/646) [#697](https://github.com/Esposter/Esposter/issues/697) [#627](https://github.com/Esposter/Esposter/issues/627)
+* **shared:** the panzoom measure reads the element and its parent once, and the parent resolves through a shadow root ([cda80e3](https://github.com/Esposter/Esposter/commit/cda80e3eeff9846988c5e2dec7822046b97a0ebd))
+* **shared:** the panzoom models and default options are declared, with the element's measure as one model ([3cd8d7a](https://github.com/Esposter/Esposter/commit/3cd8d7aba1623f6a567341b75b2253b6b222f51c))
+* **shared:** the panzoom models take automatic containment, the wheel and start-scale options, the fit and no unused event enum ([62649c4](https://github.com/Esposter/Esposter/commit/62649c4d1e387d87e68e2424cfe525db0589bd8c))
+* **zod:** a record is capped by its entry count, and the request-bounds guard reads the cap ([f386ee8](https://github.com/Esposter/Esposter/commit/f386ee8bdc9f11fc7ddfaed809818be78c6f710c))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **azure-mock:** the mocks refuse a transaction, batch or publish the service caps ([d36d8c1](https://github.com/Esposter/Esposter/commit/d36d8c17e0f120ae265434bff0eaa04a3d80e570))
+* **db-schema:** a message writer's undefined field takes the entity's default, so every type's row stores mentions, message and replyRowKey ([0424a6d](https://github.com/Esposter/Esposter/commit/0424a6d6a11aa5f1110a8c38dd6567bf46b2fc32))
+* **db-schema:** a room's category is held per member on usersToRooms, and a member files a room only under their own ([54b0f20](https://github.com/Esposter/Esposter/commit/54b0f20f4eed1ab7de40b6303845f3d5ba374ba3))
+* **db-schema:** a room's deletion cascades through its search histories by an index led with the room ([56fe650](https://github.com/Esposter/Esposter/commit/56fe6509706023c08dc2c6880955ad00c9efc304))
+* **db-schema:** a survey response's participant token is required, since every writer sets it, and its inputs state it ([bddd2f9](https://github.com/Esposter/Esposter/commit/bddd2f92438bc5751443bb3078a0de99ce448298))
+* **db-schema:** ResourceTags sorts its imports as the lint rule orders them ([50ee0a0](https://github.com/Esposter/Esposter/commit/50ee0a06511937206c6938f08a5f1f3ac60dd6a9))
+* **db-schema:** the foreign keys that reads filter by and deletes cascade through are indexed ([51838fe](https://github.com/Esposter/Esposter/commit/51838fe7044be49c54ccc6670fe24ceb7785d82f))
+* **esbabbler:** the message gate refuses a sender whose roles do not grant SendMessages ([61c8ed1](https://github.com/Esposter/Esposter/commit/61c8ed12d29331d649db102c2cfad452b4d9fbd3))
+* **web:** the invite landing page reads a room's member count, never its members ([bf10848](https://github.com/Esposter/Esposter/commit/bf10848658bc31327b49178e42318e48e428fa77))
+
+### Features
+
+* **trpc:** the request bounds guard is one shared helper, a format is no length, and the webhook payload is held to it ([f6c36fb](https://github.com/Esposter/Esposter/commit/f6c36fb777be6388ee087e8079da5bff9f0a5ec3))
+* **web:** the Whiteboard resource type and the page builder's critique read on the server ([96360f4](https://github.com/Esposter/Esposter/commit/96360f4aaafb4a00b9f832c7f8ecd800b2bc60ad))
+* **zod:** a record is capped by its entry count, and the request-bounds guard reads the cap ([f386ee8](https://github.com/Esposter/Esposter/commit/f386ee8bdc9f11fc7ddfaed809818be78c6f710c))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

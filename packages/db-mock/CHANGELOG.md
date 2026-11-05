@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **db-schema:** a room's deletion cascades through its search histories by an index led with the room ([56fe650](https://github.com/Esposter/Esposter/commit/56fe6509706023c08dc2c6880955ad00c9efc304))
+* **db-schema:** the foreign keys that reads filter by and deletes cascade through are indexed ([51838fe](https://github.com/Esposter/Esposter/commit/51838fe7044be49c54ccc6670fe24ceb7785d82f))
+* **db-schema:** the migration that moves a room's category onto each member keeps the owner's category ([21042be](https://github.com/Esposter/Esposter/commit/21042be575fff740753f617486d7d83b9f5ad83a))
+
+### Features
+
+* **db:** the resourceType enum gains Whiteboard ([f6b90f6](https://github.com/Esposter/Esposter/commit/f6b90f6c9e734861c5f3b78336b955335adcae0a))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

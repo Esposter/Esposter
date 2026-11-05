@@ -1,6 +1,6 @@
 {
   "name": "headless-survey-engine",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save and a runner whose state is plain functions, with no framework or DOM",
   "keywords": [
     "typescript"

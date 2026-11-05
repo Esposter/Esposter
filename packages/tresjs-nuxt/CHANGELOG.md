@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **ci:** the generated manifest fields of tresjs-nuxt include its runtime constants export ([54914cb](https://github.com/Esposter/Esposter/commit/54914cbc1c78a87af9d53406901432471e26b31c))
+* **ci:** tresjs-nuxt leaves its runtime constants out of the exports map ([c3d48ff](https://github.com/Esposter/Esposter/commit/c3d48fff4806c14b75dea5591597c65a2de4bd8b))
+
+### Features
+
+* unplugin-pwa-nuxt, the Nuxt 5 PWA module on @unplugin-pwa/vite, replaces @vite-pwa/nuxt in apps/web ([258ab5c](https://github.com/Esposter/Esposter/commit/258ab5c31a2e8bd6e5bbe2e24fc9095697bdf4cf))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

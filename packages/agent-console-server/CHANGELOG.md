@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **agent-console-server:** a page pairing sends its code only to a host that has shown it holds the code ([dc15a8e](https://github.com/Esposter/Esposter/commit/dc15a8e064eef95cd13125a91144afd3dfbb0b8f))
+* **agent-console-server:** a second start's hand-off takes a socket error as the socket's own, not a refusal of the host ([970cdf0](https://github.com/Esposter/Esposter/commit/970cdf0070facad6e4393aa4d29988115b57a895))
+* **agent-console-server:** a socket whose frame cannot be read closes alone, and a close is waited on past its error ([857473a](https://github.com/Esposter/Esposter/commit/857473a48ff0ccaddf8fae2ca1f32724ee224401))
+* **agent-console-server:** a window whose reconnect is refused retries instead of ending ([e2842dc](https://github.com/Esposter/Esposter/commit/e2842dca5b75d5ade35aa4a1b7c47d695c1b5642))
+* **agent-console-server:** a window's session secret is drawn at the one secret length ([570aaec](https://github.com/Esposter/Esposter/commit/570aaec6c553d53932074132ed487e9159cadeb0))
+* **agent-console-server:** a window's socket takes the host's message ceiling, so an oversize window message ends that window alone ([d3b0149](https://github.com/Esposter/Esposter/commit/d3b0149cef73f49fccf897316fd8d66096801f00))
+* **agent-console:** a prompt's attachments have a ceiling, and a message over the host's limit ends its socket ([0305aca](https://github.com/Esposter/Esposter/commit/0305aca641bf70b9ddfba15fc0d924961202709e))
+* **agent-console:** a socket that does not finish its handshake is closed, and admission clears the timer ([0f8b2b1](https://github.com/Esposter/Esposter/commit/0f8b2b10402e25217080ef4ede5ffb5883e8e4b8))
+* **agent-console:** the pairing code's length is one constant the host and the page both read ([73f7df9](https://github.com/Esposter/Esposter/commit/73f7df988e6f633ca462297578ff27d183248aa7))
+* **azure-mock, agent-console-server:** the mock and test files the lint pass flags are clean ([9311ff0](https://github.com/Esposter/Esposter/commit/9311ff07fbe87d5860ffc9d60e4dd72e5ac338b3))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+* **lint:** the workspace lint reds clear, with the boolean checks named check*, the pdf test helpers at module scope and the polling in the console test replaced ([9d0acf1](https://github.com/Esposter/Esposter/commit/9d0acf16c78727dfa15cbf50b0ba921d944cbd78))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

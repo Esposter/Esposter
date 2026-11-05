@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **genshin-persona:** a kept reference clip that will not decode is fetched again, and a fetched one is kept only once it decodes ([12a7258](https://github.com/Esposter/Esposter/commit/12a72583023314379d8c0c73fb0be2fd2e0d7ab5))
+* **genshin-persona:** the reference clip is written through the state file writer, so a killed session leaves no half clip ([75ff730](https://github.com/Esposter/Esposter/commit/75ff73002841d4b1a07dafa02ba94fea64abe1f1))
+
+### Features
+
+* **genshin-text:** the achievements, mail, time and weapon screens' own words by text id ([8dc4260](https://github.com/Esposter/Esposter/commit/8dc4260e77e8b9ffa885e3139499d7683e3817d3))
+* **genshin:text:** a shop good's held count has its key ([8620008](https://github.com/Esposter/Esposter/commit/86200085beb12521f0eea2ceddc87c9456b696d5))
+* **genshin:text:** the General Goods shop's title, purchase limit and source heading have their keys ([617939a](https://github.com/Esposter/Esposter/commit/617939a66b5c8ae8a3be021afba8740102b64615))
+* **genshin:text:** the Statue's Worship popup's heading, requirement and offer pills have their keys ([607faa0](https://github.com/Esposter/Esposter/commit/607faa02710396b8b8cbd51fc88b046ab8c17236))
+* **genshin:** the published tables carry the reactions' poise, the blunt flag, the talent names and the Electro Crystal's respawn ([09d1045](https://github.com/Esposter/Esposter/commit/09d1045c2128af7a12fc0696e3ba69db5a1f4e96))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

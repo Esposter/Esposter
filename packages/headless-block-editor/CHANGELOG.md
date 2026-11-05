@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **headless-block-editor:** a stroke's bounds are one pass over its points, so a long stroke no longer overflows the call stack ([944547c](https://github.com/Esposter/Esposter/commit/944547c94bda0a2e80f0774ee9f9999899dcd948))
+
+### Features
+
+* **headless-block-editor:** a document names the node type its root accepts ([850c3eb](https://github.com/Esposter/Esposter/commit/850c3eb919f7ccee0323ffe281a0a2c188c5192c))
+* **headless-block-editor:** positioned elements for the whiteboard — typed elements, commands as JSON Patch, wrapping, snap and SVG export ([c300fce](https://github.com/Esposter/Esposter/commit/c300fcedc9f2fb91efd1078b251f1fe2ae4ff28e))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

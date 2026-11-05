@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **genshin-engine:** the gamepad's directional buttons reach menu navigation ([8c38b28](https://github.com/Esposter/Esposter/commit/8c38b28b7508c3dc6eb230e3febef27ed570b4d1))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

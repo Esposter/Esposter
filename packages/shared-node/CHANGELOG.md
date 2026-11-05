@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **shared-node:** a failed cache write removes its part file ([e13a561](https://github.com/Esposter/Esposter/commit/e13a561ddd550e6f9b340acbfddf50bc672b4718))
+* **shared-node:** one write-then-move helper serves the cache and the scripts' writers ([60cd2f6](https://github.com/Esposter/Esposter/commit/60cd2f62728149a61d101fa538f346351ec08c26))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

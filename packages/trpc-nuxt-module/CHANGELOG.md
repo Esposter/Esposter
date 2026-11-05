@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **ci:** tRPC 11.23 types the WebSocket server and socket, so the adapters become subsets of the ws types ([bc46987](https://github.com/Esposter/Esposter/commit/bc4698703aa0eb59f594e8064b93d36c6543da28))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+* **trpc-nuxt-module:** a mutate resolves with its own call's result ([79ae58c](https://github.com/Esposter/Esposter/commit/79ae58c340c073c3caf52dc9e4ab6562a857e8d8))
+* **trpc-nuxt-module:** a mutate resolves with its transformed and picked result ([d3ba0fb](https://github.com/Esposter/Esposter/commit/d3ba0fb28f3b35b51dc436731e3dc6a67ed67352))
+* **trpc-nuxt-module:** a WebSocket context that fails takes no hook and leaks no rejection ([39d2b3c](https://github.com/Esposter/Esposter/commit/39d2b3c40335f107545a214337f72d52a0a0a108))
+* **trpc-nuxt-module:** the event handler's comment states where h3 merges a procedure's headers ([ac668ef](https://github.com/Esposter/Esposter/commit/ac668efe43d8d025c76beeb7cb2479db126d15d4))
+* **trpc-nuxt-module:** the websocket callbacks return a Promise without async, and the test shadows nothing ([ab3791c](https://github.com/Esposter/Esposter/commit/ab3791c7e1aebb10c07dc852e31bd16b3070bcb5))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

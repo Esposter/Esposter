@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **build:** a Vue package's components keep their type imports, since the declaration build names a slot type only through one ([1a8b590](https://github.com/Esposter/Esposter/commit/1a8b5905eb1a268b813f95880653ed8a2c1d47ad))
+* **ci:** the lint, format, citation and manual-verification checks the queue's last runs failed are green again ([462434e](https://github.com/Esposter/Esposter/commit/462434e2cfbb46532aa3dbf874cef1bf2a2e48c1))
+* **ci:** the shop's import order and the forge's repeated text rules are settled ([4eb6005](https://github.com/Esposter/Esposter/commit/4eb60054d3b745fa959ad6991aec797d2d10af9f))
+* **genshin-interface:** the forge sort pill reads the game's cream from its constant ([efb4f50](https://github.com/Esposter/Esposter/commit/efb4f504f5c5a7a31fe94f9b1956fc2f9bd9c1e6))
+* **genshin-interface:** the profile row component is named Row, since Entry is the name of the model type the barrel exports ([5574715](https://github.com/Esposter/Esposter/commit/5574715a39610a2c6b8b6c1d1d002ffdfb8fca67))
+* **genshin:parity:** the character screen's panel, name, breadcrumb and underline sit where the game draws them ([2fe78d1](https://github.com/Esposter/Esposter/commit/2fe78d17199f7c3f2101644a5afc84d86d4a6f33))
+* **genshin:parity:** the dialogue's reply pills take the reference's slate rest, their words' width, their height and their place ([b987cc2](https://github.com/Esposter/Esposter/commit/b987cc25b8de32939255b53ef3b27da58144d1c6))
+* **genshin:parity:** the forge's tabs, total time, sort toggle, recipe rows and queue rows sit where the frame draws them ([e7279ff](https://github.com/Esposter/Esposter/commit/e7279ffd93c443dd2839249c12bdee9bdb0528ee))
+* **genshin:parity:** the General Goods list draws its title, Source, Owned and Purchase up to lines from their keys ([170f744](https://github.com/Esposter/Esposter/commit/170f74446abb8dc8df8d6b67280f28122193f9b6))
+* **genshin:parity:** the Statue's Worship popup draws its heading, requirement and offer words by their keys ([84f70fa](https://github.com/Esposter/Esposter/commit/84f70faa7b3906e7dbc126af5ee7d773015b460c))
+* **genshin:parity:** the wish card's bar, title, probability line and notice sit where the frame draws them ([8067c57](https://github.com/Esposter/Esposter/commit/8067c576213e620ae85e61eb0e10f47d6f6700ed))
+* **genshin:** a pad's confirm draws the press, a downed character is not choosable and a selected die dims when held ([2f09f64](https://github.com/Esposter/Esposter/commit/2f09f646f963bb76b78534b908aa854a918c93ba))
+* **genshin:** the health notice and the reputation list keep the fits their references scored best at, and the parity scores follow the render ([f6615fc](https://github.com/Esposter/Esposter/commit/f6615fc3df75dd7c2d3ac47546ba4afc3882675b))
+* **genshin:** the review's findings over the cuts and the builders are settled ([4edfeae](https://github.com/Esposter/Esposter/commit/4edfeae6b03184ba3d5b71264f2f513c99e7d97a))
+* **lint:** sort the functions named import and arrow the shop's count handler ([ce8ec45](https://github.com/Esposter/Esposter/commit/ce8ec4567d9f4bc366d062c26604114609d0578a))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+
+### Features
+
+* **genshin:** buttons light on hover, focus and press the way the game's do, and the touch stick appears where the thumb lands ([05287e5](https://github.com/Esposter/Esposter/commit/05287e5a7b5b5adeea85fdc8430da59bfe2b15fe))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

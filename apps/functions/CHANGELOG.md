@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **azure-mock:** the mocks refuse a transaction, batch or publish the service caps ([d36d8c1](https://github.com/Esposter/Esposter/commit/d36d8c17e0f120ae265434bff0eaa04a3d80e570))
+* **esbabbler:** the message gate refuses a sender whose roles do not grant SendMessages ([61c8ed1](https://github.com/Esposter/Esposter/commit/61c8ed12d29331d649db102c2cfad452b4d9fbd3))
+* **functions:** a stranded payload another drain already replayed no longer aborts the start drain ([189037b](https://github.com/Esposter/Esposter/commit/189037b2483735b793a9ee6929510f813afa1da4))
+* **functions:** each push thunk awaits its send, so the settled array holds no promises ([f4c57c7](https://github.com/Esposter/Esposter/commit/f4c57c7d44481950a7259822755f397b03561d27))
+* **functions:** survey invite removal uses the shared plain-object guard instead of a local copy ([f9c0971](https://github.com/Esposter/Esposter/commit/f9c097158056134cfba38b218ba864a740fdcc0c))
+* **functions:** web push sends go out in bounded waves instead of one request per subscription at once ([94b22c5](https://github.com/Esposter/Esposter/commit/94b22c519e60e3051bbb95b1df41d49f2157b041))
+* **lint:** sort the functions named import and arrow the shop's count handler ([ce8ec45](https://github.com/Esposter/Esposter/commit/ce8ec4567d9f4bc366d062c26604114609d0578a))
+* **web:** each member's room category is pinned by tests and specs, and the data export lists the category a member filed each room under ([a2d74eb](https://github.com/Esposter/Esposter/commit/a2d74eb0517e977b32277f54eb21c247c6f775fa))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **azure-mock, agent-console-server:** the mock and test files the lint pass flags are clean ([9311ff0](https://github.com/Esposter/Esposter/commit/9311ff07fbe87d5860ffc9d60e4dd72e5ac338b3))
+* **azure-mock:** a conditional blob delete refuses a stale ifMatch and keeps the blob ([0b733de](https://github.com/Esposter/Esposter/commit/0b733de0948181f08fdf846879728e88a35faf06))
+* **azure-mock:** a filter reads a quoted value whole, parentheses and and/or included ([408bfc0](https://github.com/Esposter/Esposter/commit/408bfc091f56df7d9c73330b84c1803b1715dbd8))
+* **azure-mock:** a re-uploaded search document replaces its key rather than doubling ([b8cc8c8](https://github.com/Esposter/Esposter/commit/b8cc8c84487275fc30e149afd09fe683d55a531d))
+* **azure-mock:** the mocks refuse a transaction, batch or publish the service caps ([d36d8c1](https://github.com/Esposter/Esposter/commit/d36d8c17e0f120ae265434bff0eaa04a3d80e570))
+* **web:** a departed member's devices leave the room's Web PubSub group ([8513c55](https://github.com/Esposter/Esposter/commit/8513c556c504de0bf47ea36a2948eea32be4da8b))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **parse-tmx:** a chunk must hold one cell per tile of its own size ([3590636](https://github.com/Esposter/Esposter/commit/3590636ed0861ed1501317af713359fae9d41258))
+* **parse-tmx:** csv text with no cell decodes to no cells ([9192689](https://github.com/Esposter/Esposter/commit/9192689b5b10f494b6fbd54b9c17700a756db469))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Features

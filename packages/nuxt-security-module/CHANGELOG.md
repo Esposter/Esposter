@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **nuxt-security-module:** a body with no content length is counted as it is read, so the size limit holds ([3643005](https://github.com/Esposter/Esposter/commit/3643005712dcfc7a1d994697fd26af0468d1879d))
+* **nuxt-security-module:** a declared body length is refused past the limit, as a chunked body is, and the limiter test asserts the 413 ([9e67057](https://github.com/Esposter/Esposter/commit/9e6705720b1dd5573c2cde51a3465b52d32bda1e))
+* **nuxt-security-module:** a middleware's answer reaches the client ([2ec25dd](https://github.com/Esposter/Esposter/commit/2ec25dde59f5a6d4defdf1ee64e145dfbc1873cb))
+* **nuxt-security-module:** a request's size limit is its route's, not its Content-Type's ([0b97169](https://github.com/Esposter/Esposter/commit/0b9716901bab37d9a1121bc1385569020d86676e))
+* **nuxt-security-module:** a security check that cannot resolve or is empty fails closed ([f8df8fd](https://github.com/Esposter/Esposter/commit/f8df8fd01c45b6d91971b11a9bd85bb9dd5a65dd))
+* **nuxt-security-module:** rendered pages keep report-only and read only their own hashes ([2e185ab](https://github.com/Esposter/Esposter/commit/2e185ab7d109cf6ab2d74162c3be87537aeddde9))
+* **nuxt-security-module:** the route-rules failure is a TypeError and CORS returns on every path ([577da3b](https://github.com/Esposter/Esposter/commit/577da3bdeb848e7194bd246f50a4c1eb0d036b24))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+* **mjml-blocks:** a default for all components is kept only where every type taking its name accepts it ([3e04b50](https://github.com/Esposter/Esposter/commit/3e04b50a739f5fe0d02c73a7bd6a17e500ff98bf))
+* **mjml-blocks:** a default for all components is refused when no type taking its name accepts its value ([1f7fe54](https://github.com/Esposter/Esposter/commit/1f7fe5467d490ccfe191eb6419790b577abf9dd3))
+
+### Features
+
+* **zod:** a record is capped by its entry count, and the request-bounds guard reads the cap ([f386ee8](https://github.com/Esposter/Esposter/commit/f386ee8bdc9f11fc7ddfaed809818be78c6f710c))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes

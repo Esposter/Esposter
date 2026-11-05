@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
+
+### Bug Fixes
+
+* **azure-mock:** the mocks refuse a transaction, batch or publish the service caps ([d36d8c1](https://github.com/Esposter/Esposter/commit/d36d8c17e0f120ae265434bff0eaa04a3d80e570))
+* **db-schema:** a message writer's undefined field takes the entity's default, so every type's row stores mentions, message and replyRowKey ([0424a6d](https://github.com/Esposter/Esposter/commit/0424a6d6a11aa5f1110a8c38dd6567bf46b2fc32))
+* **db:** a blob deletion wave rethrows every failure, not only the first ([57adced](https://github.com/Esposter/Esposter/commit/57adcedaf40b714697b7355f789b9891dc5c6acb))
+* **db:** a direct message passes the gate's SendMessages rule, since it has no roles to grant it ([a7ad059](https://github.com/Esposter/Esposter/commit/a7ad05905ec24aada2f503a7233bb1ff7877e25e))
+* **db:** a partition's delete pass treats a row another delete removed as gone ([6ccde68](https://github.com/Esposter/Esposter/commit/6ccde68c16ce97a4ddd0d687e8cc500b42d64771))
+* **db:** a top-N read of zero returns nothing, not the partition ([938d3fe](https://github.com/Esposter/Esposter/commit/938d3fec84626d3d6dfe586ccd4d26512aad3ecb))
+* **db:** the best-effort delete of a mismatched asset hands its ok result to noop, not an inline arrow ([7391ac4](https://github.com/Esposter/Esposter/commit/7391ac420021ee0fe65a442ff1ea458b4ffeb38e))
+* **db:** the device lookup reads a room too large for one statement in waves, not one bind per recipient ([c290ed6](https://github.com/Esposter/Esposter/commit/c290ed6e0d530d7b076e02bd66751332ee8966b3))
+* **db:** the sender-aware mention classifier takes the optional sender a webhook's message has ([6cc73ec](https://github.com/Esposter/Esposter/commit/6cc73ecd5f0d8e14805d00f75041e72dd095c633))
+* **esbabbler:** [@everyone](https://github.com/everyone) and [@here](https://github.com/here) notify only when the sender holds MentionEveryone ([a3bc3da](https://github.com/Esposter/Esposter/commit/a3bc3da30d0edd0dcf81e1e24bd3723fa3036813))
+* **esbabbler:** the message gate refuses a sender whose roles do not grant SendMessages ([61c8ed1](https://github.com/Esposter/Esposter/commit/61c8ed12d29331d649db102c2cfad452b4d9fbd3))
+* **lint:** the oxlint autofix is applied over the tree, so its fixable errors stop reddening the Lint job ([cf8d057](https://github.com/Esposter/Esposter/commit/cf8d057edf1afad9821b04c23d5084b3b5add11e))
+
 # [4.4.0](https://github.com/Esposter/Esposter/compare/v4.3.3...v4.4.0) (2026-10-30)
 
 ### Bug Fixes
