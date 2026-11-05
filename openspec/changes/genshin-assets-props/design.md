@@ -215,7 +215,6 @@ These are the game's art. Each is a missing asset the recreation draws a stand-i
 ## Notes
 
 - A prefab's path hash is 64-bit, and the dump's JSON number loses its low digits in a JavaScript number, so it is read as text, as the derived-assets page requires for path IDs.
-- The fleet reads a change's `x-phase` only, not a task's `[phase n]` marker, so until the reader takes the marker the pick would take this change at phase 7 and hold the phase 0 tasks behind it. The marker is kept on each task for when it does.
 - The change holds more tasks than the proposal rule's twelve. It is kept whole, one task per gap, because its Key files and its spec delta are shared across the family; a split by phase would copy both.
 - The domains page's "not built yet" line about the entrances is stale against the entrance landmark kind and the writer that publishes the entrances. Its owner is the [domains](../../specs/genshin/domains/design.md) page, which this change does not edit.
 

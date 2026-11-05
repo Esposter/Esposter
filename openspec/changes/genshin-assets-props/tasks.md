@@ -16,7 +16,7 @@
 - [ ] 3.1 [phase 4] Add the two Mora labels as chest kinds in the chests builder and publish their rows per region, Mondstadt first. Verify: `pnpm -C scripts genshin:assets chests --dry-run` lists the Mora rows it would publish for Mondstadt, and a builder test over a label fixture, written first and seen failing.
 - [ ] 3.2 [phase 5] Read each region's chest record in the world, not Mondstadt's alone, and offer its unopened chests on F. Verify: a store test reads the Liyue chest record through the reader, written first and seen failing.
 - [ ] 3.3 [phase 5] Add one region at a time to the list of regions the waypoints command writes, once its map fit passes its bar, and draw its waypoints as the stand-in landmark. Verify: `pnpm -C scripts genshin:assets points-fit` prints the region's residual under its bar, and `pnpm -C scripts genshin:assets waypoints --dry-run` names its rows.
-- [ ] 3.4 [phase 5] On the PC, export the Goddess statue prefab of Liyue, Natlan, Snezhnaya and Sumeru, each name found with the lookup from task 1.2, and fit each with the statue fit from task 1.6. Fontaine, Inazuma and Nod-Krai are left to their roadmap items. Verify: `pnpm -C scripts genshin:assets fit <region> --only statue --dry-run` prints each region's counts.
+- [ ] 3.4 [phase 7] On the PC, export the Goddess statue prefab of Liyue, Natlan, Snezhnaya and Sumeru, each name found with the lookup from task 1.2, and fit each with the statue fit from task 1.6. Fontaine, Inazuma and Nod-Krai are left to their roadmap items. Verify: `pnpm -C scripts genshin:assets fit <region> --only statue --dry-run` prints each region's counts.
 
 ## 4. Models
 
