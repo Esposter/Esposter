@@ -12,8 +12,6 @@ export enum MathExpressionBinaryOperatorSymbol {
   GreaterThanOrEqual = ">=",
   LessThan = "<",
   LessThanOrEqual = "<=",
-  Mod = "mod",
-  Modulo = "%",
   Multiply = "*",
   NotEqual = "!=",
   Or = "or",

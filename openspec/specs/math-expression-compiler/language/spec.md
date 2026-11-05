@@ -8,7 +8,7 @@ The math expression language a sheet's math column evaluates: its grammar, its f
 
 ### Requirement: A formula keeps the value mathjs gave it
 
-The evaluator SHALL give every formula mathjs evaluated to a finite number, over numeric variables, the value mathjs gave it, except where mathjs's answer is a recorded defect.
+The evaluator SHALL give every formula mathjs evaluated to a finite number, over numeric variables, the value mathjs gave it, except where the parity record names a difference and its cause, and a form the language refuses is an error.
 
 #### Scenario: The parity corpus matches mathjs's recorded answers
 
@@ -24,7 +24,7 @@ The evaluator SHALL give every formula mathjs evaluated to a finite number, over
 
 #### Scenario: Modulo takes the sign of the divisor
 
-- **WHEN** the evaluator evaluates `-7 % 3`
+- **WHEN** the evaluator evaluates `mod(-7, 3)`
 - **THEN** the value is `2`
 
 #### Scenario: A trailing percent sign is a percentage of the left side
@@ -37,16 +37,17 @@ The evaluator SHALL give every formula mathjs evaluated to a finite number, over
 - **WHEN** the evaluator evaluates `mod(1e18, 7)`
 - **THEN** the value is `1`, where mathjs gives `0`
 
-#### Scenario: A negative zeta past the gamma's overflow is finite
-
-- **WHEN** the evaluator evaluates `zeta(-200.5)`
-- **THEN** the value is finite and negative, where mathjs gives negative infinity
-
 #### Scenario: A name beside a number multiplies it
 
 - **GIVEN** the variable `col0` is `3`
 - **WHEN** the evaluator evaluates `2 col0`
 - **THEN** the value is `6`
+
+#### Scenario: Implicit multiplication binds as `*` does
+
+- **GIVEN** the variable `col0` is `8`
+- **WHEN** the evaluator evaluates `col0 / 2 col0`
+- **THEN** the value is `32`
 
 #### Scenario: Rounding goes half away from zero
 
@@ -96,6 +97,21 @@ A formula that cannot be parsed SHALL be refused with an error naming the charac
 - **WHEN** a caller parses `foo(1)`
 - **THEN** the parse fails with an error naming `foo` and its position
 
+#### Scenario: A modulo written as an infix word is an error
+
+- **WHEN** a caller parses `5 mod 2`
+- **THEN** the parse fails with an error naming `mod` and its position
+
+#### Scenario: A percent sign with an operand after it is an error
+
+- **WHEN** a caller parses `5 % 2`
+- **THEN** the parse fails with an error naming `2` and its position
+
+#### Scenario: A function the language does not have is an unknown function
+
+- **WHEN** a caller parses `zeta(3)`
+- **THEN** the parse fails with an error naming `zeta` and its position
+
 #### Scenario: Nesting beyond the limit
 
 - **GIVEN** a formula whose nesting goes deeper than the parser's depth limit, through parentheses, prefix operators, assignments, a chain of powers or a chain of conditionals
@@ -114,7 +130,7 @@ A formula SHALL be parsed in time that grows with its length, however deeply its
 
 #### Scenario: A formula of forty nested groups behind a percent sign parses
 
-- **GIVEN** a formula of forty groups, each opened after `8%`
+- **GIVEN** a formula of forty groups, each opened after `8%+`
 - **WHEN** a caller parses it
 - **THEN** the parse succeeds
 

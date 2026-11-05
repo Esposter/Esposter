@@ -6,11 +6,8 @@ import { checkIsLarger } from "#src/services/function/checkIsLarger";
 import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { checkIsPrime } from "#src/services/function/checkIsPrime";
 import { checkIsSmaller } from "#src/services/function/checkIsSmaller";
-import { computeBellNumber } from "#src/services/function/computeBellNumber";
-import { computeBernoulliNumber } from "#src/services/function/computeBernoulliNumber";
 import { computeBitwiseAnd } from "#src/services/function/computeBitwiseAnd";
 import { computeBitwiseOr } from "#src/services/function/computeBitwiseOr";
-import { computeCatalan } from "#src/services/function/computeCatalan";
 import { computeCombinations } from "#src/services/function/computeCombinations";
 import { computeComparison } from "#src/services/function/computeComparison";
 import { computeCompositions } from "#src/services/function/computeCompositions";
@@ -19,7 +16,6 @@ import { computeDeterminant } from "#src/services/function/computeDeterminant";
 import { computeDistance } from "#src/services/function/computeDistance";
 import { computeDotProduct } from "#src/services/function/computeDotProduct";
 import { computeErf } from "#src/services/function/computeErf";
-import { computeErfInverse } from "#src/services/function/computeErfInverse";
 import { computeFactorial } from "#src/services/function/computeFactorial";
 import { computeGamma } from "#src/services/function/computeGamma";
 import { computeHypotenuse } from "#src/services/function/computeHypotenuse";
@@ -29,7 +25,6 @@ import { computeKullbackLeibler } from "#src/services/function/computeKullbackLe
 import { computeLeastCommonMultiple } from "#src/services/function/computeLeastCommonMultiple";
 import { computeListComparison } from "#src/services/function/computeListComparison";
 import { computeLogarithm } from "#src/services/function/computeLogarithm";
-import { computeLogGamma } from "#src/services/function/computeLogGamma";
 import { computeMean } from "#src/services/function/computeMean";
 import { computeMedian } from "#src/services/function/computeMedian";
 import { computeMedianAbsoluteDeviation } from "#src/services/function/computeMedianAbsoluteDeviation";
@@ -42,12 +37,10 @@ import { computePartitionSelect } from "#src/services/function/computePartitionS
 import { computePermutations } from "#src/services/function/computePermutations";
 import { computeProduct } from "#src/services/function/computeProduct";
 import { computeQuantile } from "#src/services/function/computeQuantile";
-import { computeStirlingSecondKind } from "#src/services/function/computeStirlingSecondKind";
 import { computeSum } from "#src/services/function/computeSum";
 import { computeTruthyCount } from "#src/services/function/computeTruthyCount";
 import { computeVariance } from "#src/services/function/computeVariance";
 import { computeVectorNorm } from "#src/services/function/computeVectorNorm";
-import { computeZeta } from "#src/services/function/computeZeta";
 import { createBinarySignatures } from "#src/services/function/signature/createBinarySignatures";
 import { createBitwiseFold } from "#src/services/function/signature/createBitwiseFold";
 import { createBitwisePair } from "#src/services/function/signature/createBitwisePair";
@@ -91,10 +84,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   atan: createUnarySignatures(Math.atan),
   atan2: createBinarySignatures((left, right) => Math.atan2(left, right)),
   atanh: createUnarySignatures(Math.atanh),
-  bellNumbers: createUnarySignatures(computeBellNumber),
-  bernoulli: createUnarySignatures((value) =>
-    Number.isInteger(value) && value >= 0 ? computeBernoulliNumber(value) : null,
-  ),
   bitAnd: createVariadicSignatures(2, createBitwiseFold(0, computeBitwiseAnd), createBitwisePair(0, computeBitwiseAnd)),
   bitNot: createIntegerUnarySignatures((value) => ~value),
   bitOr: createVariadicSignatures(2, createBitwiseFold(-1, computeBitwiseOr), createBitwisePair(-1, computeBitwiseOr)),
@@ -102,7 +91,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   boolean: createRangedSignatures(0, 1, (values) =>
     values.length === 0 ? 0 : toNumber(checkIsTruthy(values[0] ?? 0)),
   ),
-  catalan: createUnarySignatures(computeCatalan),
   cbrt: createUnarySignatures(Math.cbrt),
   ceil: createDigitSignatures(Math.ceil),
   clone: createUnarySignatures((value) => value),
@@ -156,7 +144,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   equal: createBinarySignatures((left, right) => toNumber(checkIsNearlyEqual(left, right))),
   equalScalar: createBinarySignatures((left, right) => toNumber(checkIsNearlyEqual(left, right))),
   erf: createUnarySignatures(computeErf),
-  erfinv: createUnarySignatures(computeErfInverse),
   exp: createUnarySignatures(Math.exp),
   expm1: createUnarySignatures(Math.expm1),
   fix: createDigitSignatures(Math.trunc),
@@ -189,7 +176,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     );
   }),
   leftShift: createIntegerBinarySignatures((left, right) => left << right),
-  lgamma: createUnarySignatures(computeLogGamma),
   log: createRangedSignatures(1, 2, (values) => computeLogarithm(values[0] ?? Number.NaN, values[1])),
   log1p: createRangedSignatures(1, 2, (values) => {
     const [value = Number.NaN, base] = values;
@@ -290,7 +276,6 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     1,
     createNonEmptyCompute((values) => Math.sqrt(computeVariance(values))),
   ),
-  stirlingS2: createBinarySignatures(computeStirlingSecondKind),
   subtract: createBinarySignatures((left, right) => left - right),
   subtractScalar: createBinarySignatures((left, right) => left - right),
   sum: createSpreadSignatures(1, computeSum),
@@ -305,5 +290,4 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
     (values) => toNumber(computeTruthyCount(values) % 2 === 1),
     (left, right) => toNumber(checkIsTruthy(left) !== checkIsTruthy(right)),
   ),
-  zeta: createUnarySignatures(computeZeta),
 };

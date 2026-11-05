@@ -4,8 +4,6 @@ import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGram
 import { parseAssignment } from "#src/services/parser/rule/parseAssignment";
 import { parseBinary } from "#src/services/parser/rule/parseBinary";
 import { parseConditional } from "#src/services/parser/rule/parseConditional";
-import { parseDivisionBeforeProduct } from "#src/services/parser/rule/parseDivisionBeforeProduct";
-import { parseImplicitProduct } from "#src/services/parser/rule/parseImplicitProduct";
 import { parseLeftHand } from "#src/services/parser/rule/parseLeftHand";
 import { parseNullish } from "#src/services/parser/rule/parseNullish";
 import { parsePercentage } from "#src/services/parser/rule/parsePercentage";
@@ -18,8 +16,6 @@ export const MathExpressionRuleParserMap: Record<MathExpressionGrammarRule, Math
   [MathExpressionGrammarRule.Assignment]: parseAssignment,
   [MathExpressionGrammarRule.Binary]: parseBinary,
   [MathExpressionGrammarRule.Conditional]: parseConditional,
-  [MathExpressionGrammarRule.DivisionBeforeProduct]: parseDivisionBeforeProduct,
-  [MathExpressionGrammarRule.ImplicitProduct]: parseImplicitProduct,
   [MathExpressionGrammarRule.LeftHand]: parseLeftHand,
   [MathExpressionGrammarRule.Nullish]: parseNullish,
   [MathExpressionGrammarRule.Percentage]: parsePercentage,

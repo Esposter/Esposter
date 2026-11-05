@@ -27,6 +27,16 @@ describe(parseMathExpression, () => {
     ["a decimal point right after an exponent marker", "2e.5", 'Digit expected, got "." (char 2)'],
     ["a decimal point right after an exponent sign", "2e+.5", 'Digit expected, got "." (char 1)'],
     ["a decimal point after the digits of an exponent", "1e5.5", 'Digit expected, got "." (char 1)'],
+    ["a percent sign before an operand", "5 % 2", 'Unexpected part "2" (char 5)'],
+    ["a modulo word between two operands", "5 mod 2", "Unexpected operator mod (char 3)"],
+    ["a percent sign between two columns", "col0 % col1", 'Unexpected part "col1" (char 8)'],
+    ["a function the language does not have, bernoulli", "bernoulli(3)", 'Unknown function "bernoulli" (char 1)'],
+    ["a function the language does not have, bellNumbers", "bellNumbers(3)", 'Unknown function "bellNumbers" (char 1)'],
+    ["a function the language does not have, catalan", "catalan(3)", 'Unknown function "catalan" (char 1)'],
+    ["a function the language does not have, erfinv", "erfinv(0.5)", 'Unknown function "erfinv" (char 1)'],
+    ["a function the language does not have, lgamma", "lgamma(3)", 'Unknown function "lgamma" (char 1)'],
+    ["a function the language does not have, stirlingS2", "stirlingS2(3, 2)", 'Unknown function "stirlingS2" (char 1)'],
+    ["a function the language does not have, zeta", "zeta(3)", 'Unknown function "zeta" (char 1)'],
   ])("%s is an error", (_title, formula, message) => {
     expect.hasAssertions();
 
@@ -64,7 +74,7 @@ describe(parseMathExpression, () => {
 
   test.each([
     ["a division", "1/("],
-    ["a percent sign", "8%("],
+    ["a percent sign", "8%+("],
   ])("a formula of forty nested groups behind %s parses", (_title, open) => {
     expect.hasAssertions();
 

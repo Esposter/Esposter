@@ -8,10 +8,9 @@ import { MathExpressionLogicalOperator } from "#src/models/shared/MathExpression
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 
 // The binary operators' tokens, each with its binding power, from one for the loosest operator to ten for the tightest.
-// The "*" and "/" entries are named so the implicit and divided products read their function without a check
+// The "*" entry is named so an implicit product reads its function without a check
 export const MathExpressionBinaryOperatorMap: {
   readonly "*": MathExpressionBinaryFunctionOperator;
-  readonly "/": MathExpressionBinaryFunctionOperator;
   readonly [token: string]: MathExpressionBinaryOperator;
 } = {
   [MathExpressionBinaryOperatorSymbol.Add]: { name: "add", power: 9, type: MathExpressionNodeType.Binary },
@@ -51,8 +50,6 @@ export const MathExpressionBinaryOperatorMap: {
     power: 7,
     type: MathExpressionNodeType.Comparison,
   },
-  [MathExpressionBinaryOperatorSymbol.Mod]: { name: "mod", power: 10, type: MathExpressionNodeType.Binary },
-  [MathExpressionBinaryOperatorSymbol.Modulo]: { name: "mod", power: 10, type: MathExpressionNodeType.Binary },
   [MathExpressionBinaryOperatorSymbol.Multiply]: { name: "multiply", power: 10, type: MathExpressionNodeType.Binary },
   [MathExpressionBinaryOperatorSymbol.NotEqual]: { name: "unequal", power: 7, type: MathExpressionNodeType.Comparison },
   [MathExpressionBinaryOperatorSymbol.Or]: {

@@ -15,10 +15,10 @@ const CHAIN_100K_FORMULA = generateOnes(100000, " + ");
 // Nesting is the axis the doubling grew on, so each depth holds the plain group and the two that begin with a division and a percent sign
 const PLAIN_10_FORMULA = `${"(".repeat(10)}1${")".repeat(10)}`;
 const DIVISION_10_FORMULA = `${"1/(".repeat(10)}1${")".repeat(10)}`;
-const PERCENT_10_FORMULA = `${"8%(".repeat(10)}1${")".repeat(10)}`;
+const PERCENT_10_FORMULA = `${"8%+(".repeat(10)}1${")".repeat(10)}`;
 const PLAIN_40_FORMULA = `${"(".repeat(40)}1${")".repeat(40)}`;
 const DIVISION_40_FORMULA = `${"1/(".repeat(40)}1${")".repeat(40)}`;
-const PERCENT_40_FORMULA = `${"8%(".repeat(40)}1${")".repeat(40)}`;
+const PERCENT_40_FORMULA = `${"8%+(".repeat(40)}1${")".repeat(40)}`;
 
 // Parsing is linear in the formula's length, so each group holds one scale and its second task holds the same operands in another shape
 // The chain is not the same length: it joins with " + " where the sum joins with ", " and wraps them in "sum(" and ")"

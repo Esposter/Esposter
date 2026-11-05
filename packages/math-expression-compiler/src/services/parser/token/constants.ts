@@ -8,12 +8,13 @@ const SYMBOLIC_BINARY_SYMBOLS_OF_TWO = SYMBOLIC_BINARY_SYMBOLS.filter((symbol) =
 const SYMBOLIC_BINARY_SYMBOLS_OF_ONE = SYMBOLIC_BINARY_SYMBOLS.filter((symbol) => symbol.length === 1);
 
 // Read as mathjs reads them: the symbols of three, two and one character, longest first.
-// The words that are operators rather than names are delimiters too
+// The words that are operators rather than names are delimiters too, and so is `mod`, which a function takes by name
 export const DELIMITERS_OF_THREE: ReadonlySet<string> = new Set(SYMBOLIC_BINARY_SYMBOLS_OF_THREE);
 export const DELIMITERS_OF_TWO: ReadonlySet<string> = new Set([...SYMBOLIC_BINARY_SYMBOLS_OF_TWO, ".^", "??"]);
 export const DELIMITERS_OF_ONE: ReadonlySet<string> = new Set([
   ...SYMBOLIC_BINARY_SYMBOLS_OF_ONE,
   "!",
+  "%",
   "'",
   "(",
   ")",
@@ -36,9 +37,9 @@ export const FIRST_CHARACTERS_OF_TWO: ReadonlySet<string> = new Set(
 export const NAMED_DELIMITERS: ReadonlySet<string> = new Set([
   "in",
   MathExpressionBinaryOperatorSymbol.And,
-  MathExpressionBinaryOperatorSymbol.Mod,
   MathExpressionBinaryOperatorSymbol.Or,
   MathExpressionBinaryOperatorSymbol.Xor,
+  "mod",
   "not",
   "to",
 ]);

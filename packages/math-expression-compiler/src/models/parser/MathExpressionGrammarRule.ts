@@ -4,8 +4,6 @@ export enum MathExpressionGrammarRule {
   Assignment = "Assignment",
   Binary = "Binary",
   Conditional = "Conditional",
-  DivisionBeforeProduct = "DivisionBeforeProduct",
-  ImplicitProduct = "ImplicitProduct",
   LeftHand = "LeftHand",
   Nullish = "Nullish",
   Percentage = "Percentage",

@@ -16,9 +16,18 @@ describe(compileMathExpression, () => {
 
   test.each([
     ["Power binds tighter than a sign", "-2 ^ 2", {}, -4],
-    ["Modulo takes the sign of the divisor", "-7 % 3", {}, 2],
+    ["Modulo takes the sign of the divisor", "mod(-1, 3)", {}, 2],
     ["A trailing percent sign is a percentage of the left side", "100 + 3%", {}, 103],
     ["A name beside a number multiplies it", "2 col0", SCOPE, 6],
+    ["A quotient beside a name multiplies it, as an explicit product does", "1/2 col0", { col0: 4 }, 2],
+    ["A name beside a number and a division multiplies left to right", "2 col0 / 4", { col0: 3 }, 1.5],
+    [
+      "A name after a quotient of names multiplies the quotient, left to right",
+      "col0 / 2 col1",
+      { col0: 8, col1: 2 },
+      8,
+    ],
+    ["A signed divisor before a name is a quotient times the name", "1/-2 col0", { col0: 4 }, -2],
     ["Rounding goes half away from zero", "round(-2.5)", {}, -3],
     ["A bare comparison has a value", "col0 > 3", { col0: 5 }, 1],
     ["A chained comparison holds only when each pair does", "1 < 3 < 2", {}, 0],
@@ -28,12 +37,6 @@ describe(compileMathExpression, () => {
     ["An assignment is read back by the formula", "(x = col0 + 1) * x", SCOPE, 16],
     ["A variable reads its outer value until its assignment runs", "x * (x = 2)", { x: 3 }, 6],
     ["A constant reads its value until its assignment runs", "pi * (pi = 1)", {}, Math.PI],
-    [
-      "The log gamma of infinity is infinite, as the gamma function is",
-      "lgamma(Infinity)",
-      {},
-      Number.POSITIVE_INFINITY,
-    ],
   ])("%s", (_title, formula, scope, expected) => {
     expect.hasAssertions();
 
@@ -107,13 +110,12 @@ describe("defect fixes", () => {
     expect.hasAssertions();
 
     expect(evaluateFormula("mod(10.8, 1.2)")).toBe(0);
-    expect(evaluateFormula("10.8 % 1.2")).toBe(0);
   });
 
   test("#2936 a decimal modulo that is an exact multiple is zero", () => {
     expect.hasAssertions();
 
-    expect(evaluateFormula("0.3 mod 0.1")).toBe(0);
+    expect(evaluateFormula("mod(0.3, 0.1)")).toBe(0);
     expect(evaluateFormula("mod(0.15, 0.05)")).toBe(0);
   });
 
@@ -159,14 +161,6 @@ describe("defect fixes", () => {
     expect(evaluateFormula("sech(0)")).toBe(1);
   });
 
-  test("#2011 erfinv inverts erf", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("erfinv(0.5)")).toBeCloseTo(0.4769362762044699, 14);
-    expect(evaluateFormula("erf(erfinv(0.25))")).toBeCloseTo(0.25, 14);
-    expect(evaluateFormula("erfinv(erf(0.3))")).toBeCloseTo(0.3, 14);
-  });
-
   test.each([
     ["round(1e300, 9)", 1e300],
     ["ceil(1e300, 9)", 1e300],
@@ -181,7 +175,6 @@ describe("defect fixes", () => {
   test.each([
     ["mod(1/0, 3)", Number.NaN],
     ["mod(5, 1/0)", Number.NaN],
-    ["1/0 % 3", Number.NaN],
     ["mod(1/0, 0)", Number.POSITIVE_INFINITY],
   ])(
     "a modulo of a non-finite operand is NaN, and a zero divisor keeps the dividend, as mathjs answers: %s",
@@ -202,16 +195,6 @@ describe("defect fixes", () => {
     expect(evaluateFormula(formula)).toBe(expected);
   });
 
-  test.each([
-    ["bernoulli(258) > 0", 1],
-    ["bernoulli(260)", Number.NEGATIVE_INFINITY],
-    ["bernoulli(300)", Number.NEGATIVE_INFINITY],
-  ])("a Bernoulli number past the recurrence's range is its closed form: %s", (formula, expected) => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula(formula)).toBe(expected);
-  });
-
   test.each([["sum([-0, -0])"], ["add(-0, -0, -0)"]])(
     "a sum of negative zeros is negative zero, as mathjs sums: %s",
     (formula) => {
@@ -220,15 +203,6 @@ describe("defect fixes", () => {
       expect(evaluateFormula(formula)).toBe(-0);
     },
   );
-
-  test.each([
-    ["zeta(1/0)", 1],
-    ["zeta(-1/0)", Number.NaN],
-  ])("the zeta of plus infinity is one, and of minus infinity no value, as mathjs answers: %s", (formula, expected) => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula(formula)).toBe(expected);
-  });
 
   test.each([["variance([1/0])"], ["std([1/0])"]])(
     "a single infinite value has no variance, as mathjs answers: %s",
@@ -246,8 +220,6 @@ describe("counting and primality", () => {
 
     expect(evaluateFormula("combinations(1000000000, 500000000)")).toBe(Number.POSITIVE_INFINITY);
     expect(evaluateFormula("permutations(1000000000, 500000000)")).toBe(Number.POSITIVE_INFINITY);
-    expect(evaluateFormula("bellNumbers(300)")).toBe(Number.POSITIVE_INFINITY);
-    expect(evaluateFormula("bernoulli(300)")).toBe(Number.NEGATIVE_INFINITY);
   });
 
   test("isPrime decides the safe integers, and is false for a non-integer", () => {
@@ -303,20 +275,5 @@ describe("counting and primality", () => {
 
     expect(evaluateFormula("isPrime(9007199254740994)")).toBe(0);
     expect(evaluateFormula("isPrime(1e16)")).toBe(0);
-  });
-
-  test("a Stirling number of a large count is read over its narrower band", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("stirlingS2(5000, 1)")).toBe(1);
-    expect(evaluateFormula("stirlingS2(3000, 2999)")).toBe(4498500);
-    expect(evaluateFormula("stirlingS2(2000, 1000)")).toBe(Number.POSITIVE_INFINITY);
-  });
-
-  test("a Stirling number with no part, or with as many parts as its count, is answered without the loop running on", () => {
-    expect.hasAssertions();
-
-    expect(evaluateFormula("stirlingS2(1e12, 0)")).toBe(0);
-    expect(evaluateFormula("stirlingS2(1e12, 1e12)")).toBe(1);
   });
 });
