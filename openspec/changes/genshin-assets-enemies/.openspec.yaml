@@ -1,0 +1,15 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-phase: 0
+x-needs: [game-exports, game-install]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/models/genshinAssets/**",
+    "packages/genshin-world/src/services/enemy/**",
+    "packages/genshin-world/src/services/kit/**",
+    "packages/genshin-world/src/models/enemy/**",
+    "packages/genshin-world/src/components/World/Enemies/**",
+    "packages/genshin-world/src/generated/**",
+  ]
