@@ -53,12 +53,14 @@ const { gameText, tab, uid } = defineProps<Props>();
   background-size: 20% 20%;
 }
 
+/* The pill's fill is the reference's own cream, measured off its clear part: a shade lighter than the shared pill's */
 .training-guide {
   position: absolute;
   top: calc(var(--unit) * 983);
   left: calc(var(--unit) * 200);
   margin: 0;
   padding: 0 calc(var(--unit) * 26);
+  background: rgb(233 228 214);
   line-height: calc(var(--unit) * 49);
 }
 

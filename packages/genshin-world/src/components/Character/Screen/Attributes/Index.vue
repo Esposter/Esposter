@@ -27,6 +27,8 @@ interface Props {
   character: Character;
   // The character's name in the reader's language, the one the panel's title draws
   characterName: string;
+  // The element mark the panel draws beside its stars, empty where the character has no element yet
+  elementMarkPath: string;
   // The Friendship Level the character has reached, which the panel's Friendship row draws, none until given
   friendshipLevel?: number;
   // The game's words in the reader's language
@@ -50,6 +52,7 @@ const {
   adventureRank,
   character,
   characterName,
+  elementMarkPath,
   friendshipLevel,
   gameText,
   materialDataMap,
@@ -104,6 +107,7 @@ const isLiftable = computed(() => {
 <template>
   <CharacterAttributeList
     :character
+    :element-mark-path
     :friendship-level
     :game-text
     :ascend-rows

@@ -28,4 +28,16 @@ const { rows } = defineProps<Props>();
   justify-content: space-between;
   line-height: calc(var(--unit) * 36);
 }
+
+/* The values end about 2 pixels of the reference's frame in from the panel's edge, measured off its rows' ink */
+.value {
+  margin-right: calc(var(--unit) * 1.75);
+}
+
+/* Each label sits 27 units in from the panel's edge, past the stat's icon the game draws there, which this panel does
+   not draw */
+dt {
+  padding-left: calc(var(--unit) * 27);
+  font-size: calc(var(--unit) * 25);
+}
 </style>

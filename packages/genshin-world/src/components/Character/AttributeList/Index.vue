@@ -17,6 +17,8 @@ interface Props {
   // The Adventure Rank, Mora and materials the character's next phase takes, each held against what it takes, none at its last phase
   ascendRows: { label: string; value: string }[];
   character: Character;
+  // The element mark the panel draws beside its stars, empty where the character has no element yet
+  elementMarkPath: string;
   // The Friendship Level the character has reached, which the Friendship row draws beside its word, none until given
   friendshipLevel?: number;
   // The game's words in the reader's language
@@ -40,6 +42,7 @@ interface Props {
 const {
   ascendRows,
   character,
+  elementMarkPath,
   friendshipLevel,
   gameText,
   isAscendable,
@@ -99,6 +102,10 @@ const detailGroups = computed(() =>
         />
       </svg>
     </div>
+    <svg v-if="elementMarkPath" class="emblem" viewBox="0 0 1600 1600" aria-hidden="true">
+      <circle cx="800" cy="800" r="770" />
+      <path :d="elementMarkPath" transform="translate(400 400) scale(0.5)" />
+    </svg>
     <p class="level">
       <span v-for="({ color, text }, index) of levelSegments" :key="index" :style="{ color }">{{ text }}</span>
     </p>
@@ -176,6 +183,26 @@ const detailGroups = computed(() =>
   fill: #fff;
 }
 
+/* The element's emblem at the panel's top right, a 44-unit disc its mark sits in, flush with the panel's right edge and
+   centred 63.5 units under its top, where the reference's ring stands beside the stars */
+.emblem {
+  position: absolute;
+  top: calc(var(--unit) * 41.5);
+  right: 0;
+  width: calc(var(--unit) * 44);
+  height: calc(var(--unit) * 44);
+}
+
+.emblem circle {
+  fill: rgb(255 255 255 / 0.15);
+  stroke: rgb(255 255 255 / 0.4);
+  stroke-width: 60;
+}
+
+.emblem path {
+  fill: #e9e4d9;
+}
+
 .level {
   margin: calc(var(--unit) * 5.9) 0 0;
   font-size: calc(var(--unit) * 27);
@@ -221,6 +248,11 @@ const detailGroups = computed(() =>
   padding-left: calc(var(--unit) * 27);
   font-size: calc(var(--unit) * 26);
   line-height: calc(var(--unit) * 36);
+}
+
+/* The level ends 2.9 units in from the panel's edge, where the reference's digits end, past the rows' own margin */
+.friendship .value {
+  margin-right: calc(var(--unit) * 2.9);
 }
 
 .friendship-bar {
