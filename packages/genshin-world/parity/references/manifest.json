@@ -91,15 +91,6 @@
     },
     {
       "attribution": {},
-      "bytes": 14415804,
-      "name": "yt-03U40x2YNwc-world-hud-hidden.mp4",
-      "range": { "end": 20, "start": 0 },
-      "sha256": "dcea85410e10364a0cea5a60a69967503d5ec31db5700f08370ab41d730bda58",
-      "source": "https://www.youtube.com/watch?v=03U40x2YNwc",
-      "sourceFormat": "mp4"
-    },
-    {
-      "attribution": {},
       "bytes": 152587259,
       "name": "yt-0z3OdjIBuo8-wow-completionist.mp4",
       "range": { "end": 252, "start": 0 },
@@ -113,15 +104,6 @@
       "name": "yt-1SqmdXbIhLs-reputation-guide.mp4",
       "sha256": "bf818ffb27dfafd83b2f54b74765b7654c64cbe1fbd3b8b5d568da00b7b26335",
       "source": "https://www.youtube.com/watch?v=1SqmdXbIhLs",
-      "sourceFormat": "mp4"
-    },
-    {
-      "attribution": {},
-      "bytes": 31213334,
-      "name": "yt-1c4pE7BYdWs-chest-seal-pyro.mp4",
-      "range": { "end": 150, "start": 100 },
-      "sha256": "a067f61449a615a5a4249a09db1f91a773683e9d0ae30a6678b5dcbf5299aff9",
-      "source": "https://www.youtube.com/watch?v=1c4pE7BYdWs",
       "sourceFormat": "mp4"
     },
     {
@@ -204,15 +186,6 @@
       "name": "yt-73MIt1DK8kc-world-teleport.mp4",
       "sha256": "9ceafe09e42d5bec095100bb5108bef041322608dbf602895b6c59cbd33275bb",
       "source": "https://www.youtube.com/watch?v=73MIt1DK8kc",
-      "sourceFormat": "mp4"
-    },
-    {
-      "attribution": {},
-      "bytes": 29022023,
-      "name": "yt-7O2XEUZTNxc-world-snow.mp4",
-      "range": { "end": 60, "start": 0 },
-      "sha256": "e233dd1eab547e76ccb052d3fa08f787d4f776aa21a8d13fb7ee12a40945deed",
-      "source": "https://www.youtube.com/watch?v=7O2XEUZTNxc",
       "sourceFormat": "mp4"
     },
     {
@@ -456,15 +429,6 @@
       "name": "yt-MjM6WR-9ijs-world-weather-turn.mp4",
       "sha256": "0993a5a254249c3420b49a9dc07982e37e44bfd65030bfeaf719ae4496cecd2b",
       "source": "https://www.youtube.com/watch?v=MjM6WR-9ijs",
-      "sourceFormat": "mp4"
-    },
-    {
-      "attribution": {},
-      "bytes": 61359640,
-      "name": "yt-OrIH7yMj3e8-spiral-abyss-chamber.mp4",
-      "range": { "end": 100, "start": 0 },
-      "sha256": "e7298a57e60e1070af943f53e0b38ca04398f55629a373efa39910bdb93b7516",
-      "source": "https://www.youtube.com/watch?v=OrIH7yMj3e8",
       "sourceFormat": "mp4"
     },
     {
