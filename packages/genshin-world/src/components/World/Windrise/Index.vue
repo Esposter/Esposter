@@ -486,6 +486,7 @@ onUnmounted(() => {
       <TresGroup :user-data="groundUserData">
         <WorldTerrain
           :create-terrain-worker
+          :dev-registry
           :draws="terrainDraws"
           :is-ground-settled="isRegionDataSettled"
           :light-uniforms

@@ -1,3 +1,4 @@
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerMessage } from "#src/models/world/TerrainWorkerMessage";
 import type { TerrainOptions, TerrainRing } from "genshin-engine";
@@ -6,6 +7,7 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { MAX_PENDING_TILE_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { createSettledCommand } from "#src/services/dev/commands/createSettledCommand";
 import { LOAD_STEP_MEASURE_PREFIX } from "#src/services/loading/constants";
 import {
   checkTerrainBoundsOverlap,
@@ -18,7 +20,7 @@ import {
   TERRAIN_LAYER,
 } from "genshin-engine";
 import { Mesh } from "three";
-import { toValue, watch } from "vue";
+import { onMounted, onUnmounted, toValue, watch } from "vue";
 
 const disposeTileMesh = (mesh: Mesh) => {
   mesh.geometry.dispose();
@@ -28,6 +30,7 @@ const disposeTileMesh = (mesh: Mesh) => {
 // The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The streamer asks
 // The pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
+  devRegistry,
   postTile,
   postToEach,
   regionGrounds,
@@ -36,6 +39,7 @@ export const useTerrainResidency = ({
   tileGroup,
   tileIndices,
 }: {
+  devRegistry?: DevRegistry;
   postTile: (key: number, message: TerrainWorkerMessage) => void;
   postToEach: (message: TerrainWorkerMessage) => void;
   regionGrounds: MaybeRefOrGetter<RegionGround[]>;
@@ -121,5 +125,18 @@ export const useTerrainResidency = ({
     });
     refreshStart = undefined;
   };
+  // The settled read a script waits on, registered while the terrain is mounted: only the streamer knows which tiles are
+  // In flight, so the residency answers for them
+  let unregister: (() => void) | undefined;
+  onMounted(() => {
+    if (!devRegistry) return;
+    unregister = devRegistry.register({
+      commands: [createSettledCommand({ getPendingCount: tileStreamer.pendingCount })],
+      variables: [],
+    });
+  });
+  onUnmounted(() => {
+    unregister?.();
+  });
   return { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMap, tileStreamer };
 };

@@ -78,6 +78,7 @@ export const createTileStreamer = <TTile>({
     },
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
+    pendingCount: () => pendingWantedFrameMap.size,
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);

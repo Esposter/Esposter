@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { RegionGround } from "#src/models/world/RegionGround";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { LightUniforms, TerrainOptions, TerrainSelection, WaterUniforms, WindUniforms } from "genshin-engine";
@@ -22,6 +23,8 @@ import { uniform } from "three/tsl";
 interface Props {
   // Starts one of the pool's workers, which the app builds with its bundler from the package's worker entry
   createTerrainWorker: () => Worker;
+  // The development registry the settled read is registered with, given in development alone
+  devRegistry?: DevRegistry;
   // Written each frame with the tiles drawn, for whatever else reads the ground, such as the grass's capture
   draws: TerrainSelection;
   // Whether every region in reach has arrived or failed, so no ground to lay over the terrain is still coming. The
@@ -46,6 +49,7 @@ interface Props {
 
 const {
   createTerrainWorker,
+  devRegistry,
   draws,
   isGroundSettled,
   lightUniforms,
@@ -82,6 +86,7 @@ const workers = useTerrainWorkers({
 });
 const { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMap, tileStreamer } = useTerrainResidency(
   {
+    devRegistry,
     postTile: workers.postTile,
     postToEach: workers.postToEach,
     regionGrounds: () => regionGrounds,
