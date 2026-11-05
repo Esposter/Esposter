@@ -66,6 +66,8 @@ Every open roadmap item sits under its phase's heading in the Genshin roadmap, e
 
 The report prints, for each phase, its units by kind, each as done, runnable on this machine, waiting on a named blocker, or blocked on the other machine, and the state of each exit check that a command can read today: a region's passes frozen, a screen's ids under their bars, a dataset's lock current. It is computed from the checkboxes, the compute pages, the parity snapshots and the locks. A check with no command yet prints as not measurable, never as passing.
 
+A unit is one of three things, each read from its own source. A compute area is a unit whose kind (Screen, Region, Scene, Pieces or Dataset) is a column of the compute README's phase table; it is done when its page holds no queue item and no waiting item, runnable when a queue item's needs this machine meets, waiting when only waiting items remain, and blocked on the other machine when every queue item needs a capability this machine lacks. A change is a unit of kind Change counted by its open tasks, each in its task phase, with the same four states read from the change's `x-needs` and `x-waiting`. A roadmap item is a unit of kind Item counted under its phase heading. Rejected: a kind field in every change's metadata, because a hand-set value in each of the changes goes stale and nothing but the report would read it; the done-by-kind table still defines what finishes a kind, and the compute areas already carry the kinds that have a check.
+
 ## Key files
 
 | File                                                  | Role                                                                |
