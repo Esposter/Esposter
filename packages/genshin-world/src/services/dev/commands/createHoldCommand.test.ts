@@ -76,6 +76,25 @@ describe(createHoldCommand, () => {
     });
   });
 
+  test("overlapping holds release a control only when the last ends", () => {
+    expect.hasAssertions();
+
+    const target = createTarget();
+    const { readInput } = createInput(target);
+    const frameClock = createFrameClock();
+    const command = createHoldCommand({ onFrame: frameClock.onFrame, target });
+    command.run({ control: InputAction.Interact, seconds: 1 });
+    frameClock.tick(FRAME_SECONDS);
+    command.run({ control: InputAction.Interact, seconds: 1 });
+    const heldAtFrame = Array.from({ length: FRAME_COUNT }, () => {
+      const isHeld = readInput(FRAME_SECONDS).heldActions.has(InputAction.Interact);
+      frameClock.tick(FRAME_SECONDS);
+      return isHeld;
+    });
+
+    expect(heldAtFrame).toStrictEqual([true, true, false, false, false]);
+  });
+
   test("a zero hold presses a control once, which the next read sees pressed and not held", () => {
     expect.hasAssertions();
 

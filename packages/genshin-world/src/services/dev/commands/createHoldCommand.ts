@@ -2,6 +2,7 @@ import type { DevCommand } from "#src/models/dev/DevCommand";
 
 import { dispatchHoldCodes } from "#src/services/dev/dispatchHoldCodes";
 import { resolveHoldCodes } from "#src/services/dev/resolveHoldCodes";
+import { updateHoldCounts } from "#src/services/dev/updateHoldCounts";
 import { z } from "zod";
 
 const holdArgs = z.object({ control: z.string(), seconds: z.coerce.number().min(0).default(0) });
@@ -18,12 +19,17 @@ export const createHoldCommand = ({
 }): DevCommand<typeof holdArgs> => {
   // The holds still down, each with the seconds left before its codes are let go
   const pendingHolds = new Set<{ codes: readonly string[]; remainingSeconds: number }>();
+  // How many holds press each code, so a code is let go only when the last of them ends
+  const codeHoldCountMap = new Map<string, number>();
+  const setHoldCodes = ({ codes, isPressed }: { codes: readonly string[]; isPressed: boolean }) => {
+    dispatchHoldCodes(target, { codes: updateHoldCounts(codeHoldCountMap, { codes, isPressed }), isPressed });
+  };
   onFrame((deltaSeconds) => {
     for (const pendingHold of pendingHolds) {
       pendingHold.remainingSeconds -= deltaSeconds;
       if (pendingHold.remainingSeconds <= 0) {
         pendingHolds.delete(pendingHold);
-        dispatchHoldCodes(target, { codes: pendingHold.codes, isPressed: false });
+        setHoldCodes({ codes: pendingHold.codes, isPressed: false });
       }
     }
   });
@@ -36,8 +42,8 @@ export const createHoldCommand = ({
       const codes = resolveHoldCodes(control);
       if (codes === undefined) return { error: `unknown control ${control}`, ok: false };
 
-      dispatchHoldCodes(target, { codes, isPressed: true });
-      if (seconds === 0) dispatchHoldCodes(target, { codes, isPressed: false });
+      setHoldCodes({ codes, isPressed: true });
+      if (seconds === 0) setHoldCodes({ codes, isPressed: false });
       else pendingHolds.add({ codes, remainingSeconds: seconds });
       return { ok: true, value: seconds };
     },
