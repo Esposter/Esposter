@@ -6,7 +6,7 @@ import type { Result } from "neverthrow";
 import oracleFixtures from "#src/services/fixtures/oracleFixtures.json" with { type: "json" };
 import { TEST_CONTEXT } from "#src/services/functions/constants.test";
 import { runSurveyExpression } from "#src/services/runSurveyExpression";
-import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswer";
+import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswers";
 import { describe, expect, test } from "vitest";
 
 // Each row is an expression, the answers it reads and the value SurveyJS's expression runner gives for them.

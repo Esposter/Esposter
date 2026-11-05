@@ -104,6 +104,7 @@ The package answers the recorded SurveyJS value for every fixture row except the
 | `packages/survey-expression/src/services/findSurveyExpressionRefusal.ts`         | finds the first refused call in source order                                                                 |
 | `packages/survey-expression/src/services/functions/SurveyLogicFunctionMap.ts`    | the registry the evaluator and the check read, merged from the function maps, its array functions among them |
 | `packages/survey-expression/src/services/shared/toSurveyLogicAnswer.ts`          | the one boundary where stored answers are read: a storage null as undefined (R1)                             |
+| `packages/survey-expression/src/services/shared/toSurveyLogicAnswers.ts`         | the record read as answers, each value through the one boundary (R1)                                         |
 | `packages/survey-expression/src/services/shared/toSurveyLogicNumber.ts`          | the one reader of a text as a number (R2)                                                                    |
 | `packages/survey-expression/src/services/shared/checkIsSurveyLogicItemHeld.ts`   | the one item a haystack holds, shared by `contains`, `anyof` and `allof` (R7, R11)                           |
 | `packages/survey-expression/src/services/shared/checkIsSurveyLogicContaining.ts` | the containment `contains` test over every item of its right side, exact (R11)                               |

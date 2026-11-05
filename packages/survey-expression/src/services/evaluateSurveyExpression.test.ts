@@ -3,7 +3,7 @@ import type { SurveyLogicStoredValue } from "#src/models/SurveyLogicStoredValue"
 import { evaluateSurveyExpression } from "#src/services/evaluateSurveyExpression";
 import { parseSurveyExpression } from "#src/services/parseSurveyExpression";
 import { runSurveyExpression } from "#src/services/runSurveyExpression";
-import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswer";
+import { toSurveyLogicAnswers } from "#src/services/shared/toSurveyLogicAnswers";
 import { describe, expect, test } from "vitest";
 
 // Every expected value below follows this package's rules, not SurveyJS's: undefined is the one absent value, and a storage null reads as undefined.
