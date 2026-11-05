@@ -14,10 +14,13 @@ x-model: <model id>
 - `x-model` is the model that wrote the design, or last rewrote its substance, because a design is executed cold later and the reader weighs it by who designed it; git names the committer, not the model behind it. Every open change with a design names one, held by `scripts/src/workspace/changeModel.test.ts`.
 - `skip_specs: true` marks a change with no spec delta: a roadmap, a refactor, a pure tooling change, and every deferred or rejected idea.
 
-A change may also name the fleet's three fields, each optional and read by `pnpm ai:fleet:next --kind unit` (the `throughput` skill, `references/fleet.md`):
+A change may also name these fields, each optional; the first three are the fleet's, read by `pnpm ai:fleet:next --kind unit` (the `throughput` skill, `references/fleet.md`):
 
 - `x-needs: [game-exports, game-install, media-engine, ...]` — the capabilities a machine must hold to take the change; name one only when a part reads the installed game or its exports;
 - `x-touches: ["<glob>", ...]` — the folders a part edits that its Key files table does not already name, quoted so a `*` is not read as a YAML alias;
-- `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine.
+- `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine;
+- `x-phase: <n>` — the Genshin phase the change holds, an integer from 0 to 7; a word or a number past 7 fails the read.
+
+A change whose first affected area is `genshin` names exactly one phase, the lowest whose exit gate fails without it.
 
 Omitted, each reads as empty, so a change with none of them is ready to take on any machine that lends its area. A sequence is written in flow style (`[a, b]`); a bare string where a sequence belongs fails the fleet's read rather than reading as empty.
