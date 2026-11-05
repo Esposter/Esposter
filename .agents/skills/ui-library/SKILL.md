@@ -59,7 +59,6 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A choice between views of one thing is `UiTabs`**; tabs that go somewhere are `UiTabLinks` (`references/tabs.md`).
 - **The call site's attributes go on top of the primitive's** — render from the attribute slot with `$attrs` spread after (`references/authoring-components.md`).
 - **A popover's open state is the ref handed to `usePopover`, never a mirror of the one it returns** — no watcher between the two, and a derived one is a `computed` with a `noop` setter: `references/popovers.md`.
-- **A field's completions are `UiSuggestions` beside the field, never a menu.** Focus stays in the field; a menu moves focus into itself and is for actions.
 - **A menu item is data** — a `UiMenuItem` list, a command under way disabled rather than hidden (`references/menus.md`).
 - **A form from a Zod schema is `UiSchemaForm`**; its schemas' rules are `references/schema-forms.md`.
 - **A key a surface handles — a shortcut, a grid's arrows, a right-click, a search of its own — goes through the library's one mechanism for it**, never a listener of the feature's own; which mechanism is `references/keys-and-commands.md`.
@@ -75,7 +74,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 
 ## The document chrome
 
-Scrollbars, selection, the caret, native accents and the focus ring live once in the `ui-chrome` layer, and a region in another theme is a `UiThemeScope` (`references/document-chrome.md`).
+Scrollbars, selection, the caret, native accents and the focus ring live once in the `ui-chrome` layer (`references/document-chrome.md`).
 
 ## The design pass
 
