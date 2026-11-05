@@ -1,4 +1,3 @@
-// @TODO: no upstream issue — @ark/attest cannot count instantiations through the tsgo-backed `typescript`, whose `@typescript/vfs` program loses attest's probe file; once it can, this suite gains the client's instantiation budgets over the app router
 import type { TRPCNuxtClient } from "#src/runtime/client/models/TRPCNuxtClient";
 
 import { initTRPC } from "@trpc/server";
