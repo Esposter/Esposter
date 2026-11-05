@@ -44,7 +44,7 @@ flowchart TD
 
 ## Scope
 
-The wrapper carries what the app's callers use: `openDatabase` with the `upgrade`, `blocked`, `blocking` and `terminated` callbacks; the transaction and its object stores; the indexes; `get`, `getAll`, `getAllKeys`, `put` and `delete` on a store, an index and the database; and the store and index creation an upgrade needs.
+The wrapper carries what the app's callers use: `openDatabase` with the `upgrade`, `blocked`, `blocking` and `terminated` callbacks; the transaction and its object stores; the indexes; `get`, `getAll`, `getAllKeys`, `put` and `delete` on a store and on the database, and `getAll` and `getAllKeys` on an index; and the store and index creation an upgrade needs.
 
 It does not carry, and no caller needs: cursors (and so iteration, `openCursor`, `openKeyCursor` and the reverse read they give), async iterators, `add`, `clear` and `count`, `abort`, `deleteDatabase` and `databases()`, `objectStoreNames` and `indexNames`, the native request and transaction (there is no `unwrap`), transaction durability, observers, the `close` and `versionchange` event handlers beyond the callbacks above, a schema's `keyPath` and a value type for an auto-incrementing store, a version read before opening, and polyfills for engines the app does not support.
 

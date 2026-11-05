@@ -23,11 +23,11 @@ The server has no screen, so the plugin starts both renders at no width, where e
 
 Both surfaces read the same widths, so the choice is about what changes, not about which library is nearer to hand.
 
-**Reach for `useUiDisplay` in script** when a narrow viewport produces a _different_ layout: a docked column that becomes a sheet over the page, a panel that is removed rather than shrunk, or a default that must be seeded differently on first render. These decisions have to be expressed as reactive state because something other than CSS depends on them. The composable is the library's reading of Vuetify 0's breakpoints, which only the library imports. `smAndDown` is the flag most call sites use, because the codebase treats the question as "narrow or not" rather than as a ladder of sizes; `app/store/layout.ts` reads `isMobile`, the wider cut at which the default layout docks its drawers.
+**Reach for `useUiDisplay` in script** when a narrow viewport produces a _different_ layout: a docked column that becomes a sheet over the page, a panel that is removed rather than shrunk, or a default that must be seeded differently on first render. These decisions have to be expressed as reactive state because something other than CSS depends on them. The composable is the library's reading of Vuetify 0's breakpoints, which only the library imports. Call sites ask the question as "narrow or not" rather than as a ladder of sizes, so each reads a single flag such as `smAndDown` or `isMobile`; `app/store/layout.ts` reads `isMobile`, the wider cut at which the default layout docks its drawers.
 
 **Reach for a UnoCSS prefix in the template** when the layout is unchanged and only a value moves — a grid's column count, a flex direction, a utility that applies above a width. It costs no reactivity and no script line, and it is the right tool precisely when there is nothing for script to decide.
 
-Applied examples live with the features that own them: the [resource explorer](../../resource/explorer/design.md) folds its two-box layout into a single column on `smAndDown`, and the [call view](../../esbabbler/calls/call-view/design.md) flips its prejoin screen from a column to a row with a `lg:` prefix.
+Applied examples live with the features that own them: the [survey creator](../../resource/survey-creator/design.md) shows one of its three side-by-side panes at a time as a tab on `smAndDown`, and the [call view](../../esbabbler/calls/call-view/design.md) flips its prejoin screen from a column to a row with a `lg:` prefix.
 
 ## One component for every device
 

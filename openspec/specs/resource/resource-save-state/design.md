@@ -30,7 +30,7 @@ flowchart TD
   STATE --> UI["Resource/SaveStateIndicator<br/>on the title row"]
 ```
 
-The autosaving editors are the Dashboard, Note, Program, Sheet settings, Email and Webpage editors.
+The autosaving editors are the Dashboard, Note, Program, Sheet, Email, Webpage and Whiteboard editors.
 
 ## The four states
 

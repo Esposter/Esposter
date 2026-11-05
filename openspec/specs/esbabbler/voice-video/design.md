@@ -34,11 +34,11 @@ flowchart LR
 
 ## Device selection — single source of truth
 
-The persisted `useVoiceDeviceSettingsStore` (`voice.ts`, `localStorage`) holds the selected mic/speaker/camera IDs and is the **only** source of truth, so a device picked anywhere is honoured everywhere:
+The persisted `useVoiceDeviceSettingsStore` (`voiceDevice.ts`, `localStorage`) holds the selected mic/speaker/camera IDs and is the **only** source of truth, so a device picked anywhere is honoured everywhere:
 
 - **Settings panel selects** bind `v-model` directly on the store refs.
 - **Mic test** (`useMicrophoneLevel`) and **pre-join preview** (`useCallPreJoinMedia`) build reactive `computed` `useUserMedia` constraints from the IDs — a device change re-requests the right stream immediately.
-- **The live call**: `createRoom` seeds `audioCaptureDefaults.deviceId` + `videoCaptureDefaults.deviceId` from the store; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
+- **The live call**: `createLiveKitRoom` seeds `audioCaptureDefaults.deviceId` + `videoCaptureDefaults.deviceId` from the store; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
 
 `liveKit.ts` keeps no device refs of its own. `setActiveDevice` writes the store; per-kind watchers call `room.switchActiveDevice` to restart the live track mid-call. A guard (`getActiveDevice(kind) === deviceId`) skips no-op switches — including the echo from LiveKit's own `ActiveDeviceChanged` event — so there is no feedback loop.
 
@@ -54,17 +54,17 @@ There is **no** shared "speaking indicator analyser" to reuse — in-call active
 
 ## Key files
 
-| File                                                                   | Role                                                                               |
-| :--------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/userSettingsInMessage.ts`       | fields + `NoiseSuppressionMode` enum + check constraints                           |
-| `apps/web/app/components/Message/Model/User/Settings/Type/Voice/`      | the panel: `Devices/`, `Volume/`, `MicTest/`, `InputProfile/`, `InputSensitivity/` |
-| `apps/web/app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                           |
-| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity/push-to-talk gate (LiveKit audio TrackProcessor)   |
-| `apps/web/app/composables/message/room/call/usePushToTalk.ts`          | hold-to-talk key listeners (hosted by the call store + PiP host)                   |
-| `apps/web/app/services/message/room/call/getAudioCaptureDefaults.ts`   | noise-suppression mode → getUserMedia constraints                                  |
-| `apps/web/app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers     |
-| `apps/web/app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join preview — reactive constraints from device IDs                            |
-| `apps/web/app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker                                                              |
+| File                                                                   | Role                                                                                      |
+| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/userSettingsInMessage.ts`       | fields + `NoiseSuppressionMode` enum + check constraints                                  |
+| `apps/web/app/components/Message/Model/User/Settings/Type/Voice/`      | the panel: `Devices/`, `Volume/`, `MicrophoneTest/`, `InputProfile/`, `InputSensitivity/` |
+| `apps/web/app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                                  |
+| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity/push-to-talk gate (LiveKit audio TrackProcessor)          |
+| `apps/web/app/composables/message/room/call/usePushToTalk.ts`          | hold-to-talk key listeners (hosted by the call store + PiP host)                          |
+| `apps/web/app/services/message/room/call/getAudioCaptureDefaults.ts`   | noise-suppression mode → getUserMedia constraints                                         |
+| `apps/web/app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers            |
+| `apps/web/app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join preview — reactive constraints from device IDs                                   |
+| `apps/web/app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker                                                                     |
 
 ## Unverified
 

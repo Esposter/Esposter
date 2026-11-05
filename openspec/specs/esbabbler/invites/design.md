@@ -31,7 +31,7 @@ flowchart TD
     paused[("rooms.isInvitePaused")] -.->|"set — answered like an unknown token"| check
     check -->|row returned| member["Joined room"]
     check -->|"no row (expired · exhausted · unknown)"| invalid["one NOT_FOUND error<br/>— doesn't leak which"]
-    row -.->|"inert when expired/exhausted"| reads["readInvite / readMyInvite<br/>treat as absent, lazily delete"]
+    row -.->|"inert when expired/exhausted"| reads["readInvite / readMyInvite<br/>treat as absent, readMyInvite lazily deletes"]
 ```
 
 - **Create**: the invite dialog's selects drive `createInvite`; option values come from `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
@@ -45,14 +45,14 @@ flowchart TD
 
 The invite router, `server/trpc/routers/invite.ts`, holds every procedure over the invite table; `joinRoom`, which consumes a link, is the room router's (`server/trpc/routers/room/index.ts`):
 
-| Procedure                                               | Auth                             | Purpose                                                                                                 |
-| :------------------------------------------------------ | :------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                  | replace own invite with a new token + options; returns the row and its creator                          |
-| `revokeInvite({ id, roomId })`                          | member (own row) or `ManageRoom` | delete an invite — the row's absence is what kills the token                                            |
-| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                     | the room's usable links, each joined to its creator                                                     |
-| `readMyInvite({ roomId })`                              | member                           | own invite row for the dialog (`null` if none/expired)                                                  |
-| `readInvite(id)`                                        | authed                           | landing-page info with the room's member count, never its members; `null` for unknown/expired/exhausted |
-| `joinRoom(id)`                                          | authed                           | atomic validate + consume + insert membership                                                           |
+| Procedure                                               | Auth                             | Purpose                                                                                                      |
+| :------------------------------------------------------ | :------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `createInvite({ roomId, expireAfterMinutes, maxUses })` | `ManageInvites`                  | replace own invite with a new token + options; returns the row and its creator                               |
+| `revokeInvite({ id, roomId })`                          | member (own row) or `ManageRoom` | delete an invite — the row's absence is what kills the token                                                 |
+| `readRoomInvites({ roomId, cursor })`                   | `ManageRoom`                     | the room's usable links, each joined to its creator                                                          |
+| `readMyInvite({ roomId })`                              | member                           | own invite row for the dialog (`undefined` if none/expired)                                                  |
+| `readInvite(id)`                                        | authed                           | landing-page info with the room's member count, never its members; `undefined` for unknown/expired/exhausted |
+| `joinRoom(id)`                                          | authed                           | atomic validate + consume + insert membership                                                                |
 
 ## Key files
 

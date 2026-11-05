@@ -12,15 +12,16 @@ stateDiagram-v2
   Intro --> PreBattleInfo
   PreBattleInfo --> BringOutMonster
   BringOutMonster --> PlayerInput
-  PlayerInput --> Battle: Fight
+  PlayerInput --> EnemyInput: Fight then an attack
   PlayerInput --> SwitchAttempt: Switch
   PlayerInput --> ItemAttempt: Item
   PlayerInput --> FleeAttempt: Flee
   ItemAttempt --> CatchMonster: ball
   ItemAttempt --> EnemyInput: heal
-  CatchMonster --> Finished: success
+  CatchMonster --> GainExperience: success
   CatchMonster --> EnemyInput: failure
-  SwitchAttempt --> SwitchMonster
+  SwitchAttempt --> SwitchMonster: active monster standing
+  SwitchAttempt --> BringOutMonster: active monster fainted
   SwitchMonster --> EnemyInput
   FleeAttempt --> Finished: escaped
   FleeAttempt --> EnemyInput: failed
@@ -32,7 +33,8 @@ stateDiagram-v2
   PlayerPostAttackCheck --> EnemyAttack: enemy still to act
   PlayerPostAttackCheck --> PlayerInput: turn over
   EnemyAttack --> EnemyPostAttackCheck
-  EnemyPostAttackCheck --> SwitchMonster: player monster fainted
+  EnemyPostAttackCheck --> SwitchAttempt: player monster fainted and another standing
+  EnemyPostAttackCheck --> Finished: player monster fainted and none standing
   EnemyPostAttackCheck --> PlayerAttack: player still to act
   EnemyPostAttackCheck --> PlayerInput: turn over
   GainExperience --> Finished

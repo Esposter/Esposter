@@ -22,7 +22,7 @@ flowchart TD
   effective --> check["checkHasPermission reads it"]
 ```
 
-The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermissions` and the client's role store read one answer. The owner and an Administrator are still answered before any row is read: an Administrator bit comes from a role only, and the override bits never include it, so an override can neither grant Administrator nor strip it.
+The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermissions` and the client's role store read one answer. The owner is still answered before any row is read, and an Administrator bit comes from a role only: the override bits never include it, so an override can neither grant Administrator nor strip it.
 
 ## Writing one
 

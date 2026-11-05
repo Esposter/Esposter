@@ -22,10 +22,11 @@ flowchart LR
 
 ## Key files
 
-| File                                                             | Role                                                         |
-| ---------------------------------------------------------------- | ------------------------------------------------------------ |
-| `apps/web/app/store/dashboard/visual.ts`                         | `duplicateVisual` — clone, place, save, take back on refusal |
-| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue` | The Duplicate button in the tile's corner                    |
+| File                                                               | Role                                                         |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ |
+| `apps/web/app/store/dashboard/visual.ts`                           | `duplicateVisual` — clone, place, save, take back on refusal |
+| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the tile's corner, which holds the visual's actions menu     |
+| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the Duplicate item, between Edit and Delete                  |
 
 ## Sources
 

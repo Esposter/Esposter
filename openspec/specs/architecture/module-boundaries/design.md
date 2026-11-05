@@ -44,14 +44,14 @@ The ban guards the import direction. It says nothing about the weaker case: a mo
 
 Two exceptions are deliberate, and are recorded here so an audit does not keep rediscovering them:
 
-- **`shared/generated/tiled/**`** — only three of its outputs are server-reached, but the generator hardcodes a single output root, so splitting them is a generator change rather than a relocation.
+- **`shared/generated/tiled/**`** — only some of its outputs are server-reached, but the generator hardcodes a single output root, so splitting them is a generator change rather than a relocation.
 - **`shared/generated/phaser/**`** — currently has no consumer at all. It is retained deliberately: the generator was ported ahead of the code that will read it, and deleting the output without deleting the generator only recreates it.
 
 ## A workspace package is imported where it lives
 
 The zones above are about direction. The fourth import kind — a workspace package such as `@esposter/db` or `@esposter/shared` — has no direction question, and gets no local shim: a file under `server/services/` whose whole body re-exports one name from a package is deleted and its callers import the package. The shim reads like an abstraction seam but is not one. Nothing can be swapped behind it, since the package is where the function is defined and the Azure Functions handlers reach it directly anyway, and it leaves the same function reachable under two names — so a grep for callers answers half, and two files disagree about which import path is idiomatic.
 
-The seam that is worth keeping is the opposite shape: a local function that _wraps_ package behaviour with something of its own, like `readSurveyResponseEntities` naming what "this survey's responses" means on top of `getPartitionKeyFilter`. The test is whether deleting the file would lose a decision.
+The seam that is worth keeping is the opposite shape: a local function that _wraps_ package behaviour with something of its own, like `getSurveyResponsesFilter` naming what "this survey's responses" means on top of `@esposter/azure`'s clause helpers. The test is whether deleting the file would lose a decision.
 
 ## The server never loads a component
 

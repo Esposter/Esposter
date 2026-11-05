@@ -11,7 +11,7 @@ flowchart TD
   start["checkIsDeepEqual(first, second)"]
   identity{"Identical?"}
   primitive{"Both objects?"}
-  constructor{"Same constructor?"}
+  constructor{"Same prototype?"}
   array{"Arrays on both sides?"}
   bytes{"Binary views or buffers?"}
   pattern{"RegExp, weak collection,<br/>Promise or Blob?"}
@@ -29,11 +29,15 @@ flowchart TD
   array -->|no| bytes
   bytes -->|yes| byteRange["Byte by byte over the view's own range"]
   bytes -->|no| pattern
-  pattern -->|"RegExp: source and flags"| equal
+  pattern -->|RegExp| regexpCheck{"Source and flags match?"}
+  regexpCheck -->|yes| equal
+  regexpCheck -->|no| unequal
   pattern -->|"weak collection, Promise or Blob"| unequal
   pattern -->|no| valueOf
   valueOf -->|yes| sameValueZero
-  valueOf -->|no| collection
+  valueOf -->|no| toStringCheck{"Own toString on both?"}
+  toStringCheck -->|yes| sameString["String equality"]
+  toStringCheck -->|no| collection
   collection -->|yes| members["Size, then each entry or member"]
   collection -->|no| keys
 ```

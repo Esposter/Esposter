@@ -19,8 +19,8 @@ sequenceDiagram
     Note over Q: fires natively at runAt — no delay cap
 
     Q->>F: message fires
-    F->>DB: SELECT job WHERE id AND cancelledAt IS NULL AND completedAt IS NULL
-    alt job missing / cancelled / completed
+    F->>DB: SELECT job WHERE id AND cancelledAt IS NULL AND completedAt IS NULL AND processingStartedAt IS NULL
+    alt job missing / cancelled / completed / claimed
         F->>F: exit (no-op)
     else runAt still in the future (clock skew guard)
         F->>Q: re-schedule same id at runAt

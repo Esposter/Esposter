@@ -31,4 +31,4 @@ The composer marks an attachment as a spoiler when its filename starts with `SPO
 | `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts` | `/spoiler` text wrapper                          |
 | `apps/web/app/store/message/input/uploadFile.ts`                          | filename detection and pending attachment toggle |
 | `apps/web/app/components/Message/Model/Message/File/Index.vue`            | blurred spoiler tile and first-activation reveal |
-| `packages/db-schema/src/models/azure/table/FileEntity.ts`                 | persisted flag and legacy default                |
+| `packages/db-schema/src/models/azure/table/FileEntity.ts`                 | persisted flag and its default                   |

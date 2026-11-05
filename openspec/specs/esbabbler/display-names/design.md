@@ -65,7 +65,7 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 A member holding `ManageDisplayNames` sets the name of a member they outrank from that member's menu. The member list's row menu and the profile card's overflow menu both read the one list `useMemberActionItems` builds, and its **Display name** item is offered only where the server would accept the write: the actor holds the permission, the target is not the actor, and `checkIsMemberManageable` allows it. The item opens a dialog over the same field the self-service form uses, so the length limit and the empty-clears rule are the same.
 
-The save is `updateUserToRoom` with `targetUserId`. The server checks the permission, then `assertIsManageable`, the hierarchy guard the moderation and role procedures share, so a refused target is `UNAUTHORIZED` whatever the client shows. The input rule admits a targeted write only when it sets a display name and nothing else. A self-edit needs no permission and carries the caller's own id, or none.
+The save is `updateUserToRoom` with `targetUserId`. The server checks the permission alongside `assertIsManageable`, the hierarchy guard the moderation and role procedures share, so a refused target is `UNAUTHORIZED` whatever the client shows. The input rule admits a targeted write only when it sets a display name and nothing else. A self-edit needs no permission and carries the caller's own id, or none.
 
 After the write the dialog reads the target's row back with `room.readUsersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives the row on `onUpdateUserToRoom` and takes it the same way.
 

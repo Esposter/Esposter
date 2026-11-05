@@ -29,7 +29,7 @@ Both surfaces render the **same** `MessageContentCallStage` (`isDense` in PiP ti
 
 The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
-1. Rebuilds every `document.styleSheets` **and** `adoptedStyleSheets` entry into fresh `<style>` nodes by serialising `cssRules` — deliberate, because a stylesheet built through the CSSOM (`insertRule`), as UnoCSS's runtime builds its own, leaves `<style>` `textContent` empty; a naive `cloneNode` would copy nothing. Cross-origin sheets (which throw on `cssRules`) fall back to re-linked `<link>`s.
+1. Rebuilds every `document.styleSheets` **and** `adoptedStyleSheets` entry without an `href` into a fresh `<style>` node by serialising `cssRules` — deliberate, because a stylesheet built through the CSSOM (`insertRule`), as UnoCSS's runtime builds its own, leaves `<style>` `textContent` empty; a naive `cloneNode` would copy nothing. A sheet with an `href` is re-linked as a `<link>` instead, so its relative `url(...)` resolve against its own file.
 2. Copies the root's attributes onto the PiP `<html>` — its class and style, and the data attributes the library's tokens are keyed on — so the "--ui-*" tokens resolve to the selected theme.
 3. Sets `<html>`/`<body>` `height: 100%` + `margin: 0` — a fresh document has no layout height, so `size-full` content would collapse.
 4. Attaches a `MutationObserver` on `document.head` to mirror late-added stylesheets (UnoCSS dev-time HMR injection).
@@ -44,7 +44,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
 ## Standalone-call interaction
 
-`/calls/[id]` unmount normally leaves the call ([call view UI](../call-view/design.md)). Popping out a standalone call means navigating away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Since a popped-out standalone call has no on-page surface, `MessageLeftSideBarStatusBar` surfaces **any** active call and links to the correct route (`RoutePath.Messages(callRoomId)` for room calls, the calls route for standalone) — a docked call is always one click away. The browser allows exactly one Document PiP window per document.
+`/calls/[id]` unmount normally leaves the call ([call view UI](../call-view/design.md)). Popping out a standalone call means navigating away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Since a popped-out standalone call has no on-page surface, `MessageLeftSideBarStatusBar` surfaces **any** active call and links to the call's route (`RoutePath.Messages(callRoomId)` for a room's own call, its thread's route for a thread call, the calls route for standalone) — a docked call is always one click away. The browser allows exactly one Document PiP window per document.
 
 ## Key files
 

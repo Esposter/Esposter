@@ -45,10 +45,10 @@ await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids }), {
 
 `CacheTag` (`apps/web/app/models/cache/CacheTag.ts`) is small on purpose — a tag is the smallest fact a cache can subscribe to, not an entity id:
 
-| Tag         | Means                                                                                  | Written by                                       |
-| ----------- | -------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `Resources` | which resources exist, are live, and their name and tags as the cached rows carry them | create, delete, restore, purge, rename, tag edit |
-| `Recents`   | the recency ordering, without membership changing                                      | `recordAccess` — a recorded visit                |
+| Tag         | Means                                                                                  | Written by                               |
+| ----------- | -------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `Resources` | which resources exist, are live, and their name and tags as the cached rows carry them | delete, restore, purge, rename, tag edit |
+| `Recents`   | the recency ordering, without membership changing                                      | `recordAccess` — a recorded visit        |
 
 `invalidates` lives on `useMutation`'s write options and **never** on its read options: a read has no reason to invalidate anything. It fires **after the write has landed**, so a rejected or rolled-back write invalidates nothing — it changed nothing to be stale about.
 

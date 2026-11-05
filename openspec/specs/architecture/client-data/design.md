@@ -38,7 +38,7 @@ On failure `data` stays `undefined`, so the component falls back to its empty st
 
 ## useMutation
 
-`useMutation` (`apps/web/app/composables/shared/useMutation.ts`) returns `{ executeMutation, executeQuery, checkIsPending, isPending }` and bundles the four things every write needs:
+`useMutation` (`apps/web/app/composables/shared/useMutation.ts`) returns `{ checkIsPending, executeMutation, executeQuery, isPending, supersedeKey }` and bundles the four things every write needs:
 
 - **Optimistic apply + rollback** — write the change to the store immediately, roll it back if the server rejects it.
 - **Concurrency by target** — writes to one `key` run one at a time, so two controls writing different fields of the same entity both land; reads for one `key` are latest-wins. The full model, the opt-ins, and the outcome statuses live in [Async operations](../async-operations/design.md).

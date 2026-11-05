@@ -4,7 +4,7 @@ A whiteboard is a freeform canvas resource for sketching ideas and connected dia
 
 ## How it works
 
-The editor opens on the saved document and draws it over a pannable, zoomable canvas. The palette places the basic shapes, the six flowchart shapes and a sticky note, by a pointer drag or by a click that puts the element at the middle of the view. With snap on, which is the default, a move, a resize and a placement land on the dot grid behind the canvas, and the toolbar's toggle turns it off. Keyboard nudges move by their step without snapping, and the grid is not exported. The toolbar switches the tool between select, arrow, freehand and pan. Each element is drawn by its kind, in the order the document holds them, so the element list is the z-order.
+The editor opens on the saved document and draws it over a pannable, zoomable canvas. The palette places the basic shapes, the six flowchart shapes, a sticky note and a text box, by a pointer drag or by a click that puts the element at the middle of the view. With snap on, which is the default, a move, a resize and a placement land on the dot grid behind the canvas, and the toolbar's toggle turns it off. Keyboard nudges move by their step without snapping, and the grid is not exported. The toolbar switches the tool between select, arrow, freehand and pan. Each element is drawn by its kind, in the order the document holds them, so the element list is the z-order.
 
 Every gesture on the canvas goes to one reducer, which reads the tool in use and the press it started on. A gesture in progress is shown as a preview, the document the gesture would leave, and nothing is committed until the pointer is released. The release is one core command, which returns the JSON Patch that makes the edit. The open editor applies that patch to its edit state as one history entry, and the server applies the same patch when an agent moves an element, in one save at the content version the agent read.
 
@@ -38,7 +38,7 @@ Each feature of the editor, and what the whiteboard does for it.
 | Shape label                             | text inside the shape, edited by double click                                                                     |
 | Shape colour                            | fill colour in the panel                                                                                          |
 | Shape resize                            | handles, with one minimum for every element                                                                       |
-| Palette                                 | the basic shapes, the six flowchart shapes and a sticky note, placed by a pointer drag or a click                 |
+| Palette                                 | the basic shapes, the six flowchart shapes, a sticky note and a text box, placed by a pointer drag or a click     |
 | Connection points                       | four connection points per shape, numbered from the top clockwise                                                 |
 | Arrow and arrowhead                     | an arrowhead at either end, set for each end                                                                      |
 | Arrow binds to shapes                   | an arrow binds each end to a connection point; an end drawn from empty space stays free                           |

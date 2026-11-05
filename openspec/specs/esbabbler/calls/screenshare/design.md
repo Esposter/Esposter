@@ -4,7 +4,7 @@ A screen share is a LiveKit `Track.Source.ScreenShare` track published from the 
 
 ## How it works
 
-- **Start**: the Share Screen button calls `room.localParticipant.setScreenShareEnabled(true, { audio: true, resolution: 1920×1080@15 })` — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate `ScreenShareAudio` track if the user checked "Share audio").
+- **Start**: the Share Screen button calls `room.localParticipant.setScreenShareEnabled(true, SCREEN_SHARE_CAPTURE_OPTIONS)` (audio on, 1920×1080 at 15 frames a second, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate `ScreenShareAudio` track if the user checked "Share audio").
 - **Stop**: `setScreenShareEnabled(false)` unpublishes; the layout reverts to the video grid.
 - Remote clients receive the stream via `RoomEvent.TrackSubscribed` (source `ScreenShare`) into `call/media.ts`'s `remoteScreenShareStreams`.
 - Starting a share **auto-pops the call into picture-in-picture** so the sharer keeps watching the call while presenting; the activation-ordering constraint behind this lives in [picture-in-picture](../picture-in-picture/design.md).

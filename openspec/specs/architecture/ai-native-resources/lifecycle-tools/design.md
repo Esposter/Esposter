@@ -24,7 +24,7 @@ Linking needs no tool: a reference is a field declared with `createResourceLinkS
 
 Publishing and file assets live only in `createResourceProcedures`, built per type, because a type hands its publish transform to the factory: a Dashboard resolves its bound datasets and an Email checks its compiled html. So the typeless tool reads the row, asks `checkHasCapability` whether the type declares the capability, and calls the generated procedure on the type's own router — the router named by the type uncapitalized, as `useResourceRouter` dispatches in the browser — through `createCallerFactory` of that router, so the procedure runs its own middleware and guards. The transform runs unchanged, and a type without the capability is refused in words before anything runs, rather than with the 404 its missing procedure would give.
 
-The dispatching procedures call into the routers beside them, so they sit in a router merged after the base router, as the achievement router does for the same reason.
+The dispatching procedures call into the routers beside them, so they sit in a router merged after the base router, as the call and message routers are.
 
 ```mermaid
 flowchart TD

@@ -14,7 +14,7 @@ A rollback reaches either channel, on any type, from a panel over the thing bein
 
 A version is a `resourceVersions` row keyed by resource, channel and version number, pointing at a content-addressed object; how a version is encoded, charged and collected is the [resource version store](../resource-version-store/design.md). The revision channel is owner-only; the published channel is publicly served.
 
-`SnapshotChannelDefinitionMap` is the one place a channel says what it is: its kind, its retention, and the title its rows wear.
+`SnapshotChannelDefinitionMap` is the one place a channel says what it is: its retention, and the title its rows wear.
 
 **A channel is an address space, not a workflow.** The two differ on five axes — counter, retention, visibility, whether an unpublish takes them, and whether taking one is an outward act with a public url, a view count, a notification and an activity entry. A `createSnapshot(id, channel)` driving all of that from a map would be a branch with indirection between it and its reader, which is the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids one level up. So the split is drawn where the operations are genuinely the same one:
 
@@ -55,7 +55,7 @@ flowchart LR
 
 ## The snapshot boundary
 
-Survey draws a line through its content blob that no other part of the system knows about: `model` is snapshot state, `settings` is live state, re-read on every public read so closing a survey takes effect without re-publishing every participant link already sent.
+Survey draws a line through its content blob that no other part of the system knows about: `document` is snapshot state, `settings` is live state, re-read on every public read so closing a survey takes effect without re-publishing every participant link already sent.
 
 **That line has to be declared in both directions, or restore gets it wrong**: a restore that copies the snapshot's content wholesale into the working copy carries `settings` with it, silently reopening a closed survey or flipping the response mode between Anonymous and Identified — a setting the write boundary makes authorization decisions on ([survey response modes](../survey-response-modes/design.md)).
 
@@ -145,7 +145,7 @@ Version history is a **panel over whichever blade is open**, not a nav blade: ro
 - **One list, two address spaces.** Both channels merge into one time-ordered timeline, because the owner has one question. `Current` is always the first row, so the list is never empty on a resource that has just been created; a `Published only` chip filters on publishable types.
 - **The timeline is filed under the resource it was read for.** A read names its resource and writes that resource's slice of a keyed list, never "the one on screen": reads of two resources do not supersede each other, so one issued before a switch can land after it, and filed ambiently it would list, preview and restore the resource left behind.
 - **A row is choosable**: its channel and version spelled out rather than a bare ordinal, a relative time with the absolute one on hover, its reason from `SnapshotReasonTitleMap`, and a one-line summary from `SnapshotSummaryMap` — `12 items`, `3 columns · 40 rows`. The summary is computed where the snapshot is taken and carried on its version row, so the listing stays one query for the whole history.
-- **Preview in place** renders a published version through the type's own public renderer where the blade was, under a banner carrying `Restore this version` and `Back to current`. A revision has no rendered form of its own — that would be a read-only renderer per type, publishable or not — so its row restores rather than previews.
+- **Preview in place** renders a published version through the type's own public renderer where the blade was, under a banner carrying `Restore` and `Back to current`. A revision has no rendered form of its own — that would be a read-only renderer per type, publishable or not — so its row restores rather than previews.
 - **Restore notifies with an Undo** that restores the `BeforeRestore` revision it had just taken, naming the resource it was offered for rather than whichever is open when it is clicked. Single-use: a second fire would restore a draft the first already replaced.
 
 A restore never re-points the publication — it produces a draft to review and re-publish, mirroring the [recycle bin](../recycle-bin/design.md) rule — and it lands through `saveResourceContent` like any other content write, so after-save hooks re-derive what the restored content declares and the [activity](../activity-log/design.md) trail records a `Restored` entry.
@@ -173,7 +173,7 @@ The channel rides with the version on every command, because a version alone nam
 
 | File                                                                       | Role                                                           |
 | -------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`        | what a channel is — kind, retention, title                     |
+| `apps/web/shared/services/resource/SnapshotChannelDefinitionMap.ts`        | what a channel is — retention, title                           |
 | `apps/web/shared/services/resource/SnapshotSummaryMap.ts`                  | the per-type one line a history row carries                    |
 | `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | the revision take, its eviction and its ledger charge          |
 | `apps/web/shared/services/resource/getSnapshotRetainedSince.ts`            | the cutoff a version is gone past, which every read compares   |

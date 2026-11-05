@@ -38,7 +38,7 @@ The affordance is a **persistent** status bar at the list's foot, rising from th
 
 The list pages in both directions from a `StyledWaypoint` at each end. Older pages append past the origin, which the browser absorbs. Newer pages insert _before_ everything on screen, so `readMoreNewerMessages` anchors instead of trusting `scrollHeight`: it records the top of the first genuinely visible message element, waits for Vue to render the page, then shifts `scrollTop` by however far that element moved. `column-reverse` height deltas are easy to get subtly wrong, which is why a real element is the anchor and not a measured height. The compensation is skipped while the reader is actively scrolling — a correction applied mid-gesture fights the gesture.
 
-`overflow-anchor` is disabled only while the reader is in the present, so a message arriving at the tail keeps them at the tail; anywhere else the browser's own anchoring is what holds their place.
+`overflow-anchor` is disabled only while the reader is pinned to the bottom, so a message arriving at the tail keeps them at the tail; anywhere else the browser's own anchoring is what holds their place.
 
 A permalink lands through `useScrollToMessage`: if the room and the message are already loaded it highlights the row (`activeRowKey`, cleared by a timer) and scrolls it into view, otherwise it navigates to the permalink route, whose mounted list scrolls to the named message.
 

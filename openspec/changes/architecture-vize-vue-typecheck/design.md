@@ -26,7 +26,7 @@ TypeScript 7.0.2 ships no classic API (its package exports a version file and no
 
 ### Formatter and linter stay on oxfmt and oxlint
 
-`vize fmt` formats 258 files of `vue-phaserjs` identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs sixteen repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
+`vize fmt` formats 258 files of `vue-phaserjs` identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs the repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
 
 ### `.vue` declarations from `vize check --declaration`
 

@@ -14,7 +14,7 @@ flowchart TD
   titleScene -->|"Continue, offered only when a save exists"| run["the run"]
   titleScene -->|"New Game"| run
   run -->|"world menu Save — never automatic"| saveData["saveData"]
-  settingsScene["Settings scene"] --> saveData
+  settingsScene["Settings scene"] -->|"setSettings, saved at once"| write
   saveData -->|"useSave"| write["dungeons.saveDungeons, or localStorage"]
   write --> entity
   write -->|"trigger path"| achievements["achievements"]

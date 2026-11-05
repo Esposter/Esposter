@@ -80,4 +80,4 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 
 ## Notes
 
-- **Settings that hold a path rather than a preset id match no preset.** They read as no background. The project is not in production and keeps no compatibility shims, so nothing migrates them.
+- **Settings that hold a path rather than a preset id match no preset.** They read as no background, and nothing migrates them, since the app keeps no compatibility shims for saved values.

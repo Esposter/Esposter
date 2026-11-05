@@ -4,7 +4,7 @@ Friends are the only source of DM recipients — there is no separate messaging-
 
 ## How it works
 
-Relationship state is encoded by which table a row lives in — no status enum. All three tables use a deterministic natural key (`getFriendshipId(senderId, receiverId)`, sorted ids joined by a separator), so duplicate sends conflict on the primary key and become no-ops, and any relationship check is an O(1) key lookup.
+Relationship state is encoded by which table a row lives in — no status enum. The pending and accepted tables use a deterministic natural key (`getFriendshipId(senderId, receiverId)`, sorted ids joined by a separator), so duplicate sends conflict on the primary key and become no-ops, and any relationship check is an O(1) key lookup. The blocks table is keyed by its ordered `(blockerId, blockedId)` pair.
 
 ```mermaid
 stateDiagram-v2

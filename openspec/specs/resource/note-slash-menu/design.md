@@ -25,7 +25,7 @@ flowchart LR
 ## Decisions
 
 - **Items are read off the menus, not listed twice.** The block items live in `getNoteBlockMenuItems`, not the menu bar, and the slash menu takes those with the composer's shared `getListMenuItems`. The Code Block and Divider items exist only in the slash menu, since the menu bar has no room for them and the inline Code button is a different command.
-- **The menu bar puts the block items first.** Paragraph, the headings, Task List and Blockquote form the first group, then a divider, the text marks and inline Code, then a divider and the two lists. Both menus share the one block group, so its order is set once.
+- **The menu bar puts the block items first.** Paragraph, the headings, Task List and Blockquote, then the Table and Image items, form the first group, then a divider, the text marks and inline Code, then a divider and the two lists. Both menus share the one block group, so its order is set once.
 - **The slash menu's order follows the menu bar's**: blocks, then lists, then the code block and divider, rather than the proposal's table order, so the two menus read the same way.
 - **Aliases live in one constant map keyed by title** (`NoteSlashAliasMap`). A block with no entry is found by its title alone.
 - **The command deletes the typed `/query` first, then runs the item's own `onClick`** at the emptied line, so a slash command and a menu click run the same code.

@@ -40,3 +40,4 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Claude interface** — a persona plugin and spoken replies for one workspace package; the desktop stage stays two proposals behind a gate of use. → [Claude interface](claude-interface/README.md)
 - **Genshin mods** — the mods and the delegation guard run on the function hooks, so nothing is written into the person's settings. → [Genshin mods](claude-interface/genshin-mods/README.md)
 - **Agent console retirement** — the console's code, specs and ideas are removed and the host package is unpublished from npm; the executable stays on the releases that carried it. → [Agent console](../../rejected/infra/agent-console/design.md)
+- **Pulumi preview in CI** — every push to `ai/queue` that touches `apps/infra` previews the plan against the prod stack over OIDC, with no stored cloud credential. → [Pulumi infrastructure](../../../.agents/skills/pulumi-infra/SKILL.md)

@@ -11,7 +11,7 @@ flowchart LR
   STORE["useVisualStore — visuals"] --> TILE["editor tile (GridItem)"]
   TILE --> CONTAINER["Preview/Container — inert layer"]
   CONTAINER --> VIS["DashboardVisual — live read, inert body"]
-  CONTAINER -->|"the visual menu, via slot"| CORNER["Edit · Duplicate · Export CSV · Fit height · Delete"]
+  CONTAINER -->|"the visual menu, via slot"| CORNER["Edit · Duplicate · Export CSV · Fit height · Move to · Delete"]
   VIS --> CORNER2["Copy link · Refresh"]
   CONTAINER -->|"click, not drag, or Edit"| EDIT["Content.vue: the one edit form dialog"]
   CORNER -->|"Delete names its visual"| TARGET["dashboard dialog store"]
@@ -36,13 +36,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role                                                                                                              |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Dashboard/Visual/Index.vue`               | the one renderer for the editor and the published page; exposes the `actions` slot                                |
-| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the editor tile: inert visual and corner actions                                                                  |
-| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the corner's menu: Edit, Duplicate, Export CSV, Fit height and Delete, which names its visual in the dialog store |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`             | passes each tile its visual; mounts the editor's one delete confirm and one edit form                             |
-| `apps/web/app/store/dashboard/dialog.ts`                           | the delete target, `deletingVisualId`                                                                             |
+| File                                                               | Role                                                                                                                        |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Dashboard/Visual/Index.vue`               | the one renderer for the editor and the published page; exposes the `actions` slot                                          |
+| `apps/web/app/components/Dashboard/Visual/Preview/Container.vue`   | the editor tile: inert visual and corner actions                                                                            |
+| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue` | the corner's menu: Edit, Duplicate, Export CSV, Fit height, Move to and Delete, which name their visual in the dialog store |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`             | passes each tile its visual; mounts the editor's one delete confirm and one edit form                                       |
+| `apps/web/app/store/dashboard/dialog.ts`                           | the delete target, `deletingVisualId`                                                                                       |
 
 ## Sources
 

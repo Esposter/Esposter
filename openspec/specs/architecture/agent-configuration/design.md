@@ -6,7 +6,7 @@ The direction matters. The vendor-neutral path owns the bytes and every tool con
 
 ## Every tool reads the real path
 
-Globbers follow directory symlinks. A repo-wide walk that treated `.claude` as an ordinary directory would therefore enumerate the entire agent tree a second time under a second name — and, worse, would do so through the worktrees directory, where each entry is a full copy of the monorepo. So the alias is ignored everywhere and the real path is what tools are pointed at.
+Globbers follow directory symlinks. A repo-wide walk that treated `.claude` as an ordinary directory would therefore enumerate the entire agent tree a second time under a second name — and, worse, would do so through the worktrees directory, where each entry is a full copy of the monorepo. So each tool that walks through a symlink ignores the alias, and the real path is what tools are pointed at.
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ flowchart LR
   end
 
   Tooling -->|include and lint| Tree
-  Tooling -. ignored .-> Alias
+  Tooling -. ignored where walked .-> Alias
   Tooling -. ignored .-> Worktrees
 ```
 

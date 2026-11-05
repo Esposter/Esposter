@@ -36,7 +36,7 @@ Push notification filtering and delivery detail lives in [push notifications](..
 
 A message is stored as one blob, so a procedure that changes part of it writes the whole entity back — the read-modify-write hazard of [Conditional Writes](../../architecture/conditional-writes/design.md), where the later of two concurrent writes erases the earlier with nothing surfaced. Poll voting is where that is routine rather than rare: every member of the room writes into the same poll body.
 
-`getMessageProcedure` therefore reads through `getEntityWithEtag` and carries the version it saw on the procedure context as `messageEtag`, alongside `messageClient` and `messageEntity`. The read already happens, so the version costs no extra round trip and any message procedure can make its write conditional. `votePoll` passes it as the `etag` option on `updateEntity`, so the write lands only if nothing else has written since.
+`getMessageProcedure` therefore reads through `getEntityWithEtag` and carries the version it saw on the procedure context as `messageEtag`, alongside `messageClient` and `messageEntity`. The read already happens, so the version costs no extra round trip and any message procedure can make its write conditional. `votePoll` hands it to the shared conditional-write helper as the version its write was computed against, so the write lands only if nothing else has written since.
 
 ```mermaid
 sequenceDiagram

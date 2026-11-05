@@ -10,7 +10,7 @@ The attachment loads its document once with the package's `usePdfDocument`, and 
 
 The thumbnail draws the first page with `usePdfPage` into its canvas. In a message it is a button, so a click, Enter or Space opens the dialog; in a preview it opens nothing, since the preview's own click opens its message.
 
-The viewer mounts in the dialog over `usePdfViewer` on the app's container, and `usePdfAnnotations` reads the same state for the annotation tools and the comments. Its controls are the app's, drawn with the UI library, and each one calls a function of the package. The toolbar, the search row, the sidebar, the watermark dialog and the page body are separate components under `apps/web/app/components/Pdf/Viewer/`, each with one responsibility, and they share the package's state object rather than a provided context. `Thumbnail.vue` is the message row's canvas, not part of the viewer.
+The viewer mounts in the dialog over `usePdfViewer` on the app's container, and `usePdfAnnotations` reads the same state for the annotation tools and the comments. Its controls are the app's, drawn with the UI library, and each one calls a function of the package. The toolbar, the search row, the sidebar and the watermark dialog are separate components under `apps/web/app/components/Pdf/Viewer/`, each with one responsibility, and they share the package's state object rather than a provided context. The pages draw into a container the root component owns. `Thumbnail.vue` is the message row's canvas, not part of the viewer.
 
 ```mermaid
 flowchart TD

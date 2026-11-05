@@ -11,7 +11,7 @@ The migration runs in phases. Each phase ends at a gate that decides whether the
 1. **Plain `tsc` typecheck to `tsrs --fast`.** Every package whose `typecheck` is plain `tsc` runs `tsrs --fast` instead, and the `noEmit` setting comes from the shared `tsconfig`. Its gate is a green workspace typecheck through the package scripts. Every package runs `tsrs --fast` today; `packages/db` spells two return types for it, and the comment on `upsertThreadFollow` says why.
 2. **Spike the Vue checks.** Run `vize` content mappers through `tsrs` on one small Vue package and compare its diagnostics with `vue-tsc`. The gate is a result that matches on that package. Nothing is removed in this phase.
 3. **Retire `vue-tsc` only if phase 2 passes everywhere.** Until then the `typescript-native-bridge` override stays, because `vue-tsc` and `@volar/typescript` read the classic API from it.
-4. **Drop the `typescript` package only if nothing in-process needs it.** Today `scripts/` imports `typescript` in-process in seventeen files, and the build and lint tooling reach it through peers. The gate is either a replacement for each in-process use or a decision to keep the package.
+4. **Drop the `typescript` package only if nothing in-process needs it.** `scripts/` reads source through `oxc-parser` rather than `typescript`, and the build and lint tooling reach the package through peers. The gate is either a replacement for each in-process use or a decision to keep the package.
 
 ## Out of scope
 
@@ -22,4 +22,3 @@ The migration runs in phases. Each phase ends at a gate that decides whether the
 ## Open questions
 
 - Does `tsrs` need a Vue-aware checker beyond the content mapper CLI, or is `vize` the one path? The language server does not run content mappers, so editor support for `.vue` files is the open part.
-- Which of the `scripts/` uses of the TypeScript API has a `tsrs` equivalent (its `ast` subpath, or a parser change), and which needs the package kept?

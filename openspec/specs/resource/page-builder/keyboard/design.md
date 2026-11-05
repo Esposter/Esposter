@@ -32,7 +32,7 @@ The page builder's keys. Each key the editor and the canvas take is a registered
 
 ## Not built
 
-- The canvas is a sandboxed frame, so its keys never reach the window where the commands bind. The frame keeps one listener for its arrows and Escape and hands every other unmodified key to the editor by dispatching it again on the window. That hand-off is the one step outside the commands mechanism.
+- The canvas is a sandboxed frame, so its keys never reach the window where the commands bind. The frame keeps one listener for its arrows and Escape and hands every other key to the editor by dispatching it again on the window. That hand-off is the one step outside the commands mechanism.
 - The two frame scenarios, "Arrow down in the frame selects the next node" and "Alt with an arrow in the frame is handed to the editor", have no unit test, because the test environment cannot tear down a loaded frame document cleanly. They wait for a package browser suite.
 
 ## Key files

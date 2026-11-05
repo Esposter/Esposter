@@ -320,8 +320,9 @@ export const baseMessageRouter = router({
       DatabaseEntityType.Room,
       roomId,
     );
-    // The mime category is enforced here: it is signed into the write SAS as the blob's content type, so the PUT
-    // Cannot store anything else. The size is NOT — `size` is whatever the client declared, an Azure write SAS
+    // The mime category is checked here on the declared type only: the write SAS's content type is a response
+    // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
+    // `size` is whatever the client declared, an Azure write SAS
     // Carries no length constraint, and the block PUT never passes back through Nitro, so a client that
     // Under-declares can write past this cap until the SAS expires. Checking it here rejects the honest
     // Oversized drop early; it is not a defence against a client that lies. See openspec/specs/esbabbler/file-media/design.md.

@@ -37,7 +37,7 @@ The only data JSON `genshin-world` imports is its lock and one save bound: every
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `getTsdownConfiguration`           | The base — `platform: "neutral"`                                                                                                        |
 | `getTsdownConfigurationNode`       | The base plus `platform: "node"`                                                                                                        |
-| `getTsdownConfigurationVue`        | The base plus SFC compilation through Vize's rolldown plugin, and `dts.vue`                                                             |
+| `getTsdownConfigurationVue`        | The base plus SFC compilation through Vize's rolldown plugin, and `dts.tsc.vue`                                                         |
 | `getVuePlugins`                    | The same pair through Vize's Vite plugin, for the Vitest run                                                                            |
 | `getVitestConfiguration`           | The Vitest config every member's tests run on; the app takes its `test` options alone                                                   |
 | `getBenchmarkTestConfiguration`    | Just the bench wiring, spread by `getVitestConfiguration` over the member's own test options                                            |
@@ -179,7 +179,7 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## The bootstrap package
 
-`@esposter/configuration` is built by the same factories it exports, so its own relative imports carry a `.ts` extension rather than `#src/` — it is the one config that has to reach TypeScript source before any build has run — while its `default` arm still points at `dist`, which is what every other package's config resolves it through.
+`@esposter/configuration` is built by the same factories it exports, so its own `#src/` subpath imports resolve to TypeScript source before any build has run — it is the one config that has to reach source that way — while its `default` arm still points at `dist`, which is what every other package's config resolves it through.
 
 ## A subpath needs a consumer, a load by path, or a public contract
 

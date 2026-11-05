@@ -8,7 +8,7 @@ The current arrangement is recorded in [monorepo tooling](../../specs/architectu
 
 ### Phase 1: plain `tsc` to `tsrs --fast`
 
-`tsrs` is the Rust port of the TypeScript 7 checker, a standalone CLI shipped with per-platform binaries. Its `latest` tag is the `0.20.0-ts7.1.0-beta` release. Plain typecheck scripts now run `tsrs --fast`, and the `noEmit` setting comes from the shared `tsconfig` chain, which sets it in `packages/configuration/tsconfig.base.json`. A flag that repeats the config would be a second place for the same fact, so the scripts omit it.
+`tsrs` is the Rust port of the TypeScript 7 checker, a standalone CLI shipped with per-platform binaries, at the version the workspace catalog declares. Plain typecheck scripts now run `tsrs --fast`, and the `noEmit` setting comes from the shared `tsconfig` chain, which sets it in `packages/configuration/tsconfig.base.json`. A flag that repeats the config would be a second place for the same fact, so the scripts omit it.
 
 Rejected: keeping the flag and passing it through every script. It duplicates a setting the config already owns.
 
@@ -18,7 +18,7 @@ The `--fast` preset enables the adaptive checker counts and lazy member resoluti
 
 ### The `azure-mock` false positive
 
-`packages/azure-mock/src/models/table/MockTableClient.ts` returns an object literal from a function whose return type is `PagedAsyncIterableIterator`, and its `byPage` member takes a destructured parameter with a default: `({ maxPageSize } = {})`. `tsrs` reports `TS7031` (implicit `any` on the binding element) under both the default mode and `--fast`. `tsc` in this repo reports no error, and stock TypeScript 5.9.3 accepts a minimal reproduction of the same shape. So the diagnostic is a `tsrs` gap, not a defect in the source.
+`packages/azure-mock/src/models/table/MockTableClient.ts` returns an object literal from a function whose return type is `PagedAsyncIterableIterator`, and its `byPage` member takes a destructured parameter annotated `PageSettings`: `({ maxPageSize }: PageSettings = {})`. The bare form, `({ maxPageSize } = {})`, is what `tsrs` reports as `TS7031` (implicit `any` on the binding element) under both the default mode and `--fast`. `tsc` in this repo reports no error, and stock TypeScript 5.9.3 accepts a minimal reproduction of the same shape. So the diagnostic is a `tsrs` gap, not a defect in the source.
 
 Rejected: keeping `azure-mock` on `tsc` until `tsrs` is fixed. That leaves one package on the old path for a reason the repo can remove in the source. The fix is an explicit `PageSettings` annotation on the parameter, which is the type the interface already names, and it reads more plainly than the inferred form.
 

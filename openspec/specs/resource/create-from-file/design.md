@@ -19,7 +19,7 @@ flowchart LR
 ```
 
 - **The format comes from the file, not a picker.** The drop zone accepts every extension in `DataSourceConfigurationMap`, and `getDataSourceTypeByFilename` resolves the format from the name — so a new portable format needs no change to the create form. An unsupported extension blocks Create with a message naming what is accepted.
-- **The filename is the name you never have to type.** It pre-fills the name field (extension stripped, through `normalizeString`), and stays editable.
+- **The filename is the name you never have to type.** It pre-fills the name field (extension stripped), and stays editable.
 - **A parse failure blocks Create**, surfaced on the file field itself. The form is not partly valid: you cannot create a sheet from a file that did not parse.
 - **A save failure after create is not a half-written resource.** `createResource` writes no blob, so the save is the first write, exactly as it is from the Data blade. If it fails you keep a valid, empty Sheet and see the error — never a corrupt blob.
 - **Success lands on the Data blade, not Overview.** You came to see your rows.
@@ -28,7 +28,8 @@ flowchart LR
 
 | File                                                                             | Role                                                   |
 | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `apps/web/app/pages/resource-explorer/create/[type].vue`                         | the Sheet branch, submit, and blade routing            |
+| `apps/web/app/pages/resource-explorer/create/[type].vue`                         | the type guard and the layout around the form          |
+| `apps/web/app/components/Resource/Create/Form.vue`                               | the Sheet branch, the name, and what blocks Create     |
 | `apps/web/app/components/Resource/Create/SheetFile.vue`                          | drop zone, picker, parse, preview                      |
 | `apps/web/app/services/resource/sheet/dataSource/getDataSourceTypeByFilename.ts` | extension → format, from the format map's own `accept` |
 | `apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`  | the reused `accept` + `deserialize`                    |

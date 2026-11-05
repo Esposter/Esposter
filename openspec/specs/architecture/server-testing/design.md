@@ -71,7 +71,7 @@ afterEach(() => {
 
 | Helper                       | What it does                                                                                                                                                           |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getMockSession()`           | Returns the current queued session (or default). `user.id` is stable; `session.id` is a new UUID each call.                                                            |
+| `getMockSession()`           | Returns the default identity the test acts as: one user and one session for the whole run. A queued session does not change it, and reading it consumes nothing.       |
 | `mockSessionOnce(db, user?)` | Inserts a new test user into PGlite (if no `user` given) and queues their session for the **next** API call only. After that call the default (owner) session resumes. |
 | `replayMockSession(payload)` | Re-queues an existing session payload without inserting a new user. Use when the same non-owner user must make multiple sequential calls.                              |
 

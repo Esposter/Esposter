@@ -48,7 +48,7 @@ flowchart TD
     Call --> Leave["Leave call or route unmount"]
 ```
 
-Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a `flex-1` left column (camera preview hero above centered media controls) and a `shrink-0` right column ("Ready to join?" card above an invisible spacer whose height mirrors the controls via `useElementSize`, so the card lines up with the preview exactly). No manual widths/heights; mic/camera state is conveyed by the toggle buttons' icon/error colour, never duplicated as text.
+Prejoin layout: `flex-col` on mobile, `lg:flex-row` — a camera preview taking the larger share of the width, with the mic and camera switches overlaid on its foot, and beside it a column holding the "Ready to join?" heading over the one action (Join now, or Request to join). No manual widths/heights; mic/camera state is conveyed by the toggle buttons' icon/error colour, never duplicated as text.
 
 ## Room call vs standalone call
 

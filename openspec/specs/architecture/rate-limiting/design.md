@@ -35,7 +35,7 @@ flowchart TD
   webhookLimiter --> table
   addressLimiter --> table
   assetLimiter --> table
-  auth["better-auth endpoints"] -.->|"reads points and duration"| procedureLimiter
+  auth["better-auth endpoints"] -.->|"reads standardRateLimiter's points and duration"| procedureLimiter
   middleware -->|"consumed — sets X-RateLimit headers"| ok["procedure runs"]
   middleware -->|"rejected — checkIsRateLimitExceeded"| tooMany["TOO_MANY_REQUESTS"]
 ```
