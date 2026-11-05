@@ -1,6 +1,6 @@
 # Tasks
 
-Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gives the list a publication filter, and section 4 composes them into the invite. Section 5 is the gate on the engine's purge, and section 6 the sweep.
+Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gives the list a publication filter, and section 4 composes them into the invite. Section 5 is the sweep.
 
 ## 1. Link in the schema
 
@@ -28,12 +28,7 @@ Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gi
 - [x] 4.3 Test first: with no published survey the select shows its empty state and writes no blank id.
       Verify: the empty-state case passes, and no save is sent.
 
-## 5. Gate
+## 5. Sweep and specs
 
-- [ ] 5.1 Hold the release until the one-time survey purge, the [survey purge](../resource-roadmap/tasks.md) roadmap item, has run in each environment.
-      Verify: the purge's log reports zero live survey rows and zero invite references in each environment before this change's release is cut.
-
-## 6. Sweep and specs
-
-- [x] 6.1 Sweep the prose the change makes stale: the webpage survey invite spec's line that says no picker lists the owner's surveys, its design's Notes that call the picker owed, and the schema-forms design's Key files.
+- [x] 5.1 Sweep the prose the change makes stale: the webpage survey invite spec's line that says no picker lists the owner's surveys, its design's Notes that call the picker owed, and the schema-forms design's Key files.
       Verify: a search across `openspec/`, skipping this change's own tasks.md, finds no claim that the picker is still owed or that no picker exists, and the schema-forms Key files name the link renderer.

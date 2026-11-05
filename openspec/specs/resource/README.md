@@ -107,7 +107,7 @@ Azure service at any point.
 - **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
-- **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and, until its retirement, Flowchart.
+- **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it, and one Export CSV over every dataset provider.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
 - **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.

@@ -18,4 +18,4 @@ TipTap stops releasing, or a major release forces a migration across the custom 
 
 ## Cheaper interim
 
-TipTap stays as every rich-text surface's layer, and the page builder mounts it inside its text node, as the [page builder](../../../changes/resource-page-builder-program/design.md) program designs.
+TipTap stays as every rich-text surface's layer, and the page builder mounts it inside its text node, as the [page builder](../../../changes/archive/2026-11-05-resource-page-builder-program/design.md) program designs.

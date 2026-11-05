@@ -23,7 +23,7 @@ flowchart LR
 - **The chart body is inert while editing.** The tile wrapper takes the pointer-events off the visual, so a press on the chart is the tile's drag and a click opens its edit form. Zoom, brushing, the ruler and annotation ink are the reader's, on the published page, as [dashboard chart interaction](../dashboard-chart-interaction/design.md) describes.
 - **The corner keeps its occasional actions in one menu.** The visual's menu comes from the tile through the `actions` slot of `DashboardVisual`, beside the visual's own Copy link and Refresh. The row and the error state's Retry sit above the inert layer.
 - **An edit redraws its tile on save**, since the tile reads the visual the store writes; a resized tile redraws at its new height through the resize observer `DashboardVisual` already has. A save onto a visual removed while its dialog was open is refused, and the dialog stays open on the draft.
-- **Visuals over the same source share one read.** `useVisualPropsData` resolves through `useDataset`, keyed by the reference, so six charts over one sheet read it once.
+- **Each visual reads its own source.** `useVisualPropsData` resolves through `useDataset`, which keeps one read and one latest-wins key per instance, so six charts over one sheet make six reads.
 
 ## Decisions
 

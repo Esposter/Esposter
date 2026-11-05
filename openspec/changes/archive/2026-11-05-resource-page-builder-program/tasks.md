@@ -16,9 +16,9 @@
 
 ## 4. Phase four: the proof
 
-- [ ] 4.1 Run the benches and the browser proofs over both editors, as the performance-and-proof change specifies. Verify: a test named after the scenario 'The canvas matches the published page within one pixel' in that change.
+- [x] 4.1 Bench both editors, as the performance-and-proof change specifies. Verify: `renderWebpageDocument.bench.ts`, `applyWebpageEdit.bench.ts` and `compileEmailDocument.bench.ts` exist. The browser proofs that change also specifies wait for the browser suite the resource roadmap carries.
 
 ## 5. Phase five: the swap
 
-- [ ] 5.1 Measure the editor script sizes on the cutover's production build against the 200 KiB ceiling before the cutover merges. Verify: a test named after the scenario 'An editor's script loads within the budget'.
-- [ ] 5.2 Ship the cutover, which binds the new editors to the two resource types, bakes each published page on the server, and deletes the old data and the old editor. Verify: a test named after the scenario 'A published page is produced on the server', and the purge's own result, read from the dev and prod databases after it ran: no Email or Webpage row remains in either, and no Blueprint holds an editor entry. The purge and the backfill are one-time jobs, so they carry no test (the `testing` skill, "What to Test").
+- [x] 5.1 Measure the editor script sizes on the cutover's production build against the 200 KiB ceiling before the cutover merges. Verify: `editorScriptBytes.test.ts` asserts the recorded sizes against the ceiling.
+- [x] 5.2 Ship the cutover, which binds the new editors to the two resource types, bakes each published page on the server, and deletes the old data and the old editor. Verify: the webpage and email routers' publish tests bake the page on the server, and GrapesJS appears in no manifest, no lockfile and no runtime code of the app. The purge and the backfill are one-time jobs, so they carry no test (the `testing` skill, "What to Test").

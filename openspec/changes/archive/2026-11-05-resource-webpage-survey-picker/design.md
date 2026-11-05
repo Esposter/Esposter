@@ -31,10 +31,6 @@ flowchart LR
 - **The binding.** Choosing a survey writes its id to `surveyId`, which the page's save then indexes as a link, so deleting the survey later names the page as its delete-reference warning already does.
 - **Empty.** With no published survey, the select shows an empty state that says a survey must be published before it can be offered, and it does not write a blank id.
 
-## Ordering
-
-The engine's one-time purge runs in each environment before this picker ships. The purge deletes every stored survey and removes each invite that names one, so a picker released earlier could bind a survey the purge then removes.
-
 ## Key files
 
 | File                                                                        | Role                                                                       |

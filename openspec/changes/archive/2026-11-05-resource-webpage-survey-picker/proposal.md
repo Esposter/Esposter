@@ -23,8 +23,6 @@ Build the picker as a schema-form renderer keyed on the resource-link declaratio
 
 **Against the survey form engine.** The picker does not depend on the typed survey document of the [survey form engine](../archive/2026-11-04-resource-survey-form-engine-program/design.md). It reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
 
-**Ordering.** The engine's one-time purge deletes every stored survey and removes each invite that names one. If the picker shipped first, an owner could bind a survey the purge then deletes. So the picker waits for the purge to run in each environment.
-
 ## Capabilities
 
 - **resource/webpage-survey-invite-blocks** (modified): the invite's survey is chosen from a picker of published surveys.

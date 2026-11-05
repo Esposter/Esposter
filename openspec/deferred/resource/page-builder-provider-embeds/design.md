@@ -1,6 +1,6 @@
 # Page Builder Provider Embeds
 
-A webpage could embed a video from a provider such as YouTube or Vimeo, or a map from Google Maps, each as the provider's own frame. The [page builder](../../../changes/resource-page-builder-program/design.md) ships Video as an uploaded file instead, played by the page's own `<video>` element, and no Map type.
+A webpage could embed a video from a provider such as YouTube or Vimeo, or a map from Google Maps, each as the provider's own frame. The [page builder](../../../changes/archive/2026-11-05-resource-page-builder-program/design.md) ships Video as an uploaded file instead, played by the page's own `<video>` element, and no Map type.
 
 ## Why deferred
 
