@@ -11,6 +11,8 @@ export const PLANT_TABLE_NAME = "HomeWorldPlantExcelConfigData";
 // The home event table: a reward event gives a companion a furnishing suite it favours, its one-time reward and the talk it
 // Speaks, and a summon event the same talk as the companion's invitation. Only the reward events are published
 export const HOME_EVENT_TABLE_NAME = "HomeWorldEventExcelConfigData";
+// The home NPC table: each companion's row, with the three talks it speaks in the realm, each gated by a Friendship Level
+export const HOME_NPC_TABLE_NAME = "HomeWorldNPCExcelConfigData";
 export const HOME_AVATAR_REWARD_EVENT_TYPE = "HOME_AVATAR_REWARD_EVENT";
 export const HOME_AVATAR_SUMMON_EVENT_TYPE = "HOME_AVATAR_SUMMON_EVENT";
 // The realm's area table, which holds the load each area holds at most, and the furnishing table, which holds the load each
