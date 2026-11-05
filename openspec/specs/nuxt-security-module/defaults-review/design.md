@@ -63,7 +63,7 @@ flowchart LR
 
 - [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/), whose recommended values are in its repository's [the recommended header list](https://raw.githubusercontent.com/OWASP/www-project-secure-headers/master/ci/headers_add.json).
 - [OWASP HTTP Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html), for removing `X-Powered-By`, and for its omission of `X-Download-Options` from the recommended set.
-- [Microsoft's archived documentation on the download experience](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/jj542450(v=vs.85)>), for the `NoOpen` directive and the Internet Explorer 8 support behind `X-Download-Options`.
+- [Microsoft's archived documentation on the download experience](<https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/compatibility/jj542450(v=vs.85)>), for the NoOpen directive and the Internet Explorer 8 support behind `X-Download-Options`.
 - [http.dev's page on X-Download-Options](https://http.dev/x-download-options), for its note that Chrome, Firefox and Safari do not implement the header.
 - [MDN's browser compatibility data for HTTP headers](https://github.com/mdn/browser-compat-data/tree/main/http/headers), which has an entry for neither `X-Download-Options` nor `X-Powered-By`.
 - The installed [`nuxt`](https://www.npmjs.com/package/nuxt), [`@nuxt/nitro-server`](https://www.npmjs.com/package/@nuxt/nitro-server) and [`nitro`](https://www.npmjs.com/package/nitro) builds, read at the versions `apps/web` resolves, for the `x-powered-by` writes and the header's absence from Nitro and h3.
