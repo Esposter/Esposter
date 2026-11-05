@@ -16,6 +16,12 @@ Every open Genshin change and every open item of the Genshin roadmap SHALL name 
 - **WHEN** the tasks' phases are read
 - **THEN** the marked task holds phase 6 and the other holds phase 4
 
+#### Scenario: A change's phase is its lowest open task's
+
+- **GIVEN** a change at phase 2 whose only open task is marked phase 4
+- **WHEN** the workspace's changes are checked
+- **THEN** the check fails and names phase 4 as the change's phase
+
 #### Scenario: A change's pick phase is its lowest open task's
 
 - **GIVEN** a change at phase 4 whose only open task is marked phase 6
