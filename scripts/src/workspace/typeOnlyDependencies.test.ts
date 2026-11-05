@@ -16,16 +16,16 @@ import { describe, expect, test } from "vitest";
  * types is erased by the build and belongs in `devDependencies`. A published package is the other case: a type in its
  * signature is one its consumers resolve, so it keeps the name in `dependencies`.
  */
-describe("typeOnlyDependencies", () => {
-  const SOURCE_PATH_REGEX = /\.(?:mts|ts|vue)$/u;
-  const NON_SOURCE_PATH_REGEX = /\.(?:bench|test-d|test|typebench)\.ts$|\.d\.ts$|\/(?:fixtures|tests?)\//u;
-  const SCRIPT_BLOCK_REGEX = /<script\b(?:[^>"']|"[^"]*"|'[^']*')*>([\s\S]*?)<\/script>/gu;
+const getPackageName = (specifier: string): string | undefined => {
+  if (/^(?:\.|#|node:)/u.test(specifier)) return undefined;
+  const [scopeOrName = "", name = ""] = specifier.split("/");
+  return scopeOrName.startsWith("@") ? `${scopeOrName}/${name}` : scopeOrName;
+};
 
-  const getPackageName = (specifier: string): string | undefined => {
-    if (/^(?:\.|#|node:)/u.test(specifier)) return undefined;
-    const [scopeOrName = "", name = ""] = specifier.split("/");
-    return scopeOrName.startsWith("@") ? `${scopeOrName}/${name}` : scopeOrName;
-  };
+describe("typeOnlyDependencies", () => {
+  const SOURCE_PATH_REGEX = /\.(?:cjs|mjs|js|mts|ts|vue)$/u;
+  const NON_SOURCE_PATH_REGEX = /\.(?:bench|test-d|test|typebench)\.ts$|\.d\.ts$|\/(?:fixtures|tests?)\//u;
+  const SCRIPT_BLOCK_REGEX = /<script\b(?:[^>"']|"[^"]*"|'[^']*')*>(?<script>[\s\S]*?)<\/script>/gu;
 
   // Records, per package name, whether the source loads it as a value (a static import, a re-export or a dynamic
   // `import()`) or only names its types
@@ -70,7 +70,7 @@ describe("typeOnlyDependencies", () => {
         for (const path of sourcePaths) {
           const text = readFileSync(join(REPOSITORY_ROOT, path), "utf8");
           const scripts = path.endsWith(".vue")
-            ? [...text.matchAll(SCRIPT_BLOCK_REGEX)].map(([, script = ""]) => script)
+            ? Array.from(text.matchAll(SCRIPT_BLOCK_REGEX), ({ groups }) => groups?.script ?? "")
             : [text];
           for (const script of scripts) collectUsage(parseSource(script), valueNames, typeNames);
         }
