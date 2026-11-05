@@ -1,0 +1,17 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-phase: 7
+x-needs: [game-install, game-exports, media-engine, parity-page]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/models/genshinAssets/**",
+    "packages/genshin-world/src/services/character/**",
+    "packages/genshin-world/src/services/resident/**",
+    "packages/genshin-world/src/components/Character/**",
+    "packages/genshin-world/src/components/World/Interactables/**",
+    "packages/genshin-world/src/generated/**",
+    "packages/genshin-engine/src/character/**",
+    "openspec/changes/genshin-characters/design.md",
+  ]
