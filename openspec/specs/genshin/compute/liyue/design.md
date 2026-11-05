@@ -2,8 +2,6 @@
 
 ## Queue
 
-- [ ] `[page]` {liyue-display} needs game-exports, parity-page — **Liyue: the display pass.** `pnpm -C scripts genshin:parity passes liyue --pass Display`. Reads the reference at its current build: the tone curve, grading and bloom of the post profile. Writes `scripts/src/services/genshinParity/passes/snapshots/liyue.snapshot.md`. Bar: the Display bars of [compute](../README.md#bars).
-
 ## Waiting
 
 - [ ] `[page]` {liyue-harbor-location-camera-landmarks} needs game-exports, parity-page — **liyue-harbor-location: the camera solved on its landmarks and written.** `pnpm -C scripts genshin:parity pose liyue-harbor-location --witness liyue --write`. Reads the reference, the witness, the six landmarks in its `ParityReferenceMap` entry and their shares in `DerivedAssetLandmarkMap[liyue]`. Writes and bars as the [compute bars](../README.md#bars) set out. — waits on a mesh the extraction holds for each landmark.
@@ -15,6 +13,7 @@
 - [ ] `[page]` {liyue-harbor-location-sun-direction} needs game-exports, parity-page — **liyue-harbor-location: the sun's direction by its shadows' edges.** `pnpm -C scripts genshin:parity shadows liyue-harbor-location --witness liyue`. Reads `{data-root}/genshin-parity/references/liyue-harbor-location.png` and the witness, its shadows' edges over flat receivers. Writes a shadow image outside the repository, and the printed directions. Bar: the Sun bars of [compute](../README.md#bars). Waits on a reference frame with a cast shadow on a flat receiver: the shadows solve found no shadow's edge in its reference, so the held minute needs another source (the [roadmap](../../../../changes/genshin-roadmap/tasks.md)'s sun-direction item).
 - [ ] `[page]` {liyue-light} needs game-exports, parity-page — **Liyue: the light pass.** `pnpm -C scripts genshin:parity passes liyue --pass Light`. Reads the solved direction above, the lit stone's colour over the reference and its glow over the reference's frame. Writes `scripts/src/services/genshinParity/passes/snapshots/liyue.snapshot.md`. Bar: the Light bars of [compute](../README.md#bars). Waits on `liyue-harbor-location-sun-direction`.
 - [ ] `[page]` {liyue-harbor-location-score} needs game-exports, parity-page — **liyue-harbor-location: the frame's score.** `pnpm -C scripts genshin:parity compare liyue-harbor-location`. Reads the reference and the page's screen at the reference's size. Writes its row of `ParityReferenceMap.snapshot.md` and the reference, ours and difference images. Bar: the frame score's, as [compute's bars](../README.md#bars) set out. Waits on every pass of its region, which are still queued or waiting.
+- [ ] `[page]` {liyue-display} needs game-exports, parity-page — **Liyue: the display pass.** `pnpm -C scripts genshin:parity passes liyue --pass Display`. Reads the reference at its current build: the tone curve, grading and bloom of the post profile. Writes `scripts/src/services/genshinParity/passes/snapshots/liyue.snapshot.md`. Bar: the Display bars of [compute](../README.md#bars). Waits on the landmarks of its reference defined for its witness in `DerivedAssetLandmarkMap`, which holds none for it: the camera pass reads them first, as the Inazuma Display run's stop in `readReferenceLandmarks` showed ([roadmap](../../../../changes/genshin-roadmap/tasks.md)).
 
 ## Sources
 
