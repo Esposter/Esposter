@@ -22,8 +22,7 @@ export const CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE = new InvalidOperationError
 // Also the ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
 // Document might one day cross. No string or list inside a document can outgrow the document holding it
 export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
-// The address of an uploaded file is the lowercase hex SHA-256 of its bytes, and this source is the one place that class
-// And length are written, so every regex that matches an address derives from it
+// The class and length of an address are written once, here, so every regex that matches an address derives from it
 const ASSET_HASH_SOURCE = String.raw`[\da-f]{64}`;
 // The address of an uploaded file: the lowercase hex SHA-256 of its bytes, the last segment of its blob name
 export const ASSET_HASH_REGEX = new RegExp(String.raw`^${ASSET_HASH_SOURCE}$`, "u");
