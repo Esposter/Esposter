@@ -93,3 +93,101 @@ The progress report SHALL derive every phase's counts from the checkboxes, the c
 - **GIVEN** a phase with two screens, one of them done, and one region
 - **WHEN** the report is printed
 - **THEN** the phase lists two screens with one done and one region
+
+### Requirement: A scripted session changes the world only through the registry and the frame clock
+
+A scripted session SHALL change and read the world only through the developer registry, SHALL move time only in fixed frames, and SHALL draw its randomness and its clock from fixed sources, so a run and its repeat read the same values.
+
+#### Scenario: A frame advances the clock by one fixed step
+
+- **GIVEN** a scripted clock with the frame clock faked
+- **WHEN** the runner steps one frame
+- **THEN** the clock advances by one fixed step and by no more
+
+#### Scenario: Two runs of a script read the same values
+
+- **GIVEN** a script run from the new game with its random source and clock fixed
+- **WHEN** the script is run a second time from the new game
+- **THEN** every reading it takes is the same in both runs
+
+### Requirement: The game's reads each answer one value, and a hold presses a control for seconds
+
+The developer registry SHALL offer a hold that presses a control for seconds, and SHALL offer the reads a script asserts: a quest's step, an item's count, the Archive's defeats, the open screen and whether the terrain is settled. Each read SHALL answer one value.
+
+#### Scenario: A hold command holds a control for its seconds
+
+- **GIVEN** a control with bound keys and a registered hold
+- **WHEN** the line holds it for two seconds
+- **THEN** its key is down at the first frame and up once two seconds of frames have passed
+
+#### Scenario: A quest read answers the step its progress is on
+
+- **GIVEN** a quest in progress on its second of three steps
+- **WHEN** the quest's read runs
+- **THEN** it answers step two of three, and finished once every step is past
+
+#### Scenario: A bag read counts an item across the bag and the wallet
+
+- **GIVEN** an item held in the bag and a currency held in the wallet
+- **WHEN** the read names each by the name the game shows
+- **THEN** each answers its count across the bag and the wallet together
+
+#### Scenario: A kills read counts the defeats the Archive holds
+
+- **GIVEN** an Archive that has counted three defeats
+- **WHEN** the kills read runs
+- **THEN** it answers three
+
+#### Scenario: A screen read names the open screen
+
+- **GIVEN** the Paimon menu open over the world
+- **WHEN** the screen read runs
+- **THEN** it answers the Paimon menu's screen kind
+
+#### Scenario: A settled read reports tiles in flight
+
+- **GIVEN** a terrain tile asked for and not yet given
+- **WHEN** the settled read runs
+- **THEN** it answers no, and yes once the tile is given
+
+### Requirement: A script stops at its first failed step and compares one value exactly
+
+A scripted session SHALL run its steps in order and stop at the first step that fails, naming that step. An expect step SHALL compare one value, or one field of the state record, with the expected text exactly.
+
+#### Scenario: A failed line stops the script and names it
+
+- **GIVEN** a script whose second line is refused
+- **WHEN** the script runs
+- **THEN** its third step does not run and the failure names the second line
+
+#### Scenario: An expect step compares one field of a record exactly
+
+- **GIVEN** a state record whose place field reads Windrise
+- **WHEN** an expect step names the place field as Liyue
+- **THEN** the step fails and names the field with both values
+
+### Requirement: A save in a script is the page's save, and a load resumes it in a fresh session
+
+A save SHALL pass the world's last save through the save schema, and a save the schema refuses SHALL fail the script. A load SHALL mount a fresh session from that save, so the readings the save holds read the same after the load.
+
+#### Scenario: A load restores what the save holds
+
+- **GIVEN** a quest's step, an item's count and an Archive defeat read before a save
+- **WHEN** the script loads the save into a fresh session
+- **THEN** the same step, count and defeat read after the load
+
+#### Scenario: A save the schema refuses fails the script
+
+- **GIVEN** a world save that the save schema refuses
+- **WHEN** the script saves
+- **THEN** the script fails and names the schema's message
+
+### Requirement: A quest with a script is reported as scripted and never as done
+
+The progress report SHALL print a quest that a scripted session names as scripted and leave it open until its checkbox is ticked, and SHALL run no browser to decide it.
+
+#### Scenario: A quest with a script is reported as scripted, not done
+
+- **GIVEN** a quest a scripted session names and a quest no session names
+- **WHEN** the report is printed
+- **THEN** the first is scripted and open, and the second is not measurable
