@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "scripts/src/services/fleet/**",
+    "scripts/src/services/openspec/**",
+    "scripts/src/workspace/**",
+    "openspec/changes/genshin-roadmap/**",
+    "openspec/specs/genshin/compute/**",
+  ]
