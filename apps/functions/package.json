@@ -63,9 +63,6 @@
     "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
-    "@azure/search-documents": "catalog:",
-    "@azure/service-bus": "catalog:",
-    "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
@@ -79,6 +76,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@azure/search-documents": "catalog:",
+    "@azure/service-bus": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",

@@ -151,7 +151,6 @@
     "vue-grid-layout-headless": "workspace:*",
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",
-    "vue-router": "catalog:",
     "web-push": "catalog:",
     "write-excel-file": "catalog:",
     "zod": "catalog:"
@@ -199,6 +198,7 @@
     "unplugin-pwa-nuxt": "workspace:*",
     "unstorage": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vue-router": "catalog:"
   }
 }
