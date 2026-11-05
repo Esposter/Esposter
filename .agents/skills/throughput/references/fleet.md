@@ -23,6 +23,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
   - `x-needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
   - `x-waiting: "<blocker>"`, set as the `openspec` skill, `references/change-metadata.md` gives it, such as on another unit or on data that is not extracted; a waiting change is not offered at all, its unblocked tasks included, and `pnpm ai:fleet:status` lists it with its blocker;
   - `x-touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at the last slash before its first wildcard, so a glob names whole folders: `Forge/*` and `Forge/**` both name `Forge`, while `Forge*/**` has no slash before its wildcard and names the repository root, which overlaps every entry. A long list may wrap over the lines below its key, as the formatter writes it.
+- **A unit's phase is read off its change's open tasks**, the lowest phase among them, as the `openspec` skill's `references/change-metadata.md` sets out.
 - **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
   - its area is lent;

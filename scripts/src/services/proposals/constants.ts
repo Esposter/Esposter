@@ -4,6 +4,7 @@ export const PROPOSALS_DIRECTORY = "openspec/changes";
 export const ARCHIVE_FOLDER = "archive";
 // The change's design: the lead naming what it waits on, the decisions and the Key files table
 export const PROPOSAL_DESIGN_FILE = "design.md";
+export const PROPOSAL_TASKS_FILE = "tasks.md";
 export const PROPOSAL_METADATA_FILE = ".openspec.yaml";
 // An umbrella over the changes sharing its prefix — the decision and the build order — which they may wait on but which
 // Is never a unit to build itself

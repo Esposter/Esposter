@@ -21,6 +21,8 @@ A change may also name these fields, each optional; the first three are the flee
 - `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine;
 - `x-phase: <n>` — the Genshin phase the change holds, an integer from 0 to 7; a word or a number past 7 fails the read.
 
-A change whose first affected area is `genshin` names exactly one phase, the lowest whose exit gate fails without it.
+A task whose phase is another than its change's says so with a marker right after its number, `- [ ] 3.1 [phase 6] Text`, an integer from 0 to 7; a marker past 7 is no marker, so its line reads as an ordinary task. A task without one holds its change's `x-phase`. A change is picked at the lowest phase among its open tasks, so a done task's marker never counts, and a change none of whose open tasks holds a phase is picked at none.
+
+A change whose first affected area is `genshin` names exactly one phase, its `x-phase`: the phase its tasks hold, which is the lowest whose exit gate fails without it.
 
 Omitted, each reads as empty, so a change with none of them is ready to take on any machine that lends its area. A sequence is written in flow style (`[a, b]`); a bare string where a sequence belongs fails the fleet's read rather than reading as empty.

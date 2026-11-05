@@ -13,7 +13,7 @@ import { readProposalSummaries } from "#src/services/proposals/readProposalSumma
 // Metadata's own, empty when the change names none
 export const readProposalEntries = (files: readonly QueueFile[]): FleetEntry[] => {
   const pathTextMap = new Map(files.map(({ path, text }) => [path, text]));
-  return readProposalSummaries(files).map(({ id }) => {
+  return readProposalSummaries(files).map(({ id, phase }) => {
     const design = pathTextMap.get(`${PROPOSALS_DIRECTORY}/${id}/${PROPOSAL_DESIGN_FILE}`) ?? "";
     const metadata = pathTextMap.get(`${PROPOSALS_DIRECTORY}/${id}/${PROPOSAL_METADATA_FILE}`) ?? "";
     const { needs, touches, waiting } = parseProposalMetadata(metadata);
@@ -24,6 +24,7 @@ export const readProposalEntries = (files: readonly QueueFile[]): FleetEntry[] =
       lane: "",
       line: "",
       needs,
+      phase,
       touches: [...parseKeyFilePaths(design), ...touches],
       waiting,
     };

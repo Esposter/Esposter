@@ -19,7 +19,7 @@ stateDiagram-v2
   Built --> Open: a later change carries a new delta
 ```
 
-The proposals report (`pnpm ai:proposals:report`) ranks the open changes. A change's id gives its area, and its `.openspec.yaml` carries the fields the fleet schedules by beside the CLI's own: the model that wrote it, the changes it needs first, the files it touches and what it waits on.
+The proposals report (`pnpm ai:proposals:report`) ranks the open changes. A change's id gives its area, and its `.openspec.yaml` carries the fields the fleet schedules by beside the CLI's own: the model that wrote it, the changes it needs first, the files it touches, what it waits on and the phase it holds. A task of a change names another phase with a `[phase <n>]` marker, and the phase a change is picked at is the lowest among its open tasks.
 
 ## Key files
 

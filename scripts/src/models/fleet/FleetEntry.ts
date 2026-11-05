@@ -4,7 +4,8 @@ import type { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 // Writes, which no live claim may overlap, and `needs` the capabilities a machine must hold to take it. `lane` is the
 // Queue item's lane tag (`page`, `cpu`), empty for a unit, which has none. `line` is the compute page line a queue item
 // Is read from, quoted whole in its brief, empty for a unit. `waiting` is the blocker a unit names while it
-// Cannot be built yet, empty when it can; a waiting entry is never taken
+// Cannot be built yet, empty when it can; a waiting entry is never taken. `phase` is the phase a unit is picked at, its
+// Change's lowest open task's, and absent for a queue item
 export interface FleetEntry {
   area: string;
   id: string;
@@ -12,6 +13,7 @@ export interface FleetEntry {
   lane: string;
   line: string;
   needs: string[];
+  phase?: number;
   touches: string[];
   waiting: string;
 }
