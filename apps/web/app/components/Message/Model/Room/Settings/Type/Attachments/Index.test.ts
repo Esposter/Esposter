@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MEGABYTE } from "#shared/services/app/constants";
@@ -22,7 +23,7 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     maxFileSizeBytes,
   };
 
-  // Both fields save the whole form through one mutation key, so overlapping saves mark the earlier call
+  // Both fields save through one mutation key, so overlapping saves mark the earlier call
   // Stale — it never rolls back and never alerts, leaving the rejected value rendered as if it persisted.
   // Queued saves each settle as the latest for their key
   test("surfaces a rejected save even when the next control saves straight after", async () => {
@@ -95,5 +96,26 @@ describe("messageModelRoomSettingsTypeAttachmentsIndex", () => {
     await flushPromises();
 
     expect(saveCount).toBe(2);
+  });
+
+  test("sends only the field the reader edited, not one another client changed since the panel opened", async () => {
+    expect.hasAssertions();
+
+    const { promise: saved, resolve: resolveSaved } = Promise.withResolvers<void>();
+    const inputs: UpdateRoomInput[] = [];
+    trpcMsw.room.updateRoom.mutation(({ input }) => {
+      inputs.push(input);
+      resolveSaved();
+      return { ...room, ...input };
+    });
+    const component = await mountSuspended(MessageModelRoomSettingsTypeAttachmentsIndex, { props: { room } });
+    await component.setProps({ room: { ...room, allowedMimeCategories: [MimeCategory.Audio] } });
+    const input = component.get("input");
+    await input.setValue(String(maxFileSizeBytes / MEGABYTE + 1));
+    await input.trigger("focusout");
+    await saved;
+    await flushPromises();
+
+    expect(inputs).toStrictEqual([{ id: room.id, maxFileSizeBytes: maxFileSizeBytes + MEGABYTE }]);
   });
 });

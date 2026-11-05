@@ -27,9 +27,11 @@ const maxFileSizeRules = [UiRules.minValue(1), UiRules.maxValue(maxFileSizeMegab
 const save = async () => {
   if (!isMaxFileSizeBytesDirty.value && !isAllowedMimeCategoriesDirty.value) return;
 
+  // The fields this session edited and no others, so one another client changed since the panel opened is not written
+  // Back with the value this panel was opened on
   await saveRoom({
-    allowedMimeCategories: editedAllowedMimeCategories.value,
-    maxFileSizeBytes: editedMaxFileSizeBytes.value,
+    ...(isAllowedMimeCategoriesDirty.value && { allowedMimeCategories: editedAllowedMimeCategories.value }),
+    ...(isMaxFileSizeBytesDirty.value && { maxFileSizeBytes: editedMaxFileSizeBytes.value }),
   });
   settleMaxFileSizeBytes();
   settleAllowedMimeCategories();
