@@ -4,7 +4,7 @@ Read when asked what to build next or for the low-hanging fruit, when reading `p
 
 ## The report
 
-`pnpm ai:proposals:report` reads every open proposal and prints one line each, cheapest first:
+`pnpm ai:proposals:report` reads every open proposal and prints one line each, under a heading per phase (phase 0 first, then the proposals holding none) and cheapest first within each heading:
 
 - **Files** — the rows of its Key files table, which lists the existing files the work touches (the `openspec` skill, `references/page-shapes.md`). A proposal with no table prints **unsized** and sorts last: nothing can be read off it, and a product-review pass owes it the table (the `product-review` skill, `references/verifying-proposals.md`).
 - **Signals** — the costs past the files themselves, each read off a Key files path; the set and what each one reads is `scripts/src/models/proposals/ProposalSignal.ts`.

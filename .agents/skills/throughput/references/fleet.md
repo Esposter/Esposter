@@ -24,12 +24,14 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
   - `x-waiting: "<blocker>"`, set as the `openspec` skill, `references/change-metadata.md` gives it, such as on another unit or on data that is not extracted; a waiting change is not offered at all, its unblocked tasks included, and `pnpm ai:fleet:status` lists it with its blocker;
   - `x-touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at the last slash before its first wildcard, so a glob names whole folders: `Forge/*` and `Forge/**` both name `Forge`, while `Forge*/**` has no slash before its wildcard and names the repository root, which overlaps every entry. A long list may wrap over the lines below its key, as the formatter writes it.
 - **A unit's phase is read off its change's open tasks**, the lowest phase among them, as the `openspec` skill's `references/change-metadata.md` sets out.
-- **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
+- **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these, in the order below:
   - its needs are within the machine's capabilities;
   - its area is lent;
   - it is not waiting on a blocker;
   - no one holds it;
   - its touch set overlaps no held claim's.
+
+  Entries are taken lowest phase first, a compute item's phase being its page's row in the compute README's Phases table. An entry with no phase comes after every phase. Within a phase the order is kept: the compute queue's items in their pages' order, then the units cheapest first. A phase none of whose entries meets these conditions is passed over, so the next phase's first entry is claimed.
 
   Nothing ready means the machine stays idle and says nothing.
 

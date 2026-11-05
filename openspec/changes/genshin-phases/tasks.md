@@ -14,7 +14,7 @@
 
 ## 3. The pick
 
-- [ ] 3.1 Make `pnpm ai:fleet:next` take the lowest phase's first unit the machine can run and no claim holds, and group `pnpm ai:proposals:report` by phase. Verify: tests named after the scenarios 'The lowest phase with a runnable unit is taken first' and 'A phase whose units wait on the other machine is passed over'.
+- [x] 3.1 Make `pnpm ai:fleet:next` take the lowest phase's first unit the machine can run and no claim holds, and group `pnpm ai:proposals:report` by phase. Verify: tests named after the scenarios 'The lowest phase with a runnable unit is taken first' and 'A phase whose units wait on the other machine is passed over'.
 
 ## 4. The definitions of done
 

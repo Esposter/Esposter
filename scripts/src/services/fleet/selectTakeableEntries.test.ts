@@ -159,4 +159,50 @@ describe(selectTakeableEntries, () => {
       selectTakeableEntries([claimed, overlapping, separate], PROFILE, claims, NOW).map(({ id }) => id),
     ).toStrictEqual(["inventory"]);
   });
+
+  test("The lowest phase with a runnable unit is taken first", () => {
+    expect.hasAssertions();
+
+    const entries = [
+      createEntry({ id: "phase-3", kind: FleetEntryKind.Unit, lane: "", phase: 3 }),
+      createEntry({ id: "phase-1", kind: FleetEntryKind.Unit, lane: "", phase: 1 }),
+    ];
+
+    expect(selectTakeableEntries(entries, PROFILE, new Map(), NOW).map(({ id }) => id)).toStrictEqual([
+      "phase-1",
+      "phase-3",
+    ]);
+  });
+
+  test("A phase whose units wait on the other machine is passed over", () => {
+    expect.hasAssertions();
+
+    const entries = [
+      createEntry({ id: "phase-1-first", kind: FleetEntryKind.Unit, lane: "", needs: ["game-install"], phase: 1 }),
+      createEntry({ id: "phase-1-second", kind: FleetEntryKind.Unit, lane: "", needs: ["game-install"], phase: 1 }),
+      createEntry({ id: "phase-3", kind: FleetEntryKind.Unit, lane: "", phase: 3 }),
+    ];
+
+    expect(
+      selectTakeableEntries(entries, { ...PROFILE, capabilities: [] }, new Map(), NOW).map(({ id }) => id),
+    ).toStrictEqual(["phase-3"]);
+  });
+
+  test("an entry with no phase is offered after every phase, and the listed order holds within a phase", () => {
+    expect.hasAssertions();
+
+    const entries = [
+      createEntry({ id: "no-phase" }),
+      createEntry({ id: "phase-3-first", phase: 3 }),
+      createEntry({ id: "phase-0", phase: 0 }),
+      createEntry({ id: "phase-3-second", phase: 3 }),
+    ];
+
+    expect(selectTakeableEntries(entries, PROFILE, new Map(), NOW).map(({ id }) => id)).toStrictEqual([
+      "phase-0",
+      "phase-3-first",
+      "phase-3-second",
+      "no-phase",
+    ]);
+  });
 });

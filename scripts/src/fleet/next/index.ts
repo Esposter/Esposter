@@ -5,8 +5,8 @@ import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
-// `pnpm ai:fleet:next [--lane <lane>] [--kind <queue|unit>]` — claims the first entry this worker may take and prints its
-// Id and the worker id, or prints nothing when none is takeable, which leaves the machine idle (the throughput skill,
+// `pnpm ai:fleet:next [--lane <lane>] [--kind <queue|unit>]` — claims the first entry this worker may take, lowest phase
+// First, and prints its id and the worker id, or prints nothing when none is takeable, which leaves the machine idle (the throughput skill,
 // `references/fleet.md`). The worker id is FLEET_WORKER, or a new one when the environment gives none; a runner passes it
 // To hold and release the entry. A runner names its lane, so a page runner never claims a cpu item; a skipped queue line is
 // Warned about on stderr
