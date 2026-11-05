@@ -217,4 +217,17 @@ describe(validateSurveyAnswers, () => {
       { message: SURVEY_UNKNOWN_QUESTION_MESSAGE, name: "b" },
     ]);
   });
+
+  test("a calculated value the result leaves out is refused on a submit, as a draft refuses it", () => {
+    expect.hasAssertions();
+
+    const document = createSurveyRunnerDocument(
+      [createSurveyPage([{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }])],
+      [{ expression: "{a} = 'a'", includeIntoResult: false, name: "b" }],
+    );
+
+    expect(validateSurveyAnswers(document, { a: "a", b: true }, SurveyAnswerValidationMode.Submit, now)).toStrictEqual([
+      { message: SURVEY_UNKNOWN_QUESTION_MESSAGE, name: "b" },
+    ]);
+  });
 });

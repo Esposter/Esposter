@@ -38,8 +38,14 @@ export const validateSurveyAnswers = (
   const shownNames = new Set(
     views.flatMap(({ node }) => (node.type === SurveyNodeType.Panel ? [] : [node.props.name])),
   );
-  // A submit also carries the values the survey calculates into its result. They answer no question, so they are accepted as they are
-  const calculatedNames = new Set(isSubmit ? document.root.props.calculatedValues.map(({ name }) => name) : []);
+  // A submit also carries the calculated values its result includes into the result. They answer no question, so they are accepted as they are
+  const calculatedNames = new Set(
+    isSubmit
+      ? document.root.props.calculatedValues
+          .filter(({ includeIntoResult }) => includeIntoResult)
+          .map(({ name }) => name)
+      : [],
+  );
 
   const issues: SurveyAnswerIssue[] = [];
   for (const name of Object.keys(answers)) {
