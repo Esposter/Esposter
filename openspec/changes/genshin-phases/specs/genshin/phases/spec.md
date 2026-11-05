@@ -24,9 +24,9 @@ Every open Genshin change and every open item of the Genshin roadmap SHALL name 
 
 #### Scenario: A change's pick phase is its lowest open task's
 
-- **GIVEN** a change at phase 4 whose only open task is marked phase 6
+- **GIVEN** a change at phase 4 with a done task marked phase 2, and open tasks marked phase 4 and phase 6
 - **WHEN** the fleet reads the change's phase
-- **THEN** the change is offered at phase 6
+- **THEN** the change is offered at phase 4, since the done task's marker does not count
 
 #### Scenario: An open roadmap item sits in a phase section
 
