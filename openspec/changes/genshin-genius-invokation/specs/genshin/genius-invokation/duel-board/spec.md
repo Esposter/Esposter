@@ -22,17 +22,6 @@ A character's and a card's accessible name SHALL carry the numbers the board sho
 - **WHEN** a screen reader reads its name
 - **THEN** the number is read alone, without a label
 
-### Requirement: Seated challengers offer their duel from their talk
-
-A seated challenger's talk SHALL offer its duel as a reply that opens the duel screen with the challenger's own deck.
-
-#### Scenario: A seated challenger's talk opens the duel
-
-- **GIVEN** a challenger is seated at its estimated place
-- **WHEN** the player talks to the challenger and chooses the duel reply
-- **THEN** the duel screen opens
-- **AND** the challenger plays the deck the game gives its duel
-
 ### Requirement: Challenger games open at the Player Level
 
 A challenger SHALL offer each game once the player's Player Level reaches the level that game's week row names.
@@ -64,3 +53,33 @@ The card game SHALL open with its tutorial quest once the player reaches Adventu
 - **GIVEN** the player's Adventure Rank is below 32
 - **WHEN** the player is in the world
 - **THEN** the card game is not offered
+
+## MODIFIED Requirements
+
+### Requirement: A seated resident offers the duel on the talk's opening line
+
+A resident with a seated duel SHALL offer the duel as a reply on the opening line of their standing talk, after the talk's own replies (`duelGameId`), and choosing it SHALL open the duel with the challenger's own deck.
+
+#### Scenario: Duel reply is offered after the talk's own replies
+
+- **GIVEN** a resident has a seated duel
+- **WHEN** the player begins the resident's talk
+- **THEN** the duel reply is offered on the opening line after the talk's own replies
+
+#### Scenario: Choosing the duel opens the board
+
+- **GIVEN** the duel reply is offered
+- **WHEN** the player chooses it
+- **THEN** the talk's screen gives way and the duel board opens, with no talk-end quest event
+
+#### Scenario: The challenger plays the deck the game gives its duel
+
+- **GIVEN** a resident has a seated duel
+- **WHEN** the player chooses the duel reply
+- **THEN** the challenger plays the deck the game gives its duel
+
+#### Scenario: Resident with no seated duel offers none
+
+- **GIVEN** a resident has no seated duel
+- **WHEN** the player begins the resident's talk
+- **THEN** no duel reply is offered
