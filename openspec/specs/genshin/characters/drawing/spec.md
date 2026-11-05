@@ -12,7 +12,7 @@ A character's model SHALL be drawn as one skinned mesh, with each material shade
 
 #### Scenario: Model drawn with the game's shading
 
-- **GIVEN** a model read from a character pack
+- **GIVEN** a model read from a published character pack
 - **WHEN** it is drawn
 - **THEN** it is one mesh
 - **AND** each material is shaded by the game's character shading
