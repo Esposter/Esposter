@@ -4,6 +4,7 @@
 - [x] 1.2 Add the bloom reading over the brightest pixels of each reference. Verify: a test named after the scenario 'Bloom closes where it brings the brightest pixels closer'.
 - [ ] 1.3 Re-read the bloom's field when the drawn bloom reads no closer than none. Verify: a test named after the scenario 'A bloom that reads no closer reopens its field'.
 - [ ] 1.4 Fix the login's washed-out shaders in the colour pass with bloom on. Depends on 1.1. The login scene draws the game's bloom by default (`isBloomed` defaults to true in `packages/genshin-world/src/components/Login/Scene/Index.vue`), and its shaders read washed out against the game's frames. Verify: `pnpm -C scripts genshin:parity compare <login reference>` on each login reference reads a mean difference no worse than its row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`.
+- [ ] 1.5 Decide whether `packages/genshin-engine/src/post/computeBloomPrefilter.ts` stays as the tested CPU form of the bloom prefilter or is deleted. Today nothing outside its own test calls it, and it repeats the arithmetic of the prefilter in `createGameBloomNode.ts`, so a change to one leaves the other untouched. If it stays, its comment and test name the one place each form is kept in step; if it is deleted, its file, its test and its rows in the `rendering-style` and this change's design go in the same change. Verify: the decision is written in this change's `design.md`, and the chosen form has a test that fails when the two forms disagree, or none remains.
 
 ## 2. Clouds
 
