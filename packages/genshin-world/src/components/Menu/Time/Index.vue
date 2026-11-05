@@ -14,14 +14,16 @@ interface Props {
   clockMinutes: number;
   // The game's words in the reader's language
   gameText: GameText;
+  // The advance the dial opens at, in minutes: none as the game opens it, and the pointer turns it from there
+  initialAdvance?: number;
 }
 
-const { clockMinutes, gameText } = defineProps<Props>();
+const { clockMinutes, gameText, initialAdvance = 0 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; confirm: [minutes: number] }>();
 const dial = useTemplateRef("dial");
 const confirmButton = useTemplateRef("confirmButton");
-// How far the pointer has dialled the advance, from none, and the angle it was at about the dial's centre while held
-const advance = ref(0);
+// How far the pointer has dialled the advance, and the angle it was at about the dial's centre while held
+const advance = ref(initialAdvance);
 let pointerAngle: number | undefined;
 const targetMinutes = computed(() => getTimeTargetMinutes(clockMinutes, advance.value));
 // Whether the target falls on the clock's own day, counting the advance from its minimum as the target does
@@ -111,8 +113,8 @@ onMounted(() => {
           <path class="hand current" d="M 0 10 V -86" />
         </g>
         <g :transform="`rotate(${toDialAngle(targetMinutes)})`">
-          <path class="hand" d="M 0 10 V -98" />
-          <polygon points="-9,-96 0,-118 9,-96" fill="#efe9dc" />
+          <path class="hand" d="M 0 0 V -66" />
+          <polygon points="-19,-60 3,-109 25,-61 3,-72" fill="#efe9dc" />
         </g>
         <circle class="hub" r="17" />
         <circle r="5" fill="#efe9dc" />

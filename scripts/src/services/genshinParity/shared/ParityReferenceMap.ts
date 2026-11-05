@@ -1066,11 +1066,17 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "menu-paimon-hover": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "hover" },
   "menu-paimon-pressed": { pending: NO_VARIANT_SCREENSHOT, screen: "MenuPaimon", variant: "pressed" },
   // The English PC client's Time screen at 1080 high from a public recording (yt-a4_J84iMqR0), ten seconds in: the clock
-  // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The fixture's hand rests half an hour on, so
-  // The compare differs at the hand and the target hour until the screen takes a dialled advance
+  // At 03:52 and the dial turned to 18:00 Today, drawn over the world it dims. The frame shows no title, close cross or
+  // Confirm, which the screen draws by design, so those pieces score against the frame's dark ground. The dial and the
+  // Column of words are the frame's own pieces, filled from round them, so the frame's copies never show under ours
   "menu-time": {
     isBackdrop: true,
-    props: { clockMinutes: 232 },
+    plate: [
+      { height: 530, width: 485, x: 1165, y: 240 },
+      { height: 350, width: 180, x: 870, y: 318 },
+    ],
+    // The frame's dial stands at 18:00 Today, which is 848 minutes on from the clock's 03:52
+    props: { clockMinutes: 232, initialAdvance: 848 },
     screen: "MenuTime",
     source: "yt-a4_J84iMqR0-time.mp4 at 10s",
   },
