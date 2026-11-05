@@ -208,13 +208,13 @@ export const MIN_SPEECH_TOKEN_CEILING = 100;
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
 export const VOICE_PROOF_TEXT = "The voice is set up, and a reply's spoken lines are read from the next session on.";
-// The viewer's socket: the budget a connection and its registration get to answer, the state of an open socket, the
-// Message numbers start, and the channel and volume every sound plays on
 // The motion map before a reader maps anything: every moment is there, each with no motion
 export const EMPTY_VIEWER_MOTIONS: ViewerConfiguration["motions"] = {
   [ViewerMoment.Attention]: "",
   [ViewerMoment.TurnEnd]: "",
 };
+// The viewer's socket: the budget a connection and its registration get to answer, the state of an open socket, the
+// Message numbers start, and the channel and volume every sound plays on
 export const VIEWER_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 3 }).total("milliseconds");
 export const VIEWER_OPEN_READY_STATE = 1;
 export const VIEWER_MESSAGE_ID_START = 1;
