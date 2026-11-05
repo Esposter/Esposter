@@ -48,7 +48,7 @@ catalog:
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.7.6
-  "@dxup/nuxt": ^0.5.10
+  "@dxup/nuxt": ^0.5.11
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.15
   "@eslint/core": ^1.2.1
