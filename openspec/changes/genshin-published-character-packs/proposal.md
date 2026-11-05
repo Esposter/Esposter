@@ -12,6 +12,7 @@ The world reads the published packs and the loading screen downloads them.
 - The packs are listed by one hosted index record, which gives each avatar's files with their bytes and hashes.
 - The opening starts downloading every published pack when it mounts, keeps each file in the browser, and the startup loading screen shows the download's progress by bytes and the size that remains, in the game's own words.
 - A download that fails after its retries stops the loading with the game's failure line and a retry.
+- The world's screen reads the game's tables as soon as the save and the packs are held, while the splashes and the login play, and starts its session only at the door, so the wait under the startup loading screen is the session's own work and not the tables'.
 - **BREAKING** The three delivery routes and everything that served only them are removed: the development server's route, the account's kept packs (their procedures, API route, composable and blob helpers) and the browser's kept packs (the loader, the zip and folder readers, the stores).
 
 ## Capabilities

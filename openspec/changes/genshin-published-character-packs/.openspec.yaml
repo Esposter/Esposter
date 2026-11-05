@@ -13,6 +13,8 @@ x-touches:
     "packages/genshin-world/src/components/World/Windrise/**",
     "packages/genshin-world/src/components/World/CharacterPlaceholder/**",
     "packages/genshin-world/src/components/World/Session/**",
+    "packages/genshin-world/src/components/World/Screen/**",
+    "packages/genshin-world/src/models/world/WorldScreenProps.ts",
     "packages/genshin-world/src/components/Character/PackLoader/**",
     "packages/genshin-world/src/components/Character/Terms/**",
     "packages/genshin-world/src/components/Game/Opening/**",

@@ -12,9 +12,10 @@ import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { computeLoadingProgress, GameOpening } from "genshin-world";
 
 // The game as it plays: its opening at once, and once its door is opened the world loading under the startup loading
-// Screen, whose marks follow it, shown once that screen's white gives way. The world is mounted only at the door and once
-// The character packs are held, and draws no frames while the opening covers it, though its first view's ground still
-// Streams in. Its code arriving,
+// Screen, whose marks follow it, shown once that screen's white gives way. The world's screen is mounted once the save
+// And the character packs are held, so its code and its tables arrive while the splashes and the login play, and its
+// Session is held back until the door, then draws no frames while the opening covers it, though its first view's ground
+// Still streams in. Its code arriving,
 // The player's save being loaded, and that ground and the regions in reach of it having arrived are the three steps
 // Loading can see, since none reports any finer progress
 const isLoaded = ref(false);
@@ -76,8 +77,9 @@ const progress = computed(() =>
   <div size-full relative of-hidden>
     <ClientOnly>
       <LazyGenshinWorld
-        v-if="isDoorOpened && isSaveLoaded && isPacksHeld"
+        v-if="isSaveLoaded && isPacksHeld"
         :game-text="gameText.text"
+        :is-held="!isDoorOpened"
         :is-paused="isOpeningShown || isReplaced"
         :language="gameText.language"
         :save="initialSave"

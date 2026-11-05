@@ -33,6 +33,18 @@ const readLoadStepEnd = (name: string, since: number): number =>
       .map(({ duration, startTime }) => startTime + duration),
   );
 
+// Resolves once a load step has ended, counting only a step that began after a moment
+const waitForLoadStep = (name: string, since: number): Promise<void> =>
+  new Promise((resolve) => {
+    const observer = new PerformanceObserver((list) => {
+      if (!list.getEntriesByName(`${LOAD_STEP_MEASURE_PREFIX}${name}`).some(({ startTime }) => startTime >= since))
+        return;
+      observer.disconnect();
+      resolve();
+    });
+    observer.observe({ type: "measure" });
+  });
+
 const waitForFrames = async (frameCount: number): Promise<void> => {
   for (let frame = 0; frame < frameCount; frame++)
     // oxlint-disable-next-line no-await-in-loop -- each frame is waited on after the one before it
@@ -123,6 +135,45 @@ describe("worldScreen", () => {
       });
 
       await expect(ready).resolves.toBeUndefined();
+    },
+    timeoutMs,
+  );
+
+  test(
+    "Held screen reads its tables and mounts no session",
+    async () => {
+      expect.hasAssertions();
+
+      const tablesRead = waitForLoadStep("world-gate", performance.now());
+      await render(WorldScreen, {
+        global: { plugins: [createPinia()] },
+        props: { ...props, isHeld: true, isPaused: true },
+      });
+      await tablesRead;
+      await waitForFrames(settleFrameCount);
+
+      expect(document.querySelector("canvas")).toBeNull();
+    },
+    timeoutMs,
+  );
+
+  test(
+    "Released screen opens its session",
+    async () => {
+      expect.hasAssertions();
+
+      const tablesRead = waitForLoadStep("world-gate", performance.now());
+      const { promise: ready, resolve: resolveReady } = Promise.withResolvers<void>();
+      const { rerender } = await render(WorldScreen, {
+        attrs: { onReady: resolveReady },
+        global: { plugins: [createPinia()] },
+        props: { ...props, isHeld: true, isPaused: true },
+      });
+      await tablesRead;
+      await rerender({ ...props, isHeld: false, isPaused: true });
+      await ready;
+
+      expect(document.querySelector("canvas")).not.toBeNull();
     },
     timeoutMs,
   );

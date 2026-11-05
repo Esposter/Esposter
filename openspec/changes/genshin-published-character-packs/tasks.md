@@ -28,6 +28,8 @@
 - [x] 5.3 Show the pack's terms beside the character on the Character screen from the reader, then delete `PackLoader`. Message the Mac session before touching the Character folder. Verify: the Character screen's fixture renders the terms from a stubbed reader and `git grep PackLoader` finds nothing.
 - [ ] 5.4 Decide what the world draws, or whether the loading stops, when a held model fails to read in `Character/Model`. The capsule was removed, so such a character is now invisible on the field with nothing logged beyond the console error. Verify: a test named after the chosen scenario, seen failing first.
 
+- [ ] 5.5 Restrict the party picker and the save's active character to ids in the index, as the design decides; only the Traveler fallback exists today (`getCharacterPackReader`). Verify: a test named after the chosen scenario, seen failing first.
+
 ## 6. Delete the three routes
 
 - [x] 6.1 Delete the development server's pack route, its services, its env entry and its bundle entry. Verify: `git grep GENSHIN_CHARACTER_PACKS_DIRECTORY` finds nothing and the web app's tests of the touched paths pass.
@@ -38,3 +40,9 @@
 
 - [ ] 7.1 Move the published-packs, drawing and player-packs specs with the change and update the characters README (its player-packs link and its line on the pack capability left to remove), the published-packs design (the world now reads them) and the specs of account deletion, storage quotas, blob lifecycle, user data inventory and IndexedDB that name the removed routes. The player-packs design's `CHARACTER_PACK_INDEX_PATH` citation in `packages/genshin-world/src/services/character/constants.ts` (the constant removed by 5f79a93d0f) is retired with its spec. The player-packs design's Key files table and prose name the modules 8f1e8f01c3 deleted (readCharacterPackZip, readCharacterPackZips, readCharacterPackFolders, readPickedCharacterPacks, readAccountCharacterPackFile, settleEachNamed, identifyCharacterPack, the stores and the loader) and the row of the composable useAccountCharacterPacks, whose file is already deleted; the moved spec names none of them, as the workspace citations and staleNames tests hold. Verify: `git grep -n "character pack"` over `openspec/specs` names only the published packs and `scripts/src/services/openspec` tests pass.
 - [x] 7.2 Set the genshin-world size ceiling to its fresh build's size and fix the prune test that expects a file the publish never writes. Verify: `pnpm -C packages/genshin-world test src/index.test.ts --run` and `pnpm -C scripts test src/services/gameData/pruneGameData.test.ts --run` pass.
+
+## 8. The tables load under the opening
+
+- [x] 8.1 Hold the world's session back: `WorldScreenProps` gains `isHeld`, and the screen mounts its session only when its tables have arrived and it is not held. Verify: browser tests named after the scenarios 'Held screen reads its tables and mounts no session' and 'Released screen opens its session' in `packages/genshin-world/src/components/World/Screen/Index.browser.test.ts`, seen failing first.
+- [x] 8.2 Mount the screen as soon as the save and the packs are held and release it at the door: the host's `World.vue` takes `isHeld`, and `Genshin/Index.vue` passes it as the door not yet opened. Verify: the genshin-world package's typecheck and the host's `World.test.ts` pass with `isHeld` required on `World.vue`. The host's mount timing is read from its template and is not proved in a browser, since the page mounts only behind a sign-in and a seeded save, which no driven browser here holds.
+- [x] 8.3 Re-read the pages that say the world mounts at the door. Verify: `git grep -n -i -E "mount the world then|the world mounts"` over `openspec/specs` names the held screen where it describes the mount.

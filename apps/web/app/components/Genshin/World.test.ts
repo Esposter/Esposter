@@ -29,6 +29,7 @@ describe("genshinWorld", () => {
       global: { stubs: { WorldScreen: true } },
       props: {
         gameText: ENGLISH_GAME_TEXT,
+        isHeld: false,
         isPaused: false,
         language: GameLanguage.English,
         save: EMPTY_GENSHIN_SAVE,

@@ -73,3 +73,19 @@ A pack file SHALL be attempted three times, and when the third fails the loading
 - **WHEN** the loading stops
 - **THEN** the failure line is shown
 - **AND** the world is not shown until the download completes
+
+### Requirement: The world's tables load under the opening
+
+The world's screen SHALL read the game's tables as soon as the player's save and every character pack are held, and SHALL start its session only when the door is opened, so the tables are already read when the startup loading screen shows.
+
+#### Scenario: Held screen reads its tables and mounts no session
+
+- **GIVEN** the world's screen is held
+- **WHEN** its tables have arrived
+- **THEN** no session is mounted
+
+#### Scenario: Released screen opens its session
+
+- **GIVEN** the held screen's tables have arrived
+- **WHEN** the screen is released
+- **THEN** its session mounts and the screen signals ready

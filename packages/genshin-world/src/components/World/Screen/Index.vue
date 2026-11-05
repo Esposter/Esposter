@@ -50,7 +50,7 @@ import { getResultAsync } from "@esposter/shared";
 // Starting team's kits its first frame builds their combatants from, and the ground, the catalogue and the animals its
 // First frame draws. The bag's weapons, materials and names are read as the save loads, so the world is made only then.
 // A record that fails to arrive is logged and the world stays shut, ready all the same, as a world that cannot start
-// Is, so a host waiting on it moves on
+// Is, so a host waiting on it moves on. A host that holds the screen has the tables read and the session not yet made
 const props = defineProps<WorldScreenProps>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
 const tables = shallowRef<WorldTables>();
@@ -193,7 +193,7 @@ getResultAsync(() =>
 
 <template>
   <WorldSession
-    v-if="tables"
+    v-if="tables && !isHeld"
     :="{ ...props, ...tables }"
     @grant="emit('grant')"
     @quit="emit('quit')"

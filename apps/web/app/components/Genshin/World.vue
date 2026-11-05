@@ -22,6 +22,8 @@ import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 interface Props {
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the world's session is held back, its tables read all the same, until the door of the opening is opened
+  isHeld: boolean;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
   isPaused: boolean;
   // The reader's game language, whose names the world loads
@@ -31,7 +33,7 @@ interface Props {
   serverClockOffsetMs: number;
 }
 
-const { gameText, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
+const { gameText, isHeld, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
 // The signed-in player's picture and name, which the world's profile card shows
@@ -129,6 +131,7 @@ onMounted(() => {
     :dev-registry
     :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
     :game-text
+    :is-held
     :is-paused
     :is-tuning="IS_DEVELOPMENT"
     :language
