@@ -8,6 +8,9 @@ const searchServiceName = "dev-srch-esposter-001";
 export const devSrchEsposter001: azure_native.search.Service = new azure_native.search.Service(
   searchServiceName,
   {
+    authOptions: {
+      aadOrApiKey: { aadAuthFailureMode: azure_native.search.AadAuthFailureMode.Http401WithBearerChallenge },
+    },
     computeType: azure_native.search.ComputeType.Default,
     disableLocalAuth: false,
     encryptionWithCmk: { enforcement: azure_native.search.SearchEncryptionWithCmk.Unspecified },

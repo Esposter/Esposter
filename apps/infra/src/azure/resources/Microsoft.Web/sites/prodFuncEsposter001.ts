@@ -4,6 +4,7 @@ import AzureCustomDomainVerificationId from "#src/azure/constants/AzureCustomDom
 import ProductionDeploymentOrigin from "#src/azure/constants/ProductionDeploymentOrigin";
 import { prodEvgtEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodSrchEsposter001 } from "#src/azure/resources/Microsoft.Search/searchServices/prodSrchEsposter001";
 import { prodAspEsposterAe001 } from "#src/azure/resources/Microsoft.Web/serverFarms/prodAspEsposterAe001";
 import { configuration } from "#src/configuration";
 import * as azure_native from "@pulumi/azure-native";
@@ -64,6 +65,7 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
           name: "AZURE_EVENT_GRID_TOPIC_KEY",
           value: configuration.requireSecret("prodFuncEsposter001EventGridTopicKey"),
         },
+        { name: "AZURE_SEARCH_BASE_URL", value: prodSrchEsposter001.endpoint },
         {
           name: "AZURE_SERVICE_BUS_CONNECTION_STRING",
           value: configuration.requireSecret("prodFuncEsposter001ServiceBusConnectionString"),

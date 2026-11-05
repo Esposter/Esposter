@@ -58,6 +58,16 @@ Add a role assignment file under `src/azure/resources/Microsoft.Authorization/ro
 
 ---
 
+## Index writes and authentication
+
+Each search service declares `authOptions` with `aadOrApiKey` and an `aadAuthFailureMode` of `http401WithBearerChallenge`, so its data plane accepts a Microsoft Entra token as well as its API key, and a request that fails authentication is answered with a 401 and a Bearer challenge. `disableLocalAuth` stays `false`, which keeps the keys working beside the roles. Role-based access works on the Free SKU both services run on.
+
+The Azure Functions app holds `Search Index Data Contributor` on its search service, declared as `devFuncEsposter001SearchIndexDataContributor` and `prodFuncEsposter001SearchIndexDataContributor` in `src/azure/resources/Microsoft.Authorization/roleAssignments/`. The grant is scoped to the service rather than one index, and the app changes the index's documents with its managed identity rather than a key. An account deletion deletes that account's documents from `messages-index`.
+
+The web app keeps its API key, as set out in [Azure Search Local Authentication](security-constraints.md#azure-search-local-authentication).
+
+---
+
 ## Indexer and data source
 
 Each search service has a pull indexer reading from the `Messages` Azure Table every 5 minutes.
