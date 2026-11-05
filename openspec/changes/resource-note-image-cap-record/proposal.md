@@ -15,7 +15,7 @@ Decide whether untested shipped behaviour belongs in the spec of record. The own
 1. **Keep it out of the spec, and state it as a shipped, untested rule in the spec's purpose.** The spec keeps its scenario-as-test-name convention, and the design stays the record of the cap.
 2. **Restore the requirement and its scenario, and make the test exist.** The cap needs a test that can fail, which needs the typography extracted into a package with a layout runner, or a check that pins the rule's text in CSS. The second is a test of the implementation, so the owner judges it before choosing it.
 
-The chosen option is written into `note-images/spec.md` and `design.md` in the change that ships it, so the two agree.
+The chosen option is written as a spec delta for `note-images/spec.md`, which archive merges into the spec of record, and into `design.md` in place, in the change that ships it, so the two agree.
 
 ## Out of scope
 

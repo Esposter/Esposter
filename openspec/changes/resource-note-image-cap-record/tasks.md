@@ -6,5 +6,5 @@
 
 ## 2. Make the spec and the design agree
 
-- [ ] 2.1 Write the chosen option into `openspec/specs/resource/note-images/spec.md` and `design.md`, so the spec of record and the design state the same behaviour. Verified by a read of both against `apps/web/app/assets/css/globals.css`.
+- [ ] 2.1 Once 1.1 is recorded, write the chosen option as a spec delta at `specs/resource/note-images/spec.md` in this change, and remove `skip_specs` from `.openspec.yaml`, since the change now carries a delta. `openspec archive` merges the delta into `openspec/specs/resource/note-images/spec.md`, so the spec of record is not edited here. Update `openspec/specs/resource/note-images/design.md` in place in this change, and under option 2 only after 2.2's test runs, so the design never states a test that does not exist. Verified by a read of the delta and the design against `apps/web/app/assets/css/globals.css`.
 - [ ] 2.2 If the option restores a scenario, add the test named for it, and confirm the test fails when the rule is removed. Verified by that run recorded in the change.
