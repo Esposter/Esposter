@@ -1,5 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 3
 x-model: claude-haiku-5-5
 x-touches:
   ["packages/genshin-world/src/services/shortcutWheel/**", "packages/genshin-world/src/models/shortcutWheel/**"]

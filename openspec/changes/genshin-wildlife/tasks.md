@@ -6,7 +6,7 @@
 ## 2. Strikes reach the animals
 
 - [x] 2.1 Move the animals into the session's combat beside the enemies, so the strike loop tests each against the attack area. Verify: tests named after 'A hit in the attack area strikes a bird' and 'A hit outside the attack area does not strike a bird'.
-- [ ] 2.2 Trigger a weapon's passive on a hit on wildlife, never an artifact set's. Verify: a test named after 'A weapon passive triggers on wildlife, an artifact set does not'.
+- [ ] 2.2 [phase 6] Trigger a weapon's passive on a hit on wildlife, never an artifact set's. Verify: a test named after 'A weapon passive triggers on wildlife, an artifact set does not'.
 
 ## 3. Material sources
 
@@ -19,4 +19,4 @@
 
 ## 5. Pets and each region's animals
 
-- [ ] 5.1 Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design.
+- [ ] 5.1 [phase 5] Leave pets unable to be struck or picked up, and add each region's own animals when its region lands. Verify: a test named after 'A pet cannot be struck or picked up'. Deferred: no pet kind and no map label yet, see the design.

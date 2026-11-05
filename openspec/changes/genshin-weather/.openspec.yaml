@@ -1,5 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 4
 x-model: claude-opus-5-5
 x-waiting: "each weather area's outline, which only the client's scene holds, read on the PC from the install now that the user allows reading the scene's scripts"
 x-touches:

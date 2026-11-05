@@ -1,4 +1,5 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 3
 x-model: claude-sonnet-5-5
 skip_specs: true
