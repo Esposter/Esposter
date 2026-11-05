@@ -2,8 +2,8 @@ name: 🚀 Release
 
 # The nightly release, of main: only what a review has passed ships. `check` first recovers the latest tag when its release
 # is missing or a draft. Otherwise `version` gates the tree and versions and tags main's new commits, `push` lands that
-# version commit and its tag on main, and `finish` runs FinishRelease.yaml on the tag: the packages npm lacks, the draft, the
-# Windows host, and the public release last. The push to main starts the review run that merges main into ai/queue
+# version commit and its tag on main, and `finish` runs FinishRelease.yaml on the tag: the packages npm lacks, the draft,
+# and the public release last. The push to main starts the review run that merges main into ai/queue
 # (`MergeMain.yaml`), so nothing here dispatches it.
 on:
   schedule:

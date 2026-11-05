@@ -25,11 +25,9 @@ const {
   rightTitle = "Details",
 } = defineProps<Props>();
 const { currentRoute } = useRouter();
-const isEmbedded = useIsEmbedded();
 const layoutStore = useLayoutStore();
-// An embed is a page framed in the agent console, and takes no drawers of its own
-const hasLeftDrawer = computed(() => Boolean(slots.left) && !isEmbedded.value);
-const hasRightDrawer = computed(() => Boolean(slots.right) && !isEmbedded.value);
+const hasLeftDrawer = computed(() => Boolean(slots.left));
+const hasRightDrawer = computed(() => Boolean(slots.right));
 const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
 // A docked drawer is a column of the grid, as wide as the drawer while it is open and none at all while it is closed,
 // So the page beside it takes the room as the column animates and nothing has to be offset by hand. A narrow screen's

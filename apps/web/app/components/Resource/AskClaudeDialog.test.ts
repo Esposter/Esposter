@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
+import { McpScope } from "#shared/models/auth/McpScope";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceAskClaudeDialog from "@/components/Resource/AskClaudeDialog.vue";
-import { LOCAL_HOST_ADDRESS } from "@/services/agentConsole/constants";
 import { apiKeyList } from "@/services/auth/authClient.test";
-import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
+import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -15,32 +15,9 @@ describe("resourceAskClaudeDialog", () => {
     document.body.innerHTML = "";
   });
 
-  // Nothing is sent while no host is paired, so the pairing steps are all the dialog offers and no line form is shown
-  test("pairing is explained when no host is paired", async () => {
-    expect.hasAssertions();
-
-    apiKeyList.mockResolvedValue({ data: { apiKeys: [] }, error: null });
-    await mountSuspended(ResourceAskClaudeDialog, {
-      attachTo: document.body,
-      props: { modelValue: true, resource: createResourceListItem() },
-    });
-
-    expect(document.body.textContent).toContain("Open the agent console");
-    expect(document.body.querySelector("form")).toBeNull();
-  });
-
   test("the steps to connect a key are shown when none holds the scope", async () => {
     expect.hasAssertions();
 
-    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-    agentConsoleConnectionStore.connections = [
-      {
-        address: LOCAL_HOST_ADDRESS,
-        credential: crypto.randomUUID(),
-        id: crypto.randomUUID(),
-        publicKey: crypto.randomUUID(),
-      },
-    ];
     apiKeyList.mockResolvedValue({ data: { apiKeys: [{ permissions: null }] }, error: null });
     await mountSuspended(ResourceAskClaudeDialog, {
       attachTo: document.body,
@@ -49,6 +26,25 @@ describe("resourceAskClaudeDialog", () => {
     await flushPromises();
 
     expect(document.body.textContent).toContain("Create an API key with the Resources scope");
-    expect(document.body.querySelector("form")).toBeNull();
+    expect(document.body.querySelector("input")).toBeNull();
+  });
+
+  test("the prompt naming the resource is offered for copying once a line is typed", async () => {
+    expect.hasAssertions();
+
+    apiKeyList.mockResolvedValue({ data: { apiKeys: [{ permissions: { mcp: [McpScope.Resources] } }] }, error: null });
+    const resource = createResourceListItem();
+    await mountSuspended(ResourceAskClaudeDialog, { attachTo: document.body, props: { modelValue: true, resource } });
+    await flushPromises();
+    const input = document.body.querySelector("input");
+    if (!input) throw new Error(" ");
+
+    expect(document.body.querySelector("code")).toBeNull();
+
+    input.value = "a";
+    input.dispatchEvent(new Event("input"));
+    await flushPromises();
+
+    expect(document.body.querySelector("code")?.textContent).toBe(getAssistantPrompt(resource, "a"));
   });
 });

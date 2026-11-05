@@ -3,17 +3,6 @@ import { LOCAL_STORAGE_KEY_SEPARATOR } from "@/services/shared/constants";
 // Central registry for every localStorage key (RoutePath-style) so keys can never overlap.
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
-  // Every paired host's address, this browser's credential for it and the key it proves itself with — each never sent
-  // Anywhere but its own host
-  AgentConsoleConnections: "agent-console-connections",
-  // Whether the console stands over the whole page rather than down its side: a viewer's choice, kept with the browser
-  AgentConsoleExpanded: "agent-console-expanded",
-  // The console's height as the reader dragged it, in pixels, or 0 before they have: a viewer's choice, kept with the
-  // Browser
-  AgentConsoleHeight: "agent-console-height",
-  // The width of the console's side pane of app pages, in pixels, as the reader dragged it: a viewer's choice, kept
-  // With the browser
-  AgentConsolePaneWidth: "agent-console-pane-width",
   // Whether the world labels what the player can use: a viewer's setting, kept with the browser
   ClickerStore: "clicker-store",
   // Every composer's draft in one entry, keyed by composer inside it: the store holds them as a single Map and

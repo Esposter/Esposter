@@ -1,13 +1,10 @@
 import { WEB_DIRECTORY } from "@@/scripts/constants";
-import { COMPONENTS_DIRECTORY, NON_SOURCE_PATTERNS } from "@@/scripts/flowMap/constants";
+import { NON_SOURCE_PATTERNS } from "@@/scripts/flowMap/constants";
 import { readSourceContext } from "@@/scripts/flowMap/services/readSourceContext";
 import { readSourceNode } from "@@/scripts/flowMap/services/readSourceNode";
 import { globSync } from "node:fs";
 import { relative, resolve } from "node:path";
 
-// The agent console, kept unmounted while it is hidden from the game until its rebuild in the game's style mounts it
-// Again (the agent console's spec)
-const HIDDEN_COMPONENT_PATHS = new Set([`${COMPONENTS_DIRECTORY}/AgentConsole/Index.vue`]);
 // Every component nothing renders: no template names its tag by the auto-import name the flow map resolves, lazy or
 // Not, and no source imports its file. A test holds the list empty, so a component whose last consumer went is
 // Deleted with it rather than left for knip, which sees an auto-imported component as used by being a component
@@ -22,7 +19,6 @@ export const getUnrenderedComponentPaths = () => {
     .values()
     .filter((path) => !renderedPaths.has(path))
     .map((path) => relative(WEB_DIRECTORY, path).replaceAll("\\", "/"))
-    .filter((path) => !HIDDEN_COMPONENT_PATHS.has(path))
     .toArray()
     .toSorted();
 };

@@ -2,8 +2,8 @@ import type { ModuleOptions } from "@nuxt/fonts";
 
 // Every style's faces are named through its style tokens (`UiStyleMap`), which the module's CSS scan does not read, so
 // A face would only be loaded on a page whose own stylesheet happens to spell it out. Declared global, their font
-// Faces are in the stylesheet every page loads: voxel's pixel face, standard's sans and mono, and the open face
-// Nearest Genshin's own
+// Faces are in the stylesheet every page loads: voxel's pixel face, standard's sans and mono, and the open face the
+// Genshin interface sets its lines in
 export const fonts: Partial<ModuleOptions> = {
   families: [
     { global: true, name: "Inter", weights: [400, 600] },

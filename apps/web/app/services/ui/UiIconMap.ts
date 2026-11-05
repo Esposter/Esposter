@@ -3,10 +3,9 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyle } from "@/models/ui/UiStyle";
 import { LucideIconMap } from "@/services/ui/LucideIconMap";
 
-// Each style's class for every meaning, written whole so the icons preset sees it: Lucide for standard and Genshin, and
-// For voxel the pixel set first, and a Material Design Icons class where it has no glyph
+// Each style's class for every meaning, written whole so the icons preset sees it: Lucide for standard, and for
+// Voxel the pixel set first, and a Material Design Icons class where it has no glyph
 export const UiIconMap = {
-  [UiStyle.Genshin]: LucideIconMap,
   [UiStyle.Standard]: LucideIconMap,
   [UiStyle.Voxel]: {
     [UiIconMeaning.Achievement]: "i-pixelarticons:trophy",
@@ -21,7 +20,6 @@ export const UiIconMap = {
     [UiIconMeaning.ArrowRight]: "i-pixelarticons:arrow-right",
     [UiIconMeaning.ArrowUp]: "i-pixelarticons:arrow-up",
     [UiIconMeaning.Attach]: "i-pixelarticons:paperclip",
-    [UiIconMeaning.Automatic]: "i-pixelarticons:zap",
     [UiIconMeaning.Awaiting]: "i-pixelarticons:hourglass",
     [UiIconMeaning.Ban]: "i-mdi:cancel",
     [UiIconMeaning.Banner]: "i-pixelarticons:layout-header",
@@ -55,7 +53,6 @@ export const UiIconMap = {
     [UiIconMeaning.Device]: "i-pixelarticons:monitor",
     [UiIconMeaning.Disclosure]: "i-pixelarticons:chevron-right",
     [UiIconMeaning.Divider]: "i-pixelarticons:minus",
-    [UiIconMeaning.DoNotDisturb]: "i-pixelarticons:notification-off",
     [UiIconMeaning.Download]: "i-pixelarticons:download",
     [UiIconMeaning.Downvote]: "i-pixelarticons:arrow-big-down",
     [UiIconMeaning.Drag]: "i-mdi:drag",
@@ -74,7 +71,6 @@ export const UiIconMap = {
     [UiIconMeaning.Folder]: "i-pixelarticons:folder",
     [UiIconMeaning.Forward]: "i-pixelarticons:forward",
     [UiIconMeaning.Friends]: "i-pixelarticons:users",
-    [UiIconMeaning.GenshinStyle]: "i-pixelarticons:diamond-gem",
     [UiIconMeaning.Group]: "i-pixelarticons:list",
     [UiIconMeaning.Hand]: "i-pixelarticons:hand",
     [UiIconMeaning.HangUp]: "i-mdi:phone-hangup",
@@ -101,7 +97,6 @@ export const UiIconMap = {
     [UiIconMeaning.MicrophoneOff]: "i-pixelarticons:mic-off",
     [UiIconMeaning.MissingImage]: "i-mdi:image-broken-variant",
     [UiIconMeaning.Mixed]: "i-pixelarticons:minus",
-    [UiIconMeaning.Model]: "i-pixelarticons:robot",
     [UiIconMeaning.More]: "i-pixelarticons:more-horizontal",
     [UiIconMeaning.New]: "i-pixelarticons:sparkles",
     [UiIconMeaning.NewLine]: "i-pixelarticons:corner-down-left",
@@ -113,12 +108,10 @@ export const UiIconMap = {
     [UiIconMeaning.OutOfDate]: "i-pixelarticons:cloud-download",
     [UiIconMeaning.Owner]: "i-pixelarticons:crown",
     [UiIconMeaning.Paste]: "i-pixelarticons:clipboard",
-    [UiIconMeaning.Pause]: "i-pixelarticons:pause",
     [UiIconMeaning.Pen]: "i-pixelarticons:pencil",
     [UiIconMeaning.Person]: "i-pixelarticons:user",
     [UiIconMeaning.PictureInPicture]: "i-pixelarticons:picture-in-picture",
     [UiIconMeaning.Pin]: "i-pixelarticons:pin",
-    [UiIconMeaning.Plan]: "i-pixelarticons:notes",
     [UiIconMeaning.Play]: "i-pixelarticons:play",
     [UiIconMeaning.Pointer]: "i-mdi:cursor-default-outline",
     [UiIconMeaning.Poll]: "i-pixelarticons:chart-bar",

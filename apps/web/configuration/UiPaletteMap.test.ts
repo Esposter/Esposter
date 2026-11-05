@@ -77,10 +77,9 @@ describe("uiPaletteMap", () => {
     expect(getContrastRatio(palette[UiToken.Background], palette[fillToken])).toBeGreaterThanOrEqual(4.5);
   });
 
-  // Standard's and Genshin's tonal button is a translucent tone of the accent over whatever it sits on, its label the
-  // Accent
+  // Standard's tonal button is a translucent tone of the accent over whatever it sits on, its label the accent
   test.each(
-    [UiStyle.Genshin, UiStyle.Standard].flatMap((uiStyle) =>
+    [UiStyle.Standard].flatMap((uiStyle) =>
       ResolvedThemeModes.flatMap((themeMode) =>
         surfaceTokens.map((surfaceToken) => [uiStyle, themeMode, surfaceToken] as const),
       ),

@@ -4,9 +4,6 @@ import { STANDARD_TONAL_MIX_PERCENTAGE } from "./constants.ts";
 
 const PIXEL_FACE = "VT323, monospace";
 const SANS_FACE = "Inter, ui-sans-serif, system-ui, sans-serif";
-// The game's own face for a reader who has it, then Signika, the open face nearest it (the world package's
-// `GAME_FONT_FAMILY` says how it was picked)
-const GAME_FACE = '"HYWenHei 85W", "HYWenHei-85W", Signika, ui-sans-serif, system-ui, sans-serif';
 const MONO_FACE = '"JetBrains Mono", ui-monospace, monospace';
 // A ring one step out on each side, which leaves the corners notched, and a faint lit line along the top
 const VOXEL_FRAME_SHADOW = [
@@ -30,51 +27,8 @@ const getStateLayer = (percentage: number) =>
 // Background with no edge, what floats is a tone further with a wide soft shadow and a faint ring, a field a filled
 // Tone and a button a tonal one of the accent, each state a layer of the content's colour. A container rounds more than
 // The controls inside it, a search field is a pill, and a sans face draws the interface with a mono for code, headings
-// In the text colour at a heavier weight. Genshin draws as the game's menus do: capsule buttons and fields, rounded
-// Panels whose edge is a thin gold line set just inside it, soft shadows under what floats, a rounded humanist face
-// With gold headings, and a loading row of gems that light one by one
+// In the text colour at a heavier weight
 export const UiStyleMap = {
-  [UiStyle.Genshin]: {
-    [UiStyleToken.BlockOpacity]: "1",
-    [UiStyleToken.BorderWidth]: "0.0625rem",
-    [UiStyleToken.ContainerRadius]: "calc(var(--ui-step) * 3)",
-    [UiStyleToken.ControlRadius]: "calc(infinity * 1rem)",
-    [UiStyleToken.FocusWidth]: "calc(var(--ui-step) / 2)",
-    [UiStyleToken.FontBody]: GAME_FACE,
-    [UiStyleToken.FontHeading]: GAME_FACE,
-    [UiStyleToken.FontMono]: MONO_FACE,
-    // The gold line a step inside the edge, over a band of the panel's own colour, and a soft shadow beneath
-    [UiStyleToken.FrameShadow]: [
-      "inset 0 0 0 var(--ui-step) var(--ui-panel)",
-      "inset 0 0 0 calc(var(--ui-step) + var(--ui-border-width)) color-mix(in srgb, var(--ui-accent) 55%, transparent)",
-      "0 calc(var(--ui-step) / 2) calc(var(--ui-step) * 3) rgb(0 0 0 / 0.18)",
-    ].join(", "),
-    [UiStyleToken.HeadingColor]: "var(--ui-accent)",
-    [UiStyleToken.HoverFilter]: "none",
-    [UiStyleToken.HoverOverlay]: getStateLayer(8),
-    [UiStyleToken.IndicatorWidth]: "calc(var(--ui-border-width) * 2)",
-    [UiStyleToken.LiftedShadow]: [
-      "inset 0 0 0 var(--ui-step) var(--ui-lifted)",
-      "inset 0 0 0 calc(var(--ui-step) + var(--ui-border-width)) color-mix(in srgb, var(--ui-accent) 55%, transparent)",
-      "0 calc(var(--ui-step) * 3) calc(var(--ui-step) * 10) rgb(0 0 0 / 0.3)",
-    ].join(", "),
-    [UiStyleToken.LineFill]: "var(--ui-accent)",
-    [UiStyleToken.LineSnap]: "0.0625rem",
-    [UiStyleToken.PillRadius]: "calc(infinity * 1rem)",
-    [UiStyleToken.PressedOverlay]: getStateLayer(12),
-    [UiStyleToken.RaisedBackground]: `color-mix(in srgb, var(--ui-accent) ${STANDARD_TONAL_MIX_PERCENTAGE}%, transparent)`,
-    [UiStyleToken.RaisedColor]: "var(--ui-accent)",
-    // A faint gold ring around each capsule
-    [UiStyleToken.RaisedShadow]:
-      "inset 0 0 0 var(--ui-border-width) color-mix(in srgb, var(--ui-accent) 40%, transparent)",
-    [UiStyleToken.Scrim]: "var(--ui-background)",
-    [UiStyleToken.TextBody]: "0.9375rem",
-    [UiStyleToken.TextDisplay]: "2.5rem",
-    [UiStyleToken.TextHeading]: "1.0625rem",
-    [UiStyleToken.TextTitle]: "1.5rem",
-    [UiStyleToken.Tint]: "color-mix(in srgb, var(--ui-accent) 70%, transparent)",
-    [UiStyleToken.WeightHeading]: "700",
-  },
   [UiStyle.Standard]: {
     // A bar's blocks are kept for the layout, and the row drawn as one rounded track instead, filled to the
     // Exact reading

@@ -15,8 +15,6 @@ allowBuilds:
   esbuild: true
   # Its postinstall only writes the browser service worker (`msw init public/`); tests intercept in node
   msw: false
-  # Its install only checks that the prebuilt binaries it ships are there, and builds from source when they are not
-  node-pty: false
   # Its postinstall only fetches the CUDA runtime on Linux; the CPU and Windows binaries ship in the package
   onnxruntime-node: false
   protobufjs: true
@@ -32,7 +30,6 @@ lockfile:
   includeResolutionSettings: true
 
 catalog:
-  "@anthropic-ai/claude-agent-sdk": ^0.3.318
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.1
   "@azure/core-http-compat": ^2.5.0
@@ -113,7 +110,6 @@ catalog:
   "@types/sax": ^1.2.7
   "@types/three": ^0.187.0
   "@types/web-push": ^3.6.4
-  "@types/ws": ^8.18.2
   "@typesafe-ai/sdk": ^0.7.0
   "@unocss/eslint-config": ^66.12.0
   "@unocss/nuxt": ^66.12.0
@@ -140,8 +136,6 @@ catalog:
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
   "@webgpu/types": ^0.1.74
-  "@xterm/addon-fit": ^0.11.0
-  "@xterm/xterm": ^6.0.0
   apexcharts: ^8.7.0
   azurite: ^3.37.0
   better-auth: ^1.7.17
@@ -193,7 +187,6 @@ catalog:
   # @TODO: no upstream issue — nuxt/nuxt: Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
   nitro: npm:nitro-nightly@latest
   node-html-parser: ^9.0.6
-  node-pty: ^1.1.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
   nuxt: npm:nuxt-nightly@5x
   ohash: ^2.0.12
@@ -250,7 +243,6 @@ catalog:
   vue-tsc: 3.3.11
   web-push: ^3.6.7
   write-excel-file: ^4.1.1
-  ws: ^8.22.1
   zod: ^4.6.7
 catalogMode: strict
 

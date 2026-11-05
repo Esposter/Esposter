@@ -1,8 +1,8 @@
 // @unocss-include
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-// Lucide's class for every meaning, which Nuxt UI and shadcn ship by default: standard's icons, and Genshin's, whose
-// Line icons sit on its capsules as the game's do. Lucide draws no filled star, so the filled one is Material's
+// Lucide's class for every meaning, which Nuxt UI and shadcn ship by default: standard's icons. Lucide draws no filled
+// Star, so the filled one is Material's
 export const LucideIconMap = {
   [UiIconMeaning.Achievement]: "i-lucide:trophy",
   [UiIconMeaning.ActualSize]: "i-lucide:scan",
@@ -16,7 +16,6 @@ export const LucideIconMap = {
   [UiIconMeaning.ArrowRight]: "i-lucide:arrow-right",
   [UiIconMeaning.ArrowUp]: "i-lucide:arrow-up",
   [UiIconMeaning.Attach]: "i-lucide:paperclip",
-  [UiIconMeaning.Automatic]: "i-lucide:zap",
   [UiIconMeaning.Awaiting]: "i-lucide:hourglass",
   [UiIconMeaning.Ban]: "i-lucide:ban",
   [UiIconMeaning.Banner]: "i-lucide:panel-top",
@@ -50,7 +49,6 @@ export const LucideIconMap = {
   [UiIconMeaning.Device]: "i-lucide:monitor",
   [UiIconMeaning.Disclosure]: "i-lucide:chevron-right",
   [UiIconMeaning.Divider]: "i-lucide:minus",
-  [UiIconMeaning.DoNotDisturb]: "i-lucide:bell-off",
   [UiIconMeaning.Download]: "i-lucide:download",
   [UiIconMeaning.Downvote]: "i-lucide:arrow-big-down",
   [UiIconMeaning.Drag]: "i-lucide:grip-vertical",
@@ -69,7 +67,6 @@ export const LucideIconMap = {
   [UiIconMeaning.Folder]: "i-lucide:folder",
   [UiIconMeaning.Forward]: "i-lucide:forward",
   [UiIconMeaning.Friends]: "i-lucide:users",
-  [UiIconMeaning.GenshinStyle]: "i-lucide:gem",
   [UiIconMeaning.Group]: "i-lucide:list-tree",
   [UiIconMeaning.Hand]: "i-lucide:hand",
   [UiIconMeaning.HangUp]: "i-lucide:phone-off",
@@ -96,7 +93,6 @@ export const LucideIconMap = {
   [UiIconMeaning.MicrophoneOff]: "i-lucide:mic-off",
   [UiIconMeaning.MissingImage]: "i-lucide:image-off",
   [UiIconMeaning.Mixed]: "i-lucide:minus",
-  [UiIconMeaning.Model]: "i-lucide:bot",
   [UiIconMeaning.More]: "i-lucide:ellipsis",
   [UiIconMeaning.New]: "i-lucide:sparkles",
   [UiIconMeaning.NewLine]: "i-lucide:corner-down-left",
@@ -108,12 +104,10 @@ export const LucideIconMap = {
   [UiIconMeaning.OutOfDate]: "i-lucide:cloud-download",
   [UiIconMeaning.Owner]: "i-lucide:crown",
   [UiIconMeaning.Paste]: "i-lucide:clipboard-paste",
-  [UiIconMeaning.Pause]: "i-lucide:pause",
   [UiIconMeaning.Pen]: "i-lucide:pen-line",
   [UiIconMeaning.Person]: "i-lucide:user",
   [UiIconMeaning.PictureInPicture]: "i-lucide:picture-in-picture-2",
   [UiIconMeaning.Pin]: "i-lucide:pin",
-  [UiIconMeaning.Plan]: "i-lucide:list-todo",
   [UiIconMeaning.Play]: "i-lucide:play",
   [UiIconMeaning.Pointer]: "i-lucide:mouse-pointer-2",
   [UiIconMeaning.Poll]: "i-lucide:chart-bar",

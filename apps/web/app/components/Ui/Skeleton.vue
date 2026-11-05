@@ -23,8 +23,7 @@ const uiStyle = useUiStyle();
   background-size: 250% 100%;
 }
 
-/* Standard and Genshin ease the band across rather than stepping it, on the style's own radius */
-.skeleton[data-ui-style="genshin"],
+/* Standard eases the band across rather than stepping it, on the style's own radius */
 .skeleton[data-ui-style="standard"] {
   animation-timing-function: var(--ui-motion-easing);
   border-radius: var(--ui-control-radius);
