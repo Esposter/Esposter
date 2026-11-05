@@ -1,5 +1,5 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-model: claude-opus-5-5
+x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches: ["packages/genshin-world/src/services/kit/**"]

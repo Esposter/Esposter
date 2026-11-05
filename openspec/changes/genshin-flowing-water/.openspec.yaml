@@ -1,6 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-model: claude-opus-5-5
+x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-waiting: "the rivers outside Liyue wait on the water prefabs' meshes, which the game exports have not produced yet; the rivers' flow waits on the game's water material fields where an export holds them, or on a recording of a river; the mist and foam pool particles wait on a recording of the game's falls; the turn's sign waits on a reference frame of a fall seen from a known side, or on the game's own fall direction"
 x-touches:
