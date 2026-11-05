@@ -22,4 +22,4 @@ Windrise's open world stands on every object the game streams, each judged again
 
 ## Impact
 
-The component map that names each component's roots, spawns and landmarks gains Windrise's streamed objects, and the fit map gives each component its fit. The parity loss table orders the stand-ins for rebuild. The login scene comes first among the scenes run through this method.
+The component map that names each component's roots, spawns and landmarks gains Windrise's streamed objects, and the fit map gives each component its fit. The parity loss table orders the stand-ins for rebuild, and each rebuilt stand-in is drawn from the engine's own generators, as the Snezhnaya kits are, with the game's meshes kept to the witness. The login scene comes first among the scenes run through this method.

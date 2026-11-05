@@ -8,7 +8,7 @@ Inazuma's islands, their terrain, water, sky and weather are built on the shared
 
 Finish the Inazuma region: its storm as an area setting, each island's palette, the landmarks and torii of its capital, and Enkanomiya as a layer with its own light and ruins.
 
-- The permanent thunderstorm over Inazuma and Yashiori Island is an area setting: lifted by default and restorable from the hour and weather control.
+- The permanent thunderstorm over Inazuma and Yashiori Island is an area setting: lifted by default, and one boolean on the Time screen's weather control restores it in every area at once.
 - Each island shows its own palette, from Narukami's sakura to Tsurumi's grey fog.
 - Torii gates line Inazuma City at the game's count of 32.
 - The Grand Narukami Shrine and Tenshukaku are matched to the game's landmarks pose by pose.

@@ -10,6 +10,7 @@ The weapon screen shows a weapon the player holds and spends on it through the w
 
 - The screen shows the weapon's name, rarity, level, EXP towards the next level, ascension phase and refinement rank.
 - Enhance spends the ores and fodder weapons the player picks, and the Mora their EXP costs.
+- The Enhance strip holds seven candidates in view and scrolls to the rest, so every fodder weapon in the bag can be picked.
 - Ascend is offered only at a phase's level cap, and spends the next phase's Mora and items once the Adventure Rank allows it.
 - Refine takes one copy or one refinement material, plus that rank's Mora, up to rank five.
 - A refused action changes nothing.

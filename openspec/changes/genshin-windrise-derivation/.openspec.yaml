@@ -1,6 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
-x-model: claude-opus-5-5
+x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches:
   [
@@ -8,4 +8,5 @@ x-touches:
     "scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts",
     "scripts/src/services/genshinParity/witness/rankReferenceGains.ts",
     "packages/genshin-world/src/components/Login/Scene/Index.vue",
+    "packages/genshin-world/src/services/windrise/**",
   ]

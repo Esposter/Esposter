@@ -79,3 +79,13 @@ The weapon screen SHALL name Enhance, Ascend and Refine in the game's own words 
 - **GIVEN** a reader whose game language is one of the game's languages
 - **WHEN** the weapon screen shows its actions
 - **THEN** each action's label is the game's word for it in that language
+
+### Requirement: Enhance Strip Reaches Every Candidate
+
+The Enhance strip SHALL hold its seven candidates in view and SHALL scroll the candidates past the seventh into reach, so that every candidate the bag holds can be picked with one gesture.
+
+#### Scenario: the Enhance strip scrolls to a candidate past the seventh
+
+- **GIVEN** a player holding eight fodder weapons the Enhance strip can take
+- **WHEN** the player scrolls the strip past its seventh candidate
+- **THEN** the eighth candidate comes into view and can be picked

@@ -22,6 +22,7 @@ Archive entries open and count from the doings the world does.
 
 - The wildlife's strike, which the animals' Living Beings entries and their turning models need.
 - Books placed in the world, since no world drop is a volume's material yet.
+- The viewpoint pictures page, an open roadmap item: a viewpoint's entry opens with a picture of its place, which that page defines.
 
 ## Impact
 

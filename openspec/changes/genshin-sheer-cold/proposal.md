@@ -19,7 +19,7 @@ The subzero climate fills a gauge, heat drains it, and a full gauge deals damage
 
 ## Waiting on
 
-- Campfires are not placed in the world, so the drain has no source until they are. The official map's Campfire/Torch points are the source that would place them.
+- Campfires are not placed in the world, so the drain has no source until they are. The official map's Campfire points are the source that would place them.
 - The heat's reach is provisional until a clip isolates it. The bar's placement and look are read off a public clip, and the bar moves to them with the Hud component's owner.
 
 ## Impact

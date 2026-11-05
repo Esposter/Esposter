@@ -7,6 +7,19 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 - **Cold is the standing weather.** Snow ground and ice cover most of the region, and snow and snowstorms are its regular weather, as on Dragonspine but across a nation. The game's chill zones are play, so here they only thicken fog and snowfall by level.
 - **Warm light against the cold.** Each settlement's Kresnik's Torch is a landmark with warm emissive light and bloom, the brightest point in a pale scene. The region's shade colour is the coldest of any, which makes every torch, window and furnace stand out.
 - **Birch and tundra.** The vegetation species are white birch, which dominates White Birch Snowgrave, dark conifers on the peaks, and sparse tundra grass that shows through the snow in Volkodlak Tundra.
+- **Each area takes one chill level, provisionally.** The wiki's Weather page names three chill levels for Snezhnaya's zones, Cold, Frigid and Subzero, with Subzero the worst, and maps none of them to an area. Each area takes the one level the table below gives it, and the table holds the lowest level and a higher one so both chill tests can be written. Per-area levels measured from a recording were rejected: no recording of the zones is sought in the roadmap, so the table would wait on a clip nobody has been asked to find. Deferring the levels was rejected: the fog and snowfall they set are the region's standing weather, and a provisional table lets the rule be built and tested now.
+
+## Chill levels
+
+Provisional. The cached wiki Weather page names the three levels and maps none to an area, so each area's level in this table is a placement until a source places the zones.
+
+| Area                  | Chill level |
+| :-------------------- | :---------- |
+| Everfrozen Earth      | Cold        |
+| Volkodlak Tundra      | Frigid      |
+| White Birch Snowgrave | Cold        |
+| Fellfrost Peak        | Subzero     |
+| Flamefeather Valley   | Frigid      |
 
 ## How it works
 

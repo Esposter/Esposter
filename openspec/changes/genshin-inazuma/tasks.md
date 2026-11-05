@@ -1,6 +1,6 @@
 ## 1. The storm and the islands
 
-- [ ] 1.1 Make Inazuma's storm an area setting, lifted by default and restorable from the hour and weather control. Verify: a test named after the scenario "Inazuma's storm is lifted by default", written first and seen failing, and a test named after "The storm returns when restored from the weather control".
+- [ ] 1.1 Add one boolean to the Time screen's weather control that restores every Inazuma storm together, passed to the storm's lift, with the storm lifted by default. Verify: a test named after the scenario "Inazuma's storm is lifted by default", written first and seen failing, and a test named after "The storm returns when restored from the weather control".
 - [ ] 1.2 Build the island palettes in the build order: Ritou and Narukami Island, then Kannazuka and Yashiori Island, then Watatsumi Island, then Seirai and Tsurumi. Verify: tests named after the scenarios "Watatsumi Island shows its sea-tinted sky and coral" and "Yashiori Island shows the serpent's ribs", written first and seen failing.
 
 ## 2. The landmarks and the torii

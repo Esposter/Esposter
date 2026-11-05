@@ -2,7 +2,7 @@
 
 ### Requirement: Inazuma's storm is an area setting lifted by default
 
-Inazuma's permanent thunderstorm SHALL be lifted by default in each area that holds it, and SHALL be restorable from the hour and weather control.
+Inazuma's permanent thunderstorm SHALL be lifted by default in each area that holds it, and one control on the Time screen SHALL restore the storm in every such area together.
 
 #### Scenario: Inazuma's storm is lifted by default
 
@@ -12,9 +12,9 @@ Inazuma's permanent thunderstorm SHALL be lifted by default in each area that ho
 
 #### Scenario: The storm returns when restored from the weather control
 
-- **GIVEN** the storm is lifted in an area that holds it
-- **WHEN** the player restores the storm from the hour and weather control
-- **THEN** the thunderstorm and its violet sky are drawn over the area
+- **GIVEN** the storm is lifted in every area of Inazuma that holds it
+- **WHEN** the player switches the storm back on in the Time screen's weather control
+- **THEN** the thunderstorm and its violet sky are drawn over every area that holds it, together
 
 ### Requirement: Each island shows its own palette
 

@@ -4,7 +4,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 
 ## Decisions
 
-- **The storm is an area setting.** Inazuma's permanent thunderstorm, and Yashiori Island's own storm, are weather that each area can switch on or off. In the game they lift when a quest completes. Here they are lifted by default and restored from the hour and weather control, so the islands can be seen both ways.
+- **The storm is an area setting, and one control restores it.** Inazuma's permanent thunderstorm, and Yashiori Island's own storm, are weather that each area can switch on or off. In the game they lift when a quest completes. Here they are lifted by default, and one boolean on the Time screen's weather control restores every Inazuma storm together, so the islands can be seen both ways. A dev-only toggle was rejected: a player of the world could not reach it, so the islands would be seen one way only. Deferring the control with the storm lifted was rejected: the lift is built, so nothing would switch the storm back. Whether Yashiori's storm is the Inazuma storm or the Tatarigami stays open, as the weather spec says, and the boolean restores it with the others until that is settled.
 - **Each island has its own palette.**
   - Narukami Island: sakura pink, red maple and dark cedar under a violet storm sky
   - Kannazuka: scorched ground and forges
@@ -30,9 +30,9 @@ flowchart TD
   WL --> ST{Storeys}
   ST -->|one| RF[Hipped or gabled roof, deep eaves]
   ST -->|several| TW[Stacked roofs: tower or pagoda]
-  AR[Area setting] --> SW{Storm lifted?}
-  SW -->|no| TS[Thunderstorm weather, violet sky]
-  SW -->|yes| CL[Clear or regular weather]
+  AR[Area setting] --> SW{Storm restored by the weather control on the Time screen?}
+  SW -->|yes| TS[Thunderstorm weather, violet sky]
+  SW -->|no, lifted by default| CL[Clear or regular weather]
 ```
 
 ## Areas
@@ -45,9 +45,12 @@ Ritou's harbour, Inazuma City's main street, Tenshukaku from the plaza, the Gran
 
 ## Key files
 
-| File                                                      | Role after the change                      |
-| :-------------------------------------------------------- | :----------------------------------------- |
-| `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each island's biome tunes |
+| File                                                           | Role after the change                                                          |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/noise/createSimplexNoise.ts`      | The detail noise each island's biome tunes                                     |
+| `packages/genshin-world/src/components/Menu/Time/Index.vue`    | The Time screen, which gains the weather control's one boolean                 |
+| `packages/genshin-world/src/composables/useAreaWeather.ts`     | Passes the control's boolean to the storm's lift in place of its fixed `false` |
+| `packages/genshin-world/src/services/world/getAreaWeathers.ts` | The lift, which the boolean restores for every Inazuma area at once            |
 
 **Still to build, in order:**
 
