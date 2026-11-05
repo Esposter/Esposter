@@ -1,6 +1,6 @@
 # Survey stored-shape backfill
 
-The one-off run that brings stored survey working copies to the shape the survey document schema reads today. It is the migration the [latest-shape-only rule](../../specs/architecture/persisted-data-latest-shape-only/design.md) names for a renamed field in a stored content schema, and it follows the `backfills` skill's run.
+The one-off run that brings stored survey working copies to the shape the survey document schema reads today. It is the migration the [latest-shape-only rule](../../../specs/architecture/persisted-data-latest-shape-only/design.md) names for a renamed field in a stored content schema, and it follows the `backfills` skill's run.
 
 ## How it works
 

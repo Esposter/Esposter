@@ -16,4 +16,4 @@ Both commits reached `main`, so a survey saved in the window between the flag an
 
 ## Capabilities
 
-No spec delta. The rule the backfill applies is stated in [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md); this change only runs it.
+No spec delta. The rule the backfill applies is stated in [persisted data, latest shape only](../../../specs/architecture/persisted-data-latest-shape-only/design.md); this change only runs it.

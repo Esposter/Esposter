@@ -1,12 +1,12 @@
 # Webpage survey picker
 
-Gap 7 of the [gap survey](../archive/2026-10-25-gap-survey-2026-10-25/proposal.md).
+Gap 7 of the [gap survey](../2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## Why
 
 A webpage's survey invite takes a bare survey id. The owner must copy an id from somewhere else and paste it into the node. Every other reference in the editor is a picker: a dashboard visual chooses its dataset from a list, and a program names its survey from the owner's surveys. The invite is the one place an owner types an identifier by hand.
 
-The [webpage survey invite spec](../../specs/resource/webpage-survey-invite-blocks/design.md) names this as owed and not built. The resource roadmap does not list it.
+The [webpage survey invite spec](../../../specs/resource/webpage-survey-invite-blocks/design.md) names this as owed and not built. The resource roadmap does not list it.
 
 ## What Changes
 
@@ -21,7 +21,7 @@ Build the picker as a schema-form renderer keyed on the resource-link declaratio
 
 - The program setup already binds its survey through a select over the owner's surveys, so a second survey picker would be a copy. A component that knows the invite's field by name would also need a second one for each other link field, and the repo already has more than one such field. A renderer keyed on the declaration covers every link field the schema forms draw, so the next picker is written once.
 
-**Against the survey form engine.** The picker does not depend on the typed survey document of the [survey form engine](../archive/2026-11-04-resource-survey-form-engine-program/design.md). It reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
+**Against the survey form engine.** The picker does not depend on the typed survey document of the [survey form engine](../2026-11-04-resource-survey-form-engine-program/design.md). It reads only a survey resource's identity, title and publication, and those belong to the resource layer the engine keeps. It never reads a survey's questions, so the engine's typed document and the picker do not depend on each other beyond that.
 
 ## Capabilities
 
