@@ -2,7 +2,7 @@
 
 ## Why
 
-The agent console's code, its host package, its specs and its follow-on ideas are removed from the repository, and the [rejected record](../../rejected/infra/agent-console/design.md) keeps why. What was left was outside the repository: the host package was still published on npm, and the host executable was still attached to earlier releases. A stranger could still run a host for a page that no longer exists.
+The agent console's code, its host package, its specs and its follow-on ideas are removed from the repository, and the [rejected record](../../../rejected/infra/agent-console/design.md) keeps why. What was left was outside the repository: the host package was still published on npm, and the host executable was still attached to earlier releases. A stranger could still run a host for a page that no longer exists.
 
 ## What Changes
 

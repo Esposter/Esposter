@@ -1,6 +1,6 @@
 # Agent console retirement
 
-The repository side of the retirement shipped first: the [rejected agent console](../../rejected/infra/agent-console/design.md) holds the decision and the reasons. This design settles the part outside the repository, which is permanent.
+The repository side of the retirement shipped first: the [rejected agent console](../../../rejected/infra/agent-console/design.md) holds the decision and the reasons. This design settles the part outside the repository, which is permanent.
 
 ## How it works
 
