@@ -20,7 +20,7 @@ The world reads the published packs and the loading screen downloads them.
 - **genshin/characters/published-packs** (modified)
 - **genshin/characters/drawing** (modified)
 - **genshin/characters/player-packs** (removed)
-- **genshin/characters/development-packs** (removed)
+- **genshin/characters/development-packs** (no spec: rejected earlier, recorded under `openspec/rejected/genshin/development-packs`)
 
 ## Waiting on
 
