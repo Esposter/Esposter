@@ -1698,8 +1698,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       genshin-db:
-        specifier: ^5.2.14
-        version: 5.2.14
+        specifier: ^5.2.15
+        version: 5.2.15
 
   packages/genshin-text:
     dependencies:
@@ -8726,8 +8726,8 @@ packages:
   generic-names@4.0.0:
     resolution: {integrity: sha512-ySFolZQfw9FoDb3ed9d80Cm9f0+r7qj+HJkWjeD9RBfpxEVTlVhol+gvaQB/78WbwYfbnNh8nWHHBSlg072y6A==}
 
-  genshin-db@5.2.14:
-    resolution: {integrity: sha512-ynW5TYaEKJJOCUghETzv0CAe3OPUgtoKMWHxnpca9zyyrPmzEsYg4ATbplbdAh3ED0cc4fwLm83HxMquCGKX6w==}
+  genshin-db@5.2.15:
+    resolution: {integrity: sha512-xpdFdZAUzG0JyaNF+nbQMIbHYAzX/HbjfBja3xEw8kWET0E7yoM8A4UvB9YAqHgOzyjio2nGy+e6WI6lcjxerA==}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -19854,7 +19854,7 @@ snapshots:
     dependencies:
       loader-utils: 3.3.1
 
-  genshin-db@5.2.14:
+  genshin-db@5.2.15:
     dependencies:
       fuzzysort: 1.9.0
       pako: 2.2.0
