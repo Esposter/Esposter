@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — running the type-aware lint pass on tsrs's own `tsrs-lint`, a Rust port of tsgolint. It lints a sample about twice as fast and runs on Windows, but `tsrs --lint` cannot read the three packages whose tsconfig carries a content mapper. Its argument is in `design.md`.
+Deferred — running the type-aware lint pass on tsrs's own `tsrs-lint`, a Rust port of tsgolint. It lints a sample about twice as fast and runs on Windows, but `vite-plus` still resolves `oxlint-tsgolint` on every run, so that package cannot leave yet. The three packages whose tsconfig carries a content mapper are read only with `TSRS_LINT_RUN_EXTERNAL_CODE=1`, which the swap sets for the lint scripts and CI. Its argument is in `design.md`.
 
 ## What Changes
 
