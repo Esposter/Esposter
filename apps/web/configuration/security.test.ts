@@ -11,6 +11,20 @@ describe("security", () => {
     vi.unstubAllEnvs();
   });
 
+  // The app frames no page of its own by address: the page builder's canvas and the previews are `srcdoc` frames, which
+  // Carry no response for either header to refuse
+  test("lets no page frame the app", async () => {
+    expect.hasAssertions();
+
+    vi.resetModules();
+    const { security } = await import("./security.ts");
+
+    const contentSecurityPolicy = security?.headers ? security.headers.contentSecurityPolicy || undefined : undefined;
+
+    expect(contentSecurityPolicy?.["frame-ancestors"]).toStrictEqual(["'none'"]);
+    expect(security?.headers ? security.headers.xFrameOptions : undefined).toBe("DENY");
+  });
+
   test("holds the hosts the app's fetches and media need", async () => {
     expect.hasAssertions();
 

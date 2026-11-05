@@ -40,15 +40,21 @@ The app SHALL tell browsers to use HTTPS for its host and subdomains for two yea
 - **WHEN** a browser receives the response
 - **THEN** the browser ignores the HTTPS policy header
 
-### Requirement: App pages can be framed only by the same origin
+### Requirement: App pages cannot be framed by address
 
-App pages SHALL be frameable only by pages from the same origin.
+App pages SHALL NOT be frameable by any page, whatever its origin. Frames a page builds from inline `srcdoc` content are not governed by this and still render.
 
 #### Scenario: A page from another site cannot frame an app page
 
 - **GIVEN** a page on another site that embeds an app page in a frame
 - **WHEN** the frame loads
 - **THEN** the browser refuses to display the app page
+
+#### Scenario: A page from the same origin cannot frame an app page by address
+
+- **GIVEN** an app page that embeds another app page in a frame by its address
+- **WHEN** the frame loads
+- **THEN** the browser refuses to display the framed page
 
 ### Requirement: Browser features the app does not use are denied
 

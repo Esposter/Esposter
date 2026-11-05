@@ -30,6 +30,8 @@ export const security: NuxtConfig["security"] = {
         "https://storage.googleapis.com",
         // An unset env var, as in CI, leaves its host out: the security module refuses an undefined source
       ].filter((source) => source !== undefined),
+      // No page frames the app: its own frames are `srcdoc` documents, which no response header governs
+      "frame-ancestors": ["'none'"],
       // Members embed images from anywhere on the web, in a message or a resource's page or email, and no allowlist
       // Can enumerate it. One policy for every route: the app navigates on the client, so the document a session
       // Landed on carries its policy to every page it opens after
@@ -85,6 +87,8 @@ export const security: NuxtConfig["security"] = {
       gamepad: ["self"],
       microphone: ["self"],
     },
+    // The header form of `frame-ancestors`, for a browser that reads only the older one
+    xFrameOptions: "DENY",
   },
   rateLimiter: false,
   // No route takes a larger body, since files travel to Blob Storage by SAS. Any route that takes one
