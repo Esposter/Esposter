@@ -1,4 +1,6 @@
+import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
+import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { WORKSPACE_FILE } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
@@ -14,23 +16,20 @@ import { describe, expect, test } from "vitest";
  */
 describe("workspaceFileOrder", () => {
   const text = readFileSync(resolve(REPOSITORY_ROOT, WORKSPACE_FILE), "utf8");
-  const QUOTED_OR_BARE_KEY_REGEX = /^ {2}(?:"(?<quoted>[^"]+)"|(?<bare>[^\s"#][^:]*)):/gmu;
 
   test("list the settings after packages in order", () => {
     expect.hasAssertions();
 
-    const [first, ...settings] = [...text.matchAll(/^[A-Za-z]\w*(?=:)/gmu)].map(([key]) => key);
+    const [first, ...settings] = Array.from(text.matchAll(/^[A-Za-z]\w*(?=:)/gmu), ([key]) => key);
 
     expect(first).toBe("packages");
     expect(settings).toStrictEqual(settings.toSorted());
   });
 
-  test.each(["catalog", "overrides"])("list the %s entries in order", (name) => {
+  test.each([DependencyGroup.Catalog, DependencyGroup.Overrides])("list the %s entries in order", (group) => {
     expect.hasAssertions();
 
-    const keys = [...getSection(name, text).matchAll(QUOTED_OR_BARE_KEY_REGEX)].map(
-      ({ groups }) => groups?.quoted ?? groups?.bare ?? "",
-    );
+    const keys = parseWorkspaceEntries(group, getSection(group, text)).map(({ packageName }) => packageName);
 
     expect(keys).toStrictEqual(keys.toSorted());
   });
