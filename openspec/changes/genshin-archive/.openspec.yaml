@@ -1,5 +1,6 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 6
 x-model: claude-haiku-5-5
 x-touches: ["packages/genshin-world/src/services/archive/**"]
 x-waiting: "the picture of each viewpoint's place (task 1.1) waits on the viewpoint pictures page, an open roadmap item with no design yet"

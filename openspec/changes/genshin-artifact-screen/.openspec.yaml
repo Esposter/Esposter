@@ -1,3 +1,4 @@
 schema: spec-driven
 affected_areas: [genshin]
+x-phase: 2
 x-model: claude-haiku-5-5
