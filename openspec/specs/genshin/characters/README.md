@@ -59,6 +59,7 @@ A model that fails to read is logged by the model component and draws nothing fo
 
 ## Notes
 
+- **The pack capability left to remove.** [Player packs](player-packs/design.md) describes code the change `genshin-published-character-packs` deletes; it leaves the tree when that change is archived, with its REMOVED deltas.
 - **Within what the terms allow.** No commercial use of the models, and none of the uses the terms list (adult, extreme religious, gore, personal attacks) (`{data-root}/character-packs/extracted/10000030/readme【一定要看】.txt`), which the platform's own rules already forbid.
 
 ## Sources
