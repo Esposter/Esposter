@@ -46,13 +46,24 @@ import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
 
+// Whether the host holds the session back: the screen reads its tables all the same, and mounts the session once it is
+// No longer held, so a host can have the tables arrive while something else plays
+interface Props extends WorldScreenProps {
+  isHeld?: boolean;
+}
+
 // The world, opened once the names and the game's tables it reads its save and runs its rules by have arrived, with the
 // Starting team's kits its first frame builds their combatants from, and the ground, the catalogue and the animals its
 // First frame draws. The bag's weapons, materials and names are read as the save loads, so the world is made only then.
 // A record that fails to arrive is logged and the world stays shut, ready all the same, as a world that cannot start
 // Is, so a host waiting on it moves on. A host that holds the screen has the tables read and the session not yet made
-const props = defineProps<WorldScreenProps>();
+const props = defineProps<Props>();
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
+// The props the session is mounted with: every one the screen takes but its own hold, which only the screen reads
+const sessionProps = computed(() => {
+  const { isHeld: _isHeld, ...rest } = props;
+  return rest;
+});
 const tables = shallowRef<WorldTables>();
 // The deployed team the save holds, whose kits the world reads before it opens: a new player's starting team, as a new
 // Player's save holds it
@@ -194,7 +205,7 @@ getResultAsync(() =>
 <template>
   <WorldSession
     v-if="tables && !isHeld"
-    :="{ ...props, ...tables }"
+    :="{ ...sessionProps, ...tables }"
     @grant="emit('grant')"
     @quit="emit('quit')"
     @ready="emit('ready')"

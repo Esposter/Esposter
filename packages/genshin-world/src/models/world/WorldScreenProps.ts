@@ -20,9 +20,6 @@ export interface WorldScreenProps {
   gameText: GameText;
   // The game's minute of the day the clock is held at, as a reference of the game's shows it
   heldMinutes?: number;
-  // Whether the host holds the session back: the screen reads its tables all the same, and mounts the session once it is
-  // No longer held, so a host can have the tables arrive while something else plays
-  isHeld?: boolean;
   // Whether something covers the world, which then keeps loading but draws no frames until it is shown
   isPaused: boolean;
   // Whether development offers the free camera in photo mode, which the host decides
