@@ -1,6 +1,8 @@
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import type { Party } from "#src/models/party/Party";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -17,6 +19,8 @@ export interface WorldDevHandleOptions {
   getGameClock: () => GameClock | undefined;
   getKills: () => ArchiveKills;
   getLandmarks: () => readonly Landmark[];
+  getQuestProgressMap: () => ReadonlyMap<string, QuestProgress>;
+  getQuests: () => readonly Quest[];
   getScreenKind: () => ScreenKind;
   getWeather: () => undefined | WeatherKind;
   // The window the input reads, which a hold dispatches its keys on

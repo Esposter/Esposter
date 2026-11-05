@@ -687,6 +687,8 @@ const { stepHolds } = useWorldDevHandles({
   getGameClock: () => windrise.value?.gameClock,
   getKills: () => archiveKillsMap.value,
   getLandmarks: () => jumpLandmarks.value,
+  getQuestProgressMap: () => worldQuestsStore.questProgressMap,
+  getQuests: () => worldQuestsStore.quests,
   getScreenKind: () => screenKind.value,
   getWeather: () => windrise.value?.areaWeather,
   inputTarget: window,
