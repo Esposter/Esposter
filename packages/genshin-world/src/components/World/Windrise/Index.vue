@@ -392,8 +392,16 @@ const sightTrailEnds = useSightTrailEnds({
   getSeelies: () => seelies,
   regionDataMap,
 });
+// The characters whose model has failed to read, which the field draws from the Traveler's pack in their place
+const unreadableCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
 // The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack for
-const characterPackReader = computed(() => getCharacterPackReader(characterPackReaders, activeCharacterId));
+// or whose model has failed to read
+const characterPackReader = computed(() =>
+  getCharacterPackReader(characterPackReaders, activeCharacterId, unreadableCharacterIds.value),
+);
+const onCharacterModelError = (characterId: number) => {
+  unreadableCharacterIds.value = new Set([...unreadableCharacterIds.value, characterId]);
+};
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
 const terrainDraws = createTerrainSelection(TILE_SELECTION_CAPACITY);
 // The ground under the camera from above, which the grass redraws as the camera moves and grows on, and the rain's
@@ -644,6 +652,7 @@ onUnmounted(() => {
         :character-pack-reader
         :light-uniforms
         :ramp-texture
+        @error="onCharacterModelError"
       />
     </primitive>
   </TresGroup>

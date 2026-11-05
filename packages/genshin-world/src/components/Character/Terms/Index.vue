@@ -14,8 +14,8 @@ interface Props {
 const { characterId, characterPackReaders } = defineProps<Props>();
 const terms = ref("");
 const isFailed = ref(false);
-const characterPackReader = getCharacterPackReader(characterPackReaders, characterId);
-// The terms are the drawn model's, the Traveler's when the index lists none for the character, so with no reader at all it shows none
+const characterPackReader = getCharacterPackReader(characterPackReaders, characterId, new Set());
+// The terms are the character's own pack's, the Traveler's when the index lists none for the character, so with no reader at all it shows none
 if (characterPackReader)
   readCharacterTerms(characterPackReader).match(
     (text) => {

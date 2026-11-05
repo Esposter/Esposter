@@ -23,6 +23,17 @@ The player's character SHALL be drawn on the character body from its published p
 - **THEN** the failure is shown
 - **AND** no capsule is drawn in its place
 
+### Requirement: A model that fails to read is drawn in the Traveler's place
+
+A character whose model fails to read SHALL be drawn from the Traveler's model in its place, and its failure SHALL be logged once with the character's id. When the Traveler's own model fails to read, nothing SHALL be drawn for the character.
+
+#### Scenario: Unreadable model draws the Traveler
+
+- **GIVEN** the character's model fails to read
+- **WHEN** the world draws the character on the field
+- **THEN** the Traveler's model is drawn on the body in its place
+- **AND** nothing is drawn on the body once the Traveler's model has failed to read too
+
 ## REMOVED Requirements
 
 ### Requirement: The Traveler is drawn on the body at Windrise's start

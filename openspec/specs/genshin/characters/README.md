@@ -29,13 +29,13 @@ flowchart LR
   DRAW -->|"it does not"| TRAVELER["the Traveler's model"]
 ```
 
-A model that fails to read is logged by the model component and draws nothing for the character. A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
+A model that fails to read is logged with its character's id, and the field draws the Traveler's model in its place; when the Traveler's own model fails to read too, nothing is drawn (`packages/genshin-world/src/components/Character/Model/Index.vue`, `packages/genshin-world/src/services/character/getCharacterPackReader.ts`). A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
 
 ## Decisions
 
 - **The index is the one list of the packs.** The world reads it through the game data's lock like every other dataset, so the packs a build draws are the packs the publish wrote (`packages/genshin-world/src/services/character/readCharacterPackIndex.ts`).
 - **A pack is drawn whole or not at all.** (`packages/genshin-world/src/services/shared/readFileResponse.ts` throws on a failed file.) Only the textures a material draws with are read (`packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts`, which matches only the textures a model names). A texture the release does not hold draws its material untextured, since the release itself lacks it; a file the pack lists that fails to arrive fails the whole model, so a character never draws partly.
-- **No stand-in is drawn for a character.** A character whose model is not held draws nothing, and the world does not mount until every pack is held, so the case is a model that fails to parse alone.
+- **The Traveler's model stands in only for a character with no readable model of its own.** The world does not mount until every pack is held, so a character has no model on the field only when its own fails to read or when a save names a character outside the index. Both draw the Traveler's model, and nothing stands in for the Traveler's.
 - **The terms are shown from the model's own pack** (`packages/genshin-world/src/components/Character/Terms/Index.vue`, which reads `readCharacterTerms` from the reader of the character the Character screen shows). They carry the credit the release asks for, so each pack's terms appear the same way.
 
 ## Key files
