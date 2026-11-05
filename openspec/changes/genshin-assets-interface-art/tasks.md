@@ -21,3 +21,7 @@
 ## 4. The roadmap
 
 - [ ] 4.1 [phase 2] Add an `Asset:` line to the roadmap, under the item that holds its screen, for each picture or mark no line names yet: the duel board's frame ornament, icons and coins, the Forge's recipe item icons and its support portrait, the Gcg plate portraits, the quest's series-row picture, and the expedition's pin and book emblem. Verify: `pnpm -C scripts exec vitest run src/workspace/roadmapPhases.test.ts` passes, and each new line names its screen and its source in the roadmap's own format.
+
+## 5. The game's face
+
+- [ ] 5.1 [phase 2] Read the game's HYWenHei 85W face's cap height and advance widths from its font asset, in the block that `pnpm -C scripts genshin:assets ui-find "HYWenHei"` names, and record them as a checked export, the one the roadmap's HYWenHei item waits on, so that every text screen measures its widths against the game's face and not Signika's. Verify: `pnpm -C scripts genshin:assets ui-find "HYWenHei"` names the block that holds the face, and the export's cap height and the advance width of the word 'Adventurer' are recorded in the interface-art design's Decisions, naming the block they were read from.
