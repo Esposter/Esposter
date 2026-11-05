@@ -1,0 +1,17 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-phase: 0
+x-model: claude-haiku-5-5
+x-needs: [game-exports, game-install, media-engine]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/weapons/**",
+    "scripts/src/services/genshinAssets/fit/**",
+    "scripts/src/services/genshinAssets/commands/**",
+    "scripts/src/services/genshinParity/commands/**",
+    "packages/genshin-world/src/components/Weapon/**",
+    "packages/genshin-world/src/models/data/**",
+    "packages/genshin-world/src/generated/**",
+    "packages/genshin-engine/src/kits/**",
+  ]
+x-waiting: "task 3.9 waits on the Traveler's skeleton item of the roadmap, which retargets the game's clips onto the body"
