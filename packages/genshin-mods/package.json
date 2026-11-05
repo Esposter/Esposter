@@ -24,6 +24,7 @@
     "src",
     "types",
     "!**/*.test.ts",
+    "!**/*.test-d.ts",
     "!.claude-plugin/types"
   ],
   "type": "module",

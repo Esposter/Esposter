@@ -1,5 +1,6 @@
 // The plugin's state contract, the one self-contained file the engine validates the module's `$.state` keys against,
-// So the value types the modules share are declared here too
+// So the value types the modules share are declared here too, and a value set the mod also keeps as an enum is repeated
+// Here by hand, with `src/models/stateContract.test-d.ts` holding the two equal
 export interface Commission {
   goal: string;
   openedAt: number;

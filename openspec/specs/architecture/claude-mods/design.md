@@ -57,16 +57,16 @@ Validation comes before the typecheck because it is the engine's own reading and
 
 ## Key files
 
-| File                                                      | Role                                                                    |
-| :-------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-mods/src/register.ts`                   | The entry the engine loads; it runs every register file one time        |
-| `packages/genshin-mods/src/services/registerLifecycle.ts` | Every event the engine takes one unmatched hook for, and the switches   |
-| `packages/genshin-mods/src/services/band/registerBand.ts` | The one band above the prompt, its rows and its button actions          |
-| `packages/genshin-mods/src/services/InitialState.ts`      | Every state value's initial, read by each file's atoms                  |
-| `packages/genshin-mods/types/index.d.ts`                  | The state contract the engine validates the keys against                |
-| `packages/genshin-persona/mod/register.ts`                | A second mod's shape: a plugin's existing node scripts run as commands  |
-| `oxlint.config.ts`                                        | The mod trees' import rule: relative specifiers, never a subpath import |
-| `.agents/skills/claude-mods/SKILL.md`                     | The rules above, one line each, for a session writing a mod             |
+| File                                                      | Role                                                                                                                                                            |
+| :-------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/register.ts`                   | The entry the engine loads; it runs every register file one time                                                                                                |
+| `packages/genshin-mods/src/services/registerLifecycle.ts` | Every event the engine takes one unmatched hook for, and the switches                                                                                           |
+| `packages/genshin-mods/src/services/band/registerBand.ts` | The one band above the prompt, its rows and its button actions                                                                                                  |
+| `packages/genshin-mods/src/services/InitialState.ts`      | Every state value's initial, read by each file's atoms                                                                                                          |
+| `packages/genshin-mods/types/index.d.ts`                  | The state contract the engine validates the keys against; it imports nothing, so `src/models/stateContract.test-d.ts` pins its repeated value sets to the enums |
+| `packages/genshin-persona/mod/register.ts`                | A second mod's shape: a plugin's existing node scripts run as commands                                                                                          |
+| `oxlint.config.ts`                                        | The mod trees' import rule: relative specifiers, never a subpath import                                                                                         |
+| `.agents/skills/claude-mods/SKILL.md`                     | The rules above, one line each, for a session writing a mod                                                                                                     |
 
 ## Notes
 
