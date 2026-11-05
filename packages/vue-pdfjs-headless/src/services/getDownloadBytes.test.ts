@@ -2,7 +2,7 @@
 import type { PdfFreeTextEntry } from "#src/models/PdfFreeTextEntry";
 import type { PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 
-import { PDF_WATERMARK_FONT_SIZE } from "#src/services/constants";
+import { PDF_EDITOR_KEY_PREFIX, PDF_WATERMARK_FONT_SIZE } from "#src/services/constants";
 import { createFormPdf } from "#src/services/createFormPdf.fixture";
 import { getDownloadBytes } from "#src/services/getDownloadBytes";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -59,6 +59,31 @@ describe(getDownloadBytes, () => {
       await expect(readFieldValue(bytes)).resolves.toBe("Typed");
     },
   );
+
+  // A failure means the pinned pdf.js now saves a text annotation, so a comment can be added. The deferred idea at
+  // `openspec/deferred/vue-pdfjs-headless/annotation-comments/design.md` is then revived, and this test is retired with it
+  test("pdf.js still drops a Text annotation when it saves", async () => {
+    expect.hasAssertions();
+
+    const pdfDocument = await getDocument({ data: createFormPdf({ needAppearances: false }), verbosity: 0 }).promise;
+    // The annotation type of a text annotation, which the editor modes do not name
+    // The value is not blank, so the renderer's rule for blank text cannot explain a drop
+    pdfDocument.annotationStorage.setValue(`${PDF_EDITOR_KEY_PREFIX}0`, {
+      annotationType: 1,
+      color: [0, 0, 0],
+      deleted: false,
+      id: "0",
+      pageIndex: 0,
+      rect: [20, 40, 44, 64],
+      rotation: 0,
+      value: "a",
+    });
+    const bytes = await getDownloadBytes(pdfDocument, undefined);
+    const saved = await getDocument({ data: new Uint8Array(bytes), verbosity: 0 }).promise;
+    const annotations = await (await saved.getPage(1)).getAnnotations();
+
+    expect(annotations.map(({ subtype }) => subtype)).toStrictEqual(["Widget"]);
+  });
 
   test("a watermark band crosses the middle of a page turned a quarter", async () => {
     expect.hasAssertions();
