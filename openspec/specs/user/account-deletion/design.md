@@ -33,9 +33,9 @@ The `DeleteAccount` function (`apps/functions/src/functions/deleteAccount.ts`) p
 
 ```mermaid
 flowchart TD
-  Event["DeleteAccount event"] --> Rooms["Owned rooms<br/>partitions, prefixes, room row"]
+  Event["DeleteAccount event"] --> Rooms["Owned rooms<br/>partitions, search documents, prefixes, room row"]
   Rooms --> Resources["Owned resources<br/>purge per resource"]
-  Resources --> Messages["Messages in member rooms<br/>soft delete"]
+  Resources --> Messages["Messages in member rooms<br/>erase, then soft delete"]
   Messages --> Reactions["Reactions in member rooms<br/>remove or unshare"]
   Reactions --> Charged["Charged blobs<br/>from the storage ledger"]
   Charged --> Prefixes["User blob prefixes"]
@@ -45,9 +45,9 @@ flowchart TD
 
 The order is the mechanism. The user row goes last because its cascade removes the `dataExports` rows that name the export archives, so the archives must be removed first.
 
-1. **Owned rooms.** Each room the account owns is deleted one at a time, as an owner's departure deletes it: `leaveRoom` deletes the room for everyone when its owner leaves. The step clears the room's partitions in five tables, `Messages`, `MessagesAscending`, `MessagesMetadata`, `ModerationLog` and `ModerationNotes`. It removes the `{roomId}/` prefix in `MessageAssets` and the `rooms/{roomId}/` prefix in `PublicUserAssets`, which holds the room's profile images, and it deletes the room row last, since a replay finds the room by that row. `deleteRoom` publishes the attachment prefix and the profile images as Event Grid work, but it does not clear the partitions, so the sweep runs its own deletes.
+1. **Owned rooms.** Each room the account owns is deleted one at a time, as an owner's departure deletes it: `leaveRoom` deletes the room for everyone when its owner leaves. The step clears the room's partitions in five tables, `Messages`, `MessagesAscending`, `MessagesMetadata`, `ModerationLog` and `ModerationNotes`, and then deletes the room's documents from the `messages-index` search index, which the indexer filled from the `Messages` partition. It removes the `{roomId}/` prefix in `MessageAssets` and the `rooms/{roomId}/` prefix in `PublicUserAssets`, which holds the room's profile images, and it deletes the room row last, since a replay finds the room by that row. `deleteRoom` publishes the attachment prefix and the profile images as Event Grid work, but it does not clear the partitions or the index documents, so the sweep runs its own deletes.
 2. **Owned resources.** Each resource the account owns goes through `purgeResourceAndBroadcast`, the purge the recycle bin's timer runs: its directory, the partitions its type owns, then its ledger rows, in the order that makes a replay safe.
-3. **Messages in member rooms.** The sweep reads the memberships that remain once the owned rooms are gone. In each of those rooms it soft-deletes the account's messages through `softDeleteRoomMessagesByUser`, the same soft delete a moderation ban runs. It passes a no-op for the announcement, so an open room keeps showing the messages until it reloads.
+3. **Messages in member rooms.** The sweep reads the memberships that remain once the owned rooms are gone. In each of those rooms it erases the account's messages through `eraseRoomMessagesByUser`: the text, the files and the link preview are cleared, and the row is soft-deleted. A moderation ban only soft-deletes, which hides a message without clearing its text, so the sweep does more than the ban does. It passes a no-op for the announcement, so an open room keeps showing the messages until it reloads.
 4. **Reactions in member rooms.** In each of those rooms, an emoji row the account reacted to is deleted when the account is its only reactor. Otherwise the account is taken out of its reactor list. Each write is conditional on the row's etag, so a row another member changed meanwhile fails the step, and the replay reads it again. The rule is `checkIsOnlyReactor` and `getUpdatedUserIds` in `packages/shared`, which the emoji router and the client store also use. No announcement goes out, so an open room shows a removed reaction on its next load.
 5. **Charged blobs.** `listChargedBlobsByUser` reads the account's rows in the storage ledger, grouped by container. `deleteStorageBlobs` removes each container's blobs through the release a blob deletion runs, which drops their ledger rows and broadcasts the storage usage change. The sweep never lists a directory to find these files.
 6. **Blob prefixes.** `deleteUserDirectories` removes everything under `{userId}/` in `GenshinAssets`, `PublicUserAssets`, `UserAssets` and `ClickerAssets`. It is a prefix delete that lists no names, and an empty prefix counts as done. The clicker and user-assets containers each hold the person's `save.json` under the prefix, the clicker's and the dungeon save respectively.
@@ -66,7 +66,9 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 **Owned rooms are deleted, as an owner's departure deletes them.** Account deletion does what `leaveRoom` already does for an owner, rather than inventing a transfer. Transferring ownership is a feature with its own design, and it is the reason to revisit this.
 
-**Messages leave, and reactions are unshared.** A message is attributed to its author, so the sweep removes the author's content from every room the account is still in. A reaction is one row shared by everyone who reacted with that emoji, so the sweep takes the account out of a shared row and deletes a row it holds alone, as the reaction's own removal does. The soft delete lives in `packages/db`, so the functions app and the web app share one implementation.
+**Messages leave, and reactions are unshared.** A message is attributed to its author, so the sweep removes the author's content from every room the account is still in. A reaction is one row shared by everyone who reacted with that emoji, so the sweep takes the account out of a shared row and deletes a row it holds alone, as the reaction's own removal does. The erase and the soft delete both live in `packages/db`, beside the batch loop they share, so the functions app and the web app run one implementation.
+
+**The index follows the table through the indexer, except where a row is deleted.** An erased message stays a row, so the indexer's next pull writes its empty form over the indexed one. The indexer does not detect deleted rows, so an owned room's documents are deleted by the sweep, by partition key, once its partitions are cleared.
 
 **Nothing is announced to open rooms.** A moderation ban publishes each batch it commits, so members watch messages leave. The sweep passes a no-op for that and sends no announcement for reaction removals, so open rooms show both changes on reload. A live announcement was decided against ([rejected](../../../rejected/esbabbler/deleted-account-live-removal/proposal.md)).
 
@@ -86,31 +88,35 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 - Messages a person wrote in a room they have since left stay attributed to them. Membership is the only index from a user to a room.
 - Moderation records in other people's rooms that name the user, and resource activity on resources the user does not own, are kept as the platform's audit trail. Whether that retention is lawful is an owner decision.
-- The Azure AI Search index may keep the text of messages the sweep removes. No sweep step deletes documents from it: member-room messages are marked with `deletedAt`, which the search's not-deleted clause hides ([message search](../../esbabbler/message-search/design.md)), and owned-room rows are left to the indexer's own handling, which `apps/infra/docs/azure/search-indexes.md` does not cover.
+- The Azure AI Search index holds an erased member-room message's old text until the indexer's next pull, at most one schedule interval after the sweep. Owned-room documents do not outlive the sweep, which deletes them by partition key ([message search](../../esbabbler/message-search/design.md)).
 
 ## Key files
 
-| Path                                                                                             | Role                                                     |
-| :----------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| `apps/web/server/trpc/routers/user.ts`                                                           | The `deleteAccount` mutation                             |
-| `apps/web/server/services/user/deleteAccountSessions.ts`                                         | Ends the account's sessions and their device connections |
-| `apps/web/app/components/User/DeleteAccountCard/Index.vue`                                       | The Delete account card and its typed confirmation       |
-| `apps/web/app/components/Ui/ConfirmDialog.vue`                                                   | The confirmation dialog that gates on the typed name     |
-| `apps/web/app/services/user/settings/AccountDeletionKeptItems.ts`                                | The kept list the confirmation names                     |
-| `packages/db-schema/src/schema/auth/usersInAuth.ts`                                              | The `deletionRequestedAt` marker                         |
-| `packages/db-schema/src/schema/auth/accountsInAuth.ts`                                           | The `accounts` foreign key, cascading                    |
-| `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                 | Marks `DeleteAccount` idempotent                         |
-| `apps/functions/src/functions/deleteAccount.ts`                                                  | The event registration                                   |
-| `apps/functions/src/handlers/deleteAccountHandler.ts`                                            | The sweep, in order                                      |
-| `apps/functions/src/services/account/`                                                           | One service per step                                     |
-| `apps/functions/src/handlers/deleteOrphanedProfileImageHandler.ts`                               | Removes a profile image that lands after the sweep       |
-| `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts`                               | The message soft delete, shared with moderation          |
-| `packages/db/src/services/resource/purgeResource.ts`                                             | The purge each owned resource goes through               |
-| `packages/db/src/services/storage/listChargedBlobsByUser.ts`                                     | Reads the account's storage ledger rows                  |
-| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | Removes charged blobs and releases their charge          |
-| `packages/db/src/services/azure/container/deleteUserDirectories.ts`                              | The `{userId}/` prefix sweep                             |
-| `packages/shared/src/services/message/emoji/checkIsOnlyReactor.ts`                               | The reaction rule, shared with the emoji router          |
-| `packages/shared/src/services/message/emoji/getUpdatedUserIds.ts`                                | The reaction rule, shared with the emoji router          |
-| `apps/web/server/trpc/routers/message/emoji.ts`                                                  | The emoji router, which applies the same reaction rule   |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe010.ts`  | The dev subscription for `DeleteAccount`                 |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe010.ts` | The prod subscription for `DeleteAccount`                |
+| Path                                                                                             | Role                                                         |
+| :----------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |
+| `apps/web/server/trpc/routers/user.ts`                                                           | The `deleteAccount` mutation                                 |
+| `apps/web/server/services/user/deleteAccountSessions.ts`                                         | Ends the account's sessions and their device connections     |
+| `apps/web/app/components/User/DeleteAccountCard/Index.vue`                                       | The Delete account card and its typed confirmation           |
+| `apps/web/app/components/Ui/ConfirmDialog.vue`                                                   | The confirmation dialog that gates on the typed name         |
+| `apps/web/app/services/user/settings/AccountDeletionKeptItems.ts`                                | The kept list the confirmation names                         |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                                              | The `deletionRequestedAt` marker                             |
+| `packages/db-schema/src/schema/auth/accountsInAuth.ts`                                           | The `accounts` foreign key, cascading                        |
+| `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                 | Marks `DeleteAccount` idempotent                             |
+| `apps/functions/src/functions/deleteAccount.ts`                                                  | The event registration                                       |
+| `apps/functions/src/handlers/deleteAccountHandler.ts`                                            | The sweep, in order                                          |
+| `apps/functions/src/services/account/`                                                           | One service per step                                         |
+| `apps/functions/src/handlers/deleteOrphanedProfileImageHandler.ts`                               | Removes a profile image that lands after the sweep           |
+| `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts`                               | The message soft delete, shared with moderation              |
+| `packages/db/src/services/message/eraseRoomMessagesByUser.ts`                                    | The erase in member rooms, which the sweep runs              |
+| `packages/db/src/services/message/updateRoomMessagesByUser.ts`                                   | The batch loop the erase and the soft delete share           |
+| `packages/db/src/services/azure/search/deleteSearchDocumentsByFilter.ts`                         | Deletes a room's documents from the search index             |
+| `apps/functions/src/services/azure/getSearchClient.ts`                                           | The search client the sweep writes with, by managed identity |
+| `packages/db/src/services/resource/purgeResource.ts`                                             | The purge each owned resource goes through                   |
+| `packages/db/src/services/storage/listChargedBlobsByUser.ts`                                     | Reads the account's storage ledger rows                      |
+| `packages/db/src/services/storage/deleteStorageBlobs.ts`                                         | Removes charged blobs and releases their charge              |
+| `packages/db/src/services/azure/container/deleteUserDirectories.ts`                              | The `{userId}/` prefix sweep                                 |
+| `packages/shared/src/services/message/emoji/checkIsOnlyReactor.ts`                               | The reaction rule, shared with the emoji router              |
+| `packages/shared/src/services/message/emoji/getUpdatedUserIds.ts`                                | The reaction rule, shared with the emoji router              |
+| `apps/web/server/trpc/routers/message/emoji.ts`                                                  | The emoji router, which applies the same reaction rule       |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAe010.ts`  | The dev subscription for `DeleteAccount`                     |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe010.ts` | The prod subscription for `DeleteAccount`                    |

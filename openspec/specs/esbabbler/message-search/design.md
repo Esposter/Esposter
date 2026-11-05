@@ -95,6 +95,10 @@ Results, totals and the current page are all keyed by room, so a response that l
 
 Within a room, a newer search cancels the one still in flight, whichever surface issued it: the Enter key, a history entry or a page change. The store holds one `AbortController` per room and hands out its signal, so the cancelled request is actually stopped, and a response that arrives after the cancel writes nothing, as the [search design](../../architecture/search/design.md) requires of every search. An empty read cancels the search the same way, and it clears the pending flag that search leaves behind, since the cancelled search skips clearing its own flag and nothing else would.
 
+## Erased accounts
+
+A deleted account's messages keep their place in their rooms, but not their text. The account deletion erases the text, the files and the link preview of each message the account wrote in a room it is still in, and soft-deletes the row ([account deletion](../../user/account-deletion/design.md)). The index takes the erased row on the indexer's next pull, and until that pull the old text stays searchable. A room the account owned is removed instead, and the sweep deletes the room's documents from the index by partition key, so a search of that room finds nothing once the sweep has finished.
+
 ## Key files
 
 | File                                                                     | Role                                                                                                            |

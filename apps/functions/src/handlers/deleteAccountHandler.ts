@@ -7,7 +7,7 @@ import { deleteAccountDataExportArchives } from "#src/services/account/deleteAcc
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
 import { deleteAccountOwnedResources } from "#src/services/account/deleteAccountOwnedResources";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
-import { softDeleteAccountMessages } from "#src/services/account/softDeleteAccountMessages";
+import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { db } from "#src/services/shared/db";
 import { usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
@@ -19,7 +19,7 @@ import { eq } from "drizzle-orm";
 export const deleteAccountHandler = async (context: InvocationContext, userId: UserInAuth["id"]): Promise<void> => {
   await deleteAccountOwnedRooms(context, userId);
   await deleteAccountOwnedResources(context, userId);
-  await softDeleteAccountMessages(userId);
+  await eraseAccountMessages(userId);
   await deleteAccountMemberRoomReactions(userId);
   await deleteAccountChargedBlobs(context, userId);
   await deleteAccountBlobDirectories(userId);

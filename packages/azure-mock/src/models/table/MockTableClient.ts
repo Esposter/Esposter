@@ -149,7 +149,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
 
     const snapshot = new Map(this.table);
     getResult(() => {
-      for (const [type, entity, updateMode] of actions)
+      for (const [type, entity, updateMode, updateOptions] of actions)
         switch (type) {
           case "create":
             this.#applyCreate(entity);
@@ -158,7 +158,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
             this.#applyDelete(entity.partitionKey, entity.rowKey);
             break;
           case "update":
-            this.#applyUpdate(entity, updateMode);
+            this.#applyUpdate(entity, updateMode, updateOptions?.etag);
             break;
           case "upsert":
             this.#applyUpsert(entity, updateMode);
@@ -247,15 +247,24 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     return { ...entity, etag: entity.etag ?? this.#getEtag() };
   }
 
+  // The service stores no null or undefined property: a Merge keeps the stored value when the write carries null for
+  // It, and a Replace stores only the properties the write carries with a value
+  #withPresentProperties<T extends object>(entity: TableEntity<T>): TableEntity<T> {
+    return Object.fromEntries(
+      Object.entries(entity).filter(([, value]) => value !== null && value !== undefined),
+    ) as TableEntity<T>;
+  }
+
   #writeEntity<T extends object>(
     key: string,
     entity: TableEntity<T>,
     mode: UpdateMode,
     existingEntity?: TableEntity,
   ): void {
+    const presentEntity = this.#withPresentProperties(entity);
     if (existingEntity && mode === "Merge")
-      this.table.set(key, { ...existingEntity, ...entity, etag: this.#getEtag() });
+      this.table.set(key, { ...existingEntity, ...presentEntity, etag: this.#getEtag() });
     // "Replace" or entity doesn't exist (which is an insert)
-    else this.table.set(key, { ...entity, etag: this.#getEtag() });
+    else this.table.set(key, { ...presentEntity, etag: this.#getEtag() });
   }
 }

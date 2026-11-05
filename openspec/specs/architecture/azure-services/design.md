@@ -55,11 +55,12 @@ Azure AI Search holds one index, `messages-index`, that powers filtered message 
 
 The index is populated by Azure's managed pull indexer (`messages-indexer`), not by a push on write. The indexer runs on its own schedule — every five minutes, the `schedule.interval` it is created with in `apps/infra/docs/azure/search-indexes.md` — reads the `Messages` table and upserts each row as a document. A newly sent message becomes searchable within that interval rather than synchronously.
 
-The indexer owns the index, so nothing in this repo writes documents to it. Its own control plane is the operational tooling: `GET /indexers/messages-indexer/status` reports the last runs, document counts, and per-document errors, and `POST /indexers/messages-indexer/reset` followed by `POST .../run` clears the high-water mark and re-reads the whole table. Both are one click each in the portal's indexer blade. Soft deletes need no special handling — `deletedAt` is a column the indexer already carries, and queries exclude it with a null clause.
+Nothing in this repo uploads documents to the index. The indexer does not detect deleted rows, so the account deletion is the one writer that removes documents: once an owned room's `Messages` partition is cleared, its documents are deleted by partition key ([account deletion](../../user/account-deletion/design.md)). Its own control plane is the operational tooling: `GET /indexers/messages-indexer/status` reports the last runs, document counts, and per-document errors, and `POST /indexers/messages-indexer/reset` followed by `POST .../run` clears the high-water mark and re-reads the whole table. Both are one click each in the portal's indexer blade. Soft deletes need no special handling — `deletedAt` is a column the indexer already carries, and queries exclude it with a null clause.
 
 ```mermaid
 flowchart TD
   MT["Messages table (Azure Table)"] -->|"messages-indexer pull, five-minute schedule"| IDX["messages-index (Azure AI Search)"]
+  ACC["Account deletion, owned-room step"] -->|"deleteDocuments by PartitionKey"| IDX
   IDX -->|"searchMessages"| SM["Filtered full-text search"]
   IDX -->|"readMySentMessages"| SENT["Sent tab"]
 ```

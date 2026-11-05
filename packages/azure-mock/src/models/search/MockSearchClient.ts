@@ -23,7 +23,9 @@ import type { Except } from "type-fest";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { MOCK_SEARCH_BASE_URL } from "#src/services/constants";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
+import { deserializeDocumentKeys } from "#src/services/search/deserializeDocumentKeys";
 import { searchDocuments } from "#src/services/search/searchDocuments";
+import { selectSearchDocumentFields } from "#src/services/search/selectSearchDocumentFields";
 import { sortDocuments } from "#src/services/search/sortDocuments";
 import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
 import { getOrCreate } from "@esposter/shared";
@@ -64,8 +66,21 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
     keyValues: string[],
     options?: DeleteDocumentsOptions,
   ): Promise<IndexDocumentsResult>;
-  deleteDocuments(): Promise<IndexDocumentsResult> {
-    throw new NotImplementedError(this.deleteDocuments.name);
+  deleteDocuments(
+    keyName: keyof TModel | TModel[],
+    keyValues?: DeleteDocumentsOptions | string[],
+  ): Promise<IndexDocumentsResult> {
+    // Deleting by whole documents is not modelled: a delete names its key field and the values it holds
+    if (Array.isArray(keyName) || !Array.isArray(keyValues)) throw new NotImplementedError(this.deleteDocuments.name);
+    // The service deletes a listed key whether or not a document holds it, so a key nothing holds reports success too
+    const deletedKeys = new Set(keyValues);
+    MockSearchDatabase.set(
+      this.indexName,
+      this.documents.filter(
+        (document) => !deletedKeys.has(String((document as Record<PropertyKey, unknown>)[keyName])),
+      ),
+    );
+    return Promise.resolve({ results: keyValues.map((key) => ({ key, statusCode: 200, succeeded: true })) });
   }
 
   getDocument<TFields extends SelectFields<TModel>>(
@@ -98,19 +113,22 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
     searchText?: string,
     options?: SearchOptions<TModel, TFields>,
   ): Promise<SearchDocumentsResult<TModel, TFields>> {
-    const { filter, includeTotalCount, orderBy, searchFields, skip = 0, top } = options ?? {};
+    const { filter, includeTotalCount, orderBy, searchFields, select, skip = 0, top } = options ?? {};
     let documents = searchDocuments(this.documents as Record<string, unknown>[], searchText, searchFields);
     if (filter) {
       const predicate = createFilterPredicate(filter);
-      documents = documents.filter((document) => predicate(document));
+      documents = documents.filter((document) => predicate(deserializeDocumentKeys(document)));
     }
     if (orderBy) documents = sortDocuments(documents, orderBy);
     const count = documents.length;
     const paginatedDocuments = documents.slice(skip, top === undefined ? undefined : skip + top);
+    const returnedDocuments = select
+      ? paginatedDocuments.map((document) => selectSearchDocumentFields(document, select))
+      : paginatedDocuments;
     const results = {
       // oxlint-disable-next-line typescript/require-await -- async required by the AsyncIterator protocol
       async *[Symbol.asyncIterator](): AsyncGenerator<{ document: TModel }> {
-        for (const document of paginatedDocuments) yield { document: document as TModel };
+        for (const document of returnedDocuments) yield { document: document as TModel };
       },
     };
     // eslint-disable-next-line no-restricted-syntax -- A fake against an SDK result type with private members

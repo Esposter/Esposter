@@ -157,6 +157,51 @@ describe(MockTableClient, () => {
     expect(storedEntity.count).toBe(1);
   });
 
+  test("keeps a stored property when a merge carries null for it, as the service does", async () => {
+    expect.hasAssertions();
+
+    const client = new MockTableClient(tableName, tableName);
+    await client.createEntity({ note: "kept", partitionKey, rowKey: "0" });
+    await client.updateEntity({ note: null, partitionKey, rowKey: "0" }, "Merge");
+    const storedEntity = await client.getEntity<{ note: null | string }>(partitionKey, "0");
+
+    expect(storedEntity.note).toBe("kept");
+  });
+
+  test("replaces the whole entity on a replace, storing no property the write omits or carries as null", async () => {
+    expect.hasAssertions();
+
+    const client = new MockTableClient(tableName, tableName);
+    await client.createEntity({ dropped: "old", note: "kept", partitionKey, rowKey: "0" });
+    await client.updateEntity({ note: null, partitionKey, rowKey: "0" }, "Replace");
+    const storedEntity = await client.getEntity(partitionKey, "0");
+
+    expect(storedEntity).not.toHaveProperty("dropped");
+    expect(storedEntity).not.toHaveProperty("note");
+  });
+
+  test("refuses a transaction whose update carries a stale etag and applies none of its actions", async () => {
+    expect.hasAssertions();
+
+    const client = await createClient(1);
+    const { etag } = await client.getEntity(partitionKey, "0");
+    await client.updateEntity({ count: 1, partitionKey, rowKey: "0" }, "Merge");
+
+    expect(() =>
+      client.submitTransaction([
+        ["create", { partitionKey, rowKey: "1" }],
+        ["update", { count: 2, partitionKey, rowKey: "0" }, "Replace", { etag }],
+      ]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[MockRestError: The update condition specified in the request was not satisfied.]`,
+    );
+
+    const storedEntity = await client.getEntity<{ count: number }>(partitionKey, "0");
+
+    expect(storedEntity.count).toBe(1);
+    await expect(readByPage(client)).resolves.toHaveLength(1);
+  });
+
   // The service refuses a transaction over its action limit whole, so none of its creates lands
   test("rejects a transaction over the azure action limit and applies none of it", () => {
     expect.hasAssertions();

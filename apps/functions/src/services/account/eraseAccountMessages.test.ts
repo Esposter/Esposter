@@ -1,6 +1,6 @@
 import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
-import { softDeleteAccountMessages } from "#src/services/account/softDeleteAccountMessages";
+import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createEntity } from "@esposter/db";
@@ -26,7 +26,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
-describe(softDeleteAccountMessages, () => {
+describe(eraseAccountMessages, () => {
   const name = "name";
 
   beforeAll(async () => {
@@ -43,7 +43,7 @@ describe(softDeleteAccountMessages, () => {
     await mockDb.delete(usersInAuth);
   });
 
-  test("soft-deletes the account's messages in the rooms it is a member of, and nothing else", async () => {
+  test("erases the account's messages in the rooms it is a member of, and nothing else", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
@@ -72,12 +72,12 @@ describe(softDeleteAccountMessages, () => {
     const otherUserMessage = await createRoomMessage(memberRoom.id, otherUserId);
     const nonMemberRoomMessage = await createRoomMessage(nonMemberRoom.id, userId);
 
-    await softDeleteAccountMessages(userId);
+    await eraseAccountMessages(userId);
 
-    const readDeletedAt = async (message: StandardMessageEntity) =>
-      (await messageClient.getEntity<StandardMessageEntity>(message.partitionKey, message.rowKey)).deletedAt;
-    await expect(readDeletedAt(targetMessage)).resolves.toStrictEqual(new Date(0));
-    await expect(readDeletedAt(otherUserMessage)).resolves.toBeNull();
-    await expect(readDeletedAt(nonMemberRoomMessage)).resolves.toBeNull();
+    const readRow = (message: StandardMessageEntity) =>
+      messageClient.getEntity<StandardMessageEntity>(message.partitionKey, message.rowKey);
+    await expect(readRow(targetMessage)).resolves.toMatchObject({ deletedAt: new Date(0), message: "" });
+    await expect(readRow(otherUserMessage)).resolves.toMatchObject({ deletedAt: null, message: "message" });
+    await expect(readRow(nonMemberRoomMessage)).resolves.toMatchObject({ deletedAt: null, message: "message" });
   });
 });

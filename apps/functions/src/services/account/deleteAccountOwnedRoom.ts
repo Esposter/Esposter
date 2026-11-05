@@ -1,16 +1,18 @@
 import type { InvocationContext } from "@azure/functions";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { getSearchClient } from "#src/services/azure/getSearchClient";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { db } from "#src/services/shared/db";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
-import { deleteTablePartitionEntities } from "@esposter/db";
-import { AzureContainer, AzureTable, roomsInMessage } from "@esposter/db-schema";
+import { getPartitionKeyFilter } from "@esposter/azure";
+import { deleteSearchDocumentsByFilter, deleteTablePartitionEntities } from "@esposter/db";
+import { AzureContainer, AzureTable, roomsInMessage, SearchIndex } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // An owner's departure deletes the room for everyone, and account deletion does the same to each room its account owns.
-// The message partitions, the attachments and the profile images go first, and the room row last: the row is what a
-// Replay finds the room by, so a room whose sweep fails keeps its row and is swept again
+// The message partitions and the search documents that index them, the attachments and the profile images go first, and
+// The room row last: the row is what a replay finds the room by, so a room whose sweep fails keeps its row and is swept again
 export const deleteAccountOwnedRoom = async (
   context: InvocationContext,
   roomId: RoomInMessage["id"],
@@ -24,6 +26,8 @@ export const deleteAccountOwnedRoom = async (
       AzureTable.ModerationNotes,
     ].map(async (tableName) => deleteTablePartitionEntities(await getTableClient(tableName), roomId)),
   );
+  // The index is fed from the Messages partition just cleared, so the room's documents are removed once that partition is
+  await deleteSearchDocumentsByFilter(getSearchClient(SearchIndex.Messages), getPartitionKeyFilter(roomId));
   await deleteStoragePrefix(context, AzureContainer.MessageAssets, `${roomId}/`);
   await deleteStoragePrefix(context, AzureContainer.PublicUserAssets, `rooms/${roomId}/`);
   await db.delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));

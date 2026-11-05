@@ -50,7 +50,7 @@ The deletion SHALL remove each store the user data inventory lists as keyed to t
 
 ### Requirement: Owned rooms are deleted as an owner's departure deletes them
 
-A room whose owner is the account being deleted SHALL be deleted for every member, with its message partitions, its moderation records and its attachments, as leaving the room as its owner already deletes it.
+A room whose owner is the account being deleted SHALL be deleted for every member, with its message partitions, its search documents, its moderation records and its attachments, as leaving the room as its owner already deletes it.
 
 #### Scenario: A deleted owner's room is removed with its messages and files
 
@@ -58,15 +58,21 @@ A room whose owner is the account being deleted SHALL be deleted for every membe
 - **WHEN** the deletion sweeps
 - **THEN** the room, its message partitions and its attachments are gone
 
+#### Scenario: A deleted owner's room is no longer searchable
+
+- **GIVEN** a room owned by the account, whose messages the search index holds
+- **WHEN** the deletion sweeps
+- **THEN** the index holds no document for the room, and the other rooms' documents are unchanged
+
 ### Requirement: The account's messages and charged attachments are removed from the rooms it is in
 
-The deletion SHALL soft-delete every message the account wrote in a room it is a member of, and SHALL remove every attachment the account is charged for, found through its storage ledger rows.
+The deletion SHALL erase the text, the files and the link preview of every message the account wrote in a room it is a member of, and SHALL soft-delete those messages. It SHALL remove every attachment the account is charged for, found through its storage ledger rows.
 
-#### Scenario: A member's messages are removed from the rooms they are in
+#### Scenario: A member's messages are erased in the rooms they are in
 
 - **GIVEN** an account that wrote messages in two rooms it is still a member of
 - **WHEN** the deletion sweeps
-- **THEN** those messages are soft-deleted in both rooms and no other person's messages change
+- **THEN** those messages are soft-deleted in both rooms with their text erased, and no other person's messages change
 
 #### Scenario: Charged attachments are removed through the ledger
 

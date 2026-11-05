@@ -8,6 +8,7 @@ import { readPartitionEntities } from "#src/services/azure/readPartitionEntities
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
+import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import {
   chargeStorageLedgerEntry,
   createEntity,
@@ -36,6 +37,7 @@ import {
   ResourceType,
   resourceVersionsInResource,
   roomsInMessage,
+  SearchIndex,
   sessionsInAuth,
   SnapshotChannel,
   storageLedgerInStorage,
@@ -44,7 +46,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -56,6 +58,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 vi.mock(
   import("#src/services/azure/getWebPubSubServiceClient"),
@@ -94,6 +97,7 @@ describe(deleteAccountHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
+    MockSearchDatabase.clear();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
@@ -140,6 +144,7 @@ describe(deleteAccountHandler, () => {
       userId,
     });
     const memberRoomMessage = await createMessage(messageClient, messageAscendingClient, {
+      files: [{ filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 }],
       message,
       roomId: memberRoom.id,
       type: MessageType.Message,
@@ -261,6 +266,18 @@ describe(deleteAccountHandler, () => {
     await seedBlob(AzureContainer.ClickerAssets, getSaveBlobName(userId));
     await seedBlob(AzureContainer.UserAssets, getSaveBlobName(userId));
 
+    // The search index holds a document for the owned room's messages and one for the member room's. The sweep removes
+    // The owned room's documents by its partition key, and the member room's document is not its to remove
+    const indexedOwnedRoomDocument = {
+      [serializeKey(CompositeKeyPropertyNames.partitionKey)]: ownedRoom.id,
+      [serializeKey(CompositeKeyPropertyNames.rowKey)]: getReverseTickedTimestamp(),
+    };
+    const indexedMemberRoomDocument = {
+      [serializeKey(CompositeKeyPropertyNames.partitionKey)]: memberRoom.id,
+      [serializeKey(CompositeKeyPropertyNames.rowKey)]: memberRoomMessage.rowKey,
+    };
+    MockSearchDatabase.set(SearchIndex.Messages, [indexedOwnedRoomDocument, indexedMemberRoomDocument]);
+
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
     // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
     expect(readPartitionEntities(AzureTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
@@ -290,6 +307,7 @@ describe(deleteAccountHandler, () => {
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.PublicUserAssets, `rooms/${ownedRoom.id}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(AzureContainer.MessageAssets, `${ownedRoom.id}/`)).toStrictEqual([]);
+    expect(MockSearchDatabase.get(SearchIndex.Messages)).toStrictEqual([indexedMemberRoomDocument]);
 
     // The owned resource, its version, its working copy, its objects and its activity trail
     await expect(
@@ -313,10 +331,13 @@ describe(deleteAccountHandler, () => {
     expect(readPartitionEntities(AzureTable.ProgramParticipants, ownedProgram.id)).toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
-    // The account's messages in the room it is a member of are soft-deleted, and its charged attachment is gone
+    // The account's messages in the room it is a member of are erased and soft-deleted, and its charged attachment is gone
     const readDeletedAt = async (roomMessage: StandardMessageEntity) =>
       (await messageClient.getEntity<StandardMessageEntity>(roomMessage.partitionKey, roomMessage.rowKey)).deletedAt;
     await expect(readDeletedAt(memberRoomMessage)).resolves.toBeInstanceOf(Date);
+    await expect(
+      messageClient.getEntity<StandardMessageEntity>(memberRoomMessage.partitionKey, memberRoomMessage.rowKey),
+    ).resolves.toMatchObject({ files: "[]", message: "" });
     expect(readBlobNamesUnder(AzureContainer.MessageAssets, `${memberRoom.id}/`)).toStrictEqual([
       otherMemberRoomAttachmentBlobName,
     ]);
