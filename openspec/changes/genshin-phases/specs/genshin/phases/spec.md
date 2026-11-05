@@ -2,7 +2,7 @@
 
 ### Requirement: Every unit of Genshin work belongs to exactly one phase
 
-Every open Genshin change and every open item of the Genshin roadmap SHALL name the one phase whose exit gate fails without it, and a compute item SHALL take the phase of the area it measures.
+Every open Genshin change and every open item of the Genshin roadmap SHALL name the lowest phase whose exit gate fails without it, and a compute item SHALL take the phase of the area it measures.
 
 #### Scenario: A genshin change names its phase
 
