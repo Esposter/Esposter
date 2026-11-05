@@ -2,7 +2,7 @@ import type { SurveyLogicArrayParams } from "#src/models/SurveyLogicArrayParams"
 import type { SurveyLogicArrayRow } from "#src/models/SurveyLogicArrayRow";
 import type { SurveyLogicValue } from "#src/models/SurveyLogicValue";
 
-import { checkIsSurveyFieldName } from "#src/services/shared/checkIsSurveyFieldName";
+import { checkIsSurveyReturnField } from "#src/services/shared/checkIsSurveyReturnField";
 import { getOwnValue } from "#src/services/shared/getOwnValue";
 import { getSurveyArrayItems } from "#src/services/shared/getSurveyArrayItems";
 import { toSurveyLogicNumber } from "#src/services/shared/toSurveyLogicNumber";
@@ -14,8 +14,7 @@ export const getSurveyArrayParams = (args: SurveyLogicValue[]): SurveyLogicArray
   const [data, name, returnCandidate] = args;
   if (args.length < 2 || args.length > 4 || typeof name !== "string") return undefined;
 
-  const hasReturnField =
-    args.length > 2 && typeof returnCandidate === "string" && checkIsSurveyFieldName(returnCandidate);
+  const hasReturnField = args.length > 2 && checkIsSurveyReturnField(returnCandidate);
   const filterIndex = hasReturnField ? 3 : 2;
   if (args.length > filterIndex) return undefined;
 
