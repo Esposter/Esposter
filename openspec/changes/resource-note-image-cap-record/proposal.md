@@ -17,6 +17,8 @@ Decide whether untested shipped behaviour belongs in the spec of record. The own
 
 The chosen option is written as a spec delta for `note-images/spec.md`, which archive merges into the spec of record, and into `design.md` in place, in the change that ships it, so the two agree.
 
+Option 2 is a requirement and its scenario, so a requirements delta carries it. Option 1 is not: its only spec-of-record change is a sentence in the spec's `## Purpose`, and archive merges requirements, not Purpose. Under option 1 the owner also picks how that sentence reaches the spec of record: either a direct edit to the Purpose in the change that ships it, named there as an exception to archive-only, or no spec edit at all, with the cap recorded in the design alone. Either way the change carries no requirements delta under option 1.
+
 ## Out of scope
 
 - The column width itself, and the image rule's values.
