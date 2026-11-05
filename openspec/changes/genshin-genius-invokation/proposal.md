@@ -22,6 +22,8 @@ Finish Genius Invokation TCG beyond its tutorial: every card's effect, seated op
 ## Capabilities
 
 - **genshin/genius-invokation** (new)
+- **genshin/genius-invokation/rules** (the round limit)
+- **genshin/genius-invokation/duel-board** (the board's names for a screen reader)
 
 ## Waiting on
 
