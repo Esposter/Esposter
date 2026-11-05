@@ -1,6 +1,7 @@
 import type { WorldDevHandleOptions } from "#src/models/world/WorldDevHandleOptions";
 
 import { createHealCommand } from "#src/services/dev/commands/createHealCommand";
+import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand";
 import { createKillsCommand } from "#src/services/dev/commands/createKillsCommand";
 import { createScreenCommand } from "#src/services/dev/commands/createScreenCommand";
 import { createStateCommand } from "#src/services/dev/commands/createStateCommand";
@@ -10,9 +11,11 @@ import { createTimescaleCommand } from "#src/services/dev/commands/createTimesca
 import { DEV_SCENARIOS } from "#src/services/dev/scenarios/constants";
 
 // The world's developer commands, joined to the registry by the session that holds the state they read and change: they
-// Register once it mounts and leave when it goes, so each command exists exactly while the state it changes does
-export const useWorldDevHandles = ({ devRegistry, ...options }: WorldDevHandleOptions) => {
+// Register once it mounts and leave when it goes, so each command exists exactly while the state it changes does. The
+// Session steps the holds once a frame, after the frame has read the input, and returns that step
+export const useWorldDevHandles = ({ devRegistry, inputTarget, ...options }: WorldDevHandleOptions) => {
   let unregister: (() => void) | undefined;
+  const frameListeners = new Set<(deltaSeconds: number) => void>();
 
   onMounted(() => {
     if (!devRegistry) return;
@@ -20,6 +23,12 @@ export const useWorldDevHandles = ({ devRegistry, ...options }: WorldDevHandleOp
     unregister = devRegistry.register({
       commands: [
         createHealCommand(options),
+        createHoldCommand({
+          onFrame: (listener) => {
+            frameListeners.add(listener);
+          },
+          target: inputTarget,
+        }),
         createKillsCommand(options),
         createScreenCommand(options),
         createStateCommand(options),
@@ -35,4 +44,10 @@ export const useWorldDevHandles = ({ devRegistry, ...options }: WorldDevHandleOp
   onUnmounted(() => {
     unregister?.();
   });
+
+  return {
+    stepHolds: (deltaSeconds: number) => {
+      for (const listener of frameListeners) listener(deltaSeconds);
+    },
+  };
 };

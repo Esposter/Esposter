@@ -679,7 +679,7 @@ const getCharacterName = (characterId: number) =>
   nameText[statTables.characterDataMap.get(characterId)?.nameTextId ?? ""] || "";
 // The world's developer commands, which read and change the state this session holds, and join the registry while it is
 // Mounted; the scene's clock and weather are read through the Windrise scene
-useWorldDevHandles({
+const { stepHolds } = useWorldDevHandles({
   body: characterBody,
   catalogue,
   devRegistry,
@@ -689,6 +689,7 @@ useWorldDevHandles({
   getLandmarks: () => jumpLandmarks.value,
   getScreenKind: () => screenKind.value,
   getWeather: () => windrise.value?.areaWeather,
+  inputTarget: window,
   jumpTo,
   party,
 });
@@ -989,7 +990,12 @@ useWorldSaveSync({
       :tone-mapping="GENSHIN_TONE_MAPPING"
       shadows
       :shadow-map-type="PCFShadowMap"
-      @before-loop="(context) => stepFrame(context)"
+      @before-loop="
+        (context) => {
+          stepFrame(context);
+          stepHolds(context.delta);
+        }
+      "
       @error="emit('ready')"
     >
       <TresPerspectiveCamera

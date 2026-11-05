@@ -19,6 +19,8 @@ export interface WorldDevHandleOptions {
   getLandmarks: () => readonly Landmark[];
   getScreenKind: () => ScreenKind;
   getWeather: () => undefined | WeatherKind;
+  // The window the input reads, which a hold dispatches its keys on
+  inputTarget: Pick<Window, "dispatchEvent">;
   jumpTo: (pose: WorldJumpPose) => void;
   party: Party;
 }
