@@ -16,10 +16,10 @@ The Shortcut Wheel is how a player reaches the game's menus and screens without 
 
 ## Waiting on
 
-- The wheel's glyphs and layout, which the parity loop traces from the game's own still; until then the component is not drawn.
+- The wheel's glyphs and layout, which the parity loop traces from the game's own still; until then the wheel is drawn from the wiki's description.
 - Customizing the entries and the direction count from Settings, which the wiki gates on Adventure Rank 20, is deferred: [customization](../../deferred/genshin/shortcut-wheel-customization/design.md). The defaults are built now.
 - Gadgets are not on the wiki's wheel, so the quick-use slots of `genshin-gadgets` stay on Z and are not added here.
 
 ## Impact
 
-Adds `packages/genshin-world/src/services/shortcutWheel/`, whose entries and direction are pure and tested, and the component that draws the wheel once its layout is traced.
+Adds `packages/genshin-world/src/services/shortcutWheel/`, whose entries and direction are pure and tested, and the component that draws the wheel from its picked direction count, with the layout provisional until the trace.
