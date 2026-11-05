@@ -1,7 +1,12 @@
 import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { ViewerLink } from "#src/models/ViewerLink";
 
-import { VIEWER_DEFAULT_FRAME_COLOR, VIEWER_PROOF_DURATION_MS, VIEWER_TEXT_COLOR } from "#src/services/constants";
+import {
+  EMPTY_VIEWER_MOTIONS,
+  VIEWER_DEFAULT_FRAME_COLOR,
+  VIEWER_PROOF_DURATION_MS,
+  VIEWER_TEXT_COLOR,
+} from "#src/services/constants";
 
 export interface SetViewerDependencies {
   connect: (address: string) => Promise<undefined | ViewerLink>;
@@ -21,7 +26,7 @@ export const setViewer = async (
   if (!link) return false;
 
   link.bubble(modelId, proofText, VIEWER_PROOF_DURATION_MS, VIEWER_DEFAULT_FRAME_COLOR, VIEWER_TEXT_COLOR);
-  writeConfiguration({ address, modelId, motions: readConfiguration()?.motions ?? {} });
+  writeConfiguration({ address, modelId, motions: readConfiguration()?.motions ?? EMPTY_VIEWER_MOTIONS });
   link.close();
   return true;
 };

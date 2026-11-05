@@ -1,4 +1,4 @@
-// The game's interface colour for each element, used as the Genshin theme's accent and as the persona's fallback
+// The game's interface colour for each element, used as the persona's fallback
 export const ElementColorMap: Record<string, string> = {
   Anemo: "#33ccb3",
   Cryo: "#98c8e8",

@@ -2,6 +2,7 @@ import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { ViewerLink } from "#src/models/ViewerLink";
 
 import {
+  EMPTY_VIEWER_MOTIONS,
   VIEWER_DEFAULT_FRAME_COLOR,
   VIEWER_DEFAULT_MODEL_ID,
   VIEWER_PROOF_DURATION_MS,
@@ -38,7 +39,7 @@ describe(setViewer, () => {
     expect(dependencies.writeConfiguration).toHaveBeenCalledExactlyOnceWith({
       address: ADDRESS,
       modelId: VIEWER_DEFAULT_MODEL_ID,
-      motions: {},
+      motions: EMPTY_VIEWER_MOTIONS,
     });
     expect(link.close).toHaveBeenCalledTimes(1);
   });

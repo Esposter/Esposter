@@ -41,5 +41,5 @@ if (pick) {
   ];
   // The warm waits for no more than a synthesizer's bind
   await deliverWarmRequest(character.name, personaCard);
-  console.log(getSessionStartOutput(card, remarks, readReplyLanguage() ?? language, language, loreRates));
+  console.log(getSessionStartOutput(card, remarks, readReplyLanguage() ?? language, language));
 }

@@ -1,16 +1,7 @@
 import type { Card } from "#src/models/Card";
-import type { LoreRate } from "#src/models/LoreRate";
 import type { PersonaCard } from "#src/models/PersonaCard";
 
-import {
-  CHARACTER_LINE_PREFIX,
-  CONTEXT_HEADLINE_PREFIX,
-  DEFAULT_LANGUAGE,
-  ELEMENT_LINE_PREFIX,
-  LORE_RATES_LINE_PREFIX,
-  NAMEPLATE_PREFIX,
-  RARITY_LINE_PREFIX,
-} from "#src/services/constants";
+import { CONTEXT_HEADLINE_PREFIX, DEFAULT_LANGUAGE, NAMEPLATE_PREFIX } from "#src/services/constants";
 import { getReplyLanguageInstruction } from "#src/services/getReplyLanguageInstruction";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { parseJsonObject } from "#src/services/parseJsonObject";
@@ -18,39 +9,24 @@ import { describe, expect, test } from "vitest";
 
 describe(getSessionStartOutput, () => {
   const description = "description";
-  const element = "Anemo";
   const headline = "headline";
-  const name = "name";
-  const characterLine = `${CHARACTER_LINE_PREFIX}${name}`;
-  const elementLine = `${ELEMENT_LINE_PREFIX}${element}`;
-  const rarity = 4;
-  const rarityLine = `${RARITY_LINE_PREFIX}${rarity}`;
   const note = "note";
   const greeting = "greeting";
   const signOff = "signOff";
   const habit = "habit";
   // The session-start output never reads the voice or the verbs; production owns what those are
   const personaCard: PersonaCard = { greeting, habits: [habit], signOff, verbs: ["verb"] };
-  const bareCard: Card = {
-    description: "",
-    element: "",
-    greeting: "",
-    headline,
-    name,
-    note: "",
-    personaCard: undefined,
-    rarity,
-  };
+  const bareCard: Card = { description: "", greeting: "", headline, note: "", personaCard: undefined };
 
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();
 
-    const card: Card = { description, element, greeting, headline, name, note, personaCard, rarity };
+    const card: Card = { description, greeting, headline, note, personaCard };
 
     expect(getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}\n${characterLine}\n${elementLine}\n${rarityLine}`,
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${description}\n${note}\n- ${habit}\n- Greets: ${greeting}\n- Signs off: ${signOff}`,
           hookEventName: "SessionStart",
         },
         systemMessage: `${NAMEPLATE_PREFIX}${headline}\n${note}\n${greeting}`,
@@ -63,17 +39,13 @@ describe(getSessionStartOutput, () => {
   test("shows the person the remarks between the note and the greeting, and the model none of them", () => {
     expect.hasAssertions();
 
-    const card: Card = { description: "", element, greeting, headline, name, note, personaCard: undefined, rarity };
+    const card: Card = { description: "", greeting, headline, note, personaCard: undefined };
     const remark = "remark";
 
     expect(getSessionStartOutput(card, [remark, "", remark], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}
-${note}
-${characterLine}
-${elementLine}
-${rarityLine}`,
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${note}`,
           hookEventName: "SessionStart",
         },
         systemMessage: `${NAMEPLATE_PREFIX}${headline}
@@ -91,7 +63,7 @@ ${greeting}`,
     expect(getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
-          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}`,
+          additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}`,
           hookEventName: "SessionStart",
         },
         systemMessage: `${NAMEPLATE_PREFIX}${headline}`,
@@ -110,33 +82,12 @@ ${greeting}`,
   ])("carries an instruction naming the reply language %s beside a card in %s", (replyLanguage, interfaceLanguage) => {
     expect.hasAssertions();
 
-    const card: Card = { ...bareCard, element };
-    const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, [], replyLanguage, interfaceLanguage));
+    const { hookSpecificOutput } = parseJsonObject(
+      getSessionStartOutput(bareCard, [], replyLanguage, interfaceLanguage),
+    );
 
     expect(hookSpecificOutput).toStrictEqual({
-      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${getReplyLanguageInstruction(replyLanguage)}\n${characterLine}\n${elementLine}\n${rarityLine}`,
-      hookEventName: "SessionStart",
-    });
-  });
-
-  // The welcome chart's rows reach the theme as one line of JSON, and only when the lore pick drew them
-  test("carries the welcome chart's rows as JSON, and none when the lore pick drew no rows", () => {
-    expect.hasAssertions();
-
-    const loreRates: LoreRate[] = [{ displayName: "displayName", name, probability: 0.5 }];
-    const { hookSpecificOutput: withRates } = parseJsonObject(
-      getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE, loreRates),
-    );
-    const { hookSpecificOutput: withoutRates } = parseJsonObject(
-      getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE),
-    );
-
-    expect(withRates).toStrictEqual({
-      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}\n${LORE_RATES_LINE_PREFIX}${JSON.stringify(loreRates)}`,
-      hookEventName: "SessionStart",
-    });
-    expect(withoutRates).toStrictEqual({
-      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}`,
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${getReplyLanguageInstruction(replyLanguage)}`,
       hookEventName: "SessionStart",
     });
   });

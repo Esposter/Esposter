@@ -42,10 +42,7 @@ export const viewerCommand: SubCommandsDef[string] = defineCommand({
         return;
       }
 
-      writeViewerConfiguration({
-        ...configuration,
-        motions: { ...configuration.motions, [momentName]: motion || undefined },
-      });
+      writeViewerConfiguration({ ...configuration, motions: { ...configuration.motions, [momentName]: motion } });
       console.log(motion ? strings.viewerMotionSet(momentName, motion) : strings.viewerMotionCleared(momentName));
       return;
     }

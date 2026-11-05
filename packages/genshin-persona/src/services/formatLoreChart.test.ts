@@ -11,10 +11,10 @@ describe(formatLoreChart, () => {
     expect.hasAssertions();
 
     const rates: LoreRate[] = [
-      { displayName: "displayName", name: "name", probability: 0.2 },
-      { displayName: "a", name: "a", probability: 0.5 },
-      { displayName: "b", name: "b", probability: 0.1 },
-      { displayName: "c", name: "c", probability: 0.05 },
+      { displayName: "displayName", probability: 0.2 },
+      { displayName: "a", probability: 0.5 },
+      { displayName: "b", probability: 0.1 },
+      { displayName: "c", probability: 0.05 },
     ];
 
     expect(formatLoreChart(rates, english)).toBe(

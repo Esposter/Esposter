@@ -6,7 +6,7 @@ import { LORE_CHART_ROWS } from "#src/services/constants";
 import { findCharacterByName } from "#src/services/findCharacterByName";
 
 // The rows the welcome's chart shows: the tier's choice first, then the runners-up by probability, at most the chart's
-// Rows. The welcome draws them and the session-start context carries them, so a theme shows the same odds the person reads
+// Rows
 export const getLoreRates = ({ choice, probabilities }: ChoiceResponse, roster: Character[]): LoreRate[] => {
   const runnersUp = Object.keys(probabilities)
     .filter((name) => name !== choice)
@@ -18,7 +18,6 @@ export const getLoreRates = ({ choice, probabilities }: ChoiceResponse, roster: 
     .slice(0, LORE_CHART_ROWS)
     .map(({ name, probability }) => ({
       displayName: findCharacterByName(roster, name)?.displayName ?? name,
-      name,
       probability,
     }));
 };

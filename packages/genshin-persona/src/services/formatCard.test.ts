@@ -16,13 +16,10 @@ describe(formatCard, () => {
 
     const card: Card = {
       description: "",
-      element: "",
       greeting: "resolvedGreeting",
       headline,
-      name: "name",
       note: "",
       personaCard: { greeting, habits: ["habit"], signOff: "signOff", verbs: [] },
-      rarity: 4,
     };
 
     expect(formatCard(card)).toBe(

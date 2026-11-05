@@ -2,6 +2,7 @@ import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { ViewerLink } from "#src/models/ViewerLink";
 import type { ViewerPlayer } from "#src/services/createViewerPlayer";
 
+import { EMPTY_VIEWER_MOTIONS } from "#src/services/constants";
 import { createFakeViewerLink } from "#src/services/createFakeViewerLink.test";
 import { createViewerOpener } from "#src/services/createViewerOpener";
 import { createViewerPlayer } from "#src/services/createViewerPlayer";
@@ -34,7 +35,7 @@ describe(createViewerOpener, () => {
     const { link } = createFakeViewerLink();
     const connect = vi.fn<(address: string) => Promise<undefined | ViewerLink>>().mockResolvedValue(link);
     const createPlayer = vi.fn<(link: ViewerLink, modelId: number) => ViewerPlayer>(createViewerPlayer);
-    const configuration: ViewerConfiguration = { address: ADDRESS, modelId: MODEL_ID, motions: {} };
+    const configuration: ViewerConfiguration = { address: ADDRESS, modelId: MODEL_ID, motions: EMPTY_VIEWER_MOTIONS };
     const opener = createViewerOpener({ connect, createPlayer, readConfiguration: () => configuration });
     const player = await opener.open();
 
@@ -53,11 +54,11 @@ describe(createViewerOpener, () => {
       .mockResolvedValueOnce(first.link)
       .mockResolvedValueOnce(second.link);
     const createPlayer = vi.fn<(link: ViewerLink, modelId: number) => ViewerPlayer>(createViewerPlayer);
-    let configuration: ViewerConfiguration = { address: ADDRESS, modelId: MODEL_ID, motions: {} };
+    let configuration: ViewerConfiguration = { address: ADDRESS, modelId: MODEL_ID, motions: EMPTY_VIEWER_MOTIONS };
     const opener = createViewerOpener({ connect, createPlayer, readConfiguration: () => configuration });
     await opener.open();
 
-    configuration = { address: ADDRESS, modelId: OTHER_MODEL_ID, motions: {} };
+    configuration = { address: ADDRESS, modelId: OTHER_MODEL_ID, motions: EMPTY_VIEWER_MOTIONS };
     await opener.open();
 
     expect(connect).toHaveBeenCalledTimes(2);

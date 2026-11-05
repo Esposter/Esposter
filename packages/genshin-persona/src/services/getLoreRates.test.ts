@@ -7,8 +7,7 @@ import { describe, expect, test } from "vitest";
 describe(getLoreRates, () => {
   const character = createCharacter({ displayName: "displayName", name: "name" });
 
-  // The choice leads whatever its probability, the rest follow by theirs, and only the chart's rows are carried, so
-  // The context carries exactly the odds the welcome prints
+  // The choice leads whatever its probability, the rest follow by theirs, and only the chart's rows are kept
   test("carries the choice first, then the runners-up by probability, up to the chart's rows", () => {
     expect.hasAssertions();
 
@@ -20,10 +19,10 @@ describe(getLoreRates, () => {
     };
 
     expect(getLoreRates(response, [character])).toStrictEqual([
-      { displayName: "displayName", name: "name", probability: 0.2 },
-      { displayName: "a", name: "a", probability: 0.5 },
-      { displayName: "b", name: "b", probability: 0.1 },
-      { displayName: "c", name: "c", probability: 0.05 },
+      { displayName: "displayName", probability: 0.2 },
+      { displayName: "a", probability: 0.5 },
+      { displayName: "b", probability: 0.1 },
+      { displayName: "c", probability: 0.05 },
     ]);
   });
 });

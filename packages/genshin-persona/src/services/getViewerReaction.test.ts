@@ -1,4 +1,5 @@
 import { ViewerMoment } from "#src/models/ViewerMoment";
+import { EMPTY_VIEWER_MOTIONS } from "#src/services/constants";
 import { getViewerReaction } from "#src/services/getViewerReaction";
 import { describe, expect, test } from "vitest";
 
@@ -8,24 +9,26 @@ describe(getViewerReaction, () => {
   test("attention wanted turns the character", () => {
     expect.hasAssertions();
 
-    expect(getViewerReaction(ViewerMoment.Attention, { [ViewerMoment.Attention]: MOTION })).toStrictEqual({
-      isExpressionCleared: false,
-      motion: MOTION,
-    });
+    expect(
+      getViewerReaction(ViewerMoment.Attention, { ...EMPTY_VIEWER_MOTIONS, [ViewerMoment.Attention]: MOTION }),
+    ).toStrictEqual({ isExpressionCleared: false, motion: MOTION });
   });
 
   test("an expression is cleared when a turn ends", () => {
     expect.hasAssertions();
 
-    expect(getViewerReaction(ViewerMoment.TurnEnd, {})).toStrictEqual({ isExpressionCleared: true, motion: undefined });
+    expect(getViewerReaction(ViewerMoment.TurnEnd, EMPTY_VIEWER_MOTIONS)).toStrictEqual({
+      isExpressionCleared: true,
+      motion: "",
+    });
   });
 
   test("an unmapped moment sends no motion to the viewer", () => {
     expect.hasAssertions();
 
-    expect(getViewerReaction(ViewerMoment.Attention, {})).toStrictEqual({
+    expect(getViewerReaction(ViewerMoment.Attention, EMPTY_VIEWER_MOTIONS)).toStrictEqual({
       isExpressionCleared: false,
-      motion: undefined,
+      motion: "",
     });
   });
 });

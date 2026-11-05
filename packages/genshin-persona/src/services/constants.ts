@@ -1,8 +1,10 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
+import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { VoiceDeviceLadder } from "#src/models/VoiceDeviceLadder";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
+import { ViewerMoment } from "#src/models/ViewerMoment";
 import { ViewerSoundForm } from "#src/models/ViewerSoundForm";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -68,23 +70,13 @@ export const CARD_DETAIL_SEPARATOR = " · ";
 // What the model reads the headline under, and what the person reads it under
 export const CONTEXT_HEADLINE_PREFIX = "Persona: ";
 export const NAMEPLATE_PREFIX = "✦ ";
-// The line naming the character for a program rather than a person: the agent console's Genshin theme finds it in the
-// Session-start hook's context, spelled the same on both sides, so neither parses the headline's prose
-export const CHARACTER_LINE_PREFIX = "Character: ";
-// The stable element key beside the character name, for a theme to read without parsing the localized headline
-export const ELEMENT_LINE_PREFIX = "Element: ";
-// The character's stars beside the element, so the star a theme draws for the session is coloured by the game's own rarity
-export const RARITY_LINE_PREFIX = "Rarity: ";
-// The welcome chart's rows as JSON, which a theme draws the odds from; absent unless the lore pick chose the character
-export const LORE_RATES_LINE_PREFIX = "Lore rates: ";
 export const ANSI_RESET = "\u001B[0m";
 // A "#rrggbb" triplet's channels: two hex digits each, 0 to 255
 export const HEX_RADIX = 16;
 export const HEX_CHANNEL_LENGTH = 2;
 export const MAX_COLOR_CHANNEL_VALUE = 255;
 // The surface a character's colour must read on, and the status line's badge a tonal fill over it mixing in this much
-// Of that colour: the design language's tonal button, over dusk's background, the agent console's, since a terminal
-// Is mostly dark
+// Of that colour: the design language's tonal button, over dusk's background, since a terminal is mostly dark
 export const NAMEPLATE_SURFACE = "#16161e";
 export const NAMEPLATE_TONAL_MIX_PERCENTAGE = 12;
 // Between the fields of a pick record and of the pin
@@ -93,7 +85,7 @@ export const PICK_RETENTION_DAYS = 7;
 // The roster cache's file name is the prefix, the revision of the roster's fields and the installed data package's
 // Version, so a bump or a new field writes a new one: a cache written before a field existed reads it as missing
 export const ROSTER_CACHE_PREFIX = "roster-";
-export const ROSTER_CACHE_REVISION = 2;
+export const ROSTER_CACHE_REVISION = 3;
 export const ROSTER_CACHE_EXTENSION = ".json";
 // Every month and day is measured inside one leap year, so 29 February is a day like any other and the year wraps
 export const LEAP_YEAR = 2000;
@@ -218,6 +210,11 @@ export const WARM_TEXT = "Ready.";
 export const VOICE_PROOF_TEXT = "The voice is set up, and a reply's spoken lines are read from the next session on.";
 // The viewer's socket: the budget a connection and its registration get to answer, the state of an open socket, the
 // Message numbers start, and the channel and volume every sound plays on
+// The motion map before a reader maps anything: every moment is there, each with no motion
+export const EMPTY_VIEWER_MOTIONS: ViewerConfiguration["motions"] = {
+  [ViewerMoment.Attention]: "",
+  [ViewerMoment.TurnEnd]: "",
+};
 export const VIEWER_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 3 }).total("milliseconds");
 export const VIEWER_OPEN_READY_STATE = 1;
 export const VIEWER_MESSAGE_ID_START = 1;
