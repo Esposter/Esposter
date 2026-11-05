@@ -10,7 +10,7 @@ Movement is kinematic, so collision is a query service the controller asks; a so
 
 ## An ignorePatterns entry for the engine's TSL
 
-The fluid simulator's file stays the only exclusion (`.agents/skills/oxlint/references/ignore-patterns.md`).
+`oxlint.config.ts` holds no entry for the engine's TSL, and no source file is excluded from the type-aware pass today (`.agents/skills/oxlint/references/ignore-patterns.md`).
 
 ## The word teyvat in any name
 

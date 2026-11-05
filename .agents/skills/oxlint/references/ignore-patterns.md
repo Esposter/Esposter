@@ -2,13 +2,13 @@
 
 Read when editing `oxlint.config.ts`'s `ignorePatterns`, when the oxlint step hangs, or when a linter walks an agent worktree.
 
-## `ignorePatterns` — the tsgo hang is load-bearing
+## `ignorePatterns` — a source file is excluded only for a tsgo hang
 
-`options.typeAware: true` runs `tsgolint`, which drives the experimental tsgo. tsgo **infinite-loops** building the type graph for the fluid simulator's composable, over the giant recursive `three/webgpu` + `three/tsl` types it imports, which is why that one file is in `ignorePatterns`. Importing those types is not itself the trigger: the Genshin engine's TSL lints in about a second, so the exclusion is that file's and a new one needs a file measured to hang (the `genshin-engine` skill's Settled list). **Do not remove that exclusion** or the whole `oxlint` step hangs forever — every other file lints in seconds, so bisect a suspected new hang per-directory, then per-file.
+`options.typeAware: true` runs `tsgolint`, which drives the experimental tsgo. tsgo can **infinite-loop** building the type graph of a file that imports giant recursive types, such as `three/webgpu` and `three/tsl`, and a hang of that kind is the only reason a source file is excluded. Importing those types is not itself the trigger: the Genshin engine's TSL lints in about a second, so a new exclusion needs a file measured to hang (the `genshin-engine` skill's Settled list). `oxlint.config.ts` excludes no source file today, so the fluid simulator's composable is linted with the rest. A hang stops the whole `oxlint` step, and every other file lints in seconds, so bisect a suspected hang per-directory, then per-file.
 
-The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` and the workflow sets `cancel-in-progress`, so it runs until the next push cancels it and reports `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`. typescript-eslint does not hang on the same file: it uses the mature `typescript` compiler via `projectService`, not tsgo.
+The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` and the workflow sets `cancel-in-progress`, so it runs until the next push cancels it and reports `ELIFECYCLE exit 129` (SIGHUP) — **not** a heap error, which would be 134 with `heap out of memory`. typescript-eslint does not hang where tsgo does: it uses the mature `typescript` compiler via `projectService`, not tsgo.
 
-oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck whether a newer `oxlint-tsgolint` / tsgo fixes it before assuming the exclusion is still needed.
+oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck whether a newer `oxlint-tsgolint` / tsgo fixes a hang before adding an exclusion for it.
 
 ## `ignorePatterns` — the tileset glob is one value for both linters
 
