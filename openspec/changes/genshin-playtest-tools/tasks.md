@@ -8,8 +8,8 @@
 ## 2. Surface
 
 - [x] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console.
-- [ ] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats.
-- [ ] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface'; `pnpm -C apps/web build` output holds no `createDevRegistry`.
+- [x] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats.
+- [x] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface'; `pnpm -C apps/web build` output holds no `createDevRegistry`.
 
 ## 3. Handles
 
