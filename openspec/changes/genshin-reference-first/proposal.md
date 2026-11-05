@@ -12,14 +12,14 @@ The check that exists matches references by screen name, so a screen's subscreen
 - Every `Screen` folder is either referenced (a fixture and a reference entry) or named pending in the list beside `screens.ts`. None is silently absent.
 - Every subscreen, the base state and each fixture variant, names a reference of its own, or a pending entry stating why it has none. No subscreen borrows another's reference.
 - A subscreen's approved image is written only once its own compare clears the bar.
-- The parity run compares only screenshots, which are committed as lossless WebP beside their snapshots or flat, with their manifest rows as provenance. The entries built from recordings name the recording and second their screenshot was sampled from in a `source` field, the recording fields and the in-repository frame, film, glide and track tools leave the code, and a backdrop's world is a screenshot of its own beside the reference. Motion is matched at the moments a person samples as screenshots, never by recording.
+- The parity run compares only committed images, screenshots and wiki files alike, as lossless WebP beside their snapshots or flat, with their manifest rows as provenance. The entries built from recordings name the recording and second their screenshot was sampled from in a `source` field, the recording fields and the in-repository frame, film, glide and track tools leave the code, and a backdrop's world is a screenshot of its own beside the reference. Motion is matched at the moments a person samples as screenshots, never by recording.
 - The order a screen is built in is fixed: reference, then fixture, then component, then compare, then approve, then the visual suite.
 
 ## Capabilities
 
 - **genshin/parity/screens** (modified): every `Screen` folder is covered or named pending, and every subscreen names a reference of its own.
 - **genshin/parity/visual-suite** (modified): approved images carry no platform segment, and a subscreen's image is approved only once its own compare clears.
-- **genshin/parity/references** (modified): a reference is a screenshot the repository holds or a wiki file, never a recording frame named by its second.
+- **genshin/parity/references** (modified): a reference is a screenshot the repository holds or a wiki file, never a recording frame; only its `source` names the recording and second its screenshot was sampled from.
 
 ## Impact
 

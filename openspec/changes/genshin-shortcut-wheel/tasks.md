@@ -9,7 +9,3 @@
 
 - [x] 2.1 Show the wheel while Tab or the left bumper is held, and open the picked entry's screen on release. Verify: tests named after the scenarios 'Holding Tab opens the wheel' and 'Releasing on an entry opens its screen' written first and seen failing. Blocked on the parity loop's traced layout for the drawn wheel.
 - [x] 2.2 Hold the character still while the wheel is open, so its move only picks the entry. Verify: the browser test named after the scenario 'Holding Tab stops the character walking' (with its walking control) written first and seen failing with the held-move wiring reverted; the wheel's move is read raw either way.
-
-## 3. Customization
-
-- [ ] 3.1 Customize the entries and the direction count from Settings from Adventure Rank 20. Deferred: a later change, after the defaults ship.

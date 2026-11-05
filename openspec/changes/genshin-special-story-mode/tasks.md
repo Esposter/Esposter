@@ -11,4 +11,3 @@
 ## 3. The rest of the restriction
 
 - [ ] 3.1 Lock the map, transport and places a restriction names. Blocked on the PC export's client scripts.
-- [ ] 3.2 Leave the mode from the top left corner and show the story review on return. Deferred: a later change.

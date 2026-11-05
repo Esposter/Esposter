@@ -34,7 +34,7 @@ flowchart TD
 - The tutorial's red arrow sits inside the panel above Confirm. The region includes it, so the parity score counts its pixels as a difference.
 - The three-choice prompt's Continue Game key, `UI_LOGOUT_CONFIRM_CONTINUE_GAME`, is removed with its choice, and the Paimon browser test now expects the two choices.
 - The prompt is scored by three rows, `exit-prompt`, `menu-exit-hover` and `menu-exit-pressed` in `ParityReferenceMap.ts`, none approved yet.
-- `Exit/Index.vue` re-declares the `.exit` reference pixel and the absolute backdrop and centred dialog rules that `styles/menuDialog.css` owns for the World Level prompt, with the same comment copied. The values differ (66% against 48%, 910 by 576 against 960 by 606, another panel colour), so the duplicate is structure, not values. Whether the sheet owns the shared structure is open (4.1), and it waits on a visual parity check because importing the sheet also brings its `.choice` pill rules into Exit.
+- `Exit/Index.vue` re-declares the `.exit` reference pixel and the absolute backdrop and centred dialog rules that `styles/menuDialog.css` owns for the World Level prompt, with the same comment copied. The values differ (66% against 48%, 910 by 576 against 960 by 606, another panel colour), so only the structure is shared, and that structure is three rules. Exit keeps its own rules rather than importing the sheet, since the import would also bring the sheet's `.choice` pill rules and restyle Exit's choices, a cost that outweighs the three rules it saves.
 
 ## Key files
 

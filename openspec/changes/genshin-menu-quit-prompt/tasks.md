@@ -13,4 +13,4 @@
 
 ## 4. Shared dialog rules
 
-- [ ] 4.1 Decide whether `Menu/Exit/Index.vue` takes the dialog's structural rules (`--reference-pixel`, the absolute backdrop, the centred dialog) from `styles/menuDialog.css` rather than re-declaring them, keeping its own values for the 66% backdrop, the 910 by 576 panel and its colour. Verify: the decision is written into design.md's Known gaps, and if the sheet is imported, `genshin:parity compare` over `exit-prompt`, `menu-exit-hover` and `menu-exit-pressed` reads no worse than before the change, with the `.choice` pill rules the sheet brings kept out of Exit. Not started: the import would bring the World Level dialog's pill look into Exit, and that needs a visual parity check before the duplicate declarations go.
+- [x] 4.1 Keep `Menu/Exit/Index.vue`'s own structural rules (`--reference-pixel`, the absolute backdrop, the centred dialog), with no import of `styles/menuDialog.css`, and record the duplicate in design.md's Known gaps. Verify: design.md's Known gaps names the duplicate and the values that differ, and `Menu/Exit/Index.vue` does not import `styles/menuDialog.css`.

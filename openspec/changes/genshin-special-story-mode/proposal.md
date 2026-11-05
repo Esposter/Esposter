@@ -18,7 +18,7 @@ Some story quests restrict the player while one of their steps is active: the Pa
 
 - `agent/data-quests`: the quest builder must carry each step's restriction into the quest dataset. This change cannot take effect until that dataset ships the field.
 - The rest of each restriction, the place or character a step limits the player to and the map and transport it bans, is read from the client's own scripts, which only the PC export holds. Those locks wait on that export.
-- Leaving the mode from the top left corner and the story review on return are a later change.
+- Leaving the mode from the top left corner and the story review on return are deferred: [their idea](../../deferred/genshin/special-story-mode-exit-and-review/design.md).
 
 ## Impact
 
