@@ -1,0 +1,25 @@
+schema: spec-driven
+affected_areas: [genshin]
+x-model: claude-haiku-5-5
+x-needs: [game-install]
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/**",
+    "scripts/src/services/genshinText/**",
+    "scripts/src/services/genshinParity/**",
+    "scripts/src/services/recreation/animeStudio/**",
+    "scripts/src/services/recreation/video/**",
+    "scripts/src/services/producerStamp/**",
+    "scripts/src/services/provenance/**",
+    "scripts/src/services/shared/**",
+    "scripts/src/services/fleet/data/**",
+    "scripts/src/services/gameData/**",
+    "scripts/src/animeStudio/**",
+    "packages/shared-node/src/services/cache/**",
+    "packages/genshin-world/parity/**",
+    "packages/genshin-world/src/services/**",
+    ".agents/skills/genshin-data/**",
+    ".agents/skills/genshin-parity/**",
+    "openspec/specs/genshin/**",
+    "openspec/specs/architecture/recoverability/**",
+  ]
