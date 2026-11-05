@@ -55,7 +55,7 @@ const weaponPanel = computed(() => {
     passiveName: getWeaponPassive(weaponData, weapon.refinement, nameText)?.name ?? "",
     rarity: weaponData.rarity,
     refinement: weapon.refinement,
-    subStatLabel: subStatAttribute === undefined ? "" : getAttributeLabel(subStatAttribute, gameText),
+    subStatLabel: getAttributeLabel(subStatAttribute, gameText),
     subStatValue,
     switchLabel: gameText[GameTextKey.QuickSwapSwitch],
   };

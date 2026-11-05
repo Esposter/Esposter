@@ -36,8 +36,6 @@ export const useWeaponStats = (
           getAttributeTotals(weapon.value.ascension)[secondaryAttribute.value],
         ),
   );
-  const secondaryLabel = computed(() =>
-    secondaryAttribute.value === undefined ? "" : getAttributeLabel(secondaryAttribute.value, toValue(gameText)),
-  );
+  const secondaryLabel = computed(() => getAttributeLabel(secondaryAttribute.value, toValue(gameText)));
   return { baseAttackText, nextBaseAttackText, secondaryLabel, secondaryText };
 };
