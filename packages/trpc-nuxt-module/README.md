@@ -98,6 +98,8 @@ const { data } = await $trpc.greeting.useQuery(name);
 
 A WebSocket connection calls the `trpc-nuxt-module:webSocket:open` Nitro runtime hook when it opens. It calls the `trpc-nuxt-module:webSocket:close` hook when it closes. Both hooks receive the connection's context, typed from your router.
 
+The `keepAlive` option of `webSocket` is the handler's own ping of each connection. After `pingMs` of quiet the handler sends `PING`, and it closes a connection that sends no message within `pongWaitMs`. A tRPC client answers `PING` with `PONG`. The client's keep-alive is not set by this module: the app configures it on its own `createWSClient`.
+
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
