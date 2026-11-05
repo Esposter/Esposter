@@ -41,26 +41,27 @@ flowchart LR
 
 ## Key files
 
-| File                                                                               | Role                                                                                   |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/characterPacks/buildCharacterPackIndex.ts`     | Builds the index record from the packs' manifests                                      |
-| `scripts/src/services/genshinAssets/commands/characterPacksCommand.ts`             | Publishes the files and the index, and reports both in a dry run                       |
-| `packages/genshin-world/src/models/character/CharacterPackIndex.ts`                | The index record's model and schema                                                    |
-| `packages/genshin-world/src/services/character/readCharacterPackIndex.ts`          | Reads the index through the hosted game data                                           |
-| `packages/genshin-world/src/services/character/planCharacterPackDownload.ts`       | The files and bytes the cache lacks                                                    |
-| `packages/genshin-world/src/services/character/downloadCharacterPackFiles.ts`      | Fetches the missing files with progress and retries into the cache                     |
-| `packages/genshin-world/src/services/character/createCharacterPackReader.ts`       | A `CharacterPackReader` over the cache                                                 |
-| `packages/genshin-world/src/composables/useCharacterPackPreload.ts`                | The preload's state: bytes loaded, bytes pending, failure and retry                    |
-| `packages/genshin-world/src/components/Loading/Startup/Index.vue`                  | The size line under the marks                                                          |
-| `packages/genshin-world/src/components/Game/Opening/Index.vue`                     | Starts the preload when it mounts                                                      |
-| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Reads the tables, takes the host's `isHeld` hold, and mounts the session once released |
-| `apps/web/app/components/Genshin/World.vue`                                        | Passes the hold to the world's screen                                                  |
-| `apps/web/app/components/Genshin/Index.vue`                                        | Composes the bar from the bytes and the thirds                                         |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`                   | Draws the character's model from the reader, with no capsule                           |
-| packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue         | Deleted                                                                                |
-| apps/web/server/development/genshinCharacterPacks.ts and its services              | Deleted                                                                                |
-| apps/web/server/services/genshin/accountCharacterPack/** and its routes and models | Deleted                                                                                |
-| packages/genshin-world/src/components/Character/PackLoader/Index.vue               | Deleted                                                                                |
+| File                                                                               | Role                                                                |
+| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/characterPacks/buildCharacterPackIndex.ts`     | Builds the index record from the packs' manifests                   |
+| `scripts/src/services/genshinAssets/commands/characterPacksCommand.ts`             | Publishes the files and the index, and reports both in a dry run    |
+| `packages/genshin-world/src/models/character/CharacterPackIndex.ts`                | The index record's model and schema                                 |
+| `packages/genshin-world/src/services/character/readCharacterPackIndex.ts`          | Reads the index through the hosted game data                        |
+| `packages/genshin-world/src/services/character/planCharacterPackDownload.ts`       | The files and bytes the cache lacks                                 |
+| `packages/genshin-world/src/services/character/downloadCharacterPackFiles.ts`      | Fetches the missing files with progress and retries into the cache  |
+| `packages/genshin-world/src/services/character/createCharacterPackReader.ts`       | A `CharacterPackReader` over the cache                              |
+| `packages/genshin-world/src/composables/useCharacterPackPreload.ts`                | The preload's state: bytes loaded, bytes pending, failure and retry |
+| `packages/genshin-world/src/components/Loading/Startup/Index.vue`                  | The size line under the marks                                       |
+| `packages/genshin-world/src/components/Game/Opening/Index.vue`                     | Starts the preload when it mounts                                   |
+| `packages/genshin-world/src/components/World/Screen/Index.vue`                     | Reads the tables, and mounts the session once released              |
+| `packages/genshin-world/src/models/world/WorldScreenProps.ts`                      | `isHeld`, the host's hold on the session                            |
+| `apps/web/app/components/Genshin/World.vue`                                        | Passes the hold to the world's screen                               |
+| `apps/web/app/components/Genshin/Index.vue`                                        | Composes the bar from the bytes and the thirds                      |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`                   | Draws the character's model from the reader, with no capsule        |
+| packages/genshin-world/src/components/World/CharacterPlaceholder/Index.vue         | Deleted                                                             |
+| apps/web/server/development/genshinCharacterPacks.ts and its services              | Deleted                                                             |
+| apps/web/server/services/genshin/accountCharacterPack/** and its routes and models | Deleted                                                             |
+| packages/genshin-world/src/components/Character/PackLoader/Index.vue               | Deleted                                                             |
 
 ## Notes
 
