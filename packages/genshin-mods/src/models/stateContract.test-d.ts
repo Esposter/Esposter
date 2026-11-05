@@ -1,8 +1,8 @@
+import { describe, expect, expectTypeOf, test } from "vitest";
+
 import type { CommissionTask, SinStatus } from "../../types";
 import type { SinStatusKind } from "./SinStatusKind";
 import type { TaskStatus } from "./TaskStatus";
-
-import { describe, expect, expectTypeOf, test } from "vitest";
 
 // The contract file imports nothing, because the engine validates the module's state keys against that one file, so it
 // Repeats the mod's value sets; these tests are what keeps each repeat equal to the enum it copies

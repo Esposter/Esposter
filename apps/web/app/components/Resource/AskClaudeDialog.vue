@@ -45,7 +45,7 @@ const prompt = computed(() => getAssistantPrompt(resource, line.value));
       </ol>
       <template v-else>
         <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />
-        <div v-if="line" pl-3 pr-1 py-1 flex gap-2 items-center ui-field>
+        <div v-if="line" py-1 pl-3 pr-1 flex gap-2 items-center ui-field>
           <code flex-1 break-all>{{ prompt }}</code>
           <UiCopyButton label="Copy prompt" :source="prompt" />
         </div>
