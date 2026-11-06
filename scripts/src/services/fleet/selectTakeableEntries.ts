@@ -23,8 +23,9 @@ export const selectTakeableEntries = (
   const liveClaimIds = new Set([...claims].filter(([, claim]) => isLive(claim)).map(([id]) => id));
   const liveTouches = entries.filter(({ id }) => liveClaimIds.has(id)).flatMap(({ touches }) => touches);
   // Two entries that both hold a phase compare by it, and two that hold none compare equal, so the listed order holds
-  const comparePhases = (first: FleetEntry, second: FleetEntry): number =>
-    Number(first.phase === undefined) - Number(second.phase === undefined) || (first.phase ?? 0) - (second.phase ?? 0);
+  const comparePhases = (firstEntry: FleetEntry, secondEntry: FleetEntry): number =>
+    Number(firstEntry.phase === undefined) - Number(secondEntry.phase === undefined) ||
+    (firstEntry.phase ?? 0) - (secondEntry.phase ?? 0);
   return entries
     .filter(
       ({ area, id, needs, touches, waiting }) =>

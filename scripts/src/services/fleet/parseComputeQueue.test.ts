@@ -1,3 +1,4 @@
+import { COMPUTE_UNNAMED_BLOCKER } from "#src/services/fleet/constants";
 import { parseComputeQueue } from "#src/services/fleet/parseComputeQueue";
 import { describe, expect, test } from "vitest";
 
@@ -54,7 +55,7 @@ describe(parseComputeQueue, () => {
       { id: "waits-run", waiting: "a plate" },
       { id: "blocked-run", waiting: "no reference names its buttons" },
       { id: "input-run", waiting: "a recording of the shafts" },
-      { id: "unnamed-run", waiting: "none named on its line" },
+      { id: "unnamed-run", waiting: COMPUTE_UNNAMED_BLOCKER },
     ]);
   });
 
