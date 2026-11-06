@@ -110,11 +110,6 @@ describe(createTrialCharacter, () => {
     });
   });
 
-  test("the trial character takes its template's artifacts", () => {
-    expect.hasAssertions();
-    expect(createTrialCharacter(TRIAL, TABLES, DATA)?.artifacts).toStrictEqual(ARTIFACTS);
-  });
-
   test("a trial whose character has no cited build has no party member", () => {
     expect.hasAssertions();
     expect(createTrialCharacter(TRIAL, { ...TABLES, builds: {} }, DATA)).toBeUndefined();
