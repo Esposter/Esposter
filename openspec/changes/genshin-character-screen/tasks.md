@@ -15,14 +15,14 @@
 ## 4. Levelling and ascension
 
 - [x] 4.1 Spend Character EXP materials on Level Up. Verify: tests named after the scenarios 'Level Up spends Character EXP materials' and 'Level Up is refused without enough Character EXP materials', seen failing first.
-- [x] 4.2 Ascend at a phase's cap once the Adventure Rank allows it. Verify: tests named after the scenarios 'Ascend spends the phase's materials and Mora at its cap' and 'Ascend is refused below the phase's Adventure Rank', seen failing first.
+- [x] 4.2 Ascend at a phase's cap once the Adventure Rank allows it. Verify: tests named after the scenarios 'Ascend spends the phase's materials and Mora at its cap', 'Ascend is refused below the phase's Adventure Rank' and 'Ascend is refused below the phase's level cap', seen failing first.
 - [x] 4.3 Lift a character past level 90 with Masterless Stella Fortuna to 95 and 100. Verify: tests named after the scenarios 'Masterless Stella Fortuna lifts a character from level 90 to 95' and 'Masterless Stella Fortuna lifts a character from level 95 to 100', seen failing first.
 - [x] 4.4 Share the ascension rule between the character and the weapon. `ascendCharacter` and `ascendWeapon` repeat the gate, the Mora debit and the item take, and differ in two things: the character path also requires the items held through `checkIsItemCountsHeld`, the weapon path does not, and a refusal is `undefined` in one and a thrown `InvalidOperationError` in the other. Decide whether the weapon path gains the item gate, and which refusal style both keep, then move the shared part into one primitive both call. Verify: a test named after the scenario 'a character and a weapon at their cap pay the same phase cost through one rule', seen failing first.
 
 ## 5. Profile and Traveler
 
 - [x] 5.1 Give the Traveler the element of each statue resonated with, and a bonus for each element. Verify: tests named after the scenarios 'the Traveler takes the element of the statue it resonates with' and 'each element resonated with adds a bonus', seen failing first.
-- [x] 5.2 List the voice-over lines on the Profile tab once the character model's terms are in place. Verify: a test named after the scenario 'the Profile tab lists the character's voice-over lines', seen failing first.
+- [x] 5.2 List the voice-over lines on the Profile tab once the character model's terms are in place. Verify: a test named after the scenario 'the Profile tab lists the character's voice-over lines' in `packages/genshin-world/src/services/profile/getProfileEntries.test.ts`, seen failing first.
 
 ## 6. Sub-stat caption
 
