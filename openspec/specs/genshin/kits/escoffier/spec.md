@@ -82,6 +82,13 @@ Scoring Cuts SHALL heal the active character once from its field, and it SHALL c
 - **WHEN** the player casts Scoring Cuts
 - **THEN** it does not cast
 
+#### Scenario: An ATK buff put on her after the cast raises Scoring Cuts' heal
+
+- **GIVEN** Escoffier casts Scoring Cuts
+- **AND** an ATK buff is put on her before the field's tick
+- **WHEN** the tick lands
+- **THEN** the active character is healed for the share of her ATK with the buff on her
+
 ### Requirement: Rehab Diet from Ascension 1
 
 From Ascension 1, Scoring Cuts SHALL also start Rehab Diet, a field of nine heals for the active character.
@@ -91,3 +98,9 @@ From Ascension 1, Scoring Cuts SHALL also start Rehab Diet, a field of nine heal
 - **GIVEN** Escoffier is at Ascension 1
 - **WHEN** Scoring Cuts is cast
 - **THEN** Rehab Diet heals the active character nine times, starting 157 frames after the cast and every 58.5 frames after that, each heal at 1.3824 times Escoffier's ATK
+
+#### Scenario: An ATK buff put on her between Rehab Diet's heals raises the later ones
+
+- **GIVEN** Rehab Diet has healed the active character once at Ascension 1
+- **WHEN** an ATK buff is put on her before the next heal falls
+- **THEN** that heal is larger than the one before it

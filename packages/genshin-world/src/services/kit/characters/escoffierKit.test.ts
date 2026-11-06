@@ -5,6 +5,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -13,7 +14,10 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -143,6 +147,72 @@ describe(createEscoffierKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeCloseTo(0.55);
+  });
+
+  // Her burst's heals on a team of her alone, at a tenth of her Max HP, with the ATK and Max HP given
+  const HEAL_HEALTH_SHARE = 0.1;
+  const HEAL_ATTACK = 1000;
+  const HEAL_MAX_HEALTH = 100_000;
+  const createHealableCombatant = (ascension: number): Combatant => ({
+    ...createEscoffierCombatant(ascension),
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseAttack, value: HEAL_ATTACK },
+      { attribute: Attribute.BaseHealth, value: HEAL_MAX_HEALTH },
+    ]),
+  });
+
+  // The share of her health the one heal of Scoring Cuts raises her by, after the cast, with whatever the callback puts on her then
+  const readScoringCutsRaise = (afterCast: (context: KitContext) => void): number => {
+    const context = createKitTestContext(createHealableCombatant(0));
+    const member = getPartyMember(context.party, ESCOFFIER_CHARACTER_ID);
+    member.healthShare = HEAL_HEALTH_SHARE;
+    ESCOFFIER_KIT.elementalBurst.onStart?.(context);
+    afterCast(context);
+    stepKitSeconds(context, 2);
+    return member.healthShare - HEAL_HEALTH_SHARE;
+  };
+
+  test("scoring Cuts' heal reads her ATK with the buffs on her as they stand at its tick, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+
+    expect(
+      readScoringCutsRaise((context) => {
+        buffKitMember(context.kitEffectState, ESCOFFIER_CHARACTER_ID, {
+          amount: 1,
+          attribute: Attribute.AttackPercent,
+          secondsRemaining: 100,
+          source: "test",
+        });
+      }),
+    ).toBeGreaterThan(readScoringCutsRaise(() => undefined));
+  });
+
+  test("rehab Diet's heals read her ATK with the buffs on her as they stand at each tick, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createHealableCombatant(1));
+    const member = getPartyMember(context.party, ESCOFFIER_CHARACTER_ID);
+    member.healthShare = HEAL_HEALTH_SHARE;
+    ESCOFFIER_KIT.elementalBurst.onStart?.(context);
+    // How far her health share rises on each frame's step. Its rises are the heals, Scoring Cuts' at 97 frames, then Rehab
+    // Diet's first at 157 frames and its second at 215.5
+    const raises: number[] = [];
+    let healthShare = member.healthShare;
+    for (let frame = 0; frame < 230; frame++) {
+      stepKitEffects(1 / 60, context);
+      raises.push(member.healthShare - healthShare);
+      healthShare = member.healthShare;
+      // The buff goes on after Rehab Diet's first heal and before its second
+      if (frame === 160)
+        buffKitMember(context.kitEffectState, ESCOFFIER_CHARACTER_ID, {
+          amount: 1,
+          attribute: Attribute.AttackPercent,
+          secondsRemaining: 100,
+          source: "test",
+        });
+    }
+    const heals = raises.filter((raise) => raise > 0);
+
+    expect(takeOne(heals, 2)).toBeCloseTo(2 * takeOne(heals, 1), 6);
   });
 });
 

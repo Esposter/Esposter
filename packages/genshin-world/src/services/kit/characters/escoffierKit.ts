@@ -1,6 +1,7 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -14,6 +15,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
@@ -96,6 +98,10 @@ const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
   };
 };
 
+// The ATK a heal of hers reads at its tick, with the buffs on her as they stand then, as gcsim's TotalAtk reads it on each tick
+const getTickAttack = (tick: KitContext, caster: Combatant): number =>
+  getBuffedCombatant(caster, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap).attributes.attack;
+
 export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
@@ -127,8 +133,8 @@ export const createEscoffierKitBehaviour = ({
       hits: [{ enemyStatus: getAscension4Status }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         startConstellation1(combatant, kitEffectState);
-        // Scoring Cuts' heal is one tick of a field, which heals the active character from the caster's ATK, a flat
-        // Amount and a share of it
+        // Scoring Cuts' heal is one tick of a field, which heals the active character from the caster's ATK as it then
+        // Stands with the buffs on her, a flat amount and a share of it
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: BURST_HEAL_FIELD_ID,
           nextTickSeconds: burstHealSeconds,
@@ -137,7 +143,7 @@ export const createEscoffierKitBehaviour = ({
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              burstHealFlat + burstHealAttackShare * combatant.attributes.attack,
+              burstHealFlat + burstHealAttackShare * getTickAttack(tick, combatant),
             );
           },
           radius: burstRadius,
@@ -146,7 +152,7 @@ export const createEscoffierKitBehaviour = ({
           tickIntervalSeconds: 1,
         });
         if (combatant.ascension < REHAB_DIET_ASCENSION) return;
-        // Rehab Diet heals the active character from the caster's ATK each tick
+        // Rehab Diet heals the active character from the caster's ATK with the buffs on her at each tick
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: REHAB_DIET_FIELD_ID,
           nextTickSeconds: rehabDietFirstTickSeconds,
@@ -155,7 +161,7 @@ export const createEscoffierKitBehaviour = ({
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              REHAB_DIET_SCALING * combatant.attributes.attack,
+              REHAB_DIET_SCALING * getTickAttack(tick, combatant),
             );
           },
           radius: burstRadius,
