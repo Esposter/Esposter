@@ -11,6 +11,7 @@
 
 - [x] 2.1 Build `pnpm ai:genshin:progress`, which prints each phase's units as done, runnable on this machine, waiting on a named blocker, or blocked on the other machine: the compute areas by their kind (a Kind column joins the compute README's phase table), the changes by their open tasks in each task's phase, and the roadmap items under each phase heading, computed from the checkboxes, the compute pages and the needs of each unit. Verify: a test named after the scenario 'A phase's progress counts its units by kind', written first and seen failing.
 - [x] 2.2 Add the exit checks a command can read today to the report: a region's passes frozen, a screen's ids under their bars, a dataset's lock current. A check with no command prints as not measurable. Verify: tests named after the scenarios 'A screen's check is met when every id is under its bar', 'A screen's check is not met when an id is over its bar' and 'A check with no command is not measurable'.
+- [x] 2.3 Count an open line with no id on a compute page as a waiting item of that page, so the page is never done or runnable while it holds one, and the report names the missing id as its blocker. Verify: a test named after the scenario 'A compute page whose only open line has no id waits on that line', written first and seen failing, in `scripts/src/services/genshinProgress/buildGenshinProgress.test.ts`.
 
 ## 3. The pick
 
