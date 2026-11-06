@@ -5,8 +5,8 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => ({
   ParityReferenceMap: {
-    "login-door": { screen: "LoginScreen", wikiTitle: "File:Door.png" },
-    "mondstadt-city-location": { screen: "WorldScreen", source: "wiki location image" },
+    "login-door": { screen: "LoginScreen", wikiTitle: " " },
+    "mondstadt-city-location": { screen: "WorldScreen", source: " " },
   } satisfies Record<string, ParityReference>,
 }));
 
