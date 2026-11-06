@@ -2,7 +2,7 @@
 
 ## Why
 
-The weathers, their blends, particles, lightning and the turn through them are built, and the cities that hold clear skies are too. Every open-world area still turns by the standard chain of weathers, because the game's own weather areas are not read: which weather area covers a place is held only in the client's own scene. Reading it would give each area its own template and turn.
+The weathers, their blends, particles, lightning and the turn through them are built, and the cities that hold clear skies are too. Every open-world area turns by the standard chain of weathers, because the game's own weather areas are not read: which weather area covers a place is held only in the client's own scene. Reading it would give each area its own template and turn.
 
 ## What Changes
 
@@ -24,4 +24,4 @@ Each open-world area's weather turns through the game's own chain of weathers, a
 
 ## Impact
 
-The weather catalogue and the turn through each area's weathers are touched, The weather templates table joins the game text dump's fetched tables.
+The weather catalogue and the turn through each area's weathers are touched, and the weather templates table joins the game text dump's fetched tables.
