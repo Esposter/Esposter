@@ -154,11 +154,6 @@ Each row is a piece of the game's audio or art. None ships, and each has a subst
 - **Voice-over stays a missing asset.** The alternative was to use the install's language packages, either shipped or as the persona's reference clip. The first breaks the rule on game audio. The second changes the persona's own rule that its references come from the wiki, which is the persona plugin's decision to make, not this family's.
 - **Gaps owned by another change are linked, and their work stays where it is.** The alternative was to restate the weather, bloom, cloud and login-audio work here, which would give two tasks for one piece of work.
 
-## Notes
-
-- The roadmap's Audio item for the login's music still says instrument samples would mean shipping sounds the project does not own, while the [sampled instruments](../../specs/genshin/sampled-instruments/design.md) design ships CC0 recordings under their own licence. That clause is the roadmap's to correct, and this change does not edit it.
-- The install's audio packages and the door's two decoded sounds are on this Mac, so the door's Audio pass has its inputs here. Matching a new sound does not, because the decoder is the PC's.
-
 ## Key files
 
 | File                                                                     | Role after the change                                                                          |

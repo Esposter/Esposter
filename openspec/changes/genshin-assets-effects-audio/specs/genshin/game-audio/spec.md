@@ -41,3 +41,23 @@ A sound matched to a screen SHALL play when the trigger that sets it off fires, 
 - **GIVEN** a screen has no sound matched to any of its triggers
 - **WHEN** each of its triggers fires
 - **THEN** no sound plays
+
+### Requirement: A component's sound record is read under its own key
+
+A component's sound or music record SHALL be read under a key of its own, so that refitting one component replaces only its own record.
+
+#### Scenario: A component's sound record is read under its own key
+
+- **GIVEN** a component with a fitted sound record
+- **WHEN** its sound is read
+- **THEN** the record is read under the component's own key
+
+### Requirement: The Audio pass writes the door sound's measures
+
+The Audio pass over the login's door recording SHALL write its readings, the door sound's decibels and correlations, the rush's length and level and the delay, rather than leave them to be copied by hand.
+
+#### Scenario: The Audio pass writes the door sound's measures
+
+- **GIVEN** the login's door recording and its door sounds are held
+- **WHEN** the Audio pass runs over the recording
+- **THEN** it writes the door sound's decibels and correlations, the rush's length and level, and the delay

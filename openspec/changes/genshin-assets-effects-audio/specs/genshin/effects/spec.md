@@ -86,3 +86,36 @@ An effect's surface SHALL draw with the shader ported from the game's own listin
 - **GIVEN** an effect whose shader has been ported
 - **WHEN** the effect is shown
 - **THEN** its surface is drawn by the ported shader
+
+### Requirement: A clip's rectangle is measured in every frame
+
+The frame measure SHALL read a rectangle's colour, ink and bounding box in each frame of a clip and write one row for each frame.
+
+#### Scenario: A rectangle is read in every frame of a clip
+
+- **GIVEN** a clip in which a rectangle is drawn across its frames
+- **WHEN** the frame measure reads the clip
+- **THEN** it writes one row for each frame of the clip
+- **AND** each row holds the rectangle's colour, ink and bounding box in that frame
+
+### Requirement: An emitter's settings are read from its export
+
+The emitter reader SHALL read each particle system's rate, life, size and colour from its export, naming each field the export does not hold rather than guessing one.
+
+#### Scenario: An emitter's rate and life are read from its raw bytes
+
+- **GIVEN** an export that holds a particle system's settings
+- **WHEN** the emitter reader reads the export
+- **THEN** the system's rate and life are read from its bytes
+- **AND** a field the export does not hold is named, not guessed
+
+### Requirement: A shader is listed as an effect by its blend state
+
+The shader listing SHALL list each exported shader of a component and mark as an effect each shader whose blend state an effect uses.
+
+#### Scenario: A shader is listed as an effect by its blend state
+
+- **GIVEN** a component whose exported shaders include one an effect's material uses
+- **WHEN** the shader listing runs
+- **THEN** each exported shader is listed
+- **AND** the shader whose blend state an effect uses is marked as an effect
