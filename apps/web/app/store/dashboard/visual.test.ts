@@ -280,6 +280,30 @@ describe(useVisualStore, () => {
     expect(takeOne(visuals.value).isAutoHeight).toBe(false);
   });
 
+  // A refused delete of an unselected visual keeps the selection, and a selection the reader makes while the save is in flight
+  // Survives the refusal rather than being rolled back to the one the delete never touched
+  test("keeps a selection made while a refused delete's save is in flight", async () => {
+    expect.hasAssertions();
+
+    const removed = new Visual({ type: VisualType.Area });
+    const selected = new Visual({ type: VisualType.Bar });
+    const reselected = new Visual({ type: VisualType.Line });
+    content = new Dashboard({ visuals: [removed, selected, reselected] });
+    const visualStore = await setupStore();
+    const { deleteVisual } = visualStore;
+    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    selectedVisualId.value = selected.id;
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      selectedVisualId.value = reselected.id;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const isSuccessful = await deleteVisual({ id: removed.id });
+
+    expect({ isSuccessful, selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual(
+      { isSuccessful: false, selectedVisualId: reselected.id, visualCount: 3 },
+    );
+  });
+
   // A group takes the visual into its own list, and the dashboard's own list is left as it was
   test("adds a visual into a group, leaving the dashboard's own list as it was", async () => {
     expect.hasAssertions();

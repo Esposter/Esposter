@@ -115,11 +115,13 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     removeVisualFromList(dashboard, location.group, ids.id);
     // The selection is cleared when it names the visual, or one a deleted group held with it
     if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
+    const selectionAfterDelete = selectedVisualId.value;
     const isSuccessful = await saveDashboard();
-    // A refused save also restores the selection the delete cleared, so the store is as it was before the delete
+    // A refused save also restores the selection the delete cleared, so the store is as it was before the delete. A selection
+    // Made while the save was in flight is the reader's, so it is kept: the one the delete left is only put back while it stands
     if (!isSuccessful) {
       getVisualList(dashboard, location.group).push(location.visual);
-      selectedVisualId.value = previousSelectedVisualId;
+      if (selectedVisualId.value === selectionAfterDelete) selectedVisualId.value = previousSelectedVisualId;
     }
     return isSuccessful;
   };
