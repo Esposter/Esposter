@@ -148,7 +148,8 @@ const measure = async () => {
   overflowWidth.value = toolbar.value?.querySelector("[data-toolbar-overflow]")?.getBoundingClientRect().width ?? 0;
   const bar = toolbar.value;
   // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("4px"), Number() would be NaN
-  gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) : 0;
+  // A gap the browser does not report (a computed style with none, as happy-dom gives) reads NaN, which is no gap
+  gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) || 0 : 0;
   isMeasuring.value = false;
 };
 
