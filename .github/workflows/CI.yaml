@@ -131,7 +131,8 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-  # The session's browser test, the one file of the browser project the default run leaves out (`BROWSER_TEST_GLOB`).
+  # Runs the session's browser test by its path. `BROWSER_TEST_GLOB` keeps every `*.browser.test.ts` out of the
+  # default run.
   # The provider launches the runner image's Microsoft Edge through its `msedge` channel, so no browser is installed here
   session-browser-test:
     name: Session Browser Test
