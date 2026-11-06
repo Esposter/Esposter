@@ -15,6 +15,7 @@ import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
@@ -58,22 +59,19 @@ const startSkyladderPress = (kitEffectState: KitEffectState, characterId: number
   });
 };
 
-// Constellation 4: a Driftcloud Wave's hit heals the active character by a share of Xianyun's ATK for the presses it was
+// Constellation 4: a Driftcloud Wave's hit heals each deployed member by a share of Xianyun's ATK for the presses it was
 // Made after, once every five seconds, from her ATK with the buffs on her as they stand at the hit
 const healFromDriftcloud = (context: KitContext, strike: KitStrike): void => {
-  const { kitEffectState } = context;
+  const { kitEffectState, party } = context;
   const { characterId, constellationCount } = strike.combatant;
   if (constellationCount < CONSTELLATION_4) return;
   if (checkIsKitStatusActive(kitEffectState.effects, characterId, XIANYUN_CONSTELLATION_4_ICD_ID)) return;
 
   const presses = countKitResource(kitEffectState.effects, characterId, XIANYUN_DRIFTCLOUD_ID);
   const attack = getBuffedAttack(strike.combatant, context);
-  changeKitMemberHealth(
-    context,
-    strike.combatant,
-    characterId,
-    takeOne(CONSTELLATION_4_HEAL_SHARES, presses - 1) * attack,
-  );
+  const heal = takeOne(CONSTELLATION_4_HEAL_SHARES, presses - 1) * attack;
+  for (const memberId of getDeployedCharacterIds(party))
+    changeKitMemberHealth(context, strike.combatant, memberId, heal);
   addKitStatus(kitEffectState, characterId, {
     id: XIANYUN_CONSTELLATION_4_ICD_ID,
     secondsRemaining: CONSTELLATION_4_ICD_SECONDS,

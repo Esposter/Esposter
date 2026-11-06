@@ -120,13 +120,13 @@ From Constellation 2, each White Clouds at Dawn press SHALL give Xianyun 20% ATK
 
 ### Requirement: Constellation 4 heal
 
-From Constellation 4, each Driftcloud Wave hit SHALL heal the active character by a share of Xianyun's ATK, 50%, 80% or 150% for one, two or three presses in the state, and no second heal SHALL come within 5 seconds of the first.
+From Constellation 4, each Driftcloud Wave hit SHALL heal every deployed character by a share of Xianyun's ATK, 50%, 80% or 150% for one, two or three presses in the state, and no second heal SHALL come within 5 seconds of the first.
 
 #### Scenario: Driftcloud Wave heals once in five seconds
 
 - **GIVEN** Xianyun has Constellation 4 and her Driftcloud Wave hits after one press
 - **WHEN** the hit lands
-- **THEN** the active character heals by half of Xianyun's ATK
+- **THEN** each deployed character heals by half of Xianyun's ATK
 - **AND** a second hit within 5 seconds heals nothing
 
 #### Scenario: An ATK buff put on her before the hit raises the heal
@@ -134,7 +134,7 @@ From Constellation 4, each Driftcloud Wave hit SHALL heal the active character b
 - **GIVEN** Xianyun has Constellation 4 and her Driftcloud Wave has leapt after one press
 - **AND** an ATK buff is put on her before the hit lands
 - **WHEN** the hit lands
-- **THEN** the active character heals by half of Xianyun's ATK with the buff on her
+- **THEN** each deployed character heals by half of Xianyun's ATK with the buff on her
 
 ### Requirement: Constellation 6 presses and CRIT DMG
 

@@ -4,6 +4,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import {
   createXianyunKitBehaviour,
   XIANYUN_CHARACTER_ID,
@@ -16,6 +17,9 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { assert, describe, expect, test } from "vitest";
 
 const createCombatant = (constellationCount: number): Combatant =>
@@ -158,5 +162,42 @@ describe(createXianyunKitBehaviour, () => {
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
     expect(member.healthShare).toBe(0.5);
+  });
+
+  test("a Constellation 4 Driftcloud Wave's hit heals every deployed member, not only Xianyun", () => {
+    expect.hasAssertions();
+
+    const combatant = {
+      ...createCombatant(4),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 1000 },
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+      ]),
+    };
+    const traveler = {
+      ...createCombatant(0),
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 20_000 }]),
+      characterId: TRAVELER_CHARACTER_ID,
+    };
+    const party = createParty([XIANYUN_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [XIANYUN_CHARACTER_ID, combatant],
+        [TRAVELER_CHARACTER_ID, traveler],
+      ]),
+      party,
+    });
+    const behaviour = createXianyunKitBehaviour();
+    behaviour.skill?.onStart?.(context);
+    behaviour.plungeVariants?.[0]?.onStart?.(context);
+
+    const travelerMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
+    travelerMember.healthShare = 0.5;
+    const strike = { attackTag: AttackTag.PlungingAttack, combatant } as KitStrike;
+    behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
+
+    // The heal is half of Xianyun's ATK at the hit, which the constellation 2 buff raises, over the Traveler's own Max HP
+    const heal = 0.5 * getBuffedAttack(combatant, context);
+    expect(travelerMember.healthShare).toBeCloseTo(0.5 + heal / traveler.attributes.maxHealth, 10);
   });
 });
