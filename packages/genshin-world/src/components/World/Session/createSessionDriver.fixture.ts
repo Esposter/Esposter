@@ -10,6 +10,7 @@ import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
 import { createScriptedClock } from "#src/services/dev/createScriptedClock.fixture";
 import { settleScriptedSession } from "#src/services/dev/settleScriptedSession";
 import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
+import { withFinalizerAsync } from "@esposter/shared";
 import { createPinia } from "pinia";
 import { render } from "vitest-browser-vue";
 import { z } from "zod";
@@ -66,8 +67,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
   };
   // Settles, then takes the world's last save through JSON and the save schema, and unmounts the screen whatever the
   // Outcome. A save the schema refuses fails with the schema's own message
-  const save = async (): Promise<ScriptedSessionOutcome> => {
-    try {
+  const save = (): Promise<ScriptedSessionOutcome> =>
+    withFinalizerAsync(async (): Promise<ScriptedSessionOutcome> => {
       const settled = await settleScriptedSession(driver);
       if (!settled.ok) return settled;
 
@@ -79,13 +80,10 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
 
       savedSave = parsedResult.data;
       return { ok: true };
-    } finally {
-      await unmount();
-    }
-  };
+    }, unmount);
   // Mounts a fresh screen on the same registry, from the blob the last save parsed
-  const load = async (): Promise<ScriptedSessionOutcome> => {
-    if (savedSave === undefined) return { error: "nothing has been saved", ok: false };
+  const load = (): Promise<ScriptedSessionOutcome> => {
+    if (savedSave === undefined) return Promise.resolve({ error: "nothing has been saved", ok: false });
 
     return mount(savedSave);
   };
