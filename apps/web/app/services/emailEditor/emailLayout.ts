@@ -100,6 +100,5 @@ export const emailPanelNameMap: Record<string, string> = {
   blocks: "Blocks",
   content: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Content],
   [EMAIL_STRUCTURE_PANEL_ID]: "Structure",
-  settings: "Email settings",
   style: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Style],
 };
