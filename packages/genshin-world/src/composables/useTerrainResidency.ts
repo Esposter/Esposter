@@ -5,6 +5,7 @@ import type { TerrainOptions, TerrainRing } from "genshin-engine";
 import type { Group, Material } from "three";
 import type { MaybeRefOrGetter } from "vue";
 
+import { useDevRegistration } from "#src/composables/useDevRegistration";
 import { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMessageKind";
 import { MAX_PENDING_TILE_COUNT, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { createSettledCommand } from "#src/services/dev/commands/createSettledCommand";
@@ -20,7 +21,7 @@ import {
   TERRAIN_LAYER,
 } from "genshin-engine";
 import { Mesh } from "three";
-import { onMounted, onUnmounted, toValue, watch } from "vue";
+import { toValue, watch } from "vue";
 
 const disposeTileMesh = (mesh: Mesh) => {
   mesh.geometry.dispose();
@@ -130,16 +131,9 @@ export const useTerrainResidency = ({
   };
   // The settled read a script waits on, registered while the terrain is mounted, answering for the view the selection
   // Settles and for the tiles in flight behind it
-  let unregister: (() => void) | undefined;
-  onMounted(() => {
-    if (!devRegistry) return;
-    unregister = devRegistry.register({
-      commands: [createSettledCommand({ checkIsSettled: checkIsViewSettled })],
-      variables: [],
-    });
-  });
-  onUnmounted(() => {
-    unregister?.();
+  useDevRegistration({
+    createHandle: () => ({ commands: [createSettledCommand({ checkIsSettled: checkIsViewSettled })], variables: [] }),
+    devRegistry,
   });
   return { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMap, tileStreamer };
 };

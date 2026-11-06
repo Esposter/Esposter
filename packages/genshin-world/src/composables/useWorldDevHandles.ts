@@ -1,5 +1,6 @@
 import type { WorldDevHandleOptions } from "#src/models/world/WorldDevHandleOptions";
 
+import { useDevRegistration } from "#src/composables/useDevRegistration";
 import { createBagCommand } from "#src/services/dev/commands/createBagCommand";
 import { createHealCommand } from "#src/services/dev/commands/createHealCommand";
 import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand";
@@ -16,13 +17,10 @@ import { DEV_SCENARIOS } from "#src/services/dev/scenarios/constants";
 // Register once it mounts and leave when it goes, so each command exists exactly while the state it changes does. The
 // Session steps the holds once a frame, after the frame has read the input, and returns that step
 export const useWorldDevHandles = ({ devRegistry, inputTarget, ...options }: WorldDevHandleOptions) => {
-  let unregister: (() => void) | undefined;
   const frameListeners = new Set<(deltaSeconds: number) => void>();
 
-  onMounted(() => {
-    if (!devRegistry) return;
-
-    unregister = devRegistry.register({
+  useDevRegistration({
+    createHandle: () => ({
       commands: [
         createBagCommand(options),
         createHealCommand(options),
@@ -42,11 +40,8 @@ export const useWorldDevHandles = ({ devRegistry, inputTarget, ...options }: Wor
       ],
       scenarios: DEV_SCENARIOS,
       variables: [],
-    });
-  });
-
-  onUnmounted(() => {
-    unregister?.();
+    }),
+    devRegistry,
   });
 
   return {
