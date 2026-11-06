@@ -42,9 +42,6 @@ export const ScreenKindOpenerMap: Readonly<Record<ScreenKind, ScreenKindOpener>>
   [ScreenKind.Shop]: ScreenKindOpener.Interaction,
   [ScreenKind.SpiralAbyss]: ScreenKindOpener.Interaction,
   [ScreenKind.Time]: ScreenKindOpener.PaimonMenu,
-  // No code opens it: the Paimon menu leaves it out, and the wiki's list of the menu's contents names it, so the check
-  // Names it until the menu or the screen is settled (the screens design's open items)
-  [ScreenKind.TrainingGuide]: ScreenKindOpener.PaimonMenu,
   [ScreenKind.Wish]: ScreenKindOpener.PaimonMenu,
   [ScreenKind.World]: ScreenKindOpener.World,
   [ScreenKind.Worship]: ScreenKindOpener.Interaction,

@@ -19,12 +19,7 @@ describe("findUnreachableScreenKinds", () => {
 
   test("a screen kind whose claimed opener does not hold is unreachable", () => {
     expect.hasAssertions();
-    // The Training Guide's real claim is set aside, so only the Chat claim is under test
-    const claimedScreenKindOpenerMap = {
-      ...ScreenKindOpenerMap,
-      [ScreenKind.Chat]: ScreenKindOpener.PaimonMenu,
-      [ScreenKind.TrainingGuide]: ScreenKindOpener.World,
-    };
+    const claimedScreenKindOpenerMap = { ...ScreenKindOpenerMap, [ScreenKind.Chat]: ScreenKindOpener.PaimonMenu };
 
     expect(
       findUnreachableScreenKinds(claimedScreenKindOpenerMap, {
@@ -35,11 +30,11 @@ describe("findUnreachableScreenKinds", () => {
     ).toStrictEqual([ScreenKind.Chat]);
   });
 
-  test("the real tables name only the Training Guide, which no code opens", () => {
+  test("the real tables name no unreachable screen kind", () => {
     expect.hasAssertions();
 
     expect(
       findUnreachableScreenKinds(ScreenKindOpenerMap, { inputActionScreenKinds, menuScreenKinds, wheelScreenKinds }),
-    ).toStrictEqual([ScreenKind.TrainingGuide]);
+    ).toStrictEqual([]);
   });
 });

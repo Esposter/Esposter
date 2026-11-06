@@ -36,7 +36,6 @@ export enum ScreenKind {
   Shop = "Shop",
   SpiralAbyss = "SpiralAbyss",
   Time = "Time",
-  TrainingGuide = "TrainingGuide",
   Wish = "Wish",
   World = "World",
   Worship = "Worship",

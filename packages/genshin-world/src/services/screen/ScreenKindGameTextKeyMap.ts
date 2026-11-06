@@ -31,7 +31,6 @@ export const ScreenKindGameTextKeyMap: Readonly<Record<TitledScreenKind, GameTex
   [ScreenKind.Shop]: GameTextKey.Shop,
   [ScreenKind.SpiralAbyss]: GameTextKey.AbyssMoonSpire,
   [ScreenKind.Time]: GameTextKey.Time,
-  [ScreenKind.TrainingGuide]: GameTextKey.TrainingGuide,
   [ScreenKind.Wish]: GameTextKey.Wish,
   [ScreenKind.Worship]: GameTextKey.StatueWorship,
 };
