@@ -63,6 +63,12 @@ A Nod-Krai resident SHALL NOT stand anywhere until the scene-group record places
 - **WHEN** the player looks for a resident whose page gives daytime hours
 - **THEN** no resident stands in the world there, since the scene-group record places none
 
+#### Scenario: A Nod-Krai resident keeps the wiki's hours
+
+- **GIVEN** the wiki's NPC page gives a Nod-Krai resident daytime hours
+- **WHEN** the residents are read from the wiki
+- **THEN** the resident keeps those hours
+
 ### Requirement: A vendor sells only in their hours
 
 A vendor SHALL offer their shop only while standing at their spot within the hours their page gives.
