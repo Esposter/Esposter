@@ -44,10 +44,10 @@ The profile's `id` and `areas` are never overwritten once the user has set them.
 
 An entry is one unit of work a machine may take, from two sources, both read off `ai/queue` as origin holds it, fetched fresh. The checkout's own copy is never read: one behind origin still lists an item another machine finished and deleted, and would offer it again.
 
-- **The compute queue.** Each open item under the **Queue** heading of a design in `openspec/specs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. Its phase is the one its design's row in the compute README's `## Phases` table names, and a design with no row fails the read. An item under **Waiting** is not offered.
+- **The compute queue.** Each open item under the **Queue** heading of a design in `openspec/specs/genshin/compute/` has an id in braces and its needs after `needs`. Its written paths are its touch set. Its phase is its page's, as `.agents/skills/genshin-parity/references/compute-queue.md` sets out. An item under **Waiting** is not offered.
 - **The open changes** under `openspec/changes/`, the units `pnpm ai:proposals:report` reads, a program and a roadmap excepted. A change's touch set is its Key files table plus the `x-touches` globs its `.openspec.yaml` names, and a change with an `x-waiting` blocker is not offered.
 
-An entry is taken when the machine has its needs, its area is lent, it is not waiting, no live claim holds it, and its touch set overlaps no live claim's. Of the entries that are, the first in phase order is taken: the lowest phase's first, an entry with no phase after every phase, and the listed order within a phase. Two entries whose paths do not overlap run in parallel on different machines; two that do wait for each other. Nothing takeable means the machine stays idle.
+An entry is taken when the machine has its needs, its area is lent, it is not waiting, no live claim holds it, and its touch set overlaps no live claim's. Of the entries that are, the first in the pick order `.agents/skills/genshin-parity/references/compute-queue.md` sets out is taken. Two entries whose paths do not overlap run in parallel on different machines; two that do wait for each other. Nothing takeable means the machine stays idle.
 
 ## Claims
 

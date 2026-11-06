@@ -31,7 +31,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
   - no one holds it;
   - its touch set overlaps no held claim's.
 
-  Entries are taken lowest phase first, a compute item's phase being its page's row in the compute README's Phases table. An entry with no phase comes after every phase. Within a phase the order is kept: the compute queue's items in their pages' order, then the units cheapest first. A phase none of whose entries meets these conditions is passed over, so the next phase's first entry is claimed.
+  Entries are taken in the pick order the `genshin-parity` skill's `references/compute-queue.md` sets out. A phase none of whose entries meets these conditions is passed over, so the next phase's first entry is claimed.
 
   Nothing ready means the machine stays idle and says nothing.
 
