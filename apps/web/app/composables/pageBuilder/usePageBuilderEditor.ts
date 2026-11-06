@@ -12,7 +12,7 @@ export const usePageBuilderEditor = (
   kind: AnyPageBuilderKind,
   resourceId: string,
   getRoot: () => HTMLElement | null | undefined,
-  revealLayers?: () => void,
+  revealLayers: () => void,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getHeldDocument } = pageBuilderDocumentStore;
@@ -54,7 +54,7 @@ export const usePageBuilderEditor = (
     (nodeId, previousNodeId) => {
       if (nodeId || !previousNodeId) return;
 
-      revealLayers?.();
+      revealLayers();
       nextTick(() => {
         getRoot()
           ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
