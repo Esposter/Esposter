@@ -138,4 +138,19 @@ describe(useWhiteboardPaletteDrag, () => {
 
     expect(onRelease).toHaveBeenCalledWith(item, { x: 200, y: 120 });
   });
+
+  test("a second press that starts while the first is still live drags its own item's ghost", () => {
+    expect.hasAssertions();
+
+    const drag = mountDrag(vi.fn<(item: WhiteboardPaletteItem, point: Point) => void>());
+    press(drag, 10, 10);
+    press(drag, 300, 300);
+    move(300 + DRAG_START_DISTANCE, 300);
+
+    expect(drag.vm.ghost).toStrictEqual({
+      icon: UiIconMeaning.Settings,
+      point: { x: 300 + DRAG_START_DISTANCE, y: 300 },
+      title: "Process",
+    });
+  });
 });

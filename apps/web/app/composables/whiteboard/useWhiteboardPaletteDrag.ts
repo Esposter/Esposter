@@ -18,7 +18,7 @@ export const useWhiteboardPaletteDrag = (onRelease: (item: WhiteboardPaletteItem
       : undefined;
   });
   const startDrag = (item: WhiteboardPaletteItem, event: PointerEvent) => {
-    draggedItem.value = item;
+    // Set after the press starts, since starting it ends a live press whose end clears the item
     startPress(event, {
       onEnd: () => {
         draggedItem.value = undefined;
@@ -27,6 +27,7 @@ export const useWhiteboardPaletteDrag = (onRelease: (item: WhiteboardPaletteItem
         onRelease(item, releasePoint);
       },
     });
+    draggedItem.value = item;
   };
 
   return { ghost, startDrag };
