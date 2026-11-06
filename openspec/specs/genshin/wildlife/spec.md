@@ -67,7 +67,7 @@ Striking an animal SHALL make it fall and give its drop where it fell: a Crimson
 #### Scenario: Striking an animal
 
 - **GIVEN** an animal stands in Windrise's scene
-- **WHEN** the player strikes it with an area hit that reaches it (the hit loop of `strikeKitEnemies` in `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, where a hit with no target reaches the animals)
+- **WHEN** the player strikes it with an area hit that reaches it (the hit loop of `strikeKitEnemies` in `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, where a hit with no target and no target index reaches the animals)
 - **THEN** it falls and gives its drop where it fell (the loop of `strikeKitWildlife` in `packages/genshin-world/src/services/wildlife/strikeKitWildlife.ts`; the `WildlifeKind.CrimsonFox`, `WildlifeKind.Squirrel` and `WildlifeKind.WhitePigeon` entries of `WildlifeKindDropMap` in `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`)
 - **AND** no material source appears
 - **AND** striking it again gives nothing (the `WildlifeState.Struck` check in `strikeWildlife`, `packages/genshin-world/src/services/wildlife/strikeWildlife.ts`)
