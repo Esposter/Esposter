@@ -25,7 +25,7 @@ describe(claimTrialStageReward, () => {
   const materialDataMap = new Map<number, MaterialData>();
   const names = {};
 
-  test("a trial's first clear gives its reward once", () => {
+  test("The first clear gives the reward", () => {
     expect.hasAssertions();
 
     const firstClear = claimTrialStageReward(
@@ -58,7 +58,7 @@ describe(claimTrialStageReward, () => {
     ).toStrictEqual(firstClear);
   });
 
-  test("a trial's later clear gives no reward", () => {
+  test("A later clear gives no reward", () => {
     expect.hasAssertions();
 
     expect(

@@ -27,7 +27,7 @@ const featuredCharacterOf = (): WishItem => {
 };
 
 describe("wishScreen", () => {
-  test("a banner whose featured character has a trial offers the trial, and the trial opens it", async () => {
+  test("A banner with a trial's character offers that trial", async () => {
     expect.hasAssertions();
 
     const character = featuredCharacterOf();
@@ -40,7 +40,7 @@ describe("wishScreen", () => {
     expect(onStartTrial).toHaveBeenCalledExactlyOnceWith(trial);
   });
 
-  test("a banner whose featured character has no trial offers no trial button", async () => {
+  test("A banner with no trial offers none", async () => {
     expect.hasAssertions();
 
     const character = featuredCharacterOf();
