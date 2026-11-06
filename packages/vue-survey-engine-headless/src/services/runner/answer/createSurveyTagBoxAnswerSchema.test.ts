@@ -3,7 +3,7 @@ import type { SurveyTagBoxNode } from "#src/models/SurveyTagBoxNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyTagBoxAnswerSchema } from "#src/services/runner/answer/createSurveyTagBoxAnswerSchema";
 import { SURVEY_TOO_MANY_SELECTED_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
 import { describe, expect, test } from "vitest";
 

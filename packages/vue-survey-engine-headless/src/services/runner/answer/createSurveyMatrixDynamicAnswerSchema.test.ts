@@ -8,7 +8,7 @@ import {
   SURVEY_REQUIRED_MESSAGE,
   SURVEY_WRONG_COUNT_MESSAGE,
 } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMatrixDynamicNodeType } from "#src/services/surveyMatrixDynamicNodeType";
 import { describe, expect, test } from "vitest";
 

@@ -3,7 +3,7 @@ import type { SurveyDropdownNode } from "#src/models/SurveyDropdownNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyDropdownAnswerSchema } from "#src/services/runner/answer/createSurveyDropdownAnswerSchema";
 import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyDropdownNodeType } from "#src/services/surveyDropdownNodeType";
 import { describe, expect, test } from "vitest";
 

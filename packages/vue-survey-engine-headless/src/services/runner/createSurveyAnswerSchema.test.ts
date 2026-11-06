@@ -3,7 +3,7 @@ import type { SurveyHtmlNode } from "#src/models/SurveyHtmlNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { SURVEY_INVALID_ANSWER_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
 import { describe, expect, test } from "vitest";
 

@@ -3,7 +3,7 @@ import type { SurveyImagePickerNode } from "#src/models/SurveyImagePickerNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyImagePickerAnswerSchema } from "#src/services/runner/answer/createSurveyImagePickerAnswerSchema";
 import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyImagePickerNodeType } from "#src/services/surveyImagePickerNodeType";
 import { describe, expect, test } from "vitest";
 

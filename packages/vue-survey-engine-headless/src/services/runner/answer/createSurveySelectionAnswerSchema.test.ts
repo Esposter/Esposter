@@ -5,7 +5,7 @@ import {
   SURVEY_TOO_FEW_SELECTED_MESSAGE,
   SURVEY_TOO_MANY_SELECTED_MESSAGE,
 } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveySelectionAnswerSchema, () => {

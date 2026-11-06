@@ -1,6 +1,6 @@
 import { createSurveyStringAnswerSchema } from "#src/services/runner/answer/createSurveyStringAnswerSchema";
 import { SURVEY_TOO_LONG_MESSAGE, SURVEY_TOO_SHORT_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyStringAnswerSchema, () => {

@@ -11,7 +11,7 @@ import {
   SURVEY_WRONG_COUNT_MESSAGE,
 } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyBooleanNodeType } from "#src/services/surveyBooleanNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";

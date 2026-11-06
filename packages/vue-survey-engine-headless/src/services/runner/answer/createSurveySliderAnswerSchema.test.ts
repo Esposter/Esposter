@@ -3,7 +3,7 @@ import type { SurveySliderNode } from "#src/models/SurveySliderNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveySliderAnswerSchema } from "#src/services/runner/answer/createSurveySliderAnswerSchema";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveySliderNodeType } from "#src/services/surveySliderNodeType";
 import { describe, expect, test } from "vitest";
 

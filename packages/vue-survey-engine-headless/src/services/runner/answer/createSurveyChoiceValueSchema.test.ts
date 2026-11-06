@@ -1,6 +1,6 @@
 import { createSurveyChoiceValueSchema } from "#src/services/runner/answer/createSurveyChoiceValueSchema";
 import { SURVEY_NONE_ANSWER, SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyChoiceValueSchema, () => {

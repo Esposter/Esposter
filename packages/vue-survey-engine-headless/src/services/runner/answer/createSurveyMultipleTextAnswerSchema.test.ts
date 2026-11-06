@@ -4,7 +4,7 @@ import { SurveyMultipleTextItemInputType } from "#src/models/SurveyMultipleTextI
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyMultipleTextAnswerSchema } from "#src/services/runner/answer/createSurveyMultipleTextAnswerSchema";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMultipleTextNodeType } from "#src/services/surveyMultipleTextNodeType";
 import { describe, expect, test } from "vitest";
 

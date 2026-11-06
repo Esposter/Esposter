@@ -3,7 +3,7 @@ import type { SurveyMatrixNode } from "#src/models/SurveyMatrixNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyMatrixAnswerSchema } from "#src/services/runner/answer/createSurveyMatrixAnswerSchema";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMatrixNodeType } from "#src/services/surveyMatrixNodeType";
 import { describe, expect, test } from "vitest";
 

@@ -1,6 +1,6 @@
 import { createSurveyPatternAnswerSchema } from "#src/services/runner/answer/createSurveyPatternAnswerSchema";
 import { SURVEY_INVALID_ANSWER_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 

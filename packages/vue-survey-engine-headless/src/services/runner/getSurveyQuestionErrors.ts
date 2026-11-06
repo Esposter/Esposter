@@ -9,6 +9,7 @@ import { checkSurveyAnswerEmpty } from "#src/services/runner/checkSurveyAnswerEm
 import { checkSurveyExpressionHolds } from "#src/services/runner/checkSurveyExpressionHolds";
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { toSurveyLogicAnswer } from "survey-expression";
 
 // The errors one element holds: a required question left empty, an answer its schema refuses, then each validator that does not hold
@@ -39,7 +40,7 @@ export const getSurveyQuestionErrors = (
   // The first refusal's message is the one the schema chose for the rule that failed, such as out of range or too short
   const result = createSurveyAnswerSchema(node, values, now).safeParse(answer);
   if (!result.success)
-    return [{ message: result.error.issues[0]?.message ?? SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
+    return [{ message: getSurveyFirstMessage(result) ?? SURVEY_INVALID_ANSWER_MESSAGE, name, pointer }];
 
   // The validator reads the answer as `{value}`, the one name it may read beyond the survey's own
   const value = toSurveyLogicAnswer(answer);

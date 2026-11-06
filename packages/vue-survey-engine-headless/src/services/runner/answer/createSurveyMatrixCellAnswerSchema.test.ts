@@ -3,7 +3,7 @@ import type { SurveyMatrixColumn } from "#src/models/SurveyMatrixColumn";
 import { SurveyMatrixCellType } from "#src/models/SurveyMatrixCellType";
 import { createSurveyMatrixCellAnswerSchema } from "#src/services/runner/answer/createSurveyMatrixCellAnswerSchema";
 import { SURVEY_NOT_A_CHOICE_MESSAGE, SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyMatrixCellAnswerSchema, () => {

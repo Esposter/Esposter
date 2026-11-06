@@ -3,7 +3,7 @@ import type { SurveyRadioGroupNode } from "#src/models/SurveyRadioGroupNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyRadioGroupAnswerSchema } from "#src/services/runner/answer/createSurveyRadioGroupAnswerSchema";
 import { SURVEY_NONE_ANSWER, SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
 import { describe, expect, test } from "vitest";
 

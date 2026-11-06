@@ -3,7 +3,7 @@ import type { SurveyRatingNode } from "#src/models/SurveyRatingNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyRatingAnswerSchema } from "#src/services/runner/answer/createSurveyRatingAnswerSchema";
 import { SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyRatingNodeType } from "#src/services/surveyRatingNodeType";
 import { describe, expect, test } from "vitest";
 

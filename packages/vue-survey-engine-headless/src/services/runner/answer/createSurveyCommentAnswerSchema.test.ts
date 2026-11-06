@@ -3,7 +3,7 @@ import type { SurveyCommentNode } from "#src/models/SurveyCommentNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyCommentAnswerSchema } from "#src/services/runner/answer/createSurveyCommentAnswerSchema";
 import { SURVEY_TOO_LONG_MESSAGE } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyCommentNodeType } from "#src/services/surveyCommentNodeType";
 import { describe, expect, test } from "vitest";
 

@@ -9,7 +9,7 @@ import {
   SURVEY_OUT_OF_RANGE_MESSAGE,
   SURVEY_REQUIRED_MESSAGE,
 } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
 import { describe, expect, test } from "vitest";
 

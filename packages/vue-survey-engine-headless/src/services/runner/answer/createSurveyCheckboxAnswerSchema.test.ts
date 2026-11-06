@@ -7,7 +7,7 @@ import {
   SURVEY_NONE_ANSWER,
   SURVEY_TOO_MANY_SELECTED_MESSAGE,
 } from "#src/services/runner/constants";
-import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage.test";
+import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
 import { describe, expect, test } from "vitest";
 
