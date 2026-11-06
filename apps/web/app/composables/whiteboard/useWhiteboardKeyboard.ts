@@ -2,8 +2,6 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { Point, ShapeKind } from "headless-block-editor";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
@@ -18,16 +16,14 @@ import {
   WHITEBOARD_NUDGE_DIRECTIONS,
   WHITEBOARD_NUDGE_LARGE_STEP,
   WHITEBOARD_NUDGE_STEP,
-  WHITEBOARD_SHAPE_SHORTCUTS,
-  WHITEBOARD_TOOL_SHORTCUTS,
 } from "@/services/whiteboard/keyboard/constants";
-import { WhiteboardPaletteIconMap } from "@/services/whiteboard/palette/WhiteboardPaletteIconMap";
-import { WHITEBOARD_TOOL_ITEMS } from "@/services/whiteboard/tool/constants";
+import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
+import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
 // Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
 // Selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
-// A tool key chooses the tool in hand, and the shape keys choose the shape tool with the shape they name
+// A tool's key chooses the tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,
@@ -144,33 +140,28 @@ export const useWhiteboardKeyboard = (
   ];
 
   const toolCommands: UiCommand[] = [
-    ...Object.entries(WHITEBOARD_TOOL_SHORTCUTS).map(([key, chosenTool]) => {
-      const item = WHITEBOARD_TOOL_ITEMS.find(({ value }) => value === chosenTool);
-      // Every tool with a key has a toolbar item carrying its mark, so a miss is a broken table, not a case to skip
-      if (!item?.meaning)
-        throw new InvalidOperationError(Operation.Read, chosenTool, "it has no toolbar item with a mark");
-
-      return {
-        group: WHITEBOARD_COMMAND_GROUP,
-        id: `whiteboard-tool-${chosenTool}`,
-        meaning: item.meaning,
-        run: () => {
-          chooseTool(chosenTool);
-        },
-        shortcut: key,
-        title: `${item.title} tool`,
-      };
-    }),
-    ...Object.entries(WHITEBOARD_SHAPE_SHORTCUTS).map(([key, { kind, title }]) => ({
+    ...Object.values(WhiteboardToolItemMap).map(({ meaning, shortcut, title, value }) => ({
       group: WHITEBOARD_COMMAND_GROUP,
-      id: `whiteboard-shape-${kind}`,
-      meaning: WhiteboardPaletteIconMap[kind],
+      id: `whiteboard-tool-${value}`,
+      meaning,
       run: () => {
-        chooseShape(kind);
+        chooseTool(value);
       },
-      shortcut: key,
+      shortcut,
       title: `${title} tool`,
     })),
+    ...Object.values(WhiteboardShapeItemMap)
+      .filter(({ shortcut }) => shortcut !== undefined)
+      .map(({ meaning, shortcut, title, value }) => ({
+        group: WHITEBOARD_COMMAND_GROUP,
+        id: `whiteboard-shape-${value}`,
+        meaning,
+        run: () => {
+          chooseShape(value);
+        },
+        shortcut,
+        title: `${title} tool`,
+      })),
   ];
 
   useCommands((): UiCommand[] => {

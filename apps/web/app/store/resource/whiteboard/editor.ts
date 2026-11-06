@@ -7,7 +7,7 @@ import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
-import { checkIsPointInBounds, ShapeKind } from "headless-block-editor";
+import { ShapeKind } from "headless-block-editor";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, whether
 // The tool stays in hand after a placement, the viewport, and the gesture in progress with the document it would leave. None of it is saved
@@ -22,12 +22,8 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const tool = ref(GestureTool.Select);
   const viewport = ref<Viewport>({ scale: 1, x: 0, y: 0 });
   const getCentreScreen = (): Point => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
-  const checkIsInCanvas = (point: Point) => checkIsPointInBounds(canvasRect.value, point, 0);
-  // The document point at the middle of the canvas, where a click places an element
+  // The document point at the middle of the canvas, where a picked image is placed
   const getCentrePoint = () => getWorldPoint(getCentreScreen(), viewport.value);
-  // The document point under a point on the page
-  const getDocumentPoint = (point: Point) =>
-    getWorldPoint({ x: point.x - canvasRect.value.x, y: point.y - canvasRect.value.y }, viewport.value);
   const setCanvasRect = (rect: CanvasRect) => {
     canvasRect.value = rect;
   };
@@ -37,6 +33,9 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const toggleSnap = () => {
     isSnapEnabled.value = !isSnapEnabled.value;
   };
+  const toggleToolLock = () => {
+    isToolLocked.value = !isToolLocked.value;
+  };
   const zoomBy = (factor: number) => {
     viewport.value = getZoomedViewport(viewport.value, factor, getCentreScreen());
   };
@@ -45,11 +44,9 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   };
   return {
     canvasRect,
-    checkIsInCanvas,
     fitTo,
     gesture,
     getCentrePoint,
-    getDocumentPoint,
     isSnapEnabled,
     isToolLocked,
     preview,
@@ -58,6 +55,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
     setCanvasRect,
     shapeKind,
     toggleSnap,
+    toggleToolLock,
     tool,
     viewport,
     zoomBy,

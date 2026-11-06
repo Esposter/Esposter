@@ -8,6 +8,8 @@ import { createContentData } from "@/services/resource/createContentData";
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
+import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
+import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
@@ -54,13 +56,22 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
   // A property edit is one commit on the element at an index, so it is one undo step
   const updateElementProperty = (index: number, change: PositionedElementProperty): boolean =>
     commitOperations(updatePositionedElementProperty(whiteboard.value, index, change));
+  // Steps back or forward through the history, as the undo and redo buttons and the keys do
+  const redo = () => {
+    editState.value = redoWhiteboardEdit(editState.value);
+  };
+  const undo = () => {
+    editState.value = undoWhiteboardEdit(editState.value);
+  };
   return {
     commitOperations,
     displayedDocument,
     editState,
     insertElement,
     loadContent,
+    redo,
     saveWhiteboard,
+    undo,
     updateElementProperty,
     whiteboard,
   };

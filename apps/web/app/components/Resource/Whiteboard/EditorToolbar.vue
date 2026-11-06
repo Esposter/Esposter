@@ -1,23 +1,98 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
+
+import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
+import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { WHITEBOARD_TOOL_ITEMS } from "@/services/whiteboard/tool/constants";
+import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
+import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
+import { WHITEBOARD_IMAGE_ACCEPT, WHITEBOARD_SHAPE_TOOL_ITEM } from "@/services/whiteboard/tool/constants";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
-// The tool a press is read by: the select tool, the hand that pans, or freehand drawing. Beside it, the switch that snaps a move or a resize to the grid
+// Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools, the image picker, and the
+// Lock that keeps a tool in hand and the grid snap. The toolbar holds one value for the tool in hand, and a shape tool's value is the kind it
+// Places, so the slot draws the kind and a choice in it or by a key sets both
 const whiteboardEditorStore = useWhiteboardEditorStore();
-const { isSnapEnabled, tool } = storeToRefs(whiteboardEditorStore);
-const { toggleSnap } = whiteboardEditorStore;
+const { isSnapEnabled, isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
+const { toggleSnap, toggleToolLock } = whiteboardEditorStore;
+const insertImages = useInsertWhiteboardImages();
+const imageInput = useTemplateRef("imageInput");
+const toolbarValue = computed({
+  get: () => (tool.value === GestureTool.Shape ? shapeKind.value : tool.value),
+  set: (value) => {
+    const shapeItem = Object.values(WhiteboardShapeItemMap).find((item) => item.value === value);
+    const toolItem = Object.values(WhiteboardToolItemMap).find((item) => item.value === value);
+    if (shapeItem) {
+      tool.value = GestureTool.Shape;
+      shapeKind.value = shapeItem.value;
+    } else if (toolItem) tool.value = toolItem.value;
+  },
+});
+const groups = computed<EditorToolbarGroup[]>(() => [
+  {
+    items: [WhiteboardToolItemMap[GestureTool.Select], WhiteboardToolItemMap[GestureTool.Hand]],
+    kind: EditorToolbarGroupKind.Tool,
+    label: "Select and pan",
+  },
+  { items: [WHITEBOARD_SHAPE_TOOL_ITEM], kind: EditorToolbarGroupKind.Tool, label: "Shape" },
+  {
+    items: [
+      WhiteboardToolItemMap[GestureTool.Arrow],
+      WhiteboardToolItemMap[GestureTool.Freehand],
+      WhiteboardToolItemMap[GestureTool.Text],
+      WhiteboardToolItemMap[GestureTool.StickyNote],
+    ],
+    kind: EditorToolbarGroupKind.Tool,
+    label: "Draw",
+  },
+  {
+    items: [
+      {
+        meaning: UiIconMeaning.Image,
+        onClick: () => {
+          imageInput.value?.open();
+        },
+        title: "Image",
+        value: "image",
+      },
+    ],
+    kind: EditorToolbarGroupKind.Command,
+    label: "Insert",
+  },
+  {
+    items: [
+      {
+        isPressed: isToolLocked.value,
+        meaning: UiIconMeaning.Lock,
+        onClick: toggleToolLock,
+        title: "Lock the tool",
+        value: "lock",
+      },
+      {
+        isPressed: isSnapEnabled.value,
+        meaning: UiIconMeaning.Snap,
+        onClick: toggleSnap,
+        title: "Snap to grid",
+        value: "snap",
+      },
+    ],
+    kind: EditorToolbarGroupKind.Command,
+    label: "Lock and snap",
+  },
+]);
 </script>
 
 <template>
-  <div p-1 flex gap-1 ui-lifted>
-    <UiToggleGroup v-model="tool" is-icon-only label="Tool" :items="WHITEBOARD_TOOL_ITEMS" />
-    <UiIconButton
-      label="Snap to grid"
-      :meaning="UiIconMeaning.Snap"
-      :variant="isSnapEnabled ? UiButtonVariant.Accent : undefined"
-      @click="toggleSnap()"
-    />
-  </div>
+  <EditorToolbar v-model="toolbarValue" label="Whiteboard tools" :groups />
+  <UiHiddenFileInput
+    ref="imageInput"
+    :accept="WHITEBOARD_IMAGE_ACCEPT"
+    @select="
+      (file) => {
+        imageInput?.reset();
+        if (file) insertImages([file]);
+      }
+    "
+  />
 </template>

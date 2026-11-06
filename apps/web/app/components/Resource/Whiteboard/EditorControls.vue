@@ -6,15 +6,33 @@ import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { getExportBounds } from "headless-block-editor";
 
-// Zoom in and out about the middle of the canvas, and fit the whole document into it
+// Undo and redo, then zoom in and out about the middle of the canvas, and fit the whole document into it. Undo and redo are disabled while
+// Their history has no edit to step to
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
+const { redo, undo } = whiteboardStore;
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { fitTo, zoomBy } = whiteboardEditorStore;
+const isUndoAvailable = computed(() => editState.value.history.past.length > 0);
+const isRedoAvailable = computed(() => editState.value.history.future.length > 0);
 </script>
 
 <template>
   <div p-1 flex gap-1 ui-lifted>
+    <UiIconButton
+      label="Undo"
+      :meaning="UiIconMeaning.Undo"
+      :variant="UiButtonVariant.Quiet"
+      :disabled="!isUndoAvailable"
+      @click="undo()"
+    />
+    <UiIconButton
+      label="Redo"
+      :meaning="UiIconMeaning.Redo"
+      :variant="UiButtonVariant.Quiet"
+      :disabled="!isRedoAvailable"
+      @click="redo()"
+    />
     <UiIconButton
       label="Zoom out"
       :meaning="UiIconMeaning.ZoomOut"

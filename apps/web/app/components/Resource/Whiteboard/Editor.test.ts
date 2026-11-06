@@ -7,7 +7,9 @@ import type { Except } from "type-fest";
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceWhiteboardEditor from "@/components/Resource/Whiteboard/Editor.vue";
+import ResourceWhiteboardEditorPropertiesArrow from "@/components/Resource/Whiteboard/EditorPropertiesArrow.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
+import UiPalette from "@/components/Ui/Palette/Index.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
@@ -20,7 +22,8 @@ import { flushPromises } from "@vue/test-utils";
 import { ArrowPathKind, getExportBounds, PositionedElementType } from "headless-block-editor";
 import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
-const { uploadResourceFileMock } = vi.hoisted(() => ({
+const { display, uploadResourceFileMock } = vi.hoisted(() => ({
+  display: { isCompact: false, isMobile: false },
   uploadResourceFileMock: vi.fn<(file: File) => Promise<string>>(),
 }));
 
@@ -28,6 +31,17 @@ const { uploadResourceFileMock } = vi.hoisted(() => ({
 vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
   useUploadResourceFile: () => uploadResourceFileMock,
 }));
+// The editor's size class is read from the display composable, so a test says how small the window is before the editor mounts
+vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+  const { useUiDisplay } = await importOriginal();
+  return {
+    useUiDisplay: () => ({
+      ...useUiDisplay(),
+      isMobile: shallowRef(display.isMobile),
+      xs: shallowRef(display.isCompact),
+    }),
+  };
+});
 
 const createShape = (id: string, x: number): ShapeElement => ({ ...WHITEBOARD_PROCESS, id, x });
 // The canvas is the one application-role surface, where every pointer and key of a gesture lands
@@ -42,8 +56,12 @@ describe("resourceWhiteboardEditor", () => {
   // The process shape's bottom point is where a right-angled arrow starts, bound to it, and its far end is free
   const RIGHT_ANGLED_ARROW: ArrowElement = { ...WHITEBOARD_ARROW, pathKind: ArrowPathKind.RightAngled };
   const CANVAS_RECT = { height: 600, width: 800, x: 0, y: 0 };
+  // The middle of the canvas, where a click places the element a text tool draws
+  const CANVAS_CENTRE: Point = { x: 400, y: 300 };
 
   beforeEach(async () => {
+    display.isCompact = false;
+    display.isMobile = false;
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({
       ...createResourceListItem({ id: resourceId, type: ResourceType.Whiteboard }),
@@ -205,7 +223,7 @@ describe("resourceWhiteboardEditor", () => {
     expect(viewport.value).toStrictEqual(fittedViewport);
   });
 
-  test("placing a text box from the palette adds a text box", async () => {
+  test("placing a text box with the text tool adds a text box", async () => {
     expect.hasAssertions();
 
     const component = await mountEditor([]);
@@ -215,18 +233,129 @@ describe("resourceWhiteboardEditor", () => {
     const { setCanvasRect } = whiteboardEditorStore;
     await flushPromises();
     setCanvasRect(CANVAS_RECT);
-    // The id the palette gives the new text box is fixed, so the element is read back exactly
+    // The id the placement gives the new text box is fixed, so the element is read back exactly
     const insertedId = crypto.randomUUID();
     const randomUuidSpy = vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
     onTestFinished(() => {
       randomUuidSpy.mockRestore();
     });
-    const textBoxTile = component.findAll("button").find((button) => button.text() === "Text box");
-    await textBoxTile?.trigger("click");
+    await component.get('button[aria-label="Text"]').trigger("click");
+    await drag(getCanvas(component), CANVAS_CENTRE, CANVAS_CENTRE);
 
     expect(whiteboard.value.elements).toStrictEqual([
       { id: insertedId, text: "Text", type: PositionedElementType.Text, width: 160, x: 320, y: 280 },
     ]);
+  });
+
+  test("every tool is in the top toolbar", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([]);
+    await flushPromises();
+    const toolbar = component.get('[role="toolbar"]');
+    const toolTitles = [
+      "Select",
+      "Hand",
+      "Shape",
+      "Arrow",
+      "Freehand",
+      "Text",
+      "Sticky note",
+      "Image",
+      "Lock the tool",
+    ];
+
+    expect(toolTitles.filter((title) => toolbar.find(`[aria-label="${title}"]`).exists())).toStrictEqual(toolTitles);
+    expect(component.findComponent(UiPalette).exists()).toBe(false);
+  });
+
+  test("the image tool opens the file picker", async () => {
+    expect.hasAssertions();
+
+    const click = vi.spyOn(HTMLInputElement.prototype, "click");
+    onTestFinished(() => {
+      click.mockRestore();
+    });
+    const file = new File(["a"], "a", { type: MimeType.Png });
+    uploadResourceFileMock.mockResolvedValue(" ");
+    const component = await mountEditor([]);
+    await flushPromises();
+    await component.get('[aria-label="Image"]').trigger("click");
+    const input = component.get('input[type="file"]');
+    Object.defineProperty(input.element, "files", { value: [file] });
+    await input.trigger("change");
+    await flushPromises();
+
+    expect(click).toHaveBeenCalledOnce();
+    expect(uploadResourceFileMock).toHaveBeenCalledOnce();
+  });
+
+  test("undo and redo are buttons beside zoom", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([]);
+    const whiteboardStore = useWhiteboardStore();
+    await flushPromises();
+    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    await flushPromises();
+    const view = component.get('[aria-label="View"]');
+
+    expect(view.find('[aria-label="Zoom in"]').exists()).toBe(true);
+    expect(view.get('[aria-label="Undo"]').attributes("disabled")).toBeUndefined();
+    expect(view.get('[aria-label="Redo"]').attributes("disabled")).toBe("");
+  });
+
+  test("a redo restores the undone edit", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([]);
+    const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    await flushPromises();
+    whiteboardStore.insertElement(WHITEBOARD_PROCESS);
+    await flushPromises();
+    await component.get('[aria-label="Undo"]').trigger("click");
+    await component.get('[aria-label="Redo"]').trigger("click");
+
+    expect(whiteboard.value.elements).toStrictEqual([WHITEBOARD_PROCESS]);
+  });
+
+  test("the panel shows an arrow's route", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS, WHITEBOARD_ARROW]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectElement } = whiteboardEditorStore;
+    await flushPromises();
+    selectElement(WHITEBOARD_ARROW.id);
+    await flushPromises();
+
+    expect(component.findComponent(ResourceWhiteboardEditorPropertiesArrow).props("arrow")).toStrictEqual(
+      WHITEBOARD_ARROW,
+    );
+  });
+
+  test("the properties panel is absent with nothing selected", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS]);
+    await flushPromises();
+
+    expect(component.find('[aria-label="Properties"]').exists()).toBe(false);
+  });
+
+  test("a compact window moves the toolbar to the bottom", async () => {
+    expect.hasAssertions();
+
+    display.isCompact = true;
+    const component = await mountEditor([]);
+    await flushPromises();
+    const tools = component.get('[aria-label="Tools"]');
+    const canvas = getCanvas(component);
+
+    // A bottom bar is drawn after the canvas and outside it, where a region over the canvas sits inside it
+    expect(canvas.element.contains(tools.element)).toBe(false);
+    expect(canvas.element.compareDocumentPosition(tools.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   test("the first element cannot be sent further back", async () => {

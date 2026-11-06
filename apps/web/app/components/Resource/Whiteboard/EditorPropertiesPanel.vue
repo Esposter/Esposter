@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { getSelectedElement } from "@/services/whiteboard/getSelectedElement";
+import { getWhiteboardElementTitle } from "@/services/whiteboard/getWhiteboardElementTitle";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType } from "headless-block-editor";
 
-// The properties of the one element selected. Nothing shows for a selection of several, or of none
+// The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill,
+// And every element takes the stacking and the footer
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const whiteboardEditorStore = useWhiteboardEditorStore();
@@ -13,7 +15,7 @@ const selected = computed(() => getSelectedElement(editState.value.document, sel
 </script>
 
 <template>
-  <div v-if="selected" p-2 flex flex-col gap-3 ui-lifted>
+  <EditorContextualPanel v-if="selected" :selected-count="1" :title="getWhiteboardElementTitle(selected.element)">
     <ResourceWhiteboardEditorPropertiesFill
       v-if="
         selected.element.type === PositionedElementType.Shape ||
@@ -22,11 +24,7 @@ const selected = computed(() => getSelectedElement(editState.value.document, sel
       :fill="selected.element.fill"
       :index="selected.index"
     />
-    <ResourceWhiteboardEditorPropertiesArrow
-      v-if="selected.element.type === PositionedElementType.Arrow"
-      :arrow="selected.element"
-      :index="selected.index"
-    />
     <ResourceWhiteboardEditorPropertiesOrder :index="selected.index" />
-  </div>
+    <ResourceWhiteboardEditorPropertiesFooter />
+  </EditorContextualPanel>
 </template>
