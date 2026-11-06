@@ -8,7 +8,3 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-character-screen | —     | unreconciled |
 | genshin-commissions      | —     | unreconciled |
 | genshin-sheer-cold       | —     | unreconciled |
-| genshin-weather          | —     | unreconciled |
-| genshin-wildlife         | —     | unreconciled |
-| infra-channel-chat       | —     | unreconciled |
-| infra-viewer-stage       | —     | unreconciled |
