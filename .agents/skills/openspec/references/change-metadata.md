@@ -18,7 +18,7 @@ A change may also name these fields, each optional; the first three are the flee
 
 - `x-needs: [game-exports, game-install, media-engine, ...]` — the capabilities a machine must hold to take the change; name one only when a part reads the installed game or its exports;
 - `x-touches: ["<glob>", ...]` — the folders a part edits that its Key files table does not already name, quoted so a `*` is not read as a YAML alias;
-- `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine;
+- `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A task that follows an open task of its own change is ordered by its number, not blocked: no blocker holds it from a machine that builds the earlier task, so it is not named. A change with `x-waiting` is not offered to any machine;
 - `x-phase: <n>` — the Genshin phase the change holds, an integer from 0 to 7; a word or a number past 7 fails the read.
 
 A task whose phase is another than its change's says so with a marker right after its number, `- [ ] 3.1 [phase 6] Text`, an integer from 0 to 7; a marker past 7 is no marker, so its line reads as an ordinary task. A task without one holds its change's `x-phase`. A change is picked at the lowest phase among its open tasks, so a done task's marker never counts, and a change none of whose open tasks holds a phase is picked at none.
