@@ -24,6 +24,9 @@ export const FENCE_REGEX: RegExp = /^\s*(?:```|~~~)/u;
 // A Markdown heading of any level, which ends a requirement's body and a scenario alike
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const HEADING_REGEX: RegExp = /^#{1,6}\s/u;
+// The heading a spec delta's scenario carries, with the title it names as its one capture
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const SCENARIO_HEADING_REGEX: RegExp = /^####\s+Scenario:\s*(?<title>.*)$/u;
 // An archived delta is shipped history that nothing rewrites, so neither the citation rule nor the dated-prose scan reads it
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const ARCHIVED_DELTA_PREFIX: string = `${PROPOSALS_DIRECTORY}/${ARCHIVE_FOLDER}/`;

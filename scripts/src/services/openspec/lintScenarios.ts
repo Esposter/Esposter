@@ -1,9 +1,8 @@
 import type { ScenarioBlock } from "#src/models/openspec/ScenarioBlock";
 
 import { checkScenario } from "#src/services/openspec/checkScenario";
-import { HEADING_REGEX } from "#src/services/openspec/constants";
+import { HEADING_REGEX, SCENARIO_HEADING_REGEX } from "#src/services/openspec/constants";
 
-const SCENARIO_HEADING_REGEX = /^####\s+Scenario:\s*(?<title>.*)$/u;
 const STEP_REGEX = /^-\s+\*\*(?<keyword>GIVEN|WHEN|THEN|AND)\*\*\s+\S/u;
 
 // Returns one finding per broken scenario or stray line, formatted `path:line: message`. A scenario ends at the next
