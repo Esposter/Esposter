@@ -10,8 +10,8 @@ import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCh
 export const checkScreenIdsUnderBars = (
   folder: string,
   parityIds: readonly string[],
-  means: ReadonlyMap<string, number>,
-  approvals: ReadonlyMap<string, ParityApproval>,
+  parityIdMeanMap: ReadonlyMap<string, number>,
+  parityIdApprovalMap: ReadonlyMap<string, ParityApproval>,
 ): GenshinExitCheck => {
   const name = `screen ${folder}: every parity id under its bar`;
   if (parityIds.length === 0)
@@ -19,8 +19,8 @@ export const checkScreenIdsUnderBars = (
   const failing: string[] = [];
   const unmeasured: string[] = [];
   for (const id of parityIds) {
-    const approval = approvals.get(id);
-    const mean = means.get(id);
+    const approval = parityIdApprovalMap.get(id);
+    const mean = parityIdMeanMap.get(id);
     if (approval === undefined) failing.push(`${id} is not a reference in ParityReferenceMap`);
     else if (approval.measure !== ParityApprovalMeasure.MeanDifference)
       unmeasured.push(`${id} is set on ${approval.measure}, which the report's means do not read`);
