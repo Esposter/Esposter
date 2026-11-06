@@ -78,7 +78,7 @@ The bars the region passes and the area pages' pass items share, each gate named
 - **Sun**: the solved edges within 2 px (`FRAME_GATE_PIXELS`); on a hit the held minute, read through `computeSunDirection`, replaces the provisional noon in the reference's `heldMinutes` (a call).
 - **Light**: shadow edges within 2 px (`FRAME_GATE_PIXELS`) and the stone's colour within 2.3 DeltaE (`COLOUR_GATE`).
 - **Atmosphere**: the sky's statistics within the spread of the reference's own sky halves, and its clear sky within 2.3 DeltaE (`COLOUR_GATE`).
-- **Display**: the shipped contrast's excess within 0.1 (`DISPLAY_CONTRAST_GATE`), and the drawn bloom's reading at or under zero (`BLOOM_READING_GATE`), negative where the bloom closes.
+- **Display**: the shipped contrast's excess within 0.1 (`DISPLAY_CONTRAST_GATE`), and, on each reference whose screen draws the bloom (`BLOOM_SCREENS`), the drawn bloom's reading at or under zero (`BLOOM_READING_GATE`), negative where the bloom closes.
 - **Frame score** (not gated): a location's frame reads the reference and the screen at the reference's size, writes its row of the parity snapshot and the reference, ours and difference images, and is reported, not gated: the passes above carry the bars, and the frame is checked by eye.
 
 ## Sources
