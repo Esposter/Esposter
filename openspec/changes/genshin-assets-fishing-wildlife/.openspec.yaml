@@ -2,6 +2,7 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 0
 x-model: claude-haiku-5-5
+x-waiting: "1.5 waits on genshin-assets-interface-art task 1.1, the named-icon command, which is open; 3.12 waits on genshin-assets-props tasks 1.3 and 1.4, the outline fit and its dataset member, which are open"
 x-needs: [game-install, game-exports, media-engine]
 x-touches:
   [
