@@ -2,6 +2,7 @@ import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind
 
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { getSynchronizedFunction } from "@esposter/shared";
 
 // The editing of one open page builder document, which every arrangement of the builder shares: what a screen reader hears, the
 // Keys, the history and style commands, and the drag from the palette or a merge field onto the canvas. An arrangement draws the
@@ -20,13 +21,13 @@ export const usePageBuilderEditor = (
   const { getEditingNodeId } = pageBuilderCanvasStore;
   const getPageDocument = () => getHeldDocument(resourceId)?.document;
   // The one live region every announcement goes through. Clearing first lets a repeat of the same text be announced again
+  // Each component takes announce as a sync callback, so the tick runs through getSynchronizedFunction rather than a promise each caller awaits
   const announcement = ref("");
-  const announce = (message: string) => {
+  const announce = getSynchronizedFunction(async (message: string) => {
     announcement.value = "";
-    nextTick(() => {
-      announcement.value = message;
-    });
-  };
+    await nextTick();
+    announcement.value = message;
+  });
   // The node delete a toolbar asks for is held here, since the editor's keys are not bound while it asks
   const isDeleteOpen = ref(false);
   const { handleCanvasKeydown, handleEnterKeydown } = usePageBuilderKeyCommands(
@@ -51,15 +52,14 @@ export const usePageBuilderEditor = (
   // Content is not in the DOM until the tab is shown, so the tab is revealed first and the row is focused on the next tick
   watch(
     () => getEditingNodeId(resourceId),
-    (nodeId, previousNodeId) => {
+    async (nodeId, previousNodeId) => {
       if (nodeId || !previousNodeId) return;
 
       revealLayers();
-      nextTick(() => {
-        getRoot()
-          ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
-          ?.focus();
-      });
+      await nextTick();
+      getRoot()
+        ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
+        ?.focus();
     },
   );
   return {

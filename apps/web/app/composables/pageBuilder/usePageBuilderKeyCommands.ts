@@ -13,6 +13,8 @@ import { getBlockNode } from "vue-block-editor-headless";
 // A focused button or link takes Enter as its own activation rather than a text edit
 const checkIsControlTarget = (target: EventTarget | null) =>
   checkIsElementTarget(target) && target.closest("button, a[href]") !== null;
+// A move the selection cannot take stays listed, unavailable with the reason it cannot, so the reader sees why it is not taken
+const getMoveProps = (refusal: string | undefined) => ({ description: refusal, isDisabled: refusal !== undefined });
 // The editor's keys over the selected node. Its moves, its clipboard and its delete are commands, bound for as long as the editor is
 // Mounted and unbound while a node's delete asks. Enter is listed but never bound, since a focused button or link must keep it, and
 // The canvas's frame is a document of its own, so the keys it passes on are pressed again on the window where the commands are bound
@@ -84,8 +86,6 @@ export const usePageBuilderKeyCommands = (
     shortcut: "cmd+v",
     title: "Paste a block",
   };
-  // A move the selection cannot take stays listed, unavailable with the reason it cannot, so the reader sees why it is not taken
-  const getMoveProps = (refusal: string | undefined) => ({ description: refusal, isDisabled: refusal !== undefined });
   // The commands over the selected node, which are bound and listed only while a node is selected
   const getSelectionCommands = (): UiCommand[] => [
     {

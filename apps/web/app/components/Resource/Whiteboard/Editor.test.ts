@@ -286,8 +286,8 @@ describe("resourceWhiteboardEditor", () => {
     await input.trigger("change");
     await flushPromises();
 
-    expect(click).toHaveBeenCalledOnce();
-    expect(uploadResourceFileMock).toHaveBeenCalledOnce();
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(uploadResourceFileMock).toHaveBeenCalledTimes(1);
   });
 
   test("undo and redo are buttons beside zoom", async () => {
@@ -355,7 +355,7 @@ describe("resourceWhiteboardEditor", () => {
 
     // A bottom bar is drawn after the canvas and outside it, where a region over the canvas sits inside it
     expect(canvas.element.contains(tools.element)).toBe(false);
-    expect(canvas.element.compareDocumentPosition(tools.element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(canvas.element.compareDocumentPosition(tools.element) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
   });
 
   test("the first element cannot be sent further back", async () => {

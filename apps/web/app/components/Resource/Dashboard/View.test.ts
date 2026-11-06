@@ -67,12 +67,12 @@ describe("resourceDashboardView", () => {
     mockPublishedDashboard(new Dashboard({ visuals: [new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 0 })] }));
     const component = await mountSuspended(ResourceDashboardView, { props: { id } });
     await flushPromises();
-    const buttonTexts = component.findAll("button").map((button) => button.text());
+    const buttonTexts = new Set(component.findAll("button").map((button) => button.text()));
 
     expect({
-      addVisual: buttonTexts.includes("Add visual"),
+      addVisual: buttonTexts.has("Add visual"),
       editorShell: component.findComponent(EditorShell).exists(),
-      layout: buttonTexts.includes("Layout"),
+      layout: buttonTexts.has("Layout"),
     }).toStrictEqual({ addVisual: false, editorShell: false, layout: false });
   });
 });

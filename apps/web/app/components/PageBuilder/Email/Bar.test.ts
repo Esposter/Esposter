@@ -13,21 +13,22 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test } from "vitest";
 
+const getNodeTitle = (nodeId: string) => nodeId;
+const mountBar = async (findings: EditorFinding[] = []) => {
+  const component = await mountSuspended(PageBuilderEmailBar, {
+    attachTo: document.body,
+    props: { error: "", findings, getNodeTitle, modelValue: EmailView.Design, resourceId: TEST_ID },
+  });
+  onTestFinished(() => {
+    component.unmount();
+  });
+  return component;
+};
+
 describe("pageBuilderEmailBar", () => {
   const importLabel = "Import MJML";
   const overflowLabel = "More email actions";
   const message = "a";
-  const getNodeTitle = (nodeId: string) => nodeId;
-  const mountBar = async (findings: EditorFinding[] = []) => {
-    const component = await mountSuspended(PageBuilderEmailBar, {
-      attachTo: document.body,
-      props: { error: "", findings, getNodeTitle, modelValue: EmailView.Design, resourceId: TEST_ID },
-    });
-    onTestFinished(() => {
-      component.unmount();
-    });
-    return component;
-  };
 
   test("import MJML is in the overflow menu", async () => {
     expect.hasAssertions();

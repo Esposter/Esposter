@@ -112,15 +112,15 @@ describe("resourceSurveyCreatorShell", () => {
     const surveyCreatorStore = loadSurvey();
     const component = await mountSuspended(ResourceSurveyCreatorShell);
 
-    expect(component.find(structureSelector).exists()).toBe(true);
-    expect(component.find(inspectorSelector).exists()).toBe(true);
+    expect(component.findAll(structureSelector)).toHaveLength(1);
+    expect(component.findAll(inspectorSelector)).toHaveLength(1);
 
     surveyCreatorStore.isPreview = true;
     await nextTick();
 
     expect(component.findComponent(ResourceSurveyRunner).exists()).toBe(true);
-    expect(component.find(structureSelector).exists()).toBe(false);
-    expect(component.find(inspectorSelector).exists()).toBe(false);
+    expect(component.findAll(structureSelector)).toHaveLength(0);
+    expect(component.findAll(inspectorSelector)).toHaveLength(0);
 
     component.unmount();
   });

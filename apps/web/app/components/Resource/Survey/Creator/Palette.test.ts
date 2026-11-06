@@ -106,8 +106,12 @@ describe("resourceSurveyCreatorPalette", () => {
     select("/content/0/props/children/0/props/template/0");
     const component = await mountSuspended(ResourceSurveyCreatorPalette);
     // A dynamic panel's template takes every kind but a page and the two panels
-    const untakenKinds: SurveyNodeType[] = [SurveyNodeType.Page, SurveyNodeType.Panel, SurveyNodeType.PanelDynamic];
-    const kinds = Object.values(SurveyNodeType).filter((type) => !untakenKinds.includes(type));
+    const untakenKinds = new Set<SurveyNodeType>([
+      SurveyNodeType.Page,
+      SurveyNodeType.Panel,
+      SurveyNodeType.PanelDynamic,
+    ]);
+    const kinds = Object.values(SurveyNodeType).filter((type) => !untakenKinds.has(type));
 
     expect(
       component

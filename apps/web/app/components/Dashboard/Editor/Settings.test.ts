@@ -23,6 +23,13 @@ import { flushPromises } from "@vue/test-utils";
 import { assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
+// The choices are radios, and the one chosen is the radio that reads checked
+const chooseRadio = async (wrapper: VueWrapper, title: string) => {
+  const radio = wrapper.findAll('[role="radio"]').find((item) => item.text().startsWith(title));
+  await radio?.trigger("click");
+  await flushPromises();
+};
+
 describe("dashboardEditorSettings", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -54,13 +61,6 @@ describe("dashboardEditorSettings", () => {
     const { loadContent } = dashboardStore;
     await loadContent();
   };
-  // The choices are radios, and the one chosen is the radio that reads checked
-  const chooseRadio = async (wrapper: VueWrapper, title: string) => {
-    const radio = wrapper.findAll('[role="radio"]').find((item) => item.text().startsWith(title));
-    await radio?.trigger("click");
-    await flushPromises();
-  };
-
   // Stubbed once for the file: an `unstubAllGlobals` after each test would also unstub the fetch `setupMswTrpc` stubs
   beforeAll(() => {
     stubGridWidth(gridWidth);

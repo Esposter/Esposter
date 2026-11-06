@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
@@ -17,14 +18,25 @@ import { SurveyNodeType } from "vue-survey-engine-headless";
 import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+const createFrameGeometry = (): FrameGeometry => ({
+  checkIsHorizontalOwner: () => false,
+  frameRect: { height: 500, left: 0, top: 0, width: 500 },
+  getChildRect: () => undefined,
+  getNodeIdAt: () => undefined,
+  scale: 1,
+});
+
 describe("pageBuilderPalette", () => {
-  const createFrameGeometry = (): FrameGeometry => ({
-    checkIsHorizontalOwner: () => false,
-    frameRect: { height: 500, left: 0, top: 0, width: 500 },
-    getChildRect: () => undefined,
-    getNodeIdAt: () => undefined,
-    scale: 1,
-  });
+  type StartPaletteDrag = (
+    type: BlockNode["type"],
+    event: PointerEvent,
+    getFrameGeometry: () => FrameGeometry | undefined,
+  ) => void;
+  type StartMergeFieldDrag = (
+    columnName: string,
+    event: PointerEvent,
+    getFrameGeometry: () => FrameGeometry | undefined,
+  ) => void;
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -157,7 +169,7 @@ describe("pageBuilderPalette", () => {
 
     const frameGeometry = createFrameGeometry();
     const getFrameGeometry = () => frameGeometry;
-    const startPaletteDrag = vi.fn();
+    const startPaletteDrag = vi.fn<StartPaletteDrag>();
     const component = await mountSuspended(PageBuilderPalette, {
       props: {
         announce: vi.fn<(message: string) => void>(),
@@ -174,13 +186,16 @@ describe("pageBuilderPalette", () => {
       .find((button) => button.text() === WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text])
       ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
 
-    expect(startPaletteDrag).toHaveBeenCalledWith(WebpageNodeType.Text, expect.any(PointerEvent), getFrameGeometry);
+    const [, pointerEvent] = takeOne(startPaletteDrag.mock.calls);
+
+    expect(startPaletteDrag).toHaveBeenCalledExactlyOnceWith(WebpageNodeType.Text, pointerEvent, getFrameGeometry);
+    expect(pointerEvent.type).toBe("pointerdown");
   });
 
   test("a press on a block starts no palette drag where no frame can take it", async () => {
     expect.hasAssertions();
 
-    const startPaletteDrag = vi.fn();
+    const startPaletteDrag = vi.fn<StartPaletteDrag>();
     const component = await mountSuspended(PageBuilderPalette, {
       props: {
         announce: vi.fn<(message: string) => void>(),
@@ -203,10 +218,12 @@ describe("pageBuilderPalette", () => {
   test("a press on a merge field starts its column's drag where a frame can take it", async () => {
     expect.hasAssertions();
 
-    usePageBuilderDocumentStore().setMergeFieldColumns(TEST_ID, ["first_name"]);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setMergeFieldColumns } = pageBuilderDocumentStore;
+    setMergeFieldColumns(TEST_ID, ["first_name"]);
     const frameGeometry = createFrameGeometry();
     const getFrameGeometry = () => frameGeometry;
-    const startMergeFieldDrag = vi.fn();
+    const startMergeFieldDrag = vi.fn<StartMergeFieldDrag>();
     const component = await mountSuspended(PageBuilderPalette, {
       props: {
         announce: vi.fn<(message: string) => void>(),
@@ -223,7 +240,10 @@ describe("pageBuilderPalette", () => {
       .find((button) => button.text() === "first_name")
       ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
 
-    expect(startMergeFieldDrag).toHaveBeenCalledWith("first_name", expect.any(PointerEvent), getFrameGeometry);
+    const [, pointerEvent] = takeOne(startMergeFieldDrag.mock.calls);
+
+    expect(startMergeFieldDrag).toHaveBeenCalledExactlyOnceWith("first_name", pointerEvent, getFrameGeometry);
+    expect(pointerEvent.type).toBe("pointerdown");
   });
 
   // A Column is listed only while a Columns slot is the insertion point, so the palette lists it and nothing else there

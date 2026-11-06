@@ -5,8 +5,8 @@ import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill,
-// and every element takes the stacking and the footer
+// The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill.
+// Every element takes the stacking and the footer
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const whiteboardEditorStore = useWhiteboardEditorStore();

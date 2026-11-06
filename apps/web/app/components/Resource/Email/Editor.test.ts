@@ -33,8 +33,10 @@ describe("resourceEmailEditor", () => {
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.email.readResourceContent.query(() => new EmailEditor({ content: [], root: { props: {} } }));
     trpcMsw.email.readResourcePublication.query(() => undefined);
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
     // The page reads the row before any blade mounts, and a content load reads only the blob
-    await useResourceStore().readResource();
+    await readResource();
   });
 
   test("a validation message is a finding in Design", async () => {
@@ -52,7 +54,9 @@ describe("resourceEmailEditor", () => {
     expect.hasAssertions();
 
     trpcMsw.email.compile.mutation(() => ({ html }));
-    usePageBuilderCanvasStore().setDevice(resourceId, PageBuilderDevice.Mobile);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const { setDevice } = pageBuilderCanvasStore;
+    setDevice(resourceId, PageBuilderDevice.Mobile);
     const component = await mountSuspended(ResourceEmailEditor);
     await waitForSynchronizedFunctions();
     await flushPromises();

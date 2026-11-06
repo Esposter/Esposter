@@ -48,6 +48,17 @@ vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
   };
 });
 
+// A press on a visual's tile, which the tile's container takes as a click: the press selects the visual it draws
+const pressVisual = async (wrapper: VueWrapper, visualId: Visual["id"]) => {
+  const preview = wrapper
+    .findAllComponents(DashboardVisualPreviewContainer)
+    .find((container) => container.props("visual").id === visualId);
+  assert(preview);
+  await preview.trigger("mousedown");
+  await preview.trigger("click");
+  await flushPromises();
+};
+
 describe("resourceDashboardEditor", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -86,17 +97,6 @@ describe("resourceDashboardEditor", () => {
     return wrapper;
   };
 
-  // A press on a visual's tile, which the tile's container takes as a click: the press selects the visual it draws
-  const pressVisual = async (wrapper: VueWrapper, visualId: Visual["id"]) => {
-    const preview = wrapper
-      .findAllComponents(DashboardVisualPreviewContainer)
-      .find((container) => container.props("visual").id === visualId);
-    assert(preview);
-    await preview.trigger("mousedown");
-    await preview.trigger("click");
-    await flushPromises();
-  };
-
   // The editor's changes are saved on the autosave cadence, so a visual added and left alone is written with no save control
   test("a visual added to the dashboard is autosaved", async () => {
     expect.hasAssertions();
@@ -113,6 +113,7 @@ describe("resourceDashboardEditor", () => {
       return Promise.resolve(true);
     });
     await mountSuspended(ResourceDashboardEditor);
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- the autosave debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const visualStore = useVisualStore();
     const { createVisual } = visualStore;

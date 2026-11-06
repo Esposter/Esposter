@@ -69,8 +69,8 @@ describe("pageBuilderEditor", () => {
   });
 
   // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of.
-  // No global is unstubbed here: the mock server stubs fetch and Headers in its beforeAll, and unstubbing every global
-  // would restore the real fetch, so each later request would miss the mock and hang
+  // No global is unstubbed here: the mock server stubs fetch and Headers in its beforeAll.
+  // Unstubbing every global would restore the real fetch, so each later request would miss the mock and hang
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
@@ -243,6 +243,7 @@ describe("pageBuilderEditor", () => {
   test("an unsaved edit changes the findings", async () => {
     expect.hasAssertions();
     // The findings settle on the autosave's cadence, so the test moves the clock past it rather than waiting for it
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- the findings debounce is counted by the clock; the afterEach above restores the real timers before the harness waits a turn on setTimeout
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
@@ -282,11 +283,11 @@ describe("pageBuilderEditor", () => {
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     // The survey list is read through the mock server, so the invite reads as unchecked until its answer arrives
-    await vi.waitFor(() => {
-      expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
-        "Survey invite Invite to a survey with no published version",
-      ]);
-    });
+    await flushPromises();
+
+    expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
+      "Survey invite Invite to a survey with no published version",
+    ]);
   });
 
   test("a document with no survey invite reads no survey list", async () => {
