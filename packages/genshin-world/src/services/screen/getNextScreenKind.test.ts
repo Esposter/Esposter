@@ -6,7 +6,6 @@ import { describe, expect, test } from "vitest";
 describe(getNextScreenKind, () => {
   test.each<[ScreenKind, InputAction, ScreenKind]>([
     [ScreenKind.World, InputAction.OpenMap, ScreenKind.Map],
-    [ScreenKind.World, InputAction.OpenPaimonMenu, ScreenKind.PaimonMenu],
     [ScreenKind.World, InputAction.Cancel, ScreenKind.World],
     [ScreenKind.Map, InputAction.OpenMap, ScreenKind.World],
     [ScreenKind.Map, InputAction.OpenInventory, ScreenKind.Map],
@@ -27,5 +26,13 @@ describe(getNextScreenKind, () => {
     expect(
       getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), { isPaimonMenuLocked: true }),
     ).toBe(ScreenKind.World);
+  });
+
+  test("a step with no restriction opens the Paimon menu", () => {
+    expect.hasAssertions();
+
+    expect(
+      getNextScreenKind(ScreenKind.World, new Set([InputAction.OpenPaimonMenu]), { isPaimonMenuLocked: false }),
+    ).toBe(ScreenKind.PaimonMenu);
   });
 });
