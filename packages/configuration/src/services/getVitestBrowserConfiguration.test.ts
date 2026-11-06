@@ -33,18 +33,13 @@ describe(getVitestBrowserConfiguration, () => {
     vi.unstubAllEnvs();
   });
 
-  test("image name on a Windows machine", () => {
+  test.each([
+    { machine: "Windows", platform: "win32" },
+    { machine: "macOS", platform: "darwin" },
+  ])("image name on a $machine machine", ({ platform }) => {
     expect.hasAssertions();
 
-    expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform: "win32", root: "/root" })).toBe(
-      join("/root", "src", "components", "Index.png"),
-    );
-  });
-
-  test("image name on a macOS machine", () => {
-    expect.hasAssertions();
-
-    expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform: "darwin", root: "/root" })).toBe(
+    expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform, root: "/root" })).toBe(
       join("/root", "src", "components", "Index.png"),
     );
   });
