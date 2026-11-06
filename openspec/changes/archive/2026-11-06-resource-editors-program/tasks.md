@@ -1,10 +1,10 @@
 ## 1. Drag preview
 
-- [ ] 1.1 Land the [drag preview](../resource-editors-drag-preview/tasks.md) part. Verify: its tasks are ticked.
+- [x] 1.1 Land the [drag preview](../resource-editors-drag-preview/tasks.md) part. Verify: its tasks are ticked.
 
 ## 2. Compact chrome
 
-- [ ] 2.1 Land the [compact chrome](../resource-editors-compact-chrome/tasks.md) part. Verify: its tasks are ticked.
+- [x] 2.1 Land the [compact chrome](../resource-editors-compact-chrome/tasks.md) part. Verify: its tasks are ticked.
 
 ## 3. Close-out
 
