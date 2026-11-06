@@ -178,6 +178,22 @@ describe(useVisualStore, () => {
     expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
   });
 
+  test("restores the selection of a visual whose delete failed", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { deleteVisual } = visualStore;
+    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    selectedVisualId.value = id;
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    await deleteVisual({ id });
+
+    expect(selectedVisualId.value).toBe(id);
+  });
+
   // The rollback lands after the save's await, and by then the blade may hold another dashboard — put back through
   // Whichever dashboard is open, the deleted visual would appear in that one and be saved into it by its next edit
   test("puts a visual whose delete failed back into its own dashboard only", async () => {
@@ -309,7 +325,7 @@ describe(useVisualStore, () => {
   });
 
   // Opening a visual selects it, so the delete below has a selected visual to clear
-  test("Deleting the selected visual clears the selection", async () => {
+  test("deleting the selected visual clears the selection", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();

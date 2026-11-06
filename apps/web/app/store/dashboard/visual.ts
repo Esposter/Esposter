@@ -111,11 +111,16 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const location = findVisualLocation(dashboard.visuals, ids.id);
     if (!location) return false;
 
+    const previousSelectedVisualId = selectedVisualId.value;
     removeVisualFromList(dashboard, location.group, ids.id);
     // The selection is cleared when it names the visual, or one a deleted group held with it
     if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
     const isSuccessful = await saveDashboard();
-    if (!isSuccessful) getVisualList(dashboard, location.group).push(location.visual);
+    // A refused save also restores the selection the delete cleared, so the store is as it was before the delete
+    if (!isSuccessful) {
+      getVisualList(dashboard, location.group).push(location.visual);
+      selectedVisualId.value = previousSelectedVisualId;
+    }
     return isSuccessful;
   };
   // A copy of one visual and of every visual it holds, each under a fresh id: its type, chart, binding and fit height,
