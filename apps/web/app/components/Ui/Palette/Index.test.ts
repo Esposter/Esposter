@@ -18,7 +18,7 @@ describe("uiPalette", () => {
     { items: [{ icon: UiIconMeaning.Copy, kind: "column", title: "Column" }], title: "Layout" },
   ];
 
-  test("a query hides the groups and tiles it does not match", async () => {
+  test("a search hides the groups with no match", async () => {
     expect.hasAssertions();
     const component = mount(UiPalette, { props: { groups } });
 
