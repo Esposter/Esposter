@@ -31,7 +31,7 @@ interface Props {
 }
 const { announce, getDocument, getFrameGeometry, kind, resourceId, startMergeFieldDrag, startPaletteDrag } =
   defineProps<Props>();
-const { insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
+const { getInsertable, insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
 // The columns of the dataset an email is bound to, which an email's blade holds in the store, so a webpage lists none
 const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const insertMergeField = (columnName: string) =>
@@ -44,19 +44,23 @@ const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
 const startColumnDrag = (columnName: string, event: PointerEvent) => {
   if (startMergeFieldDrag && getFrameGeometry && hasFrame()) startMergeFieldDrag(columnName, event, getFrameGeometry);
 };
-// A type with no icon or no title is left out, rather than drawn with one the kind does not give it
+// A type with no icon or no title is left out, rather than drawn with one the kind does not give it. A type no slot at the
+// Selection takes is left out the same way, and a group left with nothing in it is not drawn
 const groups = computed<PaletteGroup[]>(() => {
-  const categoryGroups = kind.paletteCategories.map(({ category, types }) => ({
-    items: types.flatMap((type) => {
-      const icon = kind.icons[type];
-      const title = kind.titles[type];
-      if (icon === undefined || title === undefined) return [];
+  const categoryGroups = kind.paletteCategories
+    .map(({ category, types }) => ({
+      items: getInsertable(types).flatMap((type) => {
+        const icon = kind.icons[type];
+        const title = kind.titles[type];
+        if (icon === undefined || title === undefined) return [];
 
-      return [{ icon, kind: type, title }];
-    }),
-    title: category,
-  }));
-  if (mergeFieldColumns.value.length === 0) return categoryGroups;
+        return [{ icon, kind: type, title }];
+      }),
+      title: category,
+    }))
+    .filter(({ items }) => items.length > 0);
+  // A merge field inserts a text, so its column is offered only where a text can be inserted
+  if (mergeFieldColumns.value.length === 0 || getInsertable([MjmlNodeType.Text]).length === 0) return categoryGroups;
 
   return [
     ...categoryGroups,

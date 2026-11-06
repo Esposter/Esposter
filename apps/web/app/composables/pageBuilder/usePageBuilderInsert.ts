@@ -1,6 +1,7 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
+import { getInsertableTypes } from "@/services/pageBuilder/getInsertableTypes";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { insertAt } from "@/services/pageBuilder/insertAt";
@@ -24,18 +25,30 @@ export const usePageBuilderInsert = <
   // `jscpd:ignore-end`
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId } = pageBuilderCanvasStore;
+  // The pointer of the selected node, which is where an insert lands, or none when nothing is selected
+  const getSelectedPointer = (document: TDocument, resourceIdValue: string) => {
+    const nodeId = getSelectedNodeId(resourceIdValue);
+    return nodeId ? getNodePointer(kind, document, nodeId) : undefined;
+  };
   // A palette item may insert a block its type builds differently, such as a merge field's text, so its node is built by the caller
   const insert = (type: TNode["type"], createNode: (id: string) => TNode = (id) => kind.createNode(type, id)) => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument();
     if (!document) return;
 
-    const nodeId = getSelectedNodeId(resourceIdValue);
-    const target = getInsertTarget(kind, document, type, nodeId ? getNodePointer(kind, document, nodeId) : undefined);
+    const target = getInsertTarget(kind, document, type, getSelectedPointer(document, resourceIdValue));
     const title = kind.titles[type];
     if (target && insertAt(kind, document, resourceIdValue, target.slotPointer, target.index, createNode) && title)
       announce(`Inserted ${title}`);
   };
+  // The kinds, of those given, an insert at the selection's place lands, which is all an insertion menu lists. With no
+  // Document held there is no slot to refuse a kind against, so every kind is given back
+  const getInsertable = (types: readonly string[]) => {
+    const document = getDocument();
+    if (!document) return [...types];
 
-  return { insert };
+    return getInsertableTypes(kind, document, getSelectedPointer(document, toValue(resourceId)), types);
+  };
+
+  return { getInsertable, insert };
 };

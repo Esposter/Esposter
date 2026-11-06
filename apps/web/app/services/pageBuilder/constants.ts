@@ -49,10 +49,13 @@ export const WEBPAGE_NODE_TYPE_ICON_MAP: Readonly<Record<WebpageNodeType, UiIcon
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
-// The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are not
-// Listed, since only Columns and Tabs hold them
+// The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are listed
+// Too, though only a Columns or a Tabs slot takes them, so the palette offers each one only where its container is the place
 export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<WebpageNode>[] = Object.freeze([
-  Object.freeze({ category: "Layout", types: Object.freeze([WebpageNodeType.Section, WebpageNodeType.Columns]) }),
+  Object.freeze({
+    category: "Layout",
+    types: Object.freeze([WebpageNodeType.Section, WebpageNodeType.Columns, WebpageNodeType.Column]),
+  }),
   Object.freeze({
     category: "Content",
     types: Object.freeze([
@@ -68,6 +71,7 @@ export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<Web
     types: Object.freeze([
       WebpageNodeType.Countdown,
       WebpageNodeType.Tabs,
+      WebpageNodeType.Tab,
       WebpageNodeType.Tooltip,
       WebpageNodeType.TypedText,
     ]),

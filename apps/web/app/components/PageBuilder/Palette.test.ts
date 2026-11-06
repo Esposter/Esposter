@@ -2,15 +2,16 @@
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
 import UiPalette from "@/components/Ui/Palette/Index.vue";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
+import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { SurveyNodeType } from "headless-survey-engine";
 import { MjmlNodeType } from "mjml-blocks";
@@ -223,5 +224,55 @@ describe("pageBuilderPalette", () => {
       ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
 
     expect(startMergeFieldDrag).toHaveBeenCalledWith("first_name", expect.any(PointerEvent), getFrameGeometry);
+  });
+
+  // A Column is listed only while a Columns slot is the insertion point, so the palette lists it and nothing else there
+  test("the palette lists only the kinds the selection's slot accepts", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_THIRD_ID }, type: WebpageNodeType.Text }],
+                  id: TEST_OTHER_ID,
+                },
+                type: WebpageNodeType.Column,
+              },
+            ],
+            id: TEST_SECTION_ID,
+          },
+          type: WebpageNodeType.Columns,
+        },
+      ],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+    const component = await mountSuspended(PageBuilderPalette, {
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        getDocument: () => pageBuilderDocumentStore.getDocument(TEST_ID),
+        kind: webpageKind,
+        resourceId: TEST_ID,
+      },
+    });
+
+    expect(component.findComponent(UiPalette).props("groups")).toStrictEqual([
+      {
+        items: [
+          {
+            icon: webpageKind.icons[WebpageNodeType.Column],
+            kind: WebpageNodeType.Column,
+            title: webpageKind.titles[WebpageNodeType.Column],
+          },
+        ],
+        title: takeOne(webpageKind.paletteCategories, 0).category,
+      },
+    ]);
   });
 });
