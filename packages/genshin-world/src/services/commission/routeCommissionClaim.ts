@@ -9,7 +9,7 @@ import type { Party } from "#src/models/party/Party";
 import type { RewardRouting } from "#src/models/reward/RewardRouting";
 
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
-import { countRewardItem } from "#src/services/reward/countRewardItem";
+import { countItemCost } from "#src/services/inventory/countItemCost";
 import { gainDeployedCompanionshipExp } from "#src/services/reward/gainDeployedCompanionshipExp";
 import { routeRewardItems } from "#src/services/reward/routeRewardItems";
 
@@ -32,7 +32,7 @@ export const routeCommissionClaim = (
   const routed = routeRewardItems(
     adventureRankTables,
     adventureExp,
-    countRewardItem(items, ADVENTURE_EXP_ITEM_ID),
+    countItemCost(items, ADVENTURE_EXP_ITEM_ID),
     completedMainQuestIds,
     wallet,
     inventory,
