@@ -2,6 +2,8 @@
 
 - [x] 1.1 Map each bird and beast kind to its drop, and mark an animal struck so that it gives its drop once. Verify: strikeWildlife.test.ts, written first and seen failing, named after 'A Crimson Fox gives two Raw Meat when struck' and 'A struck animal gives nothing when struck again'.
 - [x] 1.2 Keep a struck animal where it fell, so that stepping it does not flee. Verify: a test named after the scenario 'A struck animal does not flee', in stepWildlife.test.ts.
+- [x] 1.3 Run a startled bird from the player within its escape radius, and stand it idle again once its escape time has passed with the player out of reach. Verify: tests named after 'A White Pigeon flees when approached within its escape radius' and 'A fleeing animal returns to idle after its escape time', in stepWildlife.test.ts.
+- [ ] 1.4 Return a struck or picked up animal on its kind's refresh, as gathering points do. Verify: a test named after 'A defeated animal returns on its kind's refresh' written first and seen failing.
 
 ## 2. Strikes reach the animals
 
