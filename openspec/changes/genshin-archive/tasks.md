@@ -17,4 +17,4 @@
 
 ## 5. Artifact sets
 
-- [x] 5.1 Call `openArchiveArtifactSets` from the Archive's composable with the artifacts the bag holds, once the first artifact drop reaches the bag. Verify: a test named after the scenario 'Holding every piece opens the set', seen failing first.
+- [x] 5.1 Call `openArchiveArtifactSets` from the Archive's composable with the artifacts the bag holds, once the first artifact drop reaches the bag. Verify: tests named after the scenarios 'Holding every piece opens the set', 'A set without an entry opens nothing' and 'An opened set stays open', seen failing first.

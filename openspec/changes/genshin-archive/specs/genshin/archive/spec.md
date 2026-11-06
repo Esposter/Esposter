@@ -85,9 +85,3 @@ An artifact set's Equipment entry SHALL open once the artifacts the player holds
 - **GIVEN** a set's Equipment entry is open
 - **WHEN** its pieces are later no longer held
 - **THEN** the entry stays open
-
-#### Scenario: No artifact in the bag yet opens no set
-
-- **GIVEN** no artifact drop has reached the bag yet
-- **WHEN** the Equipment section is listed
-- **THEN** no artifact set entry is open
