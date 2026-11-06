@@ -503,7 +503,10 @@ describe("pageBuilderEditor", () => {
     await nextTick();
 
     pageBuilderCanvasStore.setEditingNodeId(resourceId, "");
-    await flushPromises();
+    // The tree is shown on one tick and its row focused on the next. Waiting on the page instead would let the canvas
+    // Frame finish loading, and happy-dom then strands the nodes teleported into it when the editor unmounts
+    await nextTick();
+    await nextTick();
 
     expect(document.activeElement).toBe(component.get(`[data-item-id="${TEST_ROOT_TEXT_ID}"]`).element);
     component.unmount();
