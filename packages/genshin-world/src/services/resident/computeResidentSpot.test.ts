@@ -1,6 +1,7 @@
 import type { Resident } from "#src/models/world/Resident";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 
+import { getTimeTargetMinutes } from "#src/services/menu/getTimeTargetMinutes";
 import { computeResidentSpot } from "#src/services/resident/computeResidentSpot";
 import { DAY_END_MINUTES, DAY_START_MINUTES } from "#src/services/resident/constants";
 import { describe, expect, test } from "vitest";
@@ -33,8 +34,22 @@ describe(computeResidentSpot, () => {
     expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES)).toStrictEqual(DAY_SPOT);
   });
 
+  test("a resident not marked absent stays in the world at night", () => {
+    expect.hasAssertions();
+    expect(computeResidentSpot(RESIDENT, DAY_END_MINUTES)).toStrictEqual(NIGHT_SPOT);
+  });
+
   test("is absent in the day when the resident keeps no day spot", () => {
     expect.hasAssertions();
     expect(computeResidentSpot({ ...RESIDENT, day: undefined }, DAY_START_MINUTES)).toBeUndefined();
+  });
+
+  test("setting the time moves residents", () => {
+    expect.hasAssertions();
+
+    const targetMinutes = getTimeTargetMinutes(DAY_START_MINUTES, DAY_END_MINUTES - DAY_START_MINUTES);
+
+    expect(computeResidentSpot(RESIDENT, DAY_START_MINUTES)).toStrictEqual(DAY_SPOT);
+    expect(computeResidentSpot(RESIDENT, targetMinutes)).toStrictEqual(NIGHT_SPOT);
   });
 });
