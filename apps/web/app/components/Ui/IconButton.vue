@@ -20,12 +20,14 @@ const { isPending, label, meaning, shortcut, variant } = defineProps<Props>();
 
 <!-- A pending button's spinner takes the icon's place, since the button is only as wide as one -->
 <template>
-  <UiTooltip #default="{ activatorProps }" :label>
+  <UiTooltip :label>
     <template v-if="shortcut" #content>
       <span flex gap-2 items-center>{{ label }} <UiShortcut :shortcut /></span>
     </template>
-    <UiButton :="mergeProps(activatorProps, $attrs)" :aria-label="label" :is-pending :variant px-0>
-      <UiIcon v-if="!isPending" :meaning />
-    </UiButton>
+    <template #default="{ activatorProps }">
+      <UiButton :="mergeProps(activatorProps, $attrs)" :aria-label="label" :is-pending :variant px-0>
+        <UiIcon v-if="!isPending" :meaning />
+      </UiButton>
+    </template>
   </UiTooltip>
 </template>
