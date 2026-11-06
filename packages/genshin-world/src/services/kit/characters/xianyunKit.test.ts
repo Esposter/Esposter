@@ -3,13 +3,19 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createXianyunKitBehaviour, XIANYUN_CHARACTER_ID } from "#src/services/kit/characters/xianyunKit";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const XIANYUN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XIANYUN_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createXianyunCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -144,5 +150,38 @@ describe(createXianyunKitBehaviour, () => {
         source: "xianyun-constellation-2",
       },
     ]);
+  });
+
+  test("constellation 4's Driftcloud Wave heal reads Xianyun's ATK with the buffs on her as they stand at the hit, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+    const combatant = {
+      ...createXianyunCombatant(4),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 1000 },
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+      ]),
+    };
+    // A press cast at constellation 1 gives no ATK, which a constellation 2 press would, so the buff under test is the only one
+    const kitEffectState = castKitAction(XIANYUN_KIT.elementalSkill, createXianyunCombatant(1));
+    const context = createKitTestContext(combatant, { enemyTables, kitEffectState });
+    getPartyMember(context.party, XIANYUN_CHARACTER_ID).healthShare = 0.1;
+    assert.exists(XIANYUN_KIT.plungeVariants);
+    // The one press in the state makes the leap a Driftcloud Wave, and an ATK buff goes on her before its hit lands
+    const driftcloud = takeOne(XIANYUN_KIT.plungeVariants);
+    driftcloud.action.onStart?.(context);
+    buffKitMember(kitEffectState, XIANYUN_CHARACTER_ID, {
+      amount: 1,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    const hit = takeOne(driftcloud.action.hits);
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
+
+    expect(getPartyMember(context.party, XIANYUN_CHARACTER_ID).healthShare).toBeCloseTo(0.2);
   });
 });

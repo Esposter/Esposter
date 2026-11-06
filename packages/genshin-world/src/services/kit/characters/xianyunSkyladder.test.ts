@@ -148,7 +148,8 @@ describe(createXianyunKitBehaviour, () => {
     const strike = { attackTag: AttackTag.PlungingAttack, combatant } as KitStrike;
     behaviour.plungeVariants?.[0]?.hits?.[0]?.onStrike?.(context, strike, {} as never);
 
-    expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1000) / 10_000, 10);
+    // The press's constellation 2 buff of 20% ATK is on her at the hit, so her ATK there is 1200, and the heal is half of it
+    expect(member.healthShare).toBeCloseTo(0.5 + (0.5 * 1200) / 10_000, 10);
     expect(
       checkIsKitStatusActive(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_CONSTELLATION_4_ICD_ID),
     ).toBe(true);

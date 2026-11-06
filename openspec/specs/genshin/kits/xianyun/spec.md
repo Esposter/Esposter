@@ -129,6 +129,13 @@ From Constellation 4, each Driftcloud Wave hit SHALL heal the active character b
 - **THEN** the active character heals by half of Xianyun's ATK
 - **AND** a second hit within 5 seconds heals nothing
 
+#### Scenario: An ATK buff put on her before the hit raises the heal
+
+- **GIVEN** Xianyun has Constellation 4 and her Driftcloud Wave has leapt after one press
+- **AND** an ATK buff is put on her before the hit lands
+- **WHEN** the hit lands
+- **THEN** the active character heals by half of Xianyun's ATK with the buff on her
+
 ### Requirement: Constellation 6 presses and CRIT DMG
 
 From Constellation 6, a burst SHALL give eight presses of Skyladder that cost no cooldown for 16 seconds, each press spending one, and a press SHALL start whatever its cooldown is while they last. A Driftcloud Wave hit SHALL gain 15%, 35% or 70% CRIT DMG for one, two or three presses in the state.
