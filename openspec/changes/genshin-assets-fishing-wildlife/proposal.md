@@ -7,7 +7,7 @@ The fishing scene and the wildlife reach the screen as a reel overlay, one capsu
 ## What Changes
 
 - Two derived-asset components, `animals` and `fishing`, named over the asset index, so the recipe's extract, clips and fit reach the family through the one path.
-- Five commands the conversion lacks: a mesh's bounds, a clip's root motion, a frame cut from a local recording, a named-icon export and a props dataset, plus a name lookup over the index.
+- Four commands the conversion lacks: a mesh's bounds, a clip's root motion, a frame command over the recording cut the parity loop already has, and a name lookup over the index. The named icons come from the named-icon command of the interface-art change, and the fishing-area placements join the fishing dataset.
 - Stand-ins drawn by our code for the cast (fish, rod, float, splash and the point ripple), the four fleeing kinds, the critter groups and the fishing-area props.
 - Fitted shapes of the game's own meshes published as our parameters, for each of those families and for the pets.
 - The fleeing kinds' flight time and speed read from their run clips, since the flight recordings the roadmap asks for were searched and not found.
@@ -20,7 +20,7 @@ The fishing scene and the wildlife reach the screen as a reel overlay, one capsu
 
 ## Waiting on
 
-None. Drawing the pets waits on the wildlife change's pet kind, but no task here waits on it.
+The icon export waits on the interface-art change's named-icon command (its task 1.1), and the fishing-area prop fit waits on the props change's outline fit and dataset member (its tasks 1.3 and 1.4). Drawing the pets waits on the wildlife change's pet kind, but no task here waits on it.
 
 ## Impact
 
