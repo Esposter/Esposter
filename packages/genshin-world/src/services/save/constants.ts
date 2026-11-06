@@ -23,8 +23,7 @@ import {
   MAX_HOME_PLACEMENT_COUNT,
   MAX_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
-import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
-import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
+import { EMPTY_CURRENCIES, INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";

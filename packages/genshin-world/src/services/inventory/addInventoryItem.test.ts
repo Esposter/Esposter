@@ -2,8 +2,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import {
+  INVENTORY_KIND_LIMIT,
   WEAPON_START_ASCENSION,
   WEAPON_START_EXPERIENCE,
   WEAPON_START_LEVEL,
@@ -35,7 +35,7 @@ describe(addInventoryItem, () => {
     expect(addInventoryItem(inventory, material, 1).inventory.quickSwapItemIds).toStrictEqual([QUICK_SWAP_ITEM_ID]);
   });
 
-  // Most items stack to 9,999, under the save's ceiling of 99,999, so a pick up is clamped by the item's own limit
+  // Most items stack to their own limit, under the save's ceiling in `MAX_ITEM_QUANTITY`, so a pick up is clamped by the item's own limit
   test("fills a stack to its item's limit of 9,999 and refuses the 10,000th", () => {
     expect.hasAssertions();
 

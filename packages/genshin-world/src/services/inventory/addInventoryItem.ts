@@ -2,8 +2,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryAddition } from "#src/models/inventory/InventoryAddition";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
-import { INVENTORY_KIND_LIMIT } from "#src/services/inventory/bagLimits";
 import {
+  INVENTORY_KIND_LIMIT,
   WEAPON_START_ASCENSION,
   WEAPON_START_EXPERIENCE,
   WEAPON_START_LEVEL,

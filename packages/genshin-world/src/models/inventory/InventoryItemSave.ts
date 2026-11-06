@@ -2,7 +2,7 @@ import type { Artifact } from "#src/models/artifact/Artifact";
 
 import { artifactSchema } from "#src/models/artifact/Artifact";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
+import { MAX_ITEM_QUANTITY } from "#src/services/inventory/constants";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { z } from "zod";
 
