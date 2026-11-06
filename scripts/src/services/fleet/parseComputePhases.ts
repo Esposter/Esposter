@@ -3,8 +3,7 @@ import type { ComputePhase } from "#src/models/fleet/ComputePhase";
 import { ComputeKind, ComputeKinds } from "#src/models/fleet/ComputeKind";
 import { COMPUTE_QUEUE_PHASE_HEADING, MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 import { readMarkdownSection } from "#src/services/fleet/readMarkdownSection";
-import { checkIsEnumValue } from "#src/services/shared/checkIsEnumValue";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { checkIsEnumValue, InvalidOperationError, Operation } from "@esposter/shared";
 
 // A row's page link opens on its area's folder, and its kind and phase are the last two cells. A row whose phase is
 // Not a whole number is not read as a row at all, so a header or a separator never is one
