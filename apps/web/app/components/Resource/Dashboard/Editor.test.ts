@@ -181,7 +181,9 @@ describe("resourceDashboardEditor", () => {
     const wrapper = await mountEditor([new Visual({ type: VisualType.Bar })]);
 
     expect({
-      labels: wrapper.findAllComponents(UiRadioGroup).map((group) => group.props("label")),
+      labels: wrapper
+        .findAllComponents(UiRadioGroup)
+        .map((group) => group.get('[role="radiogroup"]').attributes("aria-label")),
       settings: wrapper.findComponent(DashboardEditorSettings).exists(),
     }).toStrictEqual({ labels: ["Packing", "Overlaps"], settings: true });
   });

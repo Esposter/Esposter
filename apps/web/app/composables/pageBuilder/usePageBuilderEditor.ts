@@ -1,4 +1,5 @@
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -45,7 +46,9 @@ export const usePageBuilderEditor = (
   watch(refusal, (message) => {
     if (message) announce(message);
   });
-  const canvas = useTemplateRef("canvas");
+  // A composable cannot read the template, so the ref names only the method it calls. Naming the canvas component's whole
+  // Instance type closed a type cycle through this file, which the checker could not resolve
+  const canvas = useTemplateRef<{ getFrameGeometry: () => FrameGeometry | undefined }>("canvas");
   // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
   const getFrameGeometry = () => canvas.value?.getFrameGeometry();
   // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame. A tab's

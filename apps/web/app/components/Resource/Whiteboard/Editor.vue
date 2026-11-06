@@ -71,10 +71,12 @@ if (editState.value.document.elements.length > 0)
 
 <template>
   <div h-full>
+    <!-- Each region holds one panel, which takes the region's id, so the region's name is the panel's name too -->
     <EditorShell
       :context
       :editor-type="EditorType.Whiteboard"
       :layout="WHITEBOARD_LAYOUT"
+      :panel-name-map="WHITEBOARD_REGION_NAME_MAP"
       :region-name-map="WHITEBOARD_REGION_NAME_MAP"
       :registry="WhiteboardContentComponentMap"
     >

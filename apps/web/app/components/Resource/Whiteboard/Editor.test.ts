@@ -277,14 +277,19 @@ describe("resourceWhiteboardEditor", () => {
       click.mockRestore();
     });
     const file = new File(["a"], "a", { type: MimeType.Png });
-    uploadResourceFileMock.mockResolvedValue(" ");
+    // The file's bytes are hashed before the upload, a step a flush does not outlast, so the test awaits the upload itself
+    const { promise: isUploaded, resolve: onUploaded } = Promise.withResolvers<void>();
+    uploadResourceFileMock.mockImplementationOnce(() => {
+      onUploaded();
+      return Promise.resolve(" ");
+    });
     const component = await mountEditor([]);
     await flushPromises();
     await component.get('[aria-label="Image"]').trigger("click");
     const input = component.get('input[type="file"]');
     Object.defineProperty(input.element, "files", { value: [file] });
     await input.trigger("change");
-    await flushPromises();
+    await isUploaded;
 
     expect(click).toHaveBeenCalledTimes(1);
     expect(uploadResourceFileMock).toHaveBeenCalledTimes(1);

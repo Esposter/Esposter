@@ -105,7 +105,7 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
 
     Object.assign(targetVisual, {
       chart: structuredClone(toRawDeep(editedVisual.chart)),
-      dataset: structuredClone(toRawDeep(editedVisual.dataset)),
+      dataset: editedVisual.dataset ? structuredClone(toRawDeep(editedVisual.dataset)) : undefined,
       type: editedVisual.type,
     });
     return true;

@@ -51,9 +51,18 @@ const pressKey = (init: KeyboardEventInit, target: EventTarget = document.body) 
 };
 // The size class is read from the display composable, so a test says how small the window is before the editor mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), () => ({
-  useUiDisplay: () => ({ isMobile: shallowRef(display.isMobile), xs: shallowRef(display.isCompact) }),
-}));
+vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    useUiDisplay: () => ({
+      ...actual.useUiDisplay(),
+      isMobile: shallowRef(display.isMobile),
+      xs: shallowRef(display.isCompact),
+    }),
+  };
+});
 
 describe("pageBuilderEditor", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -184,7 +193,7 @@ describe("pageBuilderEditor", () => {
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
-    const inspector = component.get(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
+    const inspector = component.get<HTMLDialogElement>(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
 
     expect(inspector.element.open).toBe(false);
 
