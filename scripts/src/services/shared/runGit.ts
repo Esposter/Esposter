@@ -1,7 +1,7 @@
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { isTimedOut } from "#src/services/shared/isTimedOut";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { timedOutGitError } from "#src/services/shared/timedOutGitError";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
 // Against the repository root: with `diff.relative` set, a `git diff` run from `scripts/` answers about
@@ -21,12 +21,7 @@ export const runGit = (args: string[], cwd: string = REPOSITORY_ROOT, input?: st
       timeout,
     });
   } catch (error) {
-    if (isTimedOut(error))
-      throw new InvalidOperationError(
-        Operation.Update,
-        `git ${args.join(" ")}`,
-        `ran past ${timeout} ms and was killed`,
-      );
+    if (isTimedOut(error)) throw timedOutGitError(args, timeout);
     throw error;
   }
 };

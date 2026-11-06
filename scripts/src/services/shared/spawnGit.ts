@@ -3,7 +3,7 @@ import type { SpawnSyncReturns } from "node:child_process";
 import { CHILD_PROCESS_TIMEOUT_MS, MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { isTimedOut } from "#src/services/shared/isTimedOut";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { timedOutGitError } from "#src/services/shared/timedOutGitError";
 import { spawnSync } from "@esposter/shared-node/child-process";
 
 // A git command whose failure is an answer to read rather than an error to throw: a push the remote turned down, a pull
@@ -22,7 +22,6 @@ export const spawnGit = (
     maxBuffer: MAX_BUFFER_BYTES,
     timeout,
   });
-  if (isTimedOut(result.error))
-    throw new InvalidOperationError(Operation.Update, `git ${args.join(" ")}`, `ran past ${timeout} ms and was killed`);
+  if (isTimedOut(result.error)) throw timedOutGitError(args, timeout);
   return result;
 };
