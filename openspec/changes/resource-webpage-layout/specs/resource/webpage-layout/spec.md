@@ -16,6 +16,12 @@ The inspector SHALL offer the Page and Theme tabs with nothing selected and the 
 - **WHEN** the inspector is drawn
 - **THEN** its tabs are Content and Style
 
+#### Scenario: The Check tab is gone
+
+- **GIVEN** a webpage with nothing selected, or a paragraph selected
+- **WHEN** the inspector is drawn
+- **THEN** no tab is named Check
+
 ### Requirement: The device toggle is in the bar
 
 The device toggle SHALL be in the bar and SHALL set both the frame's width and the breakpoint the Style tab edits.
