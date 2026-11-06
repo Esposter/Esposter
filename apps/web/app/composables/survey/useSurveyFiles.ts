@@ -1,4 +1,4 @@
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";

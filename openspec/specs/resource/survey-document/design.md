@@ -1,6 +1,6 @@
 # Survey Document
 
-The survey as a typed document in the `headless-survey-engine` package, built on the [headless block editor core](../../vue-block-editor-headless/editor-core/design.md) and checked on save through the [survey logic](../survey-expression/design.md) expression language. A document is a root holding pages, pages and panels holding elements, and questions holding none, so the core's checks apply to it unchanged. Its kinds, props and limits are stated on this page and nowhere else, and the survey resource, the runner and the Creator all read the one schema.
+The survey as a typed document in the `vue-survey-engine-headless` package, built on the [headless block editor core](../../vue-block-editor-headless/editor-core/design.md) and checked on save through the [survey logic](../survey-expression/design.md) expression language. A document is a root holding pages, pages and panels holding elements, and questions holding none, so the core's checks apply to it unchanged. Its kinds, props and limits are stated on this page and nowhere else, and the survey resource, the runner and the Creator all read the one schema.
 
 ## How it works
 
@@ -74,29 +74,29 @@ A choice is `{ value, text }`, where `value` is a string or a number and `text` 
 
 ## Key files
 
-| File                                                                           | Role                                                                                                |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `packages/headless-survey-engine/package.json`                                 | the package's manifest                                                                              |
-| `packages/headless-survey-engine/src/models/SurveyNodeType.ts`                 | the kinds, by their type tags                                                                       |
-| `packages/headless-survey-engine/src/models/SurveyDocument.ts`                 | the document type: the core's `BlockDocument` over the node union, the root props and the page node |
-| `packages/headless-survey-engine/src/models/SurveyRootProps.ts`                | the root's props and the calculated values they hold                                                |
-| `packages/headless-survey-engine/src/models/SurveyQuestionBaseProps.ts`        | the shape every question shares                                                                     |
-| `packages/headless-survey-engine/src/models/SurveyChoicesProps.ts`             | the choice list every choice question shares                                                        |
-| `packages/headless-survey-engine/src/models/SurveyChoiceOptionsProps.ts`       | the order, other answer and its text, which a choice question that lists its choices adds           |
-| `packages/headless-survey-engine/src/models/SurveyNoneChoiceProps.ts`          | the none answer, which a radio group and a checkbox may offer                                       |
-| `packages/headless-survey-engine/src/services/surveyTextNodeType.ts`           | a kind's node type, the worked example: its props schema, form, defaults and label                  |
-| `packages/headless-survey-engine/src/services/surveyNodeSchema.ts`             | the node union, each kind's node schema with its strict props and its children                      |
-| `packages/headless-survey-engine/src/services/surveyNodeTypeDefinitionMap.ts`  | every kind's definition, which the typecheck holds to every kind                                    |
-| `packages/headless-survey-engine/src/services/surveyNodeTypeLists.ts`          | the types the root, a page or panel, and a template accept                                          |
-| `packages/headless-survey-engine/src/services/surveyNodeChildren.ts`           | the children port, each container's slots and the typed nodes they hold                             |
-| `packages/headless-survey-engine/src/services/surveyRegistry.ts`               | the registry: the root's content types and props schema, and every kind's definition                |
-| `packages/headless-survey-engine/src/services/surveyIdSchema.ts`               | a node's id: bounded, and restricted to the characters an HTML id takes                             |
-| `packages/headless-survey-engine/src/services/surveyNameSchema.ts`             | a question's name: bounded, with no braces                                                          |
-| `packages/headless-survey-engine/src/services/surveyDocumentSchema.ts`         | the document schema, built by the core's `createBlockDocumentSchema`                                |
-| `packages/headless-survey-engine/src/services/checkSurveyDocument.ts`          | the save check, returning every issue                                                               |
-| `packages/headless-survey-engine/src/services/createSurveyDocument.ts`         | the empty survey                                                                                    |
-| `packages/headless-survey-engine/src/services/constants.ts`                    | the package's limits on names, counts and text                                                      |
-| `packages/vue-block-editor-headless/src/models/BlockDocument.ts`               | the core's document type, whose third parameter names the node type the root accepts                |
-| `packages/vue-block-editor-headless/src/services/createBlockDocumentSchema.ts` | the core's document schema builder: the shape, then the ids and the node limit                      |
-| `apps/web/shared/models/resource/survey/SurveyResource.ts`                     | the survey resource's content schema, the document schema with the save check as a refinement       |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                           | the Editor, which runs the save check before it saves                                               |
+| File                                                                              | Role                                                                                                |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `packages/vue-survey-engine-headless/package.json`                                | the package's manifest                                                                              |
+| `packages/vue-survey-engine-headless/src/models/SurveyNodeType.ts`                | the kinds, by their type tags                                                                       |
+| `packages/vue-survey-engine-headless/src/models/SurveyDocument.ts`                | the document type: the core's `BlockDocument` over the node union, the root props and the page node |
+| `packages/vue-survey-engine-headless/src/models/SurveyRootProps.ts`               | the root's props and the calculated values they hold                                                |
+| `packages/vue-survey-engine-headless/src/models/SurveyQuestionBaseProps.ts`       | the shape every question shares                                                                     |
+| `packages/vue-survey-engine-headless/src/models/SurveyChoicesProps.ts`            | the choice list every choice question shares                                                        |
+| `packages/vue-survey-engine-headless/src/models/SurveyChoiceOptionsProps.ts`      | the order, other answer and its text, which a choice question that lists its choices adds           |
+| `packages/vue-survey-engine-headless/src/models/SurveyNoneChoiceProps.ts`         | the none answer, which a radio group and a checkbox may offer                                       |
+| `packages/vue-survey-engine-headless/src/services/surveyTextNodeType.ts`          | a kind's node type, the worked example: its props schema, form, defaults and label                  |
+| `packages/vue-survey-engine-headless/src/services/surveyNodeSchema.ts`            | the node union, each kind's node schema with its strict props and its children                      |
+| `packages/vue-survey-engine-headless/src/services/surveyNodeTypeDefinitionMap.ts` | every kind's definition, which the typecheck holds to every kind                                    |
+| `packages/vue-survey-engine-headless/src/services/surveyNodeTypeLists.ts`         | the types the root, a page or panel, and a template accept                                          |
+| `packages/vue-survey-engine-headless/src/services/surveyNodeChildren.ts`          | the children port, each container's slots and the typed nodes they hold                             |
+| `packages/vue-survey-engine-headless/src/services/surveyRegistry.ts`              | the registry: the root's content types and props schema, and every kind's definition                |
+| `packages/vue-survey-engine-headless/src/services/surveyIdSchema.ts`              | a node's id: bounded, and restricted to the characters an HTML id takes                             |
+| `packages/vue-survey-engine-headless/src/services/surveyNameSchema.ts`            | a question's name: bounded, with no braces                                                          |
+| `packages/vue-survey-engine-headless/src/services/surveyDocumentSchema.ts`        | the document schema, built by the core's `createBlockDocumentSchema`                                |
+| `packages/vue-survey-engine-headless/src/services/checkSurveyDocument.ts`         | the save check, returning every issue                                                               |
+| `packages/vue-survey-engine-headless/src/services/createSurveyDocument.ts`        | the empty survey                                                                                    |
+| `packages/vue-survey-engine-headless/src/services/constants.ts`                   | the package's limits on names, counts and text                                                      |
+| `packages/vue-block-editor-headless/src/models/BlockDocument.ts`                  | the core's document type, whose third parameter names the node type the root accepts                |
+| `packages/vue-block-editor-headless/src/services/createBlockDocumentSchema.ts`    | the core's document schema builder: the shape, then the ids and the node limit                      |
+| `apps/web/shared/models/resource/survey/SurveyResource.ts`                        | the survey resource's content schema, the document schema with the save check as a refinement       |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                              | the Editor, which runs the save check before it saves                                               |

@@ -94,7 +94,7 @@ A session holds one document and one history, so a store that edits one document
 | `packages/vue-block-editor-headless/package.json`                             | renamed, and the home of the editing session composable                                |
 | `packages/vue-block-editor-headless/src/composables/useEditSession.ts`        | the editing session composable, over one document                                      |
 | `packages/vue-block-editor-headless/src/services/getSiblingMoveOperations.ts` | the move to the sibling index, which the survey creator and the page builder both call |
-| `packages/headless-survey-engine/package.json`                                | renamed                                                                                |
+| `packages/vue-survey-engine-headless/package.json`                            | renamed                                                                                |
 | `packages/survey-expression/package.json`                                     | renamed                                                                                |
 | `packages/mjml-blocks/package.json`                                           | renamed                                                                                |
 | `packages/vue-grid-layout-headless/package.json`                              | already the convention, and the reference for a manifest with Vue as a peer            |

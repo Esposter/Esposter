@@ -2,10 +2,10 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 import type { z } from "zod";
 
-import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe } from "vitest";
 
 // A survey with its content written — the shape every suite that answers one or binds a program to it starts

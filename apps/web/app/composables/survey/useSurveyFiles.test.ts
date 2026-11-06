@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
-import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({

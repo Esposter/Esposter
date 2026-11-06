@@ -1,5 +1,5 @@
 import { useSurveyTheme } from "@/composables/survey/useSurveyTheme";
-import { surveyRootPropsSchema } from "headless-survey-engine";
+import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe(useSurveyTheme, () => {

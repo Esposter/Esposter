@@ -1,6 +1,6 @@
 import ImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import ImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The editors an image and an image picker take in the Creator's properties, drawn after the list editors. Each takes
 // The pointer of the node it edits and writes that node itself, so it is not a list editor under a props key

@@ -1,4 +1,4 @@
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { parseJsonPointer, readJsonValue } from "@esposter/shared";
 

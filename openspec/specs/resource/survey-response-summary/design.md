@@ -53,19 +53,19 @@ A response's answer becomes one cell through `toDatasetColumnValue`. A flat list
 
 ## Key files
 
-| File                                                                                  | Role                                                                               |
-| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Survey/Responses.vue`                               | The Summary and Individual views, and the empty state both share                   |
-| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`                     | One question's card                                                                |
-| `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.ts`               | The cards, one per answering question, drawn by the question's kind                |
-| `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.test.ts`          | The cards' tests over the typed question kinds                                     |
-| `apps/web/app/services/resource/survey/getSurveyDocumentResponseSummaryCards.ts`      | The questions the records hold a column for, read from the document, for the cards |
-| `apps/web/app/composables/resource/survey/useReadSurveyResponses.ts`                  | The records and the summary's reads; a failed survey read fails only the Summary   |
-| `apps/web/app/models/resource/survey/SurveySummaryCardType.ts`                        | The three card types                                                               |
-| `packages/headless-survey-engine/src/services/flattenSurveyQuestions.ts`              | The questions in the order a respondent meets them                                 |
-| `packages/headless-survey-engine/src/services/runner/checkIsSurveyAnsweringNode.ts`   | Excludes the descriptive elements that collect no answer, shared with the runner   |
-| `apps/web/server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns.ts` | The dataset's columns, read from the typed document                                |
-| `apps/web/server/services/dataset/surveyResponses/toDatasetColumnValue.ts`            | A flat or non-flat answer as one cell                                              |
+| File                                                                                    | Role                                                                               |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Responses.vue`                                 | The Summary and Individual views, and the empty state both share                   |
+| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`                       | One question's card                                                                |
+| `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.ts`                 | The cards, one per answering question, drawn by the question's kind                |
+| `apps/web/app/services/survey/summary/getSurveyDocumentSummaryCards.test.ts`            | The cards' tests over the typed question kinds                                     |
+| `apps/web/app/services/resource/survey/getSurveyDocumentResponseSummaryCards.ts`        | The questions the records hold a column for, read from the document, for the cards |
+| `apps/web/app/composables/resource/survey/useReadSurveyResponses.ts`                    | The records and the summary's reads; a failed survey read fails only the Summary   |
+| `apps/web/app/models/resource/survey/SurveySummaryCardType.ts`                          | The three card types                                                               |
+| `packages/vue-survey-engine-headless/src/services/flattenSurveyQuestions.ts`            | The questions in the order a respondent meets them                                 |
+| `packages/vue-survey-engine-headless/src/services/runner/checkIsSurveyAnsweringNode.ts` | Excludes the descriptive elements that collect no answer, shared with the runner   |
+| `apps/web/server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns.ts`   | The dataset's columns, read from the typed document                                |
+| `apps/web/server/services/dataset/surveyResponses/toDatasetColumnValue.ts`              | A flat or non-flat answer as one cell                                              |
 
 ## Sources
 

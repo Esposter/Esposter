@@ -11,7 +11,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { surveyRootPropsSchema } from "headless-survey-engine";
+import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { clearSurveyResponseIdMock, saveSurveyResponseMock } = vi.hoisted(() => ({

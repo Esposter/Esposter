@@ -1,6 +1,6 @@
-import type { SurveyPageNode, SurveyPlaceableNode } from "headless-survey-engine";
+import type { SurveyPageNode, SurveyPlaceableNode } from "vue-survey-engine-headless";
 
-import { SurveyNodeType, surveyPageNodeType } from "headless-survey-engine";
+import { SurveyNodeType, surveyPageNodeType } from "vue-survey-engine-headless";
 import { describe } from "vitest";
 
 export const createSurveyTestPage = (children: SurveyPlaceableNode[], visibleIf = ""): SurveyPageNode => ({

@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument, SurveyNode } from "headless-survey-engine";
+import type { SurveyDocument, SurveyNode } from "vue-survey-engine-headless";
 
 import CalculatedValues from "@/components/Resource/Survey/Creator/CalculatedValues.vue";
 import { getButtonByText } from "@/components/Resource/Survey/Creator/getButtonByText.test";
@@ -13,7 +13,7 @@ import {
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding a question named "a", and the calculated values given by name

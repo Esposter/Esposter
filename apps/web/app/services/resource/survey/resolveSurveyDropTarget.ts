@@ -1,6 +1,6 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
-import type { SurveyNodeType } from "headless-survey-engine";
+import type { SurveyNodeType } from "vue-survey-engine-headless";
 
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
 import { getDropIndex } from "@/services/pageBuilder/getDropIndex";

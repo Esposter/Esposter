@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "headless-survey-engine";
+import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "vue-survey-engine-headless";
 
 import Runner from "@/components/Resource/Survey/Runner.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -15,7 +15,7 @@ import {
   SurveyNodeType,
   surveyPanelDynamicNodePropsSchema,
   SurveyProgressBarPlacement,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
 // A dynamic panel named "rows" of two panels over the template, on a page of its own

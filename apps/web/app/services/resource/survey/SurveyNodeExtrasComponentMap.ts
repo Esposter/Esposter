@@ -3,7 +3,7 @@ import type { SurveyNodeExtraEditor } from "@/models/resource/survey/SurveyNodeE
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import ResourceSurveyCreatorMatrixColumnsEditor from "@/components/Resource/Survey/Creator/MatrixColumnsEditor.vue";
 import ResourceSurveyCreatorMultipleTextItemsEditor from "@/components/Resource/Survey/Creator/MultipleTextItemsEditor.vue";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The editors a kind's settings take beside its form, each for a list the form leaves out and the editor draws under the
 // Props key it is held at. The image kinds' editors are not lists, so they are in SurveyImageExtras

@@ -1,9 +1,9 @@
 import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { getSiblingMoveOperations } from "vue-block-editor-headless";
-import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
+import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 
 // The move of a node to the index an offset away from it in its own slot: one back for a move up, one on for a move down. The core's
 // command gives the operations, and none when no sibling sits there, which is refused with the reason the element is first or last

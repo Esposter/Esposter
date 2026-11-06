@@ -1,4 +1,4 @@
-import type { SurveyChoice } from "headless-survey-engine";
+import type { SurveyChoice } from "vue-survey-engine-headless";
 
 // A choice typed or pasted as one line: a value, or a value and its text split by a bar, each side trimmed
 export const parseChoiceLine = (line: string): SurveyChoice => {

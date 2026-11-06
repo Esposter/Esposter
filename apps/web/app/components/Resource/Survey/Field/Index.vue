@@ -5,11 +5,11 @@ import type {
   SurveyPanelDynamicNode,
   SurveyPanelRowView,
   SurveyQuestionNode,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 import { SURVEY_SEEDED_NODE_TYPES } from "@/services/resource/survey/constants";
 import { SurveyFieldComponentMap } from "@/services/resource/survey/SurveyFieldComponentMap";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

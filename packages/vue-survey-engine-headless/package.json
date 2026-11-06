@@ -1,11 +1,13 @@
 {
-  "name": "headless-survey-engine",
+  "name": "vue-survey-engine-headless",
   "version": "4.5.0",
-  "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save, its runner's functions and the Vue composable that holds a session over them, with no styling or DOM",
+  "description": "A headless Vue survey engine: the survey as a typed document on the headless block editor — its question kinds, the checks on a save, a runner of plain functions and the Vue composable over them, with no styling or DOM.",
   "keywords": [
-    "typescript"
+    "headless",
+    "typescript",
+    "vue"
   ],
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/headless-survey-engine#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-survey-engine-headless#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

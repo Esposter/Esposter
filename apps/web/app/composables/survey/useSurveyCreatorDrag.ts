@@ -1,6 +1,6 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
-import type { SurveyPlaceableNode } from "headless-survey-engine";
+import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
@@ -10,7 +10,7 @@ import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurve
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
 import { getBlockNode } from "vue-block-editor-headless";
-import { SurveyNodeType, surveyNodeChildren } from "headless-survey-engine";
+import { SurveyNodeType, surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop reads
 interface DragSource {

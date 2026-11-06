@@ -2,7 +2,7 @@
 import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
 import { getSurveyPaletteGroups } from "@/services/resource/survey/getSurveyPaletteGroups";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);

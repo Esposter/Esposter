@@ -1,10 +1,10 @@
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
 import { getBlockNode, useEditSession } from "vue-block-editor-headless";
-import { createSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
+import { createSurveyDocument, surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The creator's document, its selection and its undo history. The selection is the session's, held by the selected node's id
 // Rather than its pointer, so an edit or an undo that moves the node keeps it selected

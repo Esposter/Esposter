@@ -7,7 +7,7 @@ import UiForm from "@/components/Ui/Form.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyMatrixCellType } from "headless-survey-engine";
+import { SurveyMatrixCellType } from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorMatrixColumnsEditor", () => {

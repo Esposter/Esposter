@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyRadioGroupNode } from "headless-survey-engine";
+import type { SurveyRadioGroupNode } from "vue-survey-engine-headless";
 
 import SurveyFieldRadioGroup from "@/components/Resource/Survey/Field/RadioGroup.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyChoicesOrder, SurveyNodeType, surveyRadioGroupNodePropsSchema } from "headless-survey-engine";
+import { SurveyChoicesOrder, SurveyNodeType, surveyRadioGroupNodePropsSchema } from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldRadioGroup", () => {

@@ -1,4 +1,4 @@
-import type { SurveyQuestionNode } from "headless-survey-engine";
+import type { SurveyQuestionNode } from "vue-survey-engine-headless";
 
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
@@ -18,7 +18,7 @@ import {
   surveySliderNodeType,
   SurveyTextInputType,
   surveyTextNodeType,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyDocumentSummaryCards, () => {

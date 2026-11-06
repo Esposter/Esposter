@@ -1,6 +1,6 @@
-import type { SurveyQuestionNode } from "headless-survey-engine";
+import type { SurveyQuestionNode } from "vue-survey-engine-headless";
 
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The field each question kind is drawn with, loaded on demand: a survey page downloads only the fields its questions
 // Draw, as the resource's editor and view maps do for their components

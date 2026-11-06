@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { ResourceInResource } from "@esposter/db-schema";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -9,7 +9,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { createSurveyDocument } from "headless-survey-engine";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {

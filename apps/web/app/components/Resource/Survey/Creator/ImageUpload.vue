@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   pointer: string;

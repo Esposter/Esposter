@@ -1,4 +1,4 @@
-import type { SurveyChoice } from "headless-survey-engine";
+import type { SurveyChoice } from "vue-survey-engine-headless";
 
 import { parseChoiceLine } from "@/services/resource/survey/parseChoiceLine";
 

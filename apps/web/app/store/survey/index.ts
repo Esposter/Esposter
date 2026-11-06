@@ -1,12 +1,12 @@
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { SurveySettings } from "#shared/models/resource/survey/SurveySettings";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createContentData } from "@/services/resource/createContentData";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { createSurveyDocument } from "headless-survey-engine";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 export const useSurveyStore = defineStore("survey", () => {
   const resourceStore = useResourceStore();

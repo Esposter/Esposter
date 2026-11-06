@@ -1,11 +1,11 @@
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
 import { getSurveyEditorFindings } from "@/services/resource/survey/getSurveyEditorFindings";
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { takeOne } from "@esposter/shared";
-import { checkSurveyDocument, surveyRootPropsSchema } from "headless-survey-engine";
+import { checkSurveyDocument, surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyEditorFindings, () => {

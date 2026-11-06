@@ -1,9 +1,9 @@
 import type { EditorFinding } from "@/models/editor/EditorFinding";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
 import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
-import { checkSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
+import { checkSurveyDocument, surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The survey check's issues as the findings an editor lists. The check refuses a save while any issue stands, so every
 // Issue is an error. An issue names the node its field sits in by the node's id, read against this document as it is now:

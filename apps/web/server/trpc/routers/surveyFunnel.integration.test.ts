@@ -25,7 +25,7 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { AzureEntityType, resourcesInResource, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one

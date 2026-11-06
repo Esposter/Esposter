@@ -8,7 +8,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { surveyDocumentSchema, SurveyProgressBarPlacement } from "headless-survey-engine";
+import { surveyDocumentSchema, SurveyProgressBarPlacement } from "vue-survey-engine-headless";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({

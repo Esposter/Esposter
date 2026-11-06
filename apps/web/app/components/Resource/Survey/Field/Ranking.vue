@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { SurveyKeyedChoice } from "@/models/resource/survey/SurveyKeyedChoice";
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyChoice, SurveyRankingNode } from "vue-survey-engine-headless";
 
 import { getSurveyKeyedChoices } from "@/services/resource/survey/getSurveyKeyedChoices";
-import { getSurveyChoiceText } from "headless-survey-engine";
+import { getSurveyChoiceText } from "vue-survey-engine-headless";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none

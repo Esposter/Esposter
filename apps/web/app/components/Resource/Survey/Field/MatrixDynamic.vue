@@ -6,7 +6,7 @@ import type {
   SurveyChoice,
   SurveyMatrixColumn,
   SurveyMatrixDynamicNode,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -17,7 +17,7 @@ import { getSurveyRatingItems } from "@/services/resource/survey/getSurveyRating
 import { getSurveyRatingStep } from "@/services/resource/survey/getSurveyRatingStep";
 import { withSurveyAnswer } from "@/services/resource/survey/withSurveyAnswer";
 import { takeOne } from "@esposter/shared";
-import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "headless-survey-engine";
+import { getSurveyChoiceText, MATRIX_CELL_RATING_COUNT, SurveyMatrixCellType } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

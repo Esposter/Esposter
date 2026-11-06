@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyTagBoxNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyTagBoxNode } from "vue-survey-engine-headless";
 
-import { getSurveyChoiceText, getSurveyOrderedChoices } from "headless-survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

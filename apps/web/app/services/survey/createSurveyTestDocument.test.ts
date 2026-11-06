@@ -1,6 +1,6 @@
-import type { SurveyDocument, SurveyPageNode } from "headless-survey-engine";
+import type { SurveyDocument, SurveyPageNode } from "vue-survey-engine-headless";
 
-import { surveyRootPropsSchema } from "headless-survey-engine";
+import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { describe } from "vitest";
 
 export const createSurveyTestDocument = (pages: SurveyPageNode[]): SurveyDocument => ({

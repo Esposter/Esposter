@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getSurveyChoiceListEditorOptions } from "@/services/resource/survey/getSurveyChoiceListEditorOptions";
 import { useAlertStore } from "@/store/alert";
-import { surveyImageChoiceSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyImageChoiceSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   pointer: string;

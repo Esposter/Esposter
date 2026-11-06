@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyCommentNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyCommentNode } from "vue-survey-engine-headless";
 
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 

@@ -1,6 +1,6 @@
-import type { SurveyNode, SurveyNodeType } from "headless-survey-engine";
+import type { SurveyNode, SurveyNodeType } from "vue-survey-engine-headless";
 
-import { surveyNodeSchema, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
+import { surveyNodeSchema, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 // The node a new element of a type is, under its own id and name, with each of its slots an empty list. The node schema
 // Parses it, so a node that schema refuses is no node at all rather than one a type assertion has let through

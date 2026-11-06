@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyBooleanNode } from "headless-survey-engine";
+import type { SurveyBooleanNode } from "vue-survey-engine-headless";
 
 import SurveyFieldBoolean from "@/components/Resource/Survey/Field/Boolean.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyBooleanDisplayStyle, surveyBooleanNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
+import { SurveyBooleanDisplayStyle, surveyBooleanNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldBoolean", () => {

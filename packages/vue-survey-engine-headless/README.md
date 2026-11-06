@@ -1,11 +1,11 @@
-# headless-survey-engine
+# vue-survey-engine-headless
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 [![NPM version][badge-npm-version]][url-npm]
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-It defines a survey as a typed document on the headless block editor: one node type per question kind, the checks a save passes, and a runner of plain functions over the document and a record of answers. Its `useSurveyRunner` composable holds one respondent's session in refs for a Vue component. It has no styling or DOM.
+This package is a headless Vue survey engine. It defines a survey as a typed document on the headless block editor: one node type per question kind, the checks a save passes, and a runner of plain functions over the document and a record of answers. Its `useSurveyRunner` composable holds one respondent's session in refs for a Vue component. It has no styling or DOM.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/resource/survey-document).
 
@@ -20,7 +20,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i headless-survey-engine zod
+pnpm i vue-survey-engine-headless zod
 ```
 
 ```ts
@@ -30,7 +30,7 @@ import {
   setSurveyAnswer,
   SurveyNodeType,
   surveyDocumentSchema,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 const document = surveyDocumentSchema.parse({
   content: [
@@ -86,7 +86,7 @@ Licensed under [Apache-2.0][url-license].
 
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/headless-survey-engine/latest?color=brightgreen
-[url-npm]: https://www.npmjs.com/package/headless-survey-engine/v/latest
-[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/headless-survey-engine/latest?label=npm
-[badge-npm-downloads]: https://img.shields.io/npm/dm/headless-survey-engine.svg
+[badge-npm-version]: https://img.shields.io/npm/v/vue-survey-engine-headless/latest?color=brightgreen
+[url-npm]: https://www.npmjs.com/package/vue-survey-engine-headless/v/latest
+[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/vue-survey-engine-headless/latest?label=npm
+[badge-npm-downloads]: https://img.shields.io/npm/dm/vue-survey-engine-headless.svg

@@ -10,7 +10,7 @@ import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLen
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
-import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "headless-survey-engine";
+import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "vue-survey-engine-headless";
 
 // A row of the tree: a node's depth below the survey's pages, read as the indent before its title
 type LayerItem = UiListItem<string> & { depth: number };

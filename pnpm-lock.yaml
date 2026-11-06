@@ -1091,9 +1091,6 @@ importers:
       grid-engine:
         specifier: 'catalog:'
         version: 2.54.0(phaser@4.2.1)
-      headless-survey-engine:
-        specifier: workspace:*
-        version: link:../../packages/headless-survey-engine
       keyframe-store:
         specifier: workspace:*
         version: link:../../packages/keyframe-store
@@ -1196,6 +1193,9 @@ importers:
       vue-phaserjs:
         specifier: workspace:*
         version: link:../../packages/vue-phaserjs
+      vue-survey-engine-headless:
+        specifier: workspace:*
+        version: link:../../packages/vue-survey-engine-headless
       web-push:
         specifier: 'catalog:'
         version: 3.6.7(supports-color@8.1.1)
@@ -1786,34 +1786,6 @@ importers:
       vitest-browser-vue:
         specifier: 'catalog:'
         version: 3.1.0(@vue/compiler-dom@3.5.45)(@vue/server-renderer@3.5.45)(vitest@5.1.0)(vue@3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
-
-  packages/headless-survey-engine:
-    dependencies:
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:../shared
-      re2js:
-        specifier: 'catalog:'
-        version: 2.9.1
-      survey-expression:
-        specifier: workspace:*
-        version: link:../survey-expression
-      vue:
-        specifier: 'catalog:'
-        version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      vue-block-editor-headless:
-        specifier: workspace:*
-        version: link:../vue-block-editor-headless
-      zod:
-        specifier: 'catalog:'
-        version: 4.6.7
-    devDependencies:
-      '@esposter/configuration':
-        specifier: workspace:*
-        version: link:../configuration
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.23.5(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.5)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.22.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
 
   packages/keyframe-store:
     dependencies:
@@ -2409,6 +2381,34 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
+
+  packages/vue-survey-engine-headless:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      re2js:
+        specifier: 'catalog:'
+        version: 2.9.1
+      survey-expression:
+        specifier: workspace:*
+        version: link:../survey-expression
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      vue-block-editor-headless:
+        specifier: workspace:*
+        version: link:../vue-block-editor-headless
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.5(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.5)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.22.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
 
   scripts:
     dependencies:

@@ -11,7 +11,7 @@ import {
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorPalette", () => {

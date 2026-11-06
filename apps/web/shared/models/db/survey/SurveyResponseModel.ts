@@ -1,4 +1,4 @@
-import type { SurveyAnswers } from "headless-survey-engine";
+import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
 import { createRecordSchema } from "@esposter/shared";
@@ -6,7 +6,7 @@ import {
   MAX_SURVEY_QUESTION_COUNT,
   MAX_SURVEY_QUESTION_NAME_LENGTH,
   surveyAnswerValueSchema,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { z } from "zod";
 
 // A respondent's answers, as either response write takes them. Each answer is one the survey's answer types can hold, and the

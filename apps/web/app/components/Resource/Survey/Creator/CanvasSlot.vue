@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyPlaceableNode } from "headless-survey-engine";
+import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
 interface Props {
   // The elements a page or a panel holds, in order

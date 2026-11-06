@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SurveyMultipleTextItem } from "headless-survey-engine";
+import type { SurveyMultipleTextItem } from "vue-survey-engine-headless";
 
 import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
-import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "headless-survey-engine";
+import { SurveyMultipleTextItemInputType, surveyMultipleTextItemSchema } from "vue-survey-engine-headless";
 
 interface Props {
   // The list's name, drawn above its rows, such as "Items"

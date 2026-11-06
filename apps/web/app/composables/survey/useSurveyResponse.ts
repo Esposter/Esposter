@@ -1,10 +1,10 @@
 import type { SurveyResponseEntity } from "@esposter/db-schema";
-import type { SurveyAnswers } from "headless-survey-engine";
+import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { getResultAsync } from "@esposter/shared";
-import { surveyAnswerValueSchema } from "headless-survey-engine";
+import { surveyAnswerValueSchema } from "vue-survey-engine-headless";
 import { z } from "zod";
 
 // A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored

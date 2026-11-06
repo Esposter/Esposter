@@ -6,7 +6,7 @@ import type {
   SurveyPlaceableNode,
   SurveyTemplateNode,
   SurveyTextNode,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
@@ -15,7 +15,7 @@ import {
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
 

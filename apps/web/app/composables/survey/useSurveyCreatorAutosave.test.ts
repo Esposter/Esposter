@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { useSurveyCreatorAutosave } from "@/composables/survey/useSurveyCreatorAutosave";
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
@@ -9,7 +9,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { createSurveyDocument } from "headless-survey-engine";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useSurveyCreatorAutosave, () => {

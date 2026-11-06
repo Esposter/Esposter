@@ -1,5 +1,5 @@
 import type { SurveyConditionAnswer } from "@/models/resource/survey/SurveyConditionAnswer";
-import type { SurveyNode } from "headless-survey-engine";
+import type { SurveyNode } from "vue-survey-engine-headless";
 
 // A node holding an answer has a name and a title. A page and a panel have no name, and a text block and an image have
 // No title, so neither is an answer

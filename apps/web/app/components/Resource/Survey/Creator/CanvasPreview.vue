@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyPlaceableNode } from "headless-survey-engine";
+import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
-import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 interface Props {
   // The element a drag would insert here, drawn as it would sit once dropped

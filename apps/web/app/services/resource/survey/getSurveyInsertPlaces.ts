@@ -1,10 +1,10 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
 import { getBlockNode, getBlockPropPointer } from "vue-block-editor-headless";
-import { surveyNodeChildren } from "headless-survey-engine";
+import { surveyNodeChildren } from "vue-survey-engine-headless";
 
 // The places an insertion at a selection tries, in order: straight after the selected element in its own slot, then the end of each slot
 // the selected element holds, so a selected page takes an element at its end. With nothing selected, the end of the first page, then the end

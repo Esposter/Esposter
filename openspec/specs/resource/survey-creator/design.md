@@ -44,29 +44,29 @@ flowchart TD
 
 ## Key files
 
-| File                                                                   | Role                                                                                                    |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                   | the Editor blade: loads the document, autosaves through the check, sweeps files on unmount              |
-| `apps/web/app/components/Resource/Survey/Creator/Shell.vue`            | the creator's layout, registry and context handed to the editor shell, and the keyboard commands        |
-| `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue`          | the bar: undo, redo, add page, the Design or Preview switch, the problems surface and the overflow menu |
-| `apps/web/app/components/Editor/Shell.vue`                             | the editor shell that draws the layout's regions beside the canvas and the sheets over it               |
-| `apps/web/app/services/resource/survey/SurveyEditorLayout.ts`          | the regions, the panels and the content each panel shows for each selection kind                        |
-| `apps/web/app/services/resource/survey/SurveyEditorRegistry.ts`        | the component each content key draws                                                                    |
-| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`           | the layers tree: selection, drag and the row menu                                                       |
-| `apps/web/app/components/Resource/Survey/Creator/Palette.vue`          | the kinds the palette inserts                                                                           |
-| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`           | the canvas of pages                                                                                     |
-| `apps/web/app/components/Resource/Survey/Creator/CanvasNode.vue`       | one element on the canvas, selectable                                                                   |
-| `apps/web/app/components/Resource/Survey/Runner.vue`                   | the runner the preview draws                                                                            |
-| `apps/web/app/store/survey/creator.ts`                                 | the document, history, preview flag and selection                                                       |
-| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`          | one core command per gesture, applied as patches                                                        |
-| `apps/web/app/composables/survey/useSurveyCanvasSelection.ts`          | the bindings a canvas page and element take: drawn as chosen, chosen by a click or Enter                |
-| `apps/web/app/composables/survey/useSurveyCreatorAutosave.ts`          | the autosave queue                                                                                      |
-| `apps/web/app/store/survey/index.ts`                                   | the save path the autosave goes through                                                                 |
-| `apps/web/app/services/pageBuilder/getRecordedHistory.ts`              | folds a run of edits to one prop into one history entry                                                 |
-| `apps/web/app/services/pageBuilder/constants.ts`                       | the history size, the root pointer and the default side pane width                                      |
-| `packages/vue-block-editor-headless/src/services/applyBlockEdit.ts`    | applies the patches and parses the result through the schema                                            |
-| `packages/headless-survey-engine/src/services/surveyDocumentSchema.ts` | the document schema every edit is parsed by                                                             |
-| `packages/headless-survey-engine/src/services/checkSurveyDocument.ts`  | the survey check the Editor runs before a save                                                          |
+| File                                                                       | Role                                                                                                    |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                       | the Editor blade: loads the document, autosaves through the check, sweeps files on unmount              |
+| `apps/web/app/components/Resource/Survey/Creator/Shell.vue`                | the creator's layout, registry and context handed to the editor shell, and the keyboard commands        |
+| `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue`              | the bar: undo, redo, add page, the Design or Preview switch, the problems surface and the overflow menu |
+| `apps/web/app/components/Editor/Shell.vue`                                 | the editor shell that draws the layout's regions beside the canvas and the sheets over it               |
+| `apps/web/app/services/resource/survey/SurveyEditorLayout.ts`              | the regions, the panels and the content each panel shows for each selection kind                        |
+| `apps/web/app/services/resource/survey/SurveyEditorRegistry.ts`            | the component each content key draws                                                                    |
+| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`               | the layers tree: selection, drag and the row menu                                                       |
+| `apps/web/app/components/Resource/Survey/Creator/Palette.vue`              | the kinds the palette inserts                                                                           |
+| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`               | the canvas of pages                                                                                     |
+| `apps/web/app/components/Resource/Survey/Creator/CanvasNode.vue`           | one element on the canvas, selectable                                                                   |
+| `apps/web/app/components/Resource/Survey/Runner.vue`                       | the runner the preview draws                                                                            |
+| `apps/web/app/store/survey/creator.ts`                                     | the document, history, preview flag and selection                                                       |
+| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`              | one core command per gesture, applied as patches                                                        |
+| `apps/web/app/composables/survey/useSurveyCanvasSelection.ts`              | the bindings a canvas page and element take: drawn as chosen, chosen by a click or Enter                |
+| `apps/web/app/composables/survey/useSurveyCreatorAutosave.ts`              | the autosave queue                                                                                      |
+| `apps/web/app/store/survey/index.ts`                                       | the save path the autosave goes through                                                                 |
+| `apps/web/app/services/pageBuilder/getRecordedHistory.ts`                  | folds a run of edits to one prop into one history entry                                                 |
+| `apps/web/app/services/pageBuilder/constants.ts`                           | the history size, the root pointer and the default side pane width                                      |
+| `packages/vue-block-editor-headless/src/services/applyBlockEdit.ts`        | applies the patches and parses the result through the schema                                            |
+| `packages/vue-survey-engine-headless/src/services/surveyDocumentSchema.ts` | the document schema every edit is parsed by                                                             |
+| `packages/vue-survey-engine-headless/src/services/checkSurveyDocument.ts`  | the survey check the Editor runs before a save                                                          |
 
 ## Not built
 

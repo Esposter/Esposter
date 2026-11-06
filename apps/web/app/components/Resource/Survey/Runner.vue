@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyAnswers, SurveyDocument } from "headless-survey-engine";
+import type { SurveyAnswers, SurveyDocument } from "vue-survey-engine-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { SURVEY_FOCUSABLE_SELECTOR } from "@/services/resource/survey/constants";
-import { SurveyProgressBarPlacement, useSurveyRunner } from "headless-survey-engine";
+import { SurveyProgressBarPlacement, useSurveyRunner } from "vue-survey-engine-headless";
 
 interface Props {
   document: SurveyDocument;

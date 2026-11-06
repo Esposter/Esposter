@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
-import type { SurveyAnswerValue, SurveyButtonGroupNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyButtonGroupNode } from "vue-survey-engine-headless";
 
 import ResourceSurveyFieldButtonGroup from "@/components/Resource/Survey/Field/ButtonGroup.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { surveyButtonGroupNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyButtonGroupNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldButtonGroup", () => {

@@ -1,5 +1,5 @@
 import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
-import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 // Each node takes a fresh id, which the document schema requires to be unique

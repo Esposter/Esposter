@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswers } from "headless-survey-engine";
+import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import {
   DEFAULT_CLOSED_MESSAGE,
@@ -10,7 +10,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getRouteParamString } from "@/util/router/getRouteParamString";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { sanitizeHtml } from "@esposter/shared";
-import { flattenSurveyQuestions } from "headless-survey-engine";
+import { flattenSurveyQuestions } from "vue-survey-engine-headless";
 
 interface Props {
   id: string;

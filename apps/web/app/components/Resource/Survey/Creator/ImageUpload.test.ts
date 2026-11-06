@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import ResourceSurveyCreatorImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
 import UiFileField from "@/components/Ui/FileField.vue";
@@ -8,7 +8,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getBlockNode } from "vue-block-editor-headless";
-import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "headless-survey-engine";
+import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({

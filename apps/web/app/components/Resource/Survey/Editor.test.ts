@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -18,7 +18,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { checkSurveyDocument } from "headless-survey-engine";
+import { checkSurveyDocument } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { sweepMock, trackMock } = vi.hoisted(() => ({

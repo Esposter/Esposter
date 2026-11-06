@@ -5,10 +5,10 @@ import type {
   SurveyElementView,
   SurveyPanelDynamicNode,
   SurveyPanelRowView,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 import { withSurveyRequired } from "@/services/resource/survey/withSurveyRequired";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   answers: SurveyAnswers;

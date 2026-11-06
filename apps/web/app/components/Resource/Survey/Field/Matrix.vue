@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyChoice, SurveyMatrixNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyChoice, SurveyMatrixNode } from "vue-survey-engine-headless";
 
-import { getSurveyChoiceText } from "headless-survey-engine";
+import { getSurveyChoiceText } from "vue-survey-engine-headless";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none

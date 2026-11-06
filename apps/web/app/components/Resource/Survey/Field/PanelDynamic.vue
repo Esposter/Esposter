@@ -4,7 +4,7 @@ import type {
   SurveyAnswerValue,
   SurveyPanelDynamicNode,
   SurveyPanelRowView,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";

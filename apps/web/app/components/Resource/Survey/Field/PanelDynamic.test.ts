@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { SurveyAnswerValue, SurveyPanelDynamicNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyPanelDynamicNode } from "vue-survey-engine-headless";
 
 import ResourceSurveyFieldPanelDynamic from "@/components/Resource/Survey/Field/PanelDynamic.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -11,7 +11,7 @@ import {
   SurveyNodeType,
   surveyPanelDynamicNodePropsSchema,
   surveyTextNodePropsSchema,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
 const mountPanelDynamic = async (node: SurveyPanelDynamicNode, error = "") => {

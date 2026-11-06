@@ -1,4 +1,4 @@
-import type { SurveyQuestionNode } from "headless-survey-engine";
+import type { SurveyQuestionNode } from "vue-survey-engine-headless";
 
 // A question's node with the required flag the runner decides for it, which is the flag a field's mark and its hint read from the node
 export const withSurveyRequired = <T extends SurveyQuestionNode>(node: T, isRequired: boolean): T => ({

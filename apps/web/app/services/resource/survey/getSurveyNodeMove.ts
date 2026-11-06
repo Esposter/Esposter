@@ -1,5 +1,5 @@
 import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
 import { getSurveyIntoPreviousMove } from "@/services/resource/survey/getSurveyIntoPreviousMove";

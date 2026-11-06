@@ -116,7 +116,6 @@
     "genshin-text": "workspace:*",
     "genshin-world": "workspace:*",
     "grid-engine": "catalog:",
-    "headless-survey-engine": "workspace:*",
     "keyframe-store": "workspace:*",
     "livekit-client": "catalog:",
     "livekit-server-sdk": "catalog:",
@@ -151,6 +150,7 @@
     "vue-grid-layout-headless": "workspace:*",
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",
+    "vue-survey-engine-headless": "workspace:*",
     "web-push": "catalog:",
     "write-excel-file": "catalog:",
     "zod": "catalog:"

@@ -1,9 +1,9 @@
 import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { moveOutAfterParent } from "vue-block-editor-headless";
-import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
+import { surveyNodeChildren, surveyRegistry } from "vue-survey-engine-headless";
 
 // The move of a node to just after its parent, in the slot that holds the parent. Refused at the top level, where a page has no parent to
 // move out of, and where the slot around the parent does not take the node

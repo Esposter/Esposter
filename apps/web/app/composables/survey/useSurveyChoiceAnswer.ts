@@ -1,8 +1,8 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyChoiceOptionsProps, SurveyNoneChoiceProps } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyChoiceOptionsProps, SurveyNoneChoiceProps } from "vue-survey-engine-headless";
 
 import { SURVEY_NONE_TITLE, SURVEY_OTHER_KEY, SURVEY_OTHER_TITLE } from "@/services/resource/survey/constants";
-import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "headless-survey-engine";
+import { getSurveyChoiceText, getSurveyOrderedChoices, SURVEY_NONE_ANSWER } from "vue-survey-engine-headless";
 
 // What a choice question offers beside its choices: the other option every choice question may add, and the none
 // Option a radio group may add. A dropdown has no none option, so its node leaves both out

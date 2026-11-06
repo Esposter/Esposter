@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EditorToolbarGroup } from "@/models/editor/EditorToolbarGroup";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -21,7 +21,7 @@ import {
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeChildren,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 
 // The whole content and root props of a document, replaced as one edit, so an import or a clear is one history entry
 const getReplaceOperations = (replacement: SurveyDocument): JsonPatchOperation[] => [

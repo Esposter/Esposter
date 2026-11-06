@@ -11,7 +11,7 @@ import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorReg
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 

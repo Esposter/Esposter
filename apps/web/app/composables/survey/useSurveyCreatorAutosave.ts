@@ -1,4 +1,4 @@
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useSurveyCreatorStore } from "@/store/survey/creator";

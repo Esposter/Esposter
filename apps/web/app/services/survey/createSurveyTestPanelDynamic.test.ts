@@ -1,6 +1,6 @@
-import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "headless-survey-engine";
+import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "vue-survey-engine-headless";
 
-import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 import { describe } from "vitest";
 
 // A dynamic panel built from its kind's default props, holding the template each of its repeats is made from

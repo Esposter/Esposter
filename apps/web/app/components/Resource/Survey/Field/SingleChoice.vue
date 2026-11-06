@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { SurveyAnswerValue, SurveyDropdownNode, SurveyRadioGroupNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyDropdownNode, SurveyRadioGroupNode } from "vue-survey-engine-headless";
 
 interface Props {
   // The message the runner gives the question when it fails a check, "" when it has none

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyDropdownNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyDropdownNode } from "vue-survey-engine-headless";
 
 interface Props {
   // The message the runner gives this question, "" while it has none, drawn beside the field

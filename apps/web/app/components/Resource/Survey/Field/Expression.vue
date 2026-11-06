@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { SurveyAnswerValue, SurveyExpressionNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyExpressionNode } from "vue-survey-engine-headless";
 
-import { SurveyExpressionDisplayFormat } from "headless-survey-engine";
+import { SurveyExpressionDisplayFormat } from "vue-survey-engine-headless";
 
 interface Props {
   error: string;

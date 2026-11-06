@@ -14,7 +14,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.

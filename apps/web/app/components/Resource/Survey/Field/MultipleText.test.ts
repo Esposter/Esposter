@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import type { SurveyAnswerValue, SurveyMultipleTextNode } from "headless-survey-engine";
+import type { SurveyAnswerValue, SurveyMultipleTextNode } from "vue-survey-engine-headless";
 
 import ResourceSurveyFieldMultipleText from "@/components/Resource/Survey/Field/MultipleText.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyMultipleTextNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyMultipleTextNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldMultipleText", () => {

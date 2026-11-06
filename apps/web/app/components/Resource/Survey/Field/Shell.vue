@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyQuestionBaseProps } from "headless-survey-engine";
+import type { SurveyQuestionBaseProps } from "vue-survey-engine-headless";
 
 import { getSurveyQuestionTitle } from "@/services/resource/survey/getSurveyQuestionTitle";
 

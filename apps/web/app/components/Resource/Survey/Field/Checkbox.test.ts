@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { SurveyCheckboxNode, SurveyCheckboxNodeProps } from "headless-survey-engine";
+import type { SurveyCheckboxNode, SurveyCheckboxNodeProps } from "vue-survey-engine-headless";
 
 import ResourceSurveyFieldCheckbox from "@/components/Resource/Survey/Field/Checkbox.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -11,7 +11,7 @@ import {
   surveyCheckboxNodePropsSchema,
   SurveyChoicesOrder,
   SurveyNodeType,
-} from "headless-survey-engine";
+} from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldCheckbox", () => {

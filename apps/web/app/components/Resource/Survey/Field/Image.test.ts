@@ -3,7 +3,7 @@ import ResourceSurveyFieldImage from "@/components/Resource/Survey/Field/Image.v
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyImageNodePropsSchema, SurveyNodeType } from "headless-survey-engine";
+import { surveyImageNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldImage", () => {

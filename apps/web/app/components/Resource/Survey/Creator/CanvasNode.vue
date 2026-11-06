@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SurveyPlaceableNode } from "headless-survey-engine";
+import type { SurveyPlaceableNode } from "vue-survey-engine-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 interface Props {
   // The question or panel drawn here, which a page or a panel holds

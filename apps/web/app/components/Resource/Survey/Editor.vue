@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { SurveyDocument } from "headless-survey-engine";
+import type { SurveyDocument } from "vue-survey-engine-headless";
 
 import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
-import { checkSurveyDocument } from "headless-survey-engine";
+import { checkSurveyDocument } from "vue-survey-engine-headless";
 
 const surveyStore = useSurveyStore();
 const { document: storedDocument } = storeToRefs(surveyStore);

@@ -1,7 +1,7 @@
-import type { SurveyMultipleTextItem } from "headless-survey-engine";
+import type { SurveyMultipleTextItem } from "vue-survey-engine-headless";
 
 import { normalizeString } from "@esposter/shared";
-import { SurveyMultipleTextItemInputType } from "headless-survey-engine";
+import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 
 // The item a typed name makes: a text input whose name and title are the name, trimmed, which the owner can then change.
 // Blank text makes no item

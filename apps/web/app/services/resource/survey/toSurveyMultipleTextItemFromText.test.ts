@@ -1,5 +1,5 @@
 import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
-import { SurveyMultipleTextItemInputType } from "headless-survey-engine";
+import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
 
 describe("toSurveyMultipleTextItemFromText", () => {

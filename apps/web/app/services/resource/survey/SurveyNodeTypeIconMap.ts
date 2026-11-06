@@ -1,5 +1,5 @@
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { SurveyNodeType } from "headless-survey-engine";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The icon each survey kind is listed under, the closest meaning the icon set has for it, where a few kinds share one
 export const SurveyNodeTypeIconMap = {
