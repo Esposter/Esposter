@@ -163,12 +163,18 @@ export const createIneffaKitBehaviour = ({
   const skillBirgittaSpawnSeconds = readSeconds("skillBirgittaSpawn");
   const burstHit = takeOne(kit.elementalBurst.hits);
   const burstBirgittaSpawnSeconds = burstHit.hitmarkSeconds;
-  // The shield her skill and Constellation 2's burst place, priced from her ATK as the task that places it runs
+  // The shield her skill and Constellation 2's burst place, priced from her ATK with the buffs on her as the task that places it runs
   const scheduleShield = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void => {
     scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) => {
+      const { attack } = getBuffedCombatant(
+        combatant,
+        tick.kitEffectState.effects,
+        tick.party,
+        tick.characterIdCombatantMap,
+      ).attributes;
       castKitShield(tick, combatant.characterId, {
         element: Element.Electro,
-        health: shieldAttackShare * combatant.attributes.attack + shieldFlatHealth,
+        health: shieldAttackShare * attack + shieldFlatHealth,
         secondsRemaining: shieldSeconds,
       });
     });
@@ -302,8 +308,8 @@ export const createIneffaKitBehaviour = ({
         gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
     },
     skill: {
-      // The shield is placed by a task, and reads the caster's ATK as it stands then. Its element is Electro, and it
-      // Lasts the seconds gcsim gives it from its placement
+      // The shield is placed by a task, and reads her ATK with the buffs on her as they stand then. Its element is Electro,
+      // And it lasts the seconds gcsim gives it from its placement
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         scheduleShield(kitEffectState, combatant, shieldStartSeconds);
         summonBirgitta(kitEffectState, body, combatant, skillBirgittaSpawnSeconds, skillBirgittaDischarges);

@@ -34,6 +34,13 @@ Cleaning Mode SHALL raise an Electro shield on Ineffa, sized by her ATK as it st
 - **AND** its amount is a share of her ATK plus a flat amount of HP
 - **AND** it lasts 20 seconds from its placement
 
+#### Scenario: An ATK buff put on her before the shield is placed raises it
+
+- **GIVEN** Ineffa casts Cleaning Mode
+- **AND** an ATK buff is put on her before the shield is placed 4 frames in
+- **WHEN** the shield is placed
+- **THEN** its amount is a share of her ATK with the buff on her, plus the flat amount
+
 #### Scenario: Cleaning Mode cannot be cast during its cooldown
 
 - **GIVEN** Cleaning Mode is cooling down

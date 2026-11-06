@@ -28,6 +28,7 @@ import {
   createKitTestContext,
   stepKitSecondsStriking,
 } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -220,6 +221,29 @@ describe(createIneffaKitBehaviour, () => {
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
     expect(shield.secondsRemaining).toBe(20);
+  });
+
+  test("her skill's shield prices her ATK with the buffs on her as they stand when it is placed, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+    const combatant = {
+      ...createIneffaCombatant(),
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseAttack, value: 1000 }]),
+    };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    INEFFA_KIT.elementalSkill.onStart?.(context);
+    // An ATK buff goes on her after the cast, before the shield is placed 4 frames in
+    buffKitMember(kitEffectState, INEFFA_CHARACTER_ID, {
+      amount: 1,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    const field = takeOne(kitEffectState.effects.filter((effect): effect is KitField => effect.kind === "field"));
+    field.onTick(context, 0);
+    const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
+
+    expect(shield.health).toBeCloseTo(2.21184 * 2000 + 1386.6759);
   });
 
   test("a Birgitta discharge that lands drops an Electro particle 100 frames later, when its roll is under two in three", () => {
