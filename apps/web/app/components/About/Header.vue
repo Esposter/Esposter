@@ -5,6 +5,7 @@ import { SITE_NAME } from "@esposter/shared";
 
 <template>
   <header text-center flex flex-col gap-2 items-center>
+    <AppLogo width="14rem" />
     <h1 ui-display>{{ SITE_NAME }}</h1>
     <p ui-lede max-w-prose>{{ SITE_DESCRIPTION }}</p>
     <p text-muted max-w-prose>/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"</p>
