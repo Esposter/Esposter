@@ -91,7 +91,7 @@ Nothing was copied. The package is written from these behaviours, so no licence 
 
 ## Name
 
-`vue-editor-layout-headless` is the working name, which follows the convention the package shape settles. The package is new, so no consumer is moved if the final name differs, and the name is fixed in the program's rename step, after the editors run on it.
+`vue-editor-layout-headless` is the convention name, which follows the convention the package shape settles. The package is new, so no consumer is moved, and the name is fixed when the package lands under the program's task 1.2, before any editor runs on it. The program's rename task 3.0 covers only the four legacy packages.
 
 ## Not built
 
