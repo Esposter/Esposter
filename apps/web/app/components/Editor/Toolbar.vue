@@ -32,21 +32,31 @@ const usedVariantValues = shallowReactive(new Map<string, string>());
 const flatEntries = computed(() =>
   groups.flatMap(({ items, kind, label: groupLabel }) => items.map((item) => ({ item, kind, label: groupLabel }))),
 );
-const folds = computed(() => {
-  if (isMeasuring.value) return flatEntries.value.map(() => false);
+// The items the bar draws and measures, in the order it draws them. An item held in the overflow menu is never drawn, so it
+// Takes no width and is not one of the measured items
+const drawnEntries = computed(() => flatEntries.value.filter(({ item }) => !item.isInOverflow));
+const drawnFolds = computed(() => {
+  if (isMeasuring.value) return drawnEntries.value.map(() => false);
 
   return getToolbarFolds({
     availableWidth: availableWidth.value,
     gap: gap.value,
-    items: flatEntries.value.map(({ item }, index) => ({
+    items: drawnEntries.value.map(({ item }, index) => ({
       isPinned: item.isPinned,
       width: itemWidths.value[index] ?? 0,
     })),
     overflowWidth: overflowWidth.value,
   });
 });
-const foldedEntries = computed(() => flatEntries.value.filter((_entry, index) => folds.value[index]));
-const foldedValues = computed(() => new Set(foldedEntries.value.map(({ item }) => item.value)));
+// The overflow menu holds the items always held there, and the drawn items that do not fit
+const foldedValues = computed(
+  () =>
+    new Set([
+      ...flatEntries.value.filter(({ item }) => item.isInOverflow).map(({ item }) => item.value),
+      ...drawnEntries.value.filter((_entry, index) => drawnFolds.value[index]).map(({ item }) => item.value),
+    ]),
+);
+const foldedEntries = computed(() => flatEntries.value.filter(({ item }) => foldedValues.value.has(item.value)));
 const visibleGroups = computed(() =>
   groups
     .map((group) => ({ ...group, items: group.items.filter(({ value }) => !foldedValues.value.has(value)) }))

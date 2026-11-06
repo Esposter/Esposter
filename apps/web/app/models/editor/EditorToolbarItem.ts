@@ -8,6 +8,8 @@ export interface EditorToolbarItem {
   // The reason it cannot be used, which the item says as its description
   description?: string;
   isDisabled?: boolean;
+  // Held in the overflow menu at every width, for an occasional command the bar never draws, so it takes no room in the bar
+  isInOverflow?: boolean;
   // Kept in the bar when the toolbar folds what does not fit, rather than moved into its overflow menu
   isPinned?: boolean;
   // Set on a toggle, and drawn pressed while it is on
