@@ -26,17 +26,17 @@ const isDoorOpened = ref(false);
 const isPacksHeld = ref(false);
 // A diagnostic only: while the opening shows, each step still unfinished when the warning time is up is logged by name,
 // So a stall says what it waits on. Started before the awaits below, so a save that stalls in them is timed too, and
-// Started again at the door, since the world's steps start only there and are named only once it is open. Nothing is
-// Skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned once those awaits
-// Settle, so until then the warning reads the save as not loaded
+// Started again at the door, so a step still unfinished then is timed from it. The character packs are named until they
+// Are held, and the world's two steps once the world is mounted, which the save and the packs allow before the door
+// Opens. Nothing is skipped or fallen back to, so the world's absence stays as it was. The save's flag is only returned
+// Once those awaits settle, so until then the warning reads the save as not loaded
 let isSaveLoadedRef: Ref<boolean> | undefined;
 const { start: startStallWarning } = useTimeoutFn(
   () => {
     if (!isOpeningShown.value) return;
     const steps: [string, boolean][] = [["save", isSaveLoadedRef?.value ?? false]];
-    if (isDoorOpened.value)
-      if (isPacksHeld.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
-      else steps.push(["character packs", false]);
+    if (!isPacksHeld.value) steps.push(["character packs", false]);
+    else if (isSaveLoadedRef?.value) steps.push(["world chunk", isLoaded.value], ["world ready", isReady.value]);
     for (const [step, isStepDone] of steps)
       if (!isStepDone)
         console.warn(`The loading screen has waited ${LOADING_STALL_WARNING_SECONDS} seconds on ${step}`);
