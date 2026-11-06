@@ -59,7 +59,7 @@ describe("pageBuilderEditor", () => {
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    expect(component.findAll("h3").map((heading) => heading.text())).toStrictEqual(
+    expect(component.findAll("button[aria-expanded]").map((heading) => heading.text())).toStrictEqual(
       WEBPAGE_PALETTE_CATEGORIES.map(({ category }) => category),
     );
     expect(component.find("iframe").exists()).toBe(true);

@@ -2,10 +2,13 @@
 import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
 import type { BlockNode } from "headless-block-editor";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { MERGE_FIELD_KIND_PREFIX } from "@/services/pageBuilder/constants";
 import { createMergeFieldNode } from "@/services/pageBuilder/email/createMergeFieldNode";
+import { getMergeFieldColumnName } from "@/services/pageBuilder/getMergeFieldColumnName";
 import { MjmlNodeType } from "mjml-blocks";
 
 interface Props {
@@ -41,29 +44,46 @@ const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
 const startColumnDrag = (columnName: string, event: PointerEvent) => {
   if (startMergeFieldDrag && getFrameGeometry && hasFrame()) startMergeFieldDrag(columnName, event, getFrameGeometry);
 };
+// A type with no icon or no title is left out, rather than drawn with one the kind does not give it
+const groups = computed<PaletteGroup[]>(() => {
+  const categoryGroups = kind.paletteCategories.map(({ category, types }) => ({
+    items: types.flatMap((type) => {
+      const icon = kind.icons[type];
+      const title = kind.titles[type];
+      if (icon === undefined || title === undefined) return [];
+
+      return [{ icon, kind: type, title }];
+    }),
+    title: category,
+  }));
+  if (mergeFieldColumns.value.length === 0) return categoryGroups;
+
+  return [
+    ...categoryGroups,
+    {
+      items: mergeFieldColumns.value.map((columnName) => ({
+        icon: UiIconMeaning.Tag,
+        kind: `${MERGE_FIELD_KIND_PREFIX}${columnName}`,
+        title: columnName,
+      })),
+      title: "Merge fields",
+    },
+  ];
+});
+// A palette item's kind names either a block type or a merge field's column, so a click and a drag each take whichever
+// It names
+const insertItem = (itemKind: string) => {
+  const columnName = getMergeFieldColumnName(itemKind);
+  if (columnName === undefined) insert(itemKind);
+  else insertMergeField(columnName);
+};
+const dragItem = (itemKind: string, event: PointerEvent) => {
+  const columnName = getMergeFieldColumnName(itemKind);
+  if (columnName === undefined) startDrag(itemKind, event);
+  else startColumnDrag(columnName, event);
+};
 </script>
 
 <template>
-  <div cols="[repeat(auto-fill,minmax(4.25rem,1fr))]" gap-1 grid>
-    <template v-for="{ category, types } of kind.paletteCategories" :key="category">
-      <h3 text-muted col-span-full ui-title>{{ category }}</h3>
-      <PageBuilderPaletteTile
-        v-for="type of types"
-        :key="type"
-        :icon="kind.icons[type]"
-        :label="kind.titles[type]"
-        @click="insert(type)"
-        @pointerdown="startDrag(type, $event)"
-      />
-    </template>
-    <h3 v-if="mergeFieldColumns.length > 0" text-muted col-span-full ui-title>Merge fields</h3>
-    <PageBuilderPaletteTile
-      v-for="columnName of mergeFieldColumns"
-      :key="columnName"
-      :icon="UiIconMeaning.Tag"
-      :label="columnName"
-      @click="insertMergeField(columnName)"
-      @pointerdown="startColumnDrag(columnName, $event)"
-    />
-  </div>
+  <UiPalette :groups @insert="insertItem" @drag-start="dragItem" />
 </template>

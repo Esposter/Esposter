@@ -14,7 +14,7 @@ describe("resourceSurveyCreatorPalette", () => {
 
     expect(
       component
-        .findAll("button")
+        .findAll("button:not([aria-expanded])")
         .map((button) => button.text())
         .toSorted(),
     ).toStrictEqual(
@@ -50,7 +50,7 @@ describe("resourceSurveyCreatorPalette", () => {
     const component = await mountSuspended(ResourceSurveyCreatorPalette);
 
     await component
-      .findAll("button")
+      .findAll("button:not([aria-expanded])")
       .find((button) => button.text() === surveyNodeTypeDefinitionMap[SurveyNodeType.Rating].label)
       ?.trigger("click");
 

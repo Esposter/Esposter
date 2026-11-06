@@ -146,40 +146,36 @@ export const SURVEY_TEXT_FIELD_TYPES: Readonly<
   [SurveyTextInputType.Url]: UiTextFieldType.Url,
 };
 // The kinds the palette offers, in the groups it draws them under. The page is the toolbar's to add
-export const SURVEY_PALETTE_GROUPS: readonly { category: string; types: SurveyNodeType[] }[] = [
+export const SURVEY_PALETTE_GROUPS: readonly { title: string; types: SurveyNodeType[] }[] = [
+  { title: "Text", types: [SurveyNodeType.Text, SurveyNodeType.Comment, SurveyNodeType.MultipleText] },
   {
-    category: "Input",
+    title: "Choice",
     types: [
-      SurveyNodeType.Text,
-      SurveyNodeType.Comment,
-      SurveyNodeType.Boolean,
       SurveyNodeType.RadioGroup,
-      SurveyNodeType.Dropdown,
       SurveyNodeType.Checkbox,
+      SurveyNodeType.Dropdown,
       SurveyNodeType.TagBox,
       SurveyNodeType.ButtonGroup,
-      SurveyNodeType.Rating,
-      SurveyNodeType.Slider,
-      SurveyNodeType.MultipleText,
-    ],
-  },
-  {
-    category: "Choice grids and lists",
-    types: [
-      SurveyNodeType.Ranking,
+      SurveyNodeType.Boolean,
       SurveyNodeType.ImagePicker,
-      SurveyNodeType.Matrix,
-      SurveyNodeType.MatrixDynamic,
-      SurveyNodeType.PanelDynamic,
     ],
   },
-  { category: "Content", types: [SurveyNodeType.Html, SurveyNodeType.Image, SurveyNodeType.Expression] },
-  { category: "Layout", types: [SurveyNodeType.Panel] },
+  { title: "Scale and ranking", types: [SurveyNodeType.Rating, SurveyNodeType.Slider, SurveyNodeType.Ranking] },
+  {
+    title: "Grids and repeats",
+    types: [SurveyNodeType.Matrix, SurveyNodeType.MatrixDynamic, SurveyNodeType.PanelDynamic],
+  },
+  { title: "Content", types: [SurveyNodeType.Html, SurveyNodeType.Image, SurveyNodeType.Expression] },
+  { title: "Layout", types: [SurveyNodeType.Panel] },
 ];
 
 // The two views the toolbar switches between, titled and valued by the same name
 export const SURVEY_DESIGN_MODE = "Design";
 export const SURVEY_PREVIEW_MODE = "Preview";
+
+// The pixel width the toolbar's whole row needs, its controls at a touch target's size so it fits under any pointer. Narrower,
+// Add page, Import, Export and Clear fold into the overflow menu
+export const SURVEY_TOOLBAR_UNFOLDED_WIDTH = 544;
 
 // The key the other option of a choice question is drawn under, with its title, and the title its none option falls back to
 export const SURVEY_OTHER_KEY = "other";

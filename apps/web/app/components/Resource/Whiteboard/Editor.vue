@@ -12,8 +12,8 @@ import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { getExportBounds } from "headless-block-editor";
 
-// The whiteboard's editor: the palette beside the canvas, the one element's properties beside that. The canvas's events and its overlay and
-// Html slots are wired here to the gesture, keyboard and text-edit logic, and the delete confirmation is the one dialog it holds
+// The whiteboard's editor: the palette beside the canvas, the one element's properties over the canvas's right edge. The canvas's events and
+// Its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic, and the delete confirmation is the one dialog it holds
 const whiteboardStore = useWhiteboardStore();
 const { loadContent, saveWhiteboard } = whiteboardStore;
 const { editState, whiteboard } = storeToRefs(whiteboardStore);
@@ -88,8 +88,9 @@ if (editState.value.document.elements.length > 0)
       </ResourceWhiteboardEditorCanvas>
       <ResourceWhiteboardEditorToolbar left-2 top-2 absolute />
       <ResourceWhiteboardEditorControls bottom-2 left-2 absolute />
+      <!-- Over the canvas's right edge, so a selection never resizes the canvas. The toolbar and controls sit on the left -->
+      <ResourceWhiteboardEditorPropertiesPanel right-2 top-2 absolute max-h="[calc(100%_-_1rem)]" of-y-auto />
     </div>
-    <ResourceWhiteboardEditorPropertiesPanel shrink-0 />
     <UiConfirmDialog
       v-model="isDeleteOpen"
       confirm-label="Delete"

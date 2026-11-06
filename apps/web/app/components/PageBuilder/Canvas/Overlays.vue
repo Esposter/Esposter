@@ -18,6 +18,7 @@ import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox"
 import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
+import { DRAG_PREVIEW_NODE_ID } from "@/services/pageBuilder/withDragPreview";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 interface Props {
@@ -38,6 +39,8 @@ const { getHeldDocument } = pageBuilderDocumentStore;
 const pageOpen = computed(() => getHeldDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
+// The box of a palette block being dragged, drawn where the canvas previews it in its slot
+const previewBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
 // The library's accent, read from the app's own document each time the theme or style that sets it changes, since the
 // Frame holds none of the app's tokens and the layer passes it on to the boxes it draws
@@ -96,10 +99,12 @@ const getDropIndicator = (): DropIndicator | undefined => {
     ownerBox: getSlotOwnerBox(kind, document, dropTarget.slotPointer),
   });
 };
+// The drop line is the fallback for a drop whose preview the frame does not draw, since the preview shows the block in place
 const redraw = () => {
   hoverBox.value = getNodeBox(hoveredNodeId);
   selectionBox.value = getNodeBox(selectedNodeId);
-  dropIndicator.value = getDropIndicator();
+  previewBox.value = getNodeBox(DRAG_PREVIEW_NODE_ID);
+  dropIndicator.value = previewBox.value ? undefined : getDropIndicator();
 };
 // One redraw per animation frame, however many scrolls, resizes or patches land before it
 const scheduleRedraw = () => {
@@ -121,6 +126,11 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 <template>
   <div ref="layer" :style="{ ...OVERLAY_LAYER_STYLE, '--ui-accent': accent }">
     <div v-if="hoverBox" data-outline="hover" :style="{ ...OVERLAY_HOVER_STYLE, ...toBoxStyle(hoverBox) }" />
+    <div
+      v-if="previewBox"
+      data-outline="preview"
+      :style="{ ...OVERLAY_DROP_OUTLINE_STYLE, ...toBoxStyle(previewBox) }"
+    />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Line"
       data-drop-indicator="line"

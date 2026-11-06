@@ -53,11 +53,11 @@ const stateItems = [
   { title: "Default", value: StyleState.Default },
   { title: "Hover", value: StyleState.Hover },
 ];
-// Every sector starts open, and a reader closes the ones they are not editing
-const closedSectors = ref(new Set<string>());
+// The first sector starts open and the rest closed; a reader's toggles are kept for the session
+const openSectors = ref(new Set(STYLE_SECTORS.slice(0, 1).map(({ title }) => title)));
 const setSectorOpen = (title: string, isOpen: boolean) => {
-  if (isOpen) closedSectors.value.delete(title);
-  else closedSectors.value.add(title);
+  if (isOpen) openSectors.value.add(title);
+  else openSectors.value.delete(title);
 };
 </script>
 
@@ -67,7 +67,7 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
     <UiCollapsible
       v-for="sector in STYLE_SECTORS"
       :key="sector.title"
-      :model-value="!closedSectors.has(sector.title)"
+      :model-value="openSectors.has(sector.title)"
       :variant="UiCollapsibleVariant.Header"
       @update:model-value="(isOpen) => setSectorOpen(sector.title, isOpen)"
     >

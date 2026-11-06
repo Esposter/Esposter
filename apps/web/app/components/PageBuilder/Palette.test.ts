@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
-import UiIcon from "@/components/Ui/Icon.vue";
+import UiPalette from "@/components/Ui/Palette/Index.vue";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
@@ -15,6 +17,14 @@ import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderPalette", () => {
+  const createFrameGeometry = (): FrameGeometry => ({
+    checkIsHorizontalOwner: () => false,
+    frameRect: { height: 500, left: 0, top: 0, width: 500 },
+    getChildRect: () => undefined,
+    getNodeIdAt: () => undefined,
+    scale: 1,
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -46,18 +56,17 @@ describe("pageBuilderPalette", () => {
   test.each([
     { kind: webpageKind, kindName: "webpage" },
     { kind: emailKind, kindName: "email" },
-  ])("the $kindName palette draws each block as a tile with its icon and its title", async ({ kind }) => {
+  ])("the $kindName palette lists each block of its categories with its icon and its title", async ({ kind }) => {
     expect.hasAssertions();
     const component = await mountSuspended(PageBuilderPalette, {
       props: { announce: vi.fn<(message: string) => void>(), getDocument: () => undefined, kind, resourceId: TEST_ID },
     });
-    const types = kind.paletteCategories.flatMap<string>((category) => category.types);
 
-    expect(component.findAll("button").map((button) => button.text())).toStrictEqual(
-      types.map((type) => kind.titles[type]),
-    );
-    expect(component.findAllComponents(UiIcon).map((icon) => icon.props("meaning"))).toStrictEqual(
-      types.map((type) => kind.icons[type]),
+    expect(component.findComponent(UiPalette).props("groups")).toStrictEqual(
+      kind.paletteCategories.map(({ category, types }) => ({
+        items: types.map((type) => ({ icon: kind.icons[type], kind: type, title: kind.titles[type] })),
+        title: category,
+      })),
     );
   });
 
@@ -140,5 +149,79 @@ describe("pageBuilderPalette", () => {
         type: MjmlNodeType.Section,
       },
     ]);
+  });
+
+  test("a press on a block starts its palette drag where a frame can take it", async () => {
+    expect.hasAssertions();
+
+    const frameGeometry = createFrameGeometry();
+    const getFrameGeometry = () => frameGeometry;
+    const startPaletteDrag = vi.fn();
+    const component = await mountSuspended(PageBuilderPalette, {
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        getDocument: () => undefined,
+        getFrameGeometry,
+        kind: webpageKind,
+        resourceId: TEST_ID,
+        startPaletteDrag,
+      },
+    });
+
+    await component
+      .findAll("button")
+      .find((button) => button.text() === WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text])
+      ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
+
+    expect(startPaletteDrag).toHaveBeenCalledWith(WebpageNodeType.Text, expect.any(PointerEvent), getFrameGeometry);
+  });
+
+  test("a press on a block starts no palette drag where no frame can take it", async () => {
+    expect.hasAssertions();
+
+    const startPaletteDrag = vi.fn();
+    const component = await mountSuspended(PageBuilderPalette, {
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        getDocument: () => undefined,
+        getFrameGeometry: () => undefined,
+        kind: webpageKind,
+        resourceId: TEST_ID,
+        startPaletteDrag,
+      },
+    });
+
+    await component
+      .findAll("button")
+      .find((button) => button.text() === WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text])
+      ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
+
+    expect(startPaletteDrag).not.toHaveBeenCalled();
+  });
+
+  test("a press on a merge field starts its column's drag where a frame can take it", async () => {
+    expect.hasAssertions();
+
+    usePageBuilderDocumentStore().setMergeFieldColumns(TEST_ID, ["first_name"]);
+    const frameGeometry = createFrameGeometry();
+    const getFrameGeometry = () => frameGeometry;
+    const startMergeFieldDrag = vi.fn();
+    const component = await mountSuspended(PageBuilderPalette, {
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        getDocument: () => undefined,
+        getFrameGeometry,
+        kind: emailKind,
+        resourceId: TEST_ID,
+        startMergeFieldDrag,
+      },
+    });
+
+    await component
+      .findAll("button")
+      .find((button) => button.text() === "first_name")
+      ?.trigger("pointerdown", { button: 0, clientX: 0, clientY: 0 });
+
+    expect(startMergeFieldDrag).toHaveBeenCalledWith("first_name", expect.any(PointerEvent), getFrameGeometry);
   });
 });

@@ -1,6 +1,6 @@
 # Editor drag preview
 
-One drag session serves three editors. It owns the pointer, the ghost, the autoscroll, the touch hold and the cancel. Each editor supplies two things: how a kind is drawn, and which slots accept it.
+Three editors share the pieces of a drag: one ghost chip at the pointer, the edge autoscroll's speed rule, the touch hold, the Escape cancel and the refusal cue. Each editor keeps what is its own: which slots accept a kind, where the pointer lands, and how the block is drawn in place.
 
 ```mermaid
 flowchart TB
@@ -22,21 +22,23 @@ flowchart TB
 
 - **The preview is drawn in the render path, not written to the document.** The session hands the editor a pending insertion, `{ slot, index, node }`, and the editor's own canvas renderer draws that node among the slot's children, marked as a preview and not selectable. The document, the history and the undo stacks never see it. Rejected: inserting the real node and removing it on cancel, which leaves history entries a cancelled drag must not leave.
 - **The node is the kind's defaults.** The preview draws `createDefaultProps` for the kind, the same node a click would insert, so what the reader sees is what lands.
-- **The hit test is the page builder's.** The nearest ancestor slot whose allow list accepts the kind is the target, and the index is the first child whose midpoint the pointer has not crossed. The survey and the whiteboard supply their own slots to the same session.
-- **The page builder's gap is closed here.** Its canvas design promises edge autoscroll and a touch hold, and its drag composable has neither; the session takes both from `useDragReorder`, which already has them, rather than writing them a third time.
+- **Each editor resolves its own target.** The page builder's nearest ancestor slot whose allow list accepts the kind is the target, and the index is the first child whose midpoint the pointer has not crossed; the survey resolves pages and panels the same way over its own boxes, and the whiteboard's target is the canvas point. Rejected: one resolver for all three, whose slots have nothing in common but the rule.
+- **The page builder's gap is closed here.** Its canvas design promises edge autoscroll and a touch hold, and its drag composable had neither; it now holds a touch press for the reorder list's own delay and scrolls the frame near its edge. Every touch drag of the three, once started, cancels its own `touchmove` so the page's scroll does not take the finger back and cancel the drag.
 - **The twin is unchanged.** Alt+arrow, Move to… and Insert stay as the keyboard path to the same patch, which is what makes a drag permissible.
 - **A refused target says why.** The cue names the rule, "A Column goes in Columns", where the pointer is, so a refusal is never a silent no-op.
 
 ## Key files
 
-| Path                                                                | Role                                                              |
-| :------------------------------------------------------------------ | :---------------------------------------------------------------- |
-| `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`        | the page builder's drag, the starting point of the shared session |
-| `apps/web/app/composables/ui/useDragReorder.ts`                     | the autoscroll and the touch hold the session reuses              |
-| `apps/web/app/components/PageBuilder/Canvas/Overlays.vue`           | where the drop line is drawn today                                |
-| `apps/web/app/services/pageBuilder/resolveDropTarget.ts`            | the hit test                                                      |
-| `apps/web/app/components/Resource/Survey/Creator/Palette.vue`       | the survey palette, click only today                              |
-| `apps/web/app/components/Resource/Whiteboard/EditorPaletteItem.vue` | the whiteboard's drag, with no ghost today                        |
+| Path                                                              | Role                                                              |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`      | the page builder's drag, the starting point of the shared session |
+| `apps/web/app/composables/survey/useSurveyCreatorDrag.ts`         | the survey Creator's drag, from the palette and from the canvas   |
+| `apps/web/app/composables/whiteboard/useWhiteboardPaletteDrag.ts` | the whiteboard's palette drag and its ghost                       |
+| `apps/web/app/composables/ui/useDragReorder.ts`                   | the autoscroll and the touch hold the session reuses              |
+| `apps/web/app/services/ui/holdPageStillWhile.ts`                  | holds the page still under a finger whose drag has started        |
+| `apps/web/app/components/PageBuilder/Canvas/Overlays.vue`         | where the preview's outline and the fallback drop line are drawn  |
+| `apps/web/app/services/pageBuilder/resolveDropTarget.ts`          | the hit test                                                      |
+| `apps/web/app/services/pageBuilder/withDragPreview.ts`            | the page builder's document with the pending insertion in it      |
 
 ## Sources
 

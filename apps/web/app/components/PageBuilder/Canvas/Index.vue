@@ -4,6 +4,7 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
+import type { BlockNode } from "headless-block-editor";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
@@ -14,6 +15,7 @@ import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
+import { DRAG_PREVIEW_NODE_ID, withDragPreview } from "@/services/pageBuilder/withDragPreview";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
@@ -22,6 +24,8 @@ import { ResourceType } from "@esposter/db-schema";
 
 interface Props {
   announce: (message: string) => void;
+  // The palette block type being dragged, which the canvas draws in the slot its drop target names
+  draggedType?: BlockNode["type"];
   dropTarget?: DropTarget;
   // The kind the resource's document is drawn through, which the shell passes beside the resource
   kind: AnyPageBuilderKind;
@@ -29,7 +33,7 @@ interface Props {
 }
 
 const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
-const { announce, dropTarget, kind, resourceId } = defineProps<Props>();
+const { announce, draggedType, dropTarget, kind, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -47,6 +51,16 @@ const editingNodeId = computed(() => getEditingNodeId(resourceId));
 const drawnOpen = shallowRef<OpenPageBuilderDocument>();
 watchImmediate([pageOpen, editingNodeId], ([open, nodeId]) => {
   if (!nodeId) drawnOpen.value = open;
+});
+// A palette block being dragged is drawn in the slot it would land in, so the page previews the drop. The preview is derived
+// Here, so the store and its history never hold it
+const renderedOpen = computed((): OpenPageBuilderDocument | undefined => {
+  const open = drawnOpen.value;
+  if (!open || draggedType === undefined || !dropTarget) return open;
+
+  return open.type === ResourceType.Email
+    ? { ...open, document: withDragPreview(open.kind, open.document, draggedType, dropTarget) }
+    : { ...open, document: withDragPreview(open.kind, open.document, draggedType, dropTarget) };
 });
 const contentRoot = useTemplateRef("contentRoot");
 // The node under the pointer, held here rather than in the store since only this canvas outlines it
@@ -124,16 +138,21 @@ watch(contentRoot, (element, _previousElement, onCleanup) => {
 defineExpose({ getFrameGeometry });
 // While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
 // The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded
-// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw
+// An email is drawn with the inline styles MJML writes, so only a webpage has a sheet of its own to draw. The drag preview's rule
+// Is in either sheet, since its node is drawn in either document
 const css = computed(() => {
+  // An empty block has no height to outline, so the preview gets a minimum one. Its pointer events pass through it, so hover and
+  // Hit-testing reach the node it sits in, and it is faded so it reads as a preview
+  const previewCss = `[data-node-id="${DRAG_PREVIEW_NODE_ID}"] { min-height: 2.5rem; opacity: 0.5; pointer-events: none; }`;
   const open = drawnOpen.value;
-  if (open?.type !== ResourceType.Webpage) return "";
+  if (open?.type !== ResourceType.Webpage) return previewCss;
 
   const document = getPreview(resourceId) ?? open.document;
   const pageCss = getWebpageCss(document, getPresentDefinitions(document));
-  return editingNodeId.value
-    ? `${pageCss}\n[data-node-id="${CSS.escape(editingNodeId.value)}"] > :not([data-text-editor]) { display: none; }`
-    : pageCss;
+  const editingCss = editingNodeId.value
+    ? `\n[data-node-id="${CSS.escape(editingNodeId.value)}"] > :not([data-text-editor]) { display: none; }`
+    : "";
+  return `${pageCss}${editingCss}\n${previewCss}`;
 });
 const device = computed(() => getDevice(resourceId));
 // An email is drawn at the width of its device, in the column an email is read in, which the body-width wrapper gives it
@@ -162,7 +181,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
       @pointerleave="hoveredNodeId = ''"
       @pointerover="hoveredNodeId = getNodeIdFromElement($event.target) ?? ''"
     >
-      <CanvasNodes v-if="drawnOpen" :open="drawnOpen" :origin />
+      <CanvasNodes v-if="renderedOpen" :open="renderedOpen" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
         <PageBuilderCanvasTextEditor :key="editingNodeId" :kind :node-id="editingNodeId" :resource-id />
       </Teleport>

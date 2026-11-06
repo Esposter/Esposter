@@ -18,7 +18,7 @@ flowchart LR
 ## Decisions
 
 - **The drag is a preview, never an edit.** The block is drawn in the render path as a view-only node and the document is not touched until release. Rejected: inserting the real node and removing it on cancel, which writes history entries a cancelled drag must not leave and makes an agent's concurrent edit race the drag.
-- **One drag session for all three editors.** Each editor supplies how a kind is drawn and where it may land; the session, the ghost, the autoscroll, the touch hold and the cancel are written once. Rejected: three drags, which is what drifted.
+- **The pieces of a drag are shared, the target is each editor's.** The ghost, the autoscroll rule, the touch hold, the cancel and the refusal cue are written once; each editor resolves where a kind may land. Rejected: three of every piece, which is what drifted, and one resolver, whose slots have nothing in common but the rule.
 - **The survey Creator is draggable.** This overturns two decisions the Creator's design records, "reorder lives in the layers tree" and "the palette inserts; it is not dragged", whose reason was a canvas drag with no keyboard twin. The twin exists now: the Alt+arrow moves and Move to… already work from the keyboard, so the drag is the pointer's path to the same patch. Those two decisions become rejected alternatives in the part that ships it.
 - **A palette is grouped, iconed and searchable, in the app.** Categories and icons live in a map in the app keyed by every kind, so the typecheck holds it complete, as the page builder's already do. Rejected: a category and an icon on the shared kind definition, which the headless packages and the publish render never read.
 - **One density.** The editors share spacing, tab and toolbar heights from the UI library's tokens rather than each template's own padding.
@@ -35,7 +35,7 @@ Recorded from the reference products' public documentation and the galleries the
 
 ## Parts
 
-| Part                                                           | Capability                                                            |
-| :------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| [Drag preview](../resource-editors-drag-preview/design.md)     | one drag session with a live in-place preview, over the three editors |
-| [Compact chrome](../resource-editors-compact-chrome/design.md) | categorized, iconed, searchable palettes and one density              |
+| Part                                                           | Capability                                                             |
+| :------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| [Drag preview](../resource-editors-drag-preview/design.md)     | shared drag pieces and a live in-place preview, over the three editors |
+| [Compact chrome](../resource-editors-compact-chrome/design.md) | categorized, iconed, searchable palettes and one density               |

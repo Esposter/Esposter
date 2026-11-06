@@ -22,10 +22,10 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
 </script>
 
 <template>
-  <div flex flex-col gap-6>
+  <div flex flex-col gap-4>
     <div flex flex-col gap-2>
       <UiFileField accept="image/*" label="Logo" :model-value="[]" @update:model-value="(files) => onPickLogo(files)" />
-      <UiButton v-if="rootProps.logo" @click="updateRootProps({ logo: '' })">Remove logo</UiButton>
+      <UiButton :disabled="!rootProps.logo" @click="updateRootProps({ logo: '' })">Remove logo</UiButton>
     </div>
     <div flex flex-col gap-2>
       <UiColorField
@@ -33,7 +33,7 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
         :model-value="rootProps.accentColor"
         @update:model-value="(accentColor) => updateRootProps({ accentColor })"
       />
-      <UiButton v-if="rootProps.accentColor" @click="updateRootProps({ accentColor: '' })">
+      <UiButton :disabled="!rootProps.accentColor" @click="updateRootProps({ accentColor: '' })">
         Clear accent colour
       </UiButton>
     </div>
@@ -43,7 +43,7 @@ const progressBarItems: UiMenuItem<SurveyProgressBarPlacement>[] = [
         :model-value="rootProps.backgroundColor"
         @update:model-value="(backgroundColor) => updateRootProps({ backgroundColor })"
       />
-      <UiButton v-if="rootProps.backgroundColor" @click="updateRootProps({ backgroundColor: '' })">
+      <UiButton :disabled="!rootProps.backgroundColor" @click="updateRootProps({ backgroundColor: '' })">
         Clear background colour
       </UiButton>
     </div>

@@ -199,3 +199,6 @@ export const OVERLAY_SELECTION_STYLE = {
   outline: `${OVERLAY_HAIRLINE_WIDTH} solid white`,
   position: "absolute",
 } as const;
+// The prefix a palette item's kind carries when it names a merge field's column rather than a block type, so a click or a
+// Drag tells the two apart
+export const MERGE_FIELD_KIND_PREFIX = "merge-field:";

@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { SURVEY_PALETTE_GROUPS } from "@/services/resource/survey/constants";
-import { surveyNodeTypeDefinitionMap } from "headless-survey-engine";
+import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
+import { getSurveyPaletteGroups } from "@/services/resource/survey/getSurveyPaletteGroups";
+import { SurveyNodeType } from "headless-survey-engine";
 
 const { insertNode } = useSurveyCreatorCommands();
+const { startPaletteDrag } = useSurveyCreatorDrag();
+
+// The palette names a kind by its string, so the enum member it matches is found rather than cast
+const toSurveyNodeType = (kind: string) => Object.values(SurveyNodeType).find((type) => type === kind);
+const insertKind = (kind: string) => {
+  const type = toSurveyNodeType(kind);
+  if (type !== undefined) insertNode(type);
+};
+const dragKind = (kind: string, event: PointerEvent) => {
+  const type = toSurveyNodeType(kind);
+  if (type !== undefined) startPaletteDrag(type, event);
+};
 </script>
 
 <template>
-  <div flex flex-col gap-3>
-    <section v-for="{ category, types } of SURVEY_PALETTE_GROUPS" :key="category" flex flex-col gap-1>
-      <h3 text-muted ui-title>{{ category }}</h3>
-      <UiButton v-for="type of types" :key="type" w-full @click="insertNode(type)">
-        {{ surveyNodeTypeDefinitionMap[type].label }}
-      </UiButton>
-    </section>
-  </div>
+  <UiPalette :groups="getSurveyPaletteGroups()" @insert="insertKind" @drag-start="dragKind" />
 </template>

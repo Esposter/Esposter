@@ -106,7 +106,7 @@ const rightTab = ref(PROPERTIES_TAB);
         <div v-if="value === CANVAS_TAB" flex flex-col gap-2 h-full min-h-0>
           <ResourceSurveyCreatorWorkspace />
         </div>
-        <div v-else-if="value === STRUCTURE_TAB" flex flex-col gap-4>
+        <div v-else-if="value === STRUCTURE_TAB" flex flex-col gap-2>
           <ResourceSurveyCreatorPalette />
           <ResourceSurveyCreatorLayers />
         </div>
@@ -148,7 +148,7 @@ const rightTab = ref(PROPERTIES_TAB);
         label="Survey settings"
         is-filling
         :variant="UiTabsVariant.Header"
-        px-3
+        px-2
         h-full
       >
         <template #default="{ value }">

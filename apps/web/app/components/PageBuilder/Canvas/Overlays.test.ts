@@ -2,6 +2,7 @@
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasOverlays from "@/components/PageBuilder/Canvas/Overlays.vue";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { DRAG_PREVIEW_NODE_ID } from "@/services/pageBuilder/withDragPreview";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -105,5 +106,36 @@ describe("pageBuilderCanvasOverlays", () => {
 
     expect(component.get<HTMLElement>("[data-outline='hover']").element.style.left).toBe("120px");
     element.remove();
+  });
+
+  test("a dragged block is outlined where its preview is drawn, in place of the drop line", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 0;
+    });
+    const element = document.createElement("div");
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [],
+      root: { props: { lang: "en", tokens: {} } },
+    });
+
+    const component = await mountSuspended(PageBuilderCanvasOverlays, {
+      props: {
+        checkIsHorizontalOwner: () => false,
+        dropTarget: { index: 0, slotPointer: "/content" },
+        getElement: (nodeId) => (nodeId === DRAG_PREVIEW_NODE_ID ? element : null),
+        hoveredNodeId: "",
+        resourceId: TEST_ID,
+        selectedNodeId: "",
+      },
+    });
+    await nextTick();
+
+    expect(component.get<HTMLElement>("[data-outline='preview']").element.style.left).toBe("120px");
+    expect(component.find("[data-drop-indicator]").exists()).toBe(false);
   });
 });

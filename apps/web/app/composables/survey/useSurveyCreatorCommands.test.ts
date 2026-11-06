@@ -75,6 +75,26 @@ describe(useSurveyCreatorCommands, () => {
     expect(selectedPointer.value).toBe("/content/0/props/children/1");
   });
 
+  test("inserts a kind at an index of a slot as one undoable edit, and selects it", () => {
+    expect.hasAssertions();
+
+    const { document, insertNodeAt, original, selectedPointer, undo } = setup([
+      createPage([createQuestion("question1"), createQuestion("question2")]),
+    ]);
+    insertNodeAt(SurveyNodeType.Rating, "/content/0/props/children", 1);
+
+    expect(document.value.content[0]?.props.children.map(({ type }) => type)).toStrictEqual([
+      SurveyNodeType.Text,
+      SurveyNodeType.Rating,
+      SurveyNodeType.Text,
+    ]);
+    expect(selectedPointer.value).toBe("/content/0/props/children/1");
+
+    undo();
+
+    expect(document.value).toStrictEqual(original);
+  });
+
   test("names a duplicate from the stem of its question's name, as an inserted question is named", () => {
     expect.hasAssertions();
 

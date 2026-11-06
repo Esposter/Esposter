@@ -59,7 +59,7 @@ export const usePageBuilderFrame = (
 
     return getToolbarPlacement(selectionBox.value, framePlacement.value);
   });
-  // What a palette drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame.
+  // What a drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame.
   // That is the same space the pointer is mapped into, so the drop logic is not offset by the frame's own scroll
   const getFrameGeometry = (): FrameGeometry | undefined => {
     const frameElement = getFrameElement();
@@ -73,6 +73,10 @@ export const usePageBuilderFrame = (
       // Read from the frame's own document, since a drag lets the pointer pass through the frame and no hover reaches it
       getNodeIdAt: ({ x, y }) => getNodeIdFromElement(contentRoot.value?.ownerDocument.elementFromPoint(x, y) ?? null),
       scale: getFrameScaleOf(frameElement),
+      // The frame scrolls its own document, so an edge scroll moves its window rather than the app's
+      scrollBy: (delta) => {
+        frameElement.contentWindow?.scrollBy({ behavior: "instant", top: delta });
+      },
     };
   };
 

@@ -221,7 +221,8 @@ describe("resourceWhiteboardEditor", () => {
     onTestFinished(() => {
       randomUuidSpy.mockRestore();
     });
-    await component.get('button[aria-label="Text box"]').trigger("click");
+    const textBoxTile = component.findAll("button").find((button) => button.text() === "Text box");
+    await textBoxTile?.trigger("click");
 
     expect(whiteboard.value.elements).toStrictEqual([
       { id: insertedId, text: "Text", type: PositionedElementType.Text, width: 160, x: 320, y: 280 },

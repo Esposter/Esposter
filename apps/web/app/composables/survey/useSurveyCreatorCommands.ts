@@ -5,16 +5,10 @@ import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from
 
 import { ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
+import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
+import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import {
-  JsonPatchOperationType,
-  parseArrayIndex,
-  parseJsonPointer,
-  readJsonValue,
-  redoHistory,
-  toJsonPointer,
-  undoHistory,
-} from "@esposter/shared";
+import { JsonPatchOperationType, parseJsonPointer, readJsonValue, redoHistory, undoHistory } from "@esposter/shared";
 import {
   applyBlockEdit,
   duplicateBlockNode,
@@ -30,20 +24,8 @@ import {
   removeBlockNode,
   updateBlockNodeProps,
 } from "headless-block-editor";
-import {
-  surveyDocumentSchema,
-  surveyNodeChildren,
-  surveyNodeSchema,
-  surveyNodeTypeDefinitionMap,
-  surveyRegistry,
-} from "headless-survey-engine";
+import { surveyDocumentSchema, surveyNodeChildren, surveyNodeSchema, surveyRegistry } from "headless-survey-engine";
 
-// The slot a node sits in and its index there, or none for a pointer that names no element of a slot
-const getNodeLocation = (nodePointer: string) => {
-  const segments = parseJsonPointer(nodePointer);
-  const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-  return index === undefined ? undefined : { index, slotPointer: toJsonPointer(segments.slice(0, -1)) };
-};
 // How many elements a slot holds, so a new element placed at the slot's end lands after the last of them
 const getSlotLength = (document: SurveyDocument, slotPointer: string) => {
   const elements = readJsonValue(document, parseJsonPointer(slotPointer));
@@ -68,23 +50,11 @@ const addUniqueName = (base: string, names: Set<string>) => {
   names.add(name);
   return name;
 };
-// The node a new element of a type is, under its own id and name, with each of its slots an empty list. The node schema
-// Parses it, so a node that schema refuses is no node at all rather than one a type assertion has let through
-const createSurveyNode = (type: SurveyNodeType, id: string, name: string): SurveyNode | undefined => {
-  const { createDefaultProps, slots } = surveyNodeTypeDefinitionMap[type];
-  const props = {
-    ...createDefaultProps(),
-    ...Object.fromEntries(Object.keys(slots).map((slot): [string, never[]] => [slot, []])),
-    id,
-  };
-  const result = surveyNodeSchema.safeParse({ props: "name" in props ? { ...props, name } : props, type });
-  return result.success ? result.data : undefined;
-};
 // Where a new element goes: straight after the selected element in its own slot. With nothing selected it goes to the end of
 // The first page's children when they take its type, and otherwise to the end of the survey's pages, which is where a page goes
 const getInsertTarget = (document: SurveyDocument, selectedPointer: string, type: SurveyNodeType) => {
   if (selectedPointer !== "") {
-    const location = getNodeLocation(selectedPointer);
+    const location = getSurveyNodeLocation(selectedPointer);
     return location && { index: location.index + 1, slotPointer: location.slotPointer };
   }
 
@@ -130,22 +100,29 @@ export const useSurveyCreatorCommands = () => {
   const select = (nodePointer: string) => {
     selectedPointer.value = nodePointer;
   };
-  const insertNode = (type: SurveyNodeType) => {
-    const target = getInsertTarget(document.value, selectedPointer.value, type);
-    const node =
-      target && createSurveyNode(type, crypto.randomUUID(), addUniqueName("question", getElementNames(document.value)));
-    if (target === undefined || node === undefined) return false;
+  // A kind inserted at an index of a slot, as one history entry, and selected. The core refuses a slot that takes no node of its kind
+  const insertNodeAt = (type: SurveyNodeType, slotPointer: string, index: number) => {
+    const node = createSurveyNode(
+      type,
+      crypto.randomUUID(),
+      addUniqueName("question", getElementNames(document.value)),
+    );
+    if (node === undefined) return false;
 
     const isInserted = applyEdit(
-      insertBlockNode(document.value, surveyRegistry, surveyNodeChildren, target.slotPointer, target.index, node),
+      insertBlockNode(document.value, surveyRegistry, surveyNodeChildren, slotPointer, index, node),
       "Insert element",
     );
-    if (isInserted) selectedPointer.value = `${target.slotPointer}/${target.index}`;
+    if (isInserted) selectedPointer.value = `${slotPointer}/${index}`;
     return isInserted;
+  };
+  const insertNode = (type: SurveyNodeType) => {
+    const target = getInsertTarget(document.value, selectedPointer.value, type);
+    return target !== undefined && insertNodeAt(type, target.slotPointer, target.index);
   };
   // The operations that move a node to the index one away from it in its own slot, or none when no sibling sits there
   const getSiblingMoveOperations = (nodePointer: string, offset: number) => {
-    const location = getNodeLocation(nodePointer);
+    const location = getSurveyNodeLocation(nodePointer);
     if (location === undefined) return [];
 
     const siblingIndex = location.index + offset;
@@ -193,7 +170,7 @@ export const useSurveyCreatorCommands = () => {
     });
   };
   const duplicateNode = (nodePointer: string) => {
-    const location = getNodeLocation(nodePointer);
+    const location = getSurveyNodeLocation(nodePointer);
     if (location === undefined) return false;
 
     const copyPointer = `${location.slotPointer}/${location.index + 1}`;
@@ -246,6 +223,7 @@ export const useSurveyCreatorCommands = () => {
     applyEdit,
     duplicateNode,
     insertNode,
+    insertNodeAt,
     moveNodeDown,
     moveNodeIntoPrevious,
     moveNodeOut,

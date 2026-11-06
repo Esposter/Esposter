@@ -17,8 +17,6 @@ export const WHITEBOARD_SHAPE_FILL = "#ffffff";
 export const WHITEBOARD_STICKY_NOTE_FILL = "#fde68a";
 // The text a placed text box starts with, so it draws and can be double clicked to edit
 export const WHITEBOARD_TEXT_BOX_TEXT = "Text";
-// The room a palette preview leaves around its element, in document units
-export const WHITEBOARD_PALETTE_PREVIEW_PADDING = 8;
 
 export const WHITEBOARD_PALETTE_GROUPS: WhiteboardPaletteGroup[] = [
   {

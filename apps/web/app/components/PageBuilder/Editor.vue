@@ -64,12 +64,12 @@ const { handleCanvasKeydown, handleEnterKeydown } = usePageBuilderKeyCommands(
 );
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
-const { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag } = usePageBuilderDrag(
-  kind,
-  getPageDocument,
-  () => resourceId,
-  announce,
-);
+const { dragPoint, draggedType, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag } =
+  usePageBuilderDrag(kind, getPageDocument, () => resourceId, announce);
+// A refusal is announced as it begins, not on every move, since the ghost showing it follows the pointer
+watch(refusal, (message) => {
+  if (message) announce(message);
+});
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
@@ -123,6 +123,7 @@ watch(
         ref="canvas"
         v-model:is-delete-open="isDeleteOpen"
         :announce
+        :dragged-type="draggedType"
         :drop-target
         :kind
         :resource-id
@@ -156,6 +157,13 @@ watch(
         <PageBuilderCheck v-if="panel === CHECK_PANEL" :resource-id />
       </UiTabs>
     </div>
+    <!-- The ghost names the block, or says why the block is refused over the frame where no slot takes it -->
+    <UiDragGhost
+      v-if="dragPoint && draggedType"
+      :icon="kind.icons[draggedType]"
+      :point="dragPoint"
+      :title="refusal || kind.titles[draggedType] || ''"
+    />
     <div role="status" aria-live="polite" sr-only>{{ announcement }}</div>
   </div>
 </template>

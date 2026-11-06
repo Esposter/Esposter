@@ -3,15 +3,10 @@ import type { History } from "@esposter/shared";
 import type { SurveyDocument } from "headless-survey-engine";
 
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
+import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
 import { createHistory } from "@esposter/shared";
-import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "headless-block-editor";
 import { createSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
-
-// The pointer of the node an id names, read off the document's rows in layer order, or nothing when no node holds the id
-const getNodePointerById = (document: SurveyDocument, id: string) =>
-  getBlockLayerRows(document, surveyNodeChildren).find(
-    ({ nodePointer }) => getBlockNode(document, nodePointer, surveyNodeChildren)?.props.id === id,
-  )?.nodePointer ?? "";
 
 // The creator's document, its selection and its undo history. The selection holds the selected node's id rather than its
 // Pointer, so an edit or an undo that moves the node keeps it selected, and the pointer is read off the document as it stands
@@ -21,7 +16,7 @@ export const useSurveyCreatorStore = defineStore("survey/creator", () => {
   const isPreview = ref(false);
   const selectedId = ref("");
   const selectedPointer = computed({
-    get: () => getNodePointerById(document.value, selectedId.value),
+    get: () => getSurveyNodePointerById(document.value, selectedId.value),
     set: (pointer: string) => {
       selectedId.value = getBlockNode(document.value, pointer, surveyNodeChildren)?.props.id ?? "";
     },

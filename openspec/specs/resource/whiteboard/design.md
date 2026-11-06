@@ -129,7 +129,7 @@ A commit the document check refuses leaves the open document unchanged, and the 
 | `apps/web/app/components/Resource/Whiteboard/ElementArrow.vue`                        | draws an arrow along its route, with an arrowhead at each end that has one                                  |
 | `apps/web/app/components/Resource/Whiteboard/ElementShape.vue`                        | draws a shape's sketched outline and its label                                                              |
 | `apps/web/app/components/Resource/Whiteboard/Label.vue`                               | draws an element's wrapped text from the layout the export uses                                             |
-| `apps/web/app/components/Resource/Whiteboard/EditorPaletteItem.vue`                   | a palette item, placed by a pointer drag or a click                                                         |
+| `apps/web/app/composables/whiteboard/useWhiteboardPaletteDrag.ts`                     | a palette item's pointer drag, with a ghost at the pointer                                                  |
 | `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrow.vue`               | an arrow's route, the arrowhead at each end, and the detach of each bound end                               |
 | `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`               | the selected element's stacking: one step forward or back, or to the front or the back                      |
 | `packages/headless-block-editor/src/services/changePositionedElementZOrder.ts`        | the core's z-order move, which the stacking controls commit as one edit                                     |

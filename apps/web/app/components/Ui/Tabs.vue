@@ -62,7 +62,7 @@ const { isFilling, items, label, variant } = defineProps<Props>();
         :key="value"
         :value
         :class="{ 'of-y-auto': isFilling }"
-        pt-4
+        pt-2
         min-h-0
         min-w-0
       >

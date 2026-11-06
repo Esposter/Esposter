@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Item } from "@/models/shared/Item";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { SurveyDocument } from "headless-survey-engine";
@@ -6,7 +7,11 @@ import type { SurveyDocument } from "headless-survey-engine";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiToken } from "@/models/ui/UiToken";
-import { SURVEY_DESIGN_MODE, SURVEY_PREVIEW_MODE } from "@/services/resource/survey/constants";
+import {
+  SURVEY_DESIGN_MODE,
+  SURVEY_PREVIEW_MODE,
+  SURVEY_TOOLBAR_UNFOLDED_WIDTH,
+} from "@/services/resource/survey/constants";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { getResultAsync, JsonPatchOperationType, toJsonPointer } from "@esposter/shared";
@@ -74,32 +79,59 @@ const importSurvey = () =>
     );
   });
 const clearSurvey = () => applyEdit(getReplaceOperations(createSurveyDocument()), "Clear survey");
+// The toolbar's own width, since a side pane's resize narrows it on a wide screen where the viewport is not. It is zero until
+// it is measured, so the row starts folded
+const toolbar = useTemplateRef("toolbar");
+const { width } = useElementSize(toolbar);
+const isFolded = computed(() => width.value < SURVEY_TOOLBAR_UNFOLDED_WIDTH);
+// The four actions the row drops when folded, titled as their buttons are and run by the same handlers
+const foldedItems = computed<Item[]>(() => [
+  {
+    meaning: UiIconMeaning.Create,
+    onClick: () => {
+      insertNode(SurveyNodeType.Page);
+    },
+    title: "Add page",
+  },
+  { meaning: UiIconMeaning.Upload, onClick: () => importSurvey(), title: "Import" },
+  { meaning: UiIconMeaning.Download, onClick: () => exportSurvey(), title: "Export" },
+  {
+    meaning: UiIconMeaning.Clear,
+    onClick: () => {
+      isClearOpen.value = true;
+    },
+    title: "Clear",
+  },
+]);
 </script>
 
 <template>
   <div flex flex-col gap-2>
-    <div flex gap-1 items-center>
+    <div ref="toolbar" flex gap-1 items-center>
       <UiIconButton :disabled="!isUndoable" label="Undo" :meaning="UiIconMeaning.Undo" @click="undo()" />
       <UiIconButton :disabled="!isRedoable" label="Redo" :meaning="UiIconMeaning.Redo" @click="redo()" />
-      <UiButton :variant="UiButtonVariant.Quiet" @click="insertNode(SurveyNodeType.Page)">Add page</UiButton>
-      <UiIconButton
-        label="Import"
-        :meaning="UiIconMeaning.Upload"
-        :variant="UiButtonVariant.Quiet"
-        @click="importSurvey()"
-      />
-      <UiIconButton
-        label="Export"
-        :meaning="UiIconMeaning.Download"
-        :variant="UiButtonVariant.Quiet"
-        @click="exportSurvey()"
-      />
-      <UiIconButton
-        label="Clear"
-        :meaning="UiIconMeaning.Clear"
-        :variant="UiButtonVariant.Quiet"
-        @click="isClearOpen = true"
-      />
+      <template v-if="!isFolded">
+        <UiButton :variant="UiButtonVariant.Quiet" @click="insertNode(SurveyNodeType.Page)">Add page</UiButton>
+        <UiIconButton
+          label="Import"
+          :meaning="UiIconMeaning.Upload"
+          :variant="UiButtonVariant.Quiet"
+          @click="importSurvey()"
+        />
+        <UiIconButton
+          label="Export"
+          :meaning="UiIconMeaning.Download"
+          :variant="UiButtonVariant.Quiet"
+          @click="exportSurvey()"
+        />
+        <UiIconButton
+          label="Clear"
+          :meaning="UiIconMeaning.Clear"
+          :variant="UiButtonVariant.Quiet"
+          @click="isClearOpen = true"
+        />
+      </template>
+      <UiOverflowMenu v-else :items="foldedItems" label="Survey actions" />
       <UiToggleGroup v-model="mode" ml-a label="Design or preview" :items="modeItems" />
     </div>
     <UiAlert v-if="importFault" :status="UiToken.Error">{{ importFault }}</UiAlert>

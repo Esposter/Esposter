@@ -69,7 +69,7 @@ const setRootProps = (props: SurveyRootProps) => {
 </script>
 
 <template>
-  <div flex flex-col gap-4>
+  <div flex flex-col gap-2>
     <span text-sm text-muted>{{ selectedNode ? nodeDefinition?.label : "Survey" }}</span>
     <template v-if="selectedNode">
       <UiSchemaForm

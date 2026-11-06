@@ -12,21 +12,24 @@ import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
+import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { getBlockNode } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
   type: WebpageNodeType.Text,
 });
 
-const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
+const pointerAt = (type: string, x: number, y: number, pointerType = "") =>
+  new PointerEvent(type, { clientX: x, clientY: y, pointerType });
 
 describe(usePageBuilderDrag, () => {
   const TEXT_ONE = TEST_ID;
@@ -293,5 +296,76 @@ describe(usePageBuilderDrag, () => {
 
     expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("a release on a refusing slot inserts nothing", async () => {
+    expect.hasAssertions();
+    const { announce, drag, pageBuilderDocumentStore } = await setup(ROOT_DOCUMENT);
+
+    drag.vm.startPaletteDrag(WebpageNodeType.Column, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+
+    expect(drag.vm.refusal).toBe(getDropRefusal(WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Column]));
+
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+    // The release's click, which the drag swallows, so the swallow is consumed here rather than left for a later test
+    document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+    expect(drag.vm.refusal).toBe("");
+  });
+
+  test("a finger that moves before it rests does not start a drag", async () => {
+    expect.hasAssertions();
+    const { drag } = await setup(ROOT_DOCUMENT);
+    vi.useFakeTimers();
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 600, 30, "touch"), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 700, 30));
+    vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
+
+    expect(drag.vm.isDragging).toBe(false);
+  });
+
+  test("a finger that rests starts its drag, which is drawn where it rests", async () => {
+    expect.hasAssertions();
+    const { drag } = await setup(ROOT_DOCUMENT);
+    vi.useFakeTimers();
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 600, 30, "touch"), () => createGeometry());
+    vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
+
+    expect(drag.vm.isDragging).toBe(true);
+    expect(drag.vm.draggedType).toBe(WebpageNodeType.Text);
+    expect(drag.vm.dragPoint).toStrictEqual({ x: 600, y: 30 });
+    window.dispatchEvent(pointerAt("pointerup", 600, 30, "touch"));
+  });
+
+  test("a finger that rests and lifts without moving still clicks its control", async () => {
+    expect.hasAssertions();
+    const { drag } = await setup(ROOT_DOCUMENT);
+    vi.useFakeTimers();
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+    const onClick = vi.fn<(event: MouseEvent) => void>();
+    document.body.addEventListener("click", onClick);
+    onTestFinished(() => {
+      document.body.removeEventListener("click", onClick);
+    });
+
+    drag.vm.startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 600, 30, "touch"), () => createGeometry());
+    vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
+    window.dispatchEvent(pointerAt("pointerup", 600, 30, "touch"));
+    document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+    expect(onClick).toHaveBeenCalledOnce();
   });
 });
