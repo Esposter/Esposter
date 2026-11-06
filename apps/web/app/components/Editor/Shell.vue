@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { EditorType } from "@/models/editor/EditorType";
 import type { Context, Layout } from "vue-editor-layout-headless";
 
+import { useEditorReaderStateStore } from "@/store/editor/readerState";
 import { takeOne } from "@esposter/shared";
 import {
-  getDefaultReaderState,
+  parseReaderState,
   RegionEdge,
   RegionPresentation,
   SizeClass,
@@ -14,6 +16,8 @@ import {
 interface Props {
   // What the reader is doing, which decides what each panel shows
   context: Context;
+  // The editor's type, which keys the reader state the shell keeps for it
+  editorType: EditorType;
   layout: Layout;
   // The name of each side region, which its landmark or its sheet is announced by, keyed by region id
   regionNameMap: Record<string, string>;
@@ -22,7 +26,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { context, layout, regionNameMap, registry } = defineProps<Props>();
+const { context, editorType, layout, regionNameMap, registry } = defineProps<Props>();
 const { isMobile, xs: isCompact } = useUiDisplay();
 // The page's drawers are sheets below the mobile breakpoint, so that is the medium class, and a window below the first
 // Breakpoint is the compact one
@@ -31,12 +35,19 @@ const sizeClass = computed(() => {
   else if (isMobile.value) return SizeClass.Medium;
   else return SizeClass.Expanded;
 });
-const { resizeRegion, resolvedLayout, toggleRegion } = useEditorLayout(
+const editorReaderStateStore = useEditorReaderStateStore();
+const { readerStateMap } = storeToRefs(editorReaderStateStore);
+const { setReaderState } = editorReaderStateStore;
+const { readerState, resizeRegion, resolvedLayout, toggleRegion } = useEditorLayout(
   () => layout,
   () => context,
   sizeClass,
-  getDefaultReaderState(),
+  parseReaderState(layout, readerStateMap.value[editorType]),
 );
+// Every change to the reader's state is kept, so the next open of this editor type starts from it
+watch(readerState, (newReaderState) => {
+  setReaderState(editorType, newReaderState);
+});
 // A closed docked or overlay region draws nothing, while a sheet stays mounted closed so the reader can open it
 const presentationRegionMap = computed(() =>
   Map.groupBy(

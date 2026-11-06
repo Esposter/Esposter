@@ -1,9 +1,11 @@
 // @vitest-environment happy-dom
 import EditorShell from "@/components/Editor/Shell.vue";
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import { EditorType } from "@/models/editor/EditorType";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/ui/constants";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { Context, Layout } from "vue-editor-layout-headless";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
@@ -44,13 +46,21 @@ describe("editorShell", () => {
   const registry: EditorRegistry = { [contentKey]: () => h("p") };
   const mountShell = () =>
     mount(EditorShell, {
-      props: { context, layout, registry, regionNameMap: { [regionId]: regionName } },
+      props: {
+        context,
+        editorType: EditorType.Whiteboard,
+        layout,
+        registry,
+        regionNameMap: { [regionId]: regionName },
+      },
       slots: { default: "<span></span>" },
     });
 
   beforeEach(() => {
     display.isCompact = false;
     display.isMobile = false;
+    localStorage.clear();
+    setActivePinia(createPinia());
   });
 
   test("a region is drawn as the layout presents it", () => {
@@ -90,5 +100,19 @@ describe("editorShell", () => {
     await separator.trigger("keydown", { key: "ArrowLeft" });
 
     expect(component.get("aside").element.style.width).toBe(`${maximumSize}px`);
+  });
+
+  test("a stored size is restored on the next open", async () => {
+    expect.hasAssertions();
+
+    const component = mountShell();
+    await component.get('[role="separator"]').trigger("keydown", { key: "ArrowLeft" });
+    await flushPromises();
+    component.unmount();
+
+    setActivePinia(createPinia());
+    const reopenedComponent = mountShell();
+
+    expect(reopenedComponent.get("aside").element.style.width).toBe(`${defaultSize + RESIZE_HANDLE_KEYBOARD_STEP}px`);
   });
 });

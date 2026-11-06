@@ -9,6 +9,8 @@ export const LocalStorageKey = {
   // That Map is the storage, rather than a key per composer the store has to enumerate to find
   Drafts: "drafts",
   DungeonsStore: "dungeons-store",
+  // Every editor type's reader state in one record, so an editor reopens with the sizes and open regions the reader left
+  EditorReaderStates: "editor-reader-states",
   EmojiSkinTone: "emoji-skin-tone",
   // The developer console's lines and their results, kept with the browser so a reload still shows them
   GenshinDevConsoleHistory: "genshin-dev-console-history",
