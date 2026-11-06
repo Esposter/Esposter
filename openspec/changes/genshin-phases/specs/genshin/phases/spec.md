@@ -56,15 +56,15 @@ The fleet SHALL offer a machine the first unit of the lowest phase that the mach
 - **WHEN** the machine asks for its next unit
 - **THEN** it is offered the phase 3 unit
 
-### Requirement: A unit is done by the check of its kind
+### Requirement: A unit is done when its own source drains, and its kind's check gates its phase
 
-A unit SHALL count as done only when the check its kind defines passes, and a unit whose kind has no command to check it SHALL be reported as not measurable and never as passing.
+The progress report's done column SHALL count a unit once its own source has nothing left open: a compute page with no queue item and no waiting item, a change with no open task, or a roadmap item or quest ticked. Each kind's check SHALL be reported apart from that column as met, not met or not measurable, and only those checks SHALL gate a phase. A check that no command can read SHALL be reported as not measurable and never as met.
 
 #### Scenario: A screen is done when every id is under its bar
 
 - **GIVEN** a screen with three parity ids, two under their bars and one over
 - **WHEN** the screen's check is read
-- **THEN** the screen is not done
+- **THEN** the check is not met and names the id over its bar, so the screen does not gate its phase
 
 #### Scenario: A check with no command is not measurable
 
