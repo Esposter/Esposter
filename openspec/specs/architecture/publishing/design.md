@@ -67,5 +67,3 @@ One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewC
 | `apps/web/app/pages/view/[type]/[id].vue`                                  | public view route                                |
 | `apps/web/app/composables/resource/useReadPublishedResourceContent.ts`     | shared view read — fetch-or-404 plus the og meta |
 | `apps/web/app/services/resource/ViewComponentMap.ts`                       | `PublishableResourceType` → view page component  |
-
-</content>

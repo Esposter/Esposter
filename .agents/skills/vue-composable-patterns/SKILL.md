@@ -38,7 +38,7 @@ single operation resolves is a bug wearing rigour.
 
 - `references/async-sequencing.md` — when a composable issues a read or a write that can overlap another, or persists state that may be unchanged since the last save.
 - `references/browser-observation.md` — when a composable reads scroll position or online state, or must not run during SSR.
-- `references/form-dialogs.md` — when building a dialog that edits an entity: a selector that switches which schema renders, a reset on type change, a schema form's rule that needs live component state, or the dialog's initial data load.
+- `references/form-dialogs.md` — when building a dialog that edits an entity: a reset on type change, a schema form's rule that needs live component state, or the dialog's initial data load.
 - `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions.
 - `references/resource-cleanup.md` — when setting up an interval, listener, observer or pan/zoom surface, or deciding when to tear one down.
 - `references/earning-a-composable.md` — when a composable is about to be written, or reviewed for whether it should exist and what it returns.

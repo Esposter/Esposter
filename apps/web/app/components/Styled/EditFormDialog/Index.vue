@@ -22,7 +22,7 @@ interface Props<T> {
   title: string;
 }
 
-defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode; "prepend-form"?: () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
 const { editedItem, isDirty, isSavable, itemType, name, originalItem, remove, save, schema, title } =
@@ -96,7 +96,6 @@ watch(isOpen, (newIsOpen) => {
     <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
       <div v-if="isOpen" contents>
         <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-          <slot name="prepend-form" />
           <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="answer(save)">
             <slot />
           </UiForm>

@@ -1,6 +1,6 @@
 # Wiring an entity-editing dialog
 
-Read when a dialog edits an entity: a selector that switches which schema renders, a reset when the type changes, a validation rule that needs live component state inside a schema form, or the dialog's initial data load. Which validation layer to pick at all is in `SKILL.md`.
+Read when a dialog edits an entity: a reset when the type changes, a validation rule that needs live component state inside a schema form, or the dialog's initial data load. Which validation layer to pick at all is in `SKILL.md`.
 
 ## A rule on live state is a refinement built where the state is
 
@@ -9,26 +9,6 @@ sheet's other columns — is a `superRefine` on the form schema, built in the co
 share, with the issue's `path` naming the field. The dialog hands the refined schema to the form's
 `validation-schema` and to its error icon. Reference wiring: `useColumnForm`. The schema-form rules are in
 the `ui-library` skill, `references/schema-forms.md`.
-
-## Schema-controlling selectors go in `#prepend-form`
-
-When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `UiForm`, so the selector isn't part of the form it reshapes. Canonical: `apps/web/app/components/Dashboard/Visual/Preview/EditFormDialog.vue`.
-
-```vue
-<!-- WRONG: type selector mixed into default slot with the schema form -->
-<StyledEditFormDialog ...>
-  <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
-  <UiSchemaForm v-model="editedFoo" :schema="jsonSchema" />
-</StyledEditFormDialog>
-
-<!-- RIGHT: type selector in #prepend-form -->
-<StyledEditFormDialog ...>
-  <template #prepend-form>
-    <UiSelect v-model="fooType" :items="fooTypeItems" label="Type" />
-  </template>
-  <UiSchemaForm v-model="editedFoo" :schema="jsonSchema" />
-</StyledEditFormDialog>
-```
 
 ## Type-driven state reset: watch + create map
 
