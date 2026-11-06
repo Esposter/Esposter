@@ -21,6 +21,7 @@
 ## 4. The roadmap
 
 - [ ] 4.1 [phase 2] Add an `Asset:` line to the roadmap, under the item that holds its screen, for each picture or mark no line names yet: the duel board's frame ornament, icons and coins, the Forge's recipe item icons and its support portrait, the Gcg plate portraits, the quest's series-row picture, and the expedition's pin and book emblem. Verify: `pnpm -C scripts exec vitest run src/workspace/roadmapPhases.test.ts` passes, and each new line names its screen and its source in the roadmap's own format; a test in that file named after the scenario 'A stand-in has a roadmap line', written first and seen failing, passes over the new lines.
+- [ ] 4.2 [phase 2] Hold the no-picture rule: a screen whose layout places a character portrait draws a stand-in in its place, and the deployed files hold no image of that portrait. Verify: a test named after the scenario 'A screen with a portrait holds a stand-in', written first and seen failing, in the screen's browser test, beside a check over the files the app serves that lists no portrait, card face, banner or hall picture of the game.
 
 ## 5. The game's face
 
