@@ -22,6 +22,7 @@ import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { hitPartyMember } from "#src/services/kit/hitPartyMember";
@@ -221,7 +222,15 @@ export const useWorldCombat = ({
     const combatant = activeCombatant.value;
     if (!combatant) return;
     if (taunt) {
-      damageKitTaunt(kitContext.outbox, taunt, computeEnemyStrikeDamage(enemyTables, enemy, combatant));
+      damageKitTaunt(
+        kitContext.outbox,
+        taunt,
+        computeEnemyStrikeDamage(
+          enemyTables,
+          enemy,
+          getBuffedCombatant(combatant, kitContext.kitEffectState.effects, party, kitContext.characterIdCombatantMap),
+        ),
+      );
       return;
     }
 

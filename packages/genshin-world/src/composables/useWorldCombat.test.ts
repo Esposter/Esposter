@@ -1,3 +1,5 @@
+import type { KitTaunt } from "#src/models/kit/KitTaunt";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { Attribute } from "#src/models/character/Attribute";
@@ -6,8 +8,11 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER, REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
@@ -143,5 +148,31 @@ describe(useWorldCombat, () => {
 
     expect(onPartyRevived).toHaveBeenCalledExactlyOnceWith();
     expect(getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare).toBe(REVIVE_HEALTH_SHARE);
+  });
+
+  test("an enemy's strike on a live taunt is priced with the buffs on the active character", () => {
+    expect.hasAssertions();
+    const TAUNT_HEALTH = 1_000_000;
+    const TAUNT_SECONDS = 5;
+    const DAMAGE_REDUCTION = 0.1;
+    const { kitContext, strikeParty } = createCombat();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    castKitTaunt(kitContext.kitEffectState, kitContext.body, kitContext.activeCombatant, {
+      health: TAUNT_HEALTH,
+      secondsRemaining: TAUNT_SECONDS,
+    });
+    const taunt = kitContext.kitEffectState.effects.find((effect): effect is KitTaunt => effect.kind === "taunt");
+    assert.exists(taunt);
+    strikeParty(enemy, taunt);
+    const unbuffedLoss = TAUNT_HEALTH - taunt.health;
+    taunt.health = TAUNT_HEALTH;
+    buffKitMember(kitContext.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: DAMAGE_REDUCTION,
+      attribute: Attribute.DamageReduction,
+      secondsRemaining: TAUNT_SECONDS,
+    });
+    strikeParty(enemy, taunt);
+
+    expect(TAUNT_HEALTH - taunt.health).toBeLessThan(unbuffedLoss);
   });
 });
