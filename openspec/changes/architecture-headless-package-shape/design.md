@@ -101,6 +101,12 @@ A session holds one document and one history, so a store that edits one document
 | `apps/web/app/store/survey/creator.ts`                                    | the survey creator's store, one of the three with the shared shape                     |
 | `apps/web/app/store/pageBuilder/history.ts`                               | the page builder's keyed history, the second                                           |
 | `apps/web/app/store/resource/whiteboard/index.ts`                         | the whiteboard's store, the third                                                      |
+| `scripts/src/services/workspace/getHeadlessPackageFailures.ts`            | the shape check: name, Vue peer, one entry and no Pinia import                         |
+| `scripts/src/services/workspace/getHeadlessPackageFailures.test.ts`       | the check's five scenarios over fixture manifests and sources                          |
+| `scripts/src/services/workspace/checkIsHeadlessPackage.ts`                | which packages the shape check applies to: a headless name or keyword                  |
+| `scripts/src/services/workspace/checkIsHeadlessPackage.test.ts`           | the three cases of which packages count as headless                                    |
+| `scripts/src/services/workspace/constants.ts`                             | the headless keyword, the name rule and the Pinia import rule                          |
+| `scripts/src/models/workspace/PackageShapeManifest.ts`                    | the manifest fields the check reads beyond PackageManifest                             |
 
 ## Sources
 
