@@ -54,18 +54,25 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const targetVisuals = getNewVisualList(type, parentId);
     if (targetVisuals) targetVisuals.push(createNewVisual(type, cell));
   };
-  // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
-  const selectedVisualId = ref<Visual["id"]>("");
   // Counts every write to the selection, so a refused delete can tell a selection that was touched and then set back to
-  // The value the delete left from one that was never touched. `flush: "sync"` so the count is current the moment it changes
+  // The value the delete left from one that was never touched. Counted in the setter, since a ref does not trigger on a
+  // Write of the value it already holds, and a press on the empty canvas is such a write
   let selectionWriteCount = 0;
-  watch(
-    selectedVisualId,
-    () => {
-      selectionWriteCount++;
-    },
-    { flush: "sync" },
-  );
+  // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
+  const selectedVisualId = customRef<Visual["id"]>((track, trigger) => {
+    let value: Visual["id"] = "";
+    return {
+      get() {
+        track();
+        return value;
+      },
+      set(newValue) {
+        selectionWriteCount++;
+        value = newValue;
+        trigger();
+      },
+    };
+  });
   const clearSelection = () => {
     selectedVisualId.value = "";
   };
