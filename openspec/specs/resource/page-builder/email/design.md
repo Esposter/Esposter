@@ -32,7 +32,7 @@ sequenceDiagram
   P->>P: edit settles past the autosave debounce
   P->>S: email.compile mutation, document in the body
   S->>C: compile the document
-  C-->>S: html, or the validator's message
+  C-->>S: html, or the refusal with the validator's messages
   S-->>P: result
   P->>P: show html, or the alert above the last good html
 ```
