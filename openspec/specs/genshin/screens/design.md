@@ -27,6 +27,12 @@ stateDiagram-v2
 
 The rule is read only while the world is shown (`packages/genshin-world/src/composables/useWorldFrame.ts`, which calls it only while the world is not paused), so nothing opens under the opening that covers it.
 
+## One way in for each screen kind
+
+`ScreenKindOpenerMap` gives every screen kind the one way the player opens it (`packages/genshin-world/src/services/screen/ScreenKindOpenerMap.ts`). The way is one of the four `ScreenKindOpener` values (`packages/genshin-world/src/models/screen/ScreenKindOpener.ts`): the Paimon menu, when its contents or its side bar list the kind; a shortcut, when an input action or a wheel entry opens it and the menu does not; an interaction, when the world opens it from an NPC, a world object, a statue, a domain's entrance or the party falling outside a domain; or the world itself. A kind that both a menu entry and a shortcut open is the menu's. The map is typed over every kind, so a kind added to `ScreenKind` cannot go without its way in.
+
+`findUnreachableScreenKinds` (`packages/genshin-world/src/services/screen/findUnreachableScreenKinds.ts`) is the check that each claimed way holds. It reads the menu's contents and side bar, the input actions' map and the wheel's entries, and names each kind whose Paimon menu or shortcut claim none of them supports. An interaction or the world claims nothing to read, so it always holds. The test runs the check over the real tables, and the one kind it names today is recorded below.
+
 ## What a screen does to the world
 
 `ScreenBehaviourMap` answers for each kind (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`):
@@ -60,20 +66,23 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## Key files
 
-| File                                                                     | Its role                                                                                                                                                      |
-| :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/screen/ScreenKind.ts`                 | the world and every screen opened over it                                                                                                                     |
-| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`       | what each screen does to the world under it                                                                                                                   |
-| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts` | the screen each shortcut opens                                                                                                                                |
-| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`        | the rule moving between screens on a frame's pressed actions                                                                                                  |
-| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts` | each screen's title in the game's words                                                                                                                       |
-| `packages/genshin-world/src/components/World/Session/Index.vue`          | keeps what is open, holds the world, lets the pointer go, and draws the overlays itself, the HUD, menu, game-over, shop, statue and domain screens among them |
-| `packages/genshin-world/src/composables/useWorldFrame.ts`                | reads the input once a frame and picks the screen it moves to                                                                                                 |
-| `packages/genshin-world/src/components/Menu/Screen/Index.vue`            | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                                                                                |
-| `packages/genshin-world/src/components/Menu/Settings/Index.vue`          | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them                                                               |
-| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`     | the settings' tabs, each named in the game's words                                                                                                            |
-| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`      | one settings row: its label, the slider or choice it draws, and its options list when open                                                                    |
-| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`       | an unbuilt screen's title and way back                                                                                                                        |
+| File                                                                       | Its role                                                                                                                                                      |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/models/screen/ScreenKind.ts`                   | the world and every screen opened over it                                                                                                                     |
+| `packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`         | what each screen does to the world under it                                                                                                                   |
+| `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts`   | the screen each shortcut opens                                                                                                                                |
+| `packages/genshin-world/src/models/screen/ScreenKindOpener.ts`             | the four ways a screen kind is opened                                                                                                                         |
+| `packages/genshin-world/src/services/screen/ScreenKindOpenerMap.ts`        | the one way in for each screen kind                                                                                                                           |
+| `packages/genshin-world/src/services/screen/findUnreachableScreenKinds.ts` | the check that each claimed way in holds against the menus, the input actions and the wheel                                                                   |
+| `packages/genshin-world/src/services/screen/getNextScreenKind.ts`          | the rule moving between screens on a frame's pressed actions                                                                                                  |
+| `packages/genshin-world/src/services/screen/ScreenKindGameTextKeyMap.ts`   | each screen's title in the game's words                                                                                                                       |
+| `packages/genshin-world/src/components/World/Session/Index.vue`            | keeps what is open, holds the world, lets the pointer go, and draws the overlays itself, the HUD, menu, game-over, shop, statue and domain screens among them |
+| `packages/genshin-world/src/composables/useWorldFrame.ts`                  | reads the input once a frame and picks the screen it moves to                                                                                                 |
+| `packages/genshin-world/src/components/Menu/Screen/Index.vue`              | draws the open screen: the Paimon menu, a built screen's slot or a placeholder                                                                                |
+| `packages/genshin-world/src/components/Menu/Settings/Index.vue`            | the settings: their tabs and the Graphics and Audio tabs' rows, held until the world opens them                                                               |
+| `packages/genshin-world/src/components/Menu/Settings/Tabs/Index.vue`       | the settings' tabs, each named in the game's words                                                                                                            |
+| `packages/genshin-world/src/components/Menu/Settings/Row/Index.vue`        | one settings row: its label, the slider or choice it draws, and its options list when open                                                                    |
+| `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`         | an unbuilt screen's title and way back                                                                                                                        |
 
 ## Sources
 
@@ -84,3 +93,4 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 - [ ] **The menus pause the world's simulation while their music and particles run on** — no source yet: the "Time" wiki page (cached as "Page_Time.json", section "Pausing Time") pauses the in-game clock under the Paimon Menu and its screens in single player, except Photo Mode, while gadget cooldowns and bounty clocks keep ticking; it names no music or particle, so a recording of a menu with its music and particles would settle it.
 - [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: a recording of Windrise's clock under each screen; `{data-root}/genshin-parity/captures/` lists no Windrise recording.
+- [ ] **The Training Guide has no opener in the code** — no code opens its screen, and its claimed opener is the Paimon menu, from the wiki's list of the menu's contents (`{data-root}/cache/genshin-wiki/Page_Paimon_Menu.json`, line 47), which the menu leaves out as the [Paimon menu](../paimon-menu/design.md) page's open item records; the reachability test names it until the menu or the screen is settled.

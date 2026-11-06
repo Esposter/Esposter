@@ -41,3 +41,5 @@ export enum ScreenKind {
   World = "World",
   Worship = "Worship",
 }
+// Every screen kind, in the order the enum declares them
+export const ScreenKinds: readonly ScreenKind[] = Object.values(ScreenKind);
