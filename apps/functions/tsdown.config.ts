@@ -4,6 +4,10 @@ import { getPackagePatterns, getTsdownConfigurationNode, readPackageManifest } f
 import { mergeConfig } from "tsdown";
 
 const HOST_PROVIDED_PACKAGES = ["@azure/functions"];
+// Optional peers that a vendored dependency loads with a guarded dynamic import, for a feature this app never runs:
+// Web-push's proxy agent loads kerberos only to answer a proxy that asks for Negotiate authentication, and throws its own
+// Error when the package is absent. They are not installed, so the chunk may import them without bundling them
+const UNREACHABLE_OPTIONAL_PACKAGES = ["kerberos"];
 const { dependencies } = readPackageManifest();
 // A deploy artifact rather than an installed package: the Functions host runs `dist/index.js` and installs
 // Nothing, so every dependency is vendored except the host's own runtime API. Deriving the list from the
@@ -15,7 +19,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
       Object.keys(dependencies ?? {}).filter((name) => !HOST_PROVIDED_PACKAGES.includes(name)),
     ),
     neverBundle: getPackagePatterns(HOST_PROVIDED_PACKAGES),
-    onlyImport: getPackagePatterns(HOST_PROVIDED_PACKAGES),
+    onlyImport: getPackagePatterns([...HOST_PROVIDED_PACKAGES, ...UNREACHABLE_OPTIONAL_PACKAGES]),
   },
   // The v4 model loads an app by reading "main" rather than resolving it, and generation removes any field it
   // Does not write. `legacy` hands the field to the build instead: with no CJS output the ESM chunk is written

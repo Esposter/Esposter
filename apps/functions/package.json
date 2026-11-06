@@ -113,7 +113,10 @@
     "@azure/web-pubsub": "1.2.0",
     "@nodable/entities": "3.1.0",
     "@typespec/ts-http-runtime": "0.3.9",
-    "agent-base": "7.1.4",
+    "agent-base": [
+      "7.1.4",
+      "9.0.0"
+    ],
     "anynum": "1.0.1",
     "apache-arrow": "21.2.0",
     "asn1.js": "5.4.1",
@@ -132,9 +135,12 @@
     "fflate": "0.8.3",
     "flatbuffers": "25.9.23",
     "has-flag": "4.0.0",
-    "http_ece": "1.2.0",
+    "http_ece": "1.2.1",
     "http-proxy-agent": "7.0.2",
-    "https-proxy-agent": "7.0.6",
+    "https-proxy-agent": [
+      "7.0.6",
+      "9.1.0"
+    ],
     "inherits": "2.0.4",
     "is-buffer": "2.0.5",
     "is-docker": "3.0.0",
@@ -164,6 +170,7 @@
     "path-expression-matcher": "1.6.2",
     "postgres": "4.1.0",
     "powershell-utils": "0.2.1",
+    "proxy-agent-negotiate": "1.1.0",
     "rhea": "3.0.5",
     "rhea-promise": "3.1.0",
     "run-applescript": "7.1.0",
@@ -173,7 +180,7 @@
     "strnum": "2.5.1",
     "supports-color": "8.1.1",
     "tslib": "2.9.1",
-    "web-push": "3.6.7",
+    "web-push": "4.0.0",
     "wsl-utils": "1.0.1",
     "xml-naming": "0.3.0",
     "zod": "4.6.7"
