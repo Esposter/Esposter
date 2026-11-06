@@ -5,7 +5,7 @@ import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidation
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
 
 // The severity each level gives a message. Strict refuses the email, so its messages are errors, and soft renders the email
-// anyway, so its messages inform
+// Anyway, so its messages inform
 const EmailValidationLevelSeverityMap = {
   [EmailValidationLevel.Strict]: EditorFindingSeverity.Error,
   [EmailValidationLevel.Soft]: EditorFindingSeverity.Warning,

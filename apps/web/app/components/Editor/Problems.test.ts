@@ -5,13 +5,14 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
+// The layers tree titles a node; the id stands in for its title, so a row's title reads back the node it names
+const getNodeTitle = (nodeId: string) => nodeId;
+
 describe("editorProblems", () => {
   // A name clash is one message against each of the two questions that share the name
   const message = crypto.randomUUID();
   const firstNodeId = crypto.randomUUID();
   const secondNodeId = crypto.randomUUID();
-  // The layers tree titles a node; the id stands in for its title, so a row's title reads back the node it names
-  const getNodeTitle = (nodeId: string) => nodeId;
   const findings = [
     { message, nodeId: firstNodeId, severity: EditorFindingSeverity.Error },
     { message, nodeId: secondNodeId, severity: EditorFindingSeverity.Error },
