@@ -207,6 +207,33 @@ describe("pageBuilderEditor", () => {
     expect(component.find("iframe").exists()).toBe(true);
   });
 
+  test("a medium window opens the inspector as a sheet", async () => {
+    expect.hasAssertions();
+    display.isMobile = true;
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
+    const inspector = component.get<HTMLDialogElement>(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
+
+    expect(inspector.element.open).toBe(false);
+
+    const settingsButton = component
+      .findAll("button")
+      .find((button) => button.text() === PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]);
+    await settingsButton?.trigger("click");
+    await flushPromises();
+
+    expect(inspector.element.open).toBe(true);
+    expect(component.find("iframe").exists()).toBe(true);
+  });
+
   test("a critique finding is a warning in the problems surface", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -280,7 +307,7 @@ describe("pageBuilderEditor", () => {
     ]);
   });
 
-  test("an invite to an unpublished survey is a warning", async () => {
+  test("an invite to an unpublished survey is reported", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { promise: surveyListRead, resolve: completeSurveyListRead } = Promise.withResolvers<void>();
