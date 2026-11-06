@@ -10,9 +10,9 @@ import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
-const TEST_TYPES = [WebpageNodeType.Column, WebpageNodeType.Text, WebpageNodeType.Tab, WebpageNodeType.Section];
-
 describe(getInsertableTypes, () => {
+  const TEST_TYPES = [WebpageNodeType.Column, WebpageNodeType.Text, WebpageNodeType.Tab, WebpageNodeType.Section];
+
   test("An insertion menu offers only the kinds the slot accepts", () => {
     expect.hasAssertions();
 
