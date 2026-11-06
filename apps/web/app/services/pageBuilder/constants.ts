@@ -85,8 +85,6 @@ export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<Web
 // The pointer and history interaction of the root, whose props are edited when no node is selected
 export const ROOT_POINTER = "/root";
 export const ROOT_INTERACTION_ID = "content:root";
-// The width the page builder's side panes start at, in pixels, within the bounds every side pane shares
-export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // The colour a new theme colour starts as, until the colour field changes it
 export const DEFAULT_THEME_COLOR = "#000000";
 // The stack a new font-stack token starts as, until its field changes it

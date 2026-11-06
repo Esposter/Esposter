@@ -1,5 +1,4 @@
-import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
+import { DEFAULT_SIDE_PANE_WIDTH, MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 // A bar is drawn in the flow at every size class, since a window too narrow for a column still has the row for it
