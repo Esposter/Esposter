@@ -23,7 +23,7 @@ The map shows each area's exploration percentage and counts each doing toward it
 - `openspec/changes/genshin-chests/`: a chest opened counts toward its area.
 - `openspec/changes/genshin-spawned-places/`: the chests and camps are placed before they can be done.
 - `openspec/changes/genshin-puzzles/`: a puzzle solved counts toward its area.
-- `openspec/changes/genshin-statues-of-the-seven/`: a statue unlocked counts toward its area.
+- `openspec/specs/genshin/statues-of-the-seven/`: a statue unlocked counts toward its area.
 - `openspec/changes/genshin-offering-systems/`: the Oculi offered count toward their area.
 
 ## Impact

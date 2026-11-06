@@ -180,6 +180,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - The world's one reset clock: the daily, weekly and monthly resets read at the server's 04:00 in UTC+8, and the game day counted from the daily reset.
 - The Mystic Offering at the Crafting Bench from Adventure Rank 45: three unlocked five-star artifacts from the bag become a strongbox that rolls a random piece of the set the player chose, with the piece's odds and the batch of thirty-nine not yet built.
 - The world session's features as stores: the quests, the adventure rank, the map, the screen, the Archive, the ground, the pickups, the roster, the puzzles, the Friendship levels, the chests, the statues, the achievements and the cooking, each read by the features that use it and not handed to them, which took the session root's option keys from 388 to 182.
+- Statues of The Seven: the Oculi a player finds, held for the Worship Statue's offer, each region's levels claimed one action at a time, the first resonance and the Traveler's element, and the Statue's Blessing's pool with auto-recover on provisional screens.
 
 ## Key files
 

@@ -168,7 +168,7 @@ Each owned gap is linked here and carries no task in this change. Where an owner
 
 - Chests: the Mondstadt chests in the world, the sealed chest freed by Pyro or a blunt attack, and the Dig prompt are the [chests](../genshin-chests/design.md) change's behaviour, and task 4.2 of that change frees the sealed chests.
 - Gadgets: the Treasure Compass, the Seelie detector, and the Oculus Resonance Stone's detector, which the [gadgets](../genshin-gadgets/design.md) change orders in its scope and order. Its gadget icons are task 6.1 there, blocked on the PC.
-- Oculi and the Statues of the Seven: the Oculi in the world, the minimap mark and the statue levels are built in the [statues of the Seven](../genshin-statues-of-the-seven/design.md) change, whose tasks are done.
+- Oculi and the Statues of the Seven: the Oculi in the world, the minimap mark and the statue levels are built on the [statues of the Seven](../../specs/genshin/statues-of-the-seven/design.md) page.
 - Gathering: the investigation spots and the Mora spots are tasks 2.1 and 2.2 of the [gathering](../genshin-gathering/design.md) change.
 - Ley line blossoms: the claim and the outcrop places are the [ley line outcrops](../genshin-ley-line-outcrops/design.md) change, and task 5.1 there adds the blossoms of four regions.
 - Puzzles: the monuments' and shrines' behaviour and the Seelie courts are tasks of the [puzzles](../genshin-puzzles/design.md) change, and the puzzles' spec records that the servers' puzzle logic is not in the client's data, so that part is not closable here.

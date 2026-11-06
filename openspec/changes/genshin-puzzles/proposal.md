@@ -25,7 +25,7 @@ Constants the map and the wiki leave open, such as a monument's time lit and a S
 - The spawned places, where the mechanisms stand: `openspec/changes/genshin-spawned-places/`.
 - The character kits, whose attacks strike the mechanisms: `openspec/changes/genshin-character-kits/`.
 - The chests, which a solved mechanism unlocks or spawns: `openspec/changes/genshin-chests/`.
-- The Statues of The Seven, which give the Shrine of Depths keys: `openspec/changes/genshin-statues-of-the-seven/`.
+- The Statues of The Seven, which give the Shrine of Depths keys: `openspec/specs/genshin/statues-of-the-seven/`.
 
 ## Impact
 

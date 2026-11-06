@@ -261,7 +261,7 @@ Each level of a region, when claimed, SHALL pay Adventure EXP, Primogems and Sig
 
 ### Requirement: The Traveler takes the element of the statue's region on resonance
 
-Resonating with a statue SHALL change the Traveler's element to the element of the statue's region, and the constellations of that element SHALL come with the Traveler's levels.
+Resonating with a statue SHALL change the Traveler's element to the element of the statue's region. The constellations of that element are not given yet.
 
 #### Scenario: Resonating with a Liyue statue makes the Traveler Geo
 

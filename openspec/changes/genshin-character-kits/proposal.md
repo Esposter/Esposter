@@ -22,7 +22,7 @@ Each playable character fights by its own kit, with its passives, its swap effec
 
 ## Waiting on
 
-- `openspec/changes/genshin-statues-of-the-seven/`: the statue resonance that picks the Traveler's element and set.
+- `openspec/specs/genshin/statues-of-the-seven/`: the statue resonance that picks the Traveler's element and set.
 - Game exports, which the change needs before its records can be built.
 - Talent names and descriptions, which are read by their text ids once the game text is available.
 

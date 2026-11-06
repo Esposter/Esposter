@@ -1,6 +1,6 @@
 # Exploration progress
 
-The game's map shows, for every area, how much of it a player has explored as a percentage, and a nation's exploration raises its Reputation at set thresholds. It is a count over what the other exploring pages do, so it waits on the [map unlocking](../genshin-map-unlocking/design.md), [chests](../genshin-chests/design.md), [puzzles](../genshin-puzzles/design.md) and [Statues of The Seven](../genshin-statues-of-the-seven/design.md) whose doings it counts. The [as-built page](../../specs/genshin/exploration-progress/design.md) holds the count and the percentage for Galesong Hill; what follows is what remains.
+The game's map shows, for every area, how much of it a player has explored as a percentage, and a nation's exploration raises its Reputation at set thresholds. It is a count over what the other exploring pages do, so it waits on the [map unlocking](../genshin-map-unlocking/design.md), [chests](../genshin-chests/design.md), [puzzles](../genshin-puzzles/design.md) and [Statues of The Seven](../../specs/genshin/statues-of-the-seven/design.md) whose doings it counts. The [as-built page](../../specs/genshin/exploration-progress/design.md) holds the count and the percentage for Galesong Hill; what follows is what remains.
 
 ## Decisions
 

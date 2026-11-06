@@ -24,7 +24,6 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-serenitea-pot        | —     | unreconciled |
 | genshin-sheer-cold           | —     | unreconciled |
 | genshin-shops                | —     | unreconciled |
-| genshin-statues-of-the-seven | —     | unreconciled |
 | genshin-sumeru               | —     | unreconciled |
 | genshin-trees-and-scatter    | —     | unreconciled |
 | genshin-weather              | —     | unreconciled |
