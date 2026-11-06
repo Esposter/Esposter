@@ -11,17 +11,16 @@ export const useDevRegistration = ({
   devRegistry,
 }: {
   createHandle: () => DevHandle | Promise<DevHandle>;
-  devRegistry: DevRegistry | undefined;
+  devRegistry?: DevRegistry;
 }) => {
   let isActive = true;
   let unregister: (() => void) | undefined;
 
-  onMounted(() => {
+  onMounted(async () => {
     if (!devRegistry) return;
 
-    void Promise.resolve(createHandle()).then((handle) => {
-      if (isActive) unregister = devRegistry.register(handle);
-    });
+    const handle = await createHandle();
+    if (isActive) unregister = devRegistry.register(handle);
   });
   onUnmounted(() => {
     isActive = false;
