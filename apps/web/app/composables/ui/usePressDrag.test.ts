@@ -116,6 +116,20 @@ describe(usePressDrag, () => {
     expect(click.defaultPrevented).toBe(true);
   });
 
+  test("the click that follows the release of a finger that rested without moving is swallowed", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    const handlers = createHandlers();
+    trackPress(createPress("touch"), handlers);
+    vi.advanceTimersByTime(TOUCH_DRAG_DELAY_MS);
+    dispatch("pointerup", { clientX: 100, clientY: 100 });
+    const click = new MouseEvent("click", { bubbles: true, cancelable: true });
+    window.dispatchEvent(click);
+
+    expect(click.defaultPrevented).toBe(true);
+  });
+
   test("the returned cancel ends a press with nothing landed", () => {
     expect.hasAssertions();
 

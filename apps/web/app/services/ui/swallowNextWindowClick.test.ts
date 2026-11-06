@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
+import { SWALLOW_WINDOW_MS } from "@/services/ui/constants";
 import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const click = () => {
   const event = new MouseEvent("click", { bubbles: true, cancelable: true });
@@ -9,6 +10,20 @@ const click = () => {
 };
 
 describe(swallowNextWindowClick, () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("a click after the window has passed is let through, since a touch drag raises none", () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    swallowNextWindowClick();
+    vi.advanceTimersByTime(SWALLOW_WINDOW_MS);
+
+    expect(click().defaultPrevented).toBe(false);
+  });
+
   test("the click that follows a release is swallowed, and only that one", () => {
     expect.hasAssertions();
 

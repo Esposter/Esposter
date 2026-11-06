@@ -49,6 +49,9 @@ export const TOOLTIP_POSITION_AREA = "var(--ui-tooltip-position-area, top)";
 // How long a finger rests on a touch screen before a drag starts under it, so a swipe that starts on a draggable row
 // Scrolls instead. Shorter than the long press, so a finger that holds still still opens the context menu
 export const TOUCH_DRAG_DELAY_MS = 200;
+// How long after a drag's release the click it raises is still swallowed. The browser dispatches that click straight after
+// The release, so a touch drag, which raises none, does not leave the swallow armed for a click raised later
+export const SWALLOW_WINDOW_MS = Temporal.Duration.from({ milliseconds: 250 }).total("milliseconds");
 // How far a mouse or pen press moves, in CSS pixels, before it is a drag rather than a click
 export const DRAG_START_DISTANCE = 4;
 // How near a scroller's top or bottom edge, in CSS pixels, a drag's pointer starts it scrolling

@@ -1,5 +1,5 @@
 import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
-import { DRAG_START_DISTANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
+import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
 import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
 import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
@@ -27,7 +27,8 @@ export interface PressHandlers {
 // Has become a drag, and where its pointer is. A press is a click until a mouse or a pen moves the drag start distance, or
 // Until a finger rests the touch delay, and a finger that drifts first is scrolling, so its press ends there. A started drag
 // Ends at its release, a pointer cancel or Escape, which goes no further, and the click a release over the control it began
-// On would raise is swallowed once the pointer has moved. A press still held when the scope ends is cancelled
+// On would raise is swallowed, moved or not, since a finger that rested has started a drag too. A press still held when the
+// Scope ends is cancelled
 export const usePressDrag = () => {
   const isDragging = ref(false);
   const point = shallowRef<Point>();
@@ -37,7 +38,6 @@ export const usePressDrag = () => {
     cancelPress?.();
     const { clientX, clientY, pointerId, pointerType } = event;
     const stops: (() => void)[] = [];
-    let hasMoved = false;
     let isEnded = false;
     let restTimer: ReturnType<typeof setTimeout> | undefined;
     const end = () => {
@@ -67,13 +67,12 @@ export const usePressDrag = () => {
 
         const newPoint = { x: moveEvent.clientX, y: moveEvent.clientY };
         point.value = newPoint;
-        const distance = Math.hypot(newPoint.x - clientX, newPoint.y - clientY);
-        hasMoved ||= distance >= DRAG_START_DISTANCE;
         if (isDragging.value) {
           moveTo(newPoint);
           return;
         }
 
+        const distance = Math.hypot(newPoint.x - clientX, newPoint.y - clientY);
         const outcome = getPressMoveOutcome(pointerType, distance);
         if (outcome === PressMoveOutcome.Start) start();
         else if (outcome === PressMoveOutcome.Cancel) end();
@@ -83,7 +82,7 @@ export const usePressDrag = () => {
 
         if (isDragging.value) {
           onRelease?.({ x: upEvent.clientX, y: upEvent.clientY });
-          if (hasMoved) swallowNextWindowClick();
+          swallowNextWindowClick();
         }
         end();
       }),
