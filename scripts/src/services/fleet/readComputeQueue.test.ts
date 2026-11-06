@@ -22,6 +22,20 @@ describe(readComputeQueue, () => {
     "",
   ].join("\n");
 
+  test("a compute item takes its area's phase", () => {
+    expect.hasAssertions();
+
+    const { entries } = readComputeQueue([
+      { path: "compute/README.md", text: INDEX },
+      {
+        path: "compute/a/design.md",
+        text: "## Queue\n\n- [ ] `[cpu]` {alpha-run} — **Alpha.**\n- [ ] `[page]` {alpha-page} — **Alpha page.**\n\n## Waiting\n\n",
+      },
+    ]);
+
+    expect(entries.map(({ phase }) => phase)).toStrictEqual([4, 4]);
+  });
+
   test("a compute item takes its area's phase from its page's row, the designs read in path order", () => {
     expect.hasAssertions();
 
@@ -61,7 +75,7 @@ describe(readComputeQueue, () => {
     });
   });
 
-  test("a compute item takes its area's phase, and a page with no row fails the read naming the page", () => {
+  test("a page with no row fails the read naming the page", () => {
     expect.hasAssertions();
 
     expect(() =>
