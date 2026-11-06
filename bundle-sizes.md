@@ -4,17 +4,17 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                                                         |   Bytes |    KiB |
 | :------------------------- | :----------------------------------------------------------- | ------: | -----: |
-| @esposter/functions        | index.js                                                     | 5220800 | 5098.4 |
+| @esposter/functions        | index.js                                                     | 5207038 | 5085.0 |
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
 | genshin-world              | index.js                                                     | 2559820 | 2499.8 |
-| @esposter/db               | index.js                                                     | 1979939 | 1933.5 |
-| genshin-world              | index-[hash].d.ts                                            | 1725627 | 1685.2 |
+| @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
+| genshin-world              | index-[hash].d.ts                                            | 1670107 | 1631.0 |
 | genshin-world              | style.css                                                    |  305928 |  298.8 |
 | genshin-engine             | index.js                                                     |  287794 |  281.0 |
-| genshin-interface          | index.d.ts                                                   |  272437 |  266.1 |
 | @esposter/functions        | Arrow.node-[hash].js                                         |  255689 |  249.7 |
 | genshin-world              | index.d.ts                                                   |  253512 |  247.6 |
-| vue-phaserjs               | index.d.ts                                                   |  252054 |  246.1 |
+| genshin-interface          | index.d.ts                                                   |  248466 |  242.6 |
+| vue-phaserjs               | index.d.ts                                                   |  246018 |  240.3 |
 | genshin-interface          | index.js                                                     |  232450 |  227.0 |
 | genshin-interface          | style.css                                                    |  192322 |  187.8 |
 | @esposter/infra            | index.js                                                     |  121664 |  118.8 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21729437 bytes, 21220.2 KiB, 20.72 MiB
+**Total:** 569 files, 21641175 bytes, 21134.0 KiB, 20.64 MiB

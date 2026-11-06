@@ -1,6 +1,6 @@
 import { definePlugin } from "nitro";
 import { useRuntimeConfig } from "nuxt/server";
-import webpush from "web-push";
+import * as webpush from "web-push";
 
 export default definePlugin(() => {
   const runtimeConfig = useRuntimeConfig();

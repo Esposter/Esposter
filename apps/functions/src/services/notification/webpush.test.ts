@@ -1,4 +1,4 @@
-import type baseWebpush from "web-push";
+import type * as baseWebpush from "web-push";
 
 import { describe, vi } from "vitest";
 
