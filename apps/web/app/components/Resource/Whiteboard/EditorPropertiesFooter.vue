@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
+import { copySelection, requestSelectionDelete } from "@/services/whiteboard/keyboard/selectionActions";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
@@ -14,12 +14,10 @@ const { selectedIds } = storeToRefs(whiteboardEditorStore);
 const whiteboardDialogStore = useWhiteboardDialogStore();
 const { deletingIds } = storeToRefs(whiteboardDialogStore);
 const duplicateSelection = () => {
-  const { copiedIds, state } = duplicateWhiteboardElements(editState.value, selectedIds.value);
-  editState.value = state;
-  selectedIds.value = copiedIds;
+  copySelection(editState, selectedIds);
 };
 const deleteSelection = () => {
-  deletingIds.value = selectedIds.value;
+  requestSelectionDelete(deletingIds, selectedIds);
 };
 </script>
 

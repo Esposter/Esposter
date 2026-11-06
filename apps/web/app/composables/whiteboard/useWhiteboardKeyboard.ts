@@ -7,7 +7,6 @@ import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
-import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
 import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
@@ -17,12 +16,13 @@ import {
   WHITEBOARD_NUDGE_LARGE_STEP,
   WHITEBOARD_NUDGE_STEP,
 } from "@/services/whiteboard/keyboard/constants";
+import { copySelection, requestSelectionDelete } from "@/services/whiteboard/keyboard/selectionActions";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
-// name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
-// selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
+// Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
+// Selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
 // A tool's key chooses the tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,
@@ -46,15 +46,13 @@ export const useWhiteboardKeyboard = (
     selectedIds.value = selectedIds.value.filter((id) => !deletedIds.includes(id));
   };
   const deleteSelection = () => {
-    deletingIds.value = selectedIds.value;
+    requestSelectionDelete(deletingIds, selectedIds);
   };
   const deselect = () => {
     selectedIds.value = [];
   };
   const duplicateSelection = () => {
-    const { copiedIds, state } = duplicateWhiteboardElements(editState.value, selectedIds.value);
-    editState.value = state;
-    selectedIds.value = copiedIds;
+    copySelection(editState, selectedIds);
   };
   const nudgeSelection = (direction: Point, step: number) => {
     editState.value = applyWhiteboardEdit(
