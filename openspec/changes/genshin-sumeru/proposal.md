@@ -25,4 +25,4 @@ Sumeru's region reads as the rainforest and desert it is, with each area named a
 
 ## Impact
 
-The region's terrain, vegetation and water passes gain Sumeru's rainforest and desert. The world map's area list gains Sumeru's areas. Sandstorms in the Desert of Hadramaveth come from the weather proposal.
+The region's terrain, vegetation and water passes gain Sumeru's rainforest and desert. The world map's area list gains Sumeru's areas. Sandstorms in the Desert of Hadramaveth are built on the weather capability.

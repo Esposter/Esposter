@@ -41,7 +41,7 @@ The catalogue holds Sumeru's areas as the game names them: Avidya Forest, Lokapa
 1. **Avidya Forest** with Sumeru City and its tree, and **Gandharva Ville**.
 2. **Lokapala Jungle** and **Ardravi Valley**, then **Vanarana**.
 3. **The desert**, from Caravan Ribat and Aaru Village across the Land of Upper Setekh, with the Mausoleum.
-4. **The Desert of Hadramaveth**, once sandstorms exist, and then the remaining areas.
+4. **The Desert of Hadramaveth**, and then the remaining areas.
 
 ## Reference checklist
 
