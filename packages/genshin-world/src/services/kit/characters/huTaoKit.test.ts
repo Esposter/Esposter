@@ -427,7 +427,7 @@ describe("constellation 4 and 6", () => {
     return getCriticalRateBuffs(kitEffectState);
   };
 
-  test("at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate for 15 seconds", () => {
+  test("at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate", () => {
     expect.hasAssertions();
 
     expect(defeatEnemy(4, [BLOOD_BLOSSOM])).toStrictEqual([
@@ -460,7 +460,7 @@ describe("constellation 4 and 6", () => {
     expect(defeatEnemy(3, [BLOOD_BLOSSOM])).toStrictEqual([]);
   });
 
-  test("at constellation 6, a drop to 25% HP or less sets Hu Tao's CRIT Rate to 100% for 10 seconds", () => {
+  test("at constellation 6, a drop to 25% HP or less sets Hu Tao's CRIT Rate to 100%", () => {
     expect.hasAssertions();
 
     expect(drainHuTao(6, 0.25)).toStrictEqual([
@@ -493,7 +493,15 @@ describe("constellation 4 and 6", () => {
     expect(drainHuTao(5, 0.2)).toStrictEqual([]);
   });
 
-  test("at constellation 6, a lethal hit leaves Hu Tao at 1 HP, and a second within a minute takes her down", () => {
+  test("at constellation 6, a damage that would take Hu Tao to none leaves her at 1 HP", () => {
+    expect.hasAssertions();
+
+    const { attributes } = createHuTaoCombatant();
+
+    expect(takeLethalHits(6, 1)).toStrictEqual([1 / attributes.maxHealth]);
+  });
+
+  test("a second damage that would take Hu Tao to none within a minute takes her down", () => {
     expect.hasAssertions();
 
     const { attributes } = createHuTaoCombatant();
@@ -501,7 +509,7 @@ describe("constellation 4 and 6", () => {
     expect(takeLethalHits(6, 2)).toStrictEqual([1 / attributes.maxHealth, 0]);
   });
 
-  test("below constellation 6, a lethal hit takes Hu Tao down", () => {
+  test("below constellation 6, a damage that would take Hu Tao to none takes her down", () => {
     expect.hasAssertions();
 
     expect(takeLethalHits(5, 1)).toStrictEqual([0]);
