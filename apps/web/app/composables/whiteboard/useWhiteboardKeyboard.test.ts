@@ -109,7 +109,10 @@ describe(useWhiteboardKeyboard, () => {
     expect(editState.value.document).toStrictEqual(document);
   });
 
-  test("ctrl with Shift and Z is no undo, since no redo is mapped", async () => {
+  test.each([
+    { init: { ctrlKey: true, key: "y", shiftKey: false }, title: "Y" },
+    { init: { ctrlKey: true, key: "Z", shiftKey: true }, title: "Shift and Z" },
+  ])("ctrl with $title redoes the undone edit", async ({ init }) => {
     expect.hasAssertions();
 
     const document = { elements: [WHITEBOARD_PROCESS] };
@@ -124,7 +127,8 @@ describe(useWhiteboardKeyboard, () => {
     const deletingIds = ref<string[]>([]);
     await mountKeyboard(editState, selectedIds, deletingIds);
 
-    pressKey({ bubbles: true, ctrlKey: true, key: "Z", shiftKey: true });
+    pressKey({ bubbles: true, ctrlKey: true, key: "z" });
+    pressKey({ bubbles: true, ...init });
 
     expect(editState.value.document).toStrictEqual(movedDocument);
   });

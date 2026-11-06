@@ -6,9 +6,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
+import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
 import {
@@ -69,18 +71,21 @@ export const useWhiteboardKeyboard = (
       ),
     );
   };
+  const redo = () => {
+    editState.value = redoWhiteboardEdit(editState.value);
+  };
   const undo = () => {
     editState.value = undoWhiteboardEdit(editState.value);
   };
 
-  const undoCommand: UiCommand = {
+  const historyCommands = getHistoryCommands({
     group: WHITEBOARD_COMMAND_GROUP,
-    id: "whiteboard-undo",
-    meaning: UiIconMeaning.Undo,
-    run: undo,
-    shortcut: "cmd+z",
-    title: "Undo",
-  };
+    idPrefix: "whiteboard",
+    redo,
+    redoTitle: "Redo",
+    undo,
+    undoTitle: "Undo",
+  });
   const selectionCommands: UiCommand[] = [
     {
       group: WHITEBOARD_COMMAND_GROUP,
@@ -170,9 +175,9 @@ export const useWhiteboardKeyboard = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value) return [];
-    if (selectedIds.value.length === 0) return [undoCommand, ...toolCommands];
+    if (selectedIds.value.length === 0) return [...historyCommands, ...toolCommands];
 
-    return [undoCommand, ...toolCommands, ...selectionCommands];
+    return [...historyCommands, ...toolCommands, ...selectionCommands];
   });
 
   return { confirmDelete, isDeleteOpen };
