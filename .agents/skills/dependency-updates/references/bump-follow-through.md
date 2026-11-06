@@ -14,9 +14,9 @@ A rebuild that rewrites a version the repo commits is drift, not a result: the m
 
 Any bump that reaches a `dist/` is finished only by this sequence, all of it in the bump's own commit:
 
-1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size tests read. Skipping it leaves the size tests reading the stale `dist/`.
+1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size record reads. Skipping it leaves the record written from the stale `dist/`.
 2. Read the `package.json` diff of every package the rebuild touched: the `inlinedDependencies` entries the bump moved, and nothing else.
-3. Raise any size ceiling the rebuilt `dist/` outgrows, as `build`'s `references/dist-size.md` names. `apps/functions` and `apps/infra` carry the same size test outside `test:packages`, and `apps/functions` inlines the bumped package when it bundles it, so build and check them too, as that page names.
-4. Run the same size tests again — they must pass with no ceiling changed beyond step 3. The commands and the path argument that keeps them cheap are the owner pages' to name (`testing`'s `references/bundle-size.md`, `build`'s `references/dist-size.md`). The apps need their own run: the packages' project filter does not reach `apps/functions` or `apps/infra`.
+3. Build `apps/functions` and `apps/infra` too, since `apps/functions` inlines the bumped package when it bundles it, and the record covers both, as `build`'s `references/dist-size.md` names. Then `pnpm bundle-sizes:gen` rewrites `bundle-sizes.md`, whose diff is the bump's size.
+4. Run `src/workspace/bundleSizes.test.ts` of `scripts` again — it must pass against the file just written (`testing`'s `references/bundle-size.md`).
 
-A ceiling is raised only as `build`'s `references/dist-size.md` sets out, and never to a number a failure printed from a stale `dist/`.
+A growth the bump does not explain is read before the record is committed (`build`'s `references/dist-size.md`), and the record is never written from a stale `dist/`.

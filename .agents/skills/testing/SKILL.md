@@ -48,7 +48,7 @@ Environment and running:
 - `references/nuxt-environment-and-mounting.md` — when a test mounts a component: a routed link, a mount attached to the body, a dispatched event.
 - `references/mounted-stores.md` — when a test seeds a store a mounted component reads, room-scoped stores included, or a suite reaches for its own Pinia.
 - `references/platform-and-bundle-tests.md` — when a suite is skipped on some hosts, or its output depends on the host.
-- `references/bundle-size.md` — when a size test fails, or a new library package needs one.
+- `references/bundle-size.md` — when the bundle-size test fails, or a package's size record is in question.
 - `references/running-the-suite.md` — when narrowing a run with `-t` or `-u`, or reading a failure only the full parallel run produces.
 - `references/timeouts.md` — when a test, suite or config sets a timeout, or a test fails with `Test timed out`: the measurement and the ladder that decide whether a timeout is earned at all.
 - `references/regression-proof.md` — when a regression test is about to be kept, and its fix is reverted for the end-of-work run.

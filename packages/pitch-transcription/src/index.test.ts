@@ -1,4 +1,3 @@
-import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -6,20 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe("pitch-transcription", () => {
   const distFile = resolve(import.meta.dirname, "../dist/index.js");
-  const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
   const distNotesFile = resolve(import.meta.dirname, "../dist/notes.js");
-
-  test("bundle size", () => {
-    expect.hasAssertions();
-
-    expect(getFileSize(distFile)).toBeLessThanOrEqual(8 * KIBIBYTE);
-  });
-
-  test("types size", () => {
-    expect.hasAssertions();
-
-    expect(getFileSize(distDtsFile)).toBeLessThanOrEqual(8 * KIBIBYTE);
-  });
 
   // A resolve hook registered before the import records every specifier the subpath's module graph asks for, and fails on
   // An ONNX Runtime one, so a notes entry that reached the network's code would fail here rather than in a consumer's worker

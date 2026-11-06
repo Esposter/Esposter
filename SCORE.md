@@ -12,7 +12,7 @@
 | Dependencies         | 8 / 10  | Nuxt 5 and Nitro 3 nightlies, `unstorage` beta and the Drizzle RC in production   |
 | Styling              | 9 / 10  | Attributify enforced; one UI library, one palette; no app visual regression tests |
 | CI / CD              | 10 / 10 | Cached reusable build; SHA-pinned actions; least-privilege; CodeQL on `main`      |
-| Bundle & Performance | 9 / 10  | Vite auto-splits; per-package size ceilings; app bundle ungated                   |
+| Bundle & Performance | 9 / 10  | Vite auto-splits; exact bundle-size record; app bundle ungated                    |
 
 A TypeScript-strict monorepo with strong architectural discipline and comprehensive linting, deliberately delegating heavy lifting to well-maintained libraries (Vite, nuxt-security-module, Drizzle) over custom solutions. Primary remaining drag is the pre-release framework line the app runs on ahead of its release, beside the ORM's release candidate.
 
@@ -78,6 +78,6 @@ Security hardening throughout: every third-party action is SHA-pinned, `persist-
 
 ## Bundle & Performance — 9 / 10
 
-`assetsInlineLimit: 0` prevents Phaser data URI breakage. `nuxt analyze` available. Code splitting is handled automatically by Vite. Every workspace package with a build holds its built bundle, and its entry declaration file, to an explicit size ceiling written in its own test, so a dependency bump or a barrel change that grows a bundle past its ceiling fails that package's own suite instead of landing unread.
+`assetsInlineLimit: 0` prevents Phaser data URI breakage. `nuxt analyze` available. Code splitting is handled automatically by Vite. Every file a workspace package or app builds has its exact size committed in `bundle-sizes.md`, so a dependency bump or a barrel change that moves a bundle shows its bytes in the diff, and a workspace test fails a record that is not the fresh build's.
 
 **Accepted trade-off:** the app bundle has no equivalent gate. Its dependency footprint (Phaser, Survey, Three.js, PDF.js) runs to tens of megabytes, reasonable for the feature surface, and Nuxt surfaces the size on every build — but nothing fails on a regression.

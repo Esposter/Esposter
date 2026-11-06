@@ -21,9 +21,9 @@
 
 - [x] 5.1 Roll Explosive Spark and Breakthrough Barb as each hit strikes, from the world's random source. Verify: tests named after the scenarios 'Klee's Explosive Spark is applied at a 50% chance on a hit' and 'Yelan's Breakthrough Barb is rolled on each Lingering Lifeline hit', seen failing first.
 
-## 6. Size ceiling
+## 6. Size
 
-- [ ] 6.1 [phase 7] Cut the world's entry to a lower size ceiling. The gate is the size ceiling `packages/genshin-world/src/index.test.ts` holds, so a regression past it fails that test. Verify: the tests named after the scenarios "a world build under its size ceiling passes" and "a world build over its size ceiling is refused" in `packages/genshin-world/src/index.test.ts`, the ceiling that test holds, and the test's ceiling holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
+- [ ] 6.1 [phase 7] Cut the world's entry to a smaller size. The cut shows as a drop in the `genshin-world` rows of `bundle-sizes.md`. Verify: `pnpm bundle-sizes:gen` after a build shows the smaller size in the `genshin-world` rows, and the bundle-sizes test passes against it. Blocked: a cut to a smaller size is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
 
 ## 7. Decisions
 

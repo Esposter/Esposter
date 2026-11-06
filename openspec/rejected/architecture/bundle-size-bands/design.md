@@ -1,6 +1,6 @@
 # Bundle size bands
 
-Each package's size test used to pin its built bundle and its types to a band: the smallest power of two in kibibytes that sat a tenth above the file, recorded as a line such as `up to 64 KB` and compared by equality. That is rejected. Each size test now holds its file to a ceiling written in the test, in KiB, and any size at or under it passes.
+Each package's size test used to pin its built bundle and its types to a band: the smallest power of two in kibibytes that sat a tenth above the file, recorded as a line such as `up to 64 KB` and compared by equality. That is rejected. It was replaced by a ceiling per file, which is itself [rejected](../bundle-size-ceilings/design.md) for the record of exact sizes.
 
 ## Why not
 
@@ -14,8 +14,8 @@ Each package's size test used to pin its built bundle and its types to a band: t
 
 ## What stands instead
 
-An explicit ceiling per bundle and per types file, written in the package's own test. Growth below it never fails, nothing is rounded and a shrink never fails. A change that legitimately outgrows a ceiling raises that one number in the same commit, after a fresh build shows the real size; the procedure is the `build` skill's (`.agents/skills/build/references/dist-size.md`).
+The [bundle sizes](../../../specs/architecture/bundle-sizes/design.md) record of every built file's exact bytes, held to a fresh build by one workspace test. Nothing is rounded, and a shrink and a growth both show in the diff.
 
 ## The revisit trigger
 
-One package's ceiling has been raised three times, which `git log -p -- packages/<package>/src/index.test.ts` shows as three commits that change its number. Then the number records the growth instead of a limit someone chose, and the ceilings give way to a measured budget read in review. The [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page argues against one global number answered by raising it, and wants a per-route first-load number defined before any budget is enforced.
+The record churns on every unrelated change so that its diff is noise, which no build so far has made it. Then it gives way to a measured budget read in review. The [bundle budgets](../../../deferred/architecture/bundle-budgets/design.md) page argues against one global number answered by raising it, and wants a per-route first-load number defined before any budget is enforced.

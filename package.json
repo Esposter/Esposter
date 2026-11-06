@@ -79,6 +79,7 @@
     "bench:ci": "vitest bench --run",
     "bench:types": "pnpm -C scripts bench:types",
     "build": "pnpm --filter \"@esposter/web...\" build",
+    "bundle-sizes:gen": "pnpm -C scripts bundle-sizes:gen",
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts crossOS",
     "format": "vp fmt",

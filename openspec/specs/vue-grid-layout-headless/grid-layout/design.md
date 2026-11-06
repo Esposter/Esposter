@@ -69,7 +69,7 @@ flowchart TD
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.
 - `startExternalDrag` has no drag threshold, so a click on a palette entry drops it at the click point. A consumer that wants a palette entry to need a drag gives it its own threshold before calling it.
 - `startExternalDrag` ends its listeners on either a release or a cancel of its pointer. A cancelled press is discarded without accepting, and the next press's release is the one that drops the entry.
-- The package's main entry is a barrel by design, and its bundle is held to its size ceiling, which the `build` skill owns.
+- The package's main entry is a barrel by design, and its bundle's size is in the [bundle sizes](../../architecture/bundle-sizes/design.md) record.
 
 ## Key files
 

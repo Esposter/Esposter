@@ -80,6 +80,7 @@
     "genshin:text": "vpx src/genshinText/index.ts",
     "recreation": "vpx src/recreation/index.ts",
     "globe:gen": "vpx src/globeLandMask/index.ts",
+    "bundle-sizes:gen": "vpx src/bundleSizes/index.ts",
     "graph:gen": "vpx src/dependencyGraph/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

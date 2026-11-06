@@ -14,7 +14,6 @@ Each playable character fights by its own kit, with its passives, its swap effec
 - Hu Tao's Spirit Soother heals her on each hit, by a larger share while her HP is at or under half.
 - Klee's Sparks 'n' Splash, Xiao's Bane of All Evil, Ningguang's Star Jades and Razor's Wolf Within end when their character is swapped off the field; Xingqiu's Raincutter follows once its delay is read.
 - Klee's Explosive Spark and Yelan's Breakthrough Barb are rolled as each hit strikes.
-- CI refuses a world build whose entry is over its size ceiling.
 
 ## Capabilities
 

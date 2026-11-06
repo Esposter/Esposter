@@ -1,6 +1,5 @@
 import type { PackageManifest } from "@esposter/configuration";
 
-import { getFileSize, KIBIBYTE } from "@esposter/configuration";
 import { jsonDateParse } from "@esposter/shared";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -13,12 +12,6 @@ describe("@esposter/functions", () => {
   const distFile = resolve(packageDirectory, "dist/index.js");
   const readRegistrationCount = (directory: string) =>
     readdirSync(resolve(packageDirectory, "src", directory)).filter((entry) => entry.endsWith(".ts")).length;
-
-  test("bundle size", () => {
-    expect.hasAssertions();
-
-    expect(getFileSize(distFile)).toBeLessThanOrEqual(8192 * KIBIBYTE);
-  });
 
   // The Functions host loads a v4-model app by reading "main", and never consults the generated exports map, so
   // This is the one package where the field is a host contract rather than a resolver's legacy fallback. The

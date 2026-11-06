@@ -64,7 +64,7 @@ jobs:
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
       # Two suites assert against a built bundle: the Functions package counts the `app.*` registrations in its
-      # `dist`, and both apps snapshot their bundle's size. The `package-builds` artifact holds libraries only,
+      # `dist`, and the bundle-size record holds both apps' bundles. The `package-builds` artifact holds libraries only,
       # so they are built here, from the source this shard checked out.
       - name: 🏗️ Build the app bundles the suite asserts against
         run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" build
