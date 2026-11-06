@@ -84,15 +84,21 @@ const clearSurvey = () => applyEdit(getReplaceOperations(createSurveyDocument())
 const toolbar = useTemplateRef("toolbar");
 const { width } = useElementSize(toolbar);
 const isFolded = computed(() => width.value < SURVEY_TOOLBAR_UNFOLDED_WIDTH);
-// The four actions the row drops when folded, titled as their buttons are and run by the same handlers
-const foldedItems = computed<Item[]>(() => [
-  {
-    meaning: UiIconMeaning.Create,
-    onClick: () => {
-      insertNode(SurveyNodeType.Page);
-    },
-    title: "Add page",
+// The four actions the row holds. Each is drawn as a button when the row is unfolded and listed in the overflow menu when it is
+// Folded, so a title, icon or handler is written once. Add page is the only one the row draws as text rather than an icon
+interface ToolbarAction {
+  meaning: UiIconMeaning;
+  onClick: () => void;
+  title: string;
+}
+const addPageAction: ToolbarAction = {
+  meaning: UiIconMeaning.Create,
+  onClick: () => {
+    insertNode(SurveyNodeType.Page);
   },
+  title: "Add page",
+};
+const iconActions: ToolbarAction[] = [
   { meaning: UiIconMeaning.Upload, onClick: () => importSurvey(), title: "Import" },
   { meaning: UiIconMeaning.Download, onClick: () => exportSurvey(), title: "Export" },
   {
@@ -102,7 +108,8 @@ const foldedItems = computed<Item[]>(() => [
     },
     title: "Clear",
   },
-]);
+];
+const foldedItems: Item[] = [addPageAction, ...iconActions];
 </script>
 
 <template>
@@ -111,24 +118,14 @@ const foldedItems = computed<Item[]>(() => [
       <UiIconButton :disabled="!isUndoable" label="Undo" :meaning="UiIconMeaning.Undo" @click="undo()" />
       <UiIconButton :disabled="!isRedoable" label="Redo" :meaning="UiIconMeaning.Redo" @click="redo()" />
       <template v-if="!isFolded">
-        <UiButton :variant="UiButtonVariant.Quiet" @click="insertNode(SurveyNodeType.Page)">Add page</UiButton>
+        <UiButton :variant="UiButtonVariant.Quiet" @click="addPageAction.onClick()">{{ addPageAction.title }}</UiButton>
         <UiIconButton
-          label="Import"
-          :meaning="UiIconMeaning.Upload"
+          v-for="action in iconActions"
+          :key="action.title"
+          :label="action.title"
+          :meaning="action.meaning"
           :variant="UiButtonVariant.Quiet"
-          @click="importSurvey()"
-        />
-        <UiIconButton
-          label="Export"
-          :meaning="UiIconMeaning.Download"
-          :variant="UiButtonVariant.Quiet"
-          @click="exportSurvey()"
-        />
-        <UiIconButton
-          label="Clear"
-          :meaning="UiIconMeaning.Clear"
-          :variant="UiButtonVariant.Quiet"
-          @click="isClearOpen = true"
+          @click="action.onClick()"
         />
       </template>
       <UiOverflowMenu v-else :items="foldedItems" label="Survey actions" />
