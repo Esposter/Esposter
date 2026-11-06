@@ -2,7 +2,7 @@
 
 ## Why
 
-Each region's statues are the game's anchor for exploring it: a statue fills in its area of the map and is a jump point. The level rules, the stamina they raise and the healing pool are built and tested as rules, and the world holds the levels and the pool, the Blessing screen showing the pool and healing from it. The Worship Statue is built as its screen, offer and claim, and auto-recover's switch is not built yet. The player needs to find Oculi, see them offered at the Worship Statue, claim each region's levels, resonate with statues and use the Statue's Blessing for the statues to do anything in play.
+Each region's statues are the game's anchor for exploring it: a statue fills in its area of the map and is a jump point. The level rules, the stamina they raise and the healing pool are built and tested as rules, and the world holds the levels and the pool, the Blessing screen showing the pool and healing from it. The Worship Statue is built as its screen, offer and claim, and auto-recover's switch and threshold are built as provisional controls on the Blessing screen. The player needs to find Oculi, see them offered at the Worship Statue, claim each region's levels, resonate with statues and use the Statue's Blessing for the statues to do anything in play.
 
 ## What Changes
 
