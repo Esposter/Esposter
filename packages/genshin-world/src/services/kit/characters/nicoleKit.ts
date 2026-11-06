@@ -323,10 +323,11 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       },
     },
     // Her fourth constellation's flat damage, on her own strikes and on the strikes of the member she is deployed with
-    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => ({
       additiveBaseDamageBonus:
         getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
-          ? CONSTELLATION_4_RATIO * member.attributes.attack
+          ? CONSTELLATION_4_RATIO *
+            getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes.attack
           : 0,
       defenseIgnored: getC6DefenceIgnored(member.constellationCount, strike.combatant, effects),
     }),
@@ -428,7 +429,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             health: skillShieldAtk * attack + skillShieldFlat,
             secondsRemaining: SKILL_SECONDS,
           });
-          const amount = Math.min(combatant.attributes.attack * skillBuffRatio, skillBuffMax);
+          const amount = Math.min(attack * skillBuffRatio, skillBuffMax);
           for (const characterId of getDeployedCharacterIds(tick.party)) {
             buffKitMember(tick.kitEffectState, characterId, {
               amount,
