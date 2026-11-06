@@ -592,8 +592,8 @@ catalogs:
       specifier: ^8.2.0
       version: 8.2.0
     node-html-parser:
-      specifier: ^9.0.6
-      version: 9.0.6
+      specifier: ^9.0.7
+      version: 9.0.7
     nuxt:
       specifier: npm:nuxt-nightly@5x
       version: 5.0.0-2611052317-a04317f
@@ -854,7 +854,7 @@ importers:
         version: 0.8.3
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 9.0.7
       postgres:
         specifier: 'catalog:'
         version: 4.0.0
@@ -1126,7 +1126,7 @@ importers:
         version: link:../../packages/mjml-blocks
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 9.0.7
       parse-tmx:
         specifier: workspace:*
         version: link:../../packages/parse-tmx
@@ -1528,7 +1528,7 @@ importers:
         version: 4.4.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 9.0.7
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1876,7 +1876,7 @@ importers:
         version: link:../headless-block-editor
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 9.0.7
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -2003,7 +2003,7 @@ importers:
         version: 8.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 9.0.6
+        version: 9.0.7
       parse5:
         specifier: 'catalog:'
         version: 8.1.0
@@ -10062,8 +10062,8 @@ packages:
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
 
-  node-html-parser@9.0.6:
-    resolution: {integrity: sha512-q3ETJ2gU+VlERyYbiJ5JQ6+mMVV1Bc6mZQ7MdJ30moq+h3oN0kQGj3rWDORaSX1SOLSkPbY/bN+sBzDlliVOBA==}
+  node-html-parser@9.0.7:
+    resolution: {integrity: sha512-0Io6nKYNN2e+QSoJFxU991Z8kX4H2Ogy3l14Ow0XxR2Wonk9l5qBonx1dYO97UyVfYJ1U9H0WHZOIZW6q5KPrA==}
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -21446,7 +21446,7 @@ snapshots:
       undici: 6.29.1
       which: 6.0.1
 
-  node-html-parser@9.0.6:
+  node-html-parser@9.0.7:
     dependencies:
       css-select: 5.2.2
       entities: 8.1.0
