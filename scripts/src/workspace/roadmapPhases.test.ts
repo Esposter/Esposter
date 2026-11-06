@@ -1,4 +1,5 @@
-import { GENSHIN_ROADMAP_FILE, ROADMAP_PHASE_HEADING_REGEX } from "#src/services/genshinProgress/constants";
+import { GENSHIN_ROADMAP_FILE } from "#src/services/genshinProgress/constants";
+import { readRoadmapPhaseHeading } from "#src/services/genshinProgress/readRoadmapPhaseHeading";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -18,7 +19,7 @@ describe("roadmapPhases", () => {
     const offendingLines: string[] = [];
     let underPhase = false;
     for (const [index, line] of lines.entries())
-      if (HEADING_REGEX.test(line)) underPhase = ROADMAP_PHASE_HEADING_REGEX.test(line);
+      if (HEADING_REGEX.test(line)) underPhase = readRoadmapPhaseHeading(line) !== undefined;
       else if (OPEN_ITEM_REGEX.test(line) && !underPhase) offendingLines.push(`${index + 1}: ${line}`);
 
     expect(offendingLines).toStrictEqual([]);

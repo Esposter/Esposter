@@ -8,7 +8,10 @@ import { takeOne } from "@esposter/shared";
  * country the line is inside it (an even count of crossings, so a hole's edges close their own gap). A country is
  * filled on its own, and the spans of all of them are merged afterwards, so touching countries become one run
  */
-export const rasterizeLandMask = (features: readonly WorldFeature[], cellsPerDegree: number) => {
+export const rasterizeLandMask = (
+  features: readonly WorldFeature[],
+  cellsPerDegree: number,
+): { cellsPerDegree: number; rows: LandRows } => {
   const width = 360 * cellsPerDegree;
   const height = 180 * cellsPerDegree;
   const spansByRow: [number, number][][] = Array.from({ length: height }, () => []);

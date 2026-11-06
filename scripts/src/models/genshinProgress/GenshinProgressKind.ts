@@ -6,4 +6,4 @@ export enum GenshinProgressKind {
   Quest = "Quest",
 }
 
-export const GenshinProgressKinds = Object.values(GenshinProgressKind);
+export const GenshinProgressKinds: readonly GenshinProgressKind[] = Object.values(GenshinProgressKind);
