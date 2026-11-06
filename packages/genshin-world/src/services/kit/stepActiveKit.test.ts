@@ -408,7 +408,7 @@ describe(stepActiveKit, () => {
     expect(context.kitEffectState.effects).toStrictEqual([keptBuff]);
   });
 
-  test("a fall ends the Thunderbeast's Targe that Beidou cast, so it lands nothing after her fall", () => {
+  test("The Targe ends with Beidou's fall", () => {
     expect.hasAssertions();
     const context = createContext([createKitCombatant(BEIDOU_CHARACTER_ID, BEIDOU_KIT)]);
     BEIDOU_KIT.elementalBurst.onStart?.(context);

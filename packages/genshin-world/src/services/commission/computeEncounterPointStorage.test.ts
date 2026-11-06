@@ -37,7 +37,7 @@ describe(computeEncounterPointStorage, () => {
     isBonusClaimed: false,
   });
 
-  test("the storage shrinks by one Encounter Point for each daily commission finished", () => {
+  test("the storage shrinks by one for each daily commission finished", () => {
     expect.hasAssertions();
     expect(computeEncounterPointStorage(createDay(0), slice)).toBe(8);
     expect(computeEncounterPointStorage(createDay(2), slice)).toBe(4);

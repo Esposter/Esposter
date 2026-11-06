@@ -13,7 +13,7 @@ describe(readLongTermEncounterPoints, () => {
     expect(readLongTermEncounterPoints(points, MAJOR_VERSION)).toStrictEqual(points);
   });
 
-  test("should read the points earned in an earlier major version as none", () => {
+  test("Long-Term Encounter Points earned in an earlier major version are gone", () => {
     expect.hasAssertions();
 
     expect(

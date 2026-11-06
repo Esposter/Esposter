@@ -194,7 +194,7 @@ describe(useWorldCommissionClaims, () => {
     expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
   });
 
-  test("should convert a long-term point for thirty Original Resin, where the daily points are a whole point short", () => {
+  test("thirty Original Resin converts a long-term point while the daily points are short", () => {
     expect.hasAssertions();
     const { claims, encounterPoints, longTermEncounterPoints, wallet } = createClaims({
       ...baseClaims,

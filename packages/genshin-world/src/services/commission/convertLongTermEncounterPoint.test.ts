@@ -37,7 +37,7 @@ describe(convertLongTermEncounterPoint, () => {
       wallet: createWallet(resin),
     });
 
-  test("should convert a long-term point for thirty Original Resin, where the daily points are a whole point short", () => {
+  test("thirty Original Resin converts a long-term point while the daily points are short", () => {
     expect.hasAssertions();
 
     expect(convertOf(createPoints(0), createLongTermPoints(2))).toStrictEqual({

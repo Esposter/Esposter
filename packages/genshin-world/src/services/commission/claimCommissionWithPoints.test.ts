@@ -109,7 +109,7 @@ describe(claimCommissionWithPoints, () => {
     ).toBeUndefined();
   });
 
-  test("should claim an unfinished commission for a whole point, spending two half points and keeping the half", () => {
+  test("an unfinished claim spends a point and keeps the half", () => {
     expect.hasAssertions();
 
     const outcome = claimCommissionWithPoints({
@@ -151,7 +151,7 @@ describe(claimCommissionWithPoints, () => {
     ).toBeUndefined();
   });
 
-  test("should refuse a claim the bag cannot take whole, so the point is not spent", () => {
+  test("a claim the bag cannot take spends no point", () => {
     expect.hasAssertions();
 
     const fullInventory: Inventory = {
