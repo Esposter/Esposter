@@ -3,9 +3,7 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StrokeElement } from "#src/models/StrokeElement";
 import type { JsonPatchOperation } from "@esposter/shared";
 
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { movePositionedElement } from "#src/services/movePositionedElement";
 import {
   POSITIONED_ARROW,
@@ -13,6 +11,7 @@ import {
   POSITIONED_PROCESS_ID,
   POSITIONED_RECTANGLE,
 } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { applyPatches, createHistory, pushHistory, undoHistory } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
@@ -34,10 +33,7 @@ describe(movePositionedElement, () => {
 
     const strokeDocument: PositionedDocument = { elements: [stroke] };
     const operations = movePositionedElement(strokeDocument, 0, { x: 110, y: 60 });
-    const movedDocument = applyBlockEdit(positionedDocumentSchema, strokeDocument, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const movedDocument = applyPositionedEdit(strokeDocument, operations);
 
     expect(movedDocument).toStrictEqual({
       elements: [
@@ -57,10 +53,7 @@ describe(movePositionedElement, () => {
     expect.hasAssertions();
 
     const operations = movePositionedElement(document, 1, { x: 60, y: 120 });
-    const movedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const movedDocument = applyPositionedEdit(document, operations);
 
     expect(movedDocument).toStrictEqual({
       elements: [
@@ -90,10 +83,7 @@ describe(movePositionedElement, () => {
     expect.hasAssertions();
 
     const operations = movePositionedElement(document, 0, { x: 200, y: 0 });
-    const movedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const movedDocument = applyPositionedEdit(document, operations);
 
     expect(movedDocument).toStrictEqual({
       elements: [

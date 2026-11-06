@@ -2,10 +2,9 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StickyNoteElement } from "#src/models/StickyNoteElement";
 import type { TextElement } from "#src/models/TextElement";
 
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElement } from "#src/services/resizePositionedElement";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -16,10 +15,7 @@ describe(resizePositionedElement, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
     const operations = resizePositionedElement(document, 0, { height: 100, width: 200 });
-    const resizedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const resizedDocument = applyPositionedEdit(document, operations);
 
     // The bottom point of a 200 wide shape is at x 100
     expect(resizedDocument).toStrictEqual({
