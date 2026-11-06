@@ -7,7 +7,7 @@
 
 ## 2. The bar and the wiring
 
-- [x] 2.1 Step the gauge each frame where the character stands in Windrise, emitting its value and any damage, and write the value into the HUD frame from the session. Verify: the loop composable has no unit test, and the rules it calls are tested by the scenarios named in 1.1 to 1.4.
+- [ ] 2.1 Step the gauge each frame where the character stands in Windrise, emitting its value and any damage, and write the value into the HUD frame from the session. Verify: the loop composable has no unit test, and the rules it calls are tested by the scenarios named in 1.1 to 1.4. Open: no test names the write of the value into the HUD frame, which the Session's `@sheer-cold` handler makes, so this box stays open until one does.
 - [ ] 2.2 Show the bar across the top of the screen while the gauge holds cold, filled by its value. Verify: tests named after the scenarios 'Show the bar while the gauge holds cold' and "Label the bar with the game's name for the gauge", seen failing first. Neither exists yet, so this box stays open; the bar's placement and colours are provisional.
 
 ## 3. Left open
