@@ -61,7 +61,7 @@ Enemy camps SHALL be formed by clustering a family's enemy marks by distance, ea
 
 - **GIVEN** the Mondstadt region with its stand-in camp
 - **WHEN** the region's camps are built from the map's enemy marks
-- **THEN** the stand-in camp is no longer in the region
+- **THEN** the region holds no stand-in camp
 
 #### Scenario: Every kind a camp places is published to the enemies dataset
 
