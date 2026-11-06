@@ -31,7 +31,7 @@ const disposeTileMesh = (mesh: Mesh) => {
 // The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The streamer asks
 // The pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
-  checkIsViewSettled,
+  checkIsSettled,
   devRegistry,
   postTile,
   postToEach,
@@ -42,7 +42,7 @@ export const useTerrainResidency = ({
   tileIndices,
 }: {
   // Whether the view the selection holds is settled with nothing in flight behind it, which the settled read answers
-  checkIsViewSettled: () => boolean;
+  checkIsSettled: () => boolean;
   devRegistry?: DevRegistry;
   postTile: (key: number, message: TerrainWorkerMessage) => void;
   postToEach: (message: TerrainWorkerMessage) => void;
@@ -120,9 +120,9 @@ export const useTerrainResidency = ({
     if (tileStreamer.fail(key))
       console.error(`Terrain tile ${key} failed ${MAX_TILE_ATTEMPTS} times, so it is given up and drawn without`);
   };
-  // Ends the refresh once `checkIsSettled` says every tile round the eye is settled, so it is only asked while one is under way
-  const endRefresh = (checkIsSettled: () => boolean) => {
-    if (refreshStart === undefined || !checkIsSettled()) return;
+  // Ends the refresh once `checkIsViewSettled` says every tile round the eye is settled, so it is only asked while one is under way
+  const endRefresh = (checkIsViewSettled: () => boolean) => {
+    if (refreshStart === undefined || !checkIsViewSettled()) return;
     performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain-refresh`, {
       detail: { tileCount: rebuiltTileCount },
       start: refreshStart,
@@ -132,7 +132,7 @@ export const useTerrainResidency = ({
   // The settled read a script waits on, registered while the terrain is mounted, answering for the view the selection
   // Settles and for the tiles in flight behind it
   useDevRegistration({
-    createHandle: () => ({ commands: [createSettledCommand({ checkIsSettled: checkIsViewSettled })], variables: [] }),
+    createHandle: () => ({ commands: [createSettledCommand({ checkIsSettled })], variables: [] }),
     devRegistry,
   });
   return { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMap, tileStreamer };

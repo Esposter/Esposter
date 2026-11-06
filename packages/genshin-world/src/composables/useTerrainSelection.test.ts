@@ -30,7 +30,7 @@ describe(useTerrainSelection, () => {
       tileStreamer,
       ...useTerrainSelection({
         draws: createTerrainSelection(64),
-        endRefresh: vi.fn<(checkIsSettled: () => boolean) => void>(),
+        endRefresh: vi.fn<(checkIsViewSettled: () => boolean) => void>(),
         isGroundSettled: true,
         onReady: vi.fn<() => void>(),
         terrainOptions,

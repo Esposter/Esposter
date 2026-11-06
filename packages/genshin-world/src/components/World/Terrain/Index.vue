@@ -87,7 +87,7 @@ const workers = useTerrainWorkers({
 const { disposeTileMesh, endRefresh, failTile, getRing, ringDrawnKeysMap, ringMap, tileStreamer } = useTerrainResidency(
   {
     // The selection is made below, so the residency reads its check through this closure, once the selection exists
-    checkIsViewSettled: () => checkIsSettled(),
+    checkIsSettled: () => checkIsSettled(),
     devRegistry,
     postTile: workers.postTile,
     postToEach: workers.postToEach,
