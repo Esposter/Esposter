@@ -13,7 +13,7 @@ flowchart TD
   EDITOR["the editor: layout, registry, context from its store"] --> SHELL["the shell"]
   SHELL --> RESOLVED["resolved regions from the layout composable"]
   RESOLVED --> PRESENT{"each region's presentation"}
-  PRESENT -->|docked| DOCK["a column or a bar beside the canvas, with a handle to resize it unless its limits are equal"]
+  PRESENT -->|docked| DOCK["a column or a bar beside the canvas<br/>with a resize handle"]
   PRESENT -->|overlay| FLOAT["floating over the canvas edge, below the toolbar's row"]
   PRESENT -->|sheet| SHEET["a dialog sheet from its edge, opened by a button the shell places"]
   DOCK --> CONTENT["each panel's content key looked up in the registry"]

@@ -38,7 +38,7 @@ flowchart TD
 
 **The bar's controls are by use.** Undo, redo and Add page are every-edit actions and are pinned. The mode switch and the problems surface are always shown. Import, Export and Clear are occasional, and fold into the bar's overflow menu at every width, which keeps the bar one row on a phone with no second bar of buttons.
 
-**A compact window.** The canvas keeps the window. Two buttons the shell places, Structure and Inspector, open the two regions as sheets from their own edges. The inspector's button is shown while something is selected, and the structure's is always shown. This replaces the one-pane-at-a-time tabs of the current narrow layout, which swap the canvas away to show a pane, so a reader who selects a question no longer loses sight of it to see its settings.
+**A compact window.** The canvas keeps the window. Two buttons the shell places, Structure and Inspector, open the two regions as sheets from their own edges. Both buttons are always shown in the design mode: each region holds a panel whatever is selected, since the inspector's Survey, Logic and Theme tabs show with nothing selected. The buttons sit in one row in the strip below the canvas. This replaces the one-pane-at-a-time tabs of the current narrow layout, which swap the canvas away to show a pane, so a reader who selects a question no longer loses sight of it to see its settings.
 
 ## Decisions
 

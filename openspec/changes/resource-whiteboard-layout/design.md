@@ -31,7 +31,7 @@ flowchart TD
   SELECT --> PANEL["the properties panel opens for the new element"]
 ```
 
-**A placing tool draws the element.** Choosing the shape tool and clicking puts a shape of the default size at the click, and a drag makes the shape the size of the drag. The text box and the sticky note work the same way. The shape tool is one slot in the toolbar showing the shape last used, and its menu lists the shapes the palette held, the basic ones and the flowchart ones. The element is inserted by the core's insert command at the point, snapped to the grid as every placement is, and a commit the document check refuses leaves the document unchanged and tells the owner, as every commit does. After one placement the tool returns to select, so the next click selects, and a lock on the toolbar keeps the tool in hand for a run of the same shape.
+**A placing tool draws the element.** Choosing the shape tool and clicking puts a shape of the default size at the click, and a drag makes the shape the size of the drag. The text box and the sticky note work the same way. The shape tool is one slot in the toolbar showing the shape last used, and its menu lists the shapes the palette held, the basic ones and the flowchart ones. The shapes, their keys and the image types the picker accepts are listed in the [whiteboard design](../../specs/resource/whiteboard/design.md), and this change keeps them as they are. The element is inserted by the core's insert command at the point, snapped to the grid as every placement is, and a commit the document check refuses leaves the document unchanged and tells the owner, as every commit does. After one placement the tool returns to select, so the next click selects, and a lock on the toolbar keeps the tool in hand for a run of the same shape.
 
 **The image is a button.** It opens a file picker, through the app's hidden file input, and hands the chosen files to the insert a pasted image already uses, since an image has no point to draw. A paste and a picked file then reach the same composable, and the picker is the only new wiring.
 
@@ -89,8 +89,8 @@ flowchart TD
 | `apps/web/app/components/Ui/HiddenFileInput.vue`                               | the file input the image button opens                                                         |
 | `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`          | the one gesture reducer, which gains the placing transition                                   |
 | `apps/web/app/services/whiteboard/tool/WhiteboardToolItemMap.ts`               | the tools the toolbar chooses between, with the mark, title and key of each                   |
-| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`              | the shapes the shape slot holds, with the keys of the three that have one                     |
-| `apps/web/app/services/whiteboard/tool/constants.ts`                           | the shape slot the toolbar draws and the image types the picker accepts                       |
+| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`              | the shapes the shape slot holds, each with its mark                                           |
+| `apps/web/app/services/whiteboard/tool/constants.ts`                           | the shape slot the toolbar draws and the picker's image types                                 |
 | `apps/web/app/services/whiteboard/palette/constants.ts`                        | the sizes and fills of placed elements, kept                                                  |
 | `apps/web/app/store/resource/whiteboard/editor.ts`                             | the tool in hand, its lock, the selection and the viewport, which gains the lock's toggle     |
 | `apps/web/app/store/resource/whiteboard/index.ts`                              | the undo and redo the view's buttons call                                                     |
