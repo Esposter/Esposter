@@ -4,7 +4,7 @@ import { stepQuickUseHeldSeconds } from "#src/services/gadget/stepQuickUseHeldSe
 import { describe, expect, test } from "vitest";
 
 describe(checkIsQuickSwapOpen, () => {
-  test("holding z opens the quick swap", () => {
+  test("holding Z opens the quick swap", () => {
     expect.hasAssertions();
 
     expect(checkIsQuickSwapOpen(stepQuickUseHeldSeconds(0, false, QUICK_SWAP_HOLD_SECONDS))).toBe(false);
