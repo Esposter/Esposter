@@ -31,6 +31,9 @@ export const GENSHIN_PHASE_HEADER: readonly string[] = [
 ];
 // The most characters of a first blocker a table row prints, its full words being on the unit's own line
 export const GENSHIN_BLOCKER_WIDTH = 100;
+// The blocker a compute page names when an open line carries no `{id}`: no machine can take such a line, so the page
+// Waits on it until the id is written
+export const GENSHIN_MISSING_ID_BLOCKER = "an open line has no {id}, so no machine can take it";
 // The passes a scene may not owe: their measures return `isNotOwed` (`measureMotion.ts`, `measureAudio.ts`), so a row
 // Missing for one is not owed or not run, which the report does not record. Every other pass with no row was not held
 export const GENSHIN_OPTIONAL_PASSES: readonly ParityPass[] = [ParityPass.Motion, ParityPass.Audio];

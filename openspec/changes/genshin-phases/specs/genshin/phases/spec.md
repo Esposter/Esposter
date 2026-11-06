@@ -58,7 +58,7 @@ The fleet SHALL offer a machine the first unit of the lowest phase that the mach
 
 ### Requirement: A unit is done when its own source drains, and its kind's check gates its phase
 
-The progress report's done column SHALL count a unit once its own source has nothing left open: a compute page with no queue item and no waiting item, a change with no open task, or a roadmap item or quest ticked. Each kind's check SHALL be reported apart from that column as met, not met or not measurable, and only those checks SHALL gate a phase. A check that no command can read SHALL be reported as not measurable and never as met.
+The progress report's done column SHALL count a unit once its own source has nothing left open: a compute page with no queue item and no waiting item, where an open line with no id counts as a waiting item, a change with no open task, or a roadmap item or quest ticked. Each kind's check SHALL be reported apart from that column as met, not met or not measurable, and only those checks SHALL gate a phase. A check that no command can read SHALL be reported as not measurable and never as met.
 
 #### Scenario: A screen's check is met when every id is under its bar
 

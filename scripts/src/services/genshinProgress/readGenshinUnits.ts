@@ -17,14 +17,17 @@ import { resolve } from "node:path";
 // Every unit the report counts and every reading its exit checks take, each source read once off the working tree: the
 // Compute pages, the changes, the roadmap, the quests the session scripts name, the parity scores and the game data lock
 export const readGenshinUnits = async (): Promise<GenshinUnits> => {
-  const areas = readComputeAreas(readComputeFiles()).map(({ folder, kind, phase, queue, waiting }): GenshinArea => ({
-    blockers: waiting.map(({ waiting: blocker }) => blocker),
-    folder,
-    kind,
-    needs: queue.map(({ needs }) => needs),
-    parityIds: [...new Set([...queue, ...waiting].flatMap(({ line }) => getCompareIds(line)))],
-    phase,
-  }));
+  const areas = readComputeAreas(readComputeFiles()).map(
+    ({ folder, kind, phase, queue, skipped, waiting }): GenshinArea => ({
+      blockers: waiting.map(({ waiting: blocker }) => blocker),
+      folder,
+      kind,
+      needs: queue.map(({ needs }) => needs),
+      parityIds: [...new Set([...queue, ...waiting].flatMap(({ line }) => getCompareIds(line)))],
+      phase,
+      skipped,
+    }),
+  );
   return {
     areas,
     changes: readGenshinChanges(readProposalFiles()),

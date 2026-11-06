@@ -4,7 +4,11 @@ import { ComputeKind } from "#src/models/fleet/ComputeKind";
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
 import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
 import { buildGenshinProgress } from "#src/services/genshinProgress/buildGenshinProgress";
-import { GENSHIN_NO_COMMAND_NOTE, GENSHIN_PHASE_GATES } from "#src/services/genshinProgress/constants";
+import {
+  GENSHIN_MISSING_ID_BLOCKER,
+  GENSHIN_NO_COMMAND_NOTE,
+  GENSHIN_PHASE_GATES,
+} from "#src/services/genshinProgress/constants";
 import { formatGenshinProgress } from "#src/services/genshinProgress/formatGenshinProgress";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -24,9 +28,9 @@ describe(buildGenshinProgress, () => {
     const { phases } = buildGenshinProgress(
       {
         areas: [
-          { blockers: [], folder: "", kind: ComputeKind.Screen, needs: [], parityIds: [], phase: 2 },
-          { blockers: [], folder: "", kind: ComputeKind.Screen, needs: [[]], parityIds: [], phase: 2 },
-          { blockers: [], folder: "", kind: ComputeKind.Region, needs: [[]], parityIds: [], phase: 2 },
+          { blockers: [], folder: "", kind: ComputeKind.Screen, needs: [], parityIds: [], phase: 2, skipped: 0 },
+          { blockers: [], folder: "", kind: ComputeKind.Screen, needs: [[]], parityIds: [], phase: 2, skipped: 0 },
+          { blockers: [], folder: "", kind: ComputeKind.Region, needs: [[]], parityIds: [], phase: 2, skipped: 0 },
         ],
         changes: [],
         exit: noExit,
@@ -75,6 +79,7 @@ describe(buildGenshinProgress, () => {
             needs: [],
             parityIds: [],
             phase: 1,
+            skipped: 0,
           },
         ],
         changes: [],
@@ -113,6 +118,7 @@ describe(buildGenshinProgress, () => {
             needs: [["game-install"]],
             parityIds: [],
             phase: 3,
+            skipped: 0,
           },
         ],
         changes: [],
@@ -136,6 +142,38 @@ describe(buildGenshinProgress, () => {
         waiting: 0,
       },
     ]);
+  });
+
+  test("a compute area whose only open line has no id is waiting on that line, never done or runnable", () => {
+    expect.hasAssertions();
+
+    const progress = buildGenshinProgress(
+      {
+        areas: [
+          { blockers: [], folder: "login", kind: ComputeKind.Scene, needs: [], parityIds: [], phase: 1, skipped: 1 },
+        ],
+        changes: [],
+        exit: noExit,
+        roadmap: { items: [], names: new Map() },
+        scriptedQuests: [],
+      },
+      [],
+    );
+
+    expect(takeOne(progress.phases, 1).rows).toStrictEqual([
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: GENSHIN_MISSING_ID_BLOCKER,
+        kind: ComputeKind.Scene,
+        notMeasurable: 0,
+        runnable: 0,
+        scripted: 0,
+        units: 1,
+        waiting: 1,
+      },
+    ]);
+    expect(formatGenshinProgress(progress)).toContainEqual(expect.stringContaining(GENSHIN_MISSING_ID_BLOCKER));
   });
 
   test("a change counts each open task in its own task's phase, and never a done one", () => {
