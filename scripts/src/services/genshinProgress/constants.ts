@@ -5,7 +5,10 @@ import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgress
 
 // The Genshin roadmap, whose phase headings group every open item and name each phase
 export const GENSHIN_ROADMAP_FILE = "openspec/changes/genshin-roadmap/tasks.md";
-// The order the report's rows read in: the compute kinds, then the change and the roadmap item
+// The folder of the scripted sessions, one file per session, which the report reads for the quests each one names. Until
+// The first session is written the folder is absent, and the report names no quest
+export const GENSHIN_SESSIONS_DIRECTORY = "packages/genshin-world/src/services/dev/sessions";
+// The order the report's rows read in: the compute kinds, then the change, the roadmap item and the quest
 export const GENSHIN_ROW_KINDS: readonly (ComputeKind | GenshinProgressKind)[] = [
   ...Object.values(ComputeKind),
   ...Object.values(GenshinProgressKind),
@@ -18,6 +21,8 @@ export const GENSHIN_PHASE_HEADER: readonly string[] = [
   "runnable here",
   "waiting",
   "blocked on the other machine",
+  "scripted",
+  "not measurable",
   "first blocker",
 ];
 // The most characters of a first blocker a table row prints, its full words being on the unit's own line

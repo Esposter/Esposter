@@ -29,13 +29,34 @@ describe(buildGenshinProgress, () => {
         changes: [],
         exit: noExit,
         roadmap: { items: [], names: new Map([[2, "The interface"]]) },
+        scriptedQuests: [],
       },
       [],
     );
 
     expect(takeOne(phases, 2).rows).toStrictEqual([
-      { blocked: 0, done: 1, firstBlocker: "", kind: ComputeKind.Screen, runnable: 1, units: 2, waiting: 0 },
-      { blocked: 0, done: 0, firstBlocker: "", kind: ComputeKind.Region, runnable: 1, units: 1, waiting: 0 },
+      {
+        blocked: 0,
+        done: 1,
+        firstBlocker: "",
+        kind: ComputeKind.Screen,
+        notMeasurable: 0,
+        runnable: 1,
+        scripted: 0,
+        units: 2,
+        waiting: 0,
+      },
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: "",
+        kind: ComputeKind.Region,
+        notMeasurable: 0,
+        runnable: 1,
+        scripted: 0,
+        units: 1,
+        waiting: 0,
+      },
     ]);
   });
 
@@ -57,12 +78,23 @@ describe(buildGenshinProgress, () => {
         changes: [],
         exit: noExit,
         roadmap: { items: [], names: new Map() },
+        scriptedQuests: [],
       },
       [],
     );
 
     expect(takeOne(phases, 1).rows).toStrictEqual([
-      { blocked: 0, done: 0, firstBlocker: "a plate", kind: ComputeKind.Scene, runnable: 0, units: 1, waiting: 1 },
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: "a plate",
+        kind: ComputeKind.Scene,
+        notMeasurable: 0,
+        runnable: 0,
+        scripted: 0,
+        units: 1,
+        waiting: 1,
+      },
     ]);
   });
 
@@ -84,12 +116,23 @@ describe(buildGenshinProgress, () => {
         changes: [],
         exit: noExit,
         roadmap: { items: [], names: new Map() },
+        scriptedQuests: [],
       },
       ["linux"],
     );
 
     expect(takeOne(phases, 3).rows).toStrictEqual([
-      { blocked: 1, done: 0, firstBlocker: "", kind: ComputeKind.Pieces, runnable: 0, units: 1, waiting: 0 },
+      {
+        blocked: 1,
+        done: 0,
+        firstBlocker: "",
+        kind: ComputeKind.Pieces,
+        notMeasurable: 0,
+        runnable: 0,
+        scripted: 0,
+        units: 1,
+        waiting: 0,
+      },
     ]);
   });
 
@@ -113,15 +156,36 @@ describe(buildGenshinProgress, () => {
         ],
         exit: noExit,
         roadmap: { items: [], names: new Map() },
+        scriptedQuests: [],
       },
       [],
     );
 
     expect(takeOne(phases, 2).rows).toStrictEqual([
-      { blocked: 0, done: 0, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 1, units: 1, waiting: 0 },
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: "",
+        kind: GenshinProgressKind.Change,
+        notMeasurable: 0,
+        runnable: 1,
+        scripted: 0,
+        units: 1,
+        waiting: 0,
+      },
     ]);
     expect(takeOne(phases, 4).rows).toStrictEqual([
-      { blocked: 0, done: 0, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 1, units: 1, waiting: 0 },
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: "",
+        kind: GenshinProgressKind.Change,
+        notMeasurable: 0,
+        runnable: 1,
+        scripted: 0,
+        units: 1,
+        waiting: 0,
+      },
     ]);
   });
 
@@ -134,12 +198,23 @@ describe(buildGenshinProgress, () => {
         changes: [{ needs: [], phase: 6, tasks: [{ isDone: true, number: "1.1", phase: 6 }], waiting: "" }],
         exit: noExit,
         roadmap: { items: [], names: new Map() },
+        scriptedQuests: [],
       },
       [],
     );
 
     expect(takeOne(phases, 6).rows).toStrictEqual([
-      { blocked: 0, done: 1, firstBlocker: "", kind: GenshinProgressKind.Change, runnable: 0, units: 1, waiting: 0 },
+      {
+        blocked: 0,
+        done: 1,
+        firstBlocker: "",
+        kind: GenshinProgressKind.Change,
+        notMeasurable: 0,
+        runnable: 0,
+        scripted: 0,
+        units: 1,
+        waiting: 0,
+      },
     ]);
   });
 
@@ -158,12 +233,58 @@ describe(buildGenshinProgress, () => {
           ],
           names: new Map(),
         },
+        scriptedQuests: [],
       },
       [],
     );
 
     expect(takeOne(phases, 0).rows).toStrictEqual([
-      { blocked: 0, done: 1, firstBlocker: "", kind: GenshinProgressKind.Item, runnable: 1, units: 2, waiting: 0 },
+      {
+        blocked: 0,
+        done: 1,
+        firstBlocker: "",
+        kind: GenshinProgressKind.Item,
+        notMeasurable: 0,
+        runnable: 1,
+        scripted: 0,
+        units: 2,
+        waiting: 0,
+      },
+    ]);
+  });
+
+  test("A quest with a script is reported as scripted, not done", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      {
+        areas: [],
+        changes: [],
+        exit: noExit,
+        roadmap: {
+          items: [
+            { isDone: false, phase: 4, quest: "351" },
+            { isDone: false, phase: 4, quest: "352" },
+          ],
+          names: new Map(),
+        },
+        scriptedQuests: ["351"],
+      },
+      [],
+    );
+
+    expect(takeOne(phases, 4).rows).toStrictEqual([
+      {
+        blocked: 0,
+        done: 0,
+        firstBlocker: "",
+        kind: GenshinProgressKind.Quest,
+        notMeasurable: 1,
+        runnable: 0,
+        scripted: 1,
+        units: 2,
+        waiting: 0,
+      },
     ]);
   });
 
@@ -171,7 +292,7 @@ describe(buildGenshinProgress, () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
-      { areas: [], changes: [], exit: noExit, roadmap: { items: [], names: new Map() } },
+      { areas: [], changes: [], exit: noExit, roadmap: { items: [], names: new Map() }, scriptedQuests: [] },
       [],
     );
 

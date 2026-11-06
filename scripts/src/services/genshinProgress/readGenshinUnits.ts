@@ -8,13 +8,14 @@ import { getCompareIds } from "#src/services/genshinProgress/getCompareIds";
 import { parseRoadmapItems } from "#src/services/genshinProgress/parseRoadmapItems";
 import { readGenshinChanges } from "#src/services/genshinProgress/readGenshinChanges";
 import { readGenshinExitReadings } from "#src/services/genshinProgress/readGenshinExitReadings";
+import { readScriptedQuestIds } from "#src/services/genshinProgress/readScriptedQuestIds";
 import { readProposalFiles } from "#src/services/proposals/readProposalFiles";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Every unit the report counts and every reading its exit checks take, each source read once off the working tree: the
-// Compute pages, the changes, the roadmap, the parity scores and the game data lock
+// Compute pages, the changes, the roadmap, the quests the session scripts name, the parity scores and the game data lock
 export const readGenshinUnits = async (): Promise<GenshinUnits> => {
   const areas = readComputeAreas(readComputeFiles()).map(({ folder, kind, phase, queue, waiting }): GenshinArea => ({
     blockers: waiting.map(({ waiting: blocker }) => blocker),
@@ -29,5 +30,6 @@ export const readGenshinUnits = async (): Promise<GenshinUnits> => {
     changes: readGenshinChanges(readProposalFiles()),
     exit: await readGenshinExitReadings(areas),
     roadmap: parseRoadmapItems(readFileSync(resolve(REPOSITORY_ROOT, GENSHIN_ROADMAP_FILE), "utf8")),
+    scriptedQuests: readScriptedQuestIds(),
   };
 };

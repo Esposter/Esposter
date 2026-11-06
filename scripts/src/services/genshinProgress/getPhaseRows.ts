@@ -15,7 +15,9 @@ export const getPhaseRows = (units: readonly GenshinUnit[]): GenshinProgressRow[
       done: countState(GenshinUnitState.Done),
       firstBlocker: kindUnits.find((unit) => unit.state === GenshinUnitState.Waiting)?.blocker ?? "",
       kind,
+      notMeasurable: countState(GenshinUnitState.NotMeasurable),
       runnable: countState(GenshinUnitState.Runnable),
+      scripted: countState(GenshinUnitState.Scripted),
       units: kindUnits.length,
       waiting: countState(GenshinUnitState.Waiting),
     };

@@ -13,13 +13,15 @@ export const formatGenshinProgress = ({ phases, unphased }: GenshinProgress): st
       ? ["no units"]
       : formatFleetTable(
           GENSHIN_PHASE_HEADER,
-          rows.map(({ blocked, done, firstBlocker, kind, runnable, units, waiting }) => [
+          rows.map(({ blocked, done, firstBlocker, kind, notMeasurable, runnable, scripted, units, waiting }) => [
             kind,
             `${units}`,
             `${done}`,
             `${runnable}`,
             `${waiting}`,
             `${blocked}`,
+            `${scripted}`,
+            `${notMeasurable}`,
             firstBlocker.length > GENSHIN_BLOCKER_WIDTH
               ? `${firstBlocker.slice(0, GENSHIN_BLOCKER_WIDTH - 3)}...`
               : firstBlocker,

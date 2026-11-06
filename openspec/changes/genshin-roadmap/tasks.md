@@ -282,6 +282,8 @@ The References sought are the items below that name a clip or still file (a `.mk
 - [ ] **Each region's whole land fitted, and loaded by reach.** [Scene derivation](../../specs/genshin/scene-derivation/design.md) needs each region's ground fitted past its capital's surroundings over all its areas' outlines, in pieces whose features each hold their own ground's gate, each fetched with its region data as its areas come within reach rather than at the world's gate.
 - [ ] **Region palettes: the colours the sampling leaves out.** [Region buildings](../../specs/genshin/region-buildings/design.md) needs Mondstadt's and Inazuma's plaster, Fontaine's gold and iron, Mondstadt's roofs and Snezhnaya's buildings sampled from textures their extractions hold.
 - [ ] **The world's provisional looks, each by its measure.** [Trees and scatter](../genshin-trees-and-scatter/design.md) and the pages it names need the great oak's fit, the tree impostor's turn, the flowers' statistics, the weather looks and a river bend's foam, each by its own reference.
+- [ ] **Wanderer's Trail (quest 351).** The prologue's first quest, played to its end in a scripted session across a save and a load ([phases](../genshin-phases/design.md), task 4.11). Its go-to for trigger 1053 waits on task 1.4 of the [quests](../genshin-quests/design.md) change, which places it.
+- [ ] **Bird's-Eye View (quest 352).** The prologue's second quest, begun once Wanderer's Trail is finished, and played to its end in the same scripted session ([phases](../genshin-phases/design.md), task 4.11).
 
 ## Phase 5: The other regions
 
