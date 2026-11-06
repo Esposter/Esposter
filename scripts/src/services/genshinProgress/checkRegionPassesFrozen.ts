@@ -3,6 +3,7 @@ import type { GenshinExitCheck } from "#src/models/genshinProgress/GenshinExitCh
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
 import { PARITY_PASS_ORDER } from "#src/services/genshinParity/passes/constants";
 import { GENSHIN_OPTIONAL_PASSES } from "#src/services/genshinProgress/constants";
+import { getExitCheck } from "#src/services/genshinProgress/getExitCheck";
 
 // A row of a component's passes report, one for each reading: its pass, and whether the reading holds its gate
 const PASS_ROW_REGEX = /^\| (?<pass>[A-Za-z]+) \| .* \| (?<held>yes|no) \|$/gmu;
@@ -28,7 +29,5 @@ export const checkRegionPassesFrozen = (folder: string, report: string | undefin
       unrecorded.push(`${pass} has no row: not owed or not run, which the report does not record`);
     else if (passRows.length === 0) failing.push(`${pass} has no held row`);
   }
-  if (failing.length > 0) return { name, notes: failing, state: GenshinExitCheckState.NotMet };
-  if (unrecorded.length > 0) return { name, notes: unrecorded, state: GenshinExitCheckState.NotMeasurable };
-  return { name, notes: [], state: GenshinExitCheckState.Met };
+  return getExitCheck(name, failing, unrecorded);
 };

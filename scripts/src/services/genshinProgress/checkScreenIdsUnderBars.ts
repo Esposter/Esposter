@@ -3,6 +3,7 @@ import type { GenshinExitCheck } from "#src/models/genshinProgress/GenshinExitCh
 
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
+import { getExitCheck } from "#src/services/genshinProgress/getExitCheck";
 
 // A screen is done when every parity id its page names scores under its bar: the bar its reference records, or else the
 // Default. An id with no committed score, or no reference at all, is not under its bar, and a score at its bar is not
@@ -27,7 +28,5 @@ export const checkScreenIdsUnderBars = (
     else if (mean === undefined) failing.push(`${id} has no committed score`);
     else if (mean >= approval.bar) failing.push(`${id} scores ${mean}%, not under its ${approval.bar}% bar`);
   }
-  if (failing.length > 0) return { name, notes: failing, state: GenshinExitCheckState.NotMet };
-  if (unmeasured.length > 0) return { name, notes: unmeasured, state: GenshinExitCheckState.NotMeasurable };
-  return { name, notes: [], state: GenshinExitCheckState.Met };
+  return getExitCheck(name, failing, unmeasured);
 };
