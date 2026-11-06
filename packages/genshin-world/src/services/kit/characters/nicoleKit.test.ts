@@ -18,8 +18,10 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { createNicoleKitBehaviour, NICOLE_CHARACTER_ID } from "#src/services/kit/characters/nicoleKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -28,6 +30,7 @@ import { assert, describe, expect, test, vi } from "vitest";
 
 const NICOLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NICOLE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const KLEE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KLEE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createNicoleCombatant = (attack: number): Combatant => ({
@@ -176,6 +179,24 @@ describe(createNicoleKitBehaviour, () => {
     ]);
   });
 
+  test("her skill's shield reads her attack with the buffs on her as they stand 8 frames in", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNicoleCombatant(1000));
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+
+    stepKitSeconds(context, 4 / 60);
+    buffKitMember(context.kitEffectState, NICOLE_CHARACTER_ID, {
+      amount: 1000,
+      attribute: Attribute.Attack,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    stepKitSeconds(context, 4 / 60);
+
+    const shields = context.kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield");
+    expect(shields.map(({ health }) => health)).toStrictEqual([2.21184 * 2000 + 1386.6697]);
+  });
+
   test.each([
     { attack: 1000, expected: 82.5, name: "a team member gets 8.25% of her attack as ATK below the cap" },
     { attack: 10_000, expected: 330, name: "a team member gets the cap as ATK when 8.25% of her attack passes it" },
@@ -303,6 +324,50 @@ describe(createNicoleKitBehaviour, () => {
 
     stepKitSeconds(context, 1);
     expect(countDamageTaken(onKitEvent)).toBe(0);
+  });
+
+  test("her burst's Hexerei projection prices her attack with the buffs on her as they stand at its tick", () => {
+    expect.hasAssertions();
+    const nicole = createNicoleCombatant(1000);
+    const klee: Combatant = { ...createNicoleCombatant(1000), characterId: KLEE_CHARACTER_ID, kit: KLEE_KIT };
+    // A test enemy that outlives its projections, so each one finds it standing
+    const enemy = {
+      ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "enemy", position: { x: 0, z: 0 } }, ""),
+      health: 1_000_000,
+    };
+    const scene = {
+      characterIdCombatantMap: new Map([
+        [KLEE_CHARACTER_ID, klee],
+        [NICOLE_CHARACTER_ID, nicole],
+      ]),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      party: createParty([NICOLE_CHARACTER_ID, KLEE_CHARACTER_ID]),
+    };
+    // Nicole's burst starts on her, and Klee, a Hexerei of the team with her, is the active character whose hits project
+    const burstContext = createKitTestContext(nicole, scene);
+    NICOLE_KIT.elementalBurst.onStart?.(burstContext);
+    const context = createKitTestContext(klee, { ...scene, kitEffectState: burstContext.kitEffectState });
+    // The health the enemy loses over the given seconds of the team's effects
+    const stepDamage = (seconds: number): number => {
+      const healthBefore = enemy.health;
+      stepKitSeconds(context, seconds);
+      return healthBefore - enemy.health;
+    };
+
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent(createEnemyHit(enemy, klee), context);
+    const firstDamage = stepDamage(186 / 60);
+    buffKitMember(context.kitEffectState, NICOLE_CHARACTER_ID, {
+      amount: 1000,
+      attribute: Attribute.Attack,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    emitKitEvent(createEnemyHit(enemy, klee), context);
+    const secondDamage = stepDamage(186 / 60);
+
+    expect(secondDamage).toBeGreaterThan(firstDamage);
   });
 
   test("her first ascension gives the character swapped in ATK 300 three seconds on, for as long as her skill's buff stands", () => {

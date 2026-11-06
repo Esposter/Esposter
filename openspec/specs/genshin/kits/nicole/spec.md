@@ -56,6 +56,12 @@ Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her 
 - **WHEN** the player presses Nicole's skill
 - **THEN** a Pyro shield of 2.21184 times her attack plus 1386.6697, at level 1, covers the team 8 frames later, for 20 seconds
 
+#### Scenario: An ATK buff put on her before the shield lands raises it
+
+- **GIVEN** Nicole's skill is pressed, and an ATK buff is put on her 4 frames after the press
+- **WHEN** the shield lands 8 frames after the press
+- **THEN** the shield is 2.21184 times her attack with that buff counted, plus 1386.6697
+
 ### Requirement: Nicole's skill buffs the team's ATK
 
 Nicole's elemental skill SHALL give each deployed member an ATK buff scaled by her attack and capped, 8 frames after the cast and lasting 20 seconds.

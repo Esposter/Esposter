@@ -25,6 +25,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -189,11 +190,17 @@ const scheduleProjection = (
   scheduleKitTask(kitEffectState, nicole.characterId, toKitSeconds(PROJECTION_FRAMES), (tick) => {
     // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
     // Hexerei and two or more Hexerei are deployed
+    const { attack } = getBuffedCombatant(
+      nicole,
+      tick.kitEffectState.effects,
+      tick.party,
+      tick.characterIdCombatantMap,
+    ).attributes;
     const flatDamage =
       checkIsKitHexerei(nicole.characterId) &&
       checkIsKitHexerei(event.striker.characterId) &&
       checkIsKitSecretRite(getDeployedCharacterIds(tick.party))
-        ? nicole.attributes.attack * 3
+        ? attack * 3
         : 0;
     strikeKitEnemies(
       [
@@ -410,9 +417,15 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
               effect.source === CONSTELLATION_2_SOURCE),
         );
         scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(SKILL_SNAPSHOT_FRAMES), (tick) => {
+          const { attack } = getBuffedCombatant(
+            combatant,
+            tick.kitEffectState.effects,
+            tick.party,
+            tick.characterIdCombatantMap,
+          ).attributes;
           castKitShield(tick, combatant.characterId, {
             element: Element.Pyro,
-            health: skillShieldAtk * combatant.attributes.attack + skillShieldFlat,
+            health: skillShieldAtk * attack + skillShieldFlat,
             secondsRemaining: SKILL_SECONDS,
           });
           const amount = Math.min(combatant.attributes.attack * skillBuffRatio, skillBuffMax);
