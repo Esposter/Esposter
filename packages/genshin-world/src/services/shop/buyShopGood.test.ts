@@ -105,7 +105,7 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
   });
 
-  test("should refuse a limited good bought up this month, and offer it again after a purchase made before the refresh", () => {
+  test("a purchase past the limit is refused", () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: STARGLITTER_PRICE * 2 };
