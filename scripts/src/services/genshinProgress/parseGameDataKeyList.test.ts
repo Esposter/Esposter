@@ -2,7 +2,7 @@ import { parseGameDataKeyList } from "#src/services/genshinProgress/parseGameDat
 import { describe, expect, test } from "vitest";
 
 describe(parseGameDataKeyList, () => {
-  test("A key list reads every leaf of its two constants, nested or flat", () => {
+  test("a key list reads every leaf of its two constants, nested or flat", () => {
     expect.hasAssertions();
 
     const text = [

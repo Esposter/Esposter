@@ -160,7 +160,7 @@ describe(selectTakeableEntries, () => {
     ).toStrictEqual(["inventory"]);
   });
 
-  test("The lowest phase with a runnable unit is taken first", () => {
+  test("the lowest phase with a runnable unit is taken first", () => {
     expect.hasAssertions();
 
     const entries = [
@@ -174,7 +174,7 @@ describe(selectTakeableEntries, () => {
     ]);
   });
 
-  test("A phase whose units wait on the other machine is passed over", () => {
+  test("a phase whose units wait on the other machine is passed over", () => {
     expect.hasAssertions();
 
     const entries = [

@@ -11,7 +11,7 @@ describe(getSelectableCharacterIds, () => {
     [packedCharacterId, { characterId: packedCharacterId, key: "", readFile: () => Promise.resolve(undefined) }],
   ]);
 
-  test("Character without a published pack is not selectable", () => {
+  test("character without a published pack is not selectable", () => {
     expect.hasAssertions();
 
     expect(

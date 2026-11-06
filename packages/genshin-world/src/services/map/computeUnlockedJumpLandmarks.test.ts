@@ -31,7 +31,7 @@ describe(computeUnlockedJumpLandmarks, () => {
   };
   const noQuests = new Set<string>();
 
-  test("An unlocked entrance joins the jumps", () => {
+  test("an unlocked entrance joins the jumps", () => {
     expect.hasAssertions();
 
     expect(computeUnlockedJumpLandmarks([domainEntrance], new Set([domainEntrance.id]), noQuests)).toStrictEqual([
@@ -39,7 +39,7 @@ describe(computeUnlockedJumpLandmarks, () => {
     ]);
   });
 
-  test("A locked entrance is not a jump target", () => {
+  test("a locked entrance is not a jump target", () => {
     expect.hasAssertions();
 
     expect(computeUnlockedJumpLandmarks([domainEntrance], new Set(), noQuests)).toStrictEqual([]);

@@ -3,7 +3,7 @@ import { createScriptedClock } from "#src/services/dev/createScriptedClock.fixtu
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe(createScriptedClock, () => {
-  test("A frame advances the clock by one fixed step", () => {
+  test("a frame advances the clock by one fixed step", () => {
     expect.hasAssertions();
 
     const scriptedClock = createScriptedClock();

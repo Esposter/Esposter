@@ -5,7 +5,7 @@ import { GENSHIN_OPTIONAL_PASSES } from "#src/services/genshinProgress/constants
 import { describe, expect, test } from "vitest";
 
 describe(checkRegionPassesFrozen, () => {
-  test("A region's passes are not measurable where only a pass its scene may not owe has no row", () => {
+  test("a region's passes are not measurable where only a pass its scene may not owe has no row", () => {
     expect.hasAssertions();
 
     const report = PARITY_PASS_ORDER.filter((pass) => !GENSHIN_OPTIONAL_PASSES.includes(pass))

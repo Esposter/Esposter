@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
 describe(readProposalEntries, () => {
   const CHANGE = `${PROPOSALS_DIRECTORY}/genshin-first`;
 
-  test("A unit's entry carries its change's pick phase and its metadata's needs, touches and waiting", () => {
+  test("a unit's entry carries its change's pick phase and its metadata's needs, touches and waiting", () => {
     expect.hasAssertions();
 
     const files: QueueFile[] = [
@@ -40,7 +40,7 @@ describe(readProposalEntries, () => {
     ]);
   });
 
-  test("A unit's entry keeps the cheapest-first order the report lists proposals in", () => {
+  test("a unit's entry keeps the cheapest-first order the report lists proposals in", () => {
     expect.hasAssertions();
 
     const files: QueueFile[] = [

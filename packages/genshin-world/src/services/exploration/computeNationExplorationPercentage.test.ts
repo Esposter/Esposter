@@ -33,13 +33,13 @@ describe(computeNationExplorationPercentage, () => {
     rotation: 0,
   };
 
-  test("Mondstadt's percentage uses summed totals when every ratio is zero", () => {
+  test("mondstadt's percentage uses summed totals when every ratio is zero", () => {
     expect.hasAssertions();
 
     expect(computeNationExplorationPercentage(areas, [statue], new Set())).toBe(10);
   });
 
-  test("Liyue's percentage weighs each area by its ratio", () => {
+  test("liyue's percentage weighs each area by its ratio", () => {
     expect.hasAssertions();
 
     // The first area is 40 percent done and counts for three quarters of the nation, the second is 50 percent done and

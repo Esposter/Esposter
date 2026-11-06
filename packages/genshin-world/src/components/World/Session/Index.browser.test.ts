@@ -13,15 +13,15 @@ import { EMPTY_GENSHIN_SAVE, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save
 import { assert, describe, expect, onTestFinished, test } from "vitest";
 import { z } from "zod";
 
-describe("worldSession", () => {
-  // The three readings a session holds across a save: a quest's step, the defeats the Archive counts and Mora in the wallet
-  const readHolds = (devRegistry: DevRegistry) => ({
-    defeats: devRegistry.run("kills"),
-    mora: devRegistry.run(`bag ${Currency.Mora}`),
-    questStep: devRegistry.run(`quest ${QuestId.WanderersTrail}`),
-  });
+// The three readings a session holds across a save: a quest's step, the defeats the Archive counts and Mora in the wallet
+const readHolds = (devRegistry: DevRegistry) => ({
+  defeats: devRegistry.run("kills"),
+  mora: devRegistry.run(`bag ${Currency.Mora}`),
+  questStep: devRegistry.run(`quest ${QuestId.WanderersTrail}`),
+});
 
-  test("A load restores what the save holds", async () => {
+describe("worldSession", () => {
+  test("a load restores what the save holds", async () => {
     expect.hasAssertions();
 
     const devRegistry = createDevRegistry();
@@ -53,7 +53,7 @@ describe("worldSession", () => {
     expect(readingsAfterLoad).toStrictEqual(readingsBeforeSave);
   });
 
-  test("A save the schema refuses fails the script", async () => {
+  test("a save the schema refuses fails the script", async () => {
     expect.hasAssertions();
 
     const devRegistry = createDevRegistry();
@@ -70,7 +70,7 @@ describe("worldSession", () => {
     expect(saved).toStrictEqual({ error: z.prettifyError(refusal.error), ok: false });
   });
 
-  test("A save that fails to settle still unmounts the screen", async () => {
+  test("a save that fails to settle still unmounts the screen", async () => {
     expect.hasAssertions();
 
     const devRegistry = createDevRegistry();

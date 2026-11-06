@@ -3,7 +3,7 @@ import { GENSHIN_BLOOM_SCALER, GENSHIN_BLOOM_THRESHOLD } from "#src/renderer/con
 import { describe, expect, test } from "vitest";
 
 describe(computeBloomPrefilter, () => {
-  test("Bright stone in the login scene glows", () => {
+  test("bright stone in the login scene glows", () => {
     expect.hasAssertions();
 
     // A channel one above the threshold glows by the scaler, and a channel at or under the threshold does not glow

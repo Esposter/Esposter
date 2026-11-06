@@ -18,7 +18,7 @@ describe(openShrineOfDepths, () => {
     expect(shrine.isOpen).toBe(true);
   });
 
-  test("A key from another region is refused", () => {
+  test("a key from another region is refused", () => {
     expect.hasAssertions();
 
     const shrine = createShrine();

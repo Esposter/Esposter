@@ -2,7 +2,7 @@ import { createKillsCommand } from "#src/services/dev/commands/createKillsComman
 import { describe, expect, test } from "vitest";
 
 describe(createKillsCommand, () => {
-  test("A kills read counts the defeats the Archive holds", () => {
+  test("a kills read counts the defeats the Archive holds", () => {
     expect.hasAssertions();
 
     const kills = new Map([

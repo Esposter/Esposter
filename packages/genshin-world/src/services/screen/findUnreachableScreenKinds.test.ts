@@ -17,7 +17,7 @@ describe("findUnreachableScreenKinds", () => {
   );
   const wheelScreenKinds = new Set(Object.values(ShortcutWheelDirectionCountScreenKindsMap).flat());
 
-  test("A screen kind whose claimed opener does not hold is unreachable", () => {
+  test("a screen kind whose claimed opener does not hold is unreachable", () => {
     expect.hasAssertions();
     // The Training Guide's real claim is set aside, so only the Chat claim is under test
     const claimedScreenKindOpenerMap = {

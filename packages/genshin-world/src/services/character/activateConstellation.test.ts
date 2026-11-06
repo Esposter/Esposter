@@ -32,7 +32,7 @@ describe(activateConstellation, () => {
     },
   ];
 
-  test("Activate makes the next constellation active and spends one Stella Fortuna", () => {
+  test("activate makes the next constellation active and spends one Stella Fortuna", () => {
     expect.hasAssertions();
 
     expect(activateConstellation(CHARACTER, CONSTELLATIONS)).toStrictEqual({

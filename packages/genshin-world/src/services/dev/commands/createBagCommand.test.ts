@@ -10,7 +10,7 @@ describe(createBagCommand, () => {
   const MORA_COUNT = 2;
   const MORA_NAME = ENGLISH_GAME_TEXT[GameTextKey.Mora];
 
-  test("A bag read counts an item across the bag and the wallet", () => {
+  test("a bag read counts an item across the bag and the wallet", () => {
     expect.hasAssertions();
 
     const command = createBagCommand({

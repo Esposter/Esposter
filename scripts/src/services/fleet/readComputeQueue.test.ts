@@ -22,7 +22,7 @@ describe(readComputeQueue, () => {
     "",
   ].join("\n");
 
-  test("A compute item takes its area's phase from its page's row, the designs read in path order", () => {
+  test("a compute item takes its area's phase from its page's row, the designs read in path order", () => {
     expect.hasAssertions();
 
     expect(
@@ -61,7 +61,7 @@ describe(readComputeQueue, () => {
     });
   });
 
-  test("A compute item takes its area's phase, and a page with no row fails the read naming the page", () => {
+  test("a compute item takes its area's phase, and a page with no row fails the read naming the page", () => {
     expect.hasAssertions();
 
     expect(() =>

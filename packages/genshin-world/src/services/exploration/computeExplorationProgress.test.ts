@@ -32,7 +32,7 @@ describe(computeExplorationProgress, () => {
     expect(computeExplorationProgress(area, new Set(["40", "41"]))).toBe(100);
   });
 
-  test("A near-complete area reads below 100", () => {
+  test("a near-complete area reads below 100", () => {
     expect.hasAssertions();
 
     // A done weight of 199 of a total of 200 is 99.5 percent, which rounds down to 99 rather than reading complete
@@ -50,7 +50,7 @@ describe(computeExplorationProgress, () => {
     expect(computeExplorationProgress({ doings: [], total: 0 }, new Set())).toBe(0);
   });
 
-  test("A doing repeated adds its weight only once", () => {
+  test("a doing repeated adds its weight only once", () => {
     expect.hasAssertions();
 
     const statue: StatueLandmark = {

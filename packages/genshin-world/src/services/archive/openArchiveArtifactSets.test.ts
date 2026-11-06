@@ -58,7 +58,7 @@ describe(openArchiveArtifactSets, () => {
     expect(openArchiveArtifactSets(emptyProgress, fourPieces, EQUIPMENT_ENTRY_IDS, reliquarySets)).toBe(emptyProgress);
   });
 
-  test("Holding every piece opens the set", () => {
+  test("holding every piece opens the set", () => {
     expect.hasAssertions();
 
     const everyPiece = [
@@ -103,7 +103,7 @@ describe(openArchiveArtifactSets, () => {
     ).toStrictEqual(new Map([[ArchiveSection.Equipment, new Set([ONE_PIECE_SET_ID])]]));
   });
 
-  test("A set without an entry opens nothing", () => {
+  test("a set without an entry opens nothing", () => {
     expect.hasAssertions();
 
     expect(
@@ -116,7 +116,7 @@ describe(openArchiveArtifactSets, () => {
     ).toBe(emptyProgress);
   });
 
-  test("An opened set stays open", () => {
+  test("an opened set stays open", () => {
     expect.hasAssertions();
 
     const progress: ArchiveProgress = new Map([[ArchiveSection.Equipment, new Set([FIVE_PIECE_SET_ID])]]);

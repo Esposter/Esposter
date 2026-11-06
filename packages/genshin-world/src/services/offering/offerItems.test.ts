@@ -24,7 +24,7 @@ describe(offerItems, () => {
     },
   ];
 
-  test("Offering fewer items than the next threshold changes nothing", () => {
+  test("offering fewer items than the next threshold changes nothing", () => {
     expect.hasAssertions();
 
     expect(
@@ -67,7 +67,7 @@ describe(offerItems, () => {
     ).toStrictEqual({ gainedLevels: [], progress: { heldCounts: { [ANEMOCULUS_ITEM_ID]: 2 }, level: 3, levels } });
   });
 
-  test("Offering the items for a level raises the offering", () => {
+  test("offering the items for a level raises the offering", () => {
     expect.hasAssertions();
 
     expect(

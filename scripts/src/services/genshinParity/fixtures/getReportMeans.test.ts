@@ -2,7 +2,7 @@ import { getReportMeans } from "#src/services/genshinParity/fixtures/getReportMe
 import { describe, expect, test } from "vitest";
 
 describe(getReportMeans, () => {
-  test("A committed row's mean is read from its cell, padded to the table's width", () => {
+  test("a committed row's mean is read from its cell, padded to the table's width", () => {
     expect.hasAssertions();
 
     const report = [

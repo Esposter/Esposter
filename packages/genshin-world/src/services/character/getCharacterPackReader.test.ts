@@ -30,7 +30,7 @@ describe(getCharacterPackReader, () => {
     expect(getCharacterPackReader(characterPackReaders, 2, noneUnreadable)).toBe(travelerPackReader);
   });
 
-  test("Unreadable model draws the Traveler", () => {
+  test("unreadable model draws the Traveler", () => {
     expect.hasAssertions();
 
     const unreadableCharacterIds = new Set([characterId]);

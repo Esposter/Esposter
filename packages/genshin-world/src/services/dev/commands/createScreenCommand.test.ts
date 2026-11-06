@@ -3,7 +3,7 @@ import { createScreenCommand } from "#src/services/dev/commands/createScreenComm
 import { describe, expect, test } from "vitest";
 
 describe(createScreenCommand, () => {
-  test("A screen read names the open screen", () => {
+  test("a screen read names the open screen", () => {
     expect.hasAssertions();
 
     const result = createScreenCommand({ getScreenKind: () => ScreenKind.PaimonMenu }).run({});

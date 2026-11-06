@@ -408,7 +408,7 @@ describe(stepActiveKit, () => {
     expect(context.kitEffectState.effects).toStrictEqual([keptBuff]);
   });
 
-  test("The Targe ends with Beidou's fall", () => {
+  test("the Targe ends with Beidou's fall", () => {
     expect.hasAssertions();
     const context = createContext([createKitCombatant(BEIDOU_CHARACTER_ID, BEIDOU_KIT)]);
     BEIDOU_KIT.elementalBurst.onStart?.(context);

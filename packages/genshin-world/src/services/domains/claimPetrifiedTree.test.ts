@@ -65,7 +65,7 @@ describe(claimPetrifiedTree, () => {
     ],
   ]);
 
-  test("Claiming the tree spends resin and gives its rewards", () => {
+  test("claiming the tree spends resin and gives its rewards", () => {
     expect.hasAssertions();
 
     expect(
@@ -233,7 +233,7 @@ describe(claimPetrifiedTree, () => {
     ]);
   });
 
-  test("Claiming the tree with too little resin is refused", () => {
+  test("claiming the tree with too little resin is refused", () => {
     expect.hasAssertions();
 
     expect(

@@ -238,7 +238,7 @@ describe(useWorldMapStore, () => {
     };
   };
 
-  test("Crossing a threshold pays its reward once", async () => {
+  test("crossing a threshold pays its reward once", async () => {
     expect.hasAssertions();
 
     const { activateLandmark, reputation, wallet } = createWorldMap();
@@ -250,7 +250,7 @@ describe(useWorldMapStore, () => {
     expect(wallet.value).toStrictEqual(rewardedWallet);
   });
 
-  test("Reaching a passed threshold again pays nothing", async () => {
+  test("reaching a passed threshold again pays nothing", async () => {
     expect.hasAssertions();
 
     // The statue is activated once, passing the threshold, and again: the second settle finds the percentage already held
@@ -341,7 +341,7 @@ describe(useWorldMapStore, () => {
     expect(wallet.value).toStrictEqual(requestedWallet);
   });
 
-  test("An unlock before the reads settle pays its threshold once", async () => {
+  test("an unlock before the reads settle pays its threshold once", async () => {
     expect.hasAssertions();
 
     // Every read is still pending when the statue is unlocked, so the unlock lands before the areas, the regions and the

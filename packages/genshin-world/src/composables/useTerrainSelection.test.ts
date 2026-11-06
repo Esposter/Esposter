@@ -18,7 +18,7 @@ describe(useTerrainSelection, () => {
   // Enough frames for the view to ask for every tile it wants and the ones round it, one a frame
   const frameLimit = 64;
 
-  test("A settled read reports tiles in flight", () => {
+  test("a settled read reports tiles in flight", () => {
     expect.hasAssertions();
 
     const requestTile = vi.fn<(key: number) => void>();

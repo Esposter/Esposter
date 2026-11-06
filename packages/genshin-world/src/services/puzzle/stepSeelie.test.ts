@@ -40,7 +40,7 @@ describe(stepSeelie, () => {
     });
   });
 
-  test("A followed Seelie reaches its court and spawns its chest", () => {
+  test("a followed Seelie reaches its court and spawns its chest", () => {
     expect.hasAssertions();
 
     const seelie = createSeelie(SeelieState.Led);
@@ -52,7 +52,7 @@ describe(stepSeelie, () => {
     });
   });
 
-  test("A Seelie left unfollowed returns to its start", () => {
+  test("a Seelie left unfollowed returns to its start", () => {
     expect.hasAssertions();
 
     const seelie = createSeelie(SeelieState.Led);

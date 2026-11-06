@@ -18,7 +18,7 @@ const createStubDriver = (driver: Partial<ScriptedSessionDriver>): ScriptedSessi
 });
 
 describe(runScriptedSession, () => {
-  test("A failed line stops the script and names it", async () => {
+  test("a failed line stops the script and names it", async () => {
     expect.hasAssertions();
 
     const refusal: DevResult = { error: " ", ok: false, usage: "heal" };
@@ -29,7 +29,7 @@ describe(runScriptedSession, () => {
     expect(run.mock.calls).toStrictEqual([["time"], ["heal"]]);
   });
 
-  test("An expect step compares one field of a record exactly", async () => {
+  test("an expect step compares one field of a record exactly", async () => {
     expect.hasAssertions();
 
     const state = "position=0 place=Windrise hour=0 weather= health=0 party=";
@@ -45,7 +45,7 @@ describe(runScriptedSession, () => {
     });
   });
 
-  test("A step that never settles fails the script", async () => {
+  test("a step that never settles fails the script", async () => {
     expect.hasAssertions();
 
     const frame = vi.fn<() => Promise<void>>(() => Promise.resolve());
@@ -67,7 +67,7 @@ describe(runScriptedSession, () => {
     expect(save).not.toHaveBeenCalled();
   });
 
-  test("A line settles the terrain before the next step", async () => {
+  test("a line settles the terrain before the next step", async () => {
     expect.hasAssertions();
 
     const frame = vi.fn<() => Promise<void>>(() => Promise.resolve());

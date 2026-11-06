@@ -3,7 +3,7 @@ import { checkDatasetLockCurrent } from "#src/services/genshinProgress/checkData
 import { describe, expect, test } from "vitest";
 
 describe(checkDatasetLockCurrent, () => {
-  test("A dataset's lock is current when every key its readers require has an entry", () => {
+  test("a dataset's lock is current when every key its readers require has an entry", () => {
     expect.hasAssertions();
 
     const lock = { indexes: ["domains"], objects: ["stats/characters", "tips"] };

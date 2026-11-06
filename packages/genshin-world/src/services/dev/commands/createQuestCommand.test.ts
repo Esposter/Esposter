@@ -12,7 +12,7 @@ describe(createQuestCommand, () => {
   const quest: Quest = { ...fixture, steps: [step, step, step] };
   const UNKNOWN_QUEST_ID = "-1";
 
-  test("A quest read answers the step its progress is on", () => {
+  test("a quest read answers the step its progress is on", () => {
     expect.hasAssertions();
 
     const readQuest = (questProgressMap: ReadonlyMap<string, QuestProgress>) =>
@@ -31,7 +31,7 @@ describe(createQuestCommand, () => {
     });
   });
 
-  test("A quest read refuses a quest the world does not carry", () => {
+  test("a quest read refuses a quest the world does not carry", () => {
     expect.hasAssertions();
 
     const result = createQuestCommand({

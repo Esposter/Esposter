@@ -84,7 +84,7 @@ describe(useWorldShrines, () => {
     return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
   };
 
-  test("A shut shrine is offered while its region's key is held", () => {
+  test("a shut shrine is offered while its region's key is held", () => {
     expect.hasAssertions();
 
     const { shrineInteractables } = setup(createBag([KEY_ITEM_ID, 1]), [KEY_SOURCE]);
@@ -99,7 +99,7 @@ describe(useWorldShrines, () => {
     ]);
   });
 
-  test("A shrine opens with its region's key", () => {
+  test("a shrine opens with its region's key", () => {
     expect.hasAssertions();
 
     const { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers } = setup(
@@ -121,7 +121,7 @@ describe(useWorldShrines, () => {
     });
   });
 
-  test("A shut shrine is not offered without its region's key", () => {
+  test("a shut shrine is not offered without its region's key", () => {
     expect.hasAssertions();
 
     const { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers } = setup(

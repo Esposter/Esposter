@@ -154,7 +154,7 @@ describe(toDomainLevels, () => {
     });
   });
 
-  test("A domain closed today is refused", () => {
+  test("a domain closed today is refused", () => {
     expect.hasAssertions();
 
     const schedules = toDomainLevels(

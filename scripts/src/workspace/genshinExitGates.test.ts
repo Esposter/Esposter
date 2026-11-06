@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 describe("genshinExitGates", () => {
   const PHASES_DESIGN_PATH = join(REPOSITORY_ROOT, "openspec/changes/genshin-phases/design.md");
 
-  test("The report's gate clauses are the design's", () => {
+  test("the report's gate clauses are the design's", () => {
     expect.hasAssertions();
 
     const lines = readFileSync(PHASES_DESIGN_PATH, "utf8").split("\n");

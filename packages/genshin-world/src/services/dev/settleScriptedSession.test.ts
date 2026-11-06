@@ -6,7 +6,7 @@ import { settleScriptedSession } from "#src/services/dev/settleScriptedSession";
 import { describe, expect, test, vi } from "vitest";
 
 describe(settleScriptedSession, () => {
-  test("A settle waits the frames a view change needs before its first read", async () => {
+  test("a settle waits the frames a view change needs before its first read", async () => {
     expect.hasAssertions();
 
     // The view answers from its old selection, which reads settled, until a frame has run the selection on the new view.

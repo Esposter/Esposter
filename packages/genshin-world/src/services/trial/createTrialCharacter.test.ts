@@ -67,7 +67,7 @@ describe(createTrialCharacter, () => {
     weaponDataMap: WEAPON_DATA_MAP,
   };
 
-  test("The trial character is at the trial's level", () => {
+  test("the trial character is at the trial's level", () => {
     expect.hasAssertions();
     expect(createTrialCharacter(TRIAL, TABLES, DATA)).toStrictEqual({
       artifacts: [

@@ -15,7 +15,7 @@ describe(takeReputationBounty, () => {
     requests: [],
   };
 
-  test("A bounty's target spawns when the bounty is taken", () => {
+  test("a bounty's target spawns when the bounty is taken", () => {
     expect.hasAssertions();
 
     expect(takeReputationBounty(CITY, 2, 1, 0)).toStrictEqual({

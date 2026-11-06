@@ -44,21 +44,21 @@ const describeChange = ({ id, phase, pickPhase }: OpenGenshinChange): string =>
 describe("genshinChangePhases", () => {
   const genshinChanges = readOpenGenshinChanges();
 
-  test("A genshin change names its phase", () => {
+  test("a genshin change names its phase", () => {
     expect.hasAssertions();
 
-    const unnamed = genshinChanges.filter(({ phase }) => phase === undefined).map(describeChange);
+    const unnamed = genshinChanges.filter(({ phase }) => phase === undefined).map((change) => describeChange(change));
 
     expect(unnamed).toStrictEqual([]);
   });
 
-  test("A change's phase is its lowest open task's", () => {
+  test("a change's phase is its lowest open task's", () => {
     expect.hasAssertions();
 
     // A change with no open task has no pick and is skipped, since its last x-phase stays as the record of its work
     const mismatched = genshinChanges
       .filter(({ hasOpenTask, phase, pickPhase }) => hasOpenTask && phase !== pickPhase)
-      .map(describeChange);
+      .map((change) => describeChange(change));
 
     expect(mismatched).toStrictEqual([]);
   });

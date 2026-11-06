@@ -18,7 +18,7 @@ describe(pairSeelieCourts, () => {
   const NEAR_SECOND_COURT = { x: 8, z: 0 };
   const FAR_SEELIE = { x: 50, z: 0 };
 
-  test("The closest court and Seelie pair first", () => {
+  test("the closest court and Seelie pair first", () => {
     expect.hasAssertions();
 
     expect(

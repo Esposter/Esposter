@@ -26,7 +26,7 @@ describe(getFinishedReputationRewards, () => {
     titleTextId: "title",
   });
 
-  test("A delivery request pays on completion", () => {
+  test("a delivery request pays on completion", () => {
     expect.hasAssertions();
 
     const quest = createQuest(QuestObjectiveKind.Collect, 1);
@@ -36,7 +36,7 @@ describe(getFinishedReputationRewards, () => {
     expect(getFinishedReputationRewards(quest, progress, nextProgress, BINDINGS)).toStrictEqual([REWARD]);
   });
 
-  test("A group delivery request pays on completion", () => {
+  test("a group delivery request pays on completion", () => {
     expect.hasAssertions();
 
     const quest: Quest = {
@@ -56,7 +56,7 @@ describe(getFinishedReputationRewards, () => {
     expect(getFinishedReputationRewards(quest, oneCollected, finished, BINDINGS)).toStrictEqual([REWARD]);
   });
 
-  test("A finished Reputation quest pays once", () => {
+  test("a finished Reputation quest pays once", () => {
     expect.hasAssertions();
 
     const quest = createQuest(QuestObjectiveKind.Collect, 1);

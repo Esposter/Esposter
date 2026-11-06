@@ -17,7 +17,7 @@ describe(buildGenshinProgress, () => {
     requiredKeys: { indexes: [], objects: [] },
   };
 
-  test("A phase's progress counts its units by kind", () => {
+  test("a phase's progress counts its units by kind", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -61,7 +61,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A compute area with only waiting items counts as waiting and names its first blocker", () => {
+  test("a compute area with only waiting items counts as waiting and names its first blocker", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -99,7 +99,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A compute area whose every queue item needs a capability this machine lacks is blocked on the other machine", () => {
+  test("a compute area whose every queue item needs a capability this machine lacks is blocked on the other machine", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -137,7 +137,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A change counts each open task in its own task's phase, and never a done one", () => {
+  test("a change counts each open task in its own task's phase, and never a done one", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -190,7 +190,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A change with no open task counts as done in its own phase", () => {
+  test("a change with no open task counts as done in its own phase", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -219,7 +219,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A roadmap item counts under its phase, done or open by its checkbox", () => {
+  test("a roadmap item counts under its phase, done or open by its checkbox", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
@@ -254,7 +254,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("A quest with a script is reported as scripted, not done", () => {
+  test("a quest with a script is reported as scripted, not done", () => {
     expect.hasAssertions();
 
     const progress = buildGenshinProgress(
@@ -349,7 +349,7 @@ describe(buildGenshinProgress, () => {
     `);
   });
 
-  test("A check with no command is not measurable", () => {
+  test("a check with no command is not measurable", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(

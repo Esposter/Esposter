@@ -107,7 +107,7 @@ describe(strikePartyMember, () => {
     expect(kitEffectState.effects).toStrictEqual([{ characterId: 1, health: 0, kind: "shield", secondsRemaining: 0 }]);
   });
 
-  test("An enemy kind with an elemental attack applies it to the struck member", () => {
+  test("an enemy kind with an elemental attack applies it to the struck member", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
