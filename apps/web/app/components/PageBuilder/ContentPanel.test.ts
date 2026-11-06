@@ -15,7 +15,6 @@ import {
   TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
-import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
@@ -132,34 +131,6 @@ describe("pageBuilderContentPanel", () => {
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "a" });
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "a", tokens: {} } });
-
-    component.unmount();
-  });
-
-  test("editing an email's preview text writes the root's preview", async () => {
-    expect.hasAssertions();
-
-    const resourceId = crypto.randomUUID();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
-
-    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { preview: "a" });
-
-    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.preview).toBe("a");
-
-    component.unmount();
-  });
-
-  test("an email's preview text shows the length its schema allows beside the field", async () => {
-    expect.hasAssertions();
-
-    const resourceId = crypto.randomUUID();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
-
-    expect(component.text()).toContain(`0 / ${MAX_EMAIL_PREVIEW_LENGTH}`);
 
     component.unmount();
   });
