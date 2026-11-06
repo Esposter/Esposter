@@ -2,7 +2,7 @@
 
 ## Why
 
-The dashboard editor is a bar, a collapsible palette strip and a grid of tiles, and editing a visual opens a dialog. The dialog covers the canvas, so an owner who binds a chart to a dataset and changes its type cannot see the live chart redraw behind the scrim, which is the point of the [live canvas](../../specs/resource/dashboard-live-canvas/design.md). The dashboard also holds a setting of the whole canvas, how visuals pack, in a popover on the bar, and it is the one editor the [editor layout program](../resource-editor-layout-program/design.md) left unchanged.
+The dashboard editor is a bar, a collapsible palette strip and a grid of tiles, and editing a visual opens a dialog. The dialog covers the canvas, so an owner who binds a chart to a dataset and changes its type cannot see the live chart redraw behind the scrim, which is the point of the [live canvas](../../specs/resource/dashboard-live-canvas/design.md). The dashboard also holds a setting of the whole canvas, how visuals pack, in a popover on the bar, and the [editor layout program](../resource-editor-layout-program/design.md) gives it a guided layout, built here.
 
 ## What Changes
 

@@ -26,11 +26,11 @@ The check is the point of making the layout data. A layout that leaves a selecti
 
 ## Two poles
 
-| Pole     | The reader's job                          | The screen's job                                                             | Editors                         |
-| :------- | :---------------------------------------- | :--------------------------------------------------------------------------- | :------------------------------ |
-| Freeform | Write a lot, quickly, with few rules      | Stay out of the way: every tool one press away, a panel only for a selection | Whiteboard                      |
-| Guided   | Produce a document that is correct to use | Show the structure, offer only what is valid, say what is wrong and where    | Survey, email, webpage          |
-| Document | Write prose                               | One bar over the text                                                        | Note, and every rich text field |
+| Pole     | The reader's job                          | The screen's job                                                             | Editors                           |
+| :------- | :---------------------------------------- | :--------------------------------------------------------------------------- | :-------------------------------- |
+| Freeform | Write a lot, quickly, with few rules      | Stay out of the way: every tool one press away, a panel only for a selection | Whiteboard                        |
+| Guided   | Produce a document that is correct to use | Show the structure, offer only what is valid, say what is wrong and where    | Survey, email, webpage, dashboard |
+| Document | Write prose                               | One bar over the text                                                        | Note, and every rich text field   |
 
 The poles differ in what the layout holds, not in the engine. A freeform layout has a tool region and a contextual panel, and its panels open on demand. A guided layout also has a structure region that is always present, modes that change which regions exist, and a problems surface the [guardrails](../resource-editor-guardrails/design.md) define.
 
