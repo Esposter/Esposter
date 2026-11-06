@@ -100,8 +100,9 @@ export const useResourceStore = defineStore("resource", () => {
   // Another device's save held behind an unwritten edit, until the person answers the notice. The stale latch holds
   // Autosave in the meantime; this is what the notice shows and answers
   const heldSave = ref<ResourceSave>();
-  // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
-  // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
+  // Whether the last content save did not land: its write was rejected for any other reason, or an editor's own check
+  // Refused it before any write. Its notification is a one-shot the owner dismisses; this is what keeps saying so
+  // Afterwards, because a failed save leaves work only in the tab
   const isSaveContentFailed = ref(false);
   // The resource an edit the debounce is holding was made on, until a write of that resource takes it. A flag rather
   // Than a count of armed debounces: a save writes the whole content blob, so one write cleans every edit waiting on
@@ -303,7 +304,11 @@ export const useResourceStore = defineStore("resource", () => {
     const contentJson = JSON.stringify(content);
     // The baseline is the last content the server confirmed, so while a write of this resource is still in flight it
     // Can be about to replace that content — a revert to the baseline has to be written behind it, not skipped
-    if (contentJson === persistedContentJson && !checkIsSaveContentPending(resourceValue.id)) return true;
+    if (contentJson === persistedContentJson && !checkIsSaveContentPending(resourceValue.id)) {
+      // The server already holds this content, so a failed or refused save before it is superseded and nothing is left unsaved
+      isSaveContentFailed.value = false;
+      return true;
+    }
     // The serialization already made for the dirty check is what sizes the document, so a document no resource
     // May hold is refused here rather than sent — the server would refuse it after the whole upload
     const contentBytes = new TextEncoder().encode(contentJson);
@@ -389,6 +394,13 @@ export const useResourceStore = defineStore("resource", () => {
       },
     );
     return outcome.status === MutationStatus.Succeeded;
+  };
+  // An editor's own check refused the save before it reached saveContent, so no write was issued and the edit it held
+  // Is dropped rather than landed. The state reads Not saved, and the held edit is cleared as a write would clear it, so
+  // It does not keep reading as Saving
+  const refuseSaveContent = () => {
+    if (unwrittenContentResourceId.value === currentResourceId.value) unwrittenContentResourceId.value = "";
+    isSaveContentFailed.value = true;
   };
   const renameResource = async (name: string) => {
     const resourceValue = resource.value;
@@ -557,6 +569,7 @@ export const useResourceStore = defineStore("resource", () => {
     readContent,
     readResource,
     reloadResourceContent,
+    refuseSaveContent,
     renameResource,
     resource,
     saveContent,

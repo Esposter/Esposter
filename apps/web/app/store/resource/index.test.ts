@@ -398,6 +398,29 @@ describe(useResourceStore, () => {
     expect(saveState.value).toBe(ResourceSaveState.Saved);
   });
 
+  // A refused save stays Not saved only while the content differs from what the server holds. Reverting the edit to
+  // That content is a save that lands, so the refusal's state goes with it rather than standing over a document the
+  // Server already has
+  test("a save with nothing to write clears a refused save's not-saved state", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const { readContent, readResource, refuseSaveContent, saveContent, setPersistedContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    setPersistedContent(createDefaultSheetResource());
+    refuseSaveContent();
+
+    expect(saveState.value).toBe(ResourceSaveState.Failed);
+
+    const isSuccessful = await saveContent(createDefaultSheetResource());
+
+    expect(isSuccessful).toBe(true);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
   // The signal belongs to the resource its edit was made on. Loading another resource must leave it standing, or an
   // Edit the app never wrote would read as saved the moment the owner navigated away from it
   test("keeps the unwritten-edit signal when another resource is loaded", async () => {
