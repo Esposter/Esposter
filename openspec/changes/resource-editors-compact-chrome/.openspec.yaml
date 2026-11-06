@@ -1,0 +1,13 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "apps/web/app/components/PageBuilder/**",
+    "apps/web/app/components/Resource/Survey/Creator/**",
+    "apps/web/app/components/Resource/Whiteboard/**",
+    "apps/web/app/components/Ui/Tabs.vue",
+    "apps/web/app/services/resource/survey/constants.ts",
+    "apps/web/app/services/pageBuilder/constants.ts",
+    "apps/web/uno.config.ts",
+  ]

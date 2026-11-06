@@ -1,0 +1,12 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts",
+    "apps/web/app/composables/ui/useDragReorder.ts",
+    "apps/web/app/components/PageBuilder/**",
+    "apps/web/app/components/Resource/Survey/Creator/**",
+    "apps/web/app/components/Resource/Whiteboard/**",
+    "apps/web/app/services/pageBuilder/**",
+  ]
