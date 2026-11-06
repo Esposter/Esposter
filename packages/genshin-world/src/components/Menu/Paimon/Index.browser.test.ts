@@ -199,7 +199,7 @@ describe("menuPaimon", () => {
   });
 
   // The row offers the button that sets the birthday while it is unset, and the dialog's confirm sets the picked date once
-  test("a birthday not yet set is set once from the profile's dialog", async () => {
+  test("confirming the dialog sets the birthday once", async () => {
     expect.hasAssertions();
 
     const onSetBirthday = vi.fn<(birthday: TravelerBirthdaySave) => void>();
