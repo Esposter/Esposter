@@ -1,6 +1,8 @@
 import type { LandRows } from "#src/models/globeLandMask/LandRows";
 import type { WorldFeature } from "#src/models/globeLandMask/WorldFeature";
 
+import { takeOne } from "@esposter/shared";
+
 /**
  * A scanline fill: each row's centre latitude crosses every edge it spans, and between the sorted crossings of one
  * country the line is inside it (an even count of crossings, so a hole's edges close their own gap). A country is
@@ -25,11 +27,11 @@ export const rasterizeLandMask = (features: readonly WorldFeature[], cellsPerDeg
         const crossings: number[] = [];
         for (const [x1, y1, x2, y2] of edges)
           if ((y1 <= y && y < y2) || (y2 <= y && y < y1)) crossings.push(x1 + ((y - y1) / (y2 - y1)) * (x2 - x1));
-        crossings.sort((firstCrossing, secondCrossing) => firstCrossing - secondCrossing);
-        for (let i = 0; i + 1 < crossings.length; i += 2) {
-          const start = Math.max(0, Math.ceil(((crossings[i] as number) + 180) * cellsPerDegree - 0.5));
-          const end = Math.min(width, Math.ceil(((crossings[i + 1] as number) + 180) * cellsPerDegree - 0.5));
-          if (start < end) (spansByRow[row] as [number, number][]).push([start, end]);
+        const sortedCrossings = crossings.toSorted((firstCrossing, secondCrossing) => firstCrossing - secondCrossing);
+        for (let i = 0; i + 1 < sortedCrossings.length; i += 2) {
+          const start = Math.max(0, Math.ceil((takeOne(sortedCrossings, i) + 180) * cellsPerDegree - 0.5));
+          const end = Math.min(width, Math.ceil((takeOne(sortedCrossings, i + 1) + 180) * cellsPerDegree - 0.5));
+          if (start < end) takeOne(spansByRow, row).push([start, end]);
         }
       }
     }
