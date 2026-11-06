@@ -3,7 +3,7 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "the Serenitea Pot's companions invited (the serenitea-pot unit's first step), which the dialogue at 4 and 7 is said of; the game exports the dialogue's lines are read from (1.1 and 1.2); the claim values wait on the recordings (3.1); the commission claim screen (the commissions unit) calls the built route; random events have no page"
+x-waiting: "task 1.1 waits on the Serenitea Pot's realm runtime, where a companion can be talked to, and its standing-talk publish waits on that too; task 3.1 waits on the boss and domain recordings its claim values are read from"
 x-touches:
   [
     "scripts/src/services/genshinAssets/friendship/**",
