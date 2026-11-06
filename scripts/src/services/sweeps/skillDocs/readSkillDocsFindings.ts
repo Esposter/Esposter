@@ -1,3 +1,4 @@
+import type { QueueFile } from "#src/models/fleet/QueueFile";
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
 import { readWorkingTreeFiles } from "#src/services/shared/readWorkingTreeFiles";
@@ -16,8 +17,11 @@ import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresol
 
 // Every check over the skill tree, in one read: the sweep prints them and the workspace test refuses all but the budget
 export const readSkillDocsFindings = (): SkillDocsFinding[] => {
-  const skills = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/SKILL.md`);
-  const pages = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/references/*.md`);
+  const documents = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/SKILL.md`, `${SKILLS_DIRECTORY}/*/references/*.md`);
+  // A skill's own file is `<skill>/SKILL.md`, which a page under `references/` never is, even when it is named SKILL.md
+  const isSkillFile = (file: QueueFile) => file.path === `${SKILLS_DIRECTORY}/${getSkillName(file.path)}/SKILL.md`;
+  const skills = documents.filter(isSkillFile);
+  const pages = documents.filter((file) => !isSkillFile(file));
   const files = [...skills, ...pages];
   const paths = new Set(files.map(({ path }) => path));
   const skillNames = new Set(skills.map(({ path }) => getSkillName(path)));
