@@ -17,6 +17,18 @@ describe("uiIconButton", () => {
     expect(component.get('[role="tooltip"] kbd').text()).toBe("S");
   });
 
+  // A toolbar marks its own unavailable items, and the button without a reason of its own must not erase that
+  test("a button without a reason keeps the aria-disabled its caller passes", () => {
+    expect.hasAssertions();
+
+    const component = mount(UiIconButton, {
+      attrs: { "aria-disabled": true },
+      props: { label: "label", meaning: UiIconMeaning.Save },
+    });
+
+    expect(component.get("button").attributes("aria-disabled")).toBe("true");
+  });
+
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 

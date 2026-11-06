@@ -34,8 +34,7 @@ const { disabledReason, isPending, label, meaning, shortcut, variant } = defineP
     </template>
     <template #default="{ activatorProps }">
       <UiButton
-        :="mergeProps(activatorProps, $attrs)"
-        :aria-disabled="disabledReason ? true : undefined"
+        :="mergeProps(activatorProps, $attrs, disabledReason ? { 'aria-disabled': true } : {})"
         :aria-label="label"
         class="aria-disabled:op-disabled"
         :is-pending
