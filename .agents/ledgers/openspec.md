@@ -33,9 +33,7 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-offering-systems     | —     | unreconciled |
 | genshin-party                | —     | unreconciled |
 | genshin-puzzles              | —     | unreconciled |
-| genshin-reference-first      | —     | unreconciled |
 | genshin-reputation           | —     | unreconciled |
-| genshin-resident-schedules   | —     | unreconciled |
 | genshin-serenitea-pot        | —     | unreconciled |
 | genshin-sheer-cold           | —     | unreconciled |
 | genshin-shops                | —     | unreconciled |
