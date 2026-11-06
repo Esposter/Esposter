@@ -1,6 +1,7 @@
 import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
 import { checkHasSurveyInvite } from "#shared/services/pageBuilder/critique/checkHasSurveyInvite";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
+import { getCritiqueEditorFinding } from "@/services/pageBuilder/getCritiqueEditorFinding";
 import { getCritiqueFindingRow } from "@/services/pageBuilder/getCritiqueFindingRow";
 import { readBrowserColor } from "@/services/shared/readBrowserColor";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -31,14 +32,23 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
     if (surveys.items.some(({ id }) => id === surveyId)) return SurveyPublishState.Published;
     return surveys.hasMore ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
   };
+  const critiqueSources = { lookupSurveyPublishState, readColor: readBrowserColor };
   const critiqueRows = computed(() => {
     const document = getDocument(toValue(resourceId));
     if (!document) return [];
 
-    return critiqueWebpage(document, { lookupSurveyPublishState, readColor: readBrowserColor }).map((finding) =>
-      getCritiqueFindingRow(document, finding),
-    );
+    return critiqueWebpage(document, critiqueSources).map((finding) => getCritiqueFindingRow(document, finding));
   });
+  // The critique as the problems surface's findings, computed once the document settles as every editor's check is. Each
+  // is a warning, and the save never reads them, so a finding informs and nothing waits on it
+  const findings = useEditorFindings(
+    () => getDocument(toValue(resourceId)),
+    (document) => {
+      if (!document) return [];
 
-  return { critiqueRows };
+      return critiqueWebpage(document, critiqueSources).map((finding) => getCritiqueEditorFinding(finding));
+    },
+  );
+
+  return { critiqueRows, findings };
 };

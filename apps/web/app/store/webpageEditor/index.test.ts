@@ -1,11 +1,20 @@
 // @vitest-environment nuxt
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
+import { StyleState } from "#shared/models/pageBuilder/StyleState";
+import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_GREY_RGB_VALUE, createTestTextNode } from "#shared/services/pageBuilder/critique/constants.test";
+import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
+import { getCritiqueEditorFinding } from "@/services/pageBuilder/getCritiqueEditorFinding";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { readBrowserColor } from "@/services/shared/readBrowserColor";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
@@ -72,6 +81,41 @@ describe(useWebpageEditorStore, () => {
 
     expect(webpageEditorStore.webpageEditor.description).toBe(description);
     expect(webpageEditorStore.webpageEditor.imageUrl).toBe(TEST_URL);
+  });
+
+  test("A warning does not refuse a save", async () => {
+    expect.hasAssertions();
+
+    const webpageEditorStore = useWebpageEditorStore();
+    const { loadContent, saveWebpage } = webpageEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
+    // A grey text under the contrast a text needs: the critique's one finding, a warning, on a page nothing refuses
+    const webpageDocument: WebpageDocument = {
+      content: [
+        createTestTextNode(TEST_OTHER_ID, {
+          [StyleBreakpoint.Base]: { [StyleState.Default]: { color: TEST_GREY_RGB_VALUE } },
+        }),
+      ],
+      root: TEST_ROOT,
+    };
+    setDocument(resourceId, webpageKind, webpageDocument);
+    await saveWebpage(resourceId);
+    const critiqueFindings = critiqueWebpage(webpageDocument, {
+      lookupSurveyPublishState: () => SurveyPublishState.Published,
+      readColor: readBrowserColor,
+    });
+    const findings = critiqueFindings.map((finding) => getCritiqueEditorFinding(finding));
+
+    expect(savedContents).toStrictEqual([{ content: webpageDocument.content, id: content.id }]);
+    expect(findings).toStrictEqual([
+      {
+        message: "Contrast 1.61 to 1, under the 4.5 to 1 a text needs",
+        nodeId: TEST_OTHER_ID,
+        severity: EditorFindingSeverity.Warning,
+      },
+    ]);
   });
 
   test("skips the store echo that follows the load", async () => {
