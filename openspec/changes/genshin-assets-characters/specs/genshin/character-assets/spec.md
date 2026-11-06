@@ -143,3 +143,13 @@ A character's state SHALL play its fitted loop as its pose where one is held, an
 - **GIVEN** a character whose fitted record holds no loop for the state
 - **WHEN** the character is in the state
 - **THEN** the procedural pose is drawn
+
+### Requirement: The Traveler's model stands at its game model's height
+
+The Traveler's model SHALL stand at the height its game model measures.
+
+#### Scenario: The Traveler's model stands at its game model's height
+
+- **GIVEN** the Traveler's measured unit is held as a published record
+- **WHEN** the Traveler is drawn
+- **THEN** the Traveler's height is the height its game model measures

@@ -2,7 +2,7 @@
 
 ## Why
 
-The world draws thirteen characters from their official packs and every other playable character as the Traveler's model. Every pose it draws is generated from our own parameters, since no game clip drives any character, no resident has a body, and no face, cutscene, attack or emote motion is drawn. The game holds the clips and bodies for all of it on this Mac, but nothing in the repository decodes them into shippable parameters, fits them, publishes them or reads them, and no spec or recipe says how an asset family of this kind is converted. The foundation phase needs that recipe for every family before any of the family's gaps can be closed in order.
+The world draws more than ten characters from their official packs and every other playable character as the Traveler's model. Every pose it draws is generated from our own parameters, since no game clip drives any character, no resident has a body, and no face, cutscene, attack or emote motion is drawn. The game holds the clips and bodies for all of it on this Mac, but nothing in the repository decodes them into shippable parameters, fits them, publishes them or reads them, and no spec or recipe says how an asset family of this kind is converted. The foundation phase needs that recipe for every family before any of the family's gaps can be closed in order.
 
 ## What Changes
 

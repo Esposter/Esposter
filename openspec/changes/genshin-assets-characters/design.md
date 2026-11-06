@@ -137,13 +137,13 @@ Game art the family can read from the install but cannot publish. Each row is a 
 
 - **Motion ships as the fitted loops of each bone track, one record per component under `characters/motion/<component>`.** The alternative, a few gait parameters per state, was rejected by the characters change and stays rejected, since a computed pose can miss the clip it stands for. A game clip file is never shipped.
 - **The record's key is per component, so a fit run alone replaces only its own component.** The alternative, one motion record for every body, republishes every body on one fit's change.
-- **The Traveler's unit is a published record read through the lock.** The alternatives were a test reading the owner's export, which passes only on that machine since CI holds no game data, and a committed copy of the export, which a settled rule forbids.
+- **The Traveler's unit is a published record read through the lock.** The alternatives were a test reading the owner's export, which passes only on the machine that holds that export, and a committed copy of the export, which a settled rule forbids.
 - **The Traveler's clip block follows the index, not the map's first guess.** The clip reader already finds the blocks by name, so only the comment misleads. Keeping the comment and noting the exception was rejected: a reader who trusts the comment still opens the wrong block first.
 - **The Girl set's air and water clips join the Traveler's component.** The alternative, a second component on the same body and rig, would publish one rig twice.
 - **A gap spanning two gates has one task per gate.** The alternative, one task per gap, would hold the phase-0 fit behind the phase-3 pose input, or move the input into phase 0. The phases design splits a unit along its gate for the same reason.
 - **The Traveler's motion is phase 3, though it stands on Windrise's field.** The alternative, phase 1, was rejected because Windrise's gate counts the passes, and no pass reads a character. The controller's states are the phase-3 gate's, so their motion sits with them.
 - **Cutscene motion is decided before any export.** The alternative, fitting every `Ani_Cs_` clip, takes several thousand rows, most of them for scenes no quest reaches, and no spec names the scene set.
-- **NPC clips and emotes share one pattern and one fit.** The export, the fit and the record are the same work, so one gap holds them, and task 5.3 covers both.
+- **NPC clips and emotes share one pattern and one fit.** The export, the fit and the record are the same work, so one gap holds them, and task 5.3 covers both. The alternative, one gap and task for the clips and another for the emotes, would split that one piece of work across two tasks.
 - **A resident stands as one shape per game body type.** The record gives a body type and nothing finer. A shape per resident would draw several hundred shapes with nothing behind most of them.
 - **A face moves on the pack's own morphs before any game face clip.** The morphs are the shippable form and reach every pack. A game face clip is fitted only where a pack's morphs cannot express the expression.
 - **Paimon's model waits on her official pack, with no stand-in.** A generated Paimon was rejected, since menu Paimon's own decision draws characters only from official models.
@@ -155,7 +155,6 @@ Game art the family can read from the install but cannot publish. Each row is a 
 ## Notes
 
 - The owner's statement on the packs covers the official character packs. Whether it reaches Paimon's pack is for the owner to confirm before menu Paimon's wait clears, since the repository holds only the statement.
-- The task list is longer than the openspec config's guideline of twelve tasks. The one-task-per-gap request sets its size; splitting by phase is the way to cut it.
 - The Mac build's decode of these streams has no parity run recorded against the Windows build. Until one is, a Mac decode is a draft, and the reference record comes from the PC.
 - The community dump is older than the installed client. The join in G12 reads the dump, so its record carries the dump's revision.
 
@@ -189,4 +188,4 @@ packages/genshin-world/src/services/resident/  the body reader and the shape cho
 ## Sources
 
 - The owner's statement that HoYoverse permits the official character packs to be redistributed, as the [published packs](../../specs/genshin/characters/published-packs/design.md) design cites it. No written grant is in the repository.
-- The terms bundled with each official pack, read from each release's own file, as the [drawing](../../specs/genshin/characters/drawing/design.md) design cites them. They name the model's provider and bar redistribution.
+- The terms bundled with each official pack, read from each release's own file, as the [published packs](../../specs/genshin/characters/published-packs/design.md) design and the [characters README](../../specs/genshin/characters/README.md) cite them. They name the model's provider and bar redistribution.
