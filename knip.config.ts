@@ -82,8 +82,6 @@ const knipConfiguration: KnipConfig = {
     "packages/genshin-world": {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
     },
-    // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
-    "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     // The components suite loads MJML's preset through createRequire, since the preset ships no types, and knip cannot
     // Follow it
     "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },
@@ -113,6 +111,8 @@ const knipConfiguration: KnipConfig = {
       // `createWorkboxWindowPlugin` resolves the package from a set of specifier strings, so nothing imports it
       ignoreDependencies: ["@vite-pwa/workbox-window"],
     },
+    // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
+    "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     scripts: {
       // Every command is launched by path through `vpx` (`scripts/package.json`), which knip does not trace, so each
       // Command entry and the shell wrapper's slot gate are named here

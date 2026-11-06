@@ -6,8 +6,8 @@ import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { mjmlNavbarType } from "#src/services/components/mjNavbar";
 import { TEST_COLUMN_ID, TEST_IMAGE_ID, TEST_REGISTRY } from "#src/services/constants.test";
-import { getBlockTypeDefinition } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
 describe("renderMjmlNode", () => {
   test("a decorative image renders an empty alternative text", () => {

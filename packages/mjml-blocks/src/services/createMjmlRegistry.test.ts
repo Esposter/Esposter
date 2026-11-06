@@ -14,8 +14,8 @@ import {
 } from "#src/services/constants.test";
 import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
-import { getBlockTypeDefinition } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
 // A document as it arrives from its JSON, which the document schema narrows, so its issues name what the schema refused
 const getIssuePaths = (document: unknown): PropertyKey[][] =>

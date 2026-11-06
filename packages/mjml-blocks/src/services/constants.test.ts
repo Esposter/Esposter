@@ -4,8 +4,8 @@ import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextAttributeValue } from "#src/models/MjmlRichTextAttributeValue";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
-import type { BlockChildren, BlockNode } from "vue-block-editor-headless";
 import type { HTMLElement } from "node-html-parser";
+import type { BlockChildren, BlockNode } from "vue-block-editor-headless";
 
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
