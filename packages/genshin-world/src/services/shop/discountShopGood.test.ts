@@ -24,7 +24,7 @@ describe(discountShopGood, () => {
     reputationDiscountLevel: DISCOUNT_LEVEL,
   };
 
-  test("a discount applies at its named shop", () => {
+  test("A discount applies at its named shop", () => {
     expect.hasAssertions();
     expect(discountShopGood({ ...moraGood, costs: moraCosts(61) }, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(50));
     expect(discountShopGood({ ...moraGood, costs: moraCosts(62) }, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(55));
@@ -40,7 +40,7 @@ describe(discountShopGood, () => {
     expect(discountShopGood(moraGood, DISCOUNT_LEVEL - 1).costs).toStrictEqual(moraCosts(120));
   });
 
-  test("a discount does not apply at an unnamed shop", () => {
+  test("A discount does not apply at an unnamed shop", () => {
     expect.hasAssertions();
     const { reputationDiscountLevel: _, ...undiscountedGood } = moraGood;
     expect(discountShopGood(undiscountedGood, DISCOUNT_LEVEL).costs).toStrictEqual(moraCosts(120));

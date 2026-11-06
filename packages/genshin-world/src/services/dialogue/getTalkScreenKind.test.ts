@@ -20,7 +20,7 @@ describe(getTalkScreenKind, () => {
     expect(getTalkScreenKind(TALK_ID, [KEEPER])).toStrictEqual(ScreenKind.Reputation);
   });
 
-  test("the Reputation screen is not reached before the keeper stands", () => {
+  test("The Reputation screen is not reached before the keeper stands", () => {
     expect.hasAssertions();
 
     expect(getTalkScreenKind(TALK_ID, [])).toStrictEqual(ScreenKind.Dialogue);

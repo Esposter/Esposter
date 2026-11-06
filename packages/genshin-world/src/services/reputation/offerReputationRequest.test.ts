@@ -25,7 +25,7 @@ describe(offerReputationRequest, () => {
     ],
   };
 
-  test("a request is not offered before level two", () => {
+  test("A request is not offered before level two", () => {
     expect.hasAssertions();
 
     expect(offerReputationRequest(CITY, 1, 0, OFFERABLE_QUEST_IDS, [], now)).toBeUndefined();

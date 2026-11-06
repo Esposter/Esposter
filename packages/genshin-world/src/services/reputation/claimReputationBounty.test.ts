@@ -23,7 +23,7 @@ describe(claimReputationBounty, () => {
     targetEnemyKindId: 20_101,
   };
 
-  test("a bounty cannot be claimed before its target is defeated", () => {
+  test("A bounty cannot be claimed before its target is defeated", () => {
     expect.hasAssertions();
 
     expect(claimReputationBounty(CITY, HUNT)).toBeUndefined();
