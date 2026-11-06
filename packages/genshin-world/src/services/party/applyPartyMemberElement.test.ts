@@ -8,7 +8,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 describe(applyPartyMemberElement, () => {
-  test("fervent flames shortens a cryo affliction on a member", () => {
+  test("fervent Flames shortens a Cryo affliction on a member", () => {
     expect.hasAssertions();
     const GAUGE = 1;
     const STEP_SECONDS = 0.01;

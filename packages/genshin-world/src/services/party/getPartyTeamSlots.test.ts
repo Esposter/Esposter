@@ -7,7 +7,7 @@ import { setPartyTeamCharacters } from "#src/services/party/setPartyTeamCharacte
 import { assert, describe, expect, test } from "vitest";
 
 describe(getPartyTeamSlots, () => {
-  test("party setup opens showing the deployed team", () => {
+  test("party Setup opens showing the deployed team", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);

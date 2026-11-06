@@ -5,7 +5,7 @@ import { setPartyTeamCharacters } from "#src/services/party/setPartyTeamCharacte
 import { describe, expect, test } from "vitest";
 
 describe(quickSetupPartyTeam, () => {
-  test("quick setup fills the four slots in order", () => {
+  test("quick Setup fills the four slots in order", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);

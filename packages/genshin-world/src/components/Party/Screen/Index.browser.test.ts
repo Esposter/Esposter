@@ -25,4 +25,18 @@ describe("partyScreen", () => {
     await expect.element(page.getByRole("button", { exact: true, name: PARTY_1 })).toBeInTheDocument();
     await expect.element(page.getByRole("button", { exact: true, name: PARTY_3 })).toBeInTheDocument();
   });
+
+  // A step from the deployed Party 1 to Party 2 shows Party 2 in the foot, where Party 1 was shown
+  test("the arrows step between teams", async () => {
+    expect.hasAssertions();
+
+    await render(PartyScreen, { props });
+
+    await expect.element(page.getByText(PARTY_1, { exact: true })).toBeInTheDocument();
+
+    await page.getByRole("button", { exact: true, name: PARTY_2 }).click();
+
+    await expect.element(page.getByText(PARTY_2, { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText(PARTY_1, { exact: true })).not.toBeInTheDocument();
+  });
 });
