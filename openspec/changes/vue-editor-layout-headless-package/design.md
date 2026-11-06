@@ -65,7 +65,13 @@ The edges are `start` and `end`, not left and right, so a layout is correct in a
 - **A selection kind is a string, and an empty one is none.** An editor names its own selection kinds, modes and tools, so the package holds them as strings. The empty string is no selection, since an enum takes no `None` member under the absent-values rule. Rejected: a `None` member on a selection kind enum.
 - **The clamp comes from `@vueuse/core`.** `clamp` is defined by `@vueuse/shared` and re-exported by `@vueuse/core`, which the app depends on directly and which genshin-world already names as a peer. The package imports it from `@vueuse/core` and names `@vueuse/shared` nowhere. Rejected: a local clamp, which would be a second copy of one the repo takes from VueUse.
 - **The entry is the barrel the build generates.** The one entry is `src/index.ts`, generated from every module under `src`, and the manifest's `source` arm points at it. The generator's placeholder entry is removed, since its one constant is not part of the package. Rejected: a hand-written barrel, a second list to keep in step with the modules.
-- **A small bundle is a design input.** Every function is its own module and the package declares no side effects, so a consumer that uses the resolve and the resize ships only those. The package's size test holds a ceiling at the magnitude of a few kilobytes gzipped. Its one runtime dependency is the shared package, and Vue, `@vueuse/core` and the schema library are peers the app already ships.
+- **A small bundle is a design input.** Every function is its own module and the package declares no side effects, so a consumer that uses the resolve and the resize ships only those. The bundle is held by the [bundle sizes](../../specs/architecture/bundle-sizes/design.md) record, which a fresh build is checked against, and not by a ceiling in a package test: a ceiling per package is the [rejected bundle size ceilings](../../rejected/architecture/bundle-size-ceilings/design.md), and the record replaced it. The bundle is a few kilobytes gzipped, the magnitude the design names. Its one runtime dependency is the shared package, and Vue, `@vueuse/core` and the schema library are peers the app already ships.
+- **The composable's inputs are read when they change, and its state is passed in once.** The layout, the context and the size class are `MaybeRefOrGetter`s, since the resolved layout is computed from them, and the initial reader state is a plain value, read once. The app passes in the state its store holds, read through `parseReaderState`, and stores the state the composable exposes.
+- **The composable's functions take an id, and an id the layout does not name changes nothing.** A resize finds its region in the layout and a toggle finds its region in the resolved layout, which is where the open state it turns over is answered. The shell calls them with ids it drew from the resolved layout, so a missing id is a stale one, which the reader state already tolerates. Rejected: taking the region object, which would make the shell hold the layout's objects beside the ids it draws.
+- **The reader's state is exposed as a computed, so only the three functions change it.** A writable ref would let a caller set a state none of the functions made, which nothing else checks. Rejected: exposing the ref itself.
+- **The composable answers its own type.** The build's declarations need an explicit return type on an exported function whose answer is a shorthand object (`TS9016` under `isolatedDeclarations`), so the answer is `EditorLayout`, as the grid package names its composable's answer `GridLayout`.
+- **A selection kind is uncovered when no panel covers it, and the check reads neither the mode nor the tool.** A panel covers a kind when its condition admits the kind and its table gives the kind a content key, its wildcard included, since the resolve drops a panel with no content. The check takes no context, so a kind covered under one tool only counts as covered. Rejected: a finding for each panel that admits a kind without content, which would flag a panel another panel makes unnecessary.
+- **Duplicate ids are checked among regions and among panels, never across them, and the canvas is not checked.** The reader's state keys regions and panels in separate maps, so one string on a region and a panel names two things and is not ambiguous, and a panel named as its region is a valid layout. The canvas is named once by the type, so it cannot repeat. Each duplicate, and each unregistered key, is reported once however many times it repeats. Rejected: one id space for the whole layout, which would reject a panel named after its region.
 
 ## What the layout libraries settled
 
@@ -97,11 +103,11 @@ Nothing was copied. The package is written from these behaviours, so no licence 
 packages/vue-editor-layout-headless/
   src/models/        Layout, Region, Panel, Condition, Context, SizeClass, RegionEdge, RegionPresentation,
                      RegionOpening, ReaderState (with its schema), Finding, FindingKind, RegionPlacement,
-                     and the resolved layout, region and panel
+                     the resolved layout, region and panel, and EditorLayout, the composable's answer
   src/services/      resolveLayout and the functions it is built from, resizeRegion, toggleRegion,
                      setActivePanel, parseReaderState, checkLayout, one function to a file
   src/composables/   useEditorLayout, the reader's state and the resolved layout from a reactive context
-  src/index.ts       the barrel the build generates, and the package's size test beside it
+  src/index.ts       the barrel the build generates
 ```
 
 ## Key files

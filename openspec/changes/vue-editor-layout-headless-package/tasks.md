@@ -15,9 +15,9 @@
 
 ## 4. Composable
 
-- [ ] 4.1 Write the layout composable over the functions. Verify: tests named after 'A change of selection re-resolves the layout' and 'A resize is kept in the reader's state', seen failing first.
+- [x] 4.1 Write the layout composable over the functions. Verify: tests named after 'A change of selection re-resolves the layout' and 'A resize is kept in the reader's state', seen failing first.
 
 ## 5. Check
 
-- [ ] 5.1 Check a layout for gaps. Verify: tests named after 'A selection kind with no content is reported', 'A content key nobody registered is reported', 'A duplicate id is reported' and 'A panel in a region that does not exist is reported', seen failing first.
-- [ ] 5.2 Hold the bundle's size. Verify: the package's size test passes against its ceiling after a fresh build, and fails when a function from outside the package's own dependencies is imported.
+- [x] 5.1 Check a layout for gaps. Verify: tests named after 'A selection kind with no content is reported', 'A content key nobody registered is reported', 'A duplicate id is reported' and 'A panel in a region that does not exist is reported', seen failing first.
+- [x] 5.2 Hold the bundle's size. Verify: the bundle-size record holds the package's files and passes against a fresh build, and fails when a function from outside the package's own dependencies is imported.
