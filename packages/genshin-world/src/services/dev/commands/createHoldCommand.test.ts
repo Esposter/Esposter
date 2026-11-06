@@ -10,6 +10,15 @@ const createTarget = () =>
     navigator: { getGamepads: () => [] },
   });
 
+// A browser event class keeping the fields its init gives, all the input reads from a keyboard or mouse event
+const createEventStub = () =>
+  class extends Event {
+    constructor(type: string, init: object) {
+      super(type);
+      Object.assign(this, init);
+    }
+  };
+
 // A frame clock standing in for the one the session steps: each frame hands its seconds to every listener
 const createFrameClock = () => {
   const listeners: ((deltaSeconds: number) => void)[] = [];
@@ -30,24 +39,8 @@ describe(createHoldCommand, () => {
 
   beforeEach(() => {
     // The browser's keyboard and mouse events, which a Node suite has no globals for: each keeps the one field the input reads
-    vi.stubGlobal(
-      "KeyboardEvent",
-      class extends Event {
-        constructor(type: string, init: { code: string }) {
-          super(type);
-          Object.assign(this, init);
-        }
-      },
-    );
-    vi.stubGlobal(
-      "MouseEvent",
-      class extends Event {
-        constructor(type: string, init: { button: number }) {
-          super(type);
-          Object.assign(this, init);
-        }
-      },
-    );
+    vi.stubGlobal("KeyboardEvent", createEventStub());
+    vi.stubGlobal("MouseEvent", createEventStub());
   });
 
   afterEach(() => {
