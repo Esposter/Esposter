@@ -31,7 +31,7 @@ const description = ref("");
               (await createComment({ parentId, description: submittedDescription })) &&
               description === submittedDescription
             )
-              editor.commands.clearContent(true);
+              editor?.commands.clearContent(true);
           }
         "
       >
