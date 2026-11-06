@@ -3,4 +3,4 @@ affected_areas: [genshin]
 x-phase: 4
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "Task 1.2: the landmark top waits on a collision top on the landmark model, and the layer floor on the underground layers' ground data, which the catalogue and the dump do not hold; the ground part is already in the Enemies component. The family map is provisional: 54 of 104 families are left out, each named in the report; Treasure Hoarder is mapped to Scout. TreasureHoarderScout is not yet in the enemies dataset: it needs the publish run again once the camps are rewritten."
+x-waiting: "Task 1.2: the landmark top waits on a collision top on the landmark model, and the layer floor on the underground layers' ground data, which the catalogue and the dump do not hold; the ground part is already in the Enemies component. The family map is provisional: the families it leaves out are each named in the report; Treasure Hoarder is mapped to Scout. TreasureHoarderScout is not yet in the enemies dataset: it needs the publish run again once the camps are rewritten."
