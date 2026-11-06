@@ -10,7 +10,7 @@ import { MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 export const GENSHIN_ROADMAP_FILE = "openspec/changes/genshin-roadmap/tasks.md";
 // A phase heading names its phase, a number no later than the last Genshin phase, and the phase's name. Any other level-two
 // Heading ends the phase, so a checkbox under no phase heading is an item of no phase
-export const ROADMAP_PHASE_HEADING_REGEX: RegExp = new RegExp(
+export const ROADMAP_PHASE_HEADING_REGEX = new RegExp(
   `^## Phase (?<phase>[0-${MAX_GENSHIN_PHASE}]): (?<name>.+)$`,
   "u",
 );
