@@ -27,19 +27,6 @@ The app's bundle and its own server SHALL ship no model, texture, sound or image
 - **WHEN** a visitor requests the files the world draws from
 - **THEN** the app's server serves no file taken from the game
 
-#### Scenario: The first load downloads the game's assets at the loading screen
-
-- **GIVEN** the browser keeps no game asset
-- **WHEN** the app loads
-- **THEN** the published packs and the hosted game data are downloaded at the startup loading screen
-- **AND** the download's size is shown beside its bar
-
-#### Scenario: A later load reads the cache
-
-- **GIVEN** the browser already keeps the game assets it downloaded
-- **WHEN** the app loads
-- **THEN** no game asset is downloaded again
-
 #### Scenario: The world's geometry is generated rather than loaded
 
 - **GIVEN** the world is shown
@@ -50,12 +37,6 @@ The app's bundle and its own server SHALL ship no model, texture, sound or image
 ### Requirement: Characters are drawn only from HoYoverse's official models, downloaded before the world shows
 
 A character SHALL be drawn only from an official HoYoverse model, which the startup loading screen downloads from the published packs before the world shows.
-
-#### Scenario: A character is drawn from its downloaded model
-
-- **GIVEN** the character's official model has been downloaded
-- **WHEN** the character is shown in the world
-- **THEN** the character is drawn from that model
 
 #### Scenario: A pack that fails to download draws no capsule
 
