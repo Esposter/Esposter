@@ -56,9 +56,7 @@ const passiveRows = computed(() =>
           segment.text
         }}</span>
       </template>
-      <template v-else
-        ><span class="rank-label">{{ row.rankText }}:</span> {{ row.description }}</template
-      >
+      <template v-else><span class="rank-label">{{ row.rankText }}:</span> {{ row.description }}</template>
     </p>
   </div>
   <span class="stats-rule refine-stats-rule" aria-hidden="true" />

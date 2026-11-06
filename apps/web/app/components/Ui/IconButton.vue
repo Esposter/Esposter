@@ -26,9 +26,7 @@ const { disabledReason, isPending, label, meaning, shortcut, variant } = defineP
   <UiTooltip :label>
     <template v-if="disabledReason || shortcut" #content>
       <span flex gap-2 items-center>
-        <span
-          >{{ label }}<template v-if="disabledReason">. {{ disabledReason }}</template></span
-        >
+        <span>{{ label }}<template v-if="disabledReason">. {{ disabledReason }}</template></span>
         <UiShortcut v-if="shortcut" :shortcut />
       </span>
     </template>

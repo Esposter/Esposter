@@ -12,8 +12,6 @@ const creator = useCreator(() => message);
 
 <template>
   <MessageModelMessageInputHeader v-if="creator" @close="emit('close')">
-    <span truncate
-      >Replying to <span text-heading-color>{{ creator.name }}</span></span
-    >
+    <span truncate>Replying to <span text-heading-color>{{ creator.name }}</span></span>
   </MessageModelMessageInputHeader>
 </template>

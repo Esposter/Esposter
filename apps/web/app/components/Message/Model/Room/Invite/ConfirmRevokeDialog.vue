@@ -27,9 +27,6 @@ const { isOpen, item: invite } = useSingletonDialog(revokingId, () =>
     :confirm="() => invite && revokeInvite({ id: invite.id, roomId })"
     is-optimistic
   >
-    <p>
-      Revoke <code>{{ invite.id }}</code
-      >? Anyone holding the link stops being able to join with it.
-    </p>
+    <p>Revoke <code>{{ invite.id }}</code>? Anyone holding the link stops being able to join with it.</p>
   </UiConfirmDialog>
 </template>

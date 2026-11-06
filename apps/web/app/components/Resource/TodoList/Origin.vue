@@ -13,9 +13,7 @@ const modelValue = defineModel<TodoListItemOrigin>({ required: true });
   <div text-sm flex flex-col gap-1>
     <div flex gap-2 items-center>
       <UiIcon :meaning="UiIconMeaning.Terminal" text-muted />
-      <span flex-1 min-w-0 truncate>
-        Follow-up from <strong>{{ modelValue.repository }}</strong>
-      </span>
+      <span flex-1 min-w-0 truncate> Follow-up from <strong>{{ modelValue.repository }}</strong> </span>
       <UiCopyButton label="Copy resume command" :source="`claude --resume ${modelValue.sessionId}`" />
     </div>
     <p text-muted>

@@ -33,9 +33,7 @@ const isUpdateDismissed = ref(false);
       </template>
       {{ alert.text }}
     </UiToast>
-    <UiToast v-if="copied" status="success">
-      Copied <code text-info>{{ text }}</code>
-    </UiToast>
+    <UiToast v-if="copied" status="success"> Copied <code text-info>{{ text }}</code> </UiToast>
     <UiToast
       v-if="$pwa?.needRefresh && !isUpdateDismissed"
       is-dismissible
