@@ -4,11 +4,11 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                                                         |   Bytes |    KiB |
 | :------------------------- | :----------------------------------------------------------- | ------: | -----: |
-| @esposter/functions        | index.js                                                     | 5228408 | 5105.9 |
+| @esposter/functions        | index.js                                                     | 5234554 | 5111.9 |
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
-| genshin-world              | index.js                                                     | 2559820 | 2499.8 |
+| genshin-world              | index.js                                                     | 2559740 | 2499.7 |
 | @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
-| genshin-world              | index-[hash].d.ts                                            | 1670107 | 1631.0 |
+| genshin-world              | index-[hash].d.ts                                            | 1670072 | 1630.9 |
 | genshin-world              | style.css                                                    |  305928 |  298.8 |
 | genshin-engine             | index.js                                                     |  287794 |  281.0 |
 | @esposter/functions        | Arrow.node-[hash].js                                         |  255689 |  249.7 |
@@ -19,7 +19,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-interface          | style.css                                                    |  192322 |  187.8 |
 | @esposter/infra            | index.js                                                     |  121664 |  118.8 |
 | @esposter/db-schema        | index.js                                                     |  120943 |  118.1 |
-| genshin-world              | save-[hash].js                                               |  116283 |  113.6 |
+| genshin-world              | save-[hash].js                                               |  116244 |  113.5 |
 | @esposter/shared           | index.js                                                     |   97225 |   94.9 |
 | @esposter/shared           | index.d.ts                                                   |   94363 |   92.2 |
 | genshin-text               | index.js                                                     |   91030 |   88.9 |
@@ -63,7 +63,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | columbinaKit-[hash].js                                       |   13804 |   13.5 |
 | genshin-world              | alhaithamKit-[hash].js                                       |   12944 |   12.6 |
 | pitch-transcription        | notes-[hash].js                                              |   12695 |   12.4 |
-| genshin-world              | nicoleKit-[hash].js                                          |   12653 |   12.4 |
+| genshin-world              | nicoleKit-[hash].js                                          |   12717 |   12.4 |
 | @esposter/configuration    | index.js                                                     |   12465 |   12.2 |
 | genshin-world              | iansanKit-[hash].js                                          |   11660 |   11.4 |
 | genshin-world              | readCharacterAvatar-[hash].js                                |   11461 |   11.2 |
@@ -130,7 +130,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | yelanKit-[hash].js                                           |    5383 |    5.3 |
 | genshin-world              | wriothesleyKit-[hash].js                                     |    5311 |    5.2 |
 | genshin-world              | yoimiyaKit-[hash].js                                         |    5247 |    5.1 |
-| genshin-world              | xianyunKit-[hash].js                                         |    5200 |    5.1 |
+| genshin-world              | xianyunKit-[hash].js                                         |    5365 |    5.2 |
 | genshin-world              | kazuhaKit-[hash].js                                          |    5142 |    5.0 |
 | genshin-world              | ganyuKit-[hash].js                                           |    5008 |    4.9 |
 | genshin-world              | neuvilletteKit-[hash].js                                     |    4979 |    4.9 |
@@ -394,7 +394,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-nuxt-module           | runtime/client/httpBatchLink.js                              |     282 |    0.3 |
 | tresjs-nuxt                | runtime/TresCanvas.server.js                                 |     281 |    0.3 |
 | nuxt-security-module       | runtime/services/serializePermissionsPolicy.js               |     279 |    0.3 |
-| trpc-nuxt-module           | runtime/client/models/UseSubscriptionOptions.d.ts            |     278 |    0.3 |
+| trpc-nuxt-module           | runtime/client/models/UseSubscriptionOptions.d.ts            |     398 |    0.4 |
 | nuxt-security-module       | runtime/services/updateContentSecurityPolicy.d.ts            |     275 |    0.3 |
 | trpc-nuxt-module           | runtime/constants.d.ts                                       |     273 |    0.3 |
 | trpc-nuxt-module           | runtime/client/httpBatchLink.d.ts                            |     267 |    0.3 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21662606 bytes, 21154.9 KiB, 20.66 MiB
+**Total:** 569 files, 21668947 bytes, 21161.1 KiB, 20.67 MiB
