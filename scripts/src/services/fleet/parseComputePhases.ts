@@ -1,6 +1,6 @@
 import type { ComputePhase } from "#src/models/fleet/ComputePhase";
 
-import { ComputeKind } from "#src/models/fleet/ComputeKind";
+import { ComputeKind, ComputeKinds } from "#src/models/fleet/ComputeKind";
 import { COMPUTE_QUEUE_PHASE_HEADING, MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 import { readMarkdownSection } from "#src/services/fleet/readMarkdownSection";
 import { checkIsEnumValue } from "#src/services/shared/checkIsEnumValue";
@@ -33,7 +33,7 @@ export const parseComputePhases = (index: string): Map<string, ComputePhase> => 
         throw new InvalidOperationError(
           Operation.Read,
           page,
-          `its Kind is ${kind}, not one of ${Object.values(ComputeKind).join(", ")}`,
+          `its Kind is ${kind}, not one of ${ComputeKinds.join(", ")}`,
         );
       return [folder, { kind, phase }] as const;
     }),
