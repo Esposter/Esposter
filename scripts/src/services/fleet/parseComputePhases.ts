@@ -1,9 +1,9 @@
 import type { ComputePhase } from "#src/models/fleet/ComputePhase";
 
 import { ComputeKind } from "#src/models/fleet/ComputeKind";
-import { checkIsComputeKind } from "#src/services/fleet/checkIsComputeKind";
 import { COMPUTE_QUEUE_PHASE_HEADING, MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 import { readMarkdownSection } from "#src/services/fleet/readMarkdownSection";
+import { checkIsEnumValue } from "#src/services/shared/checkIsEnumValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A row's page link opens on its area's folder, and its kind and phase are the last two cells. A row whose phase is
@@ -24,7 +24,7 @@ export const parseComputePhases = (index: string): Map<string, ComputePhase> => 
   })).filter(({ phase }) => phase <= MAX_GENSHIN_PHASE);
   return new Map(
     rows.map(({ folder, kind, page, phase }) => {
-      if (!checkIsComputeKind(kind))
+      if (!checkIsEnumValue(ComputeKind, kind))
         throw new InvalidOperationError(
           Operation.Read,
           page,

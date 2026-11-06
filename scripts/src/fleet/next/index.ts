@@ -1,6 +1,7 @@
-import { checkIsFleetEntryKind } from "#src/services/fleet/checkIsFleetEntryKind";
+import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { claimNextFleetEntry } from "#src/services/fleet/claimNextFleetEntry";
 import { createFleetWorker } from "#src/services/fleet/createFleetWorker";
+import { checkIsEnumValue } from "#src/services/shared/checkIsEnumValue";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
@@ -25,7 +26,7 @@ await runCommand(
       name: "next",
     },
     run: async ({ args }) => {
-      if (args.kind !== "" && !checkIsFleetEntryKind(args.kind))
+      if (args.kind !== "" && !checkIsEnumValue(FleetEntryKind, args.kind))
         throw new InvalidOperationError(Operation.Read, args.kind, "--kind is queue or unit");
       const worker = process.env.FLEET_WORKER || createFleetWorker();
       const entry = await claimNextFleetEntry(args.lane, args.kind, worker);
