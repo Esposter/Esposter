@@ -7,7 +7,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType } from "headless-block-editor";
 
 // The panel an arrow selected opens: its route and arrowheads, its stacking and the footer. It is the content the layout keys to the arrow
-// Selection kind
+// selection kind
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const whiteboardEditorStore = useWhiteboardEditorStore();

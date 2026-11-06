@@ -11,8 +11,8 @@ import { WHITEBOARD_IMAGE_ACCEPT, WHITEBOARD_SHAPE_TOOL_ITEM } from "@/services/
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
 // Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools, the image picker, and the
-// Lock that keeps a tool in hand and the grid snap. The toolbar holds one value for the tool in hand, and a shape tool's value is the kind it
-// Places, so the slot draws the kind and a choice in it or by a key sets both
+// lock that keeps a tool in hand and the grid snap. The toolbar holds one value for the tool in hand, and a shape tool's value is the kind it
+// places, so the slot draws the kind and a choice in it or by a key sets both
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { isSnapEnabled, isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
 const { toggleSnap, toggleToolLock } = whiteboardEditorStore;

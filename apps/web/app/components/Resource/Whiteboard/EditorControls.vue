@@ -7,7 +7,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { getExportBounds } from "headless-block-editor";
 
 // Undo and redo, then zoom in and out about the middle of the canvas, and fit the whole document into it. Undo and redo are disabled while
-// Their history has no edit to step to
+// their history has no edit to step to
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const { redo, undo } = whiteboardStore;

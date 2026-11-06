@@ -6,7 +6,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType, updatePositionedElementProperty } from "headless-block-editor";
 
 // The panel a selection of several opens: the fill the shapes and sticky notes in it share, or Mixed where they differ, and the footer. A
-// Change to the fill is one edit that writes it to each of them
+// change to the fill is one edit that writes it to each of them
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations } = whiteboardStore;
 const { editState, whiteboard } = storeToRefs(whiteboardStore);

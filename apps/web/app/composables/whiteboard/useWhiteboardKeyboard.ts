@@ -21,8 +21,8 @@ import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardSha
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
-// Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
-// Selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
+// name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
+// selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
 // A tool's key chooses the tool in hand, and a shape's key chooses the shape tool with the shape it names. Each key is the one its item carries
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,

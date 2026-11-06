@@ -10,7 +10,7 @@ import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewp
 import { ShapeKind } from "headless-block-editor";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, whether
-// The tool stays in hand after a placement, the viewport, and the gesture in progress with the document it would leave. None of it is saved
+// the tool stays in hand after a placement, the viewport, and the gesture in progress with the document it would leave. None of it is saved
 export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
   const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
   const gesture = shallowRef<WhiteboardGesture>();

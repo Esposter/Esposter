@@ -18,7 +18,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { getExportBounds } from "headless-block-editor";
 
 // The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry. The canvas is the shell's default slot, and its
-// Events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic. The delete confirmation is the one dialog it holds
+// events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic. The delete confirmation is the one dialog it holds
 const whiteboardStore = useWhiteboardStore();
 const { loadContent, saveWhiteboard } = whiteboardStore;
 const { editState, whiteboard } = storeToRefs(whiteboardStore);

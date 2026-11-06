@@ -6,7 +6,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType } from "headless-block-editor";
 
 // The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill,
-// And every element takes the stacking and the footer
+// and every element takes the stacking and the footer
 const whiteboardStore = useWhiteboardStore();
 const { editState } = storeToRefs(whiteboardStore);
 const whiteboardEditorStore = useWhiteboardEditorStore();

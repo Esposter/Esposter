@@ -33,7 +33,7 @@ const WHITEBOARD_OVERLAY_PRESENTATION_MAP = {
 };
 
 // The layout the shell draws the whiteboard by: the tools float over the top of the canvas and dock at the bottom on a compact window, the
-// Properties panel opens at the start edge for a selection and is a sheet on a compact window, and the view floats at the bottom
+// properties panel opens at the start edge for a selection and is a sheet on a compact window, and the view floats at the bottom
 export const WHITEBOARD_LAYOUT: Layout = {
   canvasId: "canvas",
   panels: [

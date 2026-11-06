@@ -4,7 +4,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ShapeKind } from "headless-block-editor";
 
 // The shapes the shape tool places, in the order its slot's menu lists them: the basic shapes, then the flowchart ones. Each wears the
-// Icon the palette gave its kind
+// icon the palette gave its kind
 export const WhiteboardShapeItemMap: Record<ShapeKind, WhiteboardShapeItem> = {
   [ShapeKind.Rectangle]: {
     meaning: UiIconMeaning.Block,
