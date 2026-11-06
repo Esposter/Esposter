@@ -56,6 +56,16 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
   const selectedVisualId = ref<Visual["id"]>("");
+  // Counts every write to the selection, so a refused delete can tell a selection that was touched and then set back to
+  // The value the delete left from one that was never touched. `flush: "sync"` so the count is current the moment it changes
+  let selectionWriteCount = 0;
+  watch(
+    selectedVisualId,
+    () => {
+      selectionWriteCount++;
+    },
+    { flush: "sync" },
+  );
   const clearSelection = () => {
     selectedVisualId.value = "";
   };
@@ -115,13 +125,13 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     removeVisualFromList(dashboard, location.group, ids.id);
     // The selection is cleared when it names the visual, or one a deleted group held with it
     if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
-    const selectionAfterDelete = selectedVisualId.value;
+    const selectionWriteCountAfterDelete = selectionWriteCount;
     const isSuccessful = await saveDashboard();
     // A refused save also restores the selection the delete cleared, so the store is as it was before the delete. A selection
-    // Made while the save was in flight is the reader's, so it is kept: the one the delete left is only put back while it stands
+    // Made while the save was in flight is the reader's, so it is kept, even when it lands back on the value the delete left
     if (!isSuccessful) {
       getVisualList(dashboard, location.group).push(location.visual);
-      if (selectedVisualId.value === selectionAfterDelete) selectedVisualId.value = previousSelectedVisualId;
+      if (selectionWriteCount === selectionWriteCountAfterDelete) selectedVisualId.value = previousSelectedVisualId;
     }
     return isSuccessful;
   };

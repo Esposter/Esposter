@@ -304,6 +304,30 @@ describe(useVisualStore, () => {
     );
   });
 
+  // The delete clears the selection to none, and a reader who presses another visual then the empty canvas during the save
+  // Ends on none again: that none is the reader's, so the refusal does not put the deleted visual back as the selection
+  test("keeps a selection of none that the reader returns to while a refused delete's save is in flight", async () => {
+    expect.hasAssertions();
+
+    const selected = new Visual({ type: VisualType.Bar });
+    const reselected = new Visual({ type: VisualType.Line });
+    content = new Dashboard({ visuals: [selected, reselected] });
+    const visualStore = await setupStore();
+    const { clearSelection, deleteVisual } = visualStore;
+    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    selectedVisualId.value = selected.id;
+    trpcMsw.dashboard.saveResourceContent.mutation(() => {
+      selectedVisualId.value = reselected.id;
+      clearSelection();
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const isSuccessful = await deleteVisual({ id: selected.id });
+
+    expect({ isSuccessful, selectedVisualId: selectedVisualId.value, visualCount: visuals.value.length }).toStrictEqual(
+      { isSuccessful: false, selectedVisualId: "", visualCount: 2 },
+    );
+  });
+
   // A group takes the visual into its own list, and the dashboard's own list is left as it was
   test("adds a visual into a group, leaving the dashboard's own list as it was", async () => {
     expect.hasAssertions();
