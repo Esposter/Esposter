@@ -8,7 +8,7 @@ export const undoWhiteboardEdit = (state: WhiteboardEditState): WhiteboardEditSt
   const { entry, history } = undoHistory(state.history);
   if (entry === undefined) return state;
 
-  return applyBlockEdit(positionedDocumentSchema, state.document, entry).match(
+  return applyBlockEdit(positionedDocumentSchema, state.document, entry.inverses).match(
     ({ document }) => ({ document, history }),
     (error) => {
       throw error;

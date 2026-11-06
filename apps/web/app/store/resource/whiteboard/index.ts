@@ -1,5 +1,6 @@
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
+import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { PositionedDocument, PositionedElementProperty } from "headless-block-editor";
 
@@ -23,7 +24,7 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
     saveContent: saveWhiteboard,
   } = createContentData<ResourceType.Whiteboard>(ResourceType.Whiteboard, (data) => data ?? { elements: [] });
   // The session clears the history whenever the content is set from outside a commit, so a read from the server starts afresh
-  const { commit, history } = useEditSession<PositionedDocument, JsonPatchOperation[]>(
+  const { commit, history } = useEditSession<PositionedDocument, WhiteboardHistoryEntry>(
     whiteboard,
     MAX_WHITEBOARD_HISTORY_SIZE,
   );

@@ -13,7 +13,7 @@ export const applyWhiteboardEdit = (
   if (operations.length === 0) return state;
 
   return applyBlockEdit(positionedDocumentSchema, state.document, operations).match(
-    ({ document, inverses }) => ({ document, history: pushHistory(state.history, inverses) }),
+    ({ document, inverses }) => ({ document, history: pushHistory(state.history, { inverses, operations }) }),
     (error) => {
       throw error;
     },

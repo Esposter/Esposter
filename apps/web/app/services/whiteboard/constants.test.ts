@@ -1,5 +1,5 @@
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { JsonPatchOperation } from "@esposter/shared";
+import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
 import type { ArrowElement, PositionedDocument, ShapeElement } from "headless-block-editor";
 
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
@@ -39,7 +39,7 @@ export const WHITEBOARD_ARROW: ArrowElement = {
 // A whiteboard's state at a document, with an undo history that keeps every edit a test makes
 export const createWhiteboardEditState = (document: PositionedDocument): WhiteboardEditState => ({
   document,
-  history: createHistory<JsonPatchOperation[]>(MAX_WHITEBOARD_HISTORY_SIZE),
+  history: createHistory<WhiteboardHistoryEntry>(MAX_WHITEBOARD_HISTORY_SIZE),
 });
 
 // The event is dispatched on its target, so the target it reports is the element the key was pressed in
