@@ -70,6 +70,8 @@ The survey's logic builder, the existing delete-reference warning and the page b
 - **A survey with no page lists no kind.** The top level takes pages alone and the palette lists no page, so the scenario "A kind no slot accepts here is absent" is pinned by a survey with no page, where every kind is absent.
 - **The move actions are offered in the row menu, disabled with the refusal.** Move up, move down, move into the element before and move out of its parent join the row's menu, each disabled with its reason when the selection cannot take it, the reason being the disabled item's description. The command palette and the shortcuts dialog keep listing the same commands enabled, since the command list draws no disabled row, and a refused shortcut changes nothing, as before. Rejected: a disabled state in the shared command list in this change, which is a change to a list the other editors use.
 - **A drop on a refusing slot stays silent.** Move to lists only the places that take the element, so a refused target is never offered. A drag onto a slot that refuses the node has no menu to disable, and changes nothing, as it did before.
+- **A survey finding names the deepest node its check's pointer sits under, read off the document the check ran over.** The survey check reports a JSON pointer, which a move would invalidate, so the mapper reads each pointer against the same document it checked and returns that node's id. A calculated value's pointer sits under the root, which no node holds, so it names no node. Rejected: carrying the pointer on the finding, and changing the check's issue shape to carry an id, which would move one editor's mapping into the check's package and touch every check that reports an issue.
+- **A refused save is recorded by the store, which reads Not saved until a save lands.** The survey's check refuses before a save reaches the store's one door, so the store takes a second entry point, `refuseSaveContent`, which sets the failed state and clears the held edit the way a write would. A save of content the server already holds clears the failed state, so an edit reverted to what was saved reads Saved again. Rejected: a latch the survey owns and the header reads, which would be a second source of save state beside `saveState`.
 
 ## Not in this change
 
@@ -95,6 +97,9 @@ The survey's logic builder, the existing delete-reference warning and the page b
 | `apps/web/app/composables/editor/useEditorFindings.ts`                    | an editor's check run once its document settles                                                  |
 | `apps/web/server/services/emailEditor/getEmailValidatorMessages.ts`       | the messages a refused email compile carries, each at the strict level                           |
 | `apps/web/app/services/emailEditor/toEmailValidatorFinding.ts`            | one validator message as an email finding, its severity from its level                           |
+| `apps/web/app/composables/survey/useSurveyCreatorFindings.ts`             | the survey creator's document as findings, for the problems surface                              |
+| `apps/web/app/services/resource/survey/getSurveyEditorFindings.ts`        | the survey check's issues as findings, each naming its node by id                                |
+| `apps/web/app/store/resource/index.ts`                                    | `refuseSaveContent`, which reads a check's refused save as Not saved                             |
 | `apps/web/app/components/Editor/Problems.vue`                             | the problems surface: a count in the top bar and the list of findings                            |
 
 ## Sources

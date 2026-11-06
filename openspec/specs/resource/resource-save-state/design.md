@@ -16,12 +16,16 @@ flowchart TD
   CMD["command or dialog Save"] --> DOOR
   LIB["the survey Creator's autosave<br/>useSurveyCreatorAutosave"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
+  REFUSE["resourceStore.refuseSaveContent<br/>an editor's check refused the save"]
+  LIB -.->|"its check refused the save"| REFUSE
 
   AUTO -.->|"arms"| ARMED(["unwrittenContentResourceId"])
   DOOR -.->|"clears"| ARMED
   DOOR -.->|"in flight"| PENDING(["checkIsSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
   DOOR -.->|"rejected otherwise"| FAILED(["isSaveContentFailed"])
+  REFUSE -.->|"clears"| ARMED
+  REFUSE -.->|"refused"| FAILED
 
   ARMED --> STATE{{"saveState"}}
   PENDING --> STATE
@@ -36,12 +40,12 @@ The autosaving editors are the Dashboard, Note, Program, Sheet, Email, Webpage a
 
 `saveState` reads the flags in priority order, so the state on screen is always the most urgent thing true about the resource.
 
-| State    | Shown as          | True when                                                             | What the owner does            |
-| -------- | ----------------- | --------------------------------------------------------------------- | ------------------------------ |
-| `Stale`  | Out of date       | another session's save moved `contentVersion` on                      | refresh — nothing else lands   |
-| `Saving` | Saving…           | a debounce is armed, a write of _this_ resource is in flight, or both | nothing                        |
-| `Failed` | Not saved         | the last write was rejected for any other reason                      | retry the edit, or copy it out |
-| `Saved`  | Saved, and _when_ | none of the above                                                     | nothing                        |
+| State    | Shown as          | True when                                                                         | What the owner does            |
+| -------- | ----------------- | --------------------------------------------------------------------------------- | ------------------------------ |
+| `Stale`  | Out of date       | another session's save moved `contentVersion` on                                  | refresh — nothing else lands   |
+| `Saving` | Saving…           | a debounce is armed, a write of _this_ resource is in flight, or both             | nothing                        |
+| `Failed` | Not saved         | the last save did not land: a write was rejected, or an editor's check refused it | retry the edit, or copy it out |
+| `Saved`  | Saved, and _when_ | none of the above                                                                 | nothing                        |
 
 **An edit the debounce is holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `unwrittenContentResourceId` is set where the edit is seen, to the resource it was made on, and cleared by `saveContent` itself once that resource is written, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
 
@@ -60,6 +64,8 @@ It is also never derived by comparing the content against what was persisted, th
 **`Stale` outranks everything** because it is the only state where the remedy is not "wait". Once the server has rejected a save as stale every retry is a guaranteed rejection, so the flag latches until the next read — the [conflict](../../architecture/conditional-writes/design.md) has to be resolved by reloading, and the indicator keeps saying so after the notification that raised it has been dismissed.
 
 `Failed` exists for the same reason: a notification is a one-shot the owner dismisses, and the fact that their work is not durable outlives it.
+
+**A refused save is `Failed` too.** An editor's own check can refuse a save before it reaches the door, as the survey's does for a document its check rejects. `refuseSaveContent` is the door's second entry point: it sets `isSaveContentFailed` and clears the held edit the way a write would, since the edit was dropped rather than landed. A save of content the server already holds clears `isSaveContentFailed` as it returns, so an edit reverted to what was saved reads `Saved` again.
 
 **A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `isSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through Blob Storage otherwise ([file uploads](../../architecture/file-uploads/design.md)).
 
