@@ -12,9 +12,8 @@ import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";
 
-// Every command runs through the slash command store's one executor, since a queue lives on the instance and not on the
-// Key: the suggestion menu, the parameter chips and the actions menu each run a command, and a topic typed through one
-// Must queue behind a topic typed through another. The stores are looked up as the command runs, so no caller holds a scope
+// Every command runs through the slash command store's one executor, see there why. The stores are looked up as the
+// Command runs, so no caller holds a scope
 export const executeSlashCommand = async (
   command: { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType],
 ) => {
