@@ -123,7 +123,7 @@ export const usePageBuilderDrag = <
     onRelease: (point: { x: number; y: number }) => void,
   ) => {
     const abortController = new AbortController();
-    const { clientX: startX, clientY: startY, pointerType } = event;
+    const { clientX: startX, clientY: startY, pointerId, pointerType } = event;
     // Where the pointer was last, which a finger's drag that starts on its rest is drawn at
     let latestPoint = { x: startX, y: startY };
     // Whether the pointer has moved past the threshold, since a finger that rested and lifted without moving is a click
@@ -164,6 +164,9 @@ export const usePageBuilderDrag = <
       moveTo(latestPoint);
     };
     const onPointerMove = (moveEvent: PointerEvent) => {
+      // A second pointer on the page is not this press, so it moves neither the drag's point nor its drop target
+      if (moveEvent.pointerId !== pointerId) return;
+
       latestPoint = { x: moveEvent.clientX, y: moveEvent.clientY };
       const distance = Math.hypot(latestPoint.x - startX, latestPoint.y - startY);
       if (distance >= DRAG_START_DISTANCE) hasMoved = true;
@@ -177,6 +180,9 @@ export const usePageBuilderDrag = <
       else if (outcome === "cancel") endDrag();
     };
     const onPointerUp = (upEvent: PointerEvent) => {
+      // Releasing another pointer neither lands the drag nor ends it, which waits for this press's own release
+      if (upEvent.pointerId !== pointerId) return;
+
       if (isDragging.value) {
         onRelease({ x: upEvent.clientX, y: upEvent.clientY });
         if (hasMoved) swallowNextWindowClick();

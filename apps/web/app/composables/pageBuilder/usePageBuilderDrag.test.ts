@@ -31,6 +31,9 @@ const createText = (id: string): TextNode => ({
 const pointerAt = (type: string, x: number, y: number, pointerType = "") =>
   new PointerEvent(type, { clientX: x, clientY: y, pointerType });
 
+const pressedWith = (type: string, x: number, y: number, pointerId: number) =>
+  new PointerEvent(type, { clientX: x, clientY: y, pointerId });
+
 describe(usePageBuilderDrag, () => {
   const TEXT_ONE = TEST_ID;
   const TEXT_TWO = TEST_OTHER_ID;
@@ -226,6 +229,25 @@ describe(usePageBuilderDrag, () => {
       TEXT_TWO,
     ]);
     expect(announce.mock.calls).toStrictEqual([[`Inserted ${TEXT_TITLE}`]]);
+  });
+
+  test("a second pointer neither moves nor lands a drag its press started", async () => {
+    expect.hasAssertions();
+    const { drag, pageBuilderDocumentStore } = await setup(COLUMN_DOCUMENT);
+
+    drag.vm.startPaletteDrag(WebpageNodeType.Text, pressedWith("pointerdown", 0, 0, 1), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pressedWith("pointermove", 100, 30, 2));
+    window.dispatchEvent(pressedWith("pointerup", 100, 30, 2));
+
+    expect(drag.vm.dropTarget).toBeUndefined();
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
+
+    window.dispatchEvent(pressedWith("pointermove", 100, 30, 1));
+    window.dispatchEvent(pressedWith("pointerup", 100, 30, 1));
+
+    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+
+    expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toHaveLength(3);
   });
 
   test("owner drops a survey invite", async () => {
