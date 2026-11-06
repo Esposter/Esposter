@@ -22,7 +22,7 @@ The source's own data (its parts drawn through our renderer, its clips, its soun
 
 ## Acceptance
 
-Once every gate holds, the frame is scored against its reference (Genshin's `compare` and its perceptual score) and checked by eye. That is acceptance, never the loop: a frame still off means some pass's measure is blind to what it shows, so that measure is fixed and its pass rerun, and the next recreation is not caught the same way.
+Once every gate holds, the frame is scored against its reference (Genshin's `compare` and its perceptual score). That is acceptance, never the loop: a frame still off means some pass's measure is blind to what it shows, so that measure is fixed and its pass rerun, and the next recreation is not caught the same way.
 
 ## Why
 

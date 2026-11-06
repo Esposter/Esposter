@@ -19,7 +19,7 @@
 
 - `{data-root}/genshin-parity/references/people-of-the-springs-location.png`, present on the Mac: the reference the Sun, Camera and Score items read.
 - `run` in `scripts/src/services/genshinParity/commands/poseCommand.ts`: `start` is optional there, and the open item below asks whether the pose converges without it.
-- `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`: the comment above its `people-of-the-springs-location` entry (rigid architecture read by eye off 4x crops), and that entry itself (its seven `landmarks`, and the provisional `heldMinutes: 720` in its `props`).
+- `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`: the comment above its `people-of-the-springs-location` entry (rigid architecture read by eye off 4x crops, provisional until that entry's compare row reads the camera they solve), and that entry itself (its seven `landmarks`, and the provisional `heldMinutes: 720` in its `props`).
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`'s `[DerivedAssetComponent.Natlan]` entry: the People of the Springs' seven landmarks name no mesh and are all dropped, the reason the Camera item waits on a mesh.
 - `packages/genshin-world/src/services/world/BuildingKitPaletteReaderMap.ts`'s `[BuildingKit.Natlan]` entry (`createPaletteReader("regions/natlan/palette")`): the hosted palette the Surface item's kit colours come from.
 
