@@ -1,9 +1,10 @@
+import type { Context, ResolvedLayout, ResolvedRegion } from "vue-editor-layout-headless";
+
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
-import { emailLayout } from "@/services/emailEditor/emailLayout";
+import { emailLayout, emailPanelNameMap } from "@/services/emailEditor/emailLayout";
 import { assert, describe, expect, test } from "vitest";
-import type { Context, ResolvedLayout, ResolvedRegion } from "vue-editor-layout-headless";
 import {
   checkLayout,
   getDefaultReaderState,
@@ -12,6 +13,12 @@ import {
   SizeClass,
   toggleRegion,
 } from "vue-editor-layout-headless";
+
+const getRegion = (resolvedLayout: ResolvedLayout, regionId: string): ResolvedRegion => {
+  const region = resolvedLayout.regions.find(({ id }) => id === regionId);
+  assert.exists(region);
+  return region;
+};
 
 describe("emailLayout", () => {
   const barRegionId = "bar";
@@ -28,16 +35,19 @@ describe("emailLayout", () => {
   const nodeContext: Context = { ...designContext, selectionCount: 1, selectionKind: EmailSelectionKind.Node };
   const previewContext: Context = { ...designContext, mode: EmailView.Preview };
   const readerState = getDefaultReaderState();
-  const getRegion = (resolvedLayout: ResolvedLayout, regionId: string): ResolvedRegion => {
-    const region = resolvedLayout.regions.find(({ id }) => id === regionId);
-    assert.exists(region);
-    return region;
-  };
 
   test("an email layout passes the layout check", () => {
     expect.hasAssertions();
 
     expect(checkLayout(emailLayout, selectionKinds, registeredContentKeys)).toStrictEqual([]);
+  });
+
+  test("every panel has a tab title", () => {
+    expect.hasAssertions();
+
+    const untitledPanelIds = emailLayout.panels.filter(({ id }) => !emailPanelNameMap[id]).map(({ id }) => id);
+
+    expect(untitledPanelIds).toStrictEqual([]);
   });
 
   test("preview removes the editing regions", () => {

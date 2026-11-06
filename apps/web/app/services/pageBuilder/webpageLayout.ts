@@ -51,9 +51,7 @@ export const webpageLayout: PageBuilderLayout = {
   },
   panelNameMap: {
     ...PAGE_BUILDER_PANEL_NAME_MAP,
-    [PAGE_BUILDER_PANEL_ID_MAP.Content]: "Content",
     [PAGE_BUILDER_PANEL_ID_MAP.Page]: "Page",
-    [PAGE_BUILDER_PANEL_ID_MAP.Style]: "Style",
     [PAGE_BUILDER_PANEL_ID_MAP.Theme]: "Theme",
   },
 };

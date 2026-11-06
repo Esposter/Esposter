@@ -103,8 +103,10 @@ export const PAGE_BUILDER_BASE_PANELS: Panel[] = [
     wildcardContentKey: PAGE_BUILDER_CONTENT_KEY_MAP.Layers,
   },
 ];
-// The tab titles of the panels every layout holds, which a layout's own panels add to
+// The tab titles of the panels the page builder's layouts share, which a layout's own panels add to
 export const PAGE_BUILDER_PANEL_NAME_MAP = {
   [PAGE_BUILDER_PANEL_ID_MAP.Blocks]: "Blocks",
+  [PAGE_BUILDER_PANEL_ID_MAP.Content]: "Content",
   [PAGE_BUILDER_PANEL_ID_MAP.Layers]: "Layers",
+  [PAGE_BUILDER_PANEL_ID_MAP.Style]: "Style",
 } as const;

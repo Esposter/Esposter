@@ -3,7 +3,8 @@ import type { Layout } from "vue-editor-layout-headless";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
-import { CONTENT_PANEL, DEFAULT_SIDE_PANE_WIDTH, STYLE_PANEL } from "@/services/pageBuilder/constants";
+import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
+import { PAGE_BUILDER_PANEL_ID_MAP, PAGE_BUILDER_PANEL_NAME_MAP } from "@/services/pageBuilder/pageBuilderLayout";
 import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
@@ -112,8 +113,8 @@ export const emailRegionNameMap: Record<string, string> = {
 export const emailPanelNameMap: Record<string, string> = {
   bar: "Email bar",
   blocks: "Blocks",
-  content: CONTENT_PANEL,
-  settings: "Email settings",
+  content: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Content],
   [EMAIL_STRUCTURE_PANEL_ID]: "Structure",
-  style: STYLE_PANEL,
+  settings: "Email settings",
+  style: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Style],
 };
