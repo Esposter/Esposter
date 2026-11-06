@@ -283,6 +283,11 @@ describe("pageBuilderEditor", () => {
   test("an invite to an unpublished survey is a warning", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { promise: surveyListRead, resolve: completeSurveyListRead } = Promise.withResolvers<void>();
+    trpcMsw.survey.readResources.query(() => {
+      completeSurveyListRead();
+      return { hasMore: false, items: [] };
+    });
 
     const resourceId = crypto.randomUUID();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
@@ -291,7 +296,9 @@ describe("pageBuilderEditor", () => {
     });
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
-    // The survey list is read through the mock server, so the invite reads as unchecked until its answer arrives
+    // The survey list is read through the mock server, so the invite reads as unchecked until its answer arrives.
+    // The test waits on the list's read, then on its render
+    await surveyListRead;
     await flushPromises();
 
     expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
