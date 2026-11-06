@@ -18,4 +18,4 @@
 ## 3. The other regions
 
 - [ ] 3.1 [phase 5] Export each other region's base maps and build its ground in its own layers, its field from its tiles' cells and its colours from its base maps. Verify: a test named after the scenario "A region's ground shows its own layers' detail", written first and seen failing.
-- [x] 3.2 Confirm the base map adds no detail of its own to a ground. Verify: the terrain no longer takes `surfaces.Ground.detail` (`Windrise/Index.vue`), the domes keep it, and the look is checked by the owner's render. No test is named for the scenario 'The base map adds no detail of its own to the ground', which this task confirms: genshin-world has no component harness, so no unit can fail on it.
+- [x] 3.2 Confirm the base map adds no detail of its own to a ground. Verify: the terrain no longer takes `surfaces.Ground.detail` (`Windrise/Index.vue`), and the domes keep it. No test holds 'The base map adds no detail of its own to the ground', which this task confirms: genshin-world has no component harness, so no unit can fail on it.
