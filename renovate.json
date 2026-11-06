@@ -38,6 +38,11 @@
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
     },
     {
+      "allowedVersions": "<1.3",
+      "description": "`vite` depends on `rolldown` at its own minor (`~1.2.16` in vite 8.3), and a plugin that peers on both resolves the catalog's copy beside vite's, so the catalog stays on vite's line until a vite release depends on rolldown 1.3. `tsdown` already depends on 1.3 and keeps its own copy.",
+      "matchPackageNames": ["rolldown"]
+    },
+    {
       "description": "`@tsdown/css` pins its tsdown peer to the exact same version, so the two move as one; a bump of either alone leaves the pair mismatched.",
       "groupName": "tsdown",
       "matchPackageNames": ["@tsdown/css", "tsdown"]
