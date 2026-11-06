@@ -142,6 +142,16 @@ describe("editorShell", () => {
     expect(component.get("aside").element.style.width).toBe(`${maximumSize}px`);
   });
 
+  test("a region with equal limits draws no resize handle", () => {
+    expect.hasAssertions();
+
+    const fixedLayout = createLayout({ ...region, maximumSize: defaultSize, minimumSize: defaultSize });
+    const component = mountShell({ layout: fixedLayout });
+
+    expect(component.get("aside").element.style.width).toBe(`${defaultSize}px`);
+    expect(component.find('[role="separator"]').exists()).toBe(false);
+  });
+
   test("a stored size is restored on the next open", async () => {
     expect.hasAssertions();
 

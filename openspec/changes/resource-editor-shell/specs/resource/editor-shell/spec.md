@@ -27,6 +27,16 @@ A handle between docked regions SHALL resize them by the pointer and by the arro
 - **WHEN** the arrow key that widens it is pressed
 - **THEN** the region keeps its maximum size
 
+### Requirement: A region with equal limits has no handle
+
+A docked region whose minimum size equals its maximum SHALL draw no handle, since no size of it can change.
+
+#### Scenario: A region with equal limits draws no resize handle
+
+- **GIVEN** a docked region whose minimum and maximum size are equal
+- **WHEN** the shell is drawn
+- **THEN** the region is drawn at that size with no handle
+
 ### Requirement: A stored size is restored
 
 The shell SHALL restore a region's size the reader set, the next time the same editor type opens.

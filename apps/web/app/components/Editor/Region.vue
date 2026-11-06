@@ -23,6 +23,10 @@ const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string
 const isVertical = computed(() => [RegionEdge.Bottom, RegionEdge.Top].includes(region.edge));
 // The handle sits on the region's inner edge, so a region at the end or the bottom takes it on its start or top side
 const isReversed = computed(() => [RegionEdge.Bottom, RegionEdge.End].includes(region.edge));
+// A handle moves a docked region between its limits, so equal limits leave it nothing to move
+const isResizable = computed(
+  () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
+);
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
 </script>
 
@@ -63,7 +67,7 @@ const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px
       @select-panel="(panelId) => emit('selectPanel', panelId)"
     />
     <UiResizeHandle
-      v-if="region.presentation === RegionPresentation.Docked"
+      v-if="isResizable"
       :is-reversed="isReversed || undefined"
       :is-vertical="isVertical || undefined"
       :label="`Resize ${name}`"
