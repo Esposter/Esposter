@@ -107,7 +107,7 @@ const { copy } = clipboardStore;
       the top is the whole handle, since the cap's percentage has no height to resolve against on an auto-height
       tile, or below a chart's own toolbar -->
     <div
-      :class="isChart ? 'top-9' : 'top-[var(--dashboard-handle)]'"
+      :top="isChart ? '9' : '[var(--dashboard-handle)]'"
       right="[var(--dashboard-cap)]"
       flex
       gap-1
