@@ -1,5 +1,6 @@
 import type { SkillDocsFinding } from "#src/models/sweeps/skillDocs/SkillDocsFinding";
 
+import { readWorkingTreeFiles } from "#src/services/shared/readWorkingTreeFiles";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { getBareSkillCitationFindings } from "#src/services/sweeps/skillDocs/getBareSkillCitationFindings";
 import { getBudgetFindings } from "#src/services/sweeps/skillDocs/getBudgetFindings";
@@ -12,12 +13,11 @@ import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { getTriggerlessFindings } from "#src/services/sweeps/skillDocs/getTriggerlessFindings";
 import { getUnindexedFindings } from "#src/services/sweeps/skillDocs/getUnindexedFindings";
 import { getUnresolvedFindings } from "#src/services/sweeps/skillDocs/getUnresolvedFindings";
-import { readSkillDocsFiles } from "#src/services/sweeps/skillDocs/readSkillDocsFiles";
 
 // Every check over the skill tree, in one read: the sweep prints them and the workspace test refuses all but the budget
 export const readSkillDocsFindings = (): SkillDocsFinding[] => {
-  const skills = readSkillDocsFiles(`${SKILLS_DIRECTORY}/*/SKILL.md`);
-  const pages = readSkillDocsFiles(`${SKILLS_DIRECTORY}/*/references/*.md`);
+  const skills = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/SKILL.md`);
+  const pages = readWorkingTreeFiles(`${SKILLS_DIRECTORY}/*/references/*.md`);
   const files = [...skills, ...pages];
   const paths = new Set(files.map(({ path }) => path));
   const skillNames = new Set(skills.map(({ path }) => getSkillName(path)));
