@@ -34,7 +34,7 @@ describe("characterScreen", () => {
 
   // The world mounts the terms in the screen's slot, which the screen passes the character it shows: the terms are the
   // Pack's, read from the reader of that character
-  test("the terms of the shown character's pack come from its reader", async () => {
+  test("a chosen character's terms show beside it", async () => {
     expect.hasAssertions();
 
     const termsText = "The model's terms, shown as the pack bundles them.";
