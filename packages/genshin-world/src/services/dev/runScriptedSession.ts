@@ -7,8 +7,9 @@ import { runScriptedStep } from "#src/services/dev/runScriptedStep";
 import { takeScriptedLines } from "#src/services/dev/takeScriptedLines";
 import { takeOne } from "@esposter/shared";
 
-// Runs a script's steps in order. Each run of registry lines goes through runDevScenario, and each harness step through
-// Its own runner. The script stops at the first step that fails, and the failure names that step by its number
+// Runs a script's steps in order. Each run of registry lines goes through runDevScenario and then settles the
+// Terrain, and each harness step goes through its own runner. The script stops at the first step that fails, and the
+// Failure names that step by its number
 export const runScriptedSession = async (
   driver: ScriptedSessionDriver,
   steps: readonly ScriptedStep[],
@@ -18,7 +19,7 @@ export const runScriptedSession = async (
     const step = takeOne(steps, index);
     if (typeof step === "string") {
       const lines = takeScriptedLines(steps, index);
-      const result = runScriptedLines(driver, lines, index + 1);
+      const result = await runScriptedLines(driver, lines, index + 1);
       if (!result.ok) return result;
 
       index += lines.length;

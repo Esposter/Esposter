@@ -152,7 +152,7 @@ The developer registry SHALL offer a hold that presses a control for seconds, an
 
 ### Requirement: A script stops at its first failed step and compares one value exactly
 
-A scripted session SHALL run its steps in order and stop at the first step that fails, naming that step. An expect step SHALL compare one value, or one field of the state record, with the expected text exactly.
+A scripted session SHALL run its steps in order and stop at the first step that fails, naming that step. An expect step SHALL compare one value, or one field of the state record, with the expected text exactly. A scripted session SHALL settle the terrain after each run of lines, and SHALL fail once the terrain stays unsettled past the frame limit; the driver settles before each save.
 
 #### Scenario: A failed line stops the script and names it
 
@@ -165,6 +165,18 @@ A scripted session SHALL run its steps in order and stop at the first step that 
 - **GIVEN** a state record whose place field reads Windrise
 - **WHEN** an expect step names the place field as Liyue
 - **THEN** the step fails and names the field with both values
+
+#### Scenario: A step that never settles fails the script
+
+- **GIVEN** a driver whose settled read never answers yes
+- **WHEN** a script with a line and then a save runs
+- **THEN** the script fails naming the step, with the words not settled
+
+#### Scenario: A line settles the terrain before the next step
+
+- **GIVEN** a driver whose settled read answers no twice and then yes
+- **WHEN** a script with a line and then an expect step on that line's record runs
+- **THEN** the runner steps two frames, and the expect step reads once the terrain reads settled
 
 ### Requirement: A save in a script is the page's save, and a load resumes it in a fresh session
 
