@@ -35,7 +35,7 @@ describe(levelUpCharacter, () => {
   const WANDERERS_ADVICE: ItemDefinition = { ...ADVENTURERS_EXPERIENCE, id: 104_001 };
 
   // Level 7 needs 3,725 Character EXP to reach level 8: one Adventurer's Experience covers it, at 1,000 Mora for its 5,000
-  test("level up spends character exp materials", () => {
+  test("level Up spends Character EXP materials", () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {
@@ -55,7 +55,7 @@ describe(levelUpCharacter, () => {
   });
 
   // Three Wanderer's Advice give 3,000 of the 3,725 the level needs, so nothing is taken and the level is not raised
-  test("level up is refused without enough character exp materials", () => {
+  test("level Up is refused without enough Character EXP materials", () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {

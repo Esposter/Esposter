@@ -32,7 +32,7 @@ describe(liftCharacterLevel, () => {
     stackLimit: 99,
   };
 
-  test("masterless stella fortuna lifts a character from level 90 to 95", () => {
+  test("masterless Stella Fortuna lifts a character from level 90 to 95", () => {
     expect.hasAssertions();
     expect(
       liftCharacterLevel(CHARACTER, {
@@ -48,7 +48,7 @@ describe(liftCharacterLevel, () => {
     });
   });
 
-  test("masterless stella fortuna lifts a character from level 95 to 100", () => {
+  test("masterless Stella Fortuna lifts a character from level 95 to 100", () => {
     expect.hasAssertions();
     const character = { ...CHARACTER, level: 95 };
     expect(

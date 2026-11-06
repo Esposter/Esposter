@@ -44,7 +44,7 @@ describe(ascendCharacter, () => {
     stackLimit: 99,
   };
 
-  test("ascend spends the phase's materials and mora at its cap", () => {
+  test("ascend spends the phase's materials and Mora at its cap", () => {
     expect.hasAssertions();
     expect(
       ascendCharacter(CHARACTER, {
@@ -75,7 +75,7 @@ describe(ascendCharacter, () => {
     ).toBeUndefined();
   });
 
-  test("ascend is refused below the phase's adventure rank", () => {
+  test("ascend is refused below the phase's Adventure Rank", () => {
     expect.hasAssertions();
     expect(
       ascendCharacter(CHARACTER, {
