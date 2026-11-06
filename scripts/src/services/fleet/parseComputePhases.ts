@@ -13,7 +13,8 @@ const ROW_REGEX =
 
 // The kind and phase each compute page's folder holds, from the index's Phases table. A row whose phase is past the last
 // Genshin phase maps to nothing, so its page has no row and its read fails rather than taking a phase off the list. A
-// Row whose kind is not a compute kind fails the read, naming its page
+// Row whose kind is not a compute kind fails the read, naming its page, and two rows naming one folder fail it naming the
+// Folder, since a folder holds one phase and one kind
 export const parseComputePhases = (index: string): Map<string, ComputePhase> => {
   const section = readMarkdownSection(index, COMPUTE_QUEUE_PHASE_HEADING);
   const rows = Array.from(section.matchAll(ROW_REGEX), ({ groups }) => ({
@@ -22,6 +23,10 @@ export const parseComputePhases = (index: string): Map<string, ComputePhase> => 
     page: groups?.page ?? "",
     phase: Number(groups?.phase),
   })).filter(({ phase }) => phase <= MAX_GENSHIN_PHASE);
+  const folders = rows.map(({ folder }) => folder);
+  const duplicateFolder = folders.find((folder) => folders.indexOf(folder) !== folders.lastIndexOf(folder));
+  if (duplicateFolder !== undefined)
+    throw new InvalidOperationError(Operation.Read, duplicateFolder, "more than one row of the Phases table names it");
   return new Map(
     rows.map(({ folder, kind, page, phase }) => {
       if (!checkIsEnumValue(ComputeKind, kind))

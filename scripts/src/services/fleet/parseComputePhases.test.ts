@@ -34,4 +34,22 @@ describe(parseComputePhases, () => {
       `[InvalidOperationError: Invalid operation: Read, name: alpha/design.md, its Kind is Gadget, not one of Screen, Region, Scene, Pieces, Dataset]`,
     );
   });
+
+  test("throws on two rows naming one folder, naming the folder", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      parseComputePhases(
+        [
+          "## Phases",
+          "",
+          "| Alpha | [Alpha](alpha/design.md) | Screen | 4 |",
+          "| Alpha | [Alpha](alpha/design.md) | Region | 6 |",
+          "",
+        ].join("\n"),
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: alpha, more than one row of the Phases table names it]`,
+    );
+  });
 });
