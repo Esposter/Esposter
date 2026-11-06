@@ -370,7 +370,7 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pointerAt("pointerup", 600, 30, "touch"));
   });
 
-  test("a finger that rests and lifts without moving still clicks its control", async () => {
+  test("a finger that rests and lifts without moving has started a drag, so its control is not clicked", async () => {
     expect.hasAssertions();
     const { drag } = await setup(ROOT_DOCUMENT);
     vi.useFakeTimers();
@@ -388,6 +388,6 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pointerAt("pointerup", 600, 30, "touch"));
     document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
   });
 });
