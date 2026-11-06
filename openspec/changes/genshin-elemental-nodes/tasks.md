@@ -9,4 +9,4 @@
 
 - [ ] 2.1 Place each node from the scene groups, with its element. Blocked: the scene groups this build holds carry no node, and their group scripts need the PC export (`openspec/changes/genshin-puzzles/`).
 - [ ] 2.2 Place each Infusion Stone and destroy one, removing its buffs. Blocked: the stones' gadget identity is unconfirmed in the world, and the dump holds no stone hit points or weakness data.
-- [ ] 2.3 Call the node's pulse on each enemy in reach each fixed step. Blocked on 2.1, since no node stands in the world to pulse; the reach radius is provisional (see the design's Notes).
+- [ ] 2.3 Call the node's pulse on each enemy in reach each fixed step, once 2.1 places the nodes, since no node stands in the world to pulse. The reach radius is provisional (see the design's Notes).
