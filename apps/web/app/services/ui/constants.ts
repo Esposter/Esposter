@@ -112,6 +112,8 @@ export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
 // Builder's panes
 export const MIN_SIDE_PANE_WIDTH = 200;
 export const MAX_SIDE_PANE_WIDTH = 480;
+// The width a resizable side pane starts at, in CSS pixels, within the bounds above
+export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // What an event calendar's keys are listed under in the shortcuts dialog and the palette
 export const CALENDAR_COMMAND_GROUP = "Calendar";
 // The shortcuts an editor's undo and redo carry, in Vuetify 0's hotkey syntax, redo's Y shortcut beside its usual one
