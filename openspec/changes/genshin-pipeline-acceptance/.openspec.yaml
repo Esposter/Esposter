@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 0
 x-model: claude-haiku-5-5
 x-needs: [game-install]
+x-waiting: "task 1.1 waits on genshin-pipeline-provenance tasks 2.4 and 3.1; tasks 3.1 and 4.1 wait on genshin-pipeline-provenance task 3.4 and genshin-pipeline-hygiene task 4.3"
 x-touches:
   [
     "scripts/src/services/genshinAssets/**",
