@@ -18,7 +18,7 @@ import { endKitStatus } from "#src/services/kit/effects/endKitStatus";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
@@ -108,7 +108,7 @@ const WARMING_UP_ICD_SECONDS = 2.8;
 // The heal a restore of points gives the active character, as gcsim's a4Heal gives it, once the status is up and its cooldown
 // Is not, which the cooldown then starts
 const healWarmingUp = (context: KitContext, characterId: number): void => {
-  const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
+  const { activeCombatant, characterIdCombatantMap, kitEffectState } = context;
   const { effects } = kitEffectState;
   if (
     !checkIsKitStatusActive(effects, characterId, IANSAN_WARMING_UP_ID) ||
@@ -117,7 +117,7 @@ const healWarmingUp = (context: KitContext, characterId: number): void => {
     return;
   const iansan = characterIdCombatantMap.get(characterId);
   if (!iansan) return;
-  const { attack } = getBuffedCombatant(iansan, effects, party, characterIdCombatantMap).attributes;
+  const attack = getBuffedAttack(iansan, context);
   changeKitMemberHealth(context, iansan, activeCombatant.characterId, attack * WARMING_UP_HEAL_ATTACK_PERCENT);
   addKitStatus(kitEffectState, characterId, { id: WARMING_UP_ICD_ID, secondsRemaining: WARMING_UP_ICD_SECONDS });
 };

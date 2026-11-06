@@ -31,7 +31,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -303,8 +303,8 @@ export const createJahodaKitBehaviour = ({
   const healBurst =
     (healer: Combatant, healMultiplier: number) =>
     (context: KitContext): void => {
-      const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
-      const { attack } = getBuffedCombatant(healer, kitEffectState.effects, party, characterIdCombatantMap).attributes;
+      const { activeCombatant, kitEffectState, party } = context;
+      const attack = getBuffedAttack(healer, context);
       if (getPartyMember(party, activeCombatant.characterId).healthShare > BURST_ADDITIONAL_HEAL_HEALTH_SHARE) {
         // Ascension 4 gives the active character Elemental Mastery on each of these heals, restarting its buff
         if (healer.ascension >= JAHODA_ASCENSION_4)

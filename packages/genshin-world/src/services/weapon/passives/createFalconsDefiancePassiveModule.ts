@@ -2,7 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
 import { takeOne } from "@esposter/shared";
@@ -35,12 +35,7 @@ export const createFalconsDefiancePassiveModule = (params: number[]): PassiveMod
         })
       )
         return;
-      const { attack } = getBuffedCombatant(
-        combatant,
-        context.kitEffectState.effects,
-        context.party,
-        context.characterIdCombatantMap,
-      ).attributes;
+      const attack = getBuffedAttack(combatant, context);
       changeKitMemberHealth(context, combatant, combatant.characterId, healShare * attack);
     },
   };
