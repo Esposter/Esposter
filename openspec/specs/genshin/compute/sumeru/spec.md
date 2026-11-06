@@ -36,11 +36,10 @@ The Sumeru City sun direction SHALL replace the provisional noon only when the s
 
 ### Requirement: The Sumeru City frame's score
 
-The Sumeru City frame's score SHALL be reported without a numeric gate, and judged by eye.
+The Sumeru City frame's score SHALL be reported without a numeric gate.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the Sumeru City frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye

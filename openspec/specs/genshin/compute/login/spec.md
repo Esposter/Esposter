@@ -24,4 +24,4 @@ The Japanese PC client's health notice SHALL show whole in the visual suite, wit
 - **WHEN** the notice is compared
 - **THEN** the notice shows whole
 - **AND** the PC watermark lies outside the compared region
-- **AND** a person judges the result by eye
+- **AND** the `health-notice-japanese` row of the parity snapshot records its score

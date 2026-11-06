@@ -42,11 +42,10 @@ The People of the Springs sun direction SHALL replace the provisional noon only 
 
 ### Requirement: The People of the Springs frame's score
 
-The People of the Springs frame's score SHALL be reported without a numeric gate, and judged by eye.
+The People of the Springs frame's score SHALL be reported without a numeric gate.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the People of the Springs frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye

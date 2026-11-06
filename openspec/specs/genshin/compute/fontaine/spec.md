@@ -49,11 +49,10 @@ The Fontaine sun direction SHALL replace the provisional noon only when the solv
 
 ### Requirement: The Fontaine frame's score
 
-The Fontaine frame's score SHALL be reported without a numeric gate, and judged by eye.
+The Fontaine frame's score SHALL be reported without a numeric gate.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the Fontaine frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye

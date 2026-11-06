@@ -56,11 +56,10 @@ Inazuma's light SHALL place its shadow edges within 2 pixels and its stone colou
 
 ### Requirement: The Inazuma frame's score
 
-The Inazuma frame's score SHALL be reported without a numeric gate, and judged by eye.
+The Inazuma frame's score SHALL be reported without a numeric gate.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the Inazuma frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye

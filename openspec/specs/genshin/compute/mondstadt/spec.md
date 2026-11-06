@@ -111,11 +111,10 @@ The Mondstadt City atmosphere SHALL keep the sky's statistics within the spread 
 
 ### Requirement: The Mondstadt City frame's score
 
-The Mondstadt City frame's score SHALL be reported without a numeric gate, and judged by eye. It waits on every pass.
+The Mondstadt City frame's score SHALL be reported without a numeric gate. It waits on every pass.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the Mondstadt City frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye

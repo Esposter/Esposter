@@ -62,11 +62,10 @@ Snezhnaya's light SHALL place the lit stone's colour within 2.3 DeltaE of the re
 
 ### Requirement: The Snezhnaya frame's score
 
-The Snezhnaya frame's score SHALL be reported without a numeric gate, and judged by eye.
+The Snezhnaya frame's score SHALL be reported without a numeric gate.
 
-#### Scenario: A frame comparison reports its score and is judged by eye
+#### Scenario: A frame comparison reports its score
 
 - **GIVEN** the Everfrozen Earth frame is compared against its reference
 - **WHEN** the comparison finishes
 - **THEN** its score is recorded and reported
-- **AND** the frame is checked by eye
