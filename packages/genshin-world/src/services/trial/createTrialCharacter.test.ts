@@ -69,31 +69,10 @@ describe(createTrialCharacter, () => {
 
   test("the trial character is at the trial's level", () => {
     expect.hasAssertions();
-    expect(createTrialCharacter(TRIAL, TABLES, DATA)).toStrictEqual({
-      artifacts: [
-        {
-          experience: 100,
-          isLocked: false,
-          itemId: 91,
-          level: 4,
-          mainAffix: Attribute.AttackPercent,
-          minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
-          rarity: 4,
-          setId: 9001,
-          slot: ArtifactSlot.FlowerOfLife,
-        },
-        {
-          experience: 100,
-          isLocked: false,
-          itemId: 92,
-          level: 4,
-          mainAffix: Attribute.AttackPercent,
-          minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
-          rarity: 4,
-          setId: 9001,
-          slot: ArtifactSlot.PlumeOfDeath,
-        },
-      ],
+    const character = createTrialCharacter(TRIAL, TABLES, DATA);
+    // The artifacts are the next test's; every other field is held exact here.
+    expect(character).toStrictEqual({
+      artifacts: character?.artifacts,
       ascension: 6,
       constellationCount: 0,
       friendshipExp: 0,
@@ -107,6 +86,34 @@ describe(createTrialCharacter, () => {
       },
       weapon: { ascension: 6, experience: 0, id: WEAPON_ID, level: 90, refinement: 3 },
     });
+  });
+
+  test("the trial character takes its template's artifacts", () => {
+    expect.hasAssertions();
+    expect(createTrialCharacter(TRIAL, TABLES, DATA)?.artifacts).toStrictEqual([
+      {
+        experience: 100,
+        isLocked: false,
+        itemId: 91,
+        level: 4,
+        mainAffix: Attribute.AttackPercent,
+        minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
+        rarity: 4,
+        setId: 9001,
+        slot: ArtifactSlot.FlowerOfLife,
+      },
+      {
+        experience: 100,
+        isLocked: false,
+        itemId: 92,
+        level: 4,
+        mainAffix: Attribute.AttackPercent,
+        minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
+        rarity: 4,
+        setId: 9001,
+        slot: ArtifactSlot.PlumeOfDeath,
+      },
+    ]);
   });
 
   test("a trial whose character has no cited build has no party member", () => {
