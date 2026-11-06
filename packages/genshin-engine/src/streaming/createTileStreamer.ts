@@ -132,7 +132,8 @@ export const createTileStreamer = <TTile>({
             requestTile(key);
           }
       }
-      // Only a key the loop above asks for can leave the count, so a drawn ancestor that is no longer wanted is dropped
+      // A failed key stays counted while an update asks for it and it is neither held nor generating
+      // So a drawn ancestor that is no longer wanted is dropped
       for (const key of failedKeys) {
         const isAskedFor = [wanted, surrounding].some(({ count, keys }) => keys.subarray(0, count).includes(key));
         if (isAskedFor && !checkIsSettled(key) && !pendingWantedFrameMap.has(key)) retryKeySet.add(key);
