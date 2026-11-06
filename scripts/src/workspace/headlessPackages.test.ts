@@ -15,8 +15,8 @@ import { describe, expect, test } from "vitest";
  */
 describe("headlessPackages", () => {
   const SOURCE_DIRECTORY = "src";
-  const SOURCE_FILE_PATTERN = /\.(?:ts|vue)$/;
-  const TEST_FILE_PATTERN = /\.test(?:-d)?\.ts$/;
+  const SOURCE_FILE_PATTERN = /\.(?:ts|vue)$/u;
+  const TEST_FILE_PATTERN = /\.test(?:-d)?\.ts$/u;
   // A package's own tests may import what its source must not, since they are never shipped
   const readSourceFiles = ({ directory, workspaceDirectory }: WorkspacePackage) => {
     const sourceDirectory = join(REPOSITORY_ROOT, workspaceDirectory, directory, SOURCE_DIRECTORY);

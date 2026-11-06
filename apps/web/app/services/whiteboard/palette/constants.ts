@@ -7,7 +7,7 @@ export const WHITEBOARD_STICKY_NOTE_SIZE: Size = { height: 120, width: 160 };
 export const WHITEBOARD_TEXT_BOX_SIZE: Size = { height: 40, width: 160 };
 export const WHITEBOARD_IMAGE_SIZE: Size = { height: 240, width: 240 };
 // How far each image of a multi-file insert sits from the one picked before it, in document units: half its width, so every image
-// shows past the one over it
+// Shows past the one over it
 export const WHITEBOARD_IMAGE_INSERT_OFFSET = WHITEBOARD_IMAGE_SIZE.width / 2;
 // The fill a placed shape and sticky note start with, which the properties panel changes
 export const WHITEBOARD_SHAPE_FILL = "#ffffff";

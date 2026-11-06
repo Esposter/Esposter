@@ -23,7 +23,7 @@ import { setSurveyAnswer } from "#src/services/runner/setSurveyAnswer";
 import { computed, ref, toValue } from "vue";
 
 // A respondent's session over a survey document: the state the runner's functions move, the errors that block a move and
-// the clock they read. The Vue wrapper over those functions, so the page holds nothing of the survey's own
+// The clock they read. The Vue wrapper over those functions, so the page holds nothing of the survey's own
 export const useSurveyRunner = (
   document: MaybeRefOrGetter<SurveyDocument>,
   {

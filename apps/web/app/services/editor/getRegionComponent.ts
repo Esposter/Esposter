@@ -1,5 +1,4 @@
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
-import type { Component } from "vue";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
 // The component a region draws: the one its active panel's content key names in the registry, or none when the region

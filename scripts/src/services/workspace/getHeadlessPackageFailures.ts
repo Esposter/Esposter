@@ -4,9 +4,9 @@ import { PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
 import { HEADLESS_NAME_REGEX, PINIA_IMPORT_REGEX, VUE_IMPORT_REGEX } from "#src/services/workspace/constants";
 
 // The shape every headless package holds: a Vue package named vue-<thing>-headless that imports Vue somewhere in its
-// source, exporting its entry and its manifest only, and importing no Pinia. A package that never imports Vue ships
-// nothing the name claims, so it is not named for Vue. Each breach is one message naming the package and the subpath
-// or file it breaks on, so an empty array is a pass
+// Source, exporting its entry and its manifest only, and importing no Pinia. A package that never imports Vue ships
+// Nothing the name claims, so it is not named for Vue. Each breach is one message naming the package and the subpath
+// Or file it breaks on, so an empty array is a pass
 export const getHeadlessPackageFailures = (
   manifest: PackageShapeManifest,
   sourceFiles: { path: string; text: string }[],

@@ -8,7 +8,7 @@ import { getSurveySiblingMove } from "@/services/resource/survey/getSurveySiblin
 import { exhaustiveGuard } from "@esposter/shared";
 
 // The move a node takes from its place. The creator's commands apply its operations and its menu reads its refusal, so the two come from
-// the one place and cannot disagree
+// The one place and cannot disagree
 export const getSurveyNodeMove = (
   document: SurveyDocument,
   nodePointer: string,
