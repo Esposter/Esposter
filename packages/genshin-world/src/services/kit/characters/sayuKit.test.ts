@@ -15,7 +15,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createSayuKitBehaviour, SAYU_CHARACTER_ID } from "#src/services/kit/characters/sayuKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -127,6 +128,31 @@ describe(createSayuKitBehaviour, () => {
 
     expect(getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare).toBe(0.5);
     expect(getDarumaRadii(3)).toStrictEqual(getDarumaRadii(0));
+  });
+
+  test("a Swirl's Ascension 1 heal reads her Elemental Mastery with the buffs on her as they stand at that Swirl", () => {
+    expect.hasAssertions();
+    const combatant = createSayuCombatant(1);
+    const context = createKitTestContext(combatant);
+    getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare = 0.5;
+    // The share of her health a Swirl raises her by
+    const healFromSwirl = (): number => {
+      const healthShare = getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare;
+      triggerSwirl(combatant, context);
+      return getPartyMember(context.party, SAYU_CHARACTER_ID).healthShare - healthShare;
+    };
+    const firstHeal = healFromSwirl();
+    buffKitMember(context.kitEffectState, SAYU_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.ElementalMastery,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    // Ascension 1's heal waits out its two-second cooldown
+    stepKitSeconds(context, 3);
+    const secondHeal = healFromSwirl();
+
+    expect(secondHeal).toBeGreaterThan(firstHeal);
   });
 
   test("a Constellation 4 Swirl of hers on the field restores 1.2 Energy to her, once every 2 seconds", () => {

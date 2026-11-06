@@ -10,6 +10,7 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
@@ -135,10 +136,10 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
       },
     },
     // Ascension 1: a Swirl Sayu triggers while she is on the field heals the active character, which is her, once every 2
-    // Seconds, from the Elemental Mastery she stands with
+    // Seconds, from the Elemental Mastery she has with the buffs on her as they stand at that Swirl
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
-      const { activeCombatant, kitEffectState, party } = context;
+      const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
       // Skiving: New and Improved, from Constellation 4: a Swirl Sayu triggers on the field restores 1.2 Energy to her,
       // Once every 2 seconds
       if (
@@ -169,7 +170,11 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
         context,
         combatant,
         activeCombatant.characterId,
-        ASCENSION_1_HEAL_FLAT + elementalMasteryMultiplier(combatant, ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE),
+        ASCENSION_1_HEAL_FLAT +
+          elementalMasteryMultiplier(
+            getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap),
+            ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE,
+          ),
       );
     },
   };
