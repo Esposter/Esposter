@@ -11,6 +11,13 @@ import { HalfFloatType, Vector2 } from "three";
 import { context, float, max, texture, uniform, uv, vec2, vec3, vec4 } from "three/tsl";
 import { Node, NodeMaterial, NodeUpdateType, QuadMesh, RendererUtils, RenderTarget } from "three/webgpu";
 
+declare module "three/webgpu" {
+  interface NodeBuilder {
+    // The runtime builder has this method, which three's declarations leave out, so the bloom's materials can share its context
+    getSharedContext: () => Record<string, unknown>;
+  }
+}
+
 // Each blur's four taps are two a side at each distance in texels, each weighed alike so the four sum to one
 const BLUR_TAP_WEIGHT = 1 / (2 * BLOOM_BLUR_TEXELS.length);
 // The four taps a box-downsample reads, at the centres of the 2 by 2 block of the level above that a texel covers
@@ -49,19 +56,19 @@ export class GameBloomNode extends Node<"vec4"> {
   readonly #blurDirection = uniform(new Vector2(1, 0));
   readonly #blurInverseSize = uniform(new Vector2());
   readonly #blurMaterial = new NodeMaterial();
-  readonly #blurTexture = texture(null);
+  readonly #blurTexture = texture();
   readonly #composeMaterial = new NodeMaterial();
   readonly #composeTarget = createRenderTarget("GameBloom.compose");
   readonly #downsampleInverseSize = uniform(new Vector2());
   readonly #downsampleMaterial = new NodeMaterial();
-  readonly #downsampleTexture = texture(null);
+  readonly #downsampleTexture = texture();
   readonly #levels: GameBloomLevel[];
   readonly #materials: NodeMaterial[];
   #output?: Node<"vec4">;
   readonly #prefilterMaterial = new NodeMaterial();
   readonly #prefilterTarget = createRenderTarget("GameBloom.prefilter");
   readonly #quad = new QuadMesh(new NodeMaterial());
-  readonly #rendererState: RendererUtils.RendererState = {};
+  #rendererState?: RendererUtils.RendererState;
   readonly #size = new Vector2();
 
   constructor(inputNode: Node<"vec4">) {
@@ -71,7 +78,7 @@ export class GameBloomNode extends Node<"vec4"> {
       blurred: createRenderTarget(`GameBloom.blurred${index}`),
       downsampled: createRenderTarget(`GameBloom.downsampled${index}`),
       horizontal: createRenderTarget(`GameBloom.horizontal${index}`),
-      sampled: texture(null),
+      sampled: texture(),
       weight,
     }));
 
@@ -130,7 +137,8 @@ export class GameBloomNode extends Node<"vec4"> {
   // Node keeps, so a frame builds none
   override updateBefore(frame: NodeFrame): boolean | undefined {
     const { renderer } = frame;
-    RendererUtils.saveRendererState(renderer, this.#rendererState);
+    if (!renderer) return undefined;
+    this.#rendererState = RendererUtils.saveRendererState(renderer, this.#rendererState);
     const size = renderer.getDrawingBufferSize(this.#size);
     this.#setSize(size.width, size.height);
     this.#renderPass(renderer, this.#prefilterTarget, this.#prefilterMaterial);
