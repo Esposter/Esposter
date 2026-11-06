@@ -35,12 +35,10 @@ describe(formatSource, () => {
 
     writeFormatter(`setTimeout(() => process.stdout.write("late"), ${SLOWER_THAN_BOUND_MILLISECONDS});`);
 
-    expect(() => formatSource("source", OUTSIDE_PATH, root, root, BOUND_MILLISECONDS)).toThrow(
-      new InvalidOperationError(
-        Operation.Read,
-        OUTSIDE_PATH,
-        `oxfmt --stdin-filepath ${OUTSIDE_PATH} ran past ${BOUND_MILLISECONDS} ms and was killed`,
-      ),
+    expect(() =>
+      formatSource("source", OUTSIDE_PATH, root, root, BOUND_MILLISECONDS),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, OUTSIDE_PATH, `oxfmt --stdin-filepath ${OUTSIDE_PATH} ran past ${BOUND_MILLISECONDS} ms and was killed`).message}]`,
     );
   });
 

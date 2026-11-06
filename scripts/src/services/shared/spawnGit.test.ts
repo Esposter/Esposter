@@ -25,8 +25,8 @@ describe(spawnGit, () => {
     // The stand-in transport outlasts the bound, and its `#` comments out the host and the remote command git appends
     vi.stubEnv("GIT_SSH_COMMAND", "sleep 10 #");
 
-    expect(() => spawnGit(["ls-remote", "ssh://a/"], directory, timeout)).toThrow(
-      new InvalidOperationError(Operation.Update, "git ls-remote ssh://a/", `ran past ${timeout} ms and was killed`),
+    expect(() => spawnGit(["ls-remote", "ssh://a/"], directory, timeout)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Update, "git ls-remote ssh://a/", `ran past ${timeout} ms and was killed`).message}]`,
     );
   });
 });

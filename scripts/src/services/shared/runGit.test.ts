@@ -51,8 +51,8 @@ describe(runGit, () => {
     vi.stubEnv("GIT_SSH_COMMAND", "sleep 10 #");
     const timeout = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 
-    expect(() => runGit(["ls-remote", "ssh://a/"], directory, undefined, timeout)).toThrow(
-      new InvalidOperationError(Operation.Update, "git ls-remote ssh://a/", `ran past ${timeout} ms and was killed`),
+    expect(() => runGit(["ls-remote", "ssh://a/"], directory, undefined, timeout)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Update, "git ls-remote ssh://a/", `ran past ${timeout} ms and was killed`).message}]`,
     );
   });
 });
