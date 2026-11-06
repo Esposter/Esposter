@@ -64,7 +64,7 @@ flowchart TD
 
 ## Open
 
-The discount's shop numbers stay open here; the rest of the open items are on [the spec](spec.md), which owns them.
+The discount's shop numbers, the list's bar and face and the level unlock's info mark stay open here. The carry, the reward and unlock text, and the exploration threshold's recording are open on [the spec](spec.md), which owns them.
 
 - [ ] **The discount names shop types 1004 and 1005** — no source: the discount's function text does not resolve in the cached English text. STILL OPEN: its name hash, 1610612645 on function 1002 (`{data-root}/genshin-parity/text/ExcelBinOutput/ReputationFunctionExcelConfigData.json`), resolves in no English text file on disk, and `{data-root}/genshin-parity/text/ExcelBinOutput/ShopExcelConfigData.json` names shop types as "SHOP_TYPE_*" strings with no 1004 or 1005. The wiki names the same two shops, without numbers (`{data-root}/cache/genshin-wiki/Page_Reputation.json` line 1).
 - [ ] **The list is still over the default bar, and the game's face is HYWenHei** — the snapshot's `reputation-screen` row (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`) holds the last compare's score, a mean difference of 1.99%, which is over the default bar (`DEFAULT_APPROVAL`, `scripts/src/services/genshinParity/reference/constants.ts`): the list's reference entry sets no bar of its own. The compare is owned by the reputation item on the [Paimon compute page](../compute/paimon/design.md), which waits on a fix in progress. The face: `packages/genshin-interface/src/services/constants.ts` line 9 names "HYWenHei 85W", and no file name under `{data-root}/genshin-parity/extracted/` carries it, so the game's own face is not on disk.
