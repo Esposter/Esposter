@@ -201,7 +201,7 @@ describe("weaponScreen", () => {
   });
 
   // Refine with a copy picked: the copy leaves the bag, the weapon gains the copy's rank, and that rank's Mora is spent
-  test("refine adds a rank for a copy and the rank's mora", async () => {
+  test("refine adds a rank for a copy and the rank's Mora", async () => {
     expect.hasAssertions();
 
     const onUpdateInventory = vi.fn<(inventory: Inventory) => void>();
