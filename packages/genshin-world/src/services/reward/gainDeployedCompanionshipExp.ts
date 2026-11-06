@@ -4,7 +4,7 @@ import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { Party } from "#src/models/party/Party";
 
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
-import { countItemCost } from "#src/services/inventory/countItemCost";
+import { sumItemCount } from "#src/services/inventory/sumItemCount";
 import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
@@ -18,6 +18,6 @@ export const gainDeployedCompanionshipExp = (
   gainCompanionshipExp(
     characters,
     getDeployedCharacterIds(party),
-    countItemCost(items, COMPANIONSHIP_EXP_ITEM_ID),
+    sumItemCount(items, COMPANIONSHIP_EXP_ITEM_ID),
     friendshipLevels,
   );
