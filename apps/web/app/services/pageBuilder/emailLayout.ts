@@ -5,7 +5,7 @@ import {
   PAGE_BUILDER_CANVAS_ID,
   PAGE_BUILDER_CONTENT_KEY_MAP,
   PAGE_BUILDER_PANEL_ID_MAP,
-  PAGE_BUILDER_PANEL_TITLE_MAP,
+  PAGE_BUILDER_PANEL_NAME_MAP,
   PAGE_BUILDER_REGION_ID_MAP,
   PAGE_BUILDER_REGIONS,
 } from "@/services/pageBuilder/pageBuilderLayout";
@@ -34,8 +34,8 @@ export const emailLayout: PageBuilderLayout = {
     ],
     regions: PAGE_BUILDER_REGIONS,
   },
-  panelTitleMap: {
-    ...PAGE_BUILDER_PANEL_TITLE_MAP,
+  panelNameMap: {
+    ...PAGE_BUILDER_PANEL_NAME_MAP,
     [PAGE_BUILDER_PANEL_ID_MAP.Content]: "Content",
     [PAGE_BUILDER_PANEL_ID_MAP.Style]: "Style",
   },

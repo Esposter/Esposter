@@ -135,7 +135,7 @@ watch(
       :context
       :editor-type="EditorType.PageBuilder"
       :layout="pageBuilderLayout.layout"
-      :panel-title-map="pageBuilderLayout.panelTitleMap"
+      :panel-name-map="pageBuilderLayout.panelNameMap"
       :region-name-map="PAGE_BUILDER_REGION_NAME_MAP"
       :registry
     >

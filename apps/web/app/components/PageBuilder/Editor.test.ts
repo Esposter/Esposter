@@ -18,7 +18,6 @@ import {
   createTestTextNode,
   TEST_GREY_RGB_VALUE,
 } from "#shared/services/pageBuilder/critique/constants.test";
-import EditorShell from "@/components/Editor/Shell.vue";
 import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderCanvasFrame from "@/components/PageBuilder/Canvas/Frame.vue";
 import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
@@ -205,8 +204,10 @@ describe("pageBuilderEditor", () => {
 
     expect(inspector.element.open).toBe(false);
 
-    // The shell's button for a sheet is not built yet, so the region is opened through the shell's own function
-    component.findComponent(EditorShell).vm.toggleRegion(PAGE_BUILDER_REGION_ID_MAP.Inspector);
+    const settingsButton = component
+      .findAll("button")
+      .find((button) => button.text() === PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]);
+    await settingsButton?.trigger("click");
     await flushPromises();
 
     expect(inspector.element.open).toBe(true);

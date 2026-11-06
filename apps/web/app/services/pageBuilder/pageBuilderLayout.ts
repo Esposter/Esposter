@@ -104,7 +104,7 @@ export const PAGE_BUILDER_BASE_PANELS: Panel[] = [
   },
 ];
 // The tab titles of the panels every layout holds, which a layout's own panels add to
-export const PAGE_BUILDER_PANEL_TITLE_MAP = {
+export const PAGE_BUILDER_PANEL_NAME_MAP = {
   [PAGE_BUILDER_PANEL_ID_MAP.Blocks]: "Blocks",
   [PAGE_BUILDER_PANEL_ID_MAP.Layers]: "Layers",
 } as const;
