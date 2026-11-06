@@ -5,10 +5,11 @@ import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const { measureCamera, measureInventory, measureLayout } = vi.hoisted(() => ({
+const { measureCamera, measureInventory, measureLayout, measureLight } = vi.hoisted(() => ({
   measureCamera: vi.fn<() => Promise<ParityPassMeasure>>(),
   measureInventory: vi.fn<() => Promise<ParityPassMeasure>>(),
   measureLayout: vi.fn<() => Promise<ParityPassMeasure>>(),
+  measureLight: vi.fn<() => Promise<ParityPassMeasure>>(),
 }));
 
 vi.mock(import("#src/services/genshinParity/passes/ParityPassMeasureMap"), () => ({
@@ -16,6 +17,7 @@ vi.mock(import("#src/services/genshinParity/passes/ParityPassMeasureMap"), () =>
     [ParityPass.Camera]: measureCamera,
     [ParityPass.Inventory]: measureInventory,
     [ParityPass.Layout]: measureLayout,
+    [ParityPass.Light]: measureLight,
   },
 }));
 
@@ -134,15 +136,15 @@ describe(runParityPasses, () => {
     });
   });
 
-  test("refuses a pass taken up while an earlier pass is open, and names that pass", async () => {
+  test("a pass waits for the gates of the passes before it", async () => {
     expect.hasAssertions();
 
     measureInventory.mockResolvedValueOnce(held);
     measureLayout.mockResolvedValueOnce(failed);
-    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Light);
 
     expect(results).toStrictEqual(inventoryHeldLayoutFailed);
-    expect(measureCamera).not.toHaveBeenCalled();
+    expect(measureLight).not.toHaveBeenCalled();
   });
 
   test("measures a pass taken up alone once every pass before it holds, and stops there", async () => {
