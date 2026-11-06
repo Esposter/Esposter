@@ -3,5 +3,6 @@ affected_areas: [genshin]
 x-phase: 2
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "4.1 waits on genshin-weapon-enhancement task 2.1, the passives' names and rank text, which the game names publish carries, and on the layout beneath the fodder grid being measured against the game reference"
 x-touches:
   ["packages/genshin-world/src/components/Weapon/**", "packages/genshin-interface/src/components/WeaponMenu/**"]
