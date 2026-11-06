@@ -108,8 +108,6 @@ export const CALENDAR_CLOSING_HOUR = 17;
 export const CALENDAR_WORK_WEEK_DAY_COUNT = 5;
 // Width nudged per arrow press on a resize handle, in the px the width model is kept in
 export const RESIZE_HANDLE_KEYBOARD_STEP = 16;
-// The width a resizable side pane starts at, in CSS pixels, within the bounds below
-export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the page
 // Builder's panes
 export const MIN_SIDE_PANE_WIDTH = 200;
