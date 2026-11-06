@@ -1,6 +1,6 @@
 # Domains
 
-A domain is an instance behind a temple-like entrance, challenged for a reward. The game opens each kind by [Adventure Rank](../adventure-rank/design.md) and, for Forgery and Mastery, by the day of the week. This page is those opening rules as pure checks in `genshin-world`, the first part of the [domains proposal](../../../changes/genshin-domains/design.md). Nothing enters a domain yet, so no screen reads them.
+A domain is an instance behind a temple-like entrance, challenged for a reward. The game opens each kind by [Adventure Rank](../adventure-rank/design.md) and, for Forgery and Mastery, by the day of the week. This page is those opening rules as pure checks in `genshin-world`, the first part of the [domains proposal](../../../changes/genshin-domains/design.md). The world session reads them through its domains composable.
 
 ## Decisions
 
@@ -23,7 +23,6 @@ flowchart TD
 
 ## Not built yet
 
-- **The entrances and their landmark.** Each entrance is placed from the streaming records, which the fit does not read yet. No `LandmarkKind` is added until a fit produces one.
 - **The days Forgery and Mastery set.** They sit in DailyDungeonConfigData, which the dump holds under obfuscated keys (`{data-root}/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json`) and no builder reads, so no caller passes them yet. The builder reads DungeonExcelConfigData and DungeonEntryExcelConfigData (`scripts/src/services/genshinAssets/domains/buildDomainLevels.ts`).
 - **The levels, challenges and scenes.** Waves, time limits, ley line disorders and the domain's own scene wait on those tables and on scene derivation.
 - **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](../original-resin/design.md)). Its reward rows wait on BlossomChestExcelConfigData, which the dump holds (`{data-root}/genshin-parity/text/ExcelBinOutput/BlossomChestExcelConfigData.json`) and no builder reads yet.
@@ -31,13 +30,16 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                                                                                |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The four kinds, each open from its rank; Forgery and Mastery also by the day, Blessing and Trounce every day        |
-| `packages/genshin-world/src/services/domains/DomainOpenRankMap.ts`           | Each kind's Adventure Rank of opening                                                                               |
-| `packages/genshin-world/src/services/domains/constants.ts`                   | The Sunday weekday, numbered as Temporal numbers it                                                                 |
-| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenAtRank.ts` | Open at the kind's rank or above                                                                                    |
-| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenOnDay.ts`  | Open on a moment's game day: every day for Trounce, else Sundays and the weekdays passed in, all seven for Blessing |
+| File                                                                         | Role                                                                                                                          |
+| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The four kinds, each open from its rank; Forgery and Mastery also by the day, Blessing and Trounce every day                  |
+| `packages/genshin-world/src/services/domains/DomainOpenRankMap.ts`           | Each kind's Adventure Rank of opening                                                                                         |
+| `packages/genshin-world/src/services/domains/constants.ts`                   | The Sunday weekday, numbered as Temporal numbers it                                                                           |
+| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenAtRank.ts` | Open at the kind's rank or above                                                                                              |
+| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenOnDay.ts`  | Open on a moment's game day: every day for Trounce, else Sundays and the weekdays passed in, all seven for Blessing           |
+| `scripts/src/services/genshinAssets/domains/writeDomainEntrances.ts`         | Writes each entrance, placed at its scene point, into its region's landmarks as a `DomainEntrance` (`genshin:assets domains`) |
+| `packages/genshin-world/src/models/world/LandmarkKind.ts`                    | The landmark kinds, `DomainEntrance` among them                                                                               |
+| `packages/genshin-world/src/components/World/Landmarks/Index.vue`            | Draws a region's landmarks, a `DomainEntrance` through its own component                                                      |
 
 ## Sources
 
