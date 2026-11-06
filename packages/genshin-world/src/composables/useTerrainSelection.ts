@@ -55,9 +55,13 @@ export const useTerrainSelection = ({
   const checkIsFirstFrameSettled = (key: number): boolean =>
     getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || checkIsTileSettled(key);
   // Built once, since the settle runs every frame and the refresh ends only when both selections are settled
-  const checkIsRefreshSettled = () =>
+  const checkIsViewSettled = () =>
     checkIsSelectionSettled(wanted, checkIsTileSettled) && checkIsSelectionSettled(surrounding, checkIsTileSettled);
+  // What the settled read answers: the view is settled and no tile is in flight, so a tile the view wants that no frame
+  // has asked for yet, or one asked for and not given, is not settled
+  const checkIsSettled = () => tileStreamer.pendingCount() === 0 && checkIsViewSettled();
   return {
+    checkIsSettled,
     select: (activeCamera: Camera, origin: Vector3) => {
       setFrustum(frustum, activeCamera, origin);
       eye.copy(activeCamera.position).add(origin);
@@ -68,7 +72,7 @@ export const useTerrainSelection = ({
       tileStreamer.update(wanted, draws, surrounding);
     },
     settle: () => {
-      endRefresh(checkIsRefreshSettled);
+      endRefresh(checkIsViewSettled);
       if (isReady || !toValue(isGroundSettled) || !checkIsSelectionSettled(wanted, checkIsFirstFrameSettled)) return;
       isReady = true;
       performance.measure(`${LOAD_STEP_MEASURE_PREFIX}terrain`, { start: terrainStart });

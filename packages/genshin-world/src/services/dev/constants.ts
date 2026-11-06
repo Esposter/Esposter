@@ -25,3 +25,6 @@ export const DEV_RECORD_FIELD_SEPARATOR_REGEX = / (?=[a-z]+=)/u;
 // The most frames a scripted session steps while it waits on the world, to be ready, to settle, before it fails: a minute of
 // Scripted time, far past what a settle takes on a screen
 export const SCRIPTED_FRAME_LIMIT = 3600;
+// The frames a settle steps before its first read: one for a view change to apply, and one for the terrain's selection to
+// Run on the new view, so a read never answers from the view the change left
+export const SCRIPTED_SETTLE_MIN_FRAMES = 2;

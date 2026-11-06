@@ -30,6 +30,7 @@ const disposeTileMesh = (mesh: Mesh) => {
 // The tiles the view holds, each as a streamed tile or, past the shadows' reach, a slot in its level's ring. The streamer asks
 // The pool for each tile the view wants and frees the one the view has moved on from
 export const useTerrainResidency = ({
+  checkIsViewSettled,
   devRegistry,
   postTile,
   postToEach,
@@ -39,6 +40,8 @@ export const useTerrainResidency = ({
   tileGroup,
   tileIndices,
 }: {
+  // Whether the view the selection holds is settled with nothing in flight behind it, which the settled read answers
+  checkIsViewSettled: () => boolean;
   devRegistry?: DevRegistry;
   postTile: (key: number, message: TerrainWorkerMessage) => void;
   postToEach: (message: TerrainWorkerMessage) => void;
@@ -125,13 +128,13 @@ export const useTerrainResidency = ({
     });
     refreshStart = undefined;
   };
-  // The settled read a script waits on, registered while the terrain is mounted: only the streamer knows which tiles are
-  // In flight, so the residency answers for them
+  // The settled read a script waits on, registered while the terrain is mounted, answering for the view the selection
+  // Settles and for the tiles in flight behind it
   let unregister: (() => void) | undefined;
   onMounted(() => {
     if (!devRegistry) return;
     unregister = devRegistry.register({
-      commands: [createSettledCommand({ getPendingCount: tileStreamer.pendingCount })],
+      commands: [createSettledCommand({ checkIsSettled: checkIsViewSettled })],
       variables: [],
     });
   });

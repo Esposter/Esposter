@@ -3,7 +3,7 @@ import type { ScriptedSessionDriver } from "#src/models/dev/ScriptedSessionDrive
 import type { ScriptedSessionOutcome } from "#src/models/dev/ScriptedSessionOutcome";
 
 import { ScriptedStepKind } from "#src/models/dev/ScriptedStepKind";
-import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
+import { SCRIPTED_FRAME_LIMIT, SCRIPTED_SETTLE_MIN_FRAMES } from "#src/services/dev/constants";
 import { runScriptedSession } from "#src/services/dev/runScriptedSession";
 import { describe, expect, test, vi } from "vitest";
 
@@ -75,7 +75,6 @@ describe(runScriptedSession, () => {
       .fn<(line: string) => DevResult>()
       .mockReturnValueOnce({ ok: true, value: 0 })
       .mockReturnValueOnce({ ok: true, value: false })
-      .mockReturnValueOnce({ ok: true, value: false })
       .mockReturnValueOnce({ ok: true, value: true })
       .mockReturnValueOnce({ ok: true, value: "place=Windrise" });
     const result = await runScriptedSession(createStubDriver({ frame, run }), [
@@ -84,7 +83,7 @@ describe(runScriptedSession, () => {
     ]);
 
     expect(result).toStrictEqual({ ok: true, value: 2 });
-    expect(frame).toHaveBeenCalledTimes(2);
-    expect(run.mock.calls).toStrictEqual([["time"], ["settled"], ["settled"], ["settled"], ["state"]]);
+    expect(frame).toHaveBeenCalledTimes(SCRIPTED_SETTLE_MIN_FRAMES + 1);
+    expect(run.mock.calls).toStrictEqual([["time"], ["settled"], ["settled"], ["state"]]);
   });
 });

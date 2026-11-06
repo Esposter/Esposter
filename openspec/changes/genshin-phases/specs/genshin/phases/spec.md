@@ -149,6 +149,7 @@ The developer registry SHALL offer a hold that presses a control for seconds, an
 - **GIVEN** a terrain tile asked for and not yet given
 - **WHEN** the settled read runs
 - **THEN** it answers no, and yes once the tile is given
+- **AND** with nothing in flight, a wanted tile not yet asked for still makes it answer no
 
 ### Requirement: A script stops at its first failed step and compares one value exactly
 
