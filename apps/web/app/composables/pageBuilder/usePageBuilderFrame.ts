@@ -38,6 +38,7 @@ export const usePageBuilderFrame = (
     framePlacement.value = {
       height: frameRect.height,
       left: frameRect.left,
+      getScrollTop: () => frameElement.contentWindow?.scrollY ?? 0,
       scale: getFrameScaleOf(frameElement),
       top: frameRect.top,
     };
@@ -72,6 +73,7 @@ export const usePageBuilderFrame = (
       getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
       // Read from the frame's own document, since a drag lets the pointer pass through the frame and no hover reaches it
       getNodeIdAt: ({ x, y }) => getNodeIdFromElement(contentRoot.value?.ownerDocument.elementFromPoint(x, y) ?? null),
+      getScrollTop: () => frameElement.contentWindow?.scrollY ?? 0,
       scale: getFrameScaleOf(frameElement),
       // The frame scrolls its own document, so an edge scroll moves its window rather than the app's
       scrollBy: (delta) => {

@@ -52,13 +52,14 @@ const startDrag = (kind: string, event: PointerEvent) => {
           v-for="item of items"
           :key="item.kind"
           min-w-0
+          px-1
           w-full
           @click="emit('insert', item.kind)"
           @pointerdown="startDrag(item.kind, $event)"
         >
           <span text-sm text-center flex flex-col gap-1 min-w-0 items-center>
             <UiIcon :meaning="item.icon" />
-            <span line-clamp-2 break-words>{{ item.title }}</span>
+            <span line-clamp-2 break-words>{{ item.title.replaceAll("/", "/\u200B") }}</span>
           </span>
         </UiButton>
       </div>

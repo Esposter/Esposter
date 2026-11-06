@@ -9,6 +9,8 @@ export interface FrameGeometry {
   frameRect: OverlayBox;
   getChildRect: (nodeId: string) => OverlayBox | undefined;
   getNodeIdAt: (point: { x: number; y: number }) => string | undefined;
+  // How far the frame has scrolled, in its own pixels, which a frozen frame moves its boxes by
+  getScrollTop?: () => number;
   scale: number;
   scrollBy?: (delta: number) => void;
 }

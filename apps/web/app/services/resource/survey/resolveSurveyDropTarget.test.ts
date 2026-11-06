@@ -6,6 +6,7 @@ import { SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 const createBox = (top: number, height: number, left = 0, width = 400): OverlayBox => ({ height, left, top, width });
+
 describe(resolveSurveyDropTarget, () => {
   // A page takes questions and panels, and a panel takes questions alone, as the core's slots do
   const PAGE_ACCEPTED_TYPES = [SurveyNodeType.Text, SurveyNodeType.Panel];

@@ -88,8 +88,8 @@ if (editState.value.document.elements.length > 0)
       </ResourceWhiteboardEditorCanvas>
       <ResourceWhiteboardEditorToolbar left-2 top-2 absolute />
       <ResourceWhiteboardEditorControls bottom-2 left-2 absolute />
-      <!-- Over the canvas's right edge, so a selection never resizes the canvas. The toolbar and controls sit on the left -->
-      <ResourceWhiteboardEditorPropertiesPanel right-2 top-2 absolute max-h="[calc(100%_-_1rem)]" of-y-auto />
+      <!-- Over the canvas's right edge, so a selection never resizes the canvas, and under the toolbar's row so a narrow canvas never puts the two on each other -->
+      <ResourceWhiteboardEditorPropertiesPanel right-2 top-12 absolute max-h="[calc(100%_-_3.5rem)]" of-y-auto />
     </div>
     <UiConfirmDialog
       v-model="isDeleteOpen"

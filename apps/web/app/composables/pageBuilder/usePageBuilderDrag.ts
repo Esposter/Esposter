@@ -7,21 +7,20 @@ import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } fr
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
-import { createUnshiftedChildRect } from "@/services/pageBuilder/createUnshiftedChildRect";
+import { freezeFrameGeometry } from "@/services/pageBuilder/freezeFrameGeometry";
 import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
 import { getEdgeScrollVelocity } from "@/services/pageBuilder/getEdgeScrollVelocity";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getPressMoveOutcome } from "@/services/pageBuilder/getPressMoveOutcome";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
-import { DRAG_PREVIEW_NODE_ID } from "@/services/pageBuilder/withDragPreview";
 import { DRAG_START_DISTANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
 import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
 import { noop } from "@esposter/shared";
+import { getBlockLayerRows } from "headless-block-editor";
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type
@@ -36,26 +35,15 @@ const getDropTargetAt = <
   type: TNode["type"],
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,
-  // Where the canvas is drawing the dragged block now, whose push on the children after it the hit test reads past
-  previewTarget?: DropTarget,
 ): DropTarget | undefined => {
   if (!document || !geometry || !checkIsInsideBox(point, geometry.frameRect)) return undefined;
 
   const pointer = toFramePoint(point, geometry.frameRect, geometry.scale);
-  const getChildRect =
-    previewTarget === undefined
-      ? geometry.getChildRect
-      : createUnshiftedChildRect({
-          getChildRect: geometry.getChildRect,
-          isHorizontal: geometry.checkIsHorizontalOwner(getSlotOwnerId(kind, document, previewTarget.slotPointer)),
-          previewId: DRAG_PREVIEW_NODE_ID,
-          trailingChildIds: getSlotChildIds(kind, document, previewTarget.slotPointer).slice(previewTarget.index),
-        });
   return resolveDropTarget(kind, {
     checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
     document,
     draggedType: type,
-    getChildRect,
+    getChildRect: geometry.getChildRect,
     hoveredNodeId: geometry.getNodeIdAt(pointer),
     pointer,
   });
@@ -201,7 +189,7 @@ export const usePageBuilderDrag = <
   };
   // Resolves a block at the pointer, and where no slot takes it over the frame, says why it is refused
   const moveBlock = (type: TNode["type"], point: { x: number; y: number }, geometry: FrameGeometry | undefined) => {
-    const target = getDropTargetAt(kind, getDocument(), type, point, geometry, dropTarget.value);
+    const target = getDropTargetAt(kind, getDocument(), type, point, geometry);
     dropTarget.value = target;
     refusal.value =
       target === undefined && checkIsInsideBox(point, geometry?.frameRect) ? getDropRefusal(kind.titles[type]) : "";
@@ -212,12 +200,24 @@ export const usePageBuilderDrag = <
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
   ) => {
+    // The frame's boxes are read once, as the drag starts and before its preview is drawn, so the preview moves none of the
+    // Boxes a later move resolves against
+    let frozenGeometry: FrameGeometry | undefined;
     trackDrag(
       event,
       getFrameGeometry,
       (point) => {
         draggedType.value = type;
-        moveBlock(type, point, getFrameGeometry());
+        const geometry = getFrameGeometry();
+        const document = getDocument();
+        if (geometry && document)
+          frozenGeometry ??= freezeFrameGeometry(
+            geometry,
+            getBlockLayerRows(document, kind.children).map(({ nodePointer }) =>
+              getNodeIdAt(kind, document, nodePointer),
+            ),
+          );
+        moveBlock(type, point, frozenGeometry);
       },
       () => {
         const landing = dropTarget.value;
