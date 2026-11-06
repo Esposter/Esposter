@@ -9,7 +9,7 @@ describe(getReportMeans, () => {
       "| Reference | Screen | Mean difference | Shape | Tone | FLIP |",
       "| :-- | :-- | --: | --: | --: | --: |",
       "| `quest-screen`   | `QuestScreen`    |    2.11% | 0.941 |  1.02% | 0.1004 |",
-      "| `crafting-table` | `CraftingScreen` | pending: its recording is not on disk |  |  |  |",
+      "| `crafting-table` | `CraftingScreen` |  |  |  |  |",
     ].join("\n");
 
     expect(getReportMeans(report)).toStrictEqual(new Map([["quest-screen", 2.11]]));
