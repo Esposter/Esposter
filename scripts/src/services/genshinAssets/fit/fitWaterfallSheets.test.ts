@@ -12,7 +12,7 @@ vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
 }));
 
 describe(fitWaterfallSheets, () => {
-  test("turns a placed fall's vertices into three's axes first, so its lip lands where the layout's placement stands it", async () => {
+  test("a fall stands at the game's lip", async () => {
     expect.hasAssertions();
 
     const placement = { mesh: "Eff_Model_WaterFall_A", position: [0, 0, 10], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
