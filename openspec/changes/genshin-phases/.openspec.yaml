@@ -2,6 +2,7 @@ schema: spec-driven
 affected_areas: [genshin]
 x-phase: 0
 x-model: claude-sonnet-5-5
+x-waiting: "task 4.11 waits on genshin-quests tasks 1.4 to 1.9, which place the go-tos of the steps the first script plays (trigger 1053 first)"
 x-touches:
   [
     "scripts/src/services/fleet/**",

@@ -19,7 +19,7 @@ The recreation's work is classed into ordered phases, each with an exit gate.
 
 ## Waiting on
 
-None.
+- Task 4.11, the first script, waits on the quests change's tasks 1.4 to 1.9, which place the go-tos of the steps the script plays ([quests](../genshin-quests/design.md)).
 
 ## Impact
 
