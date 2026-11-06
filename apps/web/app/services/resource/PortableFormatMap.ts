@@ -7,7 +7,9 @@ import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncat
 import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportFormat";
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
+import { compileStoredEmail } from "@/services/emailEditor/compileStoredEmail";
 import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
+import { exportPersonalizedRows } from "@/services/emailEditor/exportPersonalizedRows";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
 import { createBlueprintPortableFormat } from "@/services/resource/createBlueprintPortableFormat";
 import { createNoteMarkdownPortableFormat } from "@/services/resource/createNoteMarkdownPortableFormat";
@@ -56,7 +58,6 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { saveEmail } = emailEditorStore;
         const emailExportDialogStore = useEmailExportDialogStore();
         const { setPendingDataset } = emailExportDialogStore;
-        const { compileStoredEmail, exportRows } = useExportPersonalizedHtml();
 
         await getResultAsync(async () => {
           await saveEmail(resourceId);
@@ -73,7 +74,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
-          else exportRows(resourceId, html, dataset.rows);
+          else exportPersonalizedRows(resourceId, html, dataset.rows);
         }).match(noop, (error) => {
           createErrorAlert(error, getDatasetErrorMessage(error));
         });

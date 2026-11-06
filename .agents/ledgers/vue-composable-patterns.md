@@ -44,7 +44,7 @@ rg -n "\buse[A-Z]\w*\(" apps/web/app/services --glob '!*.test.*' | rg -v "use\w*
 for f in $(git ls-files apps/web/app/composables | rg -v "\.test\.|\.bench\." | rg "\.ts$"); do rg -q "\b(ref|shallowRef|computed|reactive|watch\w*|onMounted|onUnmounted|onScopeDispose|tryOnScopeDispose|use[A-Z]\w*)[<(]" "$f" || echo "$f"; done
 ```
 
-A hit is a finding when the function is not at setup and reads no setup-only context. The dungeons states call `use*` hooks inside a scene's `onCreate` scope and the Tiptap `use*Extension` factories are named by their skill, so neither is a hit; `useExecuteSlashCommand` and `useExportPersonalizedHtml` are read by service callbacks and left to the `slash-commands` and `resource` owners. The second grep needs the generic bracket in its pattern: `useScript<typeof Desmos>(` is a composable call and a pattern ending at `(` misses it.
+A hit is a finding when the function is not at setup and reads no setup-only context. The dungeons states call `use*` hooks inside a scene's `onCreate` scope and the Tiptap `use*Extension` factories are named by their skill, so neither is a hit; `useExecuteSlashCommand` stays a composable because it creates a `useMutation` executor, whose queue lives on the instance and so belongs to a setup scope. The second grep needs the generic bracket in its pattern: `useScript<typeof Desmos>(` is a composable call and a pattern ending at `(` misses it.
 
 ## Exclusions
 

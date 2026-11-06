@@ -5,12 +5,13 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { compileStoredEmail } from "@/services/emailEditor/compileStoredEmail";
+import { exportPersonalizedRows } from "@/services/emailEditor/exportPersonalizedRows";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
 import { getResultAsync, noop } from "@esposter/shared";
 
-const { compileStoredEmail, exportRows } = useExportPersonalizedHtml();
 const emailExportDialogStore = useEmailExportDialogStore();
 const { pendingDataset } = storeToRefs(emailExportDialogStore);
 const resourceStore = useResourceStore();
@@ -31,7 +32,7 @@ const exportAnyway = async () => {
   isOpen.value = false;
   await getResultAsync(async () => {
     const { html } = await compileStoredEmail(resourceId);
-    exportRows(resourceId, html, rows);
+    exportPersonalizedRows(resourceId, html, rows);
   }).match(noop, (error) => createErrorAlert(error));
 };
 </script>
