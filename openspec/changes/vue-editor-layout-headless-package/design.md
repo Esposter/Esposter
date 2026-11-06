@@ -1,0 +1,109 @@
+# Headless editor layout engine
+
+A Vue package that holds an editor's layout as data and resolves it for what the reader is doing and the window they are in. It is the engine of the [editor layout program](../resource-editor-layout-program/design.md), and the [editor shell](../resource-editor-shell/design.md) is its only consumer. Its shape follows the [package shape](../architecture-headless-package-shape/design.md): pure functions and the composable that keeps their state, from one entry.
+
+Today nothing is built of it, and each editor arranges its own screen in its own component. After this change an editor hands the engine a layout, and the engine answers with the regions to draw.
+
+## How it works
+
+A layout is plain data. It names **regions**, each placed at one edge of the window or being the canvas, and **panels**, each belonging to one region and carrying the condition it is shown under and the content it shows. The window's remaining space is the canvas, which every layout has once.
+
+Resolving is one pure function. It reads the layout, the context, the window's size class and the reader's state, and answers the regions to draw, each with its presentation, its size, whether it is open and the panels it holds.
+
+```mermaid
+flowchart TD
+  PANELS["each panel"] --> WHEN{"condition matches the mode, the tool and the selection kind?"}
+  WHEN -->|no| ABSENT["the panel is absent"]
+  WHEN -->|yes| CONTENT["content key: the entry for the selection kind, else the wildcard entry"]
+  CONTENT --> GROUP["grouped into its region, in the layout's order"]
+  GROUP --> EMPTY{"the region holds a panel?"}
+  EMPTY -->|no| OMIT["the region is omitted"]
+  EMPTY -->|yes| PRESENT["presentation for the size class: docked, overlay, sheet or hidden"]
+  PRESENT --> OPEN{"how does it open?"}
+  OPEN -->|"a sheet"| WAIT["closed until the reader opens it"]
+  OPEN -->|"with content, docked or overlay"| AUTO["open while it holds a panel"]
+  OPEN -->|"on demand"| TOGGLE["the reader's choice, or open when docked"]
+  AUTO --> SIZE["size: the reader's, clamped to the region's limits"]
+  TOGGLE --> SIZE
+  WAIT --> SIZE
+```
+
+**A region opens in one of two ways.** A region that opens with its content, which is the contextual panel, is open whenever it holds a panel, so a selection brings its properties into view without a click. A region that opens on demand, which is a palette or a layers tree, is open or closed by the reader and starts open when it is docked. A region presented as a sheet is always on demand, so a phone is never covered by a panel the reader did not ask for.
+
+**The reader's state is apart from the layout.** It holds each region's size, whether each on-demand region is open and each tabbed region's active panel. Its functions return a new state and never change the one they were given. The state is parsed back from a stored value by a schema, which drops every id the layout no longer names and clamps every size to its limits, so a layout that changes between releases never meets a stale setting.
+
+**The size class is an input, not something the package reads.** The shell derives it from the display composable the app already has, which reads the one breakpoint scale through Vuetify 0, so the package holds no width, no cut and no listener, and the [responsive](../../specs/architecture/responsive/design.md) rule that one scale exists in the repo holds without a second reading of it.
+
+## Model
+
+| Concept      | What it is                                                                                                                                                                                            |
+| :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Region       | An id, an edge (top, bottom, start, end) or the canvas, optionally a different edge for a size class, a presentation for each size class, size limits, and whether it opens with content or on demand |
+| Panel        | An id, the region it belongs to, a condition and a content by selection kind with a wildcard entry                                                                                                    |
+| Condition    | Three lists, mode, tool and selection kind; a missing or empty list matches anything                                                                                                                  |
+| Context      | The mode, the tool and the selection, a kind that is none when nothing is selected, and a count                                                                                                       |
+| Size class   | Compact, medium or expanded, given by the caller                                                                                                                                                      |
+| Reader state | Sizes, which on-demand regions are open and the active panel of each tabbed region                                                                                                                    |
+| Finding      | One thing the layout check reports: a selection kind with no content, a content key nobody registered, a duplicate id, a panel in a region that does not exist                                        |
+
+The edges are `start` and `end`, not left and right, so a layout is correct in a right-to-left language without a second layout.
+
+## Decisions
+
+- **Conditions are matches, not functions.** Each editor writes its layout as a typed object, and a match can be read, listed and checked, which a function cannot. A condition that needs more than a mode, a tool and a selection kind is a sign the context lacks a field, and the context grows it. Rejected: a predicate per panel, which cannot be checked for coverage and cannot be written into a design.
+- **Content is chosen by the selection kind inside the panel.** One properties panel holds an entry per kind and a wildcard, so the layout has one panel where it would otherwise have one per kind, each with its own condition. Rejected: one panel per selection kind, which makes the layout a list of conditions that must be kept disjoint by hand.
+- **A layout check is part of the package.** It takes the editor's selection kinds and registered content keys and reports every gap. The shell's tests run it for each editor, so a new selection kind with no panel fails a test, not a reader. Rejected: leaving it to the shell, which would then check by drawing.
+- **The package holds no breakpoint, no pointer handling and no animation.** A resize gesture is the existing resize handle's; the shell hands the resolved size to it and writes what it answers through the package's resize, which clamps with the clamp VueUse already exports. Rejected: a size-class function in the package, which would read widths a second time beside the app's display composable. Rejected: the package owning the gesture, which would give it a DOM dependency and a second reading of the pointer.
+- **There is no docking.** A region is at one edge and a reader does not move a panel to another. This is the part of the docking engines this package leaves out, and the [rejected docking layout](../../rejected/resource/editor-docking-layout/design.md) records why.
+- **The package holds the composable.** One composable takes the layout and a reactive context as values or getters, keeps the reader's state and answers the resolved layout as one computed value, so nothing is derived by hand, no watcher copies one ref into another, and the shell calls it once. The functions stay pure and are exported beside it, which is how they are tested. Rejected: leaving the wiring to the shell, which would write it once per editor, and a framework-free package with the composable in a subpath, which the [package shape](../architecture-headless-package-shape/design.md) rejects.
+- **A small bundle is a design input.** Every function is its own module and the package declares no side effects, so a consumer that uses the resolve and the resize ships only those. The package's size test holds a ceiling at the magnitude of a few kilobytes gzipped. Its one runtime dependency is the shared package, and Vue, VueUse and the schema library are peers the app already ships.
+
+## What the layout libraries settled
+
+This is not an absorption, since no dependency is replaced, but its ideas are borrowed from packages that are, and the way each was taken is recorded as an absorption's Upstream table would.
+
+| Behaviour                                         | Seen in                                      | Taken as                                                                         |
+| :------------------------------------------------ | :------------------------------------------- | :------------------------------------------------------------------------------- |
+| Layout is serialisable, panels are named by id    | FlexLayout, rc-dock, golden-layout, Dockview | Panels and regions carry stable ids, and the reader's state names them           |
+| The reader's sizes are kept apart from layout     | FlexLayout, Lumino                           | The reader state, parsed against the layout so a stale id is dropped             |
+| A panel has a minimum, a maximum and can collapse | Zag, Dockview                                | Size limits on a region, and an on-demand region the reader closes               |
+| A splitter is operated from the keyboard          | WAI-ARIA window splitter, Zag                | Already the app's resize handle, which the shell reuses; the package only clamps |
+| A slot can be hidden or replaced by the embedder  | tldraw, Puck                                 | A panel absent under its condition, and a content key the editor registers       |
+| Toolbar items overflow past a width               | tldraw, Excalidraw                           | Not the engine's: the shell's toolbar folds its own items                        |
+| Floating, popout and drag-to-dock                 | Dockview, golden-layout, Lumino              | Left out, as the rejected docking layout records                                 |
+
+Nothing was copied. The package is written from these behaviours, so no licence text comes with it.
+
+## Name
+
+`vue-editor-layout-headless` is the working name, which follows the convention the package shape settles. The package is new, so no consumer is moved if the final name differs, and the name is fixed in the program's rename step, after the editors run on it.
+
+## Not built
+
+- **Layouts a reader edits.** A reader resizes and opens and closes regions. They do not add, move or remove them.
+
+## Package
+
+```text
+packages/vue-editor-layout-headless/
+  src/models/        Layout, Region, Panel, Condition, Context, SizeClass, ReaderState, Finding
+  src/services/      resolveLayout, resizeRegion, toggleRegion, setActivePanel,
+                     parseReaderState, checkLayout, one function to a file
+  src/composables/   useEditorLayout, the reader's state and the resolved layout from a reactive context
+  src/index.ts       the barrel, and the package's size test beside it
+```
+
+## Key files
+
+| File                                             | Role                                                                                                             |
+| :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/ui/useUiDisplay.ts`    | the app's one reading of the breakpoint scale, from which the shell derives the size class                       |
+| `packages/vue-grid-layout-headless/package.json` | the manifest the new package's follows, with Vue as a peer beside the schema library, as the grid package's does |
+
+## Sources
+
+- [FlexLayout](https://github.com/caplin/FlexLayout), [rc-dock](https://github.com/ticlo/rc-dock), [golden-layout](https://github.com/golden-layout/golden-layout) and [Dockview](https://github.com/mathuo/dockview): a serialisable layout naming panels by id, kept apart from the reader's own state.
+- [Zag's splitter](https://zagjs.com/components/react/splitter): panel limits and a controlled size.
+- [WAI-ARIA window splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/): the keyboard contract the resize step follows.
+- [tldraw's UI components](https://tldraw.dev/sdk-features/ui-components) and [Puck's overrides](https://next.puckeditor.com/docs/api-reference/overrides): a region's content replaced or hidden by the editor that embeds it.
+- [Material 3 window size classes](https://m3.material.io/foundations/layout/applying-layout/window-size-classes): compact, medium and expanded.

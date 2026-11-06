@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "apps/web/app/components/Resource/Whiteboard/**",
+    "apps/web/app/services/whiteboard/**",
+    "apps/web/app/composables/whiteboard/**",
+  ]
