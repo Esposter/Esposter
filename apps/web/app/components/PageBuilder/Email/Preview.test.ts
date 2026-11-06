@@ -44,20 +44,32 @@ describe("pageBuilderEmailPreview", () => {
     wrapper.unmount();
   });
 
-  test("validator messages show above the preview", async () => {
+  test("a refused compile keeps the last good message", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.mutation(() => ({ message, messages: [{ level: EmailValidationLevel.Strict, message }] }));
+    trpcMsw.email.compile.mutation(() => ({ html }));
     const wrapper = await mountSuspended(PageBuilderEmailPreview, {
       props: { device: PageBuilderDevice.Desktop, emailDocument },
     });
     await waitForSynchronizedFunctions();
     await flushPromises();
 
-    const alert = wrapper.find('[role="alert"]');
+    // The refusal comes back for the edit, which the preview compiles on the autosave's cadence
+    const { promise: isRefused, resolve: signalRefused } = Promise.withResolvers<void>();
+    trpcMsw.email.compile.mutation(() => {
+      signalRefused();
+      return { message, messages: [] };
+    });
+    const editedEmailDocument: EmailDocument = { ...emailDocument, root: { props: { preview: html } } };
+    // oxlint-disable-next-line testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness waits a turn on setTimeout
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    await wrapper.setProps({ emailDocument: editedEmailDocument });
+    await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
+    await isRefused;
+    await flushPromises();
 
-    expect(alert.text()).toBe(message);
-    expect(wrapper.element.firstElementChild).toBe(alert.element);
+    expect(wrapper.find("iframe").attributes("srcdoc")).toBe(html);
+    expect(wrapper.vm.findings).toStrictEqual([{ message, nodeId: "", severity: EditorFindingSeverity.Error }]);
     wrapper.unmount();
   });
 
