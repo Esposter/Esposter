@@ -10,4 +10,4 @@
 
 ## 3. Specs
 
-- [ ] 3.1 Rewrite the survey creator design as built: its Shell and Toolbar sentences, its narrow tabs and its key files. Verify: the OpenSpec citation checks pass in `scripts`.
+- [x] 3.1 Rewrite the survey creator design as built: its Shell and Toolbar sentences, its narrow tabs and its key files. Verify: the OpenSpec citation checks pass in `scripts`.

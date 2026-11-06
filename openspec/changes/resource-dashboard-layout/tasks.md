@@ -12,4 +12,4 @@
 
 ## 3. Specs
 
-- [ ] 3.1 Rewrite the dashboard grid design's surface table as built, with the edit visual, layout and palette rows moved. Verify: the OpenSpec citation checks pass in `scripts`.
+- [x] 3.1 Rewrite the dashboard grid design's surface table as built, with the edit visual, layout and palette rows moved. Verify: the OpenSpec citation checks pass in `scripts`.
