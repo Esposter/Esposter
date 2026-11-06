@@ -102,7 +102,7 @@ catalog:
   "@tresjs/core": ^5.10.1
   "@trpc/client": ^11.24.0
   "@trpc/server": ^11.24.0
-  "@tsdown/css": ^0.23.5
+  "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
   "@types/sax": ^1.2.7
@@ -216,7 +216,7 @@ catalog:
   temporal-polyfill: ^1.0.8
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
-  tsdown: ^0.23.5
+  tsdown: ^0.23.7
   tsrs: ^0.22.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
