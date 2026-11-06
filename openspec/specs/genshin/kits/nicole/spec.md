@@ -105,6 +105,13 @@ Nicole's burst SHALL project a copy of each hit the active character lands on an
 - **WHEN** the active character's physical hit lands on an enemy
 - **THEN** a projection lands on that enemy 30 frames later, dealt at the hitting character's element
 
+#### Scenario: A Hexerei projection's bonus follows the ATK buffs on her at its tick
+
+- **GIVEN** Nicole and the striker are Hexerei, two or more Hexerei are deployed, and Nicole's burst has started
+- **AND** an ATK buff is put on her before the projection lands
+- **WHEN** the projection lands 30 frames after its hit
+- **THEN** the projection's flat damage is three times her attack with that buff counted
+
 #### Scenario: Only the active character's hit projects
 
 - **GIVEN** Nicole's burst is active and another character is active
