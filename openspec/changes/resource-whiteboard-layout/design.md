@@ -56,6 +56,13 @@ flowchart TD
 - **A placement selects its element only when the document accepts it.** A refused commit leaves the selection where it was, so no selection names an element that was never placed.
 - **Redo is the shared history's redo, under the shortcuts the page builder and the sheet bind.** The undo entry holds the operations as well as their inverses, as the page builder's entry does, so a redo reapplies them through the commit an edit takes, and its commands come from the shared undo and redo helper: Cmd+Z, Cmd+Shift+Z and Cmd+Y. Rejected: a redo rebuilt from the patch an undo returns, which would have to swap the entry the shared history moved onto the future stack. Rejected: a redo with one shortcut, which a reader on the other keyboard convention would not find.
 - **A new edit after an undo clears the redo stack.** The shared history does this on every push, and the whiteboard keeps that rule rather than adding one.
+- **The shape slot binds through the toolbar's one value.** The toolbar takes one value for the tool in hand, so a shape tool's value is the kind it places: the slot draws that kind, and a choice in the slot or a shape key sets both the tool and the kind. Rejected: a second value on the toolbar for the kind, which every editor's toolbar would have to take beside its tool.
+- **The slot draws the variant a key put in hand.** The toolbar records the variant of its slot each time the tool in hand becomes one of that slot's variants, not only when the reader chose it in the slot, so a shape a key chose is the shape the slot shows once another tool is in hand. Rejected: remembering only the slot's own menu choices, which shows a stale shape after a key.
+- **The view is a bottom overlay, since a region names an edge and not a corner.** The view is drawn bottom-start in the design's sketch, but the layout names only the four edges, so the view floats over the bottom of the canvas, above the bar a compact window docks. Rejected: a start overlay for the view, which would stand in the properties panel's column.
+- **Panels are keyed by the selection kinds that need their own content.** An arrow and a selection of several have panels of their own. Every other kind shares the element panel through the layout's wildcard, which draws a fill where the kind has one and nothing else where it has none.
+- **A selection of several is titled by its count.** The header reads "3 shapes" when every element is a shape and "3 elements" otherwise, in the editor's own vocabulary.
+- **A selection of several has no stacking control in this change.** Stacking moves one element by its index, and moving a selection needs one operation over the whole selection. The panel for several builds its fill and its footer, and the whiteboard design's Not built names the stacking.
+- **Undo and redo are the store's for the buttons, and the keys keep their own.** The view's buttons call the store's undo and redo over the store's edit state. The keyboard composable runs the same two services over the edit state it is handed, since its suite mounts it over bare refs. Both read and write one history.
 
 ## Not in this change
 
@@ -65,23 +72,30 @@ flowchart TD
 
 ## Key files
 
-| File                                                                    | Role                                                                                         |
-| :---------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                | the arrangement, replaced by the shell with the whiteboard's layout and registry             |
-| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`         | the tool row, replaced by the toolbar's items                                                |
-| `apps/web/app/components/Resource/Whiteboard/EditorPalette.vue`         | the palette, removed                                                                         |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue` | the panel, whose content becomes the registry's entries                                      |
-| `apps/web/app/components/Resource/Whiteboard/EditorControls.vue`        | the zoom row, which gains undo and redo and becomes the view region                          |
-| `apps/web/app/composables/whiteboard/useWhiteboardPaletteDrag.ts`       | the palette's drag, removed                                                                  |
-| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`           | feeds the pointer events to the reducer, which gains the placing gesture                     |
-| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`          | registers the keyboard commands, which gain the tool shortcuts and redo                      |
-| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`      | uploads and inserts images, which the image button's picked files now reach as a paste does  |
-| `apps/web/app/components/Ui/HiddenFileInput.vue`                        | the file input the image button opens                                                        |
-| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`   | the one gesture reducer, which gains the placing transition                                  |
-| `apps/web/app/services/whiteboard/tool/constants.ts`                    | the tools the toolbar chooses between, which gain the placing tools                          |
-| `apps/web/app/services/whiteboard/palette/constants.ts`                 | the sizes and fills of placed elements, kept, and the palette groups, removed                |
-| `apps/web/app/store/resource/whiteboard/editor.ts`                      | the tool in hand, the selection and the viewport, which gains the armed element and the lock |
-| `openspec/specs/resource/whiteboard/design.md`                          | the whiteboard's design, whose arrangement and palette sentences this supersedes             |
+| File                                                                           | Role                                                                                          |
+| :----------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                       | the editor, which the shell draws over the whiteboard's layout and registry                   |
+| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                | the toolbar's items: every tool, the shape slot, the image picker, the lock and the grid snap |
+| `apps/web/app/components/Resource/Whiteboard/EditorControls.vue`               | the zoom row, which gains undo and redo and becomes the view region                           |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`        | the element panel, one of the registry's entries                                              |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrowPanel.vue`   | the arrow panel, the entry the layout keys to an arrow                                        |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue` | the panel of a selection of several, the entry the layout keys to several                     |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesFooter.vue`       | the duplicate and delete buttons every panel holds                                            |
+| `apps/web/app/services/whiteboard/layout/constants.ts`                         | the layout: its regions, its panels and the names of its regions                              |
+| `apps/web/app/services/whiteboard/layout/WhiteboardContentComponentMap.ts`     | the registry: the component each content key draws                                            |
+| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                  | feeds the pointer events to the reducer, which gains the placing gesture                      |
+| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                 | registers the keyboard commands, which gain the tool shortcuts and redo                       |
+| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`             | uploads and inserts images, which the image button's picked files now reach as a paste does   |
+| `apps/web/app/components/Ui/HiddenFileInput.vue`                               | the file input the image button opens                                                         |
+| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`          | the one gesture reducer, which gains the placing transition                                   |
+| `apps/web/app/services/whiteboard/tool/WhiteboardToolItemMap.ts`               | the tools the toolbar chooses between, with the mark, title and key of each                   |
+| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`              | the shapes the shape slot holds, with the keys of the three that have one                     |
+| `apps/web/app/services/whiteboard/tool/constants.ts`                           | the shape slot the toolbar draws and the image types the picker accepts                       |
+| `apps/web/app/services/whiteboard/palette/constants.ts`                        | the sizes and fills of placed elements, kept                                                  |
+| `apps/web/app/store/resource/whiteboard/editor.ts`                             | the tool in hand, its lock, the selection and the viewport, which gains the lock's toggle     |
+| `apps/web/app/store/resource/whiteboard/index.ts`                              | the undo and redo the view's buttons call                                                     |
+| `apps/web/app/components/Editor/Toolbar.vue`                                   | the shell's toolbar, whose slot draws the variant a key put in hand                           |
+| `openspec/specs/resource/whiteboard/design.md`                                 | the whiteboard's design, rewritten as built                                                   |
 
 ## Sources
 
