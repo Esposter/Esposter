@@ -32,8 +32,8 @@ export const readProposalChanges = (files: readonly QueueFile[]): ProposalChange
       const id = getProposalId(path);
       const changeText = (file: string) => textMap.get(`${PROPOSALS_DIRECTORY}/${id}/${file}`) ?? "";
       const metadata = parseProposalMetadata(changeText(PROPOSAL_METADATA_FILE));
-      const { pickPhase } = parseProposalTasks(changeText(PROPOSAL_TASKS_FILE), metadata.phase);
-      return { design: text, metadata, summary: { ...getProposalSummary(id, text, openIds), phase: pickPhase } };
+      const { pickPhase, tasks } = parseProposalTasks(changeText(PROPOSAL_TASKS_FILE), metadata.phase);
+      return { design: text, metadata, summary: { ...getProposalSummary(id, text, openIds), phase: pickPhase }, tasks };
     })
     .toSorted((firstChange, secondChange) => compareProposalSummaries(firstChange.summary, secondChange.summary));
 };
