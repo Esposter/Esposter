@@ -73,18 +73,21 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
   // Settles, then takes the world's last save through JSON and the save schema, and unmounts the screen whatever the
   // Outcome. A save the schema refuses fails with the schema's own message
   const save = async (): Promise<ScriptedSessionOutcome> => {
-    const settled = await settleScriptedSession(driver);
-    if (!settled.ok) return settled;
+    try {
+      const settled = await settleScriptedSession(driver);
+      if (!settled.ok) return settled;
 
-    const emittedSave = lastSave;
-    await unmount();
-    if (emittedSave === undefined) return { error: "the world has emitted no save", ok: false };
+      const emittedSave = lastSave;
+      if (emittedSave === undefined) return { error: "the world has emitted no save", ok: false };
 
-    const parsedResult = genshinSaveSchema.safeParse(JSON.parse(JSON.stringify(emittedSave)));
-    if (!parsedResult.success) return { error: z.prettifyError(parsedResult.error), ok: false };
+      const parsedResult = genshinSaveSchema.safeParse(JSON.parse(JSON.stringify(emittedSave)));
+      if (!parsedResult.success) return { error: z.prettifyError(parsedResult.error), ok: false };
 
-    savedSave = parsedResult.data;
-    return { ok: true };
+      savedSave = parsedResult.data;
+      return { ok: true };
+    } finally {
+      await unmount();
+    }
   };
   // Mounts a fresh screen on the same registry, from the blob the last save parsed
   const load = async (): Promise<ScriptedSessionOutcome> => {

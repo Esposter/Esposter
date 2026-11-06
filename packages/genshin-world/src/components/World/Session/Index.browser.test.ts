@@ -78,4 +78,29 @@ describe("worldSession", () => {
     },
     timeoutMs,
   );
+
+  test(
+    "A save that fails to settle still unmounts the screen",
+    async () => {
+      expect.hasAssertions();
+
+      const devRegistry = createDevRegistry();
+      // A registry that refuses the settle's read, so the save fails before it takes the world's save
+      const refusingRegistry: DevRegistry = {
+        ...devRegistry,
+        run: (line) => (line === "settled" ? { error: " ", ok: false, usage: "" } : devRegistry.run(line)),
+      };
+      const sessionDriver = createSessionDriver(refusingRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      const mounted = await sessionDriver.mount();
+      const saved = await sessionDriver.save();
+      const kills = devRegistry.run("kills");
+
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(saved).toStrictEqual({ error: " ", ok: false });
+      // The world's commands leave the registry only once its screen unmounts, so a command still answering here means it did not
+      expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
+    },
+    timeoutMs,
+  );
 });
