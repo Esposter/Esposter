@@ -2,9 +2,16 @@ import { ComputeKind } from "#src/models/fleet/ComputeKind";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
+import { MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 
 // The Genshin roadmap, whose phase headings group every open item and name each phase
 export const GENSHIN_ROADMAP_FILE = "openspec/changes/genshin-roadmap/tasks.md";
+// A phase heading names its phase, a number no later than the last Genshin phase, and the phase's name. Any other level-two
+// Heading ends the phase, so a checkbox under no phase heading is an item of no phase
+export const ROADMAP_PHASE_HEADING_REGEX: RegExp = new RegExp(
+  `^## Phase (?<phase>[0-${MAX_GENSHIN_PHASE}]): (?<name>.+)$`,
+  "u",
+);
 // The folder of the scripted sessions, one file per session, which the report reads for the quests each one names. Until
 // The first session is written the folder is absent, and the report names no quest
 export const GENSHIN_SESSIONS_DIRECTORY = "packages/genshin-world/src/services/dev/sessions";
