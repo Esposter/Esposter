@@ -74,6 +74,7 @@ Each feature of the editor, and what the whiteboard does for it.
 - **An element is placed by its tool and a click or a drag, not dragged out of a list.** A click places the default size centred on its point, and a drag sizes the element to the drag from the press. A placement returns the tool to select unless the tool is locked. Rejected: a drag from a list, which places only at a default size and needs the pointer to cross the canvas from the list's edge, and a click that places at the middle of the view, which the reader then drags to where it belongs.
 - **The toolbar holds one value for the tool in hand.** A shape tool's value is the kind it places, so the shape slot binds to its kind and every other tool binds to the tool. A choice in the slot, or a shape key, sets both. Rejected: a second toolbar model for the kind, which the shell's toolbar would have to read beside the tool.
 - **Redo is the shared history's redo.** The entry holds its operations beside their inverses, so a redo reapplies them through the same commit an edit takes, and a new edit clears the redo stack as the shared history does. Rejected: rebuilding a redo from the patch an undo returns, which would have to swap the entry the history moved onto the future stack.
+- **Redo has two shortcuts, Cmd+Shift+Z and Cmd+Y.** The page builder and the sheet bind the same pair, so a reader finds redo under the chord their keyboard convention uses. Rejected: a redo with one shortcut, which a reader on the other keyboard convention would not find.
 
 ## Export
 
