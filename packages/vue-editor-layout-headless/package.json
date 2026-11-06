@@ -1,0 +1,64 @@
+{
+  "name": "vue-editor-layout-headless",
+  "version": "4.5.0",
+  "description": "A headless editor layout: the regions and panels of an editor held as data, resolved for the mode, tool, selection and window size, with the reader's sizes and open regions kept apart from it.",
+  "keywords": [
+    "editor",
+    "headless",
+    "layout",
+    "typescript",
+    "vue"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-editor-layout-headless#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "tsdown": "catalog:"
+  },
+  "peerDependencies": {
+    "@vueuse/core": "catalog:",
+    "vue": "catalog:",
+    "zod": "catalog:"
+  }
+}
