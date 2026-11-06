@@ -10,13 +10,13 @@ import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.tes
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   SURVEY_REQUIRED_MESSAGE,
   SurveyNodeType,
   surveyPanelDynamicNodePropsSchema,
   SurveyProgressBarPlacement,
 } from "vue-survey-engine-headless";
-import { assert, beforeAll, describe, expect, test } from "vitest";
 
 // A dynamic panel named "rows" of two panels over the template, on a page of its own
 const createRowsDocument = (template: SurveyTemplateNode[]) => {

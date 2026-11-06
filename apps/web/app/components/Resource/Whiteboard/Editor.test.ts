@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { DOMWrapper, VueWrapper } from "@vue/test-utils";
-import type { ArrowElement, Point, ShapeElement } from "vue-block-editor-headless";
 import type { Except } from "type-fest";
+import type { ArrowElement, Point, ShapeElement } from "vue-block-editor-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -19,8 +19,8 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { ArrowPathKind, getExportBounds, PositionedElementType } from "vue-block-editor-headless";
 import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { ArrowPathKind, getExportBounds, PositionedElementType } from "vue-block-editor-headless";
 
 const { display, uploadResourceFileMock } = vi.hoisted(() => ({
   display: { isCompact: false, isMobile: false },

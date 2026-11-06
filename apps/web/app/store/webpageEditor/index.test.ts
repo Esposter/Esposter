@@ -8,7 +8,7 @@ import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishStat
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
-import { TEST_GREY_RGB_VALUE, createTestTextNode } from "#shared/services/pageBuilder/critique/constants.test";
+import { createTestTextNode, TEST_GREY_RGB_VALUE } from "#shared/services/pageBuilder/critique/constants.test";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";

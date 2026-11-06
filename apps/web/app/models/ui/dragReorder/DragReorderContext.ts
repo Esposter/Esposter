@@ -11,7 +11,7 @@ export interface DragReorderContext {
   resumeAutoscroll: () => void;
   resumeSlides: () => void;
   startTouchDelay: () => void;
-  stopTouchDelay: () => void;
   // Swallows the click a release raises after a drag, until that click or the next press
   stopSwallow?: () => void;
+  stopTouchDelay: () => void;
 }

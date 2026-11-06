@@ -78,7 +78,7 @@ defineExpose({ setActivePanel, toggleRegion });
       v-for="region in dockedEdgeRegionMap.get(RegionEdge.Top) ?? []"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
-      :panel-name-map="panelNameMap"
+      :panel-name-map
       :region
       :registry
       @resize="(newSize) => resizeRegion(region.id, newSize)"
@@ -89,20 +89,20 @@ defineExpose({ setActivePanel, toggleRegion });
         v-for="region in dockedEdgeRegionMap.get(RegionEdge.Start) ?? []"
         :key="region.id"
         :name="takeOne(regionNameMap, region.id)"
-        :panel-name-map="panelNameMap"
+        :panel-name-map
         :region
         :registry
         @resize="(newSize) => resizeRegion(region.id, newSize)"
         @select-panel="(panelId) => setActivePanel(region.id, panelId)"
       />
-      <div relative flex flex-1 flex-col min-h-0 min-w-0>
+      <div flex flex-1 flex-col min-h-0 min-w-0 relative>
         <slot />
         <EditorRegion
           v-for="region in presentationRegionMap.get(RegionPresentation.Overlay) ?? []"
           :key="region.id"
           :name="takeOne(regionNameMap, region.id)"
-          :overlay-inset="overlayInset"
-          :panel-name-map="panelNameMap"
+          :overlay-inset
+          :panel-name-map
           :region
           :registry
           @select-panel="(panelId) => setActivePanel(region.id, panelId)"
@@ -112,7 +112,7 @@ defineExpose({ setActivePanel, toggleRegion });
         v-for="region in dockedEdgeRegionMap.get(RegionEdge.End) ?? []"
         :key="region.id"
         :name="takeOne(regionNameMap, region.id)"
-        :panel-name-map="panelNameMap"
+        :panel-name-map
         :region
         :registry
         @resize="(newSize) => resizeRegion(region.id, newSize)"
@@ -121,7 +121,7 @@ defineExpose({ setActivePanel, toggleRegion });
     </div>
     <!-- In the flow below the canvas, so a button covers no control of the canvas, and a selection that shows one moves
       only the canvas's bottom edge -->
-    <div v-if="sheetRegions.length" flex gap-1 p-1 justify-end shrink-0>
+    <div v-if="sheetRegions.length" p-1 flex shrink-0 gap-1 justify-end>
       <UiButton
         v-for="region in sheetRegions"
         :key="region.id"
@@ -136,7 +136,7 @@ defineExpose({ setActivePanel, toggleRegion });
       v-for="region in dockedEdgeRegionMap.get(RegionEdge.Bottom) ?? []"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
-      :panel-name-map="panelNameMap"
+      :panel-name-map
       :region
       :registry
       @resize="(newSize) => resizeRegion(region.id, newSize)"
@@ -148,7 +148,7 @@ defineExpose({ setActivePanel, toggleRegion });
       v-for="region in sheetRegions"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
-      :panel-name-map="panelNameMap"
+      :panel-name-map
       :region
       :registry
       @select-panel="(panelId) => setActivePanel(region.id, panelId)"

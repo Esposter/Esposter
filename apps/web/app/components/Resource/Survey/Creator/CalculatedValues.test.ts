@@ -8,13 +8,13 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { assert, describe, expect, test } from "vitest";
 import {
   checkSurveyDocument,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
 } from "vue-survey-engine-headless";
-import { assert, describe, expect, test } from "vitest";
 
 // A survey of one page holding a question named "a", and the calculated values given by name
 const createSurveyTestDocument = (calculatedNames: string[]): SurveyDocument => {

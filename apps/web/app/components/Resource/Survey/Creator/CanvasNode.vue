@@ -23,11 +23,11 @@ const { startNodeDrag } = useSurveyCreatorDrag();
   <!-- A question is drawn by its field with the pointer events off, so a click lands on this element and selects it -->
   <div
     :="getSelectionBindings(pointer)"
-    ui-ring-outside
     rd="[--ui-container-radius]"
     tabindex="0"
+    data-survey-child="true"
+    ui-ring-outside
     relative
-    data-survey-child
   >
     <div
       v-if="node.type === SurveyNodeType.Panel"
@@ -48,11 +48,11 @@ const { startNodeDrag } = useSurveyCreatorDrag();
     <!-- The handle is drawn on the selected element only, and touch-none keeps a finger on it from scrolling the canvas -->
     <UiIconButton
       v-if="selectedPointer === pointer"
-      absolute
-      top-0
-      right-0
-      touch-none
       cursor-move
+      right-0
+      top-0
+      absolute
+      touch-none
       label="Drag"
       :meaning="UiIconMeaning.Drag"
       @pointerdown="(event: PointerEvent) => startNodeDrag(node.props.id, event)"

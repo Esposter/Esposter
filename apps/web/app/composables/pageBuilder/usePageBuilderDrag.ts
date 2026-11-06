@@ -203,5 +203,5 @@ export const usePageBuilderDrag = <
     });
   };
 
-  return { dragPoint, draggedType, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag };
+  return { draggedType, dragPoint, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag };
 };

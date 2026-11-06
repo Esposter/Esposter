@@ -25,7 +25,7 @@ export const freezeFrameGeometry = (geometry: FrameGeometry, nodeIds: readonly s
     getChildRect,
     // The smallest box holding the point is the innermost node, and of two equal boxes the one later in document order
     getNodeIdAt: (point) => {
-      let innermost: { area: number; nodeId: string } | undefined;
+      let innermost: undefined | { area: number; nodeId: string };
       for (const nodeId of startRects.keys()) {
         const rect = getChildRect(nodeId);
         if (!checkIsInsideBox(point, rect) || !rect) continue;

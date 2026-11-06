@@ -9,9 +9,9 @@ import { ProductGroups } from "@/services/app/ProductGroups";
     aria-label="Places"
     gap-4
     grid
+    w-full
     items-start
     justify-center
-    w-full
     :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(14rem, 20rem))' }"
   >
     <section v-for="{ items, title } of ProductGroups" :key="title" flex flex-col gap-2>

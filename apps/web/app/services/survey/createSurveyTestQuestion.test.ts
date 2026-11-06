@@ -1,7 +1,7 @@
 import type { SurveyTextNode } from "vue-survey-engine-headless";
 
-import { SurveyNodeType, surveyTextNodeType } from "vue-survey-engine-headless";
 import { describe } from "vitest";
+import { SurveyNodeType, surveyTextNodeType } from "vue-survey-engine-headless";
 
 // A text question built from its kind's default props, so a fixture holds the shape the schemas parse
 export const createSurveyTestQuestion = (

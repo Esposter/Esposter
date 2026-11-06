@@ -5,9 +5,9 @@ import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhi
 import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { WHITEBOARD_IMAGE_ACCEPT, WHITEBOARD_SHAPE_TOOL_ITEM } from "@/services/whiteboard/tool/constants";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
-import { WHITEBOARD_IMAGE_ACCEPT, WHITEBOARD_SHAPE_TOOL_ITEM } from "@/services/whiteboard/tool/constants";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
 // Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools and the image picker.

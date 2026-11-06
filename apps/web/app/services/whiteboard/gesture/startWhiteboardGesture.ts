@@ -69,12 +69,6 @@ export const startWhiteboardGesture = (
         },
       };
     }
-    case GestureTool.Shape:
-      return startPlacingGesture(state, event, { kind: state.shapeKind, type: PositionedElementType.Shape });
-    case GestureTool.StickyNote:
-      return startPlacingGesture(state, event, { type: PositionedElementType.StickyNote });
-    case GestureTool.Text:
-      return startPlacingGesture(state, event, { type: PositionedElementType.Text });
     case GestureTool.Select: {
       const tolerance = getHitTolerance(state.viewport.scale);
       const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);
@@ -101,6 +95,12 @@ export const startWhiteboardGesture = (
         },
       };
     }
+    case GestureTool.Shape:
+      return startPlacingGesture(state, event, { kind: state.shapeKind, type: PositionedElementType.Shape });
+    case GestureTool.StickyNote:
+      return startPlacingGesture(state, event, { type: PositionedElementType.StickyNote });
+    case GestureTool.Text:
+      return startPlacingGesture(state, event, { type: PositionedElementType.Text });
     default:
       return exhaustiveGuard(state.tool);
   }

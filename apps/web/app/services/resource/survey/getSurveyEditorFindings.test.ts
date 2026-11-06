@@ -5,8 +5,8 @@ import { getSurveyEditorFindings } from "@/services/resource/survey/getSurveyEdi
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { takeOne } from "@esposter/shared";
-import { checkSurveyDocument, surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { checkSurveyDocument, surveyRootPropsSchema } from "vue-survey-engine-headless";
 
 describe(getSurveyEditorFindings, () => {
   const name = "a";

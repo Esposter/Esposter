@@ -19,8 +19,8 @@ import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
-import { createSurveyDocument } from "vue-survey-engine-headless";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),

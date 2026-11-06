@@ -6,8 +6,8 @@ import { SITE_NAME } from "@esposter/shared";
 <!-- The line on why and the gem sit close as one centred unit, the gem on the right so the pair reads as centred, and
      the gem costs no row of its own -->
 <template>
-  <section flex flex-wrap gap-2 items-center justify-center w-full>
-    <div text-center flex flex-col gap-2 items-center max-w-prose>
+  <section flex flex-wrap gap-2 w-full items-center justify-center>
+    <div text-center flex flex-col gap-2 max-w-prose items-center>
       <h2 ui-title>Why {{ SITE_NAME }}?</h2>
       <p text-balance ui-lede>
         A fun place to do and create whatever you want. Built on a unified, next-generation toolchain, so it stays

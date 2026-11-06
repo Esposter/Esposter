@@ -1,9 +1,9 @@
 import type { EditorToolbarItem } from "@/models/editor/EditorToolbarItem";
 
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
-import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 
 // The shape tool, one slot in the toolbar whose variants are the shapes it places, so the slot draws the shape last used
 export const WHITEBOARD_SHAPE_TOOL_ITEM: EditorToolbarItem = {

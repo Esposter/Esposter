@@ -1,6 +1,6 @@
 import { toSurveyMultipleTextItemFromText } from "@/services/resource/survey/toSurveyMultipleTextItemFromText";
-import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 
 describe("toSurveyMultipleTextItemFromText", () => {
   test("blank text makes no item", () => {

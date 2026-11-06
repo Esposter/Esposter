@@ -19,10 +19,6 @@ const { setSelectedNodeId } = pageBuilderCanvasStore;
 <template>
   <div px-3 py-2 flex flex-wrap gap-4 ui-bar items-center>
     <PageBuilderCanvasDeviceToggle :resource-id />
-    <EditorProblems
-      :findings
-      :get-node-title="getNodeTitle"
-      @select="(nodeId) => setSelectedNodeId(resourceId, nodeId)"
-    />
+    <EditorProblems :findings :get-node-title @select="(nodeId) => setSelectedNodeId(resourceId, nodeId)" />
   </div>
 </template>

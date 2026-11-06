@@ -5,8 +5,8 @@ import { applyResourceContentPatches } from "#server/services/resource/applyReso
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 describe(applyResourceContentPatches, () => {
   const rectangleId = crypto.randomUUID();

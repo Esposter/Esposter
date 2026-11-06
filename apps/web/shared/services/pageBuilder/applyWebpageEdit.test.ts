@@ -3,8 +3,8 @@ import { TEST_EDIT_CONTENT, TEST_EDIT_POINTER } from "#shared/services/pageBuild
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { JsonPatchOperationType } from "@esposter/shared";
-import { applyBlockEdit } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { applyBlockEdit } from "vue-block-editor-headless";
 
 describe(applyBlockEdit, () => {
   test("an edit's inverse restores the document exactly", () => {

@@ -10,14 +10,14 @@ import type {
 
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { createPinia, setActivePinia } from "pinia";
+import { describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
 } from "vue-survey-engine-headless";
-import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test } from "vitest";
 
 const createQuestion = (name: string): SurveyTextNode => ({
   props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: crypto.randomUUID(), name },

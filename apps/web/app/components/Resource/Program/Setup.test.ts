@@ -9,8 +9,8 @@ import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { createSurveyDocument } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test } from "vitest";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 describe("resourceProgramSetup", () => {
   const { trpcMsw } = setupMswTrpc();

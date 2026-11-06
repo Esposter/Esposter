@@ -177,16 +177,12 @@ watch(flatEntries, async () => {
   await measure();
 });
 // The slot of a variant in hand draws that variant from then on, so a choice a key makes is the one the slot shows once the tool moves on
-watch(
-  modelValue,
-  (value) => {
-    for (const { items, label: groupLabel } of groups) {
-      const [family] = items;
-      if (family?.variants?.some((variant) => variant.value === value)) usedVariantValues.set(groupLabel, value);
-    }
-  },
-  { immediate: true },
-);
+watchImmediate(modelValue, (value) => {
+  for (const { items, label: groupLabel } of groups) {
+    const [family] = items;
+    if (family?.variants?.some((variant) => variant.value === value)) usedVariantValues.set(groupLabel, value);
+  }
+});
 </script>
 
 <template>

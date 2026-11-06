@@ -1,6 +1,6 @@
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { createGlobeScene } from "@/services/visual/globe/createGlobeScene";
 import { getNextQualityTier } from "@/services/visual/globe/getNextQualityTier";
+import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { getResult, noop } from "@esposter/shared";
 
 const { sampleCount, warmupFrames } = GlobeConfiguration;

@@ -74,8 +74,8 @@ const overflowItems: Item[] = [
 
 <template>
   <!-- One row at every width: a narrow window scrolls it sideways, so no control wraps below the bar or hides behind the canvas -->
-  <div of-x-auto ui-bar>
-    <div px-4 py-2 flex gap-4 items-center w-max min-w-full>
+  <div ui-bar of-x-auto>
+    <div px-4 py-2 flex gap-4 min-w-full w-max items-center>
       <DatasetReferencePicker
         v-if="session.data"
         :error
@@ -92,7 +92,7 @@ const overflowItems: Item[] = [
       <PageBuilderCanvasDeviceToggle :resource-id />
       <EditorProblems
         :findings
-        :get-node-title="getNodeTitle"
+        :get-node-title
         @select="
           (nodeId) => {
             if (nodeId) setSelectedNodeId(resourceId, nodeId);

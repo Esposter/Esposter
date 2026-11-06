@@ -18,8 +18,8 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { checkSurveyDocument } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { checkSurveyDocument } from "vue-survey-engine-headless";
 
 const { sweepMock, trackMock } = vi.hoisted(() => ({
   sweepMock: vi.fn<(document: SurveyDocument) => Promise<void>>(),

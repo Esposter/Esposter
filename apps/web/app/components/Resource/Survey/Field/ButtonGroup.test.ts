@@ -5,8 +5,8 @@ import ResourceSurveyFieldButtonGroup from "@/components/Resource/Survey/Field/B
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { surveyButtonGroupNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { surveyButtonGroupNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldButtonGroup", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

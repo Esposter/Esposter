@@ -7,13 +7,13 @@ import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { describe, expect, test } from "vitest";
 import {
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
 } from "vue-survey-engine-headless";
-import { describe, expect, test } from "vitest";
 
 // A page holding one question of the given kind, which the panel edits once it is selected
 const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup) =>

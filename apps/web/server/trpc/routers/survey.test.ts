@@ -27,6 +27,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import {
   createSurveyDocument,
   MAX_SURVEY_ANSWER_LENGTH,
@@ -37,7 +38,6 @@ import {
   SurveyTextInputType,
   surveyTextNodeType,
 } from "vue-survey-engine-headless";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // A text question of the given name, the one kind a save with repeated question names needs
 const createQuestion = (questionName: string): SurveyTextNode => ({

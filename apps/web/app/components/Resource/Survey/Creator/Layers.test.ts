@@ -6,8 +6,8 @@ import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQues
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();

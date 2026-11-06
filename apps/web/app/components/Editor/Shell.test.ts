@@ -1,13 +1,14 @@
 // @vitest-environment happy-dom
-import EditorShell from "@/components/Editor/Shell.vue";
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
+import type { Context, Layout, Region } from "vue-editor-layout-headless";
+
+import EditorShell from "@/components/Editor/Shell.vue";
 import { EditorType } from "@/models/editor/EditorType";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { RESIZE_HANDLE_KEYBOARD_STEP } from "@/services/ui/constants";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
-import type { Context, Layout, Region } from "vue-editor-layout-headless";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 // The size class is read from the display composable, so a test says how small the window is before the shell mounts
@@ -120,8 +121,8 @@ describe("editorShell", () => {
         editorType: EditorType.Whiteboard,
         layout: shellLayout,
         panelNameMap,
-        registry,
         regionNameMap: { [regionId]: regionName, [toolRegionId]: regionName },
+        registry,
       },
       slots: { default: "<span data-canvas></span>" },
     });
@@ -231,7 +232,7 @@ describe("editorShell", () => {
         },
       ],
     };
-    const component = mountShell({ layout: tabbedLayout, panelNameMap: { [regionId]: "a", [otherPanelId]: "b" } });
+    const component = mountShell({ layout: tabbedLayout, panelNameMap: { [otherPanelId]: "b", [regionId]: "a" } });
 
     expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual(["a", "b"]);
 

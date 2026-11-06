@@ -7,13 +7,13 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
+import { assert, describe, expect, test } from "vitest";
 import {
   MATRIX_CELL_RATING_COUNT,
   SurveyMatrixCellType,
   surveyMatrixDynamicNodePropsSchema,
   SurveyNodeType,
 } from "vue-survey-engine-headless";
-import { assert, describe, expect, test } from "vitest";
 
 const mountMatrixDynamic = (node: SurveyMatrixDynamicNode, modelValue?: SurveyAnswerValue, error = "") => {
   const component = mount(ResourceSurveyFieldMatrixDynamic, {

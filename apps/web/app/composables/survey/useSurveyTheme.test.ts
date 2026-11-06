@@ -1,6 +1,6 @@
 import { useSurveyTheme } from "@/composables/survey/useSurveyTheme";
-import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 
 describe(useSurveyTheme, () => {
   test("a survey that sets no colour sets no style variable, so the design style's own tokens apply", () => {

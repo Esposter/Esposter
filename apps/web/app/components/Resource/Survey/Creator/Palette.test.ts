@@ -6,13 +6,13 @@ import { createSurveyTestPanelDynamic } from "@/services/survey/createSurveyTest
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
   surveyDocumentSchema,
   SurveyNodeType,
   surveyNodeTypeDefinitionMap,
 } from "vue-survey-engine-headless";
-import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorPalette", () => {
   test("the palette offers every kind but the page, each under its own label", async () => {

@@ -8,8 +8,8 @@ import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { insertBlockNode } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { insertBlockNode } from "vue-block-editor-headless";
 
 describe("columnsNodeType", () => {
   test("a columns node holds only columns", () => {

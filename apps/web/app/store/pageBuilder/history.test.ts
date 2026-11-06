@@ -21,9 +21,9 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
-import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
+import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 
 const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
   { op: JsonPatchOperationType.Add, path: "/content/1", value: createButton(id) },

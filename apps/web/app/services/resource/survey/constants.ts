@@ -7,8 +7,8 @@ import { SurveyConditionOperator } from "@/models/resource/survey/SurveyConditio
 import { SurveyConditionProp } from "@/models/resource/survey/SurveyConditionProp";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "vue-survey-engine-headless";
 import { SurveyExpressionBinaryOperator } from "survey-expression";
+import { SurveyImageFit, SurveyNodeType, SurveyTextInputType } from "vue-survey-engine-headless";
 
 // The conditions a node's editor shows, each under its label, in the order the editor lists them
 export const SURVEY_CONDITION_SECTIONS: readonly { label: string; prop: SurveyConditionProp }[] = [

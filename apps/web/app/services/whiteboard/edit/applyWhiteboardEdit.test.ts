@@ -1,7 +1,7 @@
 import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { updatePositionedElementText } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { updatePositionedElementText } from "vue-block-editor-headless";
 
 describe(applyWhiteboardEdit, () => {
   test("an edit with no operations leaves the state as it was", () => {

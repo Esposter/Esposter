@@ -12,8 +12,8 @@ import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 

@@ -56,7 +56,7 @@ const overlayInsetStyle = computed(() => {
   >
     <EditorRegionContent
       :name
-      :panel-name-map="panelNameMap"
+      :panel-name-map
       :region
       :registry
       @select-panel="(panelId) => emit('selectPanel', panelId)"
@@ -67,19 +67,19 @@ const overlayInsetStyle = computed(() => {
     :aria-label="name"
     :class="region.presentation === RegionPresentation.Overlay ? RegionEdgeOverlayClassMap[region.edge] : 'relative'"
     :style="[sizeStyle, overlayInsetStyle]"
-    ui-frame
     flex
+    shrink-0
     flex-col
     min-h-0
     min-w-0
-    shrink-0
+    ui-frame
   >
     <!-- Content taller than its region scrolls inside it, so it never paints over the canvas or a column beside it. The handle sits
          outside, since it straddles the region's edge -->
     <div flex flex-1 flex-col min-h-0 min-w-0 of-auto>
       <EditorRegionContent
         :name
-        :panel-name-map="panelNameMap"
+        :panel-name-map
         :region
         :registry
         @select-panel="(panelId) => emit('selectPanel', panelId)"

@@ -7,7 +7,7 @@ describe(createLandDots, () => {
   // One cell per degree, with land only in the square from 0 to 1 degree north and east
   const landMask: LandMask = {
     cellsPerDegree: 1,
-    rows: Array.from({ length: 180 }, (_, i) => (i === 89 ? [180, 181] : [])),
+    rows: Array.from({ length: 180 }, (_value, i) => (i === 89 ? [180, 181] : [])),
   };
 
   test("dots stand on land only", () => {

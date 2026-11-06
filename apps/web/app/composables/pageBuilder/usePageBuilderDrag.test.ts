@@ -19,9 +19,9 @@ import { TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { getBlockNode } from "vue-block-editor-headless";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
+import { getBlockNode } from "vue-block-editor-headless";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },

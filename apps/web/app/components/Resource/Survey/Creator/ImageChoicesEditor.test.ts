@@ -12,9 +12,9 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { assert, describe, expect, test, vi } from "vitest";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
-import { assert, describe, expect, test, vi } from "vitest";
 
 const { deleteFile, uploadFile } = vi.hoisted(() => ({
   deleteFile: vi.fn<(url: string) => Promise<void>>(() => Promise.resolve()),

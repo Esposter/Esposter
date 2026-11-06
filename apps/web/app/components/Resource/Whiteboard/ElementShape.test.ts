@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardElementShape from "@/components/Resource/Whiteboard/ElementShape.vue";
 import { mount } from "@vue/test-utils";
-import { PositionedElementType, ShapeKind, toShapeSvg } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { PositionedElementType, ShapeKind, toShapeSvg } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementShape", () => {
   test("a shape draws the same hand-drawn outline on every render", () => {

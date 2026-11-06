@@ -9,8 +9,8 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { createSurveyDocument } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 const setupStore = async () => {
   const surveyStore = useSurveyStore();

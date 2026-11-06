@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Context } from "vue-editor-layout-headless";
 import type { Point } from "vue-block-editor-headless";
+import type { Context } from "vue-editor-layout-headless";
 
 import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
@@ -9,8 +9,8 @@ import { EditorType } from "@/models/editor/EditorType";
 import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
 import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
-import { getWhiteboardSelectionKind } from "@/services/whiteboard/layout/getWhiteboardSelectionKind";
 import { WHITEBOARD_LAYOUT, WHITEBOARD_REGION_NAME_MAP } from "@/services/whiteboard/layout/constants";
+import { getWhiteboardSelectionKind } from "@/services/whiteboard/layout/getWhiteboardSelectionKind";
 import { WhiteboardContentComponentMap } from "@/services/whiteboard/layout/WhiteboardContentComponentMap";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";

@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardLabel from "@/components/Resource/Whiteboard/Label.vue";
 import { mount } from "@vue/test-utils";
-import { PositionedElementType, ShapeKind, toElementTextSvg } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { PositionedElementType, ShapeKind, toElementTextSvg } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardLabel", () => {
   test("the editor draws a label's lines where the export breaks them", () => {

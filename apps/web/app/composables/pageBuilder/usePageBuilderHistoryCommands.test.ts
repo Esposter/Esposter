@@ -12,8 +12,8 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useCommandStore } from "@/store/ui/command";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { moveBlockNode } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { moveBlockNode } from "vue-block-editor-headless";
 
 describe(usePageBuilderHistoryCommands, () => {
   test("the command bar names the edit it would undo", async () => {

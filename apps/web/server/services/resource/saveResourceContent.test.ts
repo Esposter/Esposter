@@ -44,8 +44,8 @@ import {
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { PositionedElementType } from "vue-block-editor-headless";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where

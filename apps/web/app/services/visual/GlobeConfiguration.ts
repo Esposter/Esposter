@@ -1,8 +1,8 @@
 export const GlobeConfiguration = {
-  arcGrowTime: Temporal.Duration.from({ milliseconds: 1500 }).total("milliseconds"),
-  arcHoldTime: Temporal.Duration.from({ milliseconds: 1200 }).total("milliseconds"),
+  arcGrowTime: 1500,
+  arcHoldTime: 1200,
   // How long after the one before it each order of arcs starts
-  arcStagger: Temporal.Duration.from({ milliseconds: 400 }).total("milliseconds"),
+  arcStagger: 400,
   atmosphereColor: "#3a228a",
   atmosphereScale: 1.18,
   color: "#3a228a",
@@ -31,8 +31,8 @@ export const GlobeConfiguration = {
   spacing: 1,
   // Mean frames per second over `sampleCount` frames under which the quality steps down
   targetFps: 55.5,
-  // The first frames pay for compiling the shaders, so they say nothing of the frame rate
-  warmupFrames: 10,
   tubeRadialSegments: 6,
   tubeSegments: 44,
+  // The first frames pay for compiling the shaders, so they say nothing of the frame rate
+  warmupFrames: 10,
 };

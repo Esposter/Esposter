@@ -24,5 +24,5 @@ const dragKind = (kind: string, event: PointerEvent) => {
 </script>
 
 <template>
-  <UiPalette :groups @insert="insertKind" @drag-start="dragKind" />
+  <UiPalette :groups @insert="(kind) => insertKind(kind)" @drag-start="(kind, event) => dragKind(kind, event)" />
 </template>

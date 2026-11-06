@@ -2,17 +2,17 @@
 import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Canvas.vue";
 import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/Shell.vue";
 import ResourceSurveyRunner from "@/components/Resource/Survey/Runner.vue";
-import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
 import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
+import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
 import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
 import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
 import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 // The size class is read from the display composable, so a test says how small the window is before the shell mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));

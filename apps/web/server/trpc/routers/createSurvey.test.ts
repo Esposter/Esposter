@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { SurveyDocument } from "vue-survey-engine-headless";
 import type { z } from "zod";
 
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe } from "vitest";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 // A survey with its content written — the shape every suite that answers one or binds a program to it starts
 // From. The content is the schema's input, so it carries its settings as well as its document

@@ -3,8 +3,8 @@ import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocu
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestPanelDynamic } from "@/services/survey/createSurveyTestPanelDynamic.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
-import { createSurveyDocument, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { createSurveyDocument, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe(getSurveyPaletteGroups, () => {
   test("every survey kind has a category and an icon", () => {

@@ -4,11 +4,6 @@ import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
 import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
 import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
 
-interface Point {
-  x: number;
-  y: number;
-}
-
 // What a press tracked to its end hands its editor: where the drag starts, each move of it, what a release lands and the end
 // Of the press however it came. The editor keeps what differs between editors, which is what a move draws and what a
 // Release lands
@@ -21,6 +16,11 @@ export interface PressHandlers {
   onRelease?: (point: Point) => void;
   // The press has become a drag, before its first move is drawn
   onStart?: () => void;
+}
+
+interface Point {
+  x: number;
+  y: number;
 }
 
 // The one tracker of a drag's press, shared by every editor's drag, and the drag's state they would each hold: whether the press

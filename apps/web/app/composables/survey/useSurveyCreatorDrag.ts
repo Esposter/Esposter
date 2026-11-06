@@ -10,7 +10,7 @@ import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurve
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
 import { getBlockNode } from "vue-block-editor-headless";
-import { SurveyNodeType, surveyNodeChildren } from "vue-survey-engine-headless";
+import { surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
 // The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop reads
 interface DragSource {
@@ -24,7 +24,7 @@ interface DragSource {
 // No slot, Escape or a cancel changes nothing
 export const useSurveyCreatorDrag = () => {
   const surveyCreatorDragStore = useSurveyCreatorDragStore();
-  const { dragPoint, dropTarget, draggedNodeId, draggedType, isDragging } = storeToRefs(surveyCreatorDragStore);
+  const { draggedNodeId, draggedType, dragPoint, dropTarget, isDragging } = storeToRefs(surveyCreatorDragStore);
   const { clearDrag, clearSlotMeasurer, measureSlots, moveDrag, setDrag, setSlotMeasurer } = surveyCreatorDragStore;
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
@@ -118,8 +118,8 @@ export const useSurveyCreatorDrag = () => {
   };
 
   return {
-    dragPoint,
     draggedType,
+    dragPoint,
     dropTarget,
     isDragging,
     previewNode,

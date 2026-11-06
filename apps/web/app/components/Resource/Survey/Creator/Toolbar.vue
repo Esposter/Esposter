@@ -19,8 +19,8 @@ import {
   checkSurveyDocument,
   createSurveyDocument,
   surveyDocumentSchema,
-  SurveyNodeType,
   surveyNodeChildren,
+  SurveyNodeType,
 } from "vue-survey-engine-headless";
 
 // The whole content and root props of a document, replaced as one edit, so an import or a clear is one history entry
@@ -167,11 +167,11 @@ const groups = computed<EditorToolbarGroup[]>(() => [
 </script>
 
 <template>
-  <div flex gap-1 items-center min-w-0>
+  <div flex gap-1 min-w-0 items-center>
     <EditorToolbar v-model="mode" label="Survey actions" :groups flex-1 />
     <EditorProblems
       :findings
-      :get-node-title="getNodeTitle"
+      :get-node-title
       @select="
         (nodeId) => {
           const nodePointer = getSurveyNodePointerById(surveyDocument, nodeId);

@@ -2,9 +2,9 @@
 import type { SurveyPageNode } from "vue-survey-engine-headless";
 
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
+import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 const createPage = (): SurveyPageNode => ({
   props: {

@@ -18,15 +18,15 @@ const { icon, point, title } = defineProps<Props>();
       :style="{ left: `calc(${point.x}px + 0.75rem)`, top: `calc(${point.y}px + 0.75rem)` }"
       aria-hidden="true"
       class="drag-ghost"
-      flex
-      gap-1
-      items-center
-      fixed
-      op-90
+      text-sm
       px-2
       py-1
-      text-sm
+      op-90
+      flex
+      gap-1
       pointer-events-none
+      items-center
+      fixed
       z-2000
       ui-lifted
     >

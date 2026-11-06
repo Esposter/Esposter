@@ -1,8 +1,9 @@
 // @vitest-environment nuxt
+import type { EditorFinding } from "@/models/editor/EditorFinding";
+
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import PageBuilderEmailBar from "@/components/PageBuilder/Email/Bar.vue";
-import type { EditorFinding } from "@/models/editor/EditorFinding";
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
 import { EmailView } from "@/models/pageBuilder/EmailView";
 import { emailKind } from "@/services/pageBuilder/emailKind";

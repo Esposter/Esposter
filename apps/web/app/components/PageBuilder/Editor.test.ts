@@ -17,8 +17,8 @@ import {
   createTestTextNode,
   TEST_GREY_RGB_VALUE,
 } from "#shared/services/pageBuilder/critique/constants.test";
-import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderCanvasFrame from "@/components/PageBuilder/Canvas/Frame.vue";
+import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import {

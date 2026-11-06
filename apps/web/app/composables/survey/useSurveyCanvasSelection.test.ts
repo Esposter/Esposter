@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { useSurveyCanvasSelection } from "@/composables/survey/useSurveyCanvasSelection";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
+import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe(useSurveyCanvasSelection, () => {
   test("a click chooses its element, and Enter chooses it only from the element itself", () => {

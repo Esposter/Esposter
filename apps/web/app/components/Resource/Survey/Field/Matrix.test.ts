@@ -5,8 +5,8 @@ import ResourceSurveyFieldMatrix from "@/components/Resource/Survey/Field/Matrix
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyMatrixNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { surveyMatrixNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldMatrix", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

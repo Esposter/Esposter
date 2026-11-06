@@ -14,9 +14,9 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType } from "vue-survey-engine-headless";
 import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const createFrameGeometry = (): FrameGeometry => ({
   checkIsHorizontalOwner: () => false,

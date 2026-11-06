@@ -9,8 +9,8 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { noop } from "@esposter/shared";
-import { getBlockNode, getBlockPropValue, getBlockTypeDefinition } from "vue-block-editor-headless";
 import { getMjmlAttributeFields } from "mjml-blocks";
+import { getBlockNode, getBlockPropValue, getBlockTypeDefinition } from "vue-block-editor-headless";
 
 // The style fields of the selected email node: one per attribute its type takes. A field holds the value the node sets,
 // And shows the cascade's value as its placeholder, so clearing a field restores what the root or MJML gives it

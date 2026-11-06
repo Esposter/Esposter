@@ -5,12 +5,12 @@ import ResourceSurveyFieldExpression from "@/components/Resource/Survey/Field/Ex
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
+import { describe, expect, test } from "vitest";
 import {
   SurveyExpressionDisplayFormat,
   surveyExpressionNodePropsSchema,
   SurveyNodeType,
 } from "vue-survey-engine-headless";
-import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyFieldExpression", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

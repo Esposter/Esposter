@@ -13,8 +13,8 @@ import { useResourceStore } from "@/store/resource";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "vue-block-editor-headless";
 import { assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "vue-block-editor-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),

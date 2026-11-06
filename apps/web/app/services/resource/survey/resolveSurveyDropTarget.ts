@@ -19,7 +19,10 @@ export const resolveSurveyDropTarget = ({
 }): DropTarget | undefined => {
   const slot = slots
     .filter(({ acceptedTypes, box }) => checkIsInsideBox(point, box) && acceptedTypes.includes(draggedType))
-    .toSorted((first, second) => first.box.width * first.box.height - second.box.width * second.box.height)[0];
+    .toSorted(
+      (firstSlot, secondSlot) =>
+        firstSlot.box.width * firstSlot.box.height - secondSlot.box.width * secondSlot.box.height,
+    )[0];
   if (slot === undefined) return undefined;
 
   return { index: getDropIndex(slot.childBoxes, point, false), slotPointer: slot.slotPointer };

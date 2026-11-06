@@ -3,6 +3,7 @@ import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { checkIsPaletteSearching } from "@/services/ui/palette/checkIsPaletteSearching";
 import { filterPaletteGroups } from "@/services/ui/palette/filterPaletteGroups";
 
 interface Props {
@@ -16,7 +17,7 @@ const query = ref("");
 const collapsedTitles = ref<Set<string>>(new Set());
 const filteredGroups = computed(() => filterPaletteGroups(groups, query.value));
 // A search opens every group it shows, so a header it would hold shut is disabled while the search runs
-const isSearching = computed(() => query.value.trim() !== "");
+const isSearching = computed(() => checkIsPaletteSearching(query.value));
 const isGroupOpen = (title: string) => isSearching.value || !collapsedTitles.value.has(title);
 const toggleGroup = (title: string) => {
   const nextCollapsedTitles = new Set(collapsedTitles.value);
@@ -39,9 +40,9 @@ const startDrag = (kind: string, event: PointerEvent) => {
         :aria-expanded="isGroupOpen(title)"
         :disabled="isSearching"
         class="disabled:cursor-default"
-        ui-item
         text-sm
         text-muted
+        ui-item
         @click="toggleGroup(title)"
       >
         <UiIcon :meaning="isGroupOpen(title) ? UiIconMeaning.Collapse : UiIconMeaning.Expand" />
@@ -51,15 +52,15 @@ const startDrag = (kind: string, event: PointerEvent) => {
         <UiButton
           v-for="item of items"
           :key="item.kind"
-          min-w-0
           px-1
+          min-w-0
           w-full
           @click="emit('insert', item.kind)"
           @pointerdown="startDrag(item.kind, $event)"
         >
           <span text-sm text-center flex flex-col gap-1 min-w-0 items-center>
             <UiIcon :meaning="item.icon" />
-            <span line-clamp-2 break-words>{{ item.title.replaceAll("/", "/\u200B") }}</span>
+            <span break-words line-clamp-2>{{ item.title.replaceAll("/", "/\u200B") }}</span>
           </span>
         </UiButton>
       </div>

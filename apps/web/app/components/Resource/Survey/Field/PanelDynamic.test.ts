@@ -6,13 +6,13 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   surveyCheckboxNodePropsSchema,
   SurveyNodeType,
   surveyPanelDynamicNodePropsSchema,
   surveyTextNodePropsSchema,
 } from "vue-survey-engine-headless";
-import { assert, beforeAll, describe, expect, test } from "vitest";
 
 const mountPanelDynamic = async (node: SurveyPanelDynamicNode, error = "") => {
   const component = await mountSuspended(ResourceSurveyFieldPanelDynamic, {

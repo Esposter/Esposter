@@ -3,8 +3,8 @@ import ResourceSurveyCreatorMultipleTextItemsEditor from "@/components/Resource/
 import UiForm from "@/components/Ui/Form.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyMultipleTextItemInputType } from "vue-survey-engine-headless";
 
 describe("resourceSurveyCreatorMultipleTextItemsEditor", () => {
   test("an item added and given an input type reaches the list", async () => {

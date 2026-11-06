@@ -16,8 +16,8 @@ import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperatio
 import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { ShapeKind } from "vue-block-editor-headless";
 import { describe, expect, onTestFinished, test } from "vitest";
+import { ShapeKind } from "vue-block-editor-headless";
 
 // The keyboard mounted as a surface, so its commands are bound for as long as the mount lasts and unbound when it unmounts
 const mountKeyboard = (

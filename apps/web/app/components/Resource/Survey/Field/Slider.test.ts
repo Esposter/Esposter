@@ -5,8 +5,8 @@ import SurveyFieldSlider from "@/components/Resource/Survey/Field/Slider.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
-import { SurveyNodeType, surveySliderNodePropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyNodeType, surveySliderNodePropsSchema } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldSlider", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

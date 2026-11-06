@@ -2,8 +2,8 @@ import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
 
 import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
-import { SurveyNodeType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyNodeType } from "vue-survey-engine-headless";
 
 const createBox = (top: number, height: number, left = 0, width = 400): OverlayBox => ({ height, left, top, width });
 

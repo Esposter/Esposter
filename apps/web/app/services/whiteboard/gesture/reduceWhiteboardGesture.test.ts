@@ -16,8 +16,8 @@ import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/w
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
   fill: "#ffffff",

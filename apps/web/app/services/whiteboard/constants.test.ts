@@ -4,8 +4,8 @@ import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-e
 
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
 import { createHistory } from "@esposter/shared";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { describe } from "vitest";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 export const WHITEBOARD_ARROW_ID = crypto.randomUUID();
 export const WHITEBOARD_PROCESS_ID = crypto.randomUUID();

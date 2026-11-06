@@ -40,7 +40,7 @@ export const usePageBuilderEditor = (
   );
   usePageBuilderHistoryCommands(() => resourceId);
   usePageBuilderStyleCommands(() => resourceId);
-  const { dragPoint, draggedType, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag } =
+  const { draggedType, dragPoint, dropTarget, isDragging, refusal, startMergeFieldDrag, startPaletteDrag } =
     usePageBuilderDrag(kind, getPageDocument, () => resourceId, announce);
   // A refusal is announced as it begins, not on every move, since the ghost showing it follows the pointer
   watch(refusal, (message) => {
@@ -68,8 +68,8 @@ export const usePageBuilderEditor = (
   return {
     announce,
     announcement,
-    dragPoint,
     draggedType,
+    dragPoint,
     dropTarget,
     getFrameGeometry,
     getPageDocument,

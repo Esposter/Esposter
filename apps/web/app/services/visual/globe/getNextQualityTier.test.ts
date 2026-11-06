@@ -1,5 +1,5 @@
-import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { getNextQualityTier } from "@/services/visual/globe/getNextQualityTier";
+import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 import { describe, expect, test } from "vitest";
 
 const { qualityTiers, sampleCount, targetFps } = GlobeConfiguration;

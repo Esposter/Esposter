@@ -89,5 +89,9 @@ const dragItem = (itemKind: string, event: PointerEvent) => {
 </script>
 
 <template>
-  <UiPalette :groups @insert="insertItem" @drag-start="dragItem" />
+  <UiPalette
+    :groups
+    @insert="(itemKind) => insertItem(itemKind)"
+    @drag-start="(itemKind, event) => dragItem(itemKind, event)"
+  />
 </template>

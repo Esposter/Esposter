@@ -6,8 +6,8 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { SurveyNodeType, surveyRankingNodePropsSchema } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyNodeType, surveyRankingNodePropsSchema } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldRanking", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

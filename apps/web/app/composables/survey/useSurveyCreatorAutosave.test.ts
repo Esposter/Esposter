@@ -9,8 +9,8 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { createSurveyDocument } from "vue-survey-engine-headless";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { createSurveyDocument } from "vue-survey-engine-headless";
 
 describe(useSurveyCreatorAutosave, () => {
   const resourceId = crypto.randomUUID();

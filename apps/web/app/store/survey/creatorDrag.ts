@@ -39,9 +39,9 @@ export const useSurveyCreatorDragStore = defineStore("survey/creatorDrag", () =>
   return {
     clearDrag,
     clearSlotMeasurer,
-    dragPoint,
     draggedNodeId,
     draggedType,
+    dragPoint,
     dropTarget,
     isDragging,
     measureSlots,

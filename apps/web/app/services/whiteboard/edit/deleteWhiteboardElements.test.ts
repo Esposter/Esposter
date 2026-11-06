@@ -8,8 +8,8 @@ import {
 } from "@/services/whiteboard/constants.test";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
-import { PositionedElementType } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 describe(deleteWhiteboardElements, () => {
   test("deleting several elements is one undo step", () => {

@@ -4,8 +4,8 @@ import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 describe("whiteboardRouter", () => {
   const { getCaller } = setupResourceSuite(whiteboardRouter);

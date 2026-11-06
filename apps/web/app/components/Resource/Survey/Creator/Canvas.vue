@@ -9,7 +9,7 @@ import { surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
 const { getSelectionBindings } = useSurveyCanvasSelection();
-const { dragPoint, draggedType, registerSlots } = useSurveyCreatorDrag();
+const { draggedType, dragPoint, registerSlots } = useSurveyCreatorDrag();
 const canvas = useTemplateRef("canvas");
 // A drag reads the boxes once, as it starts, from the rendered DOM. The canvas registers the measuring while it is mounted
 registerSlots(() => getSurveyDropSlots(canvas.value ?? undefined, surveyDocument.value));
@@ -18,7 +18,7 @@ const getPagePointer = (pageIndex: number) => `/content/${pageIndex}`;
 
 <template>
   <div ref="canvas" p-3 flex flex-1 flex-col min-h-0 of-y-auto ui-body>
-    <div flex flex-col gap-6 w-full max-w="[48rem]" mx-auto>
+    <div max-w="[48rem]" mx-a flex flex-col gap-6 w-full>
       <section
         v-for="(page, pageIndex) of surveyDocument.content"
         :key="page.props.id"

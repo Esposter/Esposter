@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import ResourceEmailEditor from "@/components/Resource/Email/Editor.vue";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import ResourceEmailEditor from "@/components/Resource/Email/Editor.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";

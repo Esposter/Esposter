@@ -8,8 +8,8 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
+import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "vue-survey-engine-headless";
 
 // A survey of one page holding the given text questions, each with the condition it shows under
 const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocument => ({

@@ -35,8 +35,8 @@ const editorShell = useTemplateRef("editorShell");
 const {
   announce,
   announcement,
-  dragPoint,
   draggedType,
+  dragPoint,
   dropTarget,
   getFrameGeometry,
   getPageDocument,
@@ -111,7 +111,7 @@ const registry: EditorRegistry = {
         ref="canvas"
         v-model:is-delete-open="isDeleteOpen"
         :announce
-        :dragged-type="draggedType"
+        :dragged-type
         :drop-target
         :kind
         :resource-id

@@ -5,8 +5,8 @@ import ResourceSurveyFieldTagBox from "@/components/Resource/Survey/Field/TagBox
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "vue-survey-engine-headless";
 import { assert, describe, expect, test } from "vitest";
+import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldTagBox", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {

@@ -5,9 +5,9 @@ import type { SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "vue-su
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
+import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 const createQuestion = (name: string): SurveyTextNode => ({
   props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: crypto.randomUUID(), name },

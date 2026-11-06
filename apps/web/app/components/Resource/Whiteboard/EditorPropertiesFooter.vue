@@ -16,7 +16,7 @@ const { deletingIds } = storeToRefs(whiteboardDialogStore);
 const duplicateSelection = () => {
   copySelection(editState, selectedIds);
 };
-const deleteSelection = () => {
+const requestDeleteSelection = () => {
   requestSelectionDelete(deletingIds, selectedIds);
 };
 </script>
@@ -33,7 +33,7 @@ const deleteSelection = () => {
       label="Delete"
       :meaning="UiIconMeaning.Delete"
       :variant="UiButtonVariant.Quiet"
-      @click="deleteSelection()"
+      @click="requestDeleteSelection()"
     />
   </div>
 </template>

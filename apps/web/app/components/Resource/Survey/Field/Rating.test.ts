@@ -8,8 +8,8 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
 import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
-import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "vue-survey-engine-headless";
 import { describe, expect, test } from "vitest";
+import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "vue-survey-engine-headless";
 
 describe("resourceSurveyFieldRating", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
