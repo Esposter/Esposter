@@ -188,7 +188,7 @@ A scripted session SHALL run its steps in order and stop at the first step that 
 #### Scenario: A line settles the terrain before the next step
 
 - **GIVEN** a driver whose settled read answers no once and then yes
-- **WHEN** a script with a line and then an expect step on that line's record runs
+- **WHEN** a script with a line and then an expect step that reads a record line runs
 - **THEN** the runner steps the settle's minimum frames before its first read, then one more frame for the no, and the expect step reads once the terrain reads settled
 
 ### Requirement: A save in a script is the page's save, and a load resumes it in a fresh session
