@@ -25,3 +25,7 @@
 
 - [x] 5.1 Write the first scenarios for the features that already exist (a boss fight, every chest tier, night at Windrise, a full bag), one file each. Verify: `services/dev/scenarios/constants.test.ts` runs each scenario's lines through `createDevRegistry` against stubbed handles and every line reports success.
 - [x] 5.2 Add the rule that a feature change registers its scenario, or states why it has none, to the `building-proposals` skill and to the openspec design rules. Verify: `git grep -n scenario .agents/skills/building-proposals` finds the rule and `openspec validate --strict` passes for this change.
+
+## 6. Held keys from the console
+
+- [ ] 6.1 Decide how a `hold` typed into the console reaches the controls while the console's field keeps focus. `createHoldCommand` dispatches its keys on the window, and `createInput` ignores every key while a field is focused (the design's "Keys do not reach the game while the console is focused"), so `hold forward 2` answers ok and the Traveler does not move. The options are: blur the console's field on submit, which takes focus from the console after each line; have `createInput` ignore only keys whose event target is a field, which changes the `InputTarget` seam; or leave `hold` out of the console's handles. Verify: a test that a `hold` run from the console moves the Traveler, seen failing first, in the file the chosen option changes.
