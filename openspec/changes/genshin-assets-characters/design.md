@@ -157,6 +157,7 @@ Game art the family can read from the install but cannot publish. Each row is a 
 - The owner's statement on the packs covers the official character packs. Whether it reaches Paimon's pack is for the owner to confirm before menu Paimon's wait clears, since the repository holds only the statement.
 - The Mac build's decode of these streams has no parity run recorded against the Windows build. Until one is, a Mac decode is a draft, and the reference record comes from the PC.
 - The community dump is older than the installed client. The join in G12 reads the dump, so its record carries the dump's revision.
+- The task list is longer than the openspec config's guideline of twelve tasks, and that size is accepted: each gap gets one task, or one per gate when it spans two, so splitting by phase is the way to cut it.
 
 ## Key files
 
