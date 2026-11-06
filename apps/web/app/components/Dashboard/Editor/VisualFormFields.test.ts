@@ -1,22 +1,17 @@
 // @vitest-environment nuxt
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
+import DashboardEditorVisualFormFields from "@/components/Dashboard/Editor/VisualFormFields.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import UiTextField from "@/components/Ui/TextField.vue";
-import { useVisualStore } from "@/store/dashboard/visual";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("dashboardVisualPreviewEditFormDialog", () => {
+describe("dashboardEditorVisualFormFields", () => {
   test("editing a card offers only its label", async () => {
     expect.hasAssertions();
 
-    // The dialog draws its body only while the store has it open, as an edit of a visual does
-    const visualStore = useVisualStore();
-    const { isEditFormDialogOpen } = storeToRefs(visualStore);
-    isEditFormDialogOpen.value = true;
-    const wrapper = await mountSuspended(DashboardVisualPreviewEditFormDialog, {
+    const wrapper = await mountSuspended(DashboardEditorVisualFormFields, {
       props: { modelValue: new Visual({ type: VisualType.Card }) },
     });
 
@@ -30,11 +25,7 @@ describe("dashboardVisualPreviewEditFormDialog", () => {
   test("editing a table offers no extra settings", async () => {
     expect.hasAssertions();
 
-    // The dialog draws its body only while the store has it open, as an edit of a visual does
-    const visualStore = useVisualStore();
-    const { isEditFormDialogOpen } = storeToRefs(visualStore);
-    isEditFormDialogOpen.value = true;
-    const wrapper = await mountSuspended(DashboardVisualPreviewEditFormDialog, {
+    const wrapper = await mountSuspended(DashboardEditorVisualFormFields, {
       props: { modelValue: new Visual({ type: VisualType.Table }) },
     });
 

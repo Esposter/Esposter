@@ -21,6 +21,15 @@ export const DASHBOARD_BREAKPOINTS = [
 export const DASHBOARD_TABLE_CATEGORY_KEY = "category";
 // The name a group shows while it has no title, in its header, its menu's move list and its delete confirm
 export const DASHBOARD_UNTITLED_GROUP_TITLE = "Untitled group";
+// The editor's regions, in the pixels a resize handle reports. The bar is one control row of 8 steps with its padding either
+// Side, so it is held at that height, and the two side regions are sized to hold their content between their limits
+export const DASHBOARD_EDITOR_BAR_HEIGHT = 48;
+export const DASHBOARD_EDITOR_PALETTE_WIDTH = 256;
+export const DASHBOARD_EDITOR_PALETTE_MINIMUM_WIDTH = 192;
+export const DASHBOARD_EDITOR_PALETTE_MAXIMUM_WIDTH = 384;
+export const DASHBOARD_EDITOR_INSPECTOR_WIDTH = 320;
+export const DASHBOARD_EDITOR_INSPECTOR_MINIMUM_WIDTH = 288;
+export const DASHBOARD_EDITOR_INSPECTOR_MAXIMUM_WIDTH = 512;
 // The keys a focused visual takes, listed as the grid's shortcuts. The grid binds them itself, so no command runs them
 export const DASHBOARD_GRID_COMMANDS: UiCommand[] = [
   {

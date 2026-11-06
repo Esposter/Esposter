@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useDashboardStore } from "@/store/dashboard";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -20,35 +18,30 @@ const overlapItems = [
 ];
 </script>
 
+<!-- The settings of the whole canvas, which the inspector shows while nothing on it is selected -->
 <template>
-  <UiPopover label="Layout" :variant="UiButtonVariant.Quiet">
-    <template #trigger>
-      <UiIcon :meaning="UiIconMeaning.Settings" />
-      Layout
-    </template>
-    <div w="[min(20rem,80dvw)]" p-3 flex flex-col gap-3>
-      <p text-sm text-muted>Packing</p>
-      <UiRadioGroup
-        label="Packing"
-        :items="packingItems"
-        :model-value="dashboard.compactType"
-        @update:model-value="
-          async (compactType) => {
-            if (compactType) await setLayout({ collision: dashboard.collision, compactType });
-          }
-        "
-      />
-      <p text-sm text-muted>Overlaps</p>
-      <UiRadioGroup
-        label="Overlaps"
-        :items="overlapItems"
-        :model-value="dashboard.collision"
-        @update:model-value="
-          async (collision) => {
-            if (collision) await setLayout({ collision, compactType: dashboard.compactType });
-          }
-        "
-      />
-    </div>
-  </UiPopover>
+  <div p-3 flex flex-col gap-3>
+    <p text-sm text-muted>Packing</p>
+    <UiRadioGroup
+      label="Packing"
+      :items="packingItems"
+      :model-value="dashboard.compactType"
+      @update:model-value="
+        async (compactType) => {
+          if (compactType) await setLayout({ collision: dashboard.collision, compactType });
+        }
+      "
+    />
+    <p text-sm text-muted>Overlaps</p>
+    <UiRadioGroup
+      label="Overlaps"
+      :items="overlapItems"
+      :model-value="dashboard.collision"
+      @update:model-value="
+        async (collision) => {
+          if (collision) await setLayout({ collision, compactType: dashboard.compactType });
+        }
+      "
+    />
+  </div>
 </template>

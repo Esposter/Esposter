@@ -8,7 +8,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import DashboardEditorContent from "@/components/Dashboard/Editor/Content.vue";
-import DashboardEditorLayout from "@/components/Dashboard/Editor/Layout.vue";
+import DashboardEditorSettings from "@/components/Dashboard/Editor/Settings.vue";
 import { stubElementAtPoint } from "@/services/dashboard/grid/stubElementAtPoint.test";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -23,10 +23,9 @@ import { flushPromises } from "@vue/test-utils";
 import { assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
-describe("dashboardEditorLayout", () => {
+describe("dashboardEditorSettings", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const layoutLabel = '[aria-label="Layout"]';
   // The editor's grid is twelve columns across this width, a column pitch of 80px, the same as the grid's own suite
   const gridWidth = 970;
   const columnPitch = 80;
@@ -57,8 +56,6 @@ describe("dashboardEditorLayout", () => {
   };
   // The choices are radios, and the one chosen is the radio that reads checked
   const chooseRadio = async (wrapper: VueWrapper, title: string) => {
-    await wrapper.get(layoutLabel).trigger("click");
-    await flushPromises();
     const radio = wrapper.findAll('[role="radio"]').find((item) => item.text().startsWith(title));
     await radio?.trigger("click");
     await flushPromises();
@@ -69,7 +66,7 @@ describe("dashboardEditorLayout", () => {
     stubGridWidth(gridWidth);
   });
 
-  // The grid beside the control refuses a visual dropped onto another one under this choice, and the choice is saved
+  // The grid beside the settings refuses a visual dropped onto another one under this choice, and the choice is saved
   test("choosing block overlap", async () => {
     expect.hasAssertions();
 
@@ -77,9 +74,9 @@ describe("dashboardEditorLayout", () => {
       new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 0 }),
       new Visual({ h: 2, type: VisualType.Card, w: 2, x: 2, y: 0 }),
     ]);
-    const layout = await mountSuspended(DashboardEditorLayout, { attachTo: document.body });
+    const settings = await mountSuspended(DashboardEditorSettings);
     const editor = await mountSuspended(DashboardEditorContent);
-    await chooseRadio(layout, "Block overlap");
+    await chooseRadio(settings, "Block overlap");
     stubElementAtPoint(editor.get(".dashboard-grid").element);
     const tile = takeOne(editor.findAll(".dashboard-grid-tile"));
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
@@ -109,13 +106,13 @@ describe("dashboardEditorLayout", () => {
     expect.hasAssertions();
 
     await loadDashboard([new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 2 })]);
-    const layout = await mountSuspended(DashboardEditorLayout, { attachTo: document.body });
+    const settings = await mountSuspended(DashboardEditorSettings);
     const editor = await mountSuspended(DashboardEditorContent);
     await flushPromises();
     const tile = takeOne(editor.findAll(".dashboard-grid-tile"));
     assert(tile.element instanceof HTMLElement);
     const packedTop = tile.element.style.top;
-    await chooseRadio(layout, "Free placement");
+    await chooseRadio(settings, "Free placement");
 
     expect({
       packedTop,
@@ -131,7 +128,7 @@ describe("dashboardEditorLayout", () => {
     trpcMsw.dashboard.saveResourceContent.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const wrapper = await mountSuspended(DashboardEditorLayout, { attachTo: document.body });
+    const wrapper = await mountSuspended(DashboardEditorSettings);
     await chooseRadio(wrapper, "Swap places");
     const dashboardStore = useDashboardStore();
     const { dashboard } = storeToRefs(dashboardStore);

@@ -11,7 +11,6 @@ import DashboardGrid from "@/components/Dashboard/Grid/Index.vue";
 import DashboardGridTile from "@/components/Dashboard/Grid/Tile.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
 import DashboardVisualPreviewContainer from "@/components/Dashboard/Visual/Preview/Container.vue";
-import DashboardVisualPreviewEditFormDialog from "@/components/Dashboard/Visual/Preview/EditFormDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import {
   DASHBOARD_EDITOR_ROW_HEIGHT,
@@ -107,17 +106,21 @@ describe("dashboardEditorContent", () => {
     expect(visuals.value.map(({ id }) => id)).toStrictEqual([cardVisual.id]);
   });
 
-  test("an edit opens the editor's one edit form on the visual whose menu picked it", async () => {
+  // The menu's Edit opens the form the inspector shows, and selects the visual that form is for
+  test("an edit selects the visual whose menu picked it and opens its form", async () => {
     expect.hasAssertions();
 
     const cardVisual = new Visual({ type: VisualType.Card });
     const tableVisual = new Visual({ type: VisualType.Table, x: 4 });
     const wrapper = await mountEditor([cardVisual, tableVisual]);
     await pickTileMenuItem(wrapper, tableVisual.id, "Edit visual");
+    const visualStore = useVisualStore();
+    const { editedItem, selectedVisualId } = storeToRefs(visualStore);
 
-    expect(
-      wrapper.findAllComponents(DashboardVisualPreviewEditFormDialog).map((dialog) => dialog.props("modelValue").id),
-    ).toStrictEqual([tableVisual.id]);
+    expect({ editedItemId: editedItem.value?.id, selectedVisualId: selectedVisualId.value }).toStrictEqual({
+      editedItemId: tableVisual.id,
+      selectedVisualId: tableVisual.id,
+    });
   });
 
   test("deleting asks first", async () => {

@@ -19,7 +19,7 @@ import { prettify } from "@/util/text/prettify";
 const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
-const { editedItem, visuals } = storeToRefs(visualStore);
+const { visuals } = storeToRefs(visualStore);
 const { clearSelection, deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
@@ -87,9 +87,8 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
       </template>
     </DashboardGrid>
   </div>
-  <!-- Mounted once for the editor, not in each tile: a tile's Delete names its visual in the dialog store and its Edit sets
-    the edited draft, and these open on that. Outside the grid's branch, so a delete that empties the editor still leaves
-    through its transition -->
+  <!-- Mounted once for the editor, not in each tile: a tile's Delete names its visual in the dialog store, and the confirm opens
+    on that. Outside the grid's branch, so a delete that empties the editor still leaves through its transition -->
   <UiConfirmDialog
     v-if="deletingVisual"
     v-model="isDeleteOpen"
@@ -107,7 +106,6 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
     <p>{{ getVisualDeleteDescription(deletingVisual) }}</p>
   </UiConfirmDialog>
   <DashboardVisualPreviewMoveDialog v-if="movingVisual" v-model="isMoveOpen" :visual="movingVisual" />
-  <DashboardVisualPreviewEditFormDialog v-if="editedItem" :key="editedItem.id" v-model="editedItem" />
 </template>
 
 <style scoped>

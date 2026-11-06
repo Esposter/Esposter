@@ -2,9 +2,8 @@
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import DashboardEditorLayout from "@/components/Dashboard/Editor/Layout.vue";
-import DashboardPalette from "@/components/Dashboard/Palette/Index.vue";
 import DashboardVisualPreviewActionsMenu from "@/components/Dashboard/Visual/Preview/ActionsMenu.vue";
+import EditorShell from "@/components/Editor/Shell.vue";
 import ResourceDashboardView from "@/components/Resource/Dashboard/View.vue";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -56,10 +55,24 @@ describe("resourceDashboardView", () => {
 
     expect({
       exportPng: component.findAll("button").some((button) => button.text() === "Export PNG"),
-      layout: component.findComponent(DashboardEditorLayout).exists(),
       menu: component.findComponent(DashboardVisualPreviewActionsMenu).exists(),
-      palette: component.findComponent(DashboardPalette).exists(),
       tiles: component.findAll(".dashboard-grid-tile").length,
-    }).toStrictEqual({ exportPng: true, layout: false, menu: false, palette: false, tiles: 1 });
+    }).toStrictEqual({ exportPng: true, menu: false, tiles: 1 });
+  });
+
+  // The editor's bar, palette and inspector are drawn by the editor's shell alone, so a viewer gets none of them
+  test("The published page draws no editor regions", async () => {
+    expect.hasAssertions();
+
+    mockPublishedDashboard(new Dashboard({ visuals: [new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 0 })] }));
+    const component = await mountSuspended(ResourceDashboardView, { props: { id } });
+    await flushPromises();
+    const buttonTexts = component.findAll("button").map((button) => button.text());
+
+    expect({
+      addVisual: buttonTexts.includes("Add visual"),
+      editorShell: component.findComponent(EditorShell).exists(),
+      layout: buttonTexts.includes("Layout"),
+    }).toStrictEqual({ addVisual: false, editorShell: false, layout: false });
   });
 });
