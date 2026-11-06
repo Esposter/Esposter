@@ -1,9 +1,11 @@
 // @vitest-environment nuxt
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 
+import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import PageBuilderEmailPreview from "@/components/PageBuilder/Email/Preview.vue";
+import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -22,6 +24,7 @@ describe("pageBuilderEmailPreview", () => {
   });
   const html = "a";
   const message = "a";
+  const warningMessage = "b";
   const emailDocument: EmailDocument = { content: [], root: { props: {} } };
 
   test("preview shows the compiled email at mobile width", async () => {
@@ -44,7 +47,7 @@ describe("pageBuilderEmailPreview", () => {
   test("validator messages show above the preview", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.mutation(() => ({ message }));
+    trpcMsw.email.compile.mutation(() => ({ message, messages: [{ level: EmailValidationLevel.Strict, message }] }));
     const wrapper = await mountSuspended(PageBuilderEmailPreview, {
       props: { device: PageBuilderDevice.Desktop, emailDocument },
     });
@@ -55,6 +58,29 @@ describe("pageBuilderEmailPreview", () => {
 
     expect(alert.text()).toBe(message);
     expect(wrapper.element.firstElementChild).toBe(alert.element);
+    wrapper.unmount();
+  });
+
+  test("A validator message becomes a finding", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.email.compile.mutation(() => ({
+      message,
+      messages: [
+        { level: EmailValidationLevel.Strict, message },
+        { level: EmailValidationLevel.Soft, message: warningMessage },
+      ],
+    }));
+    const wrapper = await mountSuspended(PageBuilderEmailPreview, {
+      props: { device: PageBuilderDevice.Desktop, emailDocument },
+    });
+    await waitForSynchronizedFunctions();
+    await flushPromises();
+
+    expect(wrapper.vm.findings).toStrictEqual([
+      { message, nodeId: "", severity: EditorFindingSeverity.Error },
+      { message: warningMessage, nodeId: "", severity: EditorFindingSeverity.Warning },
+    ]);
     wrapper.unmount();
   });
 

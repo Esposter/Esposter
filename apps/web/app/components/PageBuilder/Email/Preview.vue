@@ -3,6 +3,7 @@ import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
+import { toEmailValidatorFinding } from "@/services/emailEditor/toEmailValidatorFinding";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 
 interface Props {
@@ -23,6 +24,12 @@ const { data, error, refresh } = useQuery(() => $trpc.email.compile.mutate(email
   },
 });
 const message = computed(() => (data.value && "message" in data.value ? data.value.message : ""));
+// The validator's messages as findings, exposed for the email's problems surface to list
+const findings = computed(() =>
+  data.value && "messages" in data.value
+    ? data.value.messages.map((validatorMessage) => toEmailValidatorFinding(validatorMessage))
+    : [],
+);
 // Mobile and tablet match the canvas's width for their device. Desktop fills the pane, where the canvas uses its minimum
 const frameWidth = computed(() => (device === PageBuilderDevice.Desktop ? "100%" : `${DEVICE_WIDTH_MAP[device]}px`));
 // Each edit schedules one compile on the autosave's cadence, so a run of keystrokes compiles once
@@ -31,6 +38,7 @@ watchDeep(
   () => emailDocument,
   () => scheduleRefresh(),
 );
+defineExpose({ findings });
 </script>
 
 <!-- The frame is sandboxed like the published view: scripts run, and the email gets no access to the owner's session -->
