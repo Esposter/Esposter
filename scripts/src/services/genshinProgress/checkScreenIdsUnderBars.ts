@@ -5,9 +5,9 @@ import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/Parit
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
 import { getExitCheck } from "#src/services/genshinProgress/getExitCheck";
 
-// A screen's check is met when every parity id its page names scores under its bar: the bar its reference records, or else the
-// Default. An id with no committed score, or no reference at all, is not under its bar, and a score at its bar is not
-// Under it. A bar set on a measure the report's means do not carry is not measurable here
+// A screen's check is met when every parity id its page names scores under its bar: the bar its reference records, or
+// Else the default. An id with no committed score, or no reference at all, is not under its bar, and a score at its bar
+// Is not under it. A bar set on a measure the report's means do not carry is not measurable here
 export const checkScreenIdsUnderBars = (
   folder: string,
   parityIds: readonly string[],
