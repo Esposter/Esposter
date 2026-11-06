@@ -11,10 +11,14 @@ import { surveyNodeChildren } from "headless-survey-engine";
 // of the survey, where a page goes
 export const getSurveyInsertPlaces = (document: SurveyDocument, selectedPointer: string): DropTarget[] => {
   if (selectedPointer === "") {
+    const surveyPlace = { index: getSurveySlotLength(document, "/content"), slotPointer: "/content" };
+    // A survey with no page has no first page whose end could take an element, so only the survey's end is left
+    if (document.content.length === 0) return [surveyPlace];
+
     const firstPageChildrenPointer = getBlockPropPointer("/content/0", "children");
     return [
       { index: getSurveySlotLength(document, firstPageChildrenPointer), slotPointer: firstPageChildrenPointer },
-      { index: getSurveySlotLength(document, "/content"), slotPointer: "/content" },
+      surveyPlace,
     ];
   }
 
