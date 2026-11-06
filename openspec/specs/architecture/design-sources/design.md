@@ -18,10 +18,10 @@ flowchart TD
   A --> P[Platform documents: the browser feature that implements it]
   P --> C{A leaner or better design, following our conventions?}
   C -->|no, only a copy of the reference| D
-  C -->|yes, and every flow kept| U["Kept, and checked by its measure: a Genshin screen's compare score, or run-app's steps; a layout no measure reaches is reported unverified"]
+  C -->|yes, and every flow kept| U["Kept, and checked by its measure: a Genshin screen's compare score, or run-app's steps"]
 ```
 
-The last gate is the design pass's own question. A reference product is evidence and inspiration, not the goal: a design departs from it wherever a leaner or better design follows our conventions, and each departure is argued in the area's design, with the commit body saying how it is better and citing the source it came from.
+The last gate is the design pass's own question. A reference product is evidence and inspiration, not the goal: a design departs from it wherever a leaner or better design follows our conventions, and each departure is argued in the area's design, with the commit body saying how it is better and citing the source it came from. A layout no measure reaches is reported unverified, never claimed as checked.
 
 ## References each area studies
 

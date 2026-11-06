@@ -7,7 +7,7 @@ Every daily, weekly and monthly reset in the world is read off one server clock,
 ```mermaid
 flowchart TD
   T["A moment, as an Instant"] --> GD["computeGameDay: the date of the moment less GAME_DAY_START_HOUR hours, in GAME_TIME_ZONE"]
-  T --> LD["computeLastDailyReset: the GAME_DAY_START_HOUR reset at or before the moment, in GAME_TIME_ZONE"]
+  T --> LD["computeLastDailyReset: the last GAME_DAY_START_HOUR reset, in GAME_TIME_ZONE"]
   LD --> ND["computeNextDailyReset: the GAME_DAY_START_HOUR reset a day after"]
   LD --> LW["computeLastWeeklyReset: the Monday GAME_DAY_START_HOUR reset at or before"]
   LW --> NW["computeNextWeeklyReset: the Monday GAME_DAY_START_HOUR reset a week after"]

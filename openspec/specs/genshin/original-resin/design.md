@@ -8,7 +8,7 @@ Pressing F at a cleared challenge's blossom offers its claims, the ones the held
 
 ```mermaid
 flowchart TD
-  W["Wallet: the count and the moment it last changed"] --> R["Read to now: a point each ORIGINAL_RESIN_REGEN_MINUTES minutes, to the cap (ORIGINAL_RESIN_CAP)"]
+  W["Wallet: the count and the moment it last changed"] --> R["Read to now: a point each ORIGINAL_RESIN_REGEN_MINUTES minutes, up to ORIGINAL_RESIN_CAP"]
   R --> M["The map's top bar: the count out of ORIGINAL_RESIN_CAP"]
   R --> F{"Refill or claim?"}
   F -->|"refill with Primogems"| P["Price: PRIMOGEM_RESIN_RESTORE restored, to ORIGINAL_RESIN_REFILL_CAP"]

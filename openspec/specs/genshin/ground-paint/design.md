@@ -6,7 +6,7 @@ Genshin's terrain is painted in layers: its tiles hold a weight per layer at eve
 
 ```mermaid
 flowchart TD
-  BM["The terrain tiles' cells, each in one splat layer"] --> FIT["fitGroundLayerField: each layer's share at every node of a grid of GROUND_LAYER_CELL_SIZE-metre cells"]
+  BM["The terrain tiles' cells, each in one splat layer"] --> FIT["fitGroundLayerField: each layer's share at each node of a GROUND_LAYER_CELL_SIZE grid"]
   FIT --> F["windrise/ground-layers, published to the game data"]
   V["A vertex: its height, slope and place"] --> L["The field's shares there, read bilinearly, or grass where a paint has no field"]
   F --> L
