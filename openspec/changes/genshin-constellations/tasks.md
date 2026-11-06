@@ -15,3 +15,4 @@
 ## 4. Wish showing
 
 - [x] 4.1 Show the Stella Fortuna each draw brings on its result card. Verify: a test named after the scenario 'a duplicate's result card shows its Stella Fortuna', seen failing first.
+- [ ] 4.2 Show the Masterless Stella Fortuna a five-star past six copies brings on its result card. Verify: a test named after the scenario 'a five-star past six copies' result card shows its Masterless Stella Fortuna', proven failing with its fix reverted (the `testing` skill's regression proof).

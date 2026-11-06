@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "2.1 (each constellation's switch in its kit module): most constellations have no switch yet, and most kit modules name the mechanic each one waits on as not built in their header"
 x-touches:
   [
     "packages/genshin-world/src/components/Character/**",
