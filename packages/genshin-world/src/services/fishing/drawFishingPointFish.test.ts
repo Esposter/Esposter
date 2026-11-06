@@ -29,7 +29,7 @@ describe(drawFishingPointFish, () => {
     [REGION]: [createPool(FIRST_POOL_ID, FIRST_FISH_ID), createPool(SECOND_POOL_ID, SECOND_FISH_ID)],
   };
 
-  test("a point draws the fish of its region's standing stocks, each tagged with the stock it is in", () => {
+  test("a point draws from its region's pools", () => {
     expect.hasAssertions();
 
     const standingStocks = computeStandingFishingStocks(TWO_POOLS, REGION, HOUR, new Map(), CAUGHT_AT);
