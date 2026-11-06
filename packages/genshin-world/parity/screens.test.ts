@@ -16,7 +16,7 @@ describe("screens", () => {
     .filter((path) => basename(path) === "Index.vue" && basename(dirname(path)) === "Screen")
     .map((path) => normalize(dirname(path)));
 
-  test("every screen folder has a fixture or is named pending", () => {
+  test("screen folder with neither a fixture nor a pending entry", () => {
     expect.hasAssertions();
 
     const pending = new Set(pendingScreens.map(({ directory }) => normalize(directory)));
@@ -27,7 +27,7 @@ describe("screens", () => {
     expect(uncovered).toStrictEqual([]);
   });
 
-  test("names only screen folders that have no fixture", () => {
+  test("screen folder with a fixture and a reference", () => {
     expect.hasAssertions();
 
     const stale = pendingScreens.filter(

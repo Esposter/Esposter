@@ -1,9 +1,13 @@
+import type { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
 import type { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import type { getReferencePath } from "#src/services/genshinParity/shared/getReferencePath";
 import type { spawnSync as baseSpawnSync } from "@esposter/shared-node/child-process";
 
+import { ApprovalStatus } from "#src/models/genshinParity/reference/ApprovalStatus";
 import { listFixtureScreens } from "#src/services/genshinParity/fixtures/listFixtureScreens";
 import { approveReference } from "#src/services/genshinParity/reference/approveReference";
 import { readReferenceManifest } from "#src/services/genshinParity/reference/readReferenceManifest";
+import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { GENSHIN_WORLD_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { getFixtureImageName } from "genshin-interface/getFixtureImageName";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -19,6 +23,13 @@ vi.mock(import("#src/services/genshinParity/reference/readReferenceManifest"), (
 }));
 vi.mock(import("#src/services/genshinParity/fixtures/listFixtureScreens"), () => ({
   listFixtureScreens: vi.fn<typeof listFixtureScreens>(),
+}));
+vi.mock(import("#src/services/genshinParity/reference/readScore"), () => ({ readScore: vi.fn<typeof readScore>() }));
+vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
+  writeParityScores: vi.fn<typeof writeParityScores>(),
+}));
+vi.mock(import("#src/services/genshinParity/shared/getReferencePath"), () => ({
+  getReferencePath: vi.fn<typeof getReferencePath>(),
 }));
 const { spawnSync } = vi.hoisted(() => ({ spawnSync: vi.fn<typeof baseSpawnSync>() }));
 
@@ -84,5 +95,42 @@ describe(approveReference, () => {
       `[InvalidOperationError: Invalid operation: Update, name: ArchiveScreen, the visual suite exited 1]`,
     );
     expect(existsSync(imagePath)).toBe(false);
+  });
+
+  // A subscreen's image is written whatever its compare scores, and its status against the bar is printed beside it
+  const arrangeSubscreen = (meanDifference: number) => {
+    vi.mocked(readReferenceManifest).mockResolvedValue([{ id: "character-artifacts" }] as never);
+    vi.mocked(listFixtureScreens).mockResolvedValue([
+      { directory: relative(componentsDirectory, directory), name: "CharacterScreen", variant: "artifacts" },
+    ] as never);
+    vi.mocked(readScore).mockResolvedValue({ flip: 0, meanDifference } as never);
+    vi.mocked(spawnSync).mockImplementation(() => {
+      writeFileSync(join(directory, `${getFixtureImageName("artifacts")}.png`), "render");
+      return { status: 0 } as never;
+    });
+  };
+
+  test("compare clears the bar", async () => {
+    expect.hasAssertions();
+    arrangeSubscreen(0);
+    const log = vi.spyOn(console, "log").mockReturnValue(undefined);
+
+    await approveReference("character-artifacts", "artifacts");
+
+    expect(readFileSync(join(directory, `${getFixtureImageName("artifacts")}.png`), "utf8")).toBe("render");
+    expect(log).toHaveBeenCalledWith(expect.stringContaining(ApprovalStatus.WithinBar));
+    log.mockRestore();
+  });
+
+  test("compare does not clear the bar", async () => {
+    expect.hasAssertions();
+    arrangeSubscreen(50);
+    const log = vi.spyOn(console, "log").mockReturnValue(undefined);
+
+    await approveReference("character-artifacts", "artifacts");
+
+    expect(readFileSync(join(directory, `${getFixtureImageName("artifacts")}.png`), "utf8")).toBe("render");
+    expect(log).toHaveBeenCalledWith(expect.stringContaining(ApprovalStatus.OverBar));
+    log.mockRestore();
   });
 });

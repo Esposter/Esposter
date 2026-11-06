@@ -22,7 +22,7 @@
 
 ## 3. One image per subscreen
 
-- [x] 3.1 Write `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts` first, beside the resolver, asserting that a subscreen's approved image resolves to `Index.png` with no platform segment, and watch it fail on the current resolver. Verify: the test titled "names a screenshot the same on Windows as on macOS", for the scenarios "Image name on a Windows machine", "Image name on a macOS machine" and "Two approved images for one screen", seen failing.
+- [ ] 3.1 Write `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts` beside the resolver, asserting that a subscreen's approved image resolves to `Index.png` with no platform segment. Verify: tests named after the scenarios "Image name on a Windows machine" and "Image name on a macOS machine" in that file. Open: no check fails a screen with two approved images, so "Two approved images for one screen" has no test and this box stays open until one exists.
 - [x] 3.2 Drop the platform from `getVitestBrowserConfiguration.ts`, and make `approveReference.ts` write `Index.png` and `Index-<variant>.png`. Verify: the resolver test passes, and `approveReference` writes a file with no platform segment in its test, and the scenarios 'Compare clears the bar' and 'Compare does not clear the bar' hold in `approveReference.test.ts`.
 - [x] 3.3 Rename the 36 platform-suffixed images, keeping the win32 file where a screen has both. Verify: `git ls-files | grep -E "\.(win32|darwin)\.png$"` prints nothing.
 - [x] 3.4 Update the comments in `components.visual.ts` and `screens.visual.ts` that name `Index.<platform>.png`. Verify: `git grep -F "<platform>"` prints nothing outside this change.

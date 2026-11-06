@@ -13,6 +13,15 @@ import { describe, expect, test } from "vitest";
  * its image locks in whatever it draws. Every screen the suite shoots is held to having a reference here,
  * and every reference to a screen that exists, so `compare --all` scores them all.
  */
+// A subscreen is covered by an entry naming both its screen and its variant, so an entry for its base alone covers none of its variants
+const findSubscreensWithoutEntry = (
+  subscreens: readonly { screen: string; variant: string }[],
+  entries: readonly { screen: string; variant?: string }[],
+) =>
+  subscreens.filter(
+    ({ screen, variant }) => !entries.some((entry) => entry.screen === screen && entry.variant === variant),
+  );
+
 describe("parityReferenceMap", () => {
   const COMPONENTS_DIRECTORY = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
   // Each screen is a folder holding its `Index.vue` and `Index.fixture.ts`, named by its path as the package's barrel
@@ -28,7 +37,7 @@ describe("parityReferenceMap", () => {
     getComponentName(relative(COMPONENTS_DIRECTORY, path).replace(/\.fixture\.ts$/u, ".vue"));
   const referencedScreens = new Set(Object.values(ParityReferenceMap).map(({ screen }) => screen));
 
-  test("names a reference for every screen the visual suite shoots", () => {
+  test("fixture added without a reference", () => {
     expect.hasAssertions();
 
     const stillScreens = fixturePaths
@@ -46,22 +55,42 @@ describe("parityReferenceMap", () => {
     expect([...referencedScreens].filter((screen) => !screens.has(screen))).toStrictEqual([]);
   });
 
-  test("names a reference for every subscreen", () => {
+  const subscreens = fixturePaths.flatMap((path) => {
+    const screen = toScreen(path);
+
+    return getFixtureVariantNames(readFileSync(path, "utf8")).map((variant) => ({ screen, variant }));
+  });
+
+  test("variant with its own reference", () => {
     expect.hasAssertions();
 
-    const subscreens = fixturePaths.flatMap((path) => {
-      const screen = toScreen(path);
+    expect(findSubscreensWithoutEntry(subscreens, Object.values(ParityReferenceMap))).toStrictEqual([]);
+  });
 
-      return getFixtureVariantNames(readFileSync(path, "utf8")).map((variant) => ({ screen, variant }));
-    });
-    const referencedEntries = Object.values(ParityReferenceMap);
+  test("variant with no entry", () => {
+    expect.hasAssertions();
+
+    expect(findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [])).toStrictEqual([
+      { screen: "ArchiveScreen", variant: "dusk" },
+    ]);
+  });
+
+  test("variant borrowing its base's reference", () => {
+    expect.hasAssertions();
 
     expect(
-      subscreens.filter(
-        ({ screen, variant }) =>
-          !referencedEntries.some((entry) => entry.screen === screen && entry.variant === variant),
-      ),
-    ).toStrictEqual([]);
+      findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [{ screen: "ArchiveScreen" }]),
+    ).toStrictEqual([{ screen: "ArchiveScreen", variant: "dusk" }]);
+  });
+
+  test("variant pending with a reason", () => {
+    expect.hasAssertions();
+
+    const pendingEntry = { pending: "the dusk light is not recorded yet", screen: "ArchiveScreen", variant: "dusk" };
+
+    expect(findSubscreensWithoutEntry([{ screen: "ArchiveScreen", variant: "dusk" }], [pendingEntry])).toStrictEqual(
+      [],
+    );
   });
 
   test("scores no region left of its window's edge", () => {

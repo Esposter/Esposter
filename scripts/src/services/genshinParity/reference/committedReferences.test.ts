@@ -45,7 +45,7 @@ describe("committedReferences", () => {
       .map((path) => join(COMPONENTS_DIRECTORY, path)),
   ];
 
-  test("commits a file for every reference the map names, and a plate for every one that names one", async () => {
+  test("reference is a committed screenshot or wiki file", async () => {
     expect.hasAssertions();
 
     const missing = [

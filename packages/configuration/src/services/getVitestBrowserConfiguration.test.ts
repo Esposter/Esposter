@@ -33,10 +33,18 @@ describe(getVitestBrowserConfiguration, () => {
     vi.unstubAllEnvs();
   });
 
-  test("names a screenshot the same on Windows as on macOS", () => {
+  test("image name on a Windows machine", () => {
     expect.hasAssertions();
 
     expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform: "win32", root: "/root" })).toBe(
+      join("/root", "src", "components", "Index.png"),
+    );
+  });
+
+  test("image name on a macOS machine", () => {
+    expect.hasAssertions();
+
+    expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform: "darwin", root: "/root" })).toBe(
       join("/root", "src", "components", "Index.png"),
     );
   });
