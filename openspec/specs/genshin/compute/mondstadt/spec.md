@@ -71,7 +71,7 @@ The Mondstadt City surface SHALL match the exports' mean colour within 2.3 Delta
 
 ### Requirement: The Mondstadt City display
 
-The Mondstadt City display SHALL keep the shipped contrast's excess within 0.1 of the reference's current build, across the tone curve, grading and bloom of the post profile. It waits on the surface pass.
+The Mondstadt City display SHALL keep the shipped contrast's excess within 0.1 of the reference's current build. It waits on the surface pass.
 
 #### Scenario: A contrast excess beyond 0.1 is not held
 
