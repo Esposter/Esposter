@@ -7,12 +7,8 @@ import { SITE_NAME } from "@esposter/shared";
   <section flex flex-col gap-4 max-w-prose>
     <h2 ui-title>Why {{ SITE_NAME }}?</h2>
     <p>
-      {{ SITE_NAME }} is an independent, community-driven lifetime project. It was created by
-      <NuxtLink text-info no-underline hover:underline target="_blank" :to="LINKEDIN_PROFILE_URL">
-        Jimmy Chen
-      </NuxtLink>
-      as a personal attempt to incorporate the best features of social media in a minimalistic way with the least amount
-      of code.
+      One person's attempt to keep the best parts of social media and leave out the rest. Made, and still being made, by
+      <NuxtLink text-info no-underline hover:underline target="_blank" :to="LINKEDIN_PROFILE_URL">Jimmy Chen</NuxtLink>.
     </p>
   </section>
 </template>

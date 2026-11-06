@@ -20,6 +20,7 @@ const { stop } = useIntersectionObserver(
   <NuxtLayout>
     <article px-4 py-6 flex flex-col gap-12 items-center ui-body>
       <AboutHeader />
+      <AboutProducts />
       <AboutContent />
       <AboutSupporters />
       <section flex flex-col gap-4 items-center>

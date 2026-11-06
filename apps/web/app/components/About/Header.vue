@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import vuejsLogoUwuUrl from "@/assets/about/vuejsLogoUWU.png?url";
+import { SITE_DESCRIPTION } from "#shared/services/app/constants";
+import { SITE_NAME } from "@esposter/shared";
 </script>
 
 <template>
   <header text-center flex flex-col gap-4 items-center>
     <VisualGem />
-    <!-- The one word the line is about takes the accent a heading is drawn in, and the rest reads as body text -->
-    <h1 ui-display>
-      <span text-text>The</span> Progressive
-      <br />
-      <span text-text>JavaScript Application</span>
-    </h1>
-    <p text-muted max-w-prose>An approachable, performant and versatile javascript application powered by</p>
-    <NuxtImg max-w-180 w-full :src="vuejsLogoUwuUrl" alt="uwu" />
+    <h1 ui-display>{{ SITE_NAME }}</h1>
+    <p max-w-prose>{{ SITE_DESCRIPTION }}</p>
+    <p text-muted max-w-prose>/ɛsˈpɒstər/ — "ess-POS-ter", the last two syllables as in "imposter"</p>
   </header>
 </template>

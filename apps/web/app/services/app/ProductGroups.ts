@@ -8,20 +8,52 @@ import { RoutePath } from "@esposter/shared";
 export const ProductGroups = [
   {
     items: [
-      { href: RoutePath.MessagesIndex, icon: "i-mdi:message-fast", title: MESSAGE_DISPLAY_NAME },
-      { href: RoutePath.CallsIndex, icon: "i-mdi:video", title: "Calls" },
+      {
+        description: "Chat with friends in rooms and threads.",
+        href: RoutePath.MessagesIndex,
+        icon: "i-mdi:message-fast",
+        title: MESSAGE_DISPLAY_NAME,
+      },
+      { description: "Talk face to face, on video.", href: RoutePath.CallsIndex, icon: "i-mdi:video", title: "Calls" },
     ],
     title: "Talk",
   },
   {
-    items: [{ href: RoutePath.ResourceExplorer, icon: "i-mdi:earth", title: RESOURCE_EXPLORER_DISPLAY_NAME }],
+    items: [
+      {
+        description: "Notes, forms, whiteboards and web pages, all in one place.",
+        href: RoutePath.ResourceExplorer,
+        icon: "i-mdi:earth",
+        title: RESOURCE_EXPLORER_DISPLAY_NAME,
+      },
+    ],
     title: "Make",
   },
-  { items: [{ href: RoutePath.Genshin, icon: "i-custom:genshin", title: "Genshin" }], title: "Build" },
   {
     items: [
-      { href: RoutePath.Clicker, icon: "i-mdi:cursor-pointer", title: "Clicker" },
-      { href: RoutePath.Dungeons, icon: "i-custom:dungeon-gate", title: "Dungeons" },
+      {
+        description: "A fan-made anime world to wander, right in your browser.",
+        href: RoutePath.Genshin,
+        icon: "i-custom:genshin",
+        title: "Genshin",
+      },
+    ],
+    title: "Build",
+  },
+  {
+    items: [
+      {
+        description: "Click. Upgrade. Repeat.",
+        href: RoutePath.Clicker,
+        icon: "i-mdi:cursor-pointer",
+        title: "Clicker",
+      },
+      {
+        description: "A little pixel dungeon to explore.",
+        href: RoutePath.Dungeons,
+        icon: "i-custom:dungeon-gate",
+        title: "Dungeons",
+      },
     ],
     title: "Play",
   },
