@@ -8,12 +8,12 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-// Longer than a pipe's buffer, so the source only arrives whole if the formatter reads all of its stdin
-const LARGER_THAN_A_PIPE_LENGTH = KIBIBYTE * 256;
-const BOUND_MILLISECONDS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-const SLOWER_THAN_BOUND_MILLISECONDS = Temporal.Duration.from({ seconds: 3 }).total("milliseconds");
-
 describe(formatSource, () => {
+  // Longer than a pipe's buffer, so the source only arrives whole if the formatter reads all of its stdin
+  const LARGER_THAN_A_PIPE_LENGTH = KIBIBYTE * 256;
+  const BOUND_MILLISECONDS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+  const SLOWER_THAN_BOUND_MILLISECONDS = Temporal.Duration.from({ seconds: 3 }).total("milliseconds");
+
   let root: string;
 
   beforeEach(() => {
