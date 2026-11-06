@@ -65,6 +65,11 @@ const sheetRegions = computed(() => presentationRegionMap.value.get(RegionPresen
 // The control that opened the sheet, which takes focus back when the sheet closes
 // A modal sheet is the only one open at a time, so one control is enough
 const openerElement = shallowRef<HTMLElement>();
+// A template cannot name the HTMLElement global, so the check that the opener is an element is made here
+const toggleSheet = (event: MouseEvent, regionId: string) => {
+  if (event.currentTarget instanceof HTMLElement) openerElement.value = event.currentTarget;
+  toggleRegion(regionId);
+};
 defineExpose({ setActivePanel, toggleRegion });
 </script>
 
@@ -109,12 +114,7 @@ defineExpose({ setActivePanel, toggleRegion });
             :key="region.id"
             :aria-expanded="region.isOpen"
             aria-haspopup="dialog"
-            @click="
-              (event: MouseEvent) => {
-                if (event.currentTarget instanceof HTMLElement) openerElement = event.currentTarget;
-                toggleRegion(region.id);
-              }
-            "
+            @click="(event: MouseEvent) => toggleSheet(event, region.id)"
           >
             {{ takeOne(regionNameMap, region.id) }}
           </UiButton>
