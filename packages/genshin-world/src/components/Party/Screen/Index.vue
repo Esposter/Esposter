@@ -19,11 +19,11 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 interface Props {
   // The character data by id, whose element and name text id each slot shows
   characterDataMap: ReadonlyMap<number, CharacterData>;
-  // The characters the player holds, in the order they are listed, which Quick Setup picks from
-  characters: Character[];
   // The readers of the published character packs by the character each is of. Quick Setup offers only the characters
   // That have one, since a party member with none is drawn as the Traveler
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
+  // The characters the player holds, in the order they are listed, which Quick Setup picks from
+  characters: Character[];
   gameText: GameText;
   // The names of the characters in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
