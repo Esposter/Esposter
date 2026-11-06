@@ -38,7 +38,6 @@ export const usePageBuilderFrame = (
     framePlacement.value = {
       height: frameRect.height,
       left: frameRect.left,
-      getScrollTop: () => frameElement.contentWindow?.scrollY ?? 0,
       scale: getFrameScaleOf(frameElement),
       top: frameRect.top,
     };
