@@ -9,11 +9,11 @@ Today the editor is a bar, a collapsible strip of palette tiles above the grid, 
 | Region    | Edge        | Opens        | Holds                                                                      |
 | :-------- | :---------- | :----------- | :------------------------------------------------------------------------- |
 | Bar       | top, docked | always       | the visual count and the one accent action, Add visual                     |
-| Visuals   | start       | on demand    | the palette: Charts and Layout groups, with search                         |
+| Visuals   | start       | on demand    | the palette: Charts and Layout groups                                      |
 | Inspector | end         | with content | the selection's form, below                                                |
 | Canvas    | the rest    | always       | the grid of tiles, each drawn by the same renderer the published page uses |
 
-The selection has three kinds. With nothing selected the inspector shows the dashboard's settings, how visuals pack and what a drop does, which the Layout popover held. With a visual selected it shows the visual's edit form and its dataset binding. With a group selected it shows the group's title. A press or Enter on a visual selects it, which is how it is opened now, and a press on the empty canvas clears the selection. The visual's menu keeps the occasional actions: duplicate, export, fit height, move to and delete, with the delete confirmation and the move dialog as they are.
+The selection has three kinds. With nothing selected the inspector shows the dashboard's settings, how visuals pack and what a drop does, which the Layout popover held. With a visual selected it shows the visual's edit form and its dataset binding. With a group selected it shows the group's title. A press or Enter on a visual selects it, which is how it is opened now, and a press on the empty canvas clears the selection, which closes the form it opened. The visual's menu keeps the occasional actions: duplicate, export, fit height, move to and delete, with the delete confirmation and the move dialog as they are.
 
 ```mermaid
 flowchart TD
@@ -31,30 +31,40 @@ A compact window opens the Visuals region and the inspector as sheets from two b
 
 - **The edit form is in the inspector, not a dialog.** The editor's tiles are the published renderer over live data, so an owner who changes a visual's type or binding wants to see the tile change. A dialog's scrim hides it. A dialog is for what must interrupt, and an edit that the canvas answers is not an interruption. Rejected: the dialog, which this replaces, and a popover over the tile, which covers the tile it is editing.
 - **The dashboard's settings are where nothing is selected.** A setting of the whole canvas belongs to the canvas, and nothing selected is the reader looking at the whole of it. Rejected: the popover on the bar, which kept one rarely used setting in the bar's row and gave the editor a second way to open a form.
-- **The palette is a region the reader opens.** Types are chosen where they land, and a docked palette keeps the canvas wide when closed and gives the groups room when open. Rejected: the strip above the grid, which spends the grid's height on a row of chips and has no search.
+- **The palette is a region the reader opens.** Types are chosen where they land, and a docked palette keeps the canvas wide when closed and gives the groups room when open. Rejected: the strip above the grid, which spends the grid's height on a row of chips.
+- **Below the mobile breakpoint the palette and the inspector are sheets.** The shell's medium class is that breakpoint, where the page's own drawers are already sheets, so the editor's two side regions follow them. Rejected: docking both at that width, which takes the phone's width from the grid.
 - **The grid package stays.** The canvas region holds the grid, and the [retirement](../../deferred/resource/retire-grid-layout-package/design.md) of the package waits on a product decision about free placement.
 - **Selection is store state, an id.** The pinia skill's rule for selection, so a move or a delete that changes a visual's place keeps it selected or clears it. Rejected: selection held in the tile component, which a second tile or the inspector cannot read.
-- **The selection is written where a visual's form opens, in the visual store.** The id lives in the visual store beside the visuals it names, not in the dashboard store that holds the content. Opening a form is the one write, so a press, Enter and the menu's Edit all select, and no press site repeats it. A press on the empty canvas clears it. A tile is a nested interaction of the canvas, handles included, as a group's grid is of its parent, so a press on a tile never clears the selection it made. Rejected: a selection written at each press site, which repeats the write in two components and leaves the menu's Edit unselected.
-- **A delete clears the selection and does not restore it on a refusal.** The selection clears with the visual it names or a group that held it, before the save. Restoring it on a refused save would overwrite a selection the reader made while the save was in flight, and the refused visual returns unselected. Rejected: restoring the previous selection, for that overwrite.
+- **The selection is written where a visual's form opens, in the visual store.** The id lives in the visual store beside the visuals it names, not in the dashboard store that holds the content. Opening a form is the one write, so a press, Enter and the menu's Edit all select, and no press site repeats it. The `onEdit` hook of the shared edit-form primitive carries that write, so a visual the deep-link query restores is selected too. A press on the empty canvas clears it. A tile is a nested interaction of the canvas, handles included, as a group's grid is of its parent, so a press on a tile never clears the selection it made. Rejected: a selection written at each press site, which repeats the write in two components and leaves the menu's Edit unselected.
+- **A delete clears the selection, and a refused save restores it only if the reader has made no other selection since.** The selection clears with the visual it names or a group that held it, before the save. A refused save puts the visual back and reopens the form it had, unless a selection made while the save was in flight is the reader's, which is kept. Rejected: always restoring, which overwrites that selection; never restoring, which leaves the refused visual on the canvas with its form closed and no sign why.
+- **A form change is applied as the reader types, and only what the form edits is written.** The draft is written onto its visual while the schema accepts it, so the tile redraws at once and the dashboard's autosave persists the change, with no Save to press. The write takes the type, the chart and the dataset, and never the visual's place or size, since a draft copied before the reader moved the visual would put the old place back. A draft the schema refuses is written nowhere, so an invalid value reaches neither the tile nor a save. Rejected: a Save button, which leaves the tile unchanged until pressed, and writing the whole draft, which reverts a move made while the form was open.
+- **The bar is a fixed-height region.** Its minimum and maximum are both 48 pixels, so the bar has no size to drag, though the shell still draws the resize handle a docked region gets. Whether the shell draws a handle for a region that cannot move is the shell's to settle. The height is in pixels like every region's, so a text size large enough to grow the bar's count could clip it.
 
 ## Not in this change
 
 - **New visual types, bindings or data sources.** The visuals and their forms are as they are.
 - **The grid's behaviour.** Packing, collision and the pointer gestures are the grid package's.
+- **Palette search.** The palette lists its types without a search field, as the strip did. A search is a later change, with its own task.
 
 ## Key files
 
-| File                                                                  | Role                                                             |
-| :-------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Dashboard/Editor.vue`               | the editor's arrangement, replaced by the layout                 |
-| `apps/web/app/components/Dashboard/Editor/Header.vue`                 | the bar, which keeps the count and Add visual                    |
-| `apps/web/app/components/Dashboard/Editor/Layout.vue`                 | the layout popover, whose content moves into the inspector       |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`                | the grid and the delete and move dialogs, which keep the dialogs |
-| `apps/web/app/components/Dashboard/Palette/Index.vue`                 | the palette strip, which becomes the Visuals region              |
-| `apps/web/app/components/Dashboard/Visual/Preview/EditFormDialog.vue` | the edit form's dialog, whose form moves into the inspector      |
-| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`    | the visual's menu, which keeps the occasional actions            |
-| `apps/web/app/store/dashboard/visual.ts`                              | the visuals and the edited item, which gains the selection       |
-| `apps/web/app/store/dashboard/dialog.ts`                              | the delete and move targets, kept                                |
+| File                                                                  | Role                                                                               |
+| :-------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Dashboard/Editor.vue`               | the editor shell with the layout, and the context read from the selected visual    |
+| `apps/web/app/services/dashboard/editor/DashboardLayout.ts`           | the layout as data: the bar, the Visuals region, the inspector and the canvas      |
+| `apps/web/app/services/dashboard/editor/DashboardEditorRegistry.ts`   | the component each content key draws                                               |
+| `apps/web/app/services/dashboard/editor/getDashboardEditorContext.ts` | the selection read as the layout's context                                         |
+| `apps/web/app/components/Dashboard/Editor/Header.vue`                 | the bar, which keeps the count and Add visual                                      |
+| `apps/web/app/components/Dashboard/Editor/Settings.vue`               | the inspector's entry with nothing selected: packing and overlaps                  |
+| `apps/web/app/components/Dashboard/Editor/Palette.vue`                | the Visuals region's content: the type tiles by category                           |
+| `apps/web/app/components/Dashboard/Editor/VisualForm.vue`             | the inspector's entry for a selected visual                                        |
+| `apps/web/app/components/Dashboard/Editor/VisualFormFields.vue`       | the visual's form, which writes a valid draft onto the visual as it changes        |
+| `apps/web/app/components/Dashboard/Editor/GroupForm.vue`              | the inspector's entry for a selected group: its title                              |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`                | the grid and the delete confirm; the edit form it mounted moved into the inspector |
+| `apps/web/app/components/Dashboard/Visual/Preview/ActionsMenu.vue`    | the visual's menu, which keeps the occasional actions                              |
+| `apps/web/app/store/dashboard/visual.ts`                              | the visuals, the selection and the form draft applied to its visual                |
+| `apps/web/app/store/dashboard/dialog.ts`                              | the delete and move targets, kept                                                  |
+| `apps/web/app/services/shared/editForm/createEditFormData.ts`         | the edit-form primitive, whose `onEdit` hook carries the selection write           |
 
 ## Sources
 
