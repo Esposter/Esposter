@@ -8,7 +8,7 @@ vi.mock(import("#src/services/connectVoiceServer"), () => ({ connectVoiceServer:
 vi.mock(import("node:fs"), () => ({ rmSync: vi.fn<typeof rmSync>() }));
 
 describe(deleteVoiceState, () => {
-  test("teardown removes the viewer setup", async () => {
+  test("Teardown removes the viewer setup", async () => {
     expect.hasAssertions();
 
     await deleteVoiceState();

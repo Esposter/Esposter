@@ -22,7 +22,7 @@ describe(createReadingPlayer, () => {
   const AUDIO = new Uint8Array([1, 2]);
   const SOUND_FORM = ViewerSoundForm.WavPath;
 
-  test("no viewer listening falls back to the stock player", async () => {
+  test("No viewer listening falls back to the stock player", async () => {
     expect.hasAssertions();
 
     const { createStock, stock } = createStockPlayer();
@@ -34,7 +34,7 @@ describe(createReadingPlayer, () => {
     expect(stock.play).toHaveBeenCalledExactlyOnceWith(AUDIO);
   });
 
-  test("a compressed-only path keeps the sound on the stock player", async () => {
+  test("A compressed-only path keeps the sound on the stock player", async () => {
     expect.hasAssertions();
 
     const { createStock, stock } = createStockPlayer();
@@ -53,7 +53,7 @@ describe(createReadingPlayer, () => {
     expect(stock.play).toHaveBeenCalledExactlyOnceWith(AUDIO);
   });
 
-  test("a viewer dropping mid-reply moves the rest to the player", async () => {
+  test("A viewer dropping mid-reply moves the rest to the player", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0 });

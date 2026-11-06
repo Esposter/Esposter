@@ -13,7 +13,7 @@ describe(createViewerOpener, () => {
   const MODEL_ID = 0;
   const OTHER_MODEL_ID = 1;
 
-  test("a machine with no viewer is unchanged", async () => {
+  test("A machine with no viewer is unchanged", async () => {
     expect.hasAssertions();
 
     const connect = vi.fn<(address: string) => Promise<undefined | ViewerLink>>();

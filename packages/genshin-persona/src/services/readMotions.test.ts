@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(readMotions, () => {
   const MOTION = "tap:mtn1";
 
-  test("a stored motion map with a moment missing reads that moment as unmapped", () => {
+  test("A stored motion map with a moment missing reads that moment as unmapped", () => {
     expect.hasAssertions();
 
     expect(readMotions({ [ViewerMoment.Attention]: MOTION })).toStrictEqual({
