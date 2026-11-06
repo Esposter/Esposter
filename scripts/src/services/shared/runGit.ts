@@ -1,6 +1,6 @@
+import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { timedOutGitError } from "#src/services/shared/timedOutGitError";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
@@ -21,7 +21,7 @@ export const runGit = (args: string[], cwd: string = REPOSITORY_ROOT, input?: st
       timeout,
     });
   } catch (error) {
-    if (isTimedOut(error)) throw timedOutGitError(args, timeout);
+    if (checkIsTimedOut(error)) throw timedOutGitError(args, timeout);
     throw error;
   }
 };

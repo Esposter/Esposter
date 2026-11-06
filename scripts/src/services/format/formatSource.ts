@@ -1,3 +1,4 @@
+import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import {
   CHILD_PROCESS_TIMEOUT_MS,
   MAX_BUFFER_BYTES,
@@ -5,7 +6,6 @@ import {
   OXFMT_CONFIGURATION_FILE,
   OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE,
 } from "#src/services/shared/constants";
-import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -44,7 +44,7 @@ export const formatSource = (
       timeout,
     },
   );
-  if (isTimedOut(error))
+  if (checkIsTimedOut(error))
     throw new InvalidOperationError(
       Operation.Read,
       relativePath,

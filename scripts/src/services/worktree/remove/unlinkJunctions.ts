@@ -1,5 +1,5 @@
+import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
-import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { JUNCTION_UNLINK_COMMAND } from "#src/services/worktree/remove/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -14,7 +14,7 @@ export const unlinkJunctions = (worktreePath: string): void => {
     killSignal: "SIGKILL",
     timeout: CHILD_PROCESS_TIMEOUT_MS,
   });
-  if (isTimedOut(error))
+  if (checkIsTimedOut(error))
     throw new InvalidOperationError(
       Operation.Delete,
       worktreePath,

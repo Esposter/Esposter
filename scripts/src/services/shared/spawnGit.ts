@@ -1,8 +1,8 @@
 import type { SpawnSyncReturns } from "node:child_process";
 
+import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { CHILD_PROCESS_TIMEOUT_MS, MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
-import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { timedOutGitError } from "#src/services/shared/timedOutGitError";
 import { spawnSync } from "@esposter/shared-node/child-process";
 
@@ -22,6 +22,6 @@ export const spawnGit = (
     maxBuffer: MAX_BUFFER_BYTES,
     timeout,
   });
-  if (isTimedOut(result.error)) throw timedOutGitError(args, timeout);
+  if (checkIsTimedOut(result.error)) throw timedOutGitError(args, timeout);
   return result;
 };

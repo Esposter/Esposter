@@ -1,8 +1,8 @@
 import type { ExportsGeneration } from "@esposter/configuration";
 
 import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constants";
+import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
-import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -25,7 +25,7 @@ export const spawnGenerateExports = (
     killSignal: "SIGKILL",
     timeout: CHILD_PROCESS_TIMEOUT_MS,
   });
-  if (isTimedOut(error))
+  if (checkIsTimedOut(error))
     throw new InvalidOperationError(
       Operation.Update,
       packageDirectory,
