@@ -1,10 +1,13 @@
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { createSessionDriver } from "#src/components/World/Session/createSessionDriver.fixture";
 import { Currency } from "#src/models/inventory/Currency";
 import type { DevRegistry } from "#src/models/dev/DevRegistry";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
+import { questSchema } from "#src/models/quest/Quest";
 import { QuestId } from "#src/models/quest/QuestId";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
+import { QuestLoaderMap } from "#src/services/quest/QuestLoaderMap";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { EMPTY_GENSHIN_SAVE, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
 import { assert, describe, expect, onTestFinished, test } from "vitest";
@@ -36,6 +39,8 @@ describe("worldSession", () => {
         quests: { [QuestId.WanderersTrail]: { objectiveCounts: [], stepIndex: 1 } },
         wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
       };
+      // The quest's own record, read as the world reads it, so the total the quest reading gives is the record's
+      const quest = questSchema.parse(await QuestLoaderMap[QuestId.WanderersTrail](GAME_DATA_LOCAL_BASE_URL));
       const mounted = await sessionDriver.mount(seededSave);
       const readingsBeforeSave = readHolds(devRegistry);
       const saved = await sessionDriver.save();
@@ -46,7 +51,7 @@ describe("worldSession", () => {
       expect(readingsBeforeSave).toStrictEqual({
         defeats: { ok: true, value: 1 },
         mora: { ok: true, value: 1 },
-        questStep: { ok: true, value: expect.stringMatching(/^step 2 of \d+$/u) },
+        questStep: { ok: true, value: `step 2 of ${quest.steps.length}` },
       });
       expect(saved).toStrictEqual({ ok: true });
       expect(loaded).toStrictEqual({ ok: true });
