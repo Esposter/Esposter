@@ -1,11 +1,11 @@
 import type { Layout } from "vue-editor-layout-headless";
 
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
 import {
   PAGE_BUILDER_PANEL_ID_MAP,
   PAGE_BUILDER_PANEL_NAME_MAP,
+  PAGE_BUILDER_SELECTION_KIND_MAP,
   SIDE_REGION_PRESENTATION_MAP,
   SIDE_REGION_SIZE,
 } from "@/services/pageBuilder/pageBuilderLayout";
@@ -44,21 +44,21 @@ export const emailLayout: Layout = {
       wildcardContentKey: EmailContentKey.Layers,
     },
     {
-      condition: { modes: [EmailView.Design], selectionKinds: [EmailSelectionKind.None] },
+      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Nothing] },
       id: "settings",
       regionId: "inspector",
       selectionKindContentKeyMap: {},
       wildcardContentKey: EmailContentKey.Settings,
     },
     {
-      condition: { modes: [EmailView.Design], selectionKinds: [EmailSelectionKind.Node] },
+      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Node] },
       id: "content",
       regionId: "inspector",
       selectionKindContentKeyMap: {},
       wildcardContentKey: EmailContentKey.Content,
     },
     {
-      condition: { modes: [EmailView.Design], selectionKinds: [EmailSelectionKind.Node] },
+      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Node] },
       id: "style",
       regionId: "inspector",
       selectionKindContentKeyMap: {},

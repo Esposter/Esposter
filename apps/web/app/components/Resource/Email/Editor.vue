@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { EditorFinding } from "@/models/editor/EditorFinding";
-import type { Component } from "vue";
 import type { Context } from "vue-editor-layout-headless";
 
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
@@ -10,7 +9,6 @@ import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
 import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
 import { EditorType } from "@/models/editor/EditorType";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
 import {
   EMAIL_BLOCKS_REGION_ID,
@@ -21,6 +19,7 @@ import {
 } from "@/services/emailEditor/emailLayout";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { getNodeTitleById } from "@/services/pageBuilder/getNodeTitleById";
+import { PAGE_BUILDER_SELECTION_KIND_MAP } from "@/services/pageBuilder/pageBuilderLayout";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -62,8 +61,8 @@ const editorShell = useTemplateRef("editorShell");
 const {
   announce,
   announcement,
-  dragPoint,
   draggedType,
+  dragPoint,
   dropTarget,
   getFrameGeometry,
   getPageDocument,
@@ -90,7 +89,7 @@ const context = computed<Context>(() => {
   return {
     mode: view.value,
     selectionCount: nodeId ? 1 : 0,
-    selectionKind: nodeId ? EmailSelectionKind.Node : EmailSelectionKind.None,
+    selectionKind: nodeId ? PAGE_BUILDER_SELECTION_KIND_MAP.Node : PAGE_BUILDER_SELECTION_KIND_MAP.Nothing,
     tool: "",
   };
 });
@@ -149,7 +148,7 @@ const registry: Record<EmailContentKey, Component> = {
           ref="canvas"
           v-model:is-delete-open="isDeleteOpen"
           :announce
-          :dragged-type="draggedType"
+          :dragged-type
           :drop-target
           :kind="emailKind"
           :resource-id
@@ -161,7 +160,7 @@ const registry: Record<EmailContentKey, Component> = {
         v-show="view === EmailView.Preview"
         ref="preview"
         :device
-        :email-document="emailDocument"
+        :email-document
       />
     </EditorShell>
     <div role="status" aria-live="polite" sr-only>{{ announcement }}</div>

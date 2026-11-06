@@ -1,9 +1,9 @@
 import type { Context, ResolvedLayout, ResolvedRegion } from "vue-editor-layout-headless";
 
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
-import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
 import { emailLayout, emailPanelNameMap } from "@/services/emailEditor/emailLayout";
+import { PAGE_BUILDER_SELECTION_KIND_MAP } from "@/services/pageBuilder/pageBuilderLayout";
 import { assert, describe, expect, test } from "vitest";
 import {
   checkLayout,
@@ -25,14 +25,18 @@ describe("emailLayout", () => {
   const blocksRegionId = "blocks";
   const inspectorRegionId = "inspector";
   const registeredContentKeys = Object.values(EmailContentKey);
-  const selectionKinds = Object.values(EmailSelectionKind);
+  const selectionKinds = Object.values(PAGE_BUILDER_SELECTION_KIND_MAP);
   const designContext: Context = {
     mode: EmailView.Design,
     selectionCount: 0,
-    selectionKind: EmailSelectionKind.None,
+    selectionKind: PAGE_BUILDER_SELECTION_KIND_MAP.Nothing,
     tool: "",
   };
-  const nodeContext: Context = { ...designContext, selectionCount: 1, selectionKind: EmailSelectionKind.Node };
+  const nodeContext: Context = {
+    ...designContext,
+    selectionCount: 1,
+    selectionKind: PAGE_BUILDER_SELECTION_KIND_MAP.Node,
+  };
   const previewContext: Context = { ...designContext, mode: EmailView.Preview };
   const readerState = getDefaultReaderState();
 
