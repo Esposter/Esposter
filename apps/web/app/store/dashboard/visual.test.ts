@@ -408,6 +408,25 @@ describe(useVisualStore, () => {
     });
   });
 
+  // A press on the empty canvas closes the form it opened, so a deep link to another visual opens that visual's form
+  test("a cleared selection lets a deep link select the visual it names", async () => {
+    expect.hasAssertions();
+
+    const linkedVisual = new Visual({ type: VisualType.Bar });
+    content = new Dashboard({ visuals: [new Visual({ type: VisualType.Area }), linkedVisual] });
+    const visualStore = await setupStore();
+    const { clearSelection, createVisual, editItem } = visualStore;
+    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    await editItem({ id: takeOne(visuals.value).id });
+    clearSelection();
+    await nextTick();
+    await useRouter().replace({ query: { id: linkedVisual.id } });
+    createVisual();
+    await nextTick();
+
+    expect(selectedVisualId.value).toBe(linkedVisual.id);
+  });
+
   // A copy of a group takes a fresh id everywhere in its subtree, so no two visuals in the tree share one
   test("duplicates a group with fresh ids for every visual it holds", async () => {
     expect.hasAssertions();

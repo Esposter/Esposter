@@ -48,6 +48,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     await router.replace({ query: { ...router.currentRoute.value.query, ...ids } });
   };
   const resetItem = async () => {
+    isEditFormDialogOpen.value = false;
     editedItem.value = undefined;
     await router.replace({
       query: { ...router.currentRoute.value.query, ...Object.fromEntries(idKeys.map((key) => [key, undefined])) },
