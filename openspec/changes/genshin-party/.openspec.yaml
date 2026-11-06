@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 3
 x-model: claude-haiku-5-5
 x-needs: [media-engine]
+x-waiting: "task 5.1 waits on the wiki's Attacks sections of the placed enemy kinds, which the wiki cache does not hold and whose live page refuses the fetch (HTTP 402)"
 x-touches:
   [
     "packages/genshin-interface/src/components/PartySetupScreen/**",

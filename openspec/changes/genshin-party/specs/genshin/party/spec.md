@@ -138,3 +138,13 @@ A Moondrift formed nearby SHALL give the team the same damage and Geo resistance
 - **GIVEN** the team stands near a Moondrift
 - **WHEN** the Moondrift is formed by Lunar-Crystallize
 - **THEN** the team gains the damage and Geo resistance a shield gives
+
+### Requirement: An enemy's landed strike applies its attack element
+
+An enemy kind with an elemental attack SHALL apply that element to the party member its strike lands on.
+
+#### Scenario: An enemy kind with an elemental attack applies it to the struck member
+
+- **GIVEN** an enemy kind whose attacks carry an element
+- **WHEN** one of its strikes lands on a party member
+- **THEN** the member takes an application of that element
