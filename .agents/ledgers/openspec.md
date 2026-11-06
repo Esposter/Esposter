@@ -8,7 +8,6 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-archive              | —     | unreconciled |
 | genshin-artifact-screen      | —     | unreconciled |
 | genshin-assets-characters    | —     | unreconciled |
-| genshin-assets-world         | —     | unreconciled |
 | genshin-character-kits       | —     | unreconciled |
 | genshin-character-screen     | —     | unreconciled |
 | genshin-character-trials     | —     | unreconciled |
