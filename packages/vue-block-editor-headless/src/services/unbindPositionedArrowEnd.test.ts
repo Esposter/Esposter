@@ -1,9 +1,8 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { unbindPositionedArrowEnd } from "#src/services/unbindPositionedArrowEnd";
 import { describe, expect, test } from "vitest";
 
@@ -13,10 +12,7 @@ describe(unbindPositionedArrowEnd, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
     const operations = unbindPositionedArrowEnd(document, 1, ArrowEndKey.Start);
-    const unboundDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const unboundDocument = applyPositionedEdit(document, operations);
 
     expect(unboundDocument).toStrictEqual({
       elements: [

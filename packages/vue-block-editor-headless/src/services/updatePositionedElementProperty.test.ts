@@ -2,9 +2,8 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementProperty } from "#src/services/updatePositionedElementProperty";
 import { describe, expect, test } from "vitest";
 
@@ -15,10 +14,7 @@ describe(updatePositionedElementProperty, () => {
     expect.hasAssertions();
 
     const operations = updatePositionedElementProperty(POSITIONED_DOCUMENT, 0, { property: "fill", value: "#fde68a" });
-    const editedDocument = applyBlockEdit(positionedDocumentSchema, POSITIONED_DOCUMENT, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
 
     expect(editedDocument?.elements).toStrictEqual([{ ...POSITIONED_RECTANGLE, fill: "#fde68a" }, POSITIONED_ARROW]);
   });
@@ -30,10 +26,7 @@ describe(updatePositionedElementProperty, () => {
       property: "pathKind",
       value: ArrowPathKind.Curved,
     });
-    const editedDocument = applyBlockEdit(positionedDocumentSchema, POSITIONED_DOCUMENT, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
 
     expect(editedDocument?.elements[1]).toStrictEqual({ ...POSITIONED_ARROW, pathKind: ArrowPathKind.Curved });
   });
@@ -46,10 +39,7 @@ describe(updatePositionedElementProperty, () => {
       property: "hasArrowhead",
       value: false,
     });
-    const editedDocument = applyBlockEdit(positionedDocumentSchema, POSITIONED_DOCUMENT, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
 
     expect(editedDocument?.elements[1]).toStrictEqual({
       ...POSITIONED_ARROW,

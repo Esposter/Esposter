@@ -1,10 +1,9 @@
 import type { ImageElement } from "#src/models/ImageElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementText } from "#src/services/updatePositionedElementText";
 import { describe, expect, test } from "vitest";
 
@@ -16,10 +15,7 @@ describe(updatePositionedElementText, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
     const operations = updatePositionedElementText(document, 0, EDITED_TEXT);
-    const editedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const editedDocument = applyPositionedEdit(document, operations);
 
     expect(editedDocument).toStrictEqual({
       elements: [{ ...POSITIONED_RECTANGLE, text: EDITED_TEXT }, POSITIONED_ARROW],
@@ -31,10 +27,7 @@ describe(updatePositionedElementText, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
     const operations = updatePositionedElementText(document, 1, EDITED_TEXT);
-    const editedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const editedDocument = applyPositionedEdit(document, operations);
 
     expect(editedDocument).toStrictEqual({
       elements: [POSITIONED_RECTANGLE, { ...POSITIONED_ARROW, label: EDITED_TEXT }],

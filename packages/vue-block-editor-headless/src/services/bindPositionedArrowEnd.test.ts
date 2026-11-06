@@ -2,7 +2,6 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
 import { positionedDocumentSchema } from "#src/models/PositionedDocument";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { bindPositionedArrowEnd } from "#src/services/bindPositionedArrowEnd";
 import { CONNECTION_POINT_COUNT } from "#src/services/constants";
 import {
@@ -11,6 +10,7 @@ import {
   POSITIONED_FREE_ARROW,
   POSITIONED_RECTANGLE,
 } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { describe, expect, test } from "vitest";
 
 describe(bindPositionedArrowEnd, () => {
@@ -63,10 +63,7 @@ describe(bindPositionedArrowEnd, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_FREE_ARROW] };
     const operations = bindPositionedArrowEnd(document, 1, ArrowEndKey.Start, rectangleBinding);
-    const boundDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const boundDocument = applyPositionedEdit(document, operations);
 
     expect(boundDocument).toStrictEqual({
       elements: [

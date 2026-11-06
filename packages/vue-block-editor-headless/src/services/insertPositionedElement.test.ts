@@ -1,11 +1,10 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StickyNoteElement } from "#src/models/StickyNoteElement";
 
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { insertPositionedElement } from "#src/services/insertPositionedElement";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { describe, expect, test } from "vitest";
 
 describe(insertPositionedElement, () => {
@@ -25,10 +24,7 @@ describe(insertPositionedElement, () => {
 
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_FREE_ARROW] };
     const operations = insertPositionedElement(document, 1, STICKY_NOTE);
-    const insertedDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const insertedDocument = applyPositionedEdit(document, operations);
 
     expect(insertedDocument).toStrictEqual({ elements: [POSITIONED_RECTANGLE, STICKY_NOTE, POSITIONED_FREE_ARROW] });
   });

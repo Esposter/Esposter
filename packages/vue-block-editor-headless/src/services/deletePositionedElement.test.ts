@@ -2,9 +2,7 @@ import type { ArrowElement } from "#src/models/ArrowElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
-import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { deletePositionedElement } from "#src/services/deletePositionedElement";
 import {
   POSITIONED_ARROW,
@@ -12,6 +10,7 @@ import {
   POSITIONED_PROCESS_ID,
   POSITIONED_RECTANGLE,
 } from "#src/services/positionedConstants.test";
+import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { describe, expect, test } from "vitest";
 
 describe(deletePositionedElement, () => {
@@ -35,10 +34,7 @@ describe(deletePositionedElement, () => {
       elements: [POSITIONED_RECTANGLE, POSITIONED_PROCESS, arrowToProcess, POSITIONED_ARROW],
     };
     const operations = deletePositionedElement(document, 0);
-    const remainingDocument = applyBlockEdit(positionedDocumentSchema, document, operations).match(
-      ({ document: patchedDocument }) => patchedDocument,
-      () => undefined,
-    );
+    const remainingDocument = applyPositionedEdit(document, operations);
 
     expect(remainingDocument).toStrictEqual({
       elements: [POSITIONED_PROCESS, { ...arrowToProcess, start: { hasArrowhead: false, point: { x: 50, y: 100 } } }],
