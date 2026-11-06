@@ -147,6 +147,7 @@
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
     "vue-canvas-frame-headless": "workspace:*",
+    "vue-editor-layout-headless": "workspace:*",
     "vue-grid-layout-headless": "workspace:*",
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",

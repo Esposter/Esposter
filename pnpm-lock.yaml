@@ -1184,6 +1184,9 @@ importers:
       vue-canvas-frame-headless:
         specifier: workspace:*
         version: link:../../packages/vue-canvas-frame-headless
+      vue-editor-layout-headless:
+        specifier: workspace:*
+        version: link:../../packages/vue-editor-layout-headless
       vue-grid-layout-headless:
         specifier: workspace:*
         version: link:../../packages/vue-grid-layout-headless
