@@ -252,6 +252,32 @@ describe(createTileStreamer, () => {
     });
   });
 
+  test("drops a failed tile that is only drawn as a fallback, since no update asks for it", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 2,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.fail(fineKey);
+    const drawn = createTerrainSelection(1);
+    drawn.keys.set([fineKey]);
+    drawn.count = 1;
+    tileStreamer.update(emptySelection, drawn, emptySelection);
+
+    expect({ count: tileStreamer.pendingCount(), requested: requestTile.mock.calls }).toStrictEqual({
+      count: 0,
+      requested: [[fineKey]],
+    });
+  });
+
   test("keeps a failed tile counted while it is still wanted but no slot is free to ask for it again", () => {
     expect.hasAssertions();
 
