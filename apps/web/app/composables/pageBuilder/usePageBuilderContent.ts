@@ -18,6 +18,8 @@ import { getBlockNode, getBlockTypeDefinition } from "vue-block-editor-headless"
 interface ContentTarget<TValue, TProps> {
   formSchema: z.ZodType;
   interactionId: string;
+  // The props the form edits, which a type's props schema describes: the node's without its id and its slots, or the root's
+  ownProps: object;
   pointer: string;
   // The props the target holds in full, which an edit writes back whole so the slots and the id it keeps are untouched
   props: TProps;
@@ -42,6 +44,7 @@ const getContentTarget = <
     return {
       formSchema: kind.rootFormSchema,
       interactionId: ROOT_INTERACTION_ID,
+      ownProps: document.root.props,
       pointer: ROOT_POINTER,
       props: document.root.props,
       propsSchema: kind.registry.root.propsSchema,
@@ -51,9 +54,11 @@ const getContentTarget = <
   const definition = node && getBlockTypeDefinition(kind.registry, node.type);
   if (!node || !definition) return undefined;
 
+  const slotKeys = Object.keys(kind.children(node));
   return {
     formSchema: definition.formSchema,
     interactionId: `content:${nodeId}`,
+    ownProps: Object.fromEntries(Object.entries(node.props).filter(([key]) => key !== "id" && !slotKeys.includes(key))),
     pointer: nodePointer,
     props: node.props,
     propsSchema: definition.propsSchema,
@@ -85,7 +90,7 @@ export const usePageBuilderContent = <
     const targetValue = target.value;
     if (!targetValue) return undefined;
 
-    const result = targetValue.propsSchema.safeParse(targetValue.props);
+    const result = targetValue.propsSchema.safeParse(targetValue.ownProps);
     return result.success ? result.data : undefined;
   });
   // The value the form shows, which keeps an invalid value the user typed until the document changes
@@ -98,9 +103,11 @@ export const usePageBuilderContent = <
     const targetValue = target.value;
     if (!targetValue || checkIsDeepEqual(value, savedValue.value)) return;
 
-    // The form edits a part of the props, so the props that are written are the ones checked
+    // The form edits a part of the props, so the props it edits with its change are the ones checked, and the props that are
+    // Written keep the id and the slots
+    if (!targetValue.propsSchema.safeParse({ ...targetValue.ownProps, ...value }).success) return;
+
     const props = { ...targetValue.props, ...value };
-    if (!targetValue.propsSchema.safeParse(props).success) return;
 
     applyEdit(
       toValue(resourceId),

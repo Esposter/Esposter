@@ -221,6 +221,19 @@ The Content panel SHALL show the fields of the selected node's type, and a chang
 - **WHEN** the owner changes its label in the Content panel
 - **THEN** the button on the canvas shows the new label
 
+#### Scenario: Editing an email button's label in the Content panel changes the email
+
+- **GIVEN** a selected button in an email
+- **WHEN** the owner changes its label in the Content panel
+- **THEN** the email holds the new label and keeps the button's id
+
+#### Scenario: A block with no content fields says where to edit it
+
+- **GIVEN** a selected block whose type has no content fields, as a text block has none
+- **WHEN** the Content panel is drawn
+- **THEN** it says the block has no content settings
+- **AND** it points to the canvas and the Style tab
+
 ### Requirement: An empty page names the palette rather than drawing a second one
 
 A page with no nodes SHALL show its empty state in the canvas, naming the palette beside the canvas as the place the first block is added from, and SHALL NOT draw the palette a second time.

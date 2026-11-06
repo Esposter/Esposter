@@ -22,6 +22,7 @@ import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { emailKind } from "@/services/pageBuilder/emailKind";
+import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishedResourceMessage";
@@ -60,6 +61,46 @@ const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument => ({
           {
             props: {
               children: [{ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: EmailNodeType.SurveyInvite }],
+              id: TEST_OTHER_ID,
+            },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: TEST_THIRD_ID,
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: {} },
+});
+
+// An email's button sits in a column of a section, and its form edits its label
+const createEmailButtonDocument = (content: string): EmailDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: { children: [{ props: { content, id: TEST_ID }, type: MjmlNodeType.Button }], id: TEST_OTHER_ID },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: TEST_THIRD_ID,
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: {} },
+});
+// A text block holds its text on the canvas, so its form holds no field
+const createEmailTextDocument = (): EmailDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text }],
               id: TEST_OTHER_ID,
             },
             type: MjmlNodeType.Column,
@@ -116,6 +157,44 @@ describe("pageBuilderContentPanel", () => {
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "" });
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(createButtonDocument().content);
+
+    component.unmount();
+  });
+
+  test("editing an email button's label in the Content panel changes the email", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailButtonDocument("a"));
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
+
+    expect(component.getComponent(UiSchemaForm).props("modelValue")).toStrictEqual({ content: "a" });
+
+    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { content: "b" });
+
+    expect(pageBuilderDocumentStore.getHeldDocument(resourceId)?.document).toStrictEqual(
+      createEmailButtonDocument("b"),
+    );
+
+    component.unmount();
+  });
+
+  test("a block with no content fields says where to edit it", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailTextDocument());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
+
+    expect(component.findComponent(UiSchemaForm).exists()).toBe(false);
+    expect(component.text()).toContain("No content settings");
+    expect(component.text()).toContain("Style tab");
 
     component.unmount();
   });
