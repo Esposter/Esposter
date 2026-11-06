@@ -102,13 +102,19 @@ A region's commissions SHALL join the deal once that region's quest is done.
 
 ### Requirement: Claim Routing
 
-A commission claim SHALL send its Mora to the player's wallet, its items to the bag, its Adventure EXP to the Adventure Rank, and its Companionship EXP to the friendship grant.
+A commission claim SHALL send its Mora to the player's wallet, its items to the bag, its Adventure EXP to the Adventure Rank, and its Companionship EXP to the friendship grant. A Petrified Tree's claim SHALL grant the Companionship EXP its drawn items hold to the deployed team.
 
 #### Scenario: a claim sends its Mora, items and Companionship EXP where they are kept
 
 - **GIVEN** a commission whose reward is ready to claim
 - **WHEN** the player claims the commission
 - **THEN** the Mora is added to the wallet, the items go to the bag, the Adventure EXP goes to the Adventure Rank, and the Companionship EXP is granted through the friendship grant
+
+#### Scenario: claiming the tree gives its Companionship EXP
+
+- **GIVEN** a cleared domain's Petrified Tree with a deployed team
+- **WHEN** the player claims the tree
+- **THEN** the Companionship EXP its drawn items hold is granted to the deployed team
 
 #### Scenario: a claim past the day's four is refused
 
@@ -138,6 +144,18 @@ A finished Archon quest or Story quest SHALL earn four Encounter Points, held up
 - **GIVEN** Encounter Points held from before the latest daily reset
 - **WHEN** the player reads them after that reset
 - **THEN** none are held
+
+#### Scenario: keeps the Encounter Points earned on the later daily reset
+
+- **GIVEN** a guest save holding Encounter Points earned on a later daily reset than the account's
+- **WHEN** the guest and the account saves are merged
+- **THEN** the guest's Encounter Points are held
+
+#### Scenario: keeps the larger count of Encounter Points when both copies earned them on the same daily reset
+
+- **GIVEN** a guest save and an account save each holding Encounter Points earned on the same daily reset
+- **WHEN** the two saves are merged
+- **THEN** the larger count is held
 
 ### Requirement: Claim Spends A Point From The Points Held
 
