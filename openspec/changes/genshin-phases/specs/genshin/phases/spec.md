@@ -80,7 +80,7 @@ The progress report's done column SHALL count a unit once its own source has not
 
 #### Scenario: A check with no command is not measurable
 
-- **GIVEN** a quest unit and no scripted-session harness
+- **GIVEN** a quest unit and no scripted session that plays it
 - **WHEN** the report reads the quest's check
 - **THEN** the check prints as not measurable
 
