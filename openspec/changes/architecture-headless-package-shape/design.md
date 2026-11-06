@@ -35,7 +35,7 @@ The math expression compiler is the one editor-adjacent package that stays as it
 
 | Package today                                                           | Becomes                        | Why                                                             |
 | :---------------------------------------------------------------------- | :----------------------------- | :-------------------------------------------------------------- |
-| vue-block-editor-headless                                               | vue-block-editor-headless      | The home of the editing session composable                      |
+| headless-block-editor                                                   | vue-block-editor-headless      | The home of the editing session composable                      |
 | headless-survey-engine                                                  | vue-survey-engine-headless     | A survey runner's state is a composable over its functions      |
 | survey-expression                                                       | vue-survey-expression-headless | One shape for the survey packages, as the owner asked           |
 | mjml-blocks                                                             | vue-mjml-blocks-headless       | Built on the block editor, so it takes the block editor's shape |
