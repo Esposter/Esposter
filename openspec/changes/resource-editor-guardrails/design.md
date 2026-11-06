@@ -55,6 +55,11 @@ The survey's logic builder, the existing delete-reference warning and the page b
 - **The check runs after each edit.** The rules are computations over the document, so a run is cheap and a finding never lags the edit that caused it. Rejected: running at save only, which tells the reader after the work is done, as the survey does now.
 - **A name clash is a finding, not a refused edit.** An edit that resolves a clash would be refused as well, since the clash exists only between two elements. This keeps the settled decision that the check gates the save and not each edit.
 - **A save is refused by errors only.** A warning informs and never blocks. Rejected: blocking on every finding, which would make a contrast warning stop a publish.
+- **A finding names its node by the id the editor's selection holds.** The survey creator selects by `selectedId` (`apps/web/app/store/survey/creator.ts`), the page builder and the email editor by the canvas's node id (`apps/web/app/store/pageBuilder/canvas.ts`), and the webpage critique already names its node by id. A pointer goes stale when the node moves, and an id survives a move and an undo. Rejected: the JSON pointer the survey check reports, which a move invalidates.
+- **A finding about the document as a whole names no node.** A survey's calculated value has no id (`SurveyCalculatedValue`), so its finding concerns the survey itself. The empty id is the absent string the editors already select, and it selects nothing. Rejected: a sentinel node per editor, which every editor would have to draw.
+- **A severity is the token it is drawn in.** `EditorFindingSeverity` takes the `error` and `warning` token values, which `UiStatus` already says a severity string is, so `UiStatusIconMeaningMap` marks a finding with no map of its own. Rejected: a second severity enum whose values repeat the tokens.
+- **The check's run waits for the edit to settle.** This refines the decision above: the settle scenario and task 1.3 name a settle delay, so a finding trails its edit by at most the autosave's delay (`RESOURCE_AUTOSAVE_DEBOUNCE_MS`) and clears on the same beat as the save that carries the fix. Rejected: a delay of its own, which would drift from the save.
+- **The surface emits the node's id, and the editor reveals the node.** The surface sits in the top bar and cannot reach a canvas, and each editor renders its own. An editor selects the node it is handed and brings into view the element its render stamps with that id, which is `data-node-id` on the page builder's canvas. Rejected: the surface scrolling by a query of its own, since it would reach a canvas it does not own.
 
 ## Not in this change
 
@@ -72,6 +77,9 @@ The survey's logic builder, the existing delete-reference warning and the page b
 | `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`          | the page builder's findings, mapped to the one shape                     |
 | `apps/web/app/components/Resource/Survey/Editor.vue`                      | where the survey check runs before a save                                |
 | `apps/web/app/components/Resource/Survey/Creator/Layers.vue`              | the layers tree whose titles name a finding's node                       |
+| `apps/web/app/models/editor/EditorFinding.ts`                             | the one finding shape each editor's check maps to                        |
+| `apps/web/app/composables/editor/useEditorFindings.ts`                    | an editor's check run once its document settles                          |
+| `apps/web/app/components/Editor/Problems.vue`                             | the problems surface: a count in the top bar and the list of findings    |
 
 ## Sources
 
