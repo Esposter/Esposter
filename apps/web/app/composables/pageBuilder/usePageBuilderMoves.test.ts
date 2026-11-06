@@ -11,6 +11,8 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { createTestImageNode, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { FIRST_IN_SLOT_MESSAGE, LAST_IN_SLOT_MESSAGE, TOP_LEVEL_MESSAGE } from "@/services/pageBuilder/constants";
+import { TEST_EMAIL, TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -134,6 +136,26 @@ describe(usePageBuilderMoves, () => {
     expect.hasAssertions();
 
     const { getMoveLeftRefusal } = setup("a");
+
+    expect(getMoveLeftRefusal()).toBe(TOP_LEVEL_MESSAGE);
+  });
+
+  test("a move out of the top level of an email says it is already there", () => {
+    expect.hasAssertions();
+
+    setActivePinia(createPinia());
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_SECTION_ID);
+    const announce = vi.fn<(message: string) => void>();
+    const { getMoveLeftRefusal } = usePageBuilderMoves(
+      emailKind,
+      () => pageBuilderDocumentStore.getEmailDocument(resourceId),
+      resourceId,
+      announce,
+    );
 
     expect(getMoveLeftRefusal()).toBe(TOP_LEVEL_MESSAGE);
   });

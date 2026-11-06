@@ -1,9 +1,11 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { MjmlNodeType } from "mjml-blocks";
 import { describe } from "vitest";
 
 export const TEST_SECTION_ID = crypto.randomUUID();
@@ -26,6 +28,28 @@ export const TEST_WEBPAGE: WebpageDocument = {
     { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
   ],
   root: TEST_ROOT,
+};
+
+// An email's section holding a column with a text in it, under the email's root
+export const TEST_EMAIL: EmailDocument = {
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_NESTED_TEXT_ID }, type: MjmlNodeType.Text }],
+              id: TEST_OTHER_ID,
+            },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: TEST_SECTION_ID,
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: {} },
 };
 
 // Three columns in a row of 200 pixels each, the last two wrapped onto a line below the first
