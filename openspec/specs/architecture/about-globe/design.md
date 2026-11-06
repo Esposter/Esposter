@@ -24,13 +24,16 @@ flowchart LR
 - **Quality steps down, never up.** A watcher over the last fifty frames lowers the tier when the mean frame rate is under the target, and the dots are rebuilt at the lower density. Rejected: antialiasing, which the halo shader hides more cheaply.
 - **The labels are dropped.** The previous globe named fifty random countries over a note that the browser was not powerful enough to draw them. The countries stay as bare coordinates for the coloured points; the pulses are the arcs' landing rings.
 - **The halo fades by alpha.** It reads the same over a light page and a dark one, where an additive glow washes out on a light page.
+- **The globe's code loads when the reader nears it.** The globe is the last section of the page and three.js is most of its weight, so the page holds a box of the globe's size and mounts the globe, as a lazy component, once the box is within a screen of the viewport. The data is a few kilobytes and stays in the chunk; the saving is the renderer a reader who never scrolls that far never downloads. Rejected: Nuxt's `hydrate-on-visible`, which hydrates server-rendered markup, and the globe renders nothing on the server; and the `ClientOnly` wrapper alone, which still fetched the chunk on arrival.
+- **The arcs share one ring geometry.** Every landing ring is the same shape, so one geometry serves them all and only the material, scale and opacity differ.
 - **The globe stands still when it cannot move.** Under reduced motion the arcs are drawn whole and the loop draws one frame; off screen the loop stops.
 
 ## Key files
 
 | Path                                                              | Role                                                                          |
 | :---------------------------------------------------------------- | :---------------------------------------------------------------------------- |
-| `apps/web/app/components/Visual/Globe.vue`                        | the canvas mount                                                              |
+| `apps/web/app/pages/about.vue`                                    | the sized box that mounts the globe once the reader nears it                  |
+| `apps/web/app/components/Visual/Globe.vue`                        | the canvas mount, sized by its box                                            |
 | `apps/web/app/services/visual/globe/`                             | the pure services: mask decoding, dots, curves, quality tiers, start rotation |
 | `apps/web/app/services/visual/GlobeConfiguration.ts`              | the colours and the sizes                                                     |
 | `apps/web/app/assets/about/generated/globeLandMask/landMask.json` | the generated mask                                                            |

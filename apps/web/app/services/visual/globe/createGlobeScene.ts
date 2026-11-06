@@ -181,6 +181,8 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
   }
   globe.add(points);
 
+  // Every ring is the same shape, so the arcs share one geometry and differ only in colour, scale and opacity
+  const ringGeometry = new RingGeometry(0.7, 1, 24);
   const arcMeshes = (arcs as GlobeArc[]).map((arc) => {
     const arcColor = getRandomColor();
     const stroke = takeOne(ARC_STROKES, createRandomInteger(ARC_STROKES.length - 1));
@@ -194,7 +196,7 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
       new MeshBasicMaterial({ color: arcColor }),
     );
     const ring = new Mesh(
-      new RingGeometry(0.7, 1, 24),
+      ringGeometry,
       new MeshBasicMaterial({ color: arcColor, depthWrite: false, side: DoubleSide, transparent: true }),
     );
     placeOnSurface(ring, arc.endLat, arc.endLng);
@@ -231,9 +233,9 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
     for (const { ring, tube } of arcMeshes) {
       tube.geometry.dispose();
       (tube.material as MeshBasicMaterial).dispose();
-      ring.geometry.dispose();
       (ring.material as MeshBasicMaterial).dispose();
     }
+    ringGeometry.dispose();
     dots?.geometry.dispose();
     dots?.dispose();
     dotMaterial.dispose();

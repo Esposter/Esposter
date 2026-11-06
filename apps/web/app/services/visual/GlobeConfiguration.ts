@@ -12,6 +12,8 @@ export const GlobeConfiguration = {
   emissive: "#220038",
   emissiveIntensity: 0.1,
   fogColor: "#535ef3",
+  // How far below the viewport the globe's code starts loading, so it is drawn by the time the reader arrives
+  loadMargin: "0px 0px 100% 0px",
   // The tilt the globe rests at, so the poles lean towards the reader
   oblique: -Math.PI / 6,
   pulseMaxRadius: 3,
