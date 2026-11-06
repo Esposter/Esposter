@@ -34,14 +34,14 @@ describe(deleteReadMails, () => {
   });
 
   // A read mail whose attachment is claimed is deleted, since its items are already in the bag
-  test("a read mail whose attachment is claimed is deleted", () => {
+  test("delete Read removes a read mail whose attachment is claimed", () => {
     expect.hasAssertions();
 
     expect(deleteReadMails([mail(ROW.id, true, true)], rows, new Set())).toStrictEqual([]);
   });
 
   // A read mail still holding an unclaimed attachment is kept, so Delete Read never takes a reward unclaimed
-  test("a read mail with an unclaimed attachment is kept", () => {
+  test("delete Read keeps a read mail with an unclaimed attachment", () => {
     expect.hasAssertions();
 
     expect(deleteReadMails([mail(ROW.id, false, true)], rows, new Set())).toStrictEqual([mail(ROW.id, false, true)]);
@@ -57,7 +57,7 @@ describe(deleteReadMails, () => {
   });
 
   // A pinned mail is kept, since the game does not delete pinned mail quickly
-  test("a read pinned mail is kept", () => {
+  test("delete Read keeps a pinned mail", () => {
     expect.hasAssertions();
 
     const pinned: MailSave = { ...mail(EMPTY_ROW.id, false, true), isPinned: true };
@@ -82,7 +82,7 @@ describe(deleteReadMails, () => {
   });
 
   // A birthday mail claimed is in the Gift Mail Box, which Delete Read leaves alone
-  test("a read claimed birthday mail is kept", () => {
+  test("delete Read keeps a claimed birthday mail", () => {
     expect.hasAssertions();
 
     expect(deleteReadMails([mail(ROW.id, true, true)], rows, new Set([ROW.id]))).toStrictEqual([

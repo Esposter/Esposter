@@ -85,7 +85,7 @@ describe("mailScreen", () => {
 
   // Delete Read asks first, and says so to the screen's owner only once the player confirms it. The read mail is an
   // Ordinary letter here, since a claimed birthday mail sits in the Gift Mail Box, which Delete Read keeps
-  test("should delete read mail once delete read is confirmed", async () => {
+  test("delete Read asks the player to confirm first", async () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
@@ -98,7 +98,7 @@ describe("mailScreen", () => {
   });
 
   // Cancel closes the confirm and leaves every read mail where it is
-  test("should keep read mail when delete read is cancelled", async () => {
+  test("cancelling the confirm keeps the read mail", async () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
@@ -138,7 +138,7 @@ describe("mailScreen", () => {
   });
 
   // The date line gives the date the mail was received, which NuxtTime formats in the reader's locale
-  test("should show the date a mail was received", async () => {
+  test("an opened mail shows the date it was received", async () => {
     expect.hasAssertions();
 
     await render(MailScreen, { props: unclaimedMailProps });
@@ -159,7 +159,7 @@ describe("mailScreen", () => {
   });
 
   // Delete on a gift mail asks first, and gives the mail back to the screen's owner only once the player confirms it
-  test("should delete a gift mail once its delete is confirmed", async () => {
+  test("confirming the warning removes the gift mail", async () => {
     expect.hasAssertions();
 
     const onDeleteGift = vi.fn<(held: MailSave) => void>();
@@ -173,7 +173,7 @@ describe("mailScreen", () => {
   });
 
   // Cancel closes the warning and leaves the gift mail in the Gift Mail Box
-  test("should keep the gift mail when its delete is cancelled", async () => {
+  test("cancelling the warning keeps the gift mail", async () => {
     expect.hasAssertions();
 
     const onDeleteGift = vi.fn<(held: MailSave) => void>();
