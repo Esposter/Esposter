@@ -29,7 +29,8 @@ export const createTRPCNuxtClient = <TRouter extends AnyTRPCRouter>(
       case "query":
         return client.query(procedure, first, second as TRPCRequestOptions | undefined);
       case "subscribe":
-        return client.subscription(procedure, first, second as UseSubscriptionOptions<TRPCResolverDef>);
+        // The client tells its two overloads apart by whether the options carry callbacks, which the call site checked
+        return client.subscription(procedure, first, second as TRPCRequestOptions | undefined);
       case "useLazyQuery":
         return useProcedureQuery(client, procedure, first, {
           ...(second as undefined | UseQueryOptions<TRPCResolverDef>),

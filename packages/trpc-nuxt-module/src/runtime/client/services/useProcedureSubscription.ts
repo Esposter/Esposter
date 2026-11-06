@@ -2,6 +2,7 @@ import type { UseSubscriptionOptions } from "#src/runtime/client/models/UseSubsc
 import type { UseSubscriptionReturn } from "#src/runtime/client/models/UseSubscriptionReturn";
 import type { TRPCClientError, TRPCResolverDef, TRPCUntypedClient } from "@trpc/client";
 import type { AnyTRPCRouter } from "@trpc/server";
+import type { Unsubscribable } from "@trpc/server/observable";
 import type { MaybeRefOrGetter } from "vue";
 
 import { ConnectionStateSubscriptionStatus } from "#src/runtime/client/models/ConnectionStateSubscriptionStatus";
@@ -12,7 +13,6 @@ import { getCurrentScope, onScopeDispose, shallowRef, toValue, watch } from "vue
 type ConnectionState = Parameters<
   NonNullable<UseSubscriptionOptions<TRPCResolverDef>["onConnectionStateChange"]>
 >[0]["state"];
-type Unsubscribable = ReturnType<TRPCUntypedClient<AnyTRPCRouter>["subscription"]>;
 
 const ConnectionStateSubscriptionStatusMap = {
   [ConnectionStateSubscriptionStatus.Connecting]: SubscriptionStatus.Connecting,
