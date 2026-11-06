@@ -1,8 +1,17 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorPalette from "@/components/Resource/Survey/Creator/Palette.vue";
+import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
+import { createSurveyTestPanelDynamic } from "@/services/survey/createSurveyTestPanelDynamic.test";
+import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { surveyDocumentSchema, SurveyNodeType, surveyNodeTypeDefinitionMap } from "headless-survey-engine";
+import {
+  createSurveyDocument,
+  surveyDocumentSchema,
+  SurveyNodeType,
+  surveyNodeTypeDefinitionMap,
+} from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
 describe("resourceSurveyCreatorPalette", () => {
@@ -59,5 +68,44 @@ describe("resourceSurveyCreatorPalette", () => {
       SurveyNodeType.Rating,
       SurveyNodeType.Text,
     ]);
+  });
+
+  test("An insertion menu offers only the kinds the slot accepts", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(
+      createSurveyTestDocument([
+        createSurveyTestPage([createSurveyTestPanelDynamic("panel", [createSurveyTestQuestion("question1")])]),
+      ]),
+    );
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/0/props/template/0");
+    const component = await mountSuspended(ResourceSurveyCreatorPalette);
+    // A dynamic panel's template takes every kind but a page and the two panels
+    const untakenKinds: SurveyNodeType[] = [SurveyNodeType.Page, SurveyNodeType.Panel, SurveyNodeType.PanelDynamic];
+    const kinds = Object.values(SurveyNodeType).filter((type) => !untakenKinds.includes(type));
+
+    expect(
+      component
+        .findAll("button:not([aria-expanded])")
+        .map((button) => button.text())
+        .toSorted((firstLabel, secondLabel) => firstLabel.localeCompare(secondLabel)),
+    ).toStrictEqual(
+      kinds
+        .map((type) => surveyNodeTypeDefinitionMap[type].label)
+        .toSorted((firstLabel, secondLabel) => firstLabel.localeCompare(secondLabel)),
+    );
+  });
+
+  test("A kind no slot accepts here is absent", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    // A survey with no page has nothing selected to insert after, so the insertion point is the survey's top level, which takes pages alone
+    surveyCreatorStore.load({ ...createSurveyDocument(), content: [] });
+    const component = await mountSuspended(ResourceSurveyCreatorPalette);
+
+    expect(component.findAll("button:not([aria-expanded])").map((button) => button.text())).toStrictEqual([]);
   });
 });

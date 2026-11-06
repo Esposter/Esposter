@@ -6,13 +6,13 @@ import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from
 import { ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
+import { getSurveyInsertTarget } from "@/services/resource/survey/getSurveyInsertTarget";
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { JsonPatchOperationType, parseJsonPointer, readJsonValue, redoHistory, undoHistory } from "@esposter/shared";
+import { JsonPatchOperationType, redoHistory, undoHistory } from "@esposter/shared";
 import {
   applyBlockEdit,
   duplicateBlockNode,
-  getAcceptedTypes,
   getBlockLayerRows,
   getBlockNode,
   getBlockPropPointer,
@@ -27,11 +27,6 @@ import {
 } from "headless-block-editor";
 import { surveyDocumentSchema, surveyNodeChildren, surveyNodeSchema, surveyRegistry } from "headless-survey-engine";
 
-// How many elements a slot holds, so a new element placed at the slot's end lands after the last of them
-const getSlotLength = (document: SurveyDocument, slotPointer: string) => {
-  const elements = readJsonValue(document, parseJsonPointer(slotPointer));
-  return Array.isArray(elements) ? elements.length : 0;
-};
 // A question's name, which the survey keeps unique across its questions. A page or a panel holds none
 const getElementName = (node: SurveyNode | undefined) => (node && "name" in node.props ? node.props.name : undefined);
 // The names the document's elements hold, which a new name has to avoid
@@ -50,19 +45,6 @@ const addUniqueName = (base: string, names: Set<string>) => {
   const name = `${base}${index}`;
   names.add(name);
   return name;
-};
-// Where a new element goes: straight after the selected element in its own slot. With nothing selected it goes to the end of
-// The first page's children when they take its type, and otherwise to the end of the survey's pages, which is where a page goes
-const getInsertTarget = (document: SurveyDocument, selectedPointer: string, type: SurveyNodeType) => {
-  if (selectedPointer !== "") {
-    const location = getSurveyNodeLocation(selectedPointer);
-    return location && { index: location.index + 1, slotPointer: location.slotPointer };
-  }
-
-  const slotPointer = [getBlockPropPointer("/content/0", "children"), "/content"].find((candidate) =>
-    getAcceptedTypes(document, surveyRegistry, surveyNodeChildren, candidate).includes(type),
-  );
-  return slotPointer === undefined ? undefined : { index: getSlotLength(document, slotPointer), slotPointer };
 };
 // The commands the creator's panes and shortcuts run over its document. Each gesture is one of the core's commands, applied
 // Through the survey's document schema as one history entry. A command the core or the schema refuses changes nothing and returns false
@@ -118,7 +100,7 @@ export const useSurveyCreatorCommands = () => {
     return isInserted;
   };
   const insertNode = (type: SurveyNodeType) => {
-    const target = getInsertTarget(document.value, selectedPointer.value, type);
+    const target = getSurveyInsertTarget(document.value, selectedPointer.value, type);
     return target !== undefined && insertNodeAt(type, target.slotPointer, target.index);
   };
   const moveElement = (operations: JsonPatchOperation[]) => applyEdit(operations, "Move element");

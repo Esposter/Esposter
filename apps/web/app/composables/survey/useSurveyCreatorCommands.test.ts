@@ -95,6 +95,23 @@ describe(useSurveyCreatorCommands, () => {
     expect(document.value).toStrictEqual(original);
   });
 
+  test("inserts a kind at the end of the selected page, since no place after the page takes it", () => {
+    expect.hasAssertions();
+
+    const { document, insertNode, select, selectedPointer } = setup([
+      createPage([createQuestion("question1"), createQuestion("question2")]),
+    ]);
+    select("/content/0");
+    insertNode(SurveyNodeType.Rating);
+
+    expect(document.value.content[0]?.props.children.map(({ type }) => type)).toStrictEqual([
+      SurveyNodeType.Text,
+      SurveyNodeType.Text,
+      SurveyNodeType.Rating,
+    ]);
+    expect(selectedPointer.value).toBe("/content/0/props/children/2");
+  });
+
   test("names a duplicate from the stem of its question's name, as an inserted question is named", () => {
     expect.hasAssertions();
 
