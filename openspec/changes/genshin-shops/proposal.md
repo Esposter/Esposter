@@ -15,7 +15,6 @@ The player can buy what the game's shops sell for Mora, Sigils and Starglitter, 
 - Each region's Souvenir Shop trades its Sigils for materials, blueprints and Mora, never restocks, and stays closed until the region's offering is at its last level.
 - A city's named shop takes ten percent off its Mora prices at reputation level four, rounded down to a multiple of five Mora.
 - A talk with a city's vendor opens their shop.
-- Goods paid in Genesis Crystals are never offered.
 
 ## Capabilities
 

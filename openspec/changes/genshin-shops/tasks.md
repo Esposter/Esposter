@@ -5,17 +5,18 @@
 
 ## 2. Restocks and sale dates
 
-- [x] 2.1 Restore each good's limit on its own refresh, and never for a good with no refresh. Verify: tests named after 'A daily good's limit returns at the daily refresh' and 'A good with no refresh stays bought'.
+- [x] 2.1 Restore each good's limit on its own refresh, and never for a good with no refresh. Verify: tests named after 'A daily good's limit returns at the daily refresh' and 'A good with no refresh stays bought', with the scenario 'A purchase past the limit is refused' in buyShopGood.test.ts.
 - [x] 2.2 Offer a good only within its sale dates. Verify: a test named after the scenario 'A good is not offered outside its sale dates'.
 
 ## 3. Paimon's Bargains
 
 - [x] 3.1 Offer the monthly characters and bi-monthly weapons, refusing a character with full constellations. Verify: tests named after 'Two characters are offered each month' and 'A character with full constellations cannot be bought'. The screen waits on the bag holding the items' definitions.
 - [x] 3.2 Build the Shop screen from a public clip: its goods grid by tab, a good's detail with its costs, limit and refresh, the count picker and the Buy button, emitting buy with the good and count. Verify: a test named after 'buying a good from the screen spends its costs and gives the good'.
+- [ ] 3.3 Show each good on the Shop screen at the costs the game gives it. Verify: a browser test in `components/Shop/Screen/Index.browser.test.ts`, named after the scenario 'A good is offered at its shop's costs', written first and seen failing.
 
 ## 4. Souvenir Shops, city shops and vendors
 
-- [x] 4.1 Trade Sigils at each region's Souvenir Shop, closed until its offering is at its last level. Verify: tests named after 'Sigils are traded for materials, blueprints and Mora' and 'A Souvenir Shop stays closed until its offering is at its last level'.
-- [x] 4.2 Apply the reputation discount to a city shop's Mora price. Verify: a test named after 'A discounted Mora price is rounded down to a multiple of five'.
+- [x] 4.1 Trade Sigils at each region's Souvenir Shop, closed until its offering is at its last level. Verify: tests named after 'Sigils are traded for materials, blueprints and Mora' and 'A Souvenir Shop stays closed until its offering is at its last level', and the scenario 'Souvenir goods never restock' shares the test 'a good with no refresh stays bought' of task 2.1, since a Souvenir good is a good with no refresh.
+- [x] 4.2 Apply the reputation discount to a city shop's Mora price. Verify: tests named after the scenarios 'A discounted Mora price is rounded down to a multiple of five' and 'A price below reputation level four is not discounted', both in discountShopGood.test.ts.
 - [x] 4.3 Open a city vendor's shop from their talk as each region is built. Verify: a test named after 'Talking to a vendor opens their shop'.
 - [ ] 4.4 Open the Fishing Associations' shops once fishing lands. Verify: the test named 'Talking to a vendor opens their shop', extended to the Fishing Associations' shops. Nantuck and six of the other seven Fishing Associations are placed as residents. Blocked on Zherebtsov (Snezhnaya, NPC 7418): his point is mapped, but Snezhnaya has no fitted region yet, so the fit must place it first (design.md).
