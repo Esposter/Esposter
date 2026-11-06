@@ -27,7 +27,7 @@
 - `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`'s `[DerivedAssetComponent.Snezhnaya]` entry (`{}`): the empty map the camera item's landmarks read.
 - `packages/genshin-world/src/services/snezhnaya/constants.ts`'s `SNEZHNAYA_HALL_COLOR`, the provisional kit colour the Surface item draws from.
 - `packages/genshin-world/src/services/world/readRegionPalettes.ts`'s `readRegionPalettes`, which skips a kit `checkIsPaletteKit` refuses, and `BuildingKitPaletteReaderMap` in `packages/genshin-world/src/services/world/BuildingKitPaletteReaderMap.ts`, which has no entry for it: Snezhnaya's kit has no palette record and no reader, so its colours are the constants above.
-- `openspec/specs/genshin/compute/README.md` `## Bars`, the Display item's `DISPLAY_CONTRAST_GATE` at 0.1 and the Surface and Light gates the items link.
+- `openspec/specs/genshin/compute/README.md` `## Bars`, the Display item's `DISPLAY_CONTRAST_GATE` and the Surface and Light gates the items link.
 
 ## Open
 

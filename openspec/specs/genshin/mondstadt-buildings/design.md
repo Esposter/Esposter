@@ -20,9 +20,9 @@ The house stands in for Mondstadt City's own buildings, the export's `Area_MdBui
 - **Footprint.** The width runs along the gable walls and the depth along the front and back walls, in metres (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`).
 - **Ground floor.** A stone box of the given height, the footprint's full size (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`).
 - **Storeys.** Each storey is a plaster box. The front and back walls of each storey extend the jetty beyond the storey beneath it, so the overhang accumulates by one jetty per storey. The gable walls do not overhang (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`).
-- **Timber frame.** Each storey has a timber post at each corner and a beam along the top of each wall. A timber member's outer face stands a few centimetres proud of the plaster so it reads as a frame (`packages/genshin-world/src/services/mondstadt/constants.ts`, `MONDSTADT_TIMBER_PROUD` of 0.05 m).
-- **Roof.** A gable whose ridge runs along the width, with eaves overhanging the top storey by a fixed amount. Its rise is a parameter (`packages/genshin-world/src/services/mondstadt/constants.ts`, `MONDSTADT_EAVE_OVERHANG` of 0.4 m).
-- **Dormers.** A count per slope, spaced evenly along the width and set at each slope's middle, with their bases sunk slightly into the roof (`packages/genshin-world/src/services/mondstadt/constants.ts`, `MONDSTADT_DORMER_SINK` of 0.2 m and the dormer size constants).
+- **Timber frame.** Each storey has a timber post at each corner and a beam along the top of each wall. A timber member's outer face stands proud of the plaster by `MONDSTADT_TIMBER_PROUD`, so it reads as a frame (`packages/genshin-world/src/services/mondstadt/constants.ts`).
+- **Roof.** A gable whose ridge runs along the width, with eaves overhanging the top storey by `MONDSTADT_EAVE_OVERHANG`. Its rise is a parameter (`packages/genshin-world/src/services/mondstadt/constants.ts`).
+- **Dormers.** A count per slope, spaced evenly along the width and set at each slope's middle, with their bases sunk into the roof by `MONDSTADT_DORMER_SINK` (`packages/genshin-world/src/services/mondstadt/constants.ts`, and the dormer size constants).
 - **Chimney.** A stone column a quarter of the way along the width, rising past the ridge (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`, with `MONDSTADT_CHIMNEY_SIZE` and `MONDSTADT_CHIMNEY_RISE` in `constants.ts`).
 
 ## Key files

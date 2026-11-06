@@ -1,6 +1,6 @@
 # Talents
 
-A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled from 1 by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab lists each talent's level, next phase and cost, and presses an upgrade through `upgradeCharacterTalent`, which calls `upgradeTalent`; the world screen reads `readTalentTables` beside the stat tables. A constellation's extra levels are added by the [constellations](../constellations/design.md) page, and a kit reads each talent at its own level plus those levels as its character joins the party.
+A character's three combat talents, the normal attack, the Elemental Skill and the Elemental Burst, are levelled up from `TALENT_START_LEVEL` by the game's own rule: each level costs Mora and talent materials, and needs an ascension phase the character has reached. The table side is built, published by the stats run beside the other stat tables, and the upgrade as a pure rule over the character, its wallet and its bag. The passives are read as the phases open them. The Talents tab lists each talent's level, next phase and cost, and presses an upgrade through `upgradeCharacterTalent`, which calls `upgradeTalent`; the world screen reads `readTalentTables` beside the stat tables. A constellation's extra levels are added by the [constellations](../constellations/design.md) page, and a kit reads each talent at its own level plus those levels as its character joins the party.
 
 ## The tables
 
@@ -23,7 +23,7 @@ flowchart LR
 
 ## Levelling
 
-- **Every combat talent starts at level 1.** `createCharacter` sets all three to `TALENT_START_LEVEL`.
+- **Every combat talent starts at `TALENT_START_LEVEL`.** `createCharacter` sets all three to it.
 - **An upgrade raises one talent one level.** The level above the talent's own is looked up among its upgrades. The upgrade is refused where there is none, which is past level 10 for the materials, where the character's ascension phase is below the level's phase, where the wallet lacks the Mora, and where the bag lacks an item. Those items leave the bag as [inventory](../inventory/design.md) describes.
 - **A refusal leaves nothing behind.** The rule throws before it returns anything, so the caller keeps the character, the wallet and the bag it passed in, with no part of the cost taken.
 - **The phase numbers are the ascension phases'.** Level 2 needs the second phase, levels 3 and 4 the third, 5 and 6 the fourth, 7 and 8 the fifth, and 9 and 10 the sixth (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, where the rule holds in every talent group). A character at the first phase can therefore be raised to level 1 only, and a character must reach the sixth phase to bring any talent to level 10.
