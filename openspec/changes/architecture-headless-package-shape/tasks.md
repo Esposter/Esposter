@@ -1,12 +1,12 @@
 ## 1. Reading
 
-- [ ] 1.1 Read the survey creator's store, the page builder's history store, the whiteboard's store and the commands that turn a gesture into one core edit, and write down the union of what they use as the editing session's API. Verify: the design lists each member of the API and the store each came from.
+- [x] 1.1 Read the survey creator's store, the page builder's history store, the whiteboard's store and the commands that turn a gesture into one core edit, and write down the union of what they use as the editing session's API. Verify: the design lists each member of the API and the store each came from.
 
 ## 2. Build the abstraction under the current names
 
-- [ ] 2.1 Add Vue as a peer of the block editor package and write the editing session composable in it, under the package's current name. Verify: tests named after the scenarios 'A commit sets the document and the history together' and 'A selection of a removed node reads as nothing selected', written first and seen failing.
+- [x] 2.1 Add Vue as a peer of the block editor package and write the editing session composable in it, under the package's current name. Verify: tests named after the scenarios 'A commit sets the document and the history together' and 'A selection of a removed node reads as nothing selected', written first and seen failing.
 - [ ] 2.2 Call it from the survey creator's store, the page builder's history store and the whiteboard's store, deleting each store's own copy of the shape. Verify: the three stores' own tests pass unchanged, and the scenarios 'A load clears the history and the selection' and 'A move keeps the node selected' pass against each.
-- [ ] 2.3 Read the commands that turn a gesture into one core edit in the survey creator and the page builder and extract what they share into the same package, if the reading shows duplicate business logic. Verify: each command's own tests pass unchanged, and the design records what was extracted and what was left, with the reason.
+- [x] 2.3 Read the commands that turn a gesture into one core edit in the survey creator and the page builder and extract what they share into the same package, if the reading shows duplicate business logic. Verify: each command's own tests pass unchanged, and the design records what was extracted and what was left, with the reason.
 
 ## 3. Gauge the benefit
 
