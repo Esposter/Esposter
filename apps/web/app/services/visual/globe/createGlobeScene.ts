@@ -96,6 +96,15 @@ const placeOnSurface = (object: Object3D, lat: number, lng: number) => {
   object.lookAt(object.position.clone().multiplyScalar(2));
   object.updateMatrix();
 };
+// Sets each instance's matrix to its point on the surface, in the order of the points
+const placeInstances = (mesh: InstancedMesh, points: readonly { lat: number; lng: number }[]) => {
+  const dummy = new Object3D();
+  for (const [index, { lat, lng }] of points.entries()) {
+    placeOnSurface(dummy, lat, lng);
+    mesh.setMatrixAt(index, dummy.matrix);
+  }
+  mesh.instanceMatrix.needsUpdate = true;
+};
 
 // Everything the globe draws, built on three alone. It owns no loop and no size of its own: the caller says when to
 // Draw, and how wide
@@ -161,24 +170,15 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
     const scale = 1 / Math.sqrt(densityScale);
     const positions = createLandDots(landMask, spacing * scale);
     dots = new InstancedMesh(new CircleGeometry(dotRadius * scale, 5), dotMaterial, positions.length);
-    const dummy = new Object3D();
-    for (const [index, { lat, lng }] of positions.entries()) {
-      placeOnSurface(dummy, lat, lng);
-      dots.setMatrixAt(index, dummy.matrix);
-    }
-    dots.instanceMatrix.needsUpdate = true;
+    placeInstances(dots, positions);
     globe.add(dots);
   };
   setQualityTier(0);
 
   const pointMaterial = new MeshBasicMaterial({ side: DoubleSide });
   const points = new InstancedMesh(new CircleGeometry(0.9, 8), pointMaterial, countries.length);
-  const pointDummy = new Object3D();
-  for (const [index, { lat, lng }] of countries.entries()) {
-    placeOnSurface(pointDummy, lat, lng);
-    points.setMatrixAt(index, pointDummy.matrix);
-    points.setColorAt(index, new Color(getRandomColor()));
-  }
+  placeInstances(points, countries);
+  for (const [index] of countries.entries()) points.setColorAt(index, new Color(getRandomColor()));
   globe.add(points);
 
   // Every ring is the same shape, so the arcs share one geometry and differ only in colour, scale and opacity
