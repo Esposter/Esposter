@@ -12,15 +12,15 @@ import { exhaustiveGuard } from "@esposter/shared";
 // Lock current. A scene or a set of pieces has none, so it prints no check beside its row
 export const getAreaChecks = (area: GenshinArea, exit: GenshinExitReadings): GenshinExitCheck[] => {
   switch (area.kind) {
-    case ComputeKind.Screen:
-      return [checkScreenIdsUnderBars(area.folder, area.parityIds, exit.means, exit.approvals)];
-    case ComputeKind.Region:
-      return [checkRegionPassesFrozen(area.folder, exit.passReports.get(area.folder))];
     case ComputeKind.Dataset:
       return [checkDatasetLockCurrent(area.folder, exit.requiredKeys, exit.lockKeys)];
     case ComputeKind.Pieces:
     case ComputeKind.Scene:
       return [];
+    case ComputeKind.Region:
+      return [checkRegionPassesFrozen(area.folder, exit.passReports.get(area.folder))];
+    case ComputeKind.Screen:
+      return [checkScreenIdsUnderBars(area.folder, area.parityIds, exit.means, exit.approvals)];
     default:
       return exhaustiveGuard(area.kind);
   }

@@ -20,13 +20,13 @@ export const publishGameDataStep = async ({
   const label = scopes.join(", ");
   const currentLock = await readGameDataLock();
   const result = await publishGameData({
-    currentLock,
     createContainerClientMap: isDryRun
       ? undefined
       : () => ({
           [GameDataTarget.Dev]: createGameDataContainerClient(GameDataTarget.Dev),
           [GameDataTarget.Prod]: createGameDataContainerClient(GameDataTarget.Prod),
         }),
+    currentLock,
     publication,
     scopes,
   });

@@ -1,10 +1,11 @@
+import type { GenshinExitReadings } from "#src/models/genshinProgress/GenshinExitReadings";
+
 import { ComputeKind } from "#src/models/fleet/ComputeKind";
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
 import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
-import type { GenshinExitReadings } from "#src/models/genshinProgress/GenshinExitReadings";
 import { buildGenshinProgress } from "#src/services/genshinProgress/buildGenshinProgress";
-import { formatGenshinProgress } from "#src/services/genshinProgress/formatGenshinProgress";
 import { GENSHIN_NO_COMMAND_NOTE, GENSHIN_PHASE_GATES } from "#src/services/genshinProgress/constants";
+import { formatGenshinProgress } from "#src/services/genshinProgress/formatGenshinProgress";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

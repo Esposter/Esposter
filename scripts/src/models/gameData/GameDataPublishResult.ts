@@ -12,11 +12,11 @@ export type GameDataPublishResult =
       records: GameDataRecord[];
       storedObjectCount: number;
     }
+  | { outcome: GameDataPublishOutcome.Empty }
   | {
       outcome: GameDataPublishOutcome.Published;
       plannedLock: GameDataLock;
       storedObjectCount: number;
       uploadedCountMap: Record<GameDataTarget, number>;
     }
-  | { outcome: GameDataPublishOutcome.Empty }
   | { outcome: GameDataPublishOutcome.Unchanged };

@@ -17,8 +17,8 @@ import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } 
 // Lock and commit. The caller commits only once this resolves: a failure in either account throws before then, so the
 // Committed lock never names data a Reader cannot fetch, and a rerun converges on the same objects.
 export const publishGameData = async ({
-  currentLock,
   createContainerClientMap,
+  currentLock,
   publication,
   scopes,
 }: PublishGameDataOptions): Promise<GameDataPublishResult> => {
