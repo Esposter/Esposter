@@ -48,7 +48,7 @@ describe(strikeTimeTrialTarget, () => {
     targetCount: TARGET_COUNT,
   });
 
-  test("finishing every target in time spawns the chest", () => {
+  test("Finishing every target in time spawns the chest", () => {
     expect.hasAssertions();
 
     const marker = { challenge: createChallenge(), id: MARKER_ID, position: MARKER_POSITION };
@@ -78,7 +78,7 @@ describe(stepTimeTrialChallenge, () => {
     targetCount: TARGET_COUNT,
   });
 
-  test("a missed target before the timer ends gives no chest", () => {
+  test("A missed target before the timer ends gives no chest", () => {
     expect.hasAssertions();
 
     const marker = { challenge: createChallenge(), id: MARKER_ID, position: MARKER_POSITION };

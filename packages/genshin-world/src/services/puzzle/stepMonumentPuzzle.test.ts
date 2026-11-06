@@ -7,7 +7,7 @@ import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMon
 import { describe, expect, test } from "vitest";
 
 describe(stepMonumentPuzzle, () => {
-  test("lighting every monument together solves the puzzle", () => {
+  test("Lighting every monument together solves the puzzle", () => {
     expect.hasAssertions();
 
     const lastMonument = createMonument(false);
@@ -23,7 +23,7 @@ describe(stepMonumentPuzzle, () => {
     });
   });
 
-  test("a monument going out first leaves the puzzle unsolved", () => {
+  test("A monument going out first leaves the puzzle unsolved", () => {
     expect.hasAssertions();
 
     const firstMonument = createMonument(true);
@@ -36,7 +36,7 @@ describe(stepMonumentPuzzle, () => {
     expect(puzzle.isSolved).toBe(false);
   });
 
-  test("a solved puzzle stays solved", () => {
+  test("A solved puzzle stays solved", () => {
     expect.hasAssertions();
 
     const monument = createMonument(true);

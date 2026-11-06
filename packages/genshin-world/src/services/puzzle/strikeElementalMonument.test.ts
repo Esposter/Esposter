@@ -5,7 +5,7 @@ import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMon
 import { describe, expect, test } from "vitest";
 
 describe(strikeElementalMonument, () => {
-  test("a strike of its element lights a monument", () => {
+  test("A strike of its element lights a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(false);
@@ -14,7 +14,7 @@ describe(strikeElementalMonument, () => {
     expect({ isLit: monument.isLit, litSeconds: monument.litSeconds }).toStrictEqual({ isLit: true, litSeconds: 0 });
   });
 
-  test("a strike of another element does not light a monument", () => {
+  test("A strike of another element does not light a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(false);
@@ -23,7 +23,7 @@ describe(strikeElementalMonument, () => {
     expect(monument.isLit).toBe(false);
   });
 
-  test("a reaction of its element lights a monument", () => {
+  test("A reaction of its element lights a monument", () => {
     expect.hasAssertions();
 
     const monument = createMonument(false);

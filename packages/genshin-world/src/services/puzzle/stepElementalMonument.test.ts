@@ -7,7 +7,7 @@ import { strikeElementalMonument } from "#src/services/puzzle/strikeElementalMon
 import { describe, expect, test } from "vitest";
 
 describe(stepElementalMonument, () => {
-  test("a timed monument goes out after its time", () => {
+  test("A timed monument goes out after its time", () => {
     expect.hasAssertions();
 
     const monument = { ...createMonument(false), isTimed: true };
