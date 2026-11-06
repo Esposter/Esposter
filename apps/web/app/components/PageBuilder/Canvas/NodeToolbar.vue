@@ -23,12 +23,8 @@ const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 // The document the resource holds under either kind, as the shell's keyboard commands read it, so a webpage's and an email's toolbar act alike
 const getPageDocument = () => getHeldDocument(resourceId)?.document;
-const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
-  kind,
-  getPageDocument,
-  () => resourceId,
-  announce,
-);
+const { deleteSelected, duplicateSelected, getMoveDownRefusal, getMoveUpRefusal, moveDown, moveToScope, moveUp } =
+  usePageBuilderMoves(kind, getPageDocument, () => resourceId, announce);
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
 const { selectParent } = usePageBuilderSelection(kind, getPageDocument, () => resourceId);
@@ -42,8 +38,18 @@ onBeforeUnmount(() => {
 <template>
   <div p-1 b-border bg-background flex gap-1 fixed :style="{ left: `${position.left}px`, top: `${position.top}px` }">
     <UiIconButton label="Select parent" :meaning="UiIconMeaning.Collapse" @click="selectParent()" />
-    <UiIconButton label="Move up" :meaning="UiIconMeaning.ArrowUp" @click="moveUp()" />
-    <UiIconButton label="Move down" :meaning="UiIconMeaning.ArrowDown" @click="moveDown()" />
+    <UiIconButton
+      label="Move up"
+      :disabled-reason="getMoveUpRefusal()"
+      :meaning="UiIconMeaning.ArrowUp"
+      @click="moveUp()"
+    />
+    <UiIconButton
+      label="Move down"
+      :disabled-reason="getMoveDownRefusal()"
+      :meaning="UiIconMeaning.ArrowDown"
+      @click="moveDown()"
+    />
     <UiIconButton label="Move to…" :meaning="UiIconMeaning.Forward" @click="openCommandPalette()" />
     <UiIconButton label="Duplicate" :meaning="UiIconMeaning.Copy" @click="duplicateSelected()" />
     <UiIconButton label="Delete" :meaning="UiIconMeaning.Delete" @click="isDeleteOpen = true" />

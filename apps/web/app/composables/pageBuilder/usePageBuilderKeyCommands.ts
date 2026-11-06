@@ -23,12 +23,18 @@ export const usePageBuilderKeyCommands = (
   announce: (message: string) => void,
   isDeleteOpen: Ref<boolean>,
 ) => {
-  const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(
-    kind,
-    getPageDocument,
-    resourceId,
-    announce,
-  );
+  const {
+    deleteNode,
+    deleteSelected,
+    getMoveDownRefusal,
+    getMoveLeftRefusal,
+    getMoveRightRefusal,
+    getMoveUpRefusal,
+    moveDown,
+    moveLeft,
+    moveRight,
+    moveUp,
+  } = usePageBuilderMoves(kind, getPageDocument, resourceId, announce);
   const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
     kind,
     getPageDocument,
@@ -78,8 +84,10 @@ export const usePageBuilderKeyCommands = (
     shortcut: "cmd+v",
     title: "Paste a block",
   };
+  // A move the selection cannot take stays listed, unavailable with the reason it cannot, so the reader sees why it is not taken
+  const getMoveProps = (refusal: string | undefined) => ({ description: refusal, isDisabled: refusal !== undefined });
   // The commands over the selected node, which are bound and listed only while a node is selected
-  const selectionCommands: UiCommand[] = [
+  const getSelectionCommands = (): UiCommand[] => [
     {
       group: PAGE_BUILDER_COMMAND_GROUP,
       id: "page-builder-delete",
@@ -116,6 +124,7 @@ export const usePageBuilderKeyCommands = (
       group: PAGE_BUILDER_COMMAND_GROUP,
       id: "page-builder-move-down",
       meaning: UiIconMeaning.ArrowDown,
+      ...getMoveProps(getMoveDownRefusal()),
       run: moveDown,
       shortcut: "alt+arrowdown",
       title: "Move the selected block down",
@@ -124,6 +133,7 @@ export const usePageBuilderKeyCommands = (
       group: PAGE_BUILDER_COMMAND_GROUP,
       id: "page-builder-move-left",
       meaning: UiIconMeaning.ArrowLeft,
+      ...getMoveProps(getMoveLeftRefusal()),
       run: moveLeft,
       shortcut: "alt+arrowleft",
       title: "Move the selected block out of its parent",
@@ -132,6 +142,7 @@ export const usePageBuilderKeyCommands = (
       group: PAGE_BUILDER_COMMAND_GROUP,
       id: "page-builder-move-right",
       meaning: UiIconMeaning.ArrowRight,
+      ...getMoveProps(getMoveRightRefusal()),
       run: moveRight,
       shortcut: "alt+arrowright",
       title: "Move the selected block into the block before it",
@@ -140,6 +151,7 @@ export const usePageBuilderKeyCommands = (
       group: PAGE_BUILDER_COMMAND_GROUP,
       id: "page-builder-move-up",
       meaning: UiIconMeaning.ArrowUp,
+      ...getMoveProps(getMoveUpRefusal()),
       run: moveUp,
       shortcut: "alt+arrowup",
       title: "Move the selected block up",
@@ -157,7 +169,7 @@ export const usePageBuilderKeyCommands = (
     if (isDeleteOpen.value) return [];
     if (!getSelectedNodeId(toValue(resourceId))) return [pasteCommand];
 
-    return [pasteCommand, ...selectionCommands];
+    return [pasteCommand, ...getSelectionCommands()];
   });
 
   return { handleCanvasKeydown, handleEnterKeydown };
