@@ -17,7 +17,7 @@ Fixes committed as abc1234. Refuted while reading: removeThing timeout bound, ba
 - **Where** — the file in backticks and the symbol it sits in, plus `(+N)` when the same root cause shows at other symbols, named under the table.
 - **Lane** — `quality` or `correctness` (SKILL.md). Omit the column when the round ran one lane only.
 - **Severity** — 🔴 critical, 🟡 major (default), 🟢 minor. Sort by it, correctness above quality at equal severity. Quality findings are always minor.
-- **Origin** — how the finding arose: `new` (bare, no source), `regression <sha>` (the cited line came from an earlier fix — look there next), `reopened <page>` (the record settled this; say what the code does that the record does not cover, or it is a false positive), `stale-record <path>` (the code is right and the doc is wrong, so the fix is the doc edit).
+- **Origin** — how the finding arose: `new` (bare, no source), `regression <sha>` (the code the Where column names came from an earlier fix — look there next), `reopened <page>` (the record settled this; say what the code does that the record does not cover, or it is a false positive), `stale-record <path>` (the code is right and the doc is wrong, so the fix is the doc edit).
 - **Disposition** — a few words. State the commit hash once under the table, never per row.
 - **`area` mode adds a Kind column** after Where (`correctness` / `conformance` / `record-gap` / `cleanup`) and drops Lane, since the kind carries more.
 
