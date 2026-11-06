@@ -37,11 +37,7 @@ const dragStart = (kind: string, event: PointerEvent) => {
 
 <template>
   <div p-2 flex flex-col of-y-auto ui-lifted>
-    <UiPalette
-      :groups="paletteGroups"
-      @insert="(kind) => insert(kind)"
-      @drag-start="(kind, event) => dragStart(kind, event)"
-    />
+    <UiPalette :groups="paletteGroups" @insert="insert" @drag-start="dragStart" />
     <UiDragGhost v-if="ghost" :icon="ghost.icon" :point="ghost.point" :title="ghost.title" />
   </div>
 </template>
