@@ -35,7 +35,7 @@ description: Apply when creating, updating or referencing any spec, design, prop
 1. Start a change: `pnpm exec openspec new change <area>-<slug> --description "<one sentence>"`, then write the four artifacts and the metadata (`references/change-metadata.md`).
 2. Validate: `pnpm exec openspec validate <id> --strict --no-interactive`.
 3. Check the scenarios: `pnpm -C scripts exec vitest run src/services/openspec`. Every scenario reads as an optional GIVEN, one WHEN and one THEN, with AND after any of them.
-4. Each task names the test it writes first, and each scenario is that test's name in the suite it lands in; `scripts/src/workspace/openspecScenarioTasks.test.ts` holds the tasks and the delta to each other (`references/spec-tests.md`).
+4. Each task names the test it writes first, and each scenario is that test's name in the suite it lands in; `scripts/src/workspace/openspecScenarioTasks.test.ts` holds the tasks and the delta to each other, and `scripts/src/workspace/openspecTickedTasks.test.ts` holds a ticked task's quoted scenario to a test of that title (`references/spec-tests.md`).
 5. Once it ships: `pnpm exec openspec archive <id> --yes`. The archive merges the deltas into `openspec/specs/`, and the capability's `design.md` is rewritten as built in the same change (`references/page-shapes.md`, "Lifecycle map").
 
 ## Rules
