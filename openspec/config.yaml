@@ -11,7 +11,7 @@ context: |
 
 rules:
   proposal:
-    - State one intent you can say in one sentence. More than three capabilities or twelve tasks means split the change, unless the user accepts the size.
+    - State one intent you can say in one sentence. More than three capabilities or twelve open tasks means split the change, unless the user accepts the size. Finished tasks do not count, and an area's `<area>-roadmap` change is exempt, as it is the backlog of its area rather than one intent.
     - Mark BREAKING changes. Name every capability whose behaviour changes; use skip_specs only for pure tooling, refactor or docs changes.
   specs:
     - Requirements describe behaviour an outsider can observe. File paths, class names and library choices belong in design.md.
