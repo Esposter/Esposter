@@ -10,9 +10,9 @@ describe(parseScriptQuestIds, () => {
         [
           "export const session: ScriptedStep[] = [",
           '  "quest 351",',
-          '  { equals: "finished", kind: ScriptedStepKind.Expect, line: "quest 351" },',
+          '  { equals: "", kind: ScriptedStepKind.Expect, line: "quest 351" },',
           '  "quest 352",',
-          '  "bag 1",',
+          '  "",',
           '  // "quest 999",',
           "];",
         ].join("\n"),

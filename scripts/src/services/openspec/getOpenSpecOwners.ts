@@ -1,10 +1,9 @@
-import { OPENSPEC_DIRECTORY } from "#src/services/openspec/constants";
+import { DELTA_SPECS_FOLDER, OPENSPEC_DIRECTORY } from "#src/services/openspec/constants";
 import { getChangeDirectory } from "#src/services/openspec/getChangeDirectory";
 import { PROPOSALS_DIRECTORY } from "#src/services/proposals/constants";
 import { dirname } from "node:path";
 
 const SPECS_DIRECTORY = `${OPENSPEC_DIRECTORY}/specs`;
-const DELTA_SPECS_FOLDER = "specs";
 
 // The folders an OpenSpec page is one statement of, each a page of it shares by design: a capability's spec and design
 // Describe one thing, a change's proposal, design, tasks and deltas are one decision, and a delta restates the

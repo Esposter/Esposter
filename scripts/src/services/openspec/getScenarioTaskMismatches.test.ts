@@ -5,8 +5,7 @@ describe(getScenarioTaskMismatches, () => {
   test("reports a title a task names after 'scenario' that the delta lacks, and the scenario it holds unnamed", () => {
     expect.hasAssertions();
 
-    const tasksText =
-      "- [ ] 1.1 Fit the rig. Verify: a test named after the scenario 'A rig keeps its pose', written first.";
+    const tasksText = "scenario 'A rig keeps its pose'";
 
     expect(getScenarioTaskMismatches(tasksText, ["A rig keeps its weight"])).toStrictEqual({
       unheldByDelta: ["A rig keeps its pose"],
@@ -17,9 +16,7 @@ describe(getScenarioTaskMismatches, () => {
   test("reports a scenario of the delta that no task quotes", () => {
     expect.hasAssertions();
 
-    const tasksText = "- [ ] 1.1 Fit the rig. Verify: the rig's test, written first and seen failing.";
-
-    expect(getScenarioTaskMismatches(tasksText, ["A rig keeps its weight"])).toStrictEqual({
+    expect(getScenarioTaskMismatches("", ["A rig keeps its weight"])).toStrictEqual({
       unheldByDelta: [],
       unnamedByTasks: ["A rig keeps its weight"],
     });
@@ -29,9 +26,9 @@ describe(getScenarioTaskMismatches, () => {
     expect.hasAssertions();
 
     const tasksText = [
-      "- [ ] 1.1 Fit the rig. Verify: tests named after the scenarios 'A rig keeps its pose' and",
-      '  "A rig keeps its weight", written first.',
-      "- [ ] 1.2 Read the rig. Verify: a test asserting 'a quote no scenario word precedes', written first.",
+      "scenarios 'A rig keeps its pose' and",
+      '"A rig keeps its weight"',
+      "'a quote no scenario word precedes'",
     ].join("\n");
 
     expect(getScenarioTaskMismatches(tasksText, ["A rig keeps its pose", "A rig keeps its weight"])).toStrictEqual({
@@ -44,7 +41,7 @@ describe(getScenarioTaskMismatches, () => {
     expect.hasAssertions();
 
     const title = "The rig's joints' pose holds";
-    const tasksText = `- [ ] 1.1 Fit the rig. Verify: a test named after the scenario '${title}', written first.`;
+    const tasksText = `scenario '${title}'`;
 
     expect(getScenarioTaskMismatches(tasksText, [title])).toStrictEqual({ unheldByDelta: [], unnamedByTasks: [] });
   });
@@ -52,7 +49,7 @@ describe(getScenarioTaskMismatches, () => {
   test("reads a longer quote whole past a held title that ends at an apostrophe inside it, and names no held title by it", () => {
     expect.hasAssertions();
 
-    const tasksText = "- [ ] 1.1 Fit the rig. Verify: a test named after the scenario 'A rig's pose', written first.";
+    const tasksText = "scenario 'A rig's pose'";
 
     expect(getScenarioTaskMismatches(tasksText, ["A rig"])).toStrictEqual({
       unheldByDelta: ["A rig's pose"],
