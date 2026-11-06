@@ -147,7 +147,25 @@ describe("editorShell", () => {
 
     expect(compactComponent.find("aside").exists()).toBe(false);
     expect(compactComponent.get("dialog").element.open).toBe(false);
-    expect(compactComponent.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.DrawerEnd);
+  });
+
+  test("a compact window opens a sheet from the bottom", () => {
+    expect.hasAssertions();
+
+    display.isCompact = true;
+    display.isMobile = true;
+    const component = mountShell();
+
+    expect(component.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.DrawerBottom);
+  });
+
+  test("a medium window opens a sheet from its own edge", () => {
+    expect.hasAssertions();
+
+    display.isMobile = true;
+    const component = mountShell();
+
+    expect(component.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.DrawerEnd);
   });
 
   test("a handle resizes from the keyboard", async () => {

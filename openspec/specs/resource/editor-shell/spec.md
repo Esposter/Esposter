@@ -160,6 +160,22 @@ On a compact window the shell SHALL draw each sheet's button in a strip below th
 - **THEN** the button that opens the panel is drawn in a strip below the canvas
 - **AND** the canvas holds no button
 
+### Requirement: A compact window's sheet rises from the bottom
+
+On a compact window the shell SHALL open each sheet up from the bottom edge, to most of the window's height and no further, so the canvas stays in view above it. On a wider window a sheet SHALL stand at its region's own edge.
+
+#### Scenario: A compact window opens a sheet from the bottom
+
+- **GIVEN** a compact window with a side region held as a sheet
+- **WHEN** the sheet is drawn
+- **THEN** it rises from the bottom edge
+
+#### Scenario: A medium window opens a sheet from its own edge
+
+- **GIVEN** a medium window with an end region held as a sheet
+- **WHEN** the sheet is drawn
+- **THEN** it opens from the end edge
+
 ### Requirement: A compact window places the tool region at the bottom
 
 On a compact window the tool region SHALL sit at the bottom edge of the editor, not the top.

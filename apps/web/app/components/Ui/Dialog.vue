@@ -2,6 +2,7 @@
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
 import { Dialog } from "@vuetify/v0";
 
@@ -56,17 +57,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       of-visible
       @cancel.prevent
     >
-      <section
-        ref="frame"
-        :class="
-          displayPlacement === UiDialogPlacement.High || displayPlacement === UiDialogPlacement.Middle
-            ? 'max-h-[76dvh]'
-            : 'h-full'
-        "
-        flex
-        flex-col
-        ui-lifted
-      >
+      <section ref="frame" :class="UiDialogFrameClassMap[displayPlacement]" flex flex-col ui-lifted>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else px-3 py-2 flex flex-wrap gap-2 ui-bar items-center>
           <hgroup flex-1 min-w-0>

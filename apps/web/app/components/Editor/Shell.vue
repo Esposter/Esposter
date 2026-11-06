@@ -5,13 +5,7 @@ import type { Context, Layout } from "vue-editor-layout-headless";
 
 import { useEditorReaderStateStore } from "@/store/editor/readerState";
 import { takeOne } from "@esposter/shared";
-import {
-  parseReaderState,
-  RegionEdge,
-  RegionPresentation,
-  SizeClass,
-  useEditorLayout,
-} from "vue-editor-layout-headless";
+import { parseReaderState, RegionEdge, RegionPresentation, useEditorLayout } from "vue-editor-layout-headless";
 
 interface Props {
   // What the reader is doing, which decides what each panel shows
@@ -29,14 +23,7 @@ interface Props {
 
 defineSlots<{ default: () => VNode }>();
 const { context, editorType, layout, panelNameMap, regionNameMap, registry } = defineProps<Props>();
-const { isMobile, xs: isCompact } = useUiDisplay();
-// The page's drawers are sheets below the mobile breakpoint, so that is the medium class, and a window below the first
-// Breakpoint is the compact one
-const sizeClass = computed(() => {
-  if (isCompact.value) return SizeClass.Compact;
-  else if (isMobile.value) return SizeClass.Medium;
-  else return SizeClass.Expanded;
-});
+const sizeClass = useEditorSizeClass();
 const editorReaderStateStore = useEditorReaderStateStore();
 const { readerStateMap } = storeToRefs(editorReaderStateStore);
 const { setReaderState } = editorReaderStateStore;

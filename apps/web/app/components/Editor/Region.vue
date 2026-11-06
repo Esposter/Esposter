@@ -2,9 +2,10 @@
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { RegionEdgeDialogPlacementMap } from "@/services/editor/RegionEdgeDialogPlacementMap";
 import { RegionEdgeOverlayClassMap } from "@/services/editor/RegionEdgeOverlayClassMap";
-import { RegionEdge, RegionPresentation } from "vue-editor-layout-headless";
+import { RegionEdge, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 interface Props {
   // The name the region is announced by: its landmark's label, or a sheet's title
@@ -22,6 +23,12 @@ const { name, overlayInset, panelNameMap, region, registry } = defineProps<Props
 // A docked region reports the size its handle asks for, a sheet asks to be opened or closed, and a tabbed region reports the
 // Panel its reader picked, which the shell answers
 const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string]; toggle: [] }>();
+const sizeClass = useEditorSizeClass();
+// A compact window is a phone, whose drawer would cover the whole canvas, so its sheet rises from the bottom and leaves the
+// Canvas in view above it. A wider window's sheet stands at its region's own edge
+const sheetPlacement = computed(() =>
+  sizeClass.value === SizeClass.Compact ? UiDialogPlacement.DrawerBottom : RegionEdgeDialogPlacementMap[region.edge],
+);
 // A top or bottom region is a bar, sized by its height, and a start or end region a column, sized by its width
 const isVertical = computed(() => [RegionEdge.Bottom, RegionEdge.Top].includes(region.edge));
 // The handle sits on the region's inner edge, so a region at the end or the bottom takes it on its start or top side
@@ -42,7 +49,7 @@ const overlayInsetStyle = computed(() => {
   <UiDialog
     v-if="region.presentation === RegionPresentation.Sheet"
     :model-value="region.isOpen"
-    :placement="RegionEdgeDialogPlacementMap[region.edge]"
+    :placement="sheetPlacement"
     :title="name"
     is-title-hidden
     @update:model-value="emit('toggle')"

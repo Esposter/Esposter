@@ -38,7 +38,7 @@ flowchart TD
 
 **The bar's controls are by use.** Undo, redo and Add page are every-edit actions and are pinned. The mode switch and the problems surface are always shown. Import, Export and Clear are occasional, and fold into the bar's overflow menu at every width, which keeps the bar one row on a phone with no second bar of buttons.
 
-**A compact window.** The canvas keeps the window. Two buttons the editor shell places, Structure and Inspector, open the two regions as sheets from their own edges. Both buttons are shown in the design mode, since each region holds a panel whatever is selected: the inspector's Survey, Logic and Theme tabs show with nothing selected. Neither is drawn in Preview. The buttons sit in one row in the strip below the canvas. A sheet on a phone is as wide as the window and covers the canvas while it is open, so a question's settings are read with the question out of sight, and closing the sheet returns to the canvas with the question still selected.
+**A compact window.** The canvas keeps the window. Two buttons the editor shell places, Structure and Inspector, open the two regions as sheets that rise from the bottom. Both buttons are shown in the design mode, since each region holds a panel whatever is selected: the inspector's Survey, Logic and Theme tabs show with nothing selected. Neither is drawn in Preview. The buttons sit in one row in the strip below the canvas. A sheet on a phone rises to most of the window's height, so the canvas shows above it and the selected question stays in view while its settings are read.
 
 ## Decisions
 
@@ -56,7 +56,6 @@ flowchart TD
 
 ## Not built
 
-- **A sheet that leaves the selected question in view on a phone.** The library's drawers stand at the start and end edges only, and a drawer is as wide as a phone, so the sheet covers the canvas. A partial-height sheet from the bottom edge would be a change to the library's dialog placements, not to this layout.
 - **A graph view of the logic.** The decision on logic leaves a map of the jumps across the survey for later, and the Logic tab stays one element's rows.
 - **New survey kinds, conditions or checks.** The document and its rules are as they are.
 - **A change to the logic builder's rows.** They are the Logic tab's content, as [the logic builder's design](../survey-logic-builder/design.md) holds them.

@@ -139,7 +139,7 @@ describe("resourceSurveyCreatorShell", () => {
     component.unmount();
   });
 
-  test("nothing selected offers the theme tab", async () => {
+  test("nothing selected offers the Theme tab", async () => {
     expect.hasAssertions();
 
     loadSurvey();
@@ -154,7 +154,7 @@ describe("resourceSurveyCreatorShell", () => {
     component.unmount();
   });
 
-  test("a node selection offers no theme tab", async () => {
+  test("a node selection offers no Theme tab", async () => {
     expect.hasAssertions();
 
     loadSurvey();
@@ -180,9 +180,12 @@ describe("resourceSurveyCreatorShell", () => {
     const { select } = useSurveyCreatorCommands();
     select(firstQuestionPointer);
     const component = await mountSuspended(ResourceSurveyCreatorShell);
-    const inspectorSheet = component.get<HTMLDialogElement>(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
+    // Every sheet of a compact window rises from the bottom, so the inspector's is the one named by its region
+    const inspectorSheet = component
+      .findAll<HTMLDialogElement>("dialog")
+      .find((dialog) => dialog.text().startsWith(SurveyEditorRegionNameMap[SurveyEditorRegion.Inspector]));
 
-    expect(inspectorSheet.element.open).toBe(false);
+    expect(inspectorSheet?.element.open).toBe(false);
 
     // The shell draws a button for each sheet, named by the region it opens
     await component
@@ -191,7 +194,7 @@ describe("resourceSurveyCreatorShell", () => {
       ?.trigger("click");
     await flushPromises();
 
-    expect(inspectorSheet.element.open).toBe(true);
+    expect(inspectorSheet?.element.open).toBe(true);
     expect(component.findComponent(ResourceSurveyCreatorCanvas).exists()).toBe(true);
 
     component.unmount();

@@ -193,9 +193,12 @@ describe("pageBuilderEditor", () => {
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
-    const inspector = component.get<HTMLDialogElement>(`dialog[data-placement="${UiDialogPlacement.DrawerEnd}"]`);
+    // Every sheet of a compact window rises from the bottom, so the inspector's is the one named by its region
+    const inspector = component
+      .findAll<HTMLDialogElement>("dialog")
+      .find((dialog) => dialog.text().startsWith(PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]));
 
-    expect(inspector.element.open).toBe(false);
+    expect(inspector?.element.open).toBe(false);
 
     const settingsButton = component
       .findAll("button")
