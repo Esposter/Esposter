@@ -17,11 +17,6 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-constellations       | —     | unreconciled |
 | genshin-domains              | —     | unreconciled |
 | genshin-exploration-progress | —     | unreconciled |
-| genshin-fishing              | —     | unreconciled |
-| genshin-follow-camera        | —     | unreconciled |
-| genshin-fontaine             | —     | unreconciled |
-| genshin-gadgets              | —     | unreconciled |
-| genshin-ground-detail        | —     | unreconciled |
 | genshin-imaginarium-theater  | —     | unreconciled |
 | genshin-ley-line-outcrops    | —     | unreconciled |
 | genshin-mail                 | —     | unreconciled |
