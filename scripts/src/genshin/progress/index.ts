@@ -16,8 +16,8 @@ await runCommand(
       name: "progress",
     },
     run: async () => {
-      const capabilities = await readRunnableCapabilities();
-      const progress = buildGenshinProgress(await readGenshinUnits(), capabilities);
+      const [capabilities, units] = await Promise.all([readRunnableCapabilities(), readGenshinUnits()]);
+      const progress = buildGenshinProgress(units, capabilities);
       for (const line of formatGenshinProgress(progress)) console.info(line);
     },
   }),
