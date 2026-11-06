@@ -153,6 +153,7 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/artifact-strongbox/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/buildings/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/characters/pmx-reader/spec.md`               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/published-packs/spec.md`          | —                      |       |
 | `openspec/specs/genshin/chests/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/companionship/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/capitals/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
