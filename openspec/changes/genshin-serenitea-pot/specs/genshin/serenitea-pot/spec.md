@@ -153,6 +153,30 @@ The Realm Depot SHALL offer its goods priced in Realm Currency, and the wallet S
 - **THEN** the Realm Depot opens on its first tab, with that tab's goods
 - **AND** the goods of each other tab are shown on that tab, one tab's click away
 
+### Requirement: The realm's Realm Currency and Realm Bounty stores fill over real time
+
+The realm's Realm Currency and Realm Bounty stores SHALL each fill as real time passes, up to the limit the player's Trust Rank gives, and a claim SHALL give what they hold.
+
+#### Scenario: A store fills over real time
+
+- **GIVEN** a realm whose stores were last claimed one rate period ago
+- **WHEN** the player claims the stores
+- **THEN** the Realm Currency store holds one period's rate of Realm Currency
+- **AND** the Realm Bounty store holds one period's rate of Realm Bounty
+
+#### Scenario: A store stops at its limit
+
+- **GIVEN** a realm whose Realm Currency store would fill past its limit in three rate periods
+- **WHEN** the player claims the store after those three periods
+- **THEN** the store holds its limit and no more
+
+#### Scenario: A clock read earlier than the last claim produces nothing
+
+- **GIVEN** a realm whose Realm Currency store was last claimed at a later instant than the clock now reads
+- **WHEN** the player claims the store
+- **THEN** the store holds what it held at its last claim
+- **AND** its last claim stays at that instant
+
 ### Requirement: A garden's fields and a pond yield over real time
 
 A garden's fields SHALL grow their seeds, and a pond SHALL hold its fish, as real time passes in the realm.
