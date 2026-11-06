@@ -21,7 +21,7 @@ export const publishGameDataStep = async ({
   const currentLock = await readGameDataLock();
   const result = await publishGameData({
     currentLock,
-    getContainerClientMap: isDryRun
+    createContainerClientMap: isDryRun
       ? undefined
       : () => ({
           [GameDataTarget.Dev]: createGameDataContainerClient(GameDataTarget.Dev),
