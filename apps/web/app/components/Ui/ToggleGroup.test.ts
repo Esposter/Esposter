@@ -107,6 +107,26 @@ describe("uiToggleGroup", () => {
       expect(second?.attributes("aria-disabled")).toBe("true");
     });
 
+    test("describes a choice by its description", async () => {
+      expect.hasAssertions();
+
+      const description = "description";
+      const component = mount(UiToggleGroup<string>, {
+        props: {
+          items: [
+            { title: "a", value: "a" },
+            { description, isDisabled: true, title: "b", value: "b" },
+          ],
+          label,
+          modelValue: "a",
+        },
+      });
+      await flushPromises();
+      const second = component.findAll('[role="radio"]')[1];
+
+      expect(component.get(`#${second?.attributes("aria-describedby")}`).text()).toBe(description);
+    });
+
     test("holds a disabled group, which a click does not choose and which is drawn faded", async () => {
       expect.hasAssertions();
 

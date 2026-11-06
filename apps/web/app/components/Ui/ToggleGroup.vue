@@ -28,6 +28,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ mark?: (props: { item: UiMenuItem<T> }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
 const { isDisabled, isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
+const id = useId();
 </script>
 
 <template>
@@ -53,9 +54,10 @@ const { isDisabled, isIconOnly, isVertical, items, label, variant } = defineProp
       ]"
     >
       <Radio.Root
-        v-for="item of items"
+        v-for="(item, index) of items"
         #default="{ attrs: itemAttrs }"
         :key="item.value"
+        :aria-describedby="item.description ? `${id}-${index}` : undefined"
         :disabled="item.isDisabled"
         :value="item.value"
         renderless
@@ -71,6 +73,7 @@ const { isDisabled, isIconOnly, isVertical, items, label, variant } = defineProp
               <span v-else-if="item.icon" :class="item.icon" aria-hidden="true" size-6 />
             </slot>
             <template v-if="!isIconOnly">{{ item.title }}</template>
+            <span v-if="item.description" :id="`${id}-${index}`" hidden>{{ item.description }}</span>
           </button>
         </UiTooltip>
       </Radio.Root>
