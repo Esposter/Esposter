@@ -90,7 +90,7 @@ Two expeditions SHALL be out at once at first, and one more SHALL be allowed at 
 
 - **GIVEN** two expeditions out and an Adventure Rank below 26
 - **WHEN** a third is sent
-- **THEN** the send is refused (the wikitext in `{data-root}/cache/genshin-wiki/Page_Expedition.json` lines 16 and 19 to 23 gives two expeditions at first and three from Adventure Rank 26; `EXPEDITION_BASE_LIMIT` in `packages/genshin-world/src/services/expedition/constants.ts` sets the base at 2)
+- **THEN** the send is refused (the wikitext in `{data-root}/cache/genshin-wiki/Page_Expedition.json` gives two expeditions at first and three from Adventure Rank 26; `EXPEDITION_BASE_LIMIT` in `packages/genshin-world/src/services/expedition/constants.ts` sets the base limit)
 
 #### Scenario: A third expedition is allowed from Adventure Rank 26
 
