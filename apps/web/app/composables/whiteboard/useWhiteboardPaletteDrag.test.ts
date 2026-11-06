@@ -12,15 +12,17 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 const createPointerEvent = (type: string, x: number, y: number, init?: PointerEventInit) =>
   new PointerEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, pointerId: 1, ...init });
 
+const mountDrag = (onRelease: (item: WhiteboardPaletteItem, point: Point) => void) =>
+  mount(defineComponent({ render: () => h("div"), setup: () => useWhiteboardPaletteDrag(onRelease) }));
+const move = (x: number, y: number, pointerType = "mouse") =>
+  window.dispatchEvent(createPointerEvent("pointermove", x, y, { pointerType }));
+const release = (x: number, y: number) => window.dispatchEvent(createPointerEvent("pointerup", x, y));
+
 describe(useWhiteboardPaletteDrag, () => {
   const item: WhiteboardPaletteItem = { kind: ShapeKind.Process, title: "Process", type: PositionedElementType.Shape };
-  const mountDrag = (onRelease: (item: WhiteboardPaletteItem, point: Point) => void) =>
-    mount(defineComponent({ render: () => h("div"), setup: () => useWhiteboardPaletteDrag(onRelease) }));
-  const press = (drag: ReturnType<typeof mountDrag>, x: number, y: number, pointerType = "mouse") =>
+  const press = (drag: ReturnType<typeof mountDrag>, x: number, y: number, pointerType = "mouse") => {
     drag.vm.startDrag(item, createPointerEvent("pointerdown", x, y, { pointerType }));
-  const move = (x: number, y: number, pointerType = "mouse") =>
-    window.dispatchEvent(createPointerEvent("pointermove", x, y, { pointerType }));
-  const release = (x: number, y: number) => window.dispatchEvent(createPointerEvent("pointerup", x, y));
+  };
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -81,11 +83,11 @@ describe(useWhiteboardPaletteDrag, () => {
     vi.runOnlyPendingTimers();
     tile.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
 
-    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick).toHaveBeenCalledTimes(1);
     tile.remove();
   });
 
-  test("Escape cancels a drag, so the release after it places nothing", () => {
+  test("escape cancels a drag, so the release after it places nothing", () => {
     expect.hasAssertions();
 
     const onRelease = vi.fn<(item: WhiteboardPaletteItem, point: Point) => void>();

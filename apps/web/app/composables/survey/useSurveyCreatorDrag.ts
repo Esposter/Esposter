@@ -13,11 +13,15 @@ import { getBlockNode } from "headless-block-editor";
 import { SurveyNodeType, surveyNodeChildren } from "headless-survey-engine";
 
 // The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop reads
-type DragSource = { index: number; nodePointer: string; slotPointer: string };
+interface DragSource {
+  index: number;
+  nodePointer: string;
+  slotPointer: string;
+}
 // The drag a palette kind or a canvas node starts, shared by every pane through the store, so the canvas draws what the palette
-// starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch delay; a finger that
-// moves first is scrolling, so its press ends there. A release over a slot lands the drag as one command, and a release over
-// no slot, Escape or a cancel changes nothing
+// Starts. A press is a click until it moves the drag distance, or, for a finger, until it rests the touch delay; a finger that
+// Moves first is scrolling, so its press ends there. A release over a slot lands the drag as one command, and a release over
+// No slot, Escape or a cancel changes nothing
 export const useSurveyCreatorDrag = () => {
   const surveyCreatorDragStore = useSurveyCreatorDragStore();
   const { dragPoint, dropTarget, draggedNodeId, draggedType, isDragging } = storeToRefs(surveyCreatorDragStore);
@@ -27,8 +31,8 @@ export const useSurveyCreatorDrag = () => {
   const { insertNodeAt, moveNodeTo } = useSurveyCreatorCommands();
   const { startPress } = usePressDrag();
   // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a move reads. A node
-  // cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the one the core takes once
-  // the node is removed
+  // Cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the one the core takes once
+  // The node is removed
   const getDropSlots = (source?: DragSource): SurveyDropSlot[] => {
     const slots = measureSlots();
     if (source === undefined) return slots;

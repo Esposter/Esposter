@@ -3,23 +3,25 @@ import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE, TOUCH_DRAG_DELAY_MS } f
 import { usePressDrag } from "@/composables/ui/usePressDrag";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+const createHandlers = () => ({
+  onEnd: vi.fn<() => void>(),
+  onMove: vi.fn<(point: { x: number; y: number }) => void>(),
+  onRelease: vi.fn<(point: { x: number; y: number }) => void>(),
+  onStart: vi.fn<() => void>(),
+});
+
+const trackPress = (event: PointerEvent, handlers: ReturnType<typeof createHandlers>) => {
+  const { cancel, startPress } = usePressDrag();
+  startPress(event, handlers);
+  return cancel;
+};
+
 describe(usePressDrag, () => {
   const POINTER_ID = 1;
   const createPress = (pointerType: string) =>
     new PointerEvent("pointerdown", { clientX: 100, clientY: 100, pointerId: POINTER_ID, pointerType });
   const dispatch = (type: string, init: PointerEventInit = {}) =>
     window.dispatchEvent(new PointerEvent(type, { pointerId: POINTER_ID, ...init }));
-  const createHandlers = () => ({
-    onEnd: vi.fn<() => void>(),
-    onMove: vi.fn<(point: { x: number; y: number }) => void>(),
-    onRelease: vi.fn<(point: { x: number; y: number }) => void>(),
-    onStart: vi.fn<() => void>(),
-  });
-  const trackPress = (event: PointerEvent, handlers: ReturnType<typeof createHandlers>) => {
-    const { cancel, startPress } = usePressDrag();
-    startPress(event, handlers);
-    return cancel;
-  };
 
   afterEach(() => {
     vi.useRealTimers();
@@ -76,7 +78,7 @@ describe(usePressDrag, () => {
     expect(handlers.onMove).toHaveBeenCalledWith({ x: 100, y: 100 });
   });
 
-  test("Escape ends a drag in progress and lands nothing, and goes no further", () => {
+  test("escape ends a drag in progress and lands nothing, and goes no further", () => {
     expect.hasAssertions();
 
     const handlers = createHandlers();

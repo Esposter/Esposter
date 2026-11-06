@@ -80,7 +80,7 @@ const importSurvey = () =>
   });
 const clearSurvey = () => applyEdit(getReplaceOperations(createSurveyDocument()), "Clear survey");
 // The toolbar's own width, since a side pane's resize narrows it on a wide screen where the viewport is not. It is zero until
-// it is measured, so the row starts folded
+// It is measured, so the row starts folded
 const toolbar = useTemplateRef("toolbar");
 const { width } = useElementSize(toolbar);
 const isFolded = computed(() => width.value < SURVEY_TOOLBAR_UNFOLDED_WIDTH);

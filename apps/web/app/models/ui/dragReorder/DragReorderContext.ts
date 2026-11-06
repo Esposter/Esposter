@@ -13,5 +13,5 @@ export interface DragReorderContext {
   startTouchDelay: () => void;
   stopTouchDelay: () => void;
   // Swallows the click a release raises after a drag, until that click or the next press
-  swallowing?: AbortController;
+  stopSwallow?: () => void;
 }

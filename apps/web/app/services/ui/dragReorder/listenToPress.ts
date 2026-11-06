@@ -1,13 +1,14 @@
 import type { DragReorderContext } from "@/models/ui/dragReorder/DragReorderContext";
 import type { Press } from "@/models/ui/dragReorder/Press";
 
-import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "@/services/ui/constants";
+import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
 import { cancelDrag } from "@/services/ui/dragReorder/cancelDrag";
 import { endPress } from "@/services/ui/dragReorder/endPress";
 import { moveDrag } from "@/services/ui/dragReorder/moveDrag";
 import { settleDrag } from "@/services/ui/dragReorder/settleDrag";
 import { startDrag } from "@/services/ui/dragReorder/startDrag";
 import { swallowNextClick } from "@/services/ui/dragReorder/swallowNextClick";
+import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
 
 // The window listeners a press holds until it ends, for the pointer's travel, its release and cancel, Escape, the
 // Browser's own drag and selection, and the scrolls that move the rows under a pointer that may not move at all
@@ -22,9 +23,9 @@ export const listenToPress = (context: DragReorderContext, currentPress: Press) 
       else if (!currentPress.isCancelled) {
         const distance = Math.hypot(event.clientX - currentPress.startX, event.clientY - currentPress.startY);
         // A finger moving before it has rested is scrolling, which the browser goes on to do
-        if (currentPress.pointerType === "touch") {
-          if (distance > LONG_PRESS_MOVE_TOLERANCE) endPress(context, currentPress);
-        } else if (distance >= DRAG_START_DISTANCE) startDrag(context, currentPress);
+        const outcome = getPressMoveOutcome(currentPress.pointerType, distance);
+        if (outcome === PressMoveOutcome.Cancel) endPress(context, currentPress);
+        else if (outcome === PressMoveOutcome.Start) startDrag(context, currentPress);
       }
     },
     options,

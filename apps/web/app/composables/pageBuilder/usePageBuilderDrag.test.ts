@@ -388,6 +388,6 @@ describe(usePageBuilderDrag, () => {
     window.dispatchEvent(pointerAt("pointerup", 600, 30, "touch"));
     document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
-    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

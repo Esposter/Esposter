@@ -3,16 +3,16 @@ import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import { freezeFrameGeometry } from "@/services/pageBuilder/freezeFrameGeometry";
 import { describe, expect, test } from "vitest";
 
-describe(freezeFrameGeometry, () => {
-  const createGeometry = (rects: Record<string, FrameGeometry["frameRect"]>, getScrollTop: () => number) => ({
-    checkIsHorizontalOwner: () => false,
-    frameRect: { height: 600, left: 0, top: 0, width: 800 },
-    getChildRect: (nodeId: string) => rects[nodeId],
-    getNodeIdAt: () => undefined,
-    getScrollTop,
-    scale: 1,
-  });
+const createGeometry = (rects: Record<string, FrameGeometry["frameRect"]>, getScrollTop: () => number) => ({
+  checkIsHorizontalOwner: () => false,
+  frameRect: { height: 600, left: 0, top: 0, width: 800 },
+  getChildRect: (nodeId: string) => rects[nodeId],
+  getNodeIdAt: () => undefined,
+  getScrollTop,
+  scale: 1,
+});
 
+describe(freezeFrameGeometry, () => {
   test("a frozen frame keeps the boxes it was frozen with, though the frame moves its nodes after", () => {
     expect.hasAssertions();
 
@@ -31,6 +31,7 @@ describe(freezeFrameGeometry, () => {
 
     let scrollTop = 30;
     // A browser's rect holds its sides as getters on its prototype, which a spread does not copy
+    /* oxlint-disable typescript/class-literal-property-style -- A readonly field is an own property, which a spread copies, so only a getter reproduces the browser's rect */
     class BrowserRect {
       get height() {
         return 20;
@@ -45,6 +46,7 @@ describe(freezeFrameGeometry, () => {
         return 800;
       }
     }
+    /* oxlint-enable typescript/class-literal-property-style */
     const frozen = freezeFrameGeometry(
       createGeometry({ text: new BrowserRect() }, () => scrollTop),
       ["text"],

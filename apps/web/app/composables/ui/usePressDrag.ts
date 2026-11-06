@@ -1,3 +1,4 @@
+import { PressMoveOutcome } from "@/models/ui/PressMoveOutcome";
 import { DRAG_START_DISTANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
 import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
 import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
@@ -74,8 +75,8 @@ export const usePressDrag = () => {
         }
 
         const outcome = getPressMoveOutcome(pointerType, distance);
-        if (outcome === "start") start();
-        else if (outcome === "cancel") end();
+        if (outcome === PressMoveOutcome.Start) start();
+        else if (outcome === PressMoveOutcome.Cancel) end();
       }),
       useEventListener("pointerup", (upEvent) => {
         if (upEvent.pointerId !== pointerId) return;

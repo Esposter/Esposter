@@ -1,8 +1,25 @@
 import { swallowClick } from "@/services/ui/swallowClick";
 
 // A release can land on the control a press began on, and the browser clicks that control. The click that follows a drag is
-// Stopped before it reaches the control, and the stop is dropped once the release's click has been dispatched
+// Stopped before it reaches the control, and only that one: a press or a key starts something whose click is its own, and a
+// Touch drag raises none at all. Returns the stop of the swallow, for a drag that ends it sooner
 export const swallowNextWindowClick = () => {
-  const stop = useEventListener("click", swallowClick, { capture: true, once: true });
-  setTimeout(stop, 0);
+  const stops: (() => void)[] = [];
+  const stop = () => {
+    for (const stopListener of stops) stopListener();
+  };
+  stops.push(
+    useEventListener(
+      "click",
+      (event) => {
+        swallowClick(event);
+        stop();
+      },
+      { capture: true },
+    ),
+    useEventListener("keydown", stop, { capture: true }),
+    useEventListener("pointerdown", stop, { capture: true }),
+  );
+
+  return stop;
 };
