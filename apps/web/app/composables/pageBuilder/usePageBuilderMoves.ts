@@ -17,8 +17,8 @@ import { parseArrayIndex, parseJsonPointer, readJsonValue } from "@esposter/shar
 import {
   duplicateBlockNode,
   getAcceptingSlotPointers,
-  getBlockNode,
   getFocusAfterRemoval,
+  getSiblingMoveOperations,
   moveBlockNode,
   moveIntoPreviousSibling,
   moveOutAfterParent,
@@ -32,30 +32,6 @@ type MoveKind<
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 > = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
-// The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
-const getSiblingMoveOperations = <
-  TNode extends BlockNode,
-  TRoot extends BlockRootProps,
-  TDefinition extends BlockTypeDefinition<TNode>,
-  TDocument extends BlockDocument<TNode, TRoot>,
->(
-  kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
-  document: TDocument,
-  nodePointer: string,
-  offset: number,
-): JsonPatchOperation[] => {
-  const segments = parseJsonPointer(nodePointer);
-  const slotPointer = getNodeSlotPointer(nodePointer);
-  const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-  if (
-    index === undefined ||
-    index + offset < 0 ||
-    !getBlockNode(document, `${slotPointer}/${index + offset}`, kind.children)
-  )
-    return [];
-
-  return moveBlockNode(document, kind.registry, kind.children, nodePointer, slotPointer, index + offset);
-};
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
 // It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
@@ -118,12 +94,12 @@ export const usePageBuilderMoves = <
   };
   const moveDown = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
-      getSiblingMoveOperations(selectedKind, document, nodePointer, 1),
+      getSiblingMoveOperations(document, selectedKind.registry, selectedKind.children, nodePointer, 1),
     );
   };
   const moveUp = () => {
     moveSelected("Move block", (selectedKind, document, nodePointer) =>
-      getSiblingMoveOperations(selectedKind, document, nodePointer, -1),
+      getSiblingMoveOperations(document, selectedKind.registry, selectedKind.children, nodePointer, -1),
     );
   };
   const moveRight = () => {

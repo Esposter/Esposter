@@ -17,6 +17,7 @@ import {
   getBlockNode,
   getBlockPropPointer,
   getFocusAfterRemoval,
+  getSiblingMoveOperations,
   insertBlockNode,
   moveBlockNode,
   moveIntoPreviousSibling,
@@ -120,30 +121,11 @@ export const useSurveyCreatorCommands = () => {
     const target = getInsertTarget(document.value, selectedPointer.value, type);
     return target !== undefined && insertNodeAt(type, target.slotPointer, target.index);
   };
-  // The operations that move a node to the index one away from it in its own slot, or none when no sibling sits there
-  const getSiblingMoveOperations = (nodePointer: string, offset: number) => {
-    const location = getSurveyNodeLocation(nodePointer);
-    if (location === undefined) return [];
-
-    const siblingIndex = location.index + offset;
-    if (
-      siblingIndex < 0 ||
-      !getBlockNode(document.value, `${location.slotPointer}/${siblingIndex}`, surveyNodeChildren)
-    )
-      return [];
-
-    return moveBlockNode(
-      document.value,
-      surveyRegistry,
-      surveyNodeChildren,
-      nodePointer,
-      location.slotPointer,
-      siblingIndex,
-    );
-  };
   const moveElement = (operations: JsonPatchOperation[]) => applyEdit(operations, "Move element");
-  const moveNodeDown = (nodePointer: string) => moveElement(getSiblingMoveOperations(nodePointer, 1));
-  const moveNodeUp = (nodePointer: string) => moveElement(getSiblingMoveOperations(nodePointer, -1));
+  const moveNodeDown = (nodePointer: string) =>
+    moveElement(getSiblingMoveOperations(document.value, surveyRegistry, surveyNodeChildren, nodePointer, 1));
+  const moveNodeUp = (nodePointer: string) =>
+    moveElement(getSiblingMoveOperations(document.value, surveyRegistry, surveyNodeChildren, nodePointer, -1));
   const moveNodeIntoPrevious = (nodePointer: string) =>
     moveElement(moveIntoPreviousSibling(document.value, surveyRegistry, surveyNodeChildren, nodePointer));
   const moveNodeOut = (nodePointer: string) =>
