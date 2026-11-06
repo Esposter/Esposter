@@ -3,7 +3,7 @@ affected_areas: [genshin]
 x-phase: 4
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
-x-waiting: "task 4.1 waits on a reference frame of a fall seen from a known side, or the game's own fall direction; task 4.2 waits on the water prefabs' meshes, which the game exports have not produced yet; task 4.3 waits on a recording of a river; task 4.4 waits on the game's water material fields where an export holds them, or a recording of a river; task 4.5 waits on a recording of a bending river; task 4.6 waits on a recording of the game's falls"
+x-waiting: "task 4.1 waits on a reference frame of a fall seen from a known side, or the game's own fall direction; task 4.2 waits on the water prefabs' meshes, which the game exports have not produced yet; task 4.3 waits on a recording of a river; task 4.4 waits on the game's water material fields where an export holds them, or a recording of a river; task 4.5 waits on a recording of a bending river"
 x-touches:
   [
     "scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts",
