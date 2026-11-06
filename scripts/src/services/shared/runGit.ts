@@ -2,6 +2,7 @@ import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { MAX_BUFFER_BYTES, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { getGitEnv } from "#src/services/shared/getGitEnv";
 import { timedOutGitError } from "#src/services/shared/timedOutGitError";
+import { getResult } from "@esposter/shared";
 import { execFileSync } from "@esposter/shared-node/child-process";
 
 // Against the repository root: with `diff.relative` set, a `git diff` run from `scripts/` answers about
@@ -10,18 +11,13 @@ import { execFileSync } from "@esposter/shared-node/child-process";
 // Long for the command line (`--stdin`). A call given a `timeout` is killed past it, by the default SIGTERM that git
 // Answers by removing the lock files it holds, and throws naming the command. Node closes the pipes git's transport
 // Still holds, so a remote that never answers cannot hold it. A call without a `timeout` is unbounded, as it always was
-export const runGit = (args: string[], cwd: string = REPOSITORY_ROOT, input?: string, timeout?: number): string => {
-  try {
-    return execFileSync("git", args, {
-      cwd,
-      encoding: "utf8",
-      env: getGitEnv(),
-      input,
-      maxBuffer: MAX_BUFFER_BYTES,
-      timeout,
-    });
-  } catch (error) {
-    if (checkIsTimedOut(error)) throw timedOutGitError(args, timeout);
-    throw error;
-  }
-};
+export const runGit = (args: string[], cwd: string = REPOSITORY_ROOT, input?: string, timeout?: number): string =>
+  getResult(() =>
+    execFileSync("git", args, { cwd, encoding: "utf8", env: getGitEnv(), input, maxBuffer: MAX_BUFFER_BYTES, timeout }),
+  ).match(
+    (output) => output,
+    (error) => {
+      if (checkIsTimedOut(error)) throw timedOutGitError(args, timeout);
+      throw error;
+    },
+  );
