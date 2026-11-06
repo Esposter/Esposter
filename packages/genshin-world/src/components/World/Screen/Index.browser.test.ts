@@ -24,7 +24,7 @@ const readLuminances = async (): Promise<number[]> => {
   return luminances;
 };
 
-// When the last of a load step's measures since a moment ended
+// When the last of a load step's measures since a moment ended, or negative infinity while none has
 const readLoadStepEnd = (name: string, since: number): number =>
   Math.max(
     ...performance
@@ -36,9 +36,8 @@ const readLoadStepEnd = (name: string, since: number): number =>
 // Resolves once a load step has ended, counting only a step that began after a moment
 const waitForLoadStep = (name: string, since: number): Promise<void> =>
   new Promise((resolve) => {
-    const observer = new PerformanceObserver((list) => {
-      if (!list.getEntriesByName(`${LOAD_STEP_MEASURE_PREFIX}${name}`).some(({ startTime }) => startTime >= since))
-        return;
+    const observer = new PerformanceObserver(() => {
+      if (!Number.isFinite(readLoadStepEnd(name, since))) return;
       observer.disconnect();
       resolve();
     });
