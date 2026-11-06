@@ -83,6 +83,10 @@ export const TABLE_HEADER: readonly string[] = [
 export const ROWS_START: number = 2 + TABLE_HEADER.length;
 // The text each row of the report opens with, before the pass its first cell names
 export const ROW_PREFIX = "| ";
+// The words a row's held cell says of its reading: yes where it holds its gate, and no where it does not, or where
+// No reading was taken
+export const HELD_YES = "yes";
+export const HELD_NO = "no";
 // The directory each component's committed report of its last run of its passes is written to, a file per component
 export const PARITY_PASSES_DIRECTORY: string = join(
   REPOSITORY_ROOT,

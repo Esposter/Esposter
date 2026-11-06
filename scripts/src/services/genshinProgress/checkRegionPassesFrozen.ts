@@ -1,12 +1,15 @@
 import type { GenshinExitCheck } from "#src/models/genshinProgress/GenshinExitCheck";
 
 import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
-import { PARITY_PASS_ORDER } from "#src/services/genshinParity/passes/constants";
+import { HELD_NO, HELD_YES, PARITY_PASS_ORDER } from "#src/services/genshinParity/passes/constants";
 import { GENSHIN_OPTIONAL_PASSES } from "#src/services/genshinProgress/constants";
 import { getExitCheck } from "#src/services/genshinProgress/getExitCheck";
 
 // A row of a component's passes report, one for each reading: its pass, and whether the reading holds its gate
-const PASS_ROW_REGEX = /^\| (?<pass>[A-Za-z]+) \| .* \| (?<held>yes|no) \|$/gmu;
+const PASS_ROW_REGEX = new RegExp(
+  String.raw`^\| (?<pass>[A-Za-z]+) \| .* \| (?<held>${HELD_YES}|${HELD_NO}) \|$`,
+  "gmu",
+);
 
 // A region's passes are frozen when every pass in the run's order holds on every reading. A pass with a reading that does
 // Not hold fails, as does one with no row unless its scene may not owe it. A missing optional pass leaves the check not
@@ -17,7 +20,7 @@ export const checkRegionPassesFrozen = (folder: string, report: string | undefin
   if (report === undefined)
     return { name, notes: ["its folder names no passes component"], state: GenshinExitCheckState.NotMeasurable };
   const rows = Array.from(report.matchAll(PASS_ROW_REGEX), ({ groups }) => ({
-    isHeld: groups?.held === "yes",
+    isHeld: groups?.held === HELD_YES,
     pass: groups?.pass ?? "",
   }));
   const failing: string[] = [];
