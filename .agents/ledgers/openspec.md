@@ -12,10 +12,6 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-mail                 | —     | unreconciled |
 | genshin-menu-paimon          | —     | unreconciled |
 | genshin-menu-quit-prompt     | —     | unreconciled |
-| genshin-nod-krai             | —     | unreconciled |
-| genshin-offering-systems     | —     | unreconciled |
-| genshin-puzzles              | —     | unreconciled |
-| genshin-reputation           | —     | unreconciled |
 | genshin-serenitea-pot        | —     | unreconciled |
 | genshin-sheer-cold           | —     | unreconciled |
 | genshin-shops                | —     | unreconciled |
