@@ -2,7 +2,6 @@
 import type { EditorRegistry } from "@/models/editor/EditorRegistry";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
-import { getRegionComponent } from "@/services/editor/getRegionComponent";
 import { RegionEdgeDialogPlacementMap } from "@/services/editor/RegionEdgeDialogPlacementMap";
 import { RegionEdgeOverlayClassMap } from "@/services/editor/RegionEdgeOverlayClassMap";
 import { RegionEdge, RegionPresentation } from "vue-editor-layout-headless";
@@ -10,19 +9,21 @@ import { RegionEdge, RegionPresentation } from "vue-editor-layout-headless";
 interface Props {
   // The name the region is announced by: its landmark's label, or a sheet's title
   name: string;
+  // The name of each panel, keyed by panel id, which the tabs of a region holding several panels are titled by
+  panelNameMap: Record<string, string>;
   region: ResolvedRegion;
   registry: EditorRegistry;
 }
 
-const { name, region, registry } = defineProps<Props>();
-// A docked region reports the size its handle asks for, and a sheet asks to be opened or closed, which the shell answers
-const emit = defineEmits<{ resize: [size: number]; toggle: [] }>();
+const { name, panelNameMap, region, registry } = defineProps<Props>();
+// A docked region reports the size its handle asks for, a sheet asks to be opened or closed, and a tabbed region reports the
+// Panel its reader picked, which the shell answers
+const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string]; toggle: [] }>();
 // A top or bottom region is a bar, sized by its height, and a start or end region a column, sized by its width
 const isVertical = computed(() => [RegionEdge.Bottom, RegionEdge.Top].includes(region.edge));
 // The handle sits on the region's inner edge, so a region at the end or the bottom takes it on its start or top side
 const isReversed = computed(() => [RegionEdge.Bottom, RegionEdge.End].includes(region.edge));
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
-const contentComponent = computed(() => getRegionComponent(region, registry));
 </script>
 
 <template>
@@ -34,7 +35,13 @@ const contentComponent = computed(() => getRegionComponent(region, registry));
     is-title-hidden
     @update:model-value="emit('toggle')"
   >
-    <component :is="contentComponent" v-if="contentComponent" />
+    <EditorRegionContent
+      :name
+      :panel-name-map="panelNameMap"
+      :region
+      :registry
+      @select-panel="(panelId) => emit('selectPanel', panelId)"
+    />
   </UiDialog>
   <aside
     v-else
@@ -48,7 +55,13 @@ const contentComponent = computed(() => getRegionComponent(region, registry));
     min-w-0
     shrink-0
   >
-    <component :is="contentComponent" v-if="contentComponent" />
+    <EditorRegionContent
+      :name
+      :panel-name-map="panelNameMap"
+      :region
+      :registry
+      @select-panel="(panelId) => emit('selectPanel', panelId)"
+    />
     <UiResizeHandle
       v-if="region.presentation === RegionPresentation.Docked"
       :is-reversed="isReversed || undefined"

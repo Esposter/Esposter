@@ -85,6 +85,7 @@ describe("editorShell", () => {
         context: shellContext,
         editorType: EditorType.Whiteboard,
         layout: shellLayout,
+        panelNameMap: {},
         registry,
         regionNameMap: { [regionId]: regionName, [toolRegionId]: regionName },
       },

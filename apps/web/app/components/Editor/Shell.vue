@@ -19,6 +19,8 @@ interface Props {
   // The editor's type, which keys the reader state the shell keeps for it
   editorType: EditorType;
   layout: Layout;
+  // The name of each panel, keyed by panel id, which the tabs of a region holding several panels are titled by
+  panelNameMap: Record<string, string>;
   // The name of each side region, which its landmark or its sheet is announced by, keyed by region id
   regionNameMap: Record<string, string>;
   // The component each content key draws
@@ -26,7 +28,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { context, editorType, layout, regionNameMap, registry } = defineProps<Props>();
+const { context, editorType, layout, panelNameMap, regionNameMap, registry } = defineProps<Props>();
 const { isMobile, xs: isCompact } = useUiDisplay();
 // The page's drawers are sheets below the mobile breakpoint, so that is the medium class, and a window below the first
 // Breakpoint is the compact one
@@ -38,7 +40,7 @@ const sizeClass = computed(() => {
 const editorReaderStateStore = useEditorReaderStateStore();
 const { readerStateMap } = storeToRefs(editorReaderStateStore);
 const { setReaderState } = editorReaderStateStore;
-const { readerState, resizeRegion, resolvedLayout, toggleRegion } = useEditorLayout(
+const { readerState, resizeRegion, resolvedLayout, setActivePanel, toggleRegion } = useEditorLayout(
   () => layout,
   () => context,
   sizeClass,
@@ -72,18 +74,22 @@ defineExpose({ toggleRegion });
       v-for="region in dockedEdgeRegionMap.get(RegionEdge.Top) ?? []"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
+      :panel-name-map="panelNameMap"
       :region
       :registry
       @resize="(newSize) => resizeRegion(region.id, newSize)"
+      @select-panel="(panelId) => setActivePanel(region.id, panelId)"
     />
     <div flex flex-1 min-h-0 min-w-0>
       <EditorRegion
         v-for="region in dockedEdgeRegionMap.get(RegionEdge.Start) ?? []"
         :key="region.id"
         :name="takeOne(regionNameMap, region.id)"
+        :panel-name-map="panelNameMap"
         :region
         :registry
         @resize="(newSize) => resizeRegion(region.id, newSize)"
+        @select-panel="(panelId) => setActivePanel(region.id, panelId)"
       />
       <div relative flex flex-1 flex-col min-h-0 min-w-0>
         <slot />
@@ -91,8 +97,10 @@ defineExpose({ toggleRegion });
           v-for="region in presentationRegionMap.get(RegionPresentation.Overlay) ?? []"
           :key="region.id"
           :name="takeOne(regionNameMap, region.id)"
+          :panel-name-map="panelNameMap"
           :region
           :registry
+          @select-panel="(panelId) => setActivePanel(region.id, panelId)"
         />
         <!-- Drawn out of the flow, so a selection that shows a button does not push the canvas down -->
         <div v-if="sheetRegions.length" absolute right-0 top-0 z-10 p-1 flex gap-1>
@@ -116,18 +124,22 @@ defineExpose({ toggleRegion });
         v-for="region in dockedEdgeRegionMap.get(RegionEdge.End) ?? []"
         :key="region.id"
         :name="takeOne(regionNameMap, region.id)"
+        :panel-name-map="panelNameMap"
         :region
         :registry
         @resize="(newSize) => resizeRegion(region.id, newSize)"
+        @select-panel="(panelId) => setActivePanel(region.id, panelId)"
       />
     </div>
     <EditorRegion
       v-for="region in dockedEdgeRegionMap.get(RegionEdge.Bottom) ?? []"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
+      :panel-name-map="panelNameMap"
       :region
       :registry
       @resize="(newSize) => resizeRegion(region.id, newSize)"
+      @select-panel="(panelId) => setActivePanel(region.id, panelId)"
     />
     <!-- A sheet closes from its own close button or Escape, and its control takes focus only once the close has drawn, since the
       Open modal leaves that control inert until then -->
@@ -135,8 +147,10 @@ defineExpose({ toggleRegion });
       v-for="region in sheetRegions"
       :key="region.id"
       :name="takeOne(regionNameMap, region.id)"
+      :panel-name-map="panelNameMap"
       :region
       :registry
+      @select-panel="(panelId) => setActivePanel(region.id, panelId)"
       @toggle="
         async () => {
           toggleRegion(region.id);
