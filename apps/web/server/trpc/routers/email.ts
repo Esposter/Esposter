@@ -1,8 +1,10 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
+import type { EmailValidatorMessage } from "#shared/models/pageBuilder/EmailValidatorMessage";
 
 import { getBaseUrl } from "#server/services/app/getBaseUrl";
 import { compileEmailContent } from "#server/services/emailEditor/compileEmailContent";
 import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
+import { getEmailValidatorMessages } from "#server/services/emailEditor/getEmailValidatorMessages";
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { router } from "#server/trpc";
@@ -24,10 +26,10 @@ export const emailRouter = router({
   compile: standardAuthedProcedure
     .input(emailDocumentSchema)
     .meta({ humanOnly: "The editor's own preview of the document open in it, compiled as its owner edits" })
-    .mutation<{ html: string } | { message: string }>(({ input }) =>
+    .mutation<{ html: string } | { message: string; messages: EmailValidatorMessage[] }>(({ input }) =>
       compileEmailDocument(input, { origin: getBaseUrl() }).match(
         (html) => ({ html }),
-        (error) => ({ message: error.message }),
+        (error) => ({ message: error.message, messages: getEmailValidatorMessages(error) }),
       ),
     ),
   // The personalised export's compile, over the stored working copy so it runs with the editor closed and includes the
