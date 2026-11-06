@@ -1,5 +1,27 @@
 ## ADDED Requirements
 
+### Requirement: The mail table gives each mail its sender, title, expiry and items
+
+The mail table SHALL give each mail its sender, title, expiry and attached items, leaving out and counting any mail whose key the builder cannot name.
+
+#### Scenario: A mail reads its sender, title and expiry
+
+- **GIVEN** a mail table row with a sender, a title and an expiry
+- **WHEN** the mail table is read
+- **THEN** the mail carries its sender, title and expiry
+
+#### Scenario: A mail with a reward reads its items
+
+- **GIVEN** a mail table row whose attached reward is in the reward table
+- **WHEN** the mail table is read
+- **THEN** the mail carries the items the reward pays
+
+#### Scenario: A mail with an unnamed key is skipped
+
+- **GIVEN** a mail table row with a key the builder cannot name
+- **WHEN** the mail table is read
+- **THEN** the mail is left out and counted as skipped
+
 ### Requirement: The Mail screen lists the mails a player holds
 
 The Mail screen SHALL list each mail the player holds with its sender and title, and opening a mail SHALL show its text and the items attached to it.
