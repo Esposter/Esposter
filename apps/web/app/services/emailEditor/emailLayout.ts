@@ -16,7 +16,8 @@ import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The bar is one row as tall as its preview text field, which stacks a label, an input and a counter. A narrow window scrolls the
 // Row sideways, so the bar is held at that one size and its handle has nothing to move
-const BAR_SIZE = { defaultSize: 112, maximumSize: 112, minimumSize: 112 };
+const EMAIL_BAR_SIZE = 112;
+const BAR_SIZE = { defaultSize: EMAIL_BAR_SIZE, maximumSize: EMAIL_BAR_SIZE, minimumSize: EMAIL_BAR_SIZE };
 // The blocks region holds the layers tree as its structure tab, so a text edit's end shows that tab before it returns focus to
 // The tree. The ids are named here, so the editor's reveal and the layout name the same panel
 export const EMAIL_BLOCKS_REGION_ID = "blocks";
