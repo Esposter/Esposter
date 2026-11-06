@@ -1,6 +1,8 @@
 import type { ExportsGeneration } from "@esposter/configuration";
 
 import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constants";
+import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
+import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -18,7 +20,17 @@ export const spawnGenerateExports = (
 ): void => {
   const distributionUrl = pathToFileURL(join(mainCheckoutRoot, CONFIGURATION_DISTRIBUTION_PATH)).href;
   const script = `const { generateExports } = await import(${JSON.stringify(distributionUrl)});\ngenerateExports(${JSON.stringify(packageDirectory)}, ${JSON.stringify(exportsGeneration)}, ${JSON.stringify(lazyDirectories)});`;
-  const { status, stderr } = spawnSync(process.execPath, ["--input-type=module", "-e", script], { encoding: "utf8" });
+  const { error, status, stderr } = spawnSync(process.execPath, ["--input-type=module", "-e", script], {
+    encoding: "utf8",
+    killSignal: "SIGKILL",
+    timeout: CHILD_PROCESS_TIMEOUT_MS,
+  });
+  if (isTimedOut(error))
+    throw new InvalidOperationError(
+      Operation.Update,
+      packageDirectory,
+      `the generator ran past ${CHILD_PROCESS_TIMEOUT_MS} ms and was killed`,
+    );
   if (status !== 0)
     throw new InvalidOperationError(
       Operation.Update,

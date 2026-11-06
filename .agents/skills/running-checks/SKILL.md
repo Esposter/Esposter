@@ -26,7 +26,7 @@ which checks a session runs and how it waits on them.
 
 ## Before the push: `pnpm ai:precheck`
 
-The two checks CI would run first on a push take seconds here: the formatter over each changed file, and each changed package's barrel against what its generator writes. `pnpm ai:format` fixes the files the first names, and `pnpm ai:precheck --fix` rewrites a stale barrel. `pnpm ai:land` runs the precheck itself before it pushes. Typecheck and lint stay CI's, as the settled list above says.
+The two checks CI would run first on a push take seconds here: the formatter over each changed file, and each changed package's barrel against what its generator writes. `pnpm ai:format` fixes the files the first names, and `pnpm ai:precheck --fix` rewrites a stale barrel. `pnpm ai:land` runs the precheck itself before it pushes, and every child it waits on that can stall (the formatter, the barrel generator, the Windows junction unlink, and each git call that fetches, pulls or pushes) is killed past `CHILD_PROCESS_TIMEOUT_MS`, so the land fails naming the file or the command rather than waiting forever. Typecheck and lint stay CI's, as the settled list above says.
 
 ## The tests of what the change touched, in the background
 

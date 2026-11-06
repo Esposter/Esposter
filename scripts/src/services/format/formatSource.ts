@@ -1,9 +1,11 @@
 import {
+  CHILD_PROCESS_TIMEOUT_MS,
   MAX_BUFFER_BYTES,
   OXFMT_BINARY_RELATIVE_PATH,
   OXFMT_CONFIGURATION_FILE,
   OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE,
 } from "#src/services/shared/constants";
+import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -15,13 +17,16 @@ import { join } from "node:path";
 // From the main checkout, a worktree's `generated/` file would match none of them and be rewritten.
 // The path is repository-relative, since a worktree's own path sits under `.agents/worktrees`, which the config ignores.
 // A file type the formatter has no parser for is undefined, not an error, since the pre-commit hook skips it the same way
+// A formatter still running past its `timeout` is killed with SIGKILL, since a spawn waits for a child that ignores
+// SIGTERM to exit, and the call throws naming the file and the command
 export const formatSource = (
   source: string,
   relativePath: string,
   repositoryRoot: string,
   mainCheckoutRoot: string,
+  timeout: number = CHILD_PROCESS_TIMEOUT_MS,
 ): string | undefined => {
-  const { status, stderr, stdout } = spawnSync(
+  const { error, status, stderr, stdout } = spawnSync(
     process.execPath,
     [
       join(mainCheckoutRoot, OXFMT_BINARY_RELATIVE_PATH),
@@ -30,8 +35,21 @@ export const formatSource = (
       "--stdin-filepath",
       relativePath,
     ],
-    { cwd: repositoryRoot, encoding: "utf8", input: source, maxBuffer: MAX_BUFFER_BYTES },
+    {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+      input: source,
+      killSignal: "SIGKILL",
+      maxBuffer: MAX_BUFFER_BYTES,
+      timeout,
+    },
   );
+  if (isTimedOut(error))
+    throw new InvalidOperationError(
+      Operation.Read,
+      relativePath,
+      `oxfmt --stdin-filepath ${relativePath} ran past ${timeout} ms and was killed`,
+    );
   if (status === 0) return stdout;
   if (stderr.includes(OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE)) return undefined;
   throw new InvalidOperationError(Operation.Read, relativePath, readFirstLine(stderr));

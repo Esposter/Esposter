@@ -20,6 +20,10 @@ export const MEBIBYTE: number = KIBIBYTE ** 2;
 // Every commit's body, a listing of every tracked file each run to megabytes, and the default buffer throws
 // ENOBUFS rather than truncating — a failure that reads as the tool being broken from the call site.
 export const MAX_BUFFER_BYTES: number = 256 * MEBIBYTE;
+// How long a child a script waits on may run before it is killed and the call that spawned it throws, naming the
+// Command. A formatter, a barrel generator or a git call answers in seconds, so one still running at this bound has
+// Stalled: a script that waits on it forever gives no way to tell a hang from a slow check
+export const CHILD_PROCESS_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 
 // Every script reads and writes against the repository rather than against `scripts/`. A `..` chain is what this
 // Was, and it is wrong the first time the file counting it moves a directory. The walk-up to the manifest survives

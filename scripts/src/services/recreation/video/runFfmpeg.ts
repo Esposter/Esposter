@@ -1,4 +1,5 @@
 import { resolveFfmpeg } from "#src/services/recreation/video/resolveFfmpeg";
+import { isTimedOut } from "#src/services/shared/isTimedOut";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 
@@ -15,7 +16,7 @@ export const runFfmpeg = async (args: string[], wallClockLimitMs?: number): Prom
     { encoding: "utf8", timeout: wallClockLimitMs },
   );
   if (status === 0) return;
-  if (wallClockLimitMs !== undefined && error && "code" in error && error.code === "ETIMEDOUT") return;
+  if (wallClockLimitMs !== undefined && isTimedOut(error)) return;
   throw new InvalidOperationError(
     Operation.Create,
     "ffmpeg",
