@@ -395,7 +395,7 @@ const sightTrailEnds = useSightTrailEnds({
 // The characters whose model has failed to read, which the field draws from the Traveler's pack in their place
 const unreadableCharacterIds = shallowRef<ReadonlySet<number>>(new Set());
 // The reader of the pack that draws the character on the field: the Traveler's for a character the index lists no pack for
-// or whose model has failed to read
+// Or whose model has failed to read
 const characterPackReader = computed(() =>
   getCharacterPackReader(characterPackReaders, activeCharacterId, unreadableCharacterIds.value),
 );

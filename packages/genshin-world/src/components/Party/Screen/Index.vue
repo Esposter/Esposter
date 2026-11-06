@@ -22,7 +22,7 @@ interface Props {
   // The characters the player holds, in the order they are listed, which Quick Setup picks from
   characters: Character[];
   // The readers of the published character packs by the character each is of. Quick Setup offers only the characters
-  // that have one, since a party member with none is drawn as the Traveler
+  // That have one, since a party member with none is drawn as the Traveler
   characterPackReaders: ReadonlyMap<number, CharacterPackReader>;
   gameText: GameText;
   // The names of the characters in the reader's language, by their game text ids

@@ -58,7 +58,7 @@ export const useTerrainSelection = ({
   const checkIsViewSettled = () =>
     checkIsSelectionSettled(wanted, checkIsTileSettled) && checkIsSelectionSettled(surrounding, checkIsTileSettled);
   // What the settled read answers: the view is settled and no tile is in flight, so a tile the view wants that no frame
-  // has asked for yet, or one asked for and not given, is not settled
+  // Has asked for yet, or one asked for and not given, is not settled
   const checkIsSettled = () => tileStreamer.pendingCount() === 0 && checkIsViewSettled();
   return {
     checkIsSettled,

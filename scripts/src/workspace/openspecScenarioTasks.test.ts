@@ -9,7 +9,7 @@ import { describe, expect, test } from "vitest";
 
 // A change's tasks name the scenarios its spec delta holds, and each scenario is named by a task (the `openspec` skill,
 // Process rule 4). The changes that do not agree yet are the open rows of the `openspec` ledger, which drains to
-// empty as they are reconciled: a listed change that agrees is a failure, as is an unlisted one that does not
+// Empty as they are reconciled: a listed change that agrees is a failure, as is an unlisted one that does not
 describe("openspecScenarioTasks", () => {
   const SPECS_FOLDER = "specs";
   const SPEC_FILE = "spec.md";

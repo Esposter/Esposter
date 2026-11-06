@@ -8,8 +8,8 @@ import { z } from "zod";
 const holdArgs = z.object({ control: z.string(), seconds: z.coerce.number().min(0).default(0) });
 
 // `hold <control> <seconds>` presses a move direction's key or an input action's default binding for the seconds given,
-// and a zero presses it once. The codes go out as the window's events and are let go on the frame clock, so the seconds
-// are the frames' time. A gamepad button is read as held only from a pad, so a hold of one lasts a single read
+// And a zero presses it once. The codes go out as the window's events and are let go on the frame clock, so the seconds
+// Are the frames' time. A gamepad button is read as held only from a pad, so a hold of one lasts a single read
 export const createHoldCommand = ({
   onFrame,
   target,
