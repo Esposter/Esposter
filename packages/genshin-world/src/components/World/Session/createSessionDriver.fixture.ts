@@ -9,6 +9,7 @@ import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
 import { createScriptedClock } from "#src/services/dev/createScriptedClock.fixture";
 import { settleScriptedSession } from "#src/services/dev/settleScriptedSession";
+import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
 import { createPinia } from "pinia";
 import { render } from "vitest-browser-vue";
 import { z } from "zod";
@@ -35,14 +36,6 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
       });
     });
   };
-  // Steps frames until the check holds, or until the frame limit runs out
-  const stepFramesUntil = async (checkIsDone: () => boolean, frameLimit: number): Promise<boolean> => {
-    if (checkIsDone()) return true;
-    if (frameLimit === 0) return false;
-
-    await frame();
-    return stepFramesUntil(checkIsDone, frameLimit - 1);
-  };
   const checkIsReady = () => isWorldReady && lastSave !== undefined;
   const unmount = async () => {
     await unmountScreen?.();
@@ -66,7 +59,8 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
       props: { ...props, devRegistry, save },
     });
     unmountScreen = () => screen.unmount();
-    if (await stepFramesUntil(checkIsReady, SCRIPTED_FRAME_LIMIT)) return { ok: true };
+    const isReady = await stepFramesUntil<true>(frame, () => (checkIsReady() ? true : undefined));
+    if (isReady) return { ok: true };
 
     return { error: `the world is not ready after ${SCRIPTED_FRAME_LIMIT} frames`, ok: false };
   };
