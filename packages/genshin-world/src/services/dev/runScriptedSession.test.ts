@@ -32,7 +32,7 @@ describe(runScriptedSession, () => {
   test("An expect step compares one field of a record exactly", async () => {
     expect.hasAssertions();
 
-    const state = "position=0,0,0 place=Windrise hour=21:00 weather=Clear health=100% party=Amber,Kaeya";
+    const state = "position=0 place=Windrise hour=0 weather= health=0 party=";
     const result = await runScriptedSession(createStubDriver({ run: () => ({ ok: true, value: state }) }), [
       { equals: "Windrise", field: "place", kind: ScriptedStepKind.Expect, line: "state" },
       { equals: "Liyue", field: "place", kind: ScriptedStepKind.Expect, line: "state" },
