@@ -66,13 +66,35 @@ describe(createTrialCharacter, () => {
     characterDataMap: CHARACTER_DATA_MAP,
     weaponDataMap: WEAPON_DATA_MAP,
   };
+  const ARTIFACTS = [
+    {
+      experience: 100,
+      isLocked: false,
+      itemId: 91,
+      level: 4,
+      mainAffix: Attribute.AttackPercent,
+      minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
+      rarity: 4,
+      setId: 9001,
+      slot: ArtifactSlot.FlowerOfLife,
+    },
+    {
+      experience: 100,
+      isLocked: false,
+      itemId: 92,
+      level: 4,
+      mainAffix: Attribute.AttackPercent,
+      minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
+      rarity: 4,
+      setId: 9001,
+      slot: ArtifactSlot.PlumeOfDeath,
+    },
+  ];
 
   test("the trial character is at the trial's level", () => {
     expect.hasAssertions();
-    const character = createTrialCharacter(TRIAL, TABLES, DATA);
-    // The artifacts are the next test's; every other field is held exact here.
-    expect(character).toStrictEqual({
-      artifacts: character?.artifacts,
+    expect(createTrialCharacter(TRIAL, TABLES, DATA)).toStrictEqual({
+      artifacts: ARTIFACTS,
       ascension: 6,
       constellationCount: 0,
       friendshipExp: 0,
@@ -90,30 +112,7 @@ describe(createTrialCharacter, () => {
 
   test("the trial character takes its template's artifacts", () => {
     expect.hasAssertions();
-    expect(createTrialCharacter(TRIAL, TABLES, DATA)?.artifacts).toStrictEqual([
-      {
-        experience: 100,
-        isLocked: false,
-        itemId: 91,
-        level: 4,
-        mainAffix: Attribute.AttackPercent,
-        minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
-        rarity: 4,
-        setId: 9001,
-        slot: ArtifactSlot.FlowerOfLife,
-      },
-      {
-        experience: 100,
-        isLocked: false,
-        itemId: 92,
-        level: 4,
-        mainAffix: Attribute.AttackPercent,
-        minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],
-        rarity: 4,
-        setId: 9001,
-        slot: ArtifactSlot.PlumeOfDeath,
-      },
-    ]);
+    expect(createTrialCharacter(TRIAL, TABLES, DATA)?.artifacts).toStrictEqual(ARTIFACTS);
   });
 
   test("a trial whose character has no cited build has no party member", () => {
