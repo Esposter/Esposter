@@ -1,4 +1,4 @@
-import type { PositionedDocument, PositionedElement } from "headless-block-editor";
+import type { PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
 import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";

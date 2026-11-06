@@ -2,7 +2,7 @@ import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlImageNode } from "#src/models/MjmlImageNode";
 import type { MjmlImageProps } from "#src/models/MjmlImageProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { checkMjmlAlternativeText } from "#src/services/checkMjmlAlternativeText";

@@ -21,7 +21,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
-import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
+import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
 

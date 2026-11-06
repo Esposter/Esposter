@@ -1,7 +1,7 @@
 import type { SurveyNode } from "#src/models/SurveyNode";
 import type { SurveyNodeDefinition } from "#src/models/SurveyNodeDefinition";
 import type { SurveyRootProps } from "#src/models/SurveyRootProps";
-import type { BlockRegistry } from "headless-block-editor";
+import type { BlockRegistry } from "vue-block-editor-headless";
 
 import { surveyRootPropsSchema } from "#src/models/SurveyRootProps";
 import { surveyNodeTypeDefinitionMap } from "#src/services/surveyNodeTypeDefinitionMap";

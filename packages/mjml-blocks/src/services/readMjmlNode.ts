@@ -6,7 +6,7 @@ import type { HTMLElement, Node } from "node-html-parser";
 import { STRAY_ID_ATTRIBUTE_KEY } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlContent } from "#src/services/readMjmlContent";
-import { getBlockTypeDefinition } from "headless-block-editor";
+import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
 // A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its children
 // Are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name

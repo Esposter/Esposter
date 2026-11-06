@@ -64,7 +64,7 @@ flowchart TD
 | `apps/web/app/store/survey/index.ts`                                   | the save path the autosave goes through                                                                 |
 | `apps/web/app/services/pageBuilder/getRecordedHistory.ts`              | folds a run of edits to one prop into one history entry                                                 |
 | `apps/web/app/services/pageBuilder/constants.ts`                       | the history size, the root pointer and the default side pane width                                      |
-| `packages/headless-block-editor/src/services/applyBlockEdit.ts`        | applies the patches and parses the result through the schema                                            |
+| `packages/vue-block-editor-headless/src/services/applyBlockEdit.ts`    | applies the patches and parses the result through the schema                                            |
 | `packages/headless-survey-engine/src/services/surveyDocumentSchema.ts` | the document schema every edit is parsed by                                                             |
 | `packages/headless-survey-engine/src/services/checkSurveyDocument.ts`  | the survey check the Editor runs before a save                                                          |
 

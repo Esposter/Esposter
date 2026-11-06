@@ -9,7 +9,7 @@ import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNo
 import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 import { SurveyNodeType, surveyNodeChildren } from "headless-survey-engine";
 
 // The node a drag moves: its pointer, and the slot and index it sits at, which its own slot loses from the boxes a drop reads

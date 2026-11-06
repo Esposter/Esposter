@@ -1,6 +1,6 @@
 import type { TooltipNodeProps } from "#shared/models/pageBuilder/TooltipNodeProps";
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 // A Tooltip node of a webpage: a button whose text shows on hover and on focus
 export type TooltipNode = BlockNode<WebpageNodeType.Tooltip, TooltipNodeProps>;

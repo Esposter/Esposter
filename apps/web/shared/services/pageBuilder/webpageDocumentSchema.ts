@@ -7,7 +7,7 @@ import { MAX_WEBPAGE_NODES } from "#shared/services/pageBuilder/constants";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpagePlaceableNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { createBlockDocumentSchema } from "headless-block-editor";
+import { createBlockDocumentSchema } from "vue-block-editor-headless";
 
 // A webpage document: its root takes the placeable types only, so the schema an agent reads lists exactly those
 // Refused on a duplicate id, a node a slot does not allow, props its type refuses, or too many nodes

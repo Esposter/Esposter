@@ -1,11 +1,11 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { getAdjacentBlockNodePointer, getBlockLayerRows } from "headless-block-editor";
+import { getAdjacentBlockNodePointer, getBlockLayerRows } from "vue-block-editor-headless";
 
 // The selection the canvas's keys move through one open resource's webpage: the adjacent node in document order and the parent
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it

@@ -1,4 +1,4 @@
-import type { Bounds } from "headless-block-editor";
+import type { Bounds } from "vue-block-editor-headless";
 
 // Whether a box lies fully within a covering box, each of its edges inside the covering box's on every side
 export const checkIsCoveredBy = (bounds: Bounds, coveringBounds: Bounds): boolean =>

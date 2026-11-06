@@ -1,5 +1,5 @@
 import type { SurveyPlaceableNode } from "#src/models/SurveyPlaceableNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 import { surveyContainerBasePropsShape } from "#src/models/SurveyContainerBaseProps";
 import { surveyConditionSchema } from "#src/services/surveyConditionSchema";

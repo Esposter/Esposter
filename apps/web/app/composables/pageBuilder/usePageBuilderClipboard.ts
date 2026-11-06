@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
@@ -11,7 +11,7 @@ import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBui
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { getResultAsync, parseJsonPointer } from "@esposter/shared";
-import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
+import { getBlockNode, pasteBlockNodes } from "vue-block-editor-headless";
 
 // Copy, cut and paste of the selected node in one open resource's document. The clipboard carries the node as JSON,
 // Tagged with the kind's editor, and a paste lands where an insert would, as a copy with fresh ids. Each landed edit is

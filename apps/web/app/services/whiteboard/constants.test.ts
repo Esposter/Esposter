@@ -1,10 +1,10 @@
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
-import type { ArrowElement, PositionedDocument, ShapeElement } from "headless-block-editor";
+import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-editor-headless";
 
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
 import { createHistory } from "@esposter/shared";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "headless-block-editor";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { describe } from "vitest";
 
 export const WHITEBOARD_ARROW_ID = crypto.randomUUID();

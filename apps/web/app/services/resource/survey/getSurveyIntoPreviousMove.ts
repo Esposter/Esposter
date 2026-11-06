@@ -2,7 +2,7 @@ import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
 import type { SurveyDocument } from "headless-survey-engine";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
-import { moveIntoPreviousSibling } from "headless-block-editor";
+import { moveIntoPreviousSibling } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
 
 // The move of a node to the end of the first slot of the element before it that takes its kind. Refused when nothing sits before the node,

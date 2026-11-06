@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ArrowElement } from "headless-block-editor";
+import type { ArrowElement } from "vue-block-editor-headless";
 
 import {
   EXPORT_LINE_WIDTH,
@@ -7,7 +7,7 @@ import {
   getArrowRoute,
   toPolygonPoints,
   toSketchedPathData,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 
 interface Props {
   arrow: ArrowElement;

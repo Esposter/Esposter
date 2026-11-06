@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
-import type { Point } from "headless-block-editor";
+import type { Point } from "vue-block-editor-headless";
 
 import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { GRID_SIZE } from "headless-block-editor";
+import { GRID_SIZE } from "vue-block-editor-headless";
 
 // The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place. Its overlay slot is drawn
 // Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.

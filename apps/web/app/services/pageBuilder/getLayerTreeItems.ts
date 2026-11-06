@@ -1,7 +1,7 @@
 import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
 
-import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
+import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 
 // The layers tree's items: each row is a child of the nearest earlier row one depth up, labelled by its type's title.
 // A row whose node or title cannot be read is skipped

@@ -1,9 +1,9 @@
-import type { PositionedElement } from "headless-block-editor";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { getDuplicateArrowEnd } from "@/services/whiteboard/edit/getDuplicateArrowEnd";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 // A copy of an element under the id its original maps to, moved by the duplicate offset. An arrow's ends follow the copies of the shapes they are bound to
 export const getDuplicateElement = (

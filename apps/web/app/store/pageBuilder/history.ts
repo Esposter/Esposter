@@ -8,7 +8,7 @@ import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { ResourceType } from "@esposter/db-schema";
 import { createHistory, getResult, InvalidOperationError, Operation, redoHistory, undoHistory } from "@esposter/shared";
-import { applyBlockEdit } from "headless-block-editor";
+import { applyBlockEdit } from "vue-block-editor-headless";
 
 // The edit a document's operations leave, carrying the document's own type and kind so its commit holds it the same way
 const toOpenEdit = <TOpen extends OpenPageBuilderDocument, TEdit>(open: TOpen, edit: TEdit) => ({ ...open, ...edit });

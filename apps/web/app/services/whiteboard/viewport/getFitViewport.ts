@@ -1,5 +1,5 @@
 import type { Viewport } from "@/models/whiteboard/Viewport";
-import type { Bounds, Size } from "headless-block-editor";
+import type { Bounds, Size } from "vue-block-editor-headless";
 
 import { WHITEBOARD_FIT_MAX_SCALE } from "@/services/whiteboard/viewport/constants";
 import { getClampedScale } from "@/services/whiteboard/viewport/getClampedScale";

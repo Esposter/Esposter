@@ -1091,9 +1091,6 @@ importers:
       grid-engine:
         specifier: 'catalog:'
         version: 2.54.0(phaser@4.2.1)
-      headless-block-editor:
-        specifier: workspace:*
-        version: link:../../packages/headless-block-editor
       headless-survey-engine:
         specifier: workspace:*
         version: link:../../packages/headless-survey-engine
@@ -1181,6 +1178,9 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      vue-block-editor-headless:
+        specifier: workspace:*
+        version: link:../../packages/vue-block-editor-headless
       vue-canvas-frame-headless:
         specifier: workspace:*
         version: link:../../packages/vue-canvas-frame-headless
@@ -1787,42 +1787,20 @@ importers:
         specifier: 'catalog:'
         version: 3.1.0(@vue/compiler-dom@3.5.45)(@vue/server-renderer@3.5.45)(vitest@5.1.0)(vue@3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
 
-  packages/headless-block-editor:
-    dependencies:
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:../shared
-      neverthrow:
-        specifier: 'catalog:'
-        version: 8.2.0
-      vue:
-        specifier: 'catalog:'
-        version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      zod:
-        specifier: 'catalog:'
-        version: 4.6.7
-    devDependencies:
-      '@esposter/configuration':
-        specifier: workspace:*
-        version: link:../configuration
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.23.5(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.5)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.22.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-
   packages/headless-survey-engine:
     dependencies:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
-      headless-block-editor:
-        specifier: workspace:*
-        version: link:../headless-block-editor
       re2js:
         specifier: 'catalog:'
         version: 2.9.1
       survey-expression:
         specifier: workspace:*
         version: link:../survey-expression
+      vue-block-editor-headless:
+        specifier: workspace:*
+        version: link:../vue-block-editor-headless
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -1880,12 +1858,12 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
-      headless-block-editor:
-        specifier: workspace:*
-        version: link:../headless-block-editor
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.7
+      vue-block-editor-headless:
+        specifier: workspace:*
+        version: link:../vue-block-editor-headless
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -2278,6 +2256,28 @@ importers:
       vite:
         specifier: ^8.3.6
         version: 8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
+
+  packages/vue-block-editor-headless:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.5(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.5)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.22.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
 
   packages/vue-canvas-frame-headless:
     dependencies:
@@ -3977,8 +3977,8 @@ packages:
     resolution: {integrity: sha512-mGUWr1uMnf0le2TwfOZY4SFxZGXGfm4Jtay/nwAa2FLNAKXUoUwaGwBMNH36UHPtinWfTSJ3nqFQr0091CxVGg==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@nuxt/cli-nightly@4.0.1-2610292127-cd8f364':
-    resolution: {integrity: sha512-h6Xh2F8NQO358LPmdhpoSDCqaUs/vEkIPJXsMD+NqWkCZoeAeuLzLU7nUI2nqoCXifJ1W8fdgfR6a70ORWUwvA==}
+  '@nuxt/cli-nightly@4.0.3-2611031054-7d4dec6':
+    resolution: {integrity: sha512-AJbgF0jG4MqNgfJ9QtHccVNXRhyMOyy7pnbddz79vZS1hCxz0zt+6E8cNZNoDVSrOlpumS6Q8VRabz7BTAD9hw==}
     engines: {node: ^22.21.0 || ^24.11.0 || >=26.0.0}
     hasBin: true
     peerDependencies:
@@ -14684,7 +14684,7 @@ snapshots:
       node-gyp: 12.4.0
       proc-log: 6.1.0
 
-  '@nuxt/cli-nightly@4.0.1-2610292127-cd8f364(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(jiti@2.7.0)(oxc-parser@0.157.0)(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))':
+  '@nuxt/cli-nightly@4.0.3-2611031054-7d4dec6(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(jiti@2.7.0)(oxc-parser@0.157.0)(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
       '@clack/prompts': 1.8.1
       args-tokenizer: 0.3.0
@@ -21691,7 +21691,7 @@ snapshots:
     dependencies:
       '@dxup/nuxt': 0.5.11(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(mlly@1.8.2)(oxc-parser@0.157.0)(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3))
       '@jridgewell/trace-mapping': 0.3.31
-      '@nuxt/cli': '@nuxt/cli-nightly@4.0.1-2610292127-cd8f364(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(jiti@2.7.0)(oxc-parser@0.157.0)(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))'
+      '@nuxt/cli': '@nuxt/cli-nightly@4.0.3-2611031054-7d4dec6(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(jiti@2.7.0)(oxc-parser@0.157.0)(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))'
       '@nuxt/devtools-onboard': 4.1.0(@nuxt/kit-nightly@5.0.0-2611052317-a04317f(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.157.0)(rolldown@1.3.0)(unplugin@3.7.0(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3))))
       '@nuxt/kit': '@nuxt/kit-nightly@5.0.0-2611052317-a04317f(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(oxc-parser@0.157.0)(rolldown@1.3.0)(unplugin@3.7.0(rolldown@1.3.0)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3)))'
       '@nuxt/nitro-server': '@nuxt/nitro-server-nightly@5.0.0-2611052317-a04317f(@nuxt/schema-nightly@5.0.0-2611052317-a04317f)(@oxc-project/types@0.157.0)(acorn@8.19.0)(confbox@0.3.2)(dotenv@18.0.9)(jiti@2.7.0)(lightningcss@1.33.0)(mlly@1.8.2)(nuxt-nightly@5.0.0-2611052317-a04317f(81f56c01890f4245d56fe7a7e1c079e4))(oxc-parser@0.157.0)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3))'

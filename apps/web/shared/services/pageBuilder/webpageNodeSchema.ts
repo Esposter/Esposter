@@ -36,7 +36,7 @@ import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
 import { tooltipNodeType } from "#shared/services/pageBuilder/tooltipNodeType";
 import { typedTextNodeType } from "#shared/services/pageBuilder/typedTextNodeType";
 import { videoNodeType } from "#shared/services/pageBuilder/videoNodeType";
-import { createAcceptedTypesError } from "headless-block-editor";
+import { createAcceptedTypesError } from "vue-block-editor-headless";
 import { z } from "zod";
 
 // A node's children are bounded by the most nodes a webpage may hold, so no slot can hold more than a document can

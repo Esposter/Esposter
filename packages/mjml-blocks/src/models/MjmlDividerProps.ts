@@ -1,4 +1,4 @@
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML divider node holds: its attributes as MJML takes them
 export interface MjmlDividerProps extends BlockNodeProps {

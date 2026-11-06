@@ -1,4 +1,4 @@
-import type { Bounds, Point } from "headless-block-editor";
+import type { Bounds, Point } from "vue-block-editor-headless";
 
 import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
 

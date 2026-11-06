@@ -5,7 +5,7 @@ import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { WHITEBOARD_IMAGE_INSERT_OFFSET } from "@/services/whiteboard/palette/constants";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { takeOne } from "@esposter/shared";
-import { getElementBounds } from "headless-block-editor";
+import { getElementBounds } from "vue-block-editor-headless";
 import { describe, expect, test, vi } from "vitest";
 
 const { uploadResourceFileMock } = vi.hoisted(() => ({

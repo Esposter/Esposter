@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImageElement } from "headless-block-editor";
+import type { ImageElement } from "vue-block-editor-headless";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { useResourceStore } from "@/store/resource";

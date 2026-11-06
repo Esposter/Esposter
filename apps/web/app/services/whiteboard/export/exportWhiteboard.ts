@@ -9,7 +9,7 @@ import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { downloadFile, getResultAsync, noop } from "@esposter/shared";
-import { getExportBounds, PositionedElementType, toPositionedSvg } from "headless-block-editor";
+import { getExportBounds, PositionedElementType, toPositionedSvg } from "vue-block-editor-headless";
 
 // The whiteboard as the editor holds it, downloaded as an SVG or a PNG drawn from the same SVG. Both come from the model, so the
 // File matches what the canvas shows, and nothing is captured from the page

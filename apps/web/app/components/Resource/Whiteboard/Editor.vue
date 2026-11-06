@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Context } from "vue-editor-layout-headless";
-import type { Point } from "headless-block-editor";
+import type { Point } from "vue-block-editor-headless";
 
 import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
@@ -15,7 +15,7 @@ import { WhiteboardContentComponentMap } from "@/services/whiteboard/layout/Whit
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardDialogStore } from "@/store/resource/whiteboard/dialog";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getExportBounds } from "headless-block-editor";
+import { getExportBounds } from "vue-block-editor-headless";
 
 // The whiteboard's editor, drawn by the editor shell over the whiteboard's layout and registry. The canvas is the shell's default slot, and its
 // events and its overlay and Html slots are wired here to the gesture, keyboard and text-edit logic. The delete confirmation is the one dialog it holds

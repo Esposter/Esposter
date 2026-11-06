@@ -7,7 +7,7 @@ import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
-import { renderBlockNodes } from "headless-block-editor";
+import { renderBlockNodes } from "vue-block-editor-headless";
 import { createStaticVNode, createTextVNode } from "vue";
 
 const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;

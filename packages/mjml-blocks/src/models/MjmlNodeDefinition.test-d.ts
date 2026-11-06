@@ -2,7 +2,7 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import type { MjmlButtonNode } from "#src/models/MjmlButtonNode";
 import type { MjmlNodeDefinition } from "#src/models/MjmlNodeDefinition";
 import type { MjmlTextProps } from "#src/models/MjmlTextProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 import { describe, expect, expectTypeOf, test } from "vitest";

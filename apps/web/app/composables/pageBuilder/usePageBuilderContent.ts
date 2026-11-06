@@ -1,5 +1,11 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition, OwnProps } from "headless-block-editor";
+import type {
+  BlockDocument,
+  BlockNode,
+  BlockRootProps,
+  BlockTypeDefinition,
+  OwnProps,
+} from "vue-block-editor-headless";
 import type { z } from "zod";
 
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";
@@ -7,7 +13,7 @@ import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { checkIsDeepEqual, JsonPatchOperationType, noop } from "@esposter/shared";
-import { getBlockNode, getBlockTypeDefinition } from "headless-block-editor";
+import { getBlockNode, getBlockTypeDefinition } from "vue-block-editor-headless";
 
 interface ContentTarget<TValue, TProps> {
   formSchema: z.ZodType;

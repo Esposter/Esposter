@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ImageElement, PositionedDocument } from "headless-block-editor";
+import type { ImageElement, PositionedDocument } from "vue-block-editor-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -13,7 +13,7 @@ import { useResourceStore } from "@/store/resource";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "headless-block-editor";
+import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "vue-block-editor-headless";
 import { assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({

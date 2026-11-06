@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardElementShape from "@/components/Resource/Whiteboard/ElementShape.vue";
 import { mount } from "@vue/test-utils";
-import { PositionedElementType, ShapeKind, toShapeSvg } from "headless-block-editor";
+import { PositionedElementType, ShapeKind, toShapeSvg } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceWhiteboardElementShape", () => {

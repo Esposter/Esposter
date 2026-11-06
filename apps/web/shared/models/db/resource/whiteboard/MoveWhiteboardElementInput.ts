@@ -1,6 +1,6 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { selectResourceInResourceSchema } from "@esposter/db-schema";
-import { pointSchema } from "headless-block-editor";
+import { pointSchema } from "vue-block-editor-headless";
 import { z } from "zod";
 
 export const moveWhiteboardElementInputSchema = z.object({

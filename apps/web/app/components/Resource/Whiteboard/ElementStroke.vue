@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { StrokeElement } from "headless-block-editor";
+import type { StrokeElement } from "vue-block-editor-headless";
 
-import { toPathData } from "headless-block-editor";
+import { toPathData } from "vue-block-editor-headless";
 
 interface Props {
   stroke: StrokeElement;

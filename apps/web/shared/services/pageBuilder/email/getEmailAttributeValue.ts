@@ -1,7 +1,7 @@
 import type { MjmlNode, MjmlRootProps } from "mjml-blocks";
 
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
-import { getBlockPropValue, getBlockTypeDefinition } from "headless-block-editor";
+import { getBlockPropValue, getBlockTypeDefinition } from "vue-block-editor-headless";
 import { ALL_ATTRIBUTES_KEY } from "mjml-blocks";
 
 // The value an email node's attribute resolves to, in MJML's order: the node's own prop, then the root's mj-attributes

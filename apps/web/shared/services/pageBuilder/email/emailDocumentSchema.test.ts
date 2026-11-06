@@ -7,7 +7,7 @@ import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDoc
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { JsonPatchOperationType } from "@esposter/shared";
-import { applyBlockEdit, insertBlockNode } from "headless-block-editor";
+import { applyBlockEdit, insertBlockNode } from "vue-block-editor-headless";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 

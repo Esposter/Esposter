@@ -83,7 +83,7 @@ const knipConfiguration: KnipConfig = {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
     },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
-    "packages/headless-block-editor": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
+    "packages/vue-block-editor-headless": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     // The components suite loads MJML's preset through createRequire, since the preset ships no types, and knip cannot
     // Follow it
     "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },

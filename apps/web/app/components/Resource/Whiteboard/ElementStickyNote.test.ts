@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboard/ElementStickyNote.vue";
 import { mount } from "@vue/test-utils";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceWhiteboardElementStickyNote", () => {

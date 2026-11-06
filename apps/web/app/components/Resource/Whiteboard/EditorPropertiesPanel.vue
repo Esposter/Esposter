@@ -3,7 +3,7 @@ import { getSelectedElement } from "@/services/whiteboard/getSelectedElement";
 import { getWhiteboardElementTitle } from "@/services/whiteboard/getWhiteboardElementTitle";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 // The panel the one element selected opens, for every kind but an arrow, which has a panel of its own. A shape and a sticky note take a fill,
 // and every element takes the stacking and the footer

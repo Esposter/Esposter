@@ -1,4 +1,4 @@
-import type { PositionedElement } from "headless-block-editor";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import {
@@ -10,7 +10,7 @@ import {
   stickyNoteElementSchema,
   strokeElementSchema,
   textElementSchema,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 import { z } from "zod";
 
 export type WhiteboardElement = PositionedElement;

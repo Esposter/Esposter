@@ -1,5 +1,5 @@
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { ArrowEnd, PositionedDocument } from "headless-block-editor";
+import type { ArrowEnd, PositionedDocument } from "vue-block-editor-headless";
 
 import { applyPatches } from "@esposter/shared";
 import {
@@ -8,7 +8,7 @@ import {
   bindPositionedArrowEnd,
   insertPositionedElement,
   PositionedElementType,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 
 // The operations that add a straight arrow on top of the element list, inserted free and then bound at each end that took a binding.
 // The insert and the binds are one edit, so an undo reverts the arrow and its bindings together

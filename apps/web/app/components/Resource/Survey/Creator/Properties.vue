@@ -6,7 +6,7 @@ import { SurveyImageExtras, SurveyImageExtrasKeyMap } from "@/services/resource/
 import { SurveyNodeExtrasComponentMap } from "@/services/resource/survey/SurveyNodeExtrasComponentMap";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { checkIsDeepEqual } from "@esposter/shared";
-import { getBlockTypeDefinition } from "headless-block-editor";
+import { getBlockTypeDefinition } from "vue-block-editor-headless";
 import { surveyRegistry, surveyRootPropsSchema } from "headless-survey-engine";
 
 const surveyCreatorStore = useSurveyCreatorStore();

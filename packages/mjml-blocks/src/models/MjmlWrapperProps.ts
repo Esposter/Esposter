@@ -1,7 +1,7 @@
 import type { MjmlHeroNode } from "#src/models/MjmlHeroNode";
 import type { MjmlRawNode } from "#src/models/MjmlRawNode";
 import type { MjmlSectionNode } from "#src/models/MjmlSectionNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML wrapper node holds: its attributes as MJML takes them, its children
 export interface MjmlWrapperProps extends BlockNodeProps {

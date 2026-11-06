@@ -1,10 +1,10 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getEmptyContainerSlotPointer } from "@/services/pageBuilder/getEmptyContainerSlotPointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
 import { parseArrayIndex, parseJsonPointer } from "@esposter/shared";
-import { getAcceptedTypes } from "headless-block-editor";
+import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // Where a node of the type goes: the first slot of the selected container when that slot is empty and accepts the type,
 // Else straight after the selected node in its own slot, or the end of the root's content when no node is selected

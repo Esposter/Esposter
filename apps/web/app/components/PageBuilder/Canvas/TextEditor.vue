@@ -10,7 +10,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { noop } from "@esposter/shared";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
-import { getBlockNode, updateBlockNodeProps } from "headless-block-editor";
+import { getBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 
 interface Props {
   // The kind the resource's document is edited through, which names the type of the node whose content is edited here

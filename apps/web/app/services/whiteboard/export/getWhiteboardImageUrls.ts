@@ -1,10 +1,10 @@
 import type { ResourceInResource } from "@esposter/db-schema";
-import type { PositionedDocument } from "headless-block-editor";
+import type { PositionedDocument } from "vue-block-editor-headless";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 // Each image of a whiteboard as a data url, keyed by its file id, and the file ids of the images that could not be read. An export
 // Is a file that stands alone, so its images are embedded rather than linked: a picture drawn from a link cannot load one in an

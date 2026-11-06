@@ -13,7 +13,7 @@ import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocum
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { escapeAttribute } from "@esposter/shared";
-import { renderBlockNodes } from "headless-block-editor";
+import { renderBlockNodes } from "vue-block-editor-headless";
 
 // A pure render: one HTML document, with each type the page holds contributing its CSS once and its script once, so the
 // Output runs the same in the browser that exports it and on the server that publishes it. The document is parsed first,

@@ -5,7 +5,7 @@ import { WhiteboardTextEditAction } from "@/models/whiteboard/WhiteboardTextEdit
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { getTextEditAction } from "@/services/whiteboard/text/getTextEditAction";
 import { getTextEditOperations } from "@/services/whiteboard/text/getTextEditOperations";
-import { getPositionedElementText } from "headless-block-editor";
+import { getPositionedElementText } from "vue-block-editor-headless";
 
 // A text edited in place on a whiteboard: a shape's text, an arrow's label or a sticky note's text, opened by a double click. The draft is written
 // Once, on commit, which a blur or Enter makes. A commit that arrives during an input-method composition waits for the composition to end, and Escape discards the draft

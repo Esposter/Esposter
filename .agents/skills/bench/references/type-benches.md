@@ -6,7 +6,7 @@ A type bench measures the compiler, not the runtime. `pnpm bench:types` (root or
 
 ## The file
 
-- `Foo.typebench.ts` sits beside the type it measures, as `packages/headless-block-editor/src/models/BlockChildren.typebench.ts` does for `BlockChildren.ts`.
+- `Foo.typebench.ts` sits beside the type it measures, as `packages/vue-block-editor-headless/src/models/BlockChildren.typebench.ts` does for `BlockChildren.ts`.
 - The imports and fixtures sit at the top, defined or imported. Each case is one `export type <CaseName> = <expression>;` over them. Every other top-level statement is the shared header, and a case refers to no other case.
 - The fixture is `packages/shared/src/util/types/TypeBench.fixture.ts`: four levels of objects, arrays, optional and nullable fields, and a `Date`.
 - A mapped type is read down to a leaf in its case (`DeepOmit<…>["members"][number]["profile"]["links"][number]`). The checker resolves a mapped alias's members lazily, so an alias nothing reads counts only its head: `DeepOmit` measured that way counts a few dozen types, and read to the leaf it counts nearly two orders of magnitude more.

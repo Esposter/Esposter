@@ -1,4 +1,4 @@
-import type { TextElement } from "headless-block-editor";
+import type { TextElement } from "vue-block-editor-headless";
 
 import {
   createWhiteboardEditState,
@@ -8,7 +8,7 @@ import {
 } from "@/services/whiteboard/constants.test";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(deleteWhiteboardElements, () => {

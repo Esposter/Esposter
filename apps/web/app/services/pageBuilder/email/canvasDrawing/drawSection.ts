@@ -4,7 +4,7 @@ import type { MjmlNode, MjmlNodeType } from "mjml-blocks";
 import { checkIsColumn } from "#shared/services/pageBuilder/email/checkIsColumn";
 import { getEmailColumnWidths } from "#shared/services/pageBuilder/email/getEmailColumnWidths";
 import { takeOne } from "@esposter/shared";
-import { getBlockSlots } from "headless-block-editor";
+import { getBlockSlots } from "vue-block-editor-headless";
 
 // A section lays its columns side by side, and stacks them at the canvas width the mobile breakpoint covers
 export const drawSection: EmailCanvasDrawing<MjmlNodeType.Section> = (

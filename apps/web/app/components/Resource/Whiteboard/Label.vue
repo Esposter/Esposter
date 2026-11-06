@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PositionedElement } from "headless-block-editor";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import {
   getPositionedElementText,
@@ -7,7 +7,7 @@ import {
   getTextPlacement,
   TEXT_FONT_FAMILY,
   TEXT_FONT_SIZE,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;

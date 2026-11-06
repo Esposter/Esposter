@@ -2,7 +2,7 @@ import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlTableNode } from "#src/models/MjmlTableNode";
 import type { MjmlTableProps } from "#src/models/MjmlTableProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";

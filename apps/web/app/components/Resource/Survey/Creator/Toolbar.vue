@@ -14,7 +14,7 @@ import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { getResultAsync, JsonPatchOperationType, toJsonPointer } from "@esposter/shared";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 import {
   checkSurveyDocument,
   createSurveyDocument,

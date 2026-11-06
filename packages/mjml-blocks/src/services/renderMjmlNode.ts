@@ -2,14 +2,14 @@ import type { MjmlJson } from "#src/models/MjmlJson";
 import type { MjmlRenderSpecification } from "#src/models/MjmlRenderSpecification";
 import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlContentKindSchemaMap } from "#src/services/MjmlContentKindSchemaMap";
 import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { escapeAttribute, escapeText, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
-import { getBlockPropValue } from "headless-block-editor";
+import { getBlockPropValue } from "vue-block-editor-headless";
 
 // A built-in component's render: its set attributes, the alternative text its flag writes, its children or its content, each escaped once
 // Each prop is unknown until its guard or parse narrows it, so the render reads the node as the core holds it and never as a typed props object

@@ -1,10 +1,10 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { ArrowElement, ShapeElement } from "headless-block-editor";
+import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "headless-block-editor";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("whiteboardRouter", () => {

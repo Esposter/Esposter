@@ -1,6 +1,6 @@
 import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { updatePositionedElementText } from "headless-block-editor";
+import { updatePositionedElementText } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(applyWhiteboardEdit, () => {

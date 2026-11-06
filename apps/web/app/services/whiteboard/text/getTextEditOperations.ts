@@ -1,10 +1,10 @@
 import type { WhiteboardTextEdit } from "@/models/whiteboard/WhiteboardTextEdit";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { PositionedDocument } from "headless-block-editor";
+import type { PositionedDocument } from "vue-block-editor-headless";
 
 import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
-import { getPositionedElementText, updatePositionedElementText } from "headless-block-editor";
+import { getPositionedElementText, updatePositionedElementText } from "vue-block-editor-headless";
 
 // The operations that write a text edit's draft to its element, or none when the element is gone or already holds the draft as its text
 export const getTextEditOperations = (

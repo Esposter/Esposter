@@ -1,4 +1,4 @@
-import type { BlockChildren } from "headless-block-editor";
+import type { BlockChildren } from "vue-block-editor-headless";
 import type { MjmlNode } from "mjml-blocks";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";

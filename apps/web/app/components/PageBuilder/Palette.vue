@@ -3,7 +3,7 @@ import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilder
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { PaletteGroup } from "@/models/ui/palette/PaletteGroup";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MERGE_FIELD_KIND_PREFIX } from "@/services/pageBuilder/constants";

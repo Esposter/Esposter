@@ -12,7 +12,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "headless-survey-engine";
 import { assert, describe, expect, test, vi } from "vitest";
 

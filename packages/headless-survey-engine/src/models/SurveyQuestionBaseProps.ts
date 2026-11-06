@@ -1,5 +1,5 @@
 import type { SurveyValidator } from "#src/models/SurveyValidator";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 import { surveyValidatorSchema } from "#src/models/SurveyValidator";
 import { MAX_SURVEY_TEXT_LENGTH, MAX_SURVEY_VALIDATOR_COUNT } from "#src/services/constants";

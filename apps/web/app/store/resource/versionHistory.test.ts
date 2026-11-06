@@ -17,7 +17,7 @@ import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
-import { updateBlockNodeProps } from "headless-block-editor";
+import { updateBlockNodeProps } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(useVersionHistoryStore, () => {

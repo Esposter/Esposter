@@ -3,7 +3,7 @@ import type { SurveyDocument } from "headless-survey-engine";
 
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
-import { getBlockNode, useEditSession } from "headless-block-editor";
+import { getBlockNode, useEditSession } from "vue-block-editor-headless";
 import { createSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
 
 // The creator's document, its selection and its undo history. The selection is the session's, held by the selected node's id

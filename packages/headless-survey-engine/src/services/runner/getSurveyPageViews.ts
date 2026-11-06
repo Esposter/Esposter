@@ -5,7 +5,7 @@ import type { SurveyLogicContext } from "survey-expression";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
 import { getSurveyElementViews } from "#src/services/runner/getSurveyElementViews";
-import { getBlockPropPointer } from "headless-block-editor";
+import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // The views of the page at an index: none when the index names no page or the page is hidden, and otherwise the views of its elements
 export const getSurveyPageViews = (

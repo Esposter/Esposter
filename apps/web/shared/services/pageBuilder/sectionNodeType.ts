@@ -1,7 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
 import type { SectionNodeProps } from "#shared/models/pageBuilder/SectionNodeProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";

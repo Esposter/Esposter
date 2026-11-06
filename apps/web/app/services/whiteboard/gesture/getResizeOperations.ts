@@ -1,5 +1,5 @@
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { Point, PositionedDocument } from "headless-block-editor";
+import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
 import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
@@ -11,7 +11,7 @@ import {
   resizePositionedElement,
   resizePositionedElementBounds,
   snapToGrid,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 
 // The operations that resize an element by a delta from the handle a press grabbed, down to the least size. A bottom-right resize sets the size,
 // And a top-left resize moves the start so the bottom-right corner holds still. With snap on, each edge a resize moves lands on the grid. Each

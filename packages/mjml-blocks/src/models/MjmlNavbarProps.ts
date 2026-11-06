@@ -1,6 +1,6 @@
 import type { MjmlNavbarLinkNode } from "#src/models/MjmlNavbarLinkNode";
 import type { MjmlRawNode } from "#src/models/MjmlRawNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML navbar node holds: its attributes as MJML takes them, its children
 export interface MjmlNavbarProps extends BlockNodeProps {

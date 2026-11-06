@@ -2,7 +2,7 @@
 import { WHITEBOARD_OVERLAY_DASH_ARRAY } from "@/services/whiteboard/overlay/constants";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getElementBounds } from "headless-block-editor";
+import { getElementBounds } from "vue-block-editor-headless";
 
 // A dashed frame around the box of each selected element, drawn over the elements as the canvas draws them, so a gesture in progress frames its preview
 const whiteboardStore = useWhiteboardStore();

@@ -3,7 +3,7 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import type { MjmlHeroNode } from "#src/models/MjmlHeroNode";
 import type { MjmlHeroProps } from "#src/models/MjmlHeroProps";
 import type { MjmlLeafNode } from "#src/models/MjmlLeafNode";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";

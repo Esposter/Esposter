@@ -1,7 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";

@@ -1,4 +1,4 @@
-import type { BlockNodeProps, OwnProps } from "headless-block-editor";
+import type { BlockNodeProps, OwnProps } from "vue-block-editor-headless";
 
 import { MAX_SURVEY_HTML_LENGTH } from "#src/services/constants";
 import { surveyConditionSchema } from "#src/services/surveyConditionSchema";

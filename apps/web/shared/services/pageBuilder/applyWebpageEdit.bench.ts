@@ -4,7 +4,7 @@ import { createTestTextDocument } from "#shared/services/pageBuilder/createTestT
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { applyPatches, JsonPatchOperationType } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { applyBlockEdit } from "headless-block-editor";
+import { applyBlockEdit } from "vue-block-editor-headless";
 import { describe, test } from "vitest";
 
 describe(applyBlockEdit, () => {

@@ -1,5 +1,5 @@
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "headless-survey-engine";
 
 // The node a pointer names in the creator's document, with the writes to its props and the picture uploads its files take,

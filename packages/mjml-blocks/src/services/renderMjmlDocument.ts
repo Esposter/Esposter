@@ -7,7 +7,7 @@ import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { stampNode } from "#src/services/stampNode";
-import { renderBlockNodes } from "headless-block-editor";
+import { renderBlockNodes } from "vue-block-editor-headless";
 
 // A validated document in MJML's JSON form: the root's language and direction, its head when it sets any, and the body
 export const renderMjmlDocument = <TContext>(

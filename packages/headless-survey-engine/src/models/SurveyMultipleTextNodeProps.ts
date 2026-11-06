@@ -1,6 +1,6 @@
 import type { SurveyMultipleTextItem } from "#src/models/SurveyMultipleTextItem";
 import type { SurveyQuestionBaseProps } from "#src/models/SurveyQuestionBaseProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { surveyMultipleTextItemSchema } from "#src/models/SurveyMultipleTextItem";
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";

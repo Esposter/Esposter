@@ -1,14 +1,14 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { DropTargetInput } from "@/models/pageBuilder/DropTargetInput";
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getCandidateSlotPointers } from "@/services/pageBuilder/getCandidateSlotPointers";
 import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
-import { getAcceptedTypes } from "headless-block-editor";
+import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The slot a block dragged over a node drops into: the first candidate whose accepted types include the dragged type
 // The index is the one the pointer resolves to among that slot's children, along the axis its owner lays them out on,

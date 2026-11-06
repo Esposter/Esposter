@@ -1,7 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 import type { VideoNode } from "#shared/models/pageBuilder/VideoNode";
 import type { VideoNodeProps } from "#shared/models/pageBuilder/VideoNodeProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";

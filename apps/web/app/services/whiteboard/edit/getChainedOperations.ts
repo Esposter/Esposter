@@ -1,5 +1,5 @@
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { PositionedDocument } from "headless-block-editor";
+import type { PositionedDocument } from "vue-block-editor-headless";
 
 import { applyPatches } from "@esposter/shared";
 

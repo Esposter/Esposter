@@ -8,7 +8,7 @@ import { checkSurveyInvite } from "#shared/services/pageBuilder/critique/checkSu
 import { checkTextContrast } from "#shared/services/pageBuilder/critique/checkTextContrast";
 import { getEffectiveColors } from "#shared/services/pageBuilder/critique/getEffectiveColors";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
-import { getBlockSlots } from "headless-block-editor";
+import { getBlockSlots } from "vue-block-editor-headless";
 
 // Each node's own findings before those of its children, so the list reads in document order
 export const critiqueWebpageNodes = (

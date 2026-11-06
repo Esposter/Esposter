@@ -1,10 +1,10 @@
 import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { applyPatches, getResult } from "@esposter/shared";
-import { insertBlockNode } from "headless-block-editor";
+import { insertBlockNode } from "vue-block-editor-headless";
 
 // The id the dragged block is drawn under. No document holds it, so the canvas can tell the preview from a node it holds
 export const DRAG_PREVIEW_NODE_ID = "drag-preview";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { StickyNoteElement } from "headless-block-editor";
+import type { StickyNoteElement } from "vue-block-editor-headless";
 
-import { EXPORT_LINE_WIDTH, getBoundsCorners, toClosedSketchedPathData } from "headless-block-editor";
+import { EXPORT_LINE_WIDTH, getBoundsCorners, toClosedSketchedPathData } from "vue-block-editor-headless";
 
 interface Props {
   stickyNote: StickyNoteElement;

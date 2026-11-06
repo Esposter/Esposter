@@ -1,4 +1,4 @@
-import type { Size } from "headless-block-editor";
+import type { Size } from "vue-block-editor-headless";
 
 // The size each thing a placing tool places takes, in document units. A shape's text is drawn inside its box
 export const WHITEBOARD_SHAPE_SIZE: Size = { height: 80, width: 120 };

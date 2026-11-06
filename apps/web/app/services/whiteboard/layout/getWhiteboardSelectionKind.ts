@@ -1,4 +1,4 @@
-import type { PositionedDocument } from "headless-block-editor";
+import type { PositionedDocument } from "vue-block-editor-headless";
 
 import { WHITEBOARD_SEVERAL_SELECTION_KIND } from "@/services/whiteboard/layout/constants";
 import { getSelectedElement } from "@/services/whiteboard/getSelectedElement";

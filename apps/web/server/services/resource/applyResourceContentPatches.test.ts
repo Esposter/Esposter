@@ -1,11 +1,11 @@
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { ArrowElement, ShapeElement } from "headless-block-editor";
+import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 
 import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "headless-block-editor";
+import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(applyResourceContentPatches, () => {

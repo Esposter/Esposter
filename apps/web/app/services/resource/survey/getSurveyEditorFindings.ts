@@ -2,7 +2,7 @@ import type { EditorFinding } from "@/models/editor/EditorFinding";
 import type { SurveyDocument } from "headless-survey-engine";
 
 import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
-import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
+import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 import { checkSurveyDocument, surveyNodeChildren } from "headless-survey-engine";
 
 // The survey check's issues as the findings an editor lists. The check refuses a save while any issue stands, so every

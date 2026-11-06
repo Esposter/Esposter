@@ -52,7 +52,7 @@ import { surveyRatingNodeType } from "#src/services/surveyRatingNodeType";
 import { surveySliderNodeType } from "#src/services/surveySliderNodeType";
 import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
-import { createAcceptedTypesError } from "headless-block-editor";
+import { createAcceptedTypesError } from "vue-block-editor-headless";
 import { z } from "zod";
 
 // A panel holds placeable nodes and a dynamic panel's template holds template nodes, so each is reached lazily and the

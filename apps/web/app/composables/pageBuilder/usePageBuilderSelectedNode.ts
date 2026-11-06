@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";

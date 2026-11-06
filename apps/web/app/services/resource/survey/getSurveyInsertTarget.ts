@@ -2,7 +2,7 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { SurveyDocument, SurveyNodeType } from "headless-survey-engine";
 
 import { getSurveyInsertPlaces } from "@/services/resource/survey/getSurveyInsertPlaces";
-import { getAcceptedTypes } from "headless-block-editor";
+import { getAcceptedTypes } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
 
 // Where an element of a kind lands for a selection: the first place along the selection whose slot the core's accepted types take the kind

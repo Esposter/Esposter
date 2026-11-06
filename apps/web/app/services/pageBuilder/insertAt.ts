@@ -1,9 +1,9 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { insertBlockNode } from "headless-block-editor";
+import { insertBlockNode } from "vue-block-editor-headless";
 
 // Inserts a new block at an index of a slot in one open resource's document, selects it, and reports whether the edit
 // Applied. The block is built from the id the insert mints for it, and a slot that refuses its type applies nothing

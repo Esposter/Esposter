@@ -5,7 +5,7 @@ import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNo
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpageNodeTypeDefinitionMap";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { renderBlockNodes } from "headless-block-editor";
+import { renderBlockNodes } from "vue-block-editor-headless";
 
 // The definitions of the types a document holds, in registry order, so each type's css and script is written once
 export const getPresentDefinitions = (document: WebpageDocument): WebpageNodeDefinition[] => {

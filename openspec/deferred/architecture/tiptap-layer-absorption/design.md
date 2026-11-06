@@ -4,7 +4,7 @@ The app's rich text runs on TipTap, a layer over ProseMirror. The message compos
 
 ## What it would not be
 
-Rich text does not move onto the [headless block editor](../../../specs/headless-block-editor/editor-core/design.md). The core is a tree of typed blocks edited by JSON Patch, which is the right model for a page's layout and the wrong one for text. Text editing needs a position inside inline content, marks over a run of it, a selection that crosses blocks, steps whose positions map through each other, and an input method's composition. That is ProseMirror's model, and building it on the core would mean writing ProseMirror again. The two meet only where the page builder already joins them: a block whose content is ProseMirror JSON, with ProseMirror mounted inside it.
+Rich text does not move onto the [headless block editor](../../../specs/vue-block-editor-headless/editor-core/design.md). The core is a tree of typed blocks edited by JSON Patch, which is the right model for a page's layout and the wrong one for text. Text editing needs a position inside inline content, marks over a run of it, a selection that crosses blocks, steps whose positions map through each other, and an input method's composition. That is ProseMirror's model, and building it on the core would mean writing ProseMirror again. The two meet only where the page builder already joins them: a block whose content is ProseMirror JSON, with ProseMirror mounted inside it.
 
 ## Why deferred
 

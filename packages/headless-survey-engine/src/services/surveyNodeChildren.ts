@@ -1,9 +1,9 @@
 import type { SurveyNode } from "#src/models/SurveyNode";
-import type { BlockChildren } from "headless-block-editor";
+import type { BlockChildren } from "vue-block-editor-headless";
 
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { exhaustiveGuard } from "@esposter/shared";
-import { NO_BLOCK_SLOTS } from "headless-block-editor";
+import { NO_BLOCK_SLOTS } from "vue-block-editor-headless";
 
 // The children port of a survey: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
 // A node type without a case fails the typecheck at the default, rather than falling through to no slots

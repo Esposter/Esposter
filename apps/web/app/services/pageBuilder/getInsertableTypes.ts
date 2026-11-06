@@ -1,7 +1,7 @@
 import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { getAcceptedTypes } from "headless-block-editor";
+import { getAcceptedTypes } from "vue-block-editor-headless";
 
 // The types, of those given, an insert at the insertion point lands. Each type resolves its target the way an insert does,
 // And a type is kept only when the slot it lands in accepts it, so an insertion menu offers nothing an insert would refuse

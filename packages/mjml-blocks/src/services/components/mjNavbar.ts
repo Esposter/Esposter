@@ -2,7 +2,7 @@ import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlNavbarNode } from "#src/models/MjmlNavbarNode";
 import type { MjmlNavbarProps } from "#src/models/MjmlNavbarProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";

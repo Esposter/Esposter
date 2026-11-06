@@ -1,4 +1,4 @@
-# headless-block-editor/positioned-elements Specification
+# vue-block-editor-headless/positioned-elements Specification
 
 ## Purpose
 

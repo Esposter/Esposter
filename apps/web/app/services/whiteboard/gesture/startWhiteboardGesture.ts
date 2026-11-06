@@ -15,7 +15,7 @@ import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOper
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingGesture";
 import { applyPatches, exhaustiveGuard, takeOne } from "@esposter/shared";
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 // An idle canvas takes a press. The middle button and the hand tool pan, the freehand tool starts a stroke, and the arrow tool starts an arrow
 // From the press. A shape, sticky note or text tool starts a placement at the press. The select tool takes the press on a resize handle, an

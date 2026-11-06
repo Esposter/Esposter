@@ -1,13 +1,13 @@
 import type { CanvasRect } from "@/models/whiteboard/CanvasRect";
 import type { Viewport } from "@/models/whiteboard/Viewport";
 import type { WhiteboardGesture } from "@/models/whiteboard/WhiteboardGesture";
-import type { Bounds, Point, PositionedDocument } from "headless-block-editor";
+import type { Bounds, Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
-import { ShapeKind } from "headless-block-editor";
+import { ShapeKind } from "vue-block-editor-headless";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, whether
 // the tool stays in hand after a placement, the viewport, and the gesture in progress with the document it would leave. None of it is saved

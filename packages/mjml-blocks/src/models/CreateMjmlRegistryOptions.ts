@@ -3,7 +3,7 @@ import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlNodeDefinition } from "#src/models/MjmlNodeDefinition";
 import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
-import type { BlockChildren } from "headless-block-editor";
+import type { BlockChildren } from "vue-block-editor-headless";
 
 // The consumer's half of a registry: the leaf types MJML's columns and heroes take beside its own, the rich text its text components hold, and the children port
 // That port is the consumer's composition: it handles each leaf type and delegates every other node to MJML's built-in port

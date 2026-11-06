@@ -6,7 +6,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { checkSurveyNodeEnabled } from "#src/services/runner/checkSurveyNodeEnabled";
 import { checkSurveyNodeRequired } from "#src/services/runner/checkSurveyNodeRequired";
 import { checkSurveyNodeVisible } from "#src/services/runner/checkSurveyNodeVisible";
-import { getBlockPropPointer } from "headless-block-editor";
+import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // The views of a list of nodes, each at its pointer under the list's pointer. A hidden node is absent
 // A panel is absent too when none of its elements is shown, since a panel shows only what it holds

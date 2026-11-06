@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ShapeElement } from "headless-block-editor";
+import type { ShapeElement } from "vue-block-editor-headless";
 
-import { EXPORT_LINE_WIDTH, getShapeOutline, toClosedSketchedPathData } from "headless-block-editor";
+import { EXPORT_LINE_WIDTH, getShapeOutline, toClosedSketchedPathData } from "vue-block-editor-headless";
 
 interface Props {
   shape: ShapeElement;

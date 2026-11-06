@@ -1,4 +1,4 @@
-import type { Point, Size } from "headless-block-editor";
+import type { Point, Size } from "vue-block-editor-headless";
 
 // The top left corner of a box of a size that sits centred on a point
 export const getCentredPosition = (centre: Point, size: Size): Point => ({

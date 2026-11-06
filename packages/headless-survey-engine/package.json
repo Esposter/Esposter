@@ -47,9 +47,9 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "headless-block-editor": "workspace:*",
     "re2js": "catalog:",
-    "survey-expression": "workspace:*"
+    "survey-expression": "workspace:*",
+    "vue-block-editor-headless": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

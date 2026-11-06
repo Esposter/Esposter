@@ -2,7 +2,7 @@ import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlWrapperNode } from "#src/models/MjmlWrapperNode";
 import type { MjmlWrapperProps } from "#src/models/MjmlWrapperProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { sectionPropsSchema } from "#src/services/components/mjSection";

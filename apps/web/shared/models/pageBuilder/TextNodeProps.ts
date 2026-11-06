@@ -1,6 +1,6 @@
 import type { NodeStyle } from "#shared/models/pageBuilder/NodeStyle";
 import type { JSONContent } from "@tiptap/core";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props a Text node holds: its rich text, written in the Note's writing kit, and the style it is drawn with
 export interface TextNodeProps extends BlockNodeProps {

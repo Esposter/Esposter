@@ -1,4 +1,4 @@
-import type { BlockDocument, BlockNode } from "headless-block-editor";
+import type { BlockDocument, BlockNode } from "vue-block-editor-headless";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
@@ -12,7 +12,7 @@ import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema
 import { parseMjmlDocument } from "#src/services/parseMjmlDocument";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { serializeMjml } from "#src/services/serializeMjml";
-import { getBlockPropValue } from "headless-block-editor";
+import { getBlockPropValue } from "vue-block-editor-headless";
 import { assert, describe, expect, test } from "vitest";
 
 const createNode = (type: string, props: Record<string, unknown> = {}): BlockNode => ({

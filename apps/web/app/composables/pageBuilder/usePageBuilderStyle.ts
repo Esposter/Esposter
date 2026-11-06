@@ -11,7 +11,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClipboard";
 import { noop } from "@esposter/shared";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 
 // What one field edit writes: the operations, and the history entry they record as
 type FieldEdit = Pick<PageBuilderHistoryEntry, "interactionId" | "label" | "operations">;

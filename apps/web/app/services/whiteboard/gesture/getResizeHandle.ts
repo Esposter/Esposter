@@ -1,10 +1,10 @@
-import type { Point, PositionedDocument } from "headless-block-editor";
+import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
 import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
 import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { takeOne } from "@esposter/shared";
-import { checkIsResizablePositionedElement, getElementBounds } from "headless-block-editor";
+import { checkIsResizablePositionedElement, getElementBounds } from "vue-block-editor-headless";
 
 // The handle of the one selected element whose corner the point hits, when exactly one element is selected and it can be resized
 export const getResizeHandle = (

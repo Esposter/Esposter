@@ -1,5 +1,5 @@
 import type { Viewport } from "@/models/whiteboard/Viewport";
-import type { Point } from "headless-block-editor";
+import type { Point } from "vue-block-editor-headless";
 
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { getClampedScale } from "@/services/whiteboard/viewport/getClampedScale";

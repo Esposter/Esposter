@@ -7,7 +7,7 @@ import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { getMarqueeSelection } from "@/services/whiteboard/gesture/getMarqueeSelection";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { exhaustiveGuard } from "@esposter/shared";
-import { getPointsBounds } from "headless-block-editor";
+import { getPointsBounds } from "vue-block-editor-headless";
 
 // A marquee selects every element it fully covers, along with the selection it began with. A cancel gives back that selection
 export const reduceMarqueeGesture = (

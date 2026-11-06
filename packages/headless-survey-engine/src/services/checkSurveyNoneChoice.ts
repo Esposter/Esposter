@@ -3,7 +3,7 @@ import type { SurveyDocumentIssue } from "#src/models/SurveyDocumentIssue";
 import type { SurveyNoneChoiceProps } from "#src/models/SurveyNoneChoiceProps";
 
 import { SURVEY_NONE_ANSWER } from "#src/services/runner/constants";
-import { getBlockPropPointer } from "headless-block-editor";
+import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // The none answer is the one answer that is no choice's value, so a question that offers none may not give a choice that value
 export const checkSurveyNoneChoice = (

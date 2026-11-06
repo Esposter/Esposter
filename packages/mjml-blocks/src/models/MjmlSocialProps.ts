@@ -1,6 +1,6 @@
 import type { MjmlRawNode } from "#src/models/MjmlRawNode";
 import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML social node holds: its attributes as MJML takes them, its children
 export interface MjmlSocialProps extends BlockNodeProps {

@@ -3,7 +3,7 @@ import type { SurveyQuestionBaseProps } from "#src/models/SurveyQuestionBaseProp
 
 import { checkSurveyExpressionField } from "#src/services/checkSurveyExpressionField";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
-import { getBlockPropPointer } from "headless-block-editor";
+import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // A question's name is unique among the names of its scope, and each condition and validator it holds parses
 export const checkSurveyQuestion = (

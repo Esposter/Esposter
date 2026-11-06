@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ArrowElement, ArrowPathKind } from "headless-block-editor";
+import type { ArrowElement, ArrowPathKind } from "vue-block-editor-headless";
 
 import { WHITEBOARD_PATH_KIND_ITEMS } from "@/services/whiteboard/arrow/constants";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { ArrowEndKey, unbindPositionedArrowEnd } from "headless-block-editor";
+import { ArrowEndKey, unbindPositionedArrowEnd } from "vue-block-editor-headless";
 
 interface Props {
   arrow: ArrowElement;

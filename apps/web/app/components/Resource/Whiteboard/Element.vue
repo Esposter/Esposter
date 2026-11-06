@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 
 interface Props {
   element: WhiteboardElement;

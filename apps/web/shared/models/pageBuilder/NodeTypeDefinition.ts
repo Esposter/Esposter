@@ -1,7 +1,7 @@
 import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { NodeSlots } from "#shared/models/pageBuilder/NodeSlots";
 import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
-import type { BlockNode, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockNode, BlockTypeDefinition } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 // The shared half of a webpage node type, typed by the node it defines: what the server renders when it publishes and what the editor edits

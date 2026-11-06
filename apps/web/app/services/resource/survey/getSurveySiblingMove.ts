@@ -2,7 +2,7 @@ import type { SurveyNodeMove } from "@/models/resource/survey/SurveyNodeMove";
 import type { SurveyDocument } from "headless-survey-engine";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
-import { getSiblingMoveOperations } from "headless-block-editor";
+import { getSiblingMoveOperations } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
 
 // The move of a node to the index an offset away from it in its own slot: one back for a move up, one on for a move down. The core's

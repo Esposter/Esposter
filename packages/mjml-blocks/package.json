@@ -48,8 +48,8 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "headless-block-editor": "workspace:*",
-    "node-html-parser": "catalog:"
+    "node-html-parser": "catalog:",
+    "vue-block-editor-headless": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

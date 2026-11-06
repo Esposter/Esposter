@@ -1,9 +1,9 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { getResult, SITE_NAME } from "@esposter/shared";
-import { createBlockNodesSchema } from "headless-block-editor";
+import { createBlockNodesSchema } from "vue-block-editor-headless";
 import { z } from "zod";
 
 // Tags the clipboard text as page builder nodes, so text copied from anywhere else is ignored on paste

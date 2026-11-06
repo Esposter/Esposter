@@ -1,6 +1,6 @@
 # Whiteboard
 
-A whiteboard is a freeform canvas resource for sketching ideas and connected diagrams: shapes, arrows that bind to them, freehand strokes, text, images and sticky notes, drawn in a hand-drawn look by our own code with no third-party drawing engine. Its arrows bind to shapes and route between them the way a flowchart's connectors do. The document and the commands that edit it are the [positioned elements](../../headless-block-editor/positioned-elements/design.md) model of the headless editor core.
+A whiteboard is a freeform canvas resource for sketching ideas and connected diagrams: shapes, arrows that bind to them, freehand strokes, text, images and sticky notes, drawn in a hand-drawn look by our own code with no third-party drawing engine. Its arrows bind to shapes and route between them the way a flowchart's connectors do. The document and the commands that edit it are the [positioned elements](../../vue-block-editor-headless/positioned-elements/design.md) model of the headless editor core.
 
 ## How it works
 
@@ -62,7 +62,7 @@ Each feature of the editor, and what the whiteboard does for it.
 
 ## Decisions
 
-- **Text wraps by the core's one rule.** The editor's label draws the same lines the export draws, from one layout, so the canvas and the exported image break a text at the same words. The reason the rule is an estimate is in the [positioned elements](../../headless-block-editor/positioned-elements/design.md) decisions. The alternative was to let the browser wrap the editor's text, which breaks it where the browser's font measures it, not where the export does.
+- **Text wraps by the core's one rule.** The editor's label draws the same lines the export draws, from one layout, so the canvas and the exported image break a text at the same words. The reason the rule is an estimate is in the [positioned elements](../../vue-block-editor-headless/positioned-elements/design.md) decisions. The alternative was to let the browser wrap the editor's text, which breaks it where the browser's font measures it, not where the export does.
 - **The typed move sits beside the generic patch.** An agent moves an element through `moveWhiteboardElement`, since a patch can set a shape's point but cannot compute the reroute of the arrows bound to it. The alternative was the generic patch alone, which moves the shape and leaves its arrows where they were until the editor opens.
 - **One gesture reducer takes every gesture.** Each transition is a function over the document and the commands, so a test calls it without mounting the canvas and the component stays thin. The alternative was a handler per gesture inside the component, which would need a mounted canvas to test.
 - **Shortcuts are registered commands.** Each key is a command in the Whiteboard group, so the palette and the shortcuts dialog list it. The alternative was a single keydown handler with its own switch, whose keys nothing lists.
@@ -146,13 +146,13 @@ A commit the document check refuses leaves the open document unchanged, and the 
 | `apps/web/app/components/Resource/Whiteboard/EditorPropertiesFooter.vue`              | duplicates and deletes the selection from a panel, the delete asking first                                           |
 | `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrow.vue`               | an arrow's route, the arrowhead at each end, and the detach of each bound end                                        |
 | `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`               | the selected element's stacking: one step forward or back, or to the front or the back                               |
-| `packages/headless-block-editor/src/services/changePositionedElementZOrder.ts`        | the core's z-order move, which the stacking controls commit as one edit                                              |
+| `packages/vue-block-editor-headless/src/services/changePositionedElementZOrder.ts`    | the core's z-order move, which the stacking controls commit as one edit                                              |
 | `apps/web/app/components/Resource/Whiteboard/EditorTextEdit.vue`                      | the inline text editor, which handles input-method composition                                                       |
 | `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                         | feeds the pointer events to the gesture reducer                                                                      |
 | `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                        | registers the keyboard commands, the tool shortcuts and the delete confirmation                                      |
 | `apps/web/app/composables/whiteboard/useWhiteboardTextEdit.ts`                        | the in-place text edit, committed once on blur or Enter                                                              |
 | `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`                    | uploads a pasted or picked image as a file asset and inserts its element                                             |
-| `packages/headless-block-editor/src/services/snapToGrid.ts`                           | rounds a value to the nearest grid line, which a move, a resize and a placement snap to                              |
+| `packages/vue-block-editor-headless/src/services/snapToGrid.ts`                       | rounds a value to the nearest grid line, which a move, a resize and a placement snap to                              |
 | `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`                 | the one gesture reducer, which dispatches to each gesture's transition, placing included                             |
 | `apps/web/app/services/whiteboard/gesture/getArrowEnd.ts`                             | the end an arrow takes where a point lands: bound to a connection point, or free                                     |
 | `apps/web/app/services/whiteboard/gesture/getStrokeOperations.ts`                     | the operations that add a freehand stroke as one element                                                             |

@@ -1,5 +1,5 @@
 import type { MjmlCarouselImageNode } from "#src/models/MjmlCarouselImageNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML carousel node holds: its attributes as MJML takes them, its children
 export interface MjmlCarouselProps extends BlockNodeProps {

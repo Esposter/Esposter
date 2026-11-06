@@ -1,5 +1,5 @@
 import type { MjmlJson } from "#src/models/MjmlJson";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { escapeAttribute } from "@esposter/shared";
 import { z } from "zod";

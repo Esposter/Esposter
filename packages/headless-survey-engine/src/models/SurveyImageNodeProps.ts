@@ -1,5 +1,5 @@
 import type { SurveyImageBoxProps } from "#src/models/SurveyImageBoxProps";
-import type { BlockNodeProps, OwnProps } from "headless-block-editor";
+import type { BlockNodeProps, OwnProps } from "vue-block-editor-headless";
 
 import { surveyImageBoxPropsShape } from "#src/models/SurveyImageBoxProps";
 import { MAX_SURVEY_TEXT_LENGTH, MAX_SURVEY_URL_LENGTH } from "#src/services/constants";

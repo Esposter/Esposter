@@ -4,7 +4,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { WHITEBOARD_ZOOM_FACTOR } from "@/services/whiteboard/viewport/constants";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getExportBounds } from "headless-block-editor";
+import { getExportBounds } from "vue-block-editor-headless";
 
 // Undo and redo, then zoom in and out about the middle of the canvas, and fit the whole document into it. Undo and redo are disabled while
 // their history has no edit to step to

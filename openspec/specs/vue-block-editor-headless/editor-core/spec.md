@@ -1,4 +1,4 @@
-# headless-block-editor/editor-core Specification
+# vue-block-editor-headless/editor-core Specification
 
 ## Purpose
 

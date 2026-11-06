@@ -35,7 +35,7 @@ The math expression compiler is the one editor-adjacent package that stays as it
 
 | Package today                                                           | Becomes                        | Why                                                             |
 | :---------------------------------------------------------------------- | :----------------------------- | :-------------------------------------------------------------- |
-| headless-block-editor                                                   | vue-block-editor-headless      | The home of the editing session composable                      |
+| vue-block-editor-headless                                               | vue-block-editor-headless      | The home of the editing session composable                      |
 | headless-survey-engine                                                  | vue-survey-engine-headless     | A survey runner's state is a composable over its functions      |
 | survey-expression                                                       | vue-survey-expression-headless | One shape for the survey packages, as the owner asked           |
 | mjml-blocks                                                             | vue-mjml-blocks-headless       | Built on the block editor, so it takes the block editor's shape |
@@ -89,24 +89,24 @@ A session holds one document and one history, so a store that edits one document
 
 ## Key files
 
-| File                                                                      | Role                                                                                   |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
-| `packages/headless-block-editor/package.json`                             | renamed, and the home of the editing session composable                                |
-| `packages/headless-block-editor/src/composables/useEditSession.ts`        | the editing session composable, over one document                                      |
-| `packages/headless-block-editor/src/services/getSiblingMoveOperations.ts` | the move to the sibling index, which the survey creator and the page builder both call |
-| `packages/headless-survey-engine/package.json`                            | renamed                                                                                |
-| `packages/survey-expression/package.json`                                 | renamed                                                                                |
-| `packages/mjml-blocks/package.json`                                       | renamed                                                                                |
-| `packages/vue-grid-layout-headless/package.json`                          | already the convention, and the reference for a manifest with Vue as a peer            |
-| `apps/web/app/store/survey/creator.ts`                                    | the survey creator's store, one of the three with the shared shape                     |
-| `apps/web/app/store/pageBuilder/history.ts`                               | the page builder's keyed history, the second                                           |
-| `apps/web/app/store/resource/whiteboard/index.ts`                         | the whiteboard's store, the third                                                      |
-| `scripts/src/services/workspace/getHeadlessPackageFailures.ts`            | the shape check: name, Vue peer, one entry and no Pinia import                         |
-| `scripts/src/services/workspace/getHeadlessPackageFailures.test.ts`       | the check's five scenarios over fixture manifests and sources                          |
-| `scripts/src/services/workspace/checkIsHeadlessPackage.ts`                | which packages the shape check applies to: a headless name or keyword                  |
-| `scripts/src/services/workspace/checkIsHeadlessPackage.test.ts`           | the three cases of which packages count as headless                                    |
-| `scripts/src/services/workspace/constants.ts`                             | the headless keyword, the name rule and the Pinia import rule                          |
-| `scripts/src/models/workspace/PackageShapeManifest.ts`                    | the manifest fields the check reads beyond PackageManifest                             |
+| File                                                                          | Role                                                                                   |
+| :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| `packages/vue-block-editor-headless/package.json`                             | renamed, and the home of the editing session composable                                |
+| `packages/vue-block-editor-headless/src/composables/useEditSession.ts`        | the editing session composable, over one document                                      |
+| `packages/vue-block-editor-headless/src/services/getSiblingMoveOperations.ts` | the move to the sibling index, which the survey creator and the page builder both call |
+| `packages/headless-survey-engine/package.json`                                | renamed                                                                                |
+| `packages/survey-expression/package.json`                                     | renamed                                                                                |
+| `packages/mjml-blocks/package.json`                                           | renamed                                                                                |
+| `packages/vue-grid-layout-headless/package.json`                              | already the convention, and the reference for a manifest with Vue as a peer            |
+| `apps/web/app/store/survey/creator.ts`                                        | the survey creator's store, one of the three with the shared shape                     |
+| `apps/web/app/store/pageBuilder/history.ts`                                   | the page builder's keyed history, the second                                           |
+| `apps/web/app/store/resource/whiteboard/index.ts`                             | the whiteboard's store, the third                                                      |
+| `scripts/src/services/workspace/getHeadlessPackageFailures.ts`                | the shape check: name, Vue peer, one entry and no Pinia import                         |
+| `scripts/src/services/workspace/getHeadlessPackageFailures.test.ts`           | the check's five scenarios over fixture manifests and sources                          |
+| `scripts/src/services/workspace/checkIsHeadlessPackage.ts`                    | which packages the shape check applies to: a headless name or keyword                  |
+| `scripts/src/services/workspace/checkIsHeadlessPackage.test.ts`               | the three cases of which packages count as headless                                    |
+| `scripts/src/services/workspace/constants.ts`                                 | the headless keyword, the name rule and the Pinia import rule                          |
+| `scripts/src/models/workspace/PackageShapeManifest.ts`                        | the manifest fields the check reads beyond PackageManifest                             |
 
 ## Sources
 

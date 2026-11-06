@@ -1,7 +1,7 @@
 import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
-import { getBlockLayerRows } from "headless-block-editor";
+import { getBlockLayerRows } from "vue-block-editor-headless";
 
 // The pointer of the node an id names, or none when no node in the document holds it. Generic over the kind, so a
 // Webpage and an email are looked up the same way

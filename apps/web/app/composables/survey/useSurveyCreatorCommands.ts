@@ -1,6 +1,6 @@
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History, JsonPatchOperation } from "@esposter/shared";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "headless-survey-engine";
 
 import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
@@ -23,7 +23,7 @@ import {
   moveBlockNode,
   removeBlockNode,
   updateBlockNodeProps,
-} from "headless-block-editor";
+} from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, surveyNodeSchema, surveyRegistry } from "headless-survey-engine";
 
 // A question's name, which the survey keeps unique across its questions. A page or a panel holds none

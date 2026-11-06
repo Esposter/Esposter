@@ -1,4 +1,4 @@
-import type { ArrowEnd } from "headless-block-editor";
+import type { ArrowEnd } from "vue-block-editor-headless";
 
 import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { takeOne } from "@esposter/shared";

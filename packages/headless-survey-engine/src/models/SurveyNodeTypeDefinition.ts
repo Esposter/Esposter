@@ -1,4 +1,4 @@
-import type { BlockNode, BlockTypeDefinition, OwnProps } from "headless-block-editor";
+import type { BlockNode, BlockTypeDefinition, OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 // The shared half of a survey node type, typed by the node it defines: the props a new node starts with, the form its owner

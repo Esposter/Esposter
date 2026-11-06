@@ -2,7 +2,7 @@ import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
-import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
+import { getBlockLayerRows, getBlockNode } from "vue-block-editor-headless";
 import { MjmlNodeType } from "mjml-blocks";
 
 // The id of the text node whose box holds a point in the frame's own pixels, or the empty id when no text is under it.

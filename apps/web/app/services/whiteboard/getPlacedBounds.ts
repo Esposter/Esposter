@@ -1,5 +1,5 @@
 import type { WhiteboardPlacement } from "@/models/whiteboard/WhiteboardPlacement";
-import type { Bounds, Point } from "headless-block-editor";
+import type { Bounds, Point } from "vue-block-editor-headless";
 
 import { getCentredPosition } from "@/services/whiteboard/getCentredPosition";
 import { getWhiteboardItemSize } from "@/services/whiteboard/palette/getWhiteboardItemSize";

@@ -2,7 +2,7 @@ import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEven
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { Point } from "headless-block-editor";
+import type { Point } from "vue-block-editor-headless";
 
 import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";

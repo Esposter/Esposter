@@ -1,6 +1,6 @@
 import type { MjmlColumnNode } from "mjml-blocks";
 
-import { getBlockPropValue } from "headless-block-editor";
+import { getBlockPropValue } from "vue-block-editor-headless";
 
 const PERCENT_UNIT = "%";
 

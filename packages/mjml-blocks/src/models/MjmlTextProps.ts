@@ -1,5 +1,5 @@
 import type { MjmlRichText } from "#src/models/MjmlRichText";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML text node holds: its attributes as MJML takes them, its content
 export interface MjmlTextProps extends BlockNodeProps {

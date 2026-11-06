@@ -2,7 +2,7 @@ import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteb
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
-import { updatePositionedElementText } from "headless-block-editor";
+import { updatePositionedElementText } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(redoWhiteboardEdit, () => {

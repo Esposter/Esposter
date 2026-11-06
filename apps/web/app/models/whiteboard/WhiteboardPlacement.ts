@@ -1,4 +1,4 @@
-import type { PositionedElementType, ShapeKind } from "headless-block-editor";
+import type { PositionedElementType, ShapeKind } from "vue-block-editor-headless";
 
 // What a placing tool places: a shape of a kind, a sticky note, or a text box
 export type WhiteboardPlacement =

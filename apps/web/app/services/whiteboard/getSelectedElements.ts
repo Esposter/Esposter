@@ -1,4 +1,4 @@
-import type { PositionedDocument, PositionedElement } from "headless-block-editor";
+import type { PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
 // Every element a selection names, each with its index in the element list, in the order the list holds them
 export const getSelectedElements = (

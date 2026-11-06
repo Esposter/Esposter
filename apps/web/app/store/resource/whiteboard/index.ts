@@ -2,7 +2,7 @@ import type { WhiteboardElement } from "#shared/models/resource/whiteboard/White
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { WhiteboardHistoryEntry } from "@/models/whiteboard/WhiteboardHistoryEntry";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { PositionedDocument, PositionedElementProperty } from "headless-block-editor";
+import type { PositionedDocument, PositionedElementProperty } from "vue-block-editor-headless";
 
 import { createContentData } from "@/services/resource/createContentData";
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
@@ -13,7 +13,7 @@ import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdi
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
-import { insertPositionedElement, updatePositionedElementProperty, useEditSession } from "headless-block-editor";
+import { insertPositionedElement, updatePositionedElementProperty, useEditSession } from "vue-block-editor-headless";
 
 // A whiteboard's saved document, with the undo history of the edits made to it this session. Each edit is one commit, so one
 // undo step, and a document read from the server starts a fresh history

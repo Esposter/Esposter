@@ -2,14 +2,14 @@ import type { SurveyDocument } from "#src/models/SurveyDocument";
 import type { SurveyNode } from "#src/models/SurveyNode";
 import type { SurveyPageNode } from "#src/models/SurveyPageNode";
 import type { SurveyRootProps } from "#src/models/SurveyRootProps";
-import type { BlockDocumentInput } from "headless-block-editor";
+import type { BlockDocumentInput } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 import { MAX_SURVEY_NODE_COUNT } from "#src/services/constants";
 import { surveyNodeChildren } from "#src/services/surveyNodeChildren";
 import { surveyPageNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyRegistry } from "#src/services/surveyRegistry";
-import { createBlockDocumentSchema } from "headless-block-editor";
+import { createBlockDocumentSchema } from "vue-block-editor-headless";
 
 // A survey document: its root takes pages only, so the schema an agent reads lists exactly that
 // Refused on a duplicate id, a node a slot does not allow, props its type refuses, or too many nodes

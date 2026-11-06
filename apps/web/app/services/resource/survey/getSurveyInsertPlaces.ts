@@ -3,7 +3,7 @@ import type { SurveyDocument } from "headless-survey-engine";
 
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
-import { getBlockNode, getBlockPropPointer } from "headless-block-editor";
+import { getBlockNode, getBlockPropPointer } from "vue-block-editor-headless";
 import { surveyNodeChildren } from "headless-survey-engine";
 
 // The places an insertion at a selection tries, in order: straight after the selected element in its own slot, then the end of each slot

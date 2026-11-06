@@ -1,6 +1,6 @@
 import type { SurveyChoice } from "#src/models/SurveyChoice";
 import type { SurveyQuestionBaseProps } from "#src/models/SurveyQuestionBaseProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { surveyChoiceSchema } from "#src/models/SurveyChoice";
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";

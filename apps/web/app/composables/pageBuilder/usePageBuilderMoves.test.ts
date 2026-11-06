@@ -6,7 +6,7 @@ import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";

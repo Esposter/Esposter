@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { changePositionedElementZOrder } from "headless-block-editor";
+import { changePositionedElementZOrder } from "vue-block-editor-headless";
 
 interface Props {
   index: number;

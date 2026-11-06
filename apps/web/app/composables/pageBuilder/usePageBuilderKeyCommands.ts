@@ -8,7 +8,7 @@ import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { checkIsElementTarget } from "@/util/dom/checkIsElementTarget";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 
 // A focused button or link takes Enter as its own activation rather than a text edit
 const checkIsControlTarget = (target: EventTarget | null) =>

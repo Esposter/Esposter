@@ -87,27 +87,27 @@ The survey's logic builder, the existing delete-reference warning and the page b
 
 ## Key files
 
-| File                                                                      | Role                                                                                             |
-| :------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------- |
-| `packages/headless-block-editor/src/services/getAcceptedTypes.ts`         | the kinds a slot accepts, which an insertion menu lists                                          |
-| `packages/headless-block-editor/src/services/getAcceptingSlotPointers.ts` | every slot that accepts a node, which a move target list reads                                   |
-| `packages/headless-block-editor/src/services/checkAcceptedType.ts`        | the refusal an edit makes, whose reason a disabled action shows                                  |
-| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`             | the survey's insert and move commands, which apply no edit when refused                          |
-| `apps/web/app/services/resource/survey/getSurveyInsertTarget.ts`          | the insertion point a kind lands at: the first place along the selection whose slot takes it     |
-| `apps/web/app/services/resource/survey/getSurveyPaletteGroups.ts`         | the palette's kinds, those an insertion at the selection takes                                   |
-| `apps/web/app/services/resource/survey/getSurveyNodeMove.ts`              | a move's operations and, when refused, its reason, which the commands and the row menu both read |
-| `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`          | the page builder's findings, mapped to the one shape                                             |
-| `apps/web/app/services/pageBuilder/getCritiqueEditorFinding.ts`           | one critique finding as a warning finding naming its node                                        |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                      | where the survey check runs before a save                                                        |
-| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`              | the layers tree whose titles name a finding's node                                               |
-| `apps/web/app/models/editor/EditorFinding.ts`                             | the one finding shape each editor's check maps to                                                |
-| `apps/web/app/composables/editor/useEditorFindings.ts`                    | an editor's check run once its document settles                                                  |
-| `apps/web/server/services/emailEditor/getEmailValidatorMessages.ts`       | the messages a refused email compile carries, each at the strict level                           |
-| `apps/web/app/services/emailEditor/toEmailValidatorFinding.ts`            | one validator message as an email finding, its severity from its level                           |
-| `apps/web/app/composables/survey/useSurveyCreatorFindings.ts`             | the survey creator's document as findings, for the problems surface                              |
-| `apps/web/app/services/resource/survey/getSurveyEditorFindings.ts`        | the survey check's issues as findings, each naming its node by id                                |
-| `apps/web/app/store/resource/index.ts`                                    | `refuseSaveContent`, which reads a check's refused save as Not saved                             |
-| `apps/web/app/components/Editor/Problems.vue`                             | the problems surface: a count in the top bar and the list of findings                            |
+| File                                                                          | Role                                                                                             |
+| :---------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
+| `packages/vue-block-editor-headless/src/services/getAcceptedTypes.ts`         | the kinds a slot accepts, which an insertion menu lists                                          |
+| `packages/vue-block-editor-headless/src/services/getAcceptingSlotPointers.ts` | every slot that accepts a node, which a move target list reads                                   |
+| `packages/vue-block-editor-headless/src/services/checkAcceptedType.ts`        | the refusal an edit makes, whose reason a disabled action shows                                  |
+| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts`                 | the survey's insert and move commands, which apply no edit when refused                          |
+| `apps/web/app/services/resource/survey/getSurveyInsertTarget.ts`              | the insertion point a kind lands at: the first place along the selection whose slot takes it     |
+| `apps/web/app/services/resource/survey/getSurveyPaletteGroups.ts`             | the palette's kinds, those an insertion at the selection takes                                   |
+| `apps/web/app/services/resource/survey/getSurveyNodeMove.ts`                  | a move's operations and, when refused, its reason, which the commands and the row menu both read |
+| `apps/web/app/composables/pageBuilder/usePageBuilderCritique.ts`              | the page builder's findings, mapped to the one shape                                             |
+| `apps/web/app/services/pageBuilder/getCritiqueEditorFinding.ts`               | one critique finding as a warning finding naming its node                                        |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                          | where the survey check runs before a save                                                        |
+| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`                  | the layers tree whose titles name a finding's node                                               |
+| `apps/web/app/models/editor/EditorFinding.ts`                                 | the one finding shape each editor's check maps to                                                |
+| `apps/web/app/composables/editor/useEditorFindings.ts`                        | an editor's check run once its document settles                                                  |
+| `apps/web/server/services/emailEditor/getEmailValidatorMessages.ts`           | the messages a refused email compile carries, each at the strict level                           |
+| `apps/web/app/services/emailEditor/toEmailValidatorFinding.ts`                | one validator message as an email finding, its severity from its level                           |
+| `apps/web/app/composables/survey/useSurveyCreatorFindings.ts`                 | the survey creator's document as findings, for the problems surface                              |
+| `apps/web/app/services/resource/survey/getSurveyEditorFindings.ts`            | the survey check's issues as findings, each naming its node by id                                |
+| `apps/web/app/store/resource/index.ts`                                        | `refuseSaveContent`, which reads a check's refused save as Not saved                             |
+| `apps/web/app/components/Editor/Problems.vue`                                 | the problems surface: a count in the top bar and the list of findings                            |
 
 ## Sources
 

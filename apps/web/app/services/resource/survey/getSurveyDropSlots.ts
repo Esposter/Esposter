@@ -1,7 +1,7 @@
 import type { SurveyDropSlot } from "@/models/resource/survey/SurveyDropSlot";
 import type { SurveyDocument } from "headless-survey-engine";
 
-import { getAcceptedTypes } from "headless-block-editor";
+import { getAcceptedTypes } from "vue-block-editor-headless";
 import { surveyNodeChildren, surveyRegistry } from "headless-survey-engine";
 
 // The slots the canvas draws, each with the box its owner is drawn in and the boxes of its children in order. Read off the

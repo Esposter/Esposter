@@ -43,36 +43,36 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                                                                |
-| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `packages/headless-block-editor/src/models/BlockRegistry.ts`                 | the registry: its root beside its types, generic over the node, the root's props and the definition |
-| `packages/headless-block-editor/src/models/BlockRootDefinition.ts`           | the root's declared content types and props schema                                                  |
-| `packages/headless-block-editor/src/models/BlockChildren.ts`                 | the children port's type, one function per consumer over its node union                             |
-| `packages/headless-block-editor/src/models/BlockTypeDefinition.ts`           | one registry entry: its props schema and, for each slot, the types it accepts                       |
-| `packages/headless-block-editor/src/models/BlockSlotName.ts`                 | the slot names a node type declares, the argument of a slot pointer                                 |
-| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts`   | the document's shape, then the ids and the node limit                                               |
-| `packages/headless-block-editor/src/services/checkBlockNodeIds.ts`           | the id and count walk over every slot, reading the children through the port                        |
-| `packages/headless-block-editor/src/services/checkAcceptedType.ts`           | the refusal of a node whose type its slot does not accept                                           |
-| `packages/headless-block-editor/src/services/getBlockSlots.ts`               | the one string-keyed view of a node's typed slots, read by the walks that iterate every slot        |
-| `packages/headless-block-editor/src/services/createBlockNodesSchema.ts`      | a slot's children: the node schema, the accepted types, then the ids                                |
-| `packages/headless-block-editor/src/services/getAcceptedTypes.ts`            | the types a slot accepts; the root's content types come from the registry                           |
-| `packages/headless-block-editor/src/services/getSlotItems.ts`                | a slot's accepted types from a record of slots, none for a slot the record does not declare         |
-| `packages/headless-block-editor/src/services/getSlotPointer.ts`              | a slot's pointer, named by a slot the node's type declares                                          |
-| `packages/headless-block-editor/src/services/moveBlockNode.ts`               | a move as a remove and an add, refused into its own subtree                                         |
-| `packages/headless-block-editor/src/services/moveIntoPreviousSibling.ts`     | a move to the end of the previous sibling's accepting slot                                          |
-| `packages/headless-block-editor/src/services/pasteBlockNodes.ts`             | copies with fresh ids, checked as the destination slot's children                                   |
-| `packages/headless-block-editor/src/services/remintBlockNode.ts`             | a copy of a node and its slots with fresh ids, read through the port                                |
-| `packages/headless-block-editor/src/services/renderBlockNodes.ts`            | the fold from the leaves up, through a consumer's render function                                   |
-| `packages/headless-block-editor/src/services/getFocusAfterRemoval.ts`        | the node that takes focus after a removal                                                           |
-| `packages/headless-block-editor/src/models/BlockLayerRow.ts`                 | a row of the layers tree: a node's depth, its pointer and its type                                  |
-| `packages/headless-block-editor/src/services/getBlockLayerRows.ts`           | every node in layer order, a node's row before its slots' rows                                      |
-| `packages/headless-block-editor/src/services/getAdjacentBlockNodePointer.ts` | the node a row offset from another, past a slot boundary                                            |
-| `packages/headless-block-editor/src/services/getBlockPropPointer.ts`         | a node's prop pointer, the prop's key escaped as one JSON pointer segment                           |
-| `packages/headless-block-editor/src/services/getAcceptingSlotPointers.ts`    | every slot that accepts a node, outside the node's own subtree                                      |
-| `packages/headless-block-editor/src/services/moveOutAfterParent.ts`          | a move to just after the node's parent, in the slot that holds the parent                           |
-| `packages/headless-block-editor/src/services/duplicateBlockNode.ts`          | a paste of the node's copy straight after it, in its own slot                                       |
-| `packages/headless-block-editor/src/services/applyBlockEdit.ts`              | an edit applied as one, or refused whole                                                            |
-| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`                   | the app's wire schema for an operation, beside its one consumer                                     |
+| File                                                                             | Role                                                                                                |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `packages/vue-block-editor-headless/src/models/BlockRegistry.ts`                 | the registry: its root beside its types, generic over the node, the root's props and the definition |
+| `packages/vue-block-editor-headless/src/models/BlockRootDefinition.ts`           | the root's declared content types and props schema                                                  |
+| `packages/vue-block-editor-headless/src/models/BlockChildren.ts`                 | the children port's type, one function per consumer over its node union                             |
+| `packages/vue-block-editor-headless/src/models/BlockTypeDefinition.ts`           | one registry entry: its props schema and, for each slot, the types it accepts                       |
+| `packages/vue-block-editor-headless/src/models/BlockSlotName.ts`                 | the slot names a node type declares, the argument of a slot pointer                                 |
+| `packages/vue-block-editor-headless/src/services/createBlockDocumentSchema.ts`   | the document's shape, then the ids and the node limit                                               |
+| `packages/vue-block-editor-headless/src/services/checkBlockNodeIds.ts`           | the id and count walk over every slot, reading the children through the port                        |
+| `packages/vue-block-editor-headless/src/services/checkAcceptedType.ts`           | the refusal of a node whose type its slot does not accept                                           |
+| `packages/vue-block-editor-headless/src/services/getBlockSlots.ts`               | the one string-keyed view of a node's typed slots, read by the walks that iterate every slot        |
+| `packages/vue-block-editor-headless/src/services/createBlockNodesSchema.ts`      | a slot's children: the node schema, the accepted types, then the ids                                |
+| `packages/vue-block-editor-headless/src/services/getAcceptedTypes.ts`            | the types a slot accepts; the root's content types come from the registry                           |
+| `packages/vue-block-editor-headless/src/services/getSlotItems.ts`                | a slot's accepted types from a record of slots, none for a slot the record does not declare         |
+| `packages/vue-block-editor-headless/src/services/getSlotPointer.ts`              | a slot's pointer, named by a slot the node's type declares                                          |
+| `packages/vue-block-editor-headless/src/services/moveBlockNode.ts`               | a move as a remove and an add, refused into its own subtree                                         |
+| `packages/vue-block-editor-headless/src/services/moveIntoPreviousSibling.ts`     | a move to the end of the previous sibling's accepting slot                                          |
+| `packages/vue-block-editor-headless/src/services/pasteBlockNodes.ts`             | copies with fresh ids, checked as the destination slot's children                                   |
+| `packages/vue-block-editor-headless/src/services/remintBlockNode.ts`             | a copy of a node and its slots with fresh ids, read through the port                                |
+| `packages/vue-block-editor-headless/src/services/renderBlockNodes.ts`            | the fold from the leaves up, through a consumer's render function                                   |
+| `packages/vue-block-editor-headless/src/services/getFocusAfterRemoval.ts`        | the node that takes focus after a removal                                                           |
+| `packages/vue-block-editor-headless/src/models/BlockLayerRow.ts`                 | a row of the layers tree: a node's depth, its pointer and its type                                  |
+| `packages/vue-block-editor-headless/src/services/getBlockLayerRows.ts`           | every node in layer order, a node's row before its slots' rows                                      |
+| `packages/vue-block-editor-headless/src/services/getAdjacentBlockNodePointer.ts` | the node a row offset from another, past a slot boundary                                            |
+| `packages/vue-block-editor-headless/src/services/getBlockPropPointer.ts`         | a node's prop pointer, the prop's key escaped as one JSON pointer segment                           |
+| `packages/vue-block-editor-headless/src/services/getAcceptingSlotPointers.ts`    | every slot that accepts a node, outside the node's own subtree                                      |
+| `packages/vue-block-editor-headless/src/services/moveOutAfterParent.ts`          | a move to just after the node's parent, in the slot that holds the parent                           |
+| `packages/vue-block-editor-headless/src/services/duplicateBlockNode.ts`          | a paste of the node's copy straight after it, in its own slot                                       |
+| `packages/vue-block-editor-headless/src/services/applyBlockEdit.ts`              | an edit applied as one, or refused whole                                                            |
+| `apps/web/shared/models/db/resource/JsonPatchOperation.ts`                       | the app's wire schema for an operation, beside its one consumer                                     |
 
 ## Notes
 

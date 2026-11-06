@@ -4,9 +4,9 @@ Each `*.test-d.ts` and `*.typebench.ts` kept for what it guards: a refusal the t
 
 | Unit                                                                                     | Swept                  | Notes                                                                                                    |
 | ---------------------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------- |
-| `packages/headless-block-editor/src/models/blockTypes.test-d.ts`                         | 2026-10-24             | dropped the alias-identity check of a node's props; the refusals and the helper shapes they rely on stay |
-| `packages/headless-block-editor/src/services/getSlotPointer.test-d.ts`                   | 2026-10-24             | kept: the misspelt-slot refusal                                                                          |
-| `packages/headless-block-editor/src/models/BlockChildren.typebench.ts`                   | 2026-10-24             | kept: the children port over the whole node union is the deep type behind the email's TS2589             |
+| `packages/vue-block-editor-headless/src/models/blockTypes.test-d.ts`                     | 2026-10-24             | dropped the alias-identity check of a node's props; the refusals and the helper shapes they rely on stay |
+| `packages/vue-block-editor-headless/src/services/getSlotPointer.test-d.ts`               | 2026-10-24             | kept: the misspelt-slot refusal                                                                          |
+| `packages/vue-block-editor-headless/src/models/BlockChildren.typebench.ts`               | 2026-10-24             | kept: the children port over the whole node union is the deep type behind the email's TS2589             |
 | `packages/mjml-blocks/src/models/MjmlBlockTypeDefinition.test-d.ts`                      | 2026-10-24             | kept: the content-kind refusals and the one accepted pairing that proves the refusals can pass           |
 | `packages/mjml-blocks/src/models/MjmlNodeDefinition.test-d.ts`                           | 2026-10-24             | dropped the alias-identity check; the button refusal stays                                               |
 | `apps/web/shared/models/trpc/TRPCProcedureInputs.test-d.ts`                              | 2026-11-01 · Haiku 5.5 | kept: a router that binds a trigger to another schema than the map names is caught nowhere else          |

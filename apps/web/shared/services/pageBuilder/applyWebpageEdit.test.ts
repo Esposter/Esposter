@@ -3,7 +3,7 @@ import { TEST_EDIT_CONTENT, TEST_EDIT_POINTER } from "#shared/services/pageBuild
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { JsonPatchOperationType } from "@esposter/shared";
-import { applyBlockEdit } from "headless-block-editor";
+import { applyBlockEdit } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(applyBlockEdit, () => {

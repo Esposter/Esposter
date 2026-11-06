@@ -1,7 +1,7 @@
 import type { PageBuilderHelper } from "@/models/pageBuilder/PageBuilderHelper";
 
 import { parseArrayIndex, readJsonValue, toJsonPointer } from "@esposter/shared";
-import { getBlockNode } from "headless-block-editor";
+import { getBlockNode } from "vue-block-editor-headless";
 
 // A node's title, suffixed by its 1-based position among its siblings of the same type when there is more than one such
 // Sibling, so a path can tell "Column 1" from "Column 2" in the same slot. Empty when the node is not of a known type

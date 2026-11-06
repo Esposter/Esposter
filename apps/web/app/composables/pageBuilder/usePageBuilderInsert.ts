@@ -1,5 +1,5 @@
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { getInsertableTypes } from "@/services/pageBuilder/getInsertableTypes";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";

@@ -18,7 +18,7 @@ One shape for every headless package: a Vue package with one entry. The abstract
 ## Capabilities
 
 - **architecture/headless-package-shape** (new)
-- **headless-block-editor/edit-session** (new)
+- **vue-block-editor-headless/edit-session** (new)
 
 ## Impact
 

@@ -2,7 +2,7 @@
 import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { WHITEBOARD_OVERLAY_DASH_ARRAY } from "@/services/whiteboard/overlay/constants";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getPointsBounds } from "headless-block-editor";
+import { getPointsBounds } from "vue-block-editor-headless";
 
 // The frame of a marquee while it is dragged, over the elements it covers, in the document's coordinates
 const whiteboardEditorStore = useWhiteboardEditorStore();

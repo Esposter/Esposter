@@ -1,7 +1,7 @@
 import type { MjmlAccordionTextNode } from "#src/models/MjmlAccordionTextNode";
 import type { MjmlAccordionTitleNode } from "#src/models/MjmlAccordionTitleNode";
 import type { MjmlRawNode } from "#src/models/MjmlRawNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML accordion element node holds: its attributes as MJML takes them, its children
 export interface MjmlAccordionElementProps extends BlockNodeProps {

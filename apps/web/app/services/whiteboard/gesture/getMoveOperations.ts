@@ -1,9 +1,9 @@
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { Point, PositionedDocument } from "headless-block-editor";
+import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
 import { takeOne } from "@esposter/shared";
-import { getElementBounds, GRID_SIZE, movePositionedElement, snapToGrid } from "headless-block-editor";
+import { getElementBounds, GRID_SIZE, movePositionedElement, snapToGrid } from "vue-block-editor-headless";
 
 // The operations that move each element of a selection by a delta in document units. With snap on, the delta is changed so the selection's
 // Top-left corner lands on the grid, and the selection keeps its layout. Each arrow bound to a moved shape is rerouted in the same edit

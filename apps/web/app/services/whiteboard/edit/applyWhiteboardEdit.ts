@@ -2,7 +2,7 @@ import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditStat
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { pushHistory } from "@esposter/shared";
-import { applyBlockEdit, positionedDocumentSchema } from "headless-block-editor";
+import { applyBlockEdit, positionedDocumentSchema } from "vue-block-editor-headless";
 
 // Applies an edit's operations as one step of the undo history, or leaves the state as it was when there are none
 // A refused edit throws: the commands only return operations the document's schema accepts, so a refusal is a bug to surface

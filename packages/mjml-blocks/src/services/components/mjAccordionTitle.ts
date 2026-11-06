@@ -2,7 +2,7 @@ import type { MjmlAccordionTitleNode } from "#src/models/MjmlAccordionTitleNode"
 import type { MjmlAccordionTitleProps } from "#src/models/MjmlAccordionTitleProps";
 import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";

@@ -1,6 +1,6 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { Point, ShapeKind } from "headless-block-editor";
+import type { Point, ShapeKind } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";

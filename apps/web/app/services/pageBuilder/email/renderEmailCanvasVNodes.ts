@@ -5,7 +5,7 @@ import type { EmailKind } from "@/models/pageBuilder/EmailKind";
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { EmailCanvasDrawingMap } from "@/services/pageBuilder/email/canvasDrawing/EmailCanvasDrawingMap";
-import { renderBlockNodes } from "headless-block-editor";
+import { renderBlockNodes } from "vue-block-editor-headless";
 import { cloneVNode } from "vue";
 
 // The CSS property each MJML attribute the canvas draws is written as. An attribute its node's component does not take is

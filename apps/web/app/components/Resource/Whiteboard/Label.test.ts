@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardLabel from "@/components/Resource/Whiteboard/Label.vue";
 import { mount } from "@vue/test-utils";
-import { PositionedElementType, ShapeKind, toElementTextSvg } from "headless-block-editor";
+import { PositionedElementType, ShapeKind, toElementTextSvg } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe("resourceWhiteboardLabel", () => {

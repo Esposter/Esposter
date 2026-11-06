@@ -33,7 +33,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | azure-mock                 | index.js                                                     |   51622 |   50.4 |
 | survey-expression          | index.js                                                     |   51126 |   49.9 |
 | azure-mock                 | index.d.ts                                                   |   48704 |   47.6 |
-| headless-block-editor      | index.js                                                     |   48269 |   47.1 |
+| vue-block-editor-headless  | index.js                                                     |   48269 |   47.1 |
 | mjml-blocks                | index.d.ts                                                   |   44566 |   43.5 |
 | genshin-text               | Vietnamese-[hash].js                                         |   44524 |   43.5 |
 | genshin-text               | German-[hash].js                                             |   42443 |   41.4 |
@@ -52,7 +52,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | vue-pdfjs-headless         | index.js                                                     |   30056 |   29.4 |
 | math-expression-compiler   | index.d.ts                                                   |   24862 |   24.3 |
 | parse-tmx                  | index.js                                                     |   22969 |   22.4 |
-| headless-block-editor      | index.d.ts                                                   |   21510 |   21.0 |
+| vue-block-editor-headless  | index.d.ts                                                   |   21510 |   21.0 |
 | vue-grid-layout-headless   | index.js                                                     |   21054 |   20.6 |
 | genshin-engine             | terrainWorker-[hash].js                                      |   20938 |   20.4 |
 | survey-expression          | index.d.ts                                                   |   17174 |   16.8 |

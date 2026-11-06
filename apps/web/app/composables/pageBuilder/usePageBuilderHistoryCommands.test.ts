@@ -12,7 +12,7 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useCommandStore } from "@/store/ui/command";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { moveBlockNode } from "headless-block-editor";
+import { moveBlockNode } from "vue-block-editor-headless";
 import { describe, expect, test } from "vitest";
 
 describe(usePageBuilderHistoryCommands, () => {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PositionedElement } from "headless-block-editor";
+import type { PositionedElement } from "vue-block-editor-headless";
 
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getTextPlacement, TextAnchor } from "headless-block-editor";
+import { getTextPlacement, TextAnchor } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;

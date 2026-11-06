@@ -1,6 +1,6 @@
 import type { Layout } from "vue-editor-layout-headless";
 
-import { PositionedElementType } from "headless-block-editor";
+import { PositionedElementType } from "vue-block-editor-headless";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 // The content each panel of the whiteboard's layout shows, keyed by the names the registry maps to a component

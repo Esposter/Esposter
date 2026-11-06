@@ -1,4 +1,4 @@
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML accordion title node holds: its attributes as MJML takes them, its content
 export interface MjmlAccordionTitleProps extends BlockNodeProps {

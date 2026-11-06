@@ -1,7 +1,7 @@
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
 import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootProps";
-import type { BlockRegistry } from "headless-block-editor";
+import type { BlockRegistry } from "vue-block-editor-headless";
 
 import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";

@@ -1,6 +1,6 @@
 import type { MjmlFlowNode } from "#src/models/MjmlFlowNode";
 import type { MjmlLeafNode } from "#src/models/MjmlLeafNode";
-import type { BlockNodeProps } from "headless-block-editor";
+import type { BlockNodeProps } from "vue-block-editor-headless";
 
 // The props an MJML column node holds: its attributes as MJML takes them, its children
 export interface MjmlColumnProps extends BlockNodeProps {

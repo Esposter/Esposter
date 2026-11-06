@@ -1,6 +1,6 @@
 import type { MjmlContentKind } from "#src/models/MjmlContentKind";
 import type { MjmlJson } from "#src/models/MjmlJson";
-import type { BlockNode, BlockTypeDefinition, OwnProps } from "headless-block-editor";
+import type { BlockNode, BlockTypeDefinition, OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 // A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's JSON form

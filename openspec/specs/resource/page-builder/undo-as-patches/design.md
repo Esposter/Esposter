@@ -1,6 +1,6 @@
 # Undo as patches
 
-The page builder's undo and redo: each open resource's document is held in the page builder's document store, and every edit to it is a list of [JSON Patch](https://www.rfc-editor.org/rfc/rfc6902.html) operations applied through the [headless core](../../../headless-block-editor/editor-core/design.md)'s block edit, with the inverses that undo it kept beside the operations that redo it. The [document model](../document-model/design.md) holds the documents this runs over. A webpage and an email are edited and undone the same way, and each commit writes the document back under the resource type it was opened as.
+The page builder's undo and redo: each open resource's document is held in the page builder's document store, and every edit to it is a list of [JSON Patch](https://www.rfc-editor.org/rfc/rfc6902.html) operations applied through the [headless core](../../../vue-block-editor-headless/editor-core/design.md)'s block edit, with the inverses that undo it kept beside the operations that redo it. The [document model](../document-model/design.md) holds the documents this runs over. A webpage and an email are edited and undone the same way, and each commit writes the document back under the resource type it was opened as.
 
 ## Undo and redo as patches
 
@@ -33,7 +33,7 @@ flowchart TD
 
 ## Decisions
 
-- **The bounded history lives in `@esposter/shared`.** The page builder's history is generic over its entry, and the sheet's command objects are its second consumer, so the stack sits in the shared utilities and both stores build on it. Rejected: the stack in `headless-block-editor`, which would make a sheet's undo depend on a block editor, and which the [core's own decision](../../../headless-block-editor/editor-core/design.md) to keep no history already refuses.
+- **The bounded history lives in `@esposter/shared`.** The page builder's history is generic over its entry, and the sheet's command objects are its second consumer, so the stack sits in the shared utilities and both stores build on it. Rejected: the stack in `vue-block-editor-headless`, which would make a sheet's undo depend on a block editor, and which the [core's own decision](../../../vue-block-editor-headless/editor-core/design.md) to keep no history already refuses.
 - **The sheet keeps its commands.** Its entries stay command objects with their own `execute` and `undo`, since a sheet edit is not a patch over a document tree; only the stack under them is shared. Rewriting them as patches was rejected: it would change every sheet command for no behaviour a reader sees.
 - **The merge is decided by the store, not the core.** The core applies an edit whole and leaves coalescing to the first consumer that needs it. The page builder's store is that consumer, because the interaction is the surface's, and the core cannot know which edits belong to one drag.
 
@@ -50,7 +50,7 @@ flowchart TD
 | `apps/web/app/composables/pageBuilder/usePageBuilderHistoryCommands.ts` | Undo and Redo registered as commands named by the entry's label                      |
 | `packages/shared/src/services/history/pushHistory.ts`                   | the bounded history, shared by the page builder's store and the sheet                |
 | `packages/shared/src/services/jsonPatch/applyPatches.ts`                | the JSON Patch applier that records the inverses                                     |
-| `packages/headless-block-editor/src/services/applyBlockEdit.ts`         | an edit applied whole, refused as a unit                                             |
+| `packages/vue-block-editor-headless/src/services/applyBlockEdit.ts`     | an edit applied whole, refused as a unit                                             |
 | `apps/web/app/store/resource/sheet/history/index.ts`                    | the sheet's history over the shared bounded history, its commands as entries         |
 
 ## Sources

@@ -4,7 +4,7 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
-import type { BlockNode } from "headless-block-editor";
+import type { BlockNode } from "vue-block-editor-headless";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";

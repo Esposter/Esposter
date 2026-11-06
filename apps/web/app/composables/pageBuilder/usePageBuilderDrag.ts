@@ -2,7 +2,7 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { UiCommand } from "@/models/ui/UiCommand";
-import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
@@ -16,7 +16,7 @@ import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
 import { noop } from "@esposter/shared";
-import { getBlockLayerRows } from "headless-block-editor";
+import { getBlockLayerRows } from "vue-block-editor-headless";
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type

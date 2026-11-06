@@ -2,7 +2,7 @@ import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { MjmlTextProps } from "#src/models/MjmlTextProps";
-import type { OwnProps } from "headless-block-editor";
+import type { OwnProps } from "vue-block-editor-headless";
 import type { z } from "zod";
 
 import { createMjmlRichTextPropsSchema } from "#src/services/components/createMjmlRichTextPropsSchema";

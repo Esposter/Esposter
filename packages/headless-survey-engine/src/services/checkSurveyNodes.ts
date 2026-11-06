@@ -6,7 +6,7 @@ import { checkSurveyMinimumWithinMaximum } from "#src/services/checkSurveyMinimu
 import { checkSurveyNoneChoice } from "#src/services/checkSurveyNoneChoice";
 import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptionalExpression";
 import { checkSurveyQuestion } from "#src/services/checkSurveyQuestion";
-import { getBlockPropPointer } from "headless-block-editor";
+import { getBlockPropPointer } from "vue-block-editor-headless";
 
 // Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope
 // A dynamic panel's template is a scope of its own, so its questions are named among themselves and may repeat a name outside the panel
