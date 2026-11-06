@@ -148,7 +148,7 @@ A material whose texture is missing SHALL be drawn without it, and the rest of t
 
 ### Requirement: The player's character is drawn from its published pack
 
-The player's character SHALL be drawn on the character body from its published pack, and no stand-in shape SHALL be drawn for a character.
+The player's character SHALL be drawn on the character body from its published pack, or from the Traveler's model when the index lists no pack for it, and no stand-in shape SHALL be drawn for a character.
 
 #### Scenario: Held pack draws the character's model
 
