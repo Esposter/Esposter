@@ -2,6 +2,8 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { Point, ShapeKind } from "headless-block-editor";
 
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
@@ -18,6 +20,7 @@ import {
   WHITEBOARD_TOOL_SHORTCUTS,
 } from "@/services/whiteboard/keyboard/constants";
 import { WhiteboardPaletteIconMap } from "@/services/whiteboard/palette/WhiteboardPaletteIconMap";
+import { WHITEBOARD_TOOL_ITEMS } from "@/services/whiteboard/tool/constants";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
 // Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
@@ -136,16 +139,23 @@ export const useWhiteboardKeyboard = (
   ];
 
   const toolCommands: UiCommand[] = [
-    ...Object.entries(WHITEBOARD_TOOL_SHORTCUTS).map(([key, { meaning, title, tool: chosenTool }]) => ({
-      group: WHITEBOARD_COMMAND_GROUP,
-      id: `whiteboard-tool-${chosenTool}`,
-      meaning,
-      run: () => {
-        chooseTool(chosenTool);
-      },
-      shortcut: key,
-      title: `${title} tool`,
-    })),
+    ...Object.entries(WHITEBOARD_TOOL_SHORTCUTS).map(([key, chosenTool]) => {
+      const item = WHITEBOARD_TOOL_ITEMS.find(({ value }) => value === chosenTool);
+      // Every tool with a key has a toolbar item carrying its mark, so a miss is a broken table, not a case to skip
+      if (!item?.meaning)
+        throw new InvalidOperationError(Operation.Read, chosenTool, "it has no toolbar item with a mark");
+
+      return {
+        group: WHITEBOARD_COMMAND_GROUP,
+        id: `whiteboard-tool-${chosenTool}`,
+        meaning: item.meaning,
+        run: () => {
+          chooseTool(chosenTool);
+        },
+        shortcut: key,
+        title: `${item.title} tool`,
+      };
+    }),
     ...Object.entries(WHITEBOARD_SHAPE_SHORTCUTS).map(([key, { kind, title }]) => ({
       group: WHITEBOARD_COMMAND_GROUP,
       id: `whiteboard-shape-${kind}`,

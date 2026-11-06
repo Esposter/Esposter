@@ -14,14 +14,14 @@ export const WHITEBOARD_NUDGE_DIRECTIONS = {
   ArrowRight: { direction: "right", meaning: UiIconMeaning.ArrowRight, point: { x: 1, y: 0 } },
   ArrowUp: { direction: "up", meaning: UiIconMeaning.ArrowUp, point: { x: 0, y: -1 } },
 } as const;
-// The key each tool is chosen by, with the mark and the name its command wears
+// The key each tool is chosen by. Its mark and name are the toolbar's item for that tool
 export const WHITEBOARD_TOOL_SHORTCUTS = {
-  a: { meaning: UiIconMeaning.Arrow, title: "Arrow", tool: GestureTool.Arrow },
-  h: { meaning: UiIconMeaning.Hand, title: "Hand", tool: GestureTool.Hand },
-  n: { meaning: UiIconMeaning.Edit, title: "Sticky note", tool: GestureTool.StickyNote },
-  p: { meaning: UiIconMeaning.Pen, title: "Freehand", tool: GestureTool.Freehand },
-  t: { meaning: UiIconMeaning.ReadableText, title: "Text", tool: GestureTool.Text },
-  v: { meaning: UiIconMeaning.Pointer, title: "Select", tool: GestureTool.Select },
+  a: GestureTool.Arrow,
+  h: GestureTool.Hand,
+  n: GestureTool.StickyNote,
+  p: GestureTool.Freehand,
+  t: GestureTool.Text,
+  v: GestureTool.Select,
 } as const;
 // The key each shape is placed by with the shape tool, which places the shape its key names. Its mark is the palette's icon for that kind
 export const WHITEBOARD_SHAPE_SHORTCUTS = {
