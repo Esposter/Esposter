@@ -10,21 +10,21 @@ Each built task names the test it was written first in, and each test is a scena
 ## 2. Set bonuses
 
 - [x] 2.1 `getActiveArtifactSetBonuses` reaches each set's bonus at its piece count, and the attribute sum reads it.
-      Tests: "a set's two-piece bonus is active from two pieces", "a set's four-piece bonus is active from four pieces", "a
-      single piece of a set activates none of its bonuses", "a set the table does not hold is refused".
+      Tests: "a set's two-piece bonus is active from two pieces", "a set's four-piece bonus is active from four pieces",
+      "a single piece of a set activates none of its bonuses", "a set the table does not hold is refused".
 
 ## 3. Equip and unequip
 
 - [x] 3.1 `equipCharacterArtifact` puts a piece in its slot and returns the piece it replaces, and
-      `unequipCharacterArtifact` takes off a slot's piece and refuses an empty slot. Tests: "equipping into an empty slot
-      displaces nothing", "equipping into a worn slot returns the piece it replaces", "unequipping returns the worn artifact
-      and leaves its slot empty", "unequipping an empty slot is refused".
+      `unequipCharacterArtifact` takes off a slot's piece and refuses an empty slot. Tests:
+      "equipping into an empty slot displaces nothing", "equipping into a worn slot returns the piece it replaces",
+      "unequipping returns the worn artifact and leaves its slot empty", "unequipping an empty slot is refused".
 
 ## 4. Enhancing a worn artifact
 
-- [x] 4.1 `enhanceCharacterArtifact` charges the Mora and enhances the worn piece, and refuses without it. Tests: "a worn
-      artifact takes the materials' EXP and its fodder's, and the Mora they cost is charged", "an enhancement the wallet cannot
-      pay for is refused", "an enhancement of an empty slot is refused".
+- [x] 4.1 `enhanceCharacterArtifact` charges the Mora and enhances the worn piece, and refuses without it. Tests:
+      "a worn artifact takes the materials' EXP and its fodder's, and the Mora they cost is charged",
+      "an enhancement the wallet cannot pay for is refused", "an enhancement of an empty slot is refused".
 
 ## 5. The Artifacts panel
 
