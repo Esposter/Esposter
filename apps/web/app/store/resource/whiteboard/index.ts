@@ -1,7 +1,7 @@
 import type { WhiteboardElement } from "#shared/models/resource/whiteboard/WhiteboardElement";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { History, JsonPatchOperation } from "@esposter/shared";
-import type { PositionedElementProperty } from "headless-block-editor";
+import type { JsonPatchOperation } from "@esposter/shared";
+import type { PositionedDocument, PositionedElementProperty } from "headless-block-editor";
 
 import { createContentData } from "@/services/resource/createContentData";
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
@@ -9,8 +9,8 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
-import { createHistory, getResult } from "@esposter/shared";
-import { insertPositionedElement, updatePositionedElementProperty } from "headless-block-editor";
+import { getResult } from "@esposter/shared";
+import { insertPositionedElement, updatePositionedElementProperty, useEditSession } from "headless-block-editor";
 
 // A whiteboard's saved document, with the undo history of the edits made to it this session. Each edit is one commit, so one
 // Undo step, and a document read from the server starts a fresh history
@@ -22,21 +22,15 @@ export const useWhiteboardStore = defineStore("resource/whiteboard", () => {
     loadContent,
     saveContent: saveWhiteboard,
   } = createContentData<ResourceType.Whiteboard>(ResourceType.Whiteboard, (data) => data ?? { elements: [] });
-  // A shallow ref so the history's inverse patches are held as they were written, never wrapped in a reactive proxy
-  const history = shallowRef<History<JsonPatchOperation[]>>(createHistory(MAX_WHITEBOARD_HISTORY_SIZE));
-  // Synchronous, so the history is cleared before a commit sets its own, rather than after it
-  watch(
+  // The session clears the history whenever the content is set from outside a commit, so a read from the server starts afresh
+  const { commit, history } = useEditSession<PositionedDocument, JsonPatchOperation[]>(
     whiteboard,
-    () => {
-      history.value = createHistory(MAX_WHITEBOARD_HISTORY_SIZE);
-    },
-    { flush: "sync" },
+    MAX_WHITEBOARD_HISTORY_SIZE,
   );
   const editState = computed<WhiteboardEditState>({
     get: () => ({ document: whiteboard.value, history: history.value }),
     set: (state) => {
-      whiteboard.value = state.document;
-      history.value = state.history;
+      commit(state.document, state.history);
     },
   });
   // The document the canvas shows: the one a gesture in progress would leave, or else the committed one
