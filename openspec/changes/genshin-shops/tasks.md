@@ -16,7 +16,7 @@
 
 ## 4. Souvenir Shops, city shops and vendors
 
-- [x] 4.1 Trade Sigils at each region's Souvenir Shop, closed until its offering is at its last level. Verify: tests named after 'Sigils are traded for materials, blueprints and Mora' and 'A Souvenir Shop stays closed until its offering is at its last level', and the scenario 'Souvenir goods never restock' shares the test 'a good with no refresh stays bought' of task 2.1, since a Souvenir good is a good with no refresh.
+- [x] 4.1 Trade Sigils at each region's Souvenir Shop, closed until its offering is at its last level. Verify: tests named after 'Sigils are traded for materials, blueprints and Mora', 'A Souvenir Shop stays closed until its offering is at its last level' and 'Souvenir goods never restock'. The last checks that a Souvenir good has no refresh; the limit it keeps is held by the test 'a good with no refresh stays bought' of task 2.1, since a Souvenir good is a good with no refresh.
 - [x] 4.2 Apply the reputation discount to a city shop's Mora price. Verify: tests named after the scenarios 'A discounted Mora price is rounded down to a multiple of five' and 'A price below reputation level four is not discounted', both in discountShopGood.test.ts.
 - [x] 4.3 Open a city vendor's shop from their talk as each region is built. Verify: a test named after 'Talking to a vendor opens their shop'.
 - [ ] 4.4 Open the Fishing Associations' shops once fishing lands. Verify: the test named 'Talking to a vendor opens their shop', extended to the Fishing Associations' shops. Nantuck and six of the other seven Fishing Associations are placed as residents. Blocked on Zherebtsov (Snezhnaya, NPC 7418): his point is mapped, but Snezhnaya has no fitted region yet, so the fit must place it first (design.md).

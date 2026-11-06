@@ -1,7 +1,7 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 
 import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
-import { MORA_ITEM_ID } from "#src/services/genshinAssets/shops/constants";
+import { MORA_ITEM_ID, SOUVENIR_SIGIL_ITEM_IDS } from "#src/services/genshinAssets/shops/constants";
 import { toShopGoodRow } from "#src/services/genshinAssets/shops/toShopGoodRow";
 import { describe, expect, test } from "vitest";
 
@@ -94,5 +94,17 @@ describe(toShopGoodRow, () => {
     const { refreshType: _, ...unlistedRefreshRow } = row;
 
     expect(toShopGoodRow(unlistedRefreshRow).refresh).toBe(ShopRefresh.None);
+  });
+
+  test("souvenir goods never restock", () => {
+    expect.hasAssertions();
+    const { refreshType: _, ...unlistedRefreshRow } = row;
+    const souvenirGood = toShopGoodRow({
+      ...unlistedRefreshRow,
+      costItems: [{ count: PRICE_COUNT, id: SOUVENIR_SIGIL_ITEM_IDS.mondstadt }, {}],
+    });
+
+    expect(souvenirGood.costs).toStrictEqual([{ count: PRICE_COUNT, itemId: SOUVENIR_SIGIL_ITEM_IDS.mondstadt }]);
+    expect(souvenirGood.refresh).toBe(ShopRefresh.None);
   });
 });
