@@ -7,6 +7,7 @@ import {
   OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE,
 } from "#src/services/shared/constants";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
+import { timedOutError } from "#src/services/shared/timedOutError";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
@@ -45,11 +46,7 @@ export const formatSource = (
     },
   );
   if (checkIsTimedOut(error))
-    throw new InvalidOperationError(
-      Operation.Read,
-      relativePath,
-      `oxfmt --stdin-filepath ${relativePath} ran past ${timeout} ms and was killed`,
-    );
+    throw timedOutError(Operation.Read, relativePath, timeout, `oxfmt --stdin-filepath ${relativePath}`);
   if (status === 0) return stdout;
   if (stderr.includes(OXFMT_UNSUPPORTED_FILE_TYPE_MESSAGE)) return undefined;
   throw new InvalidOperationError(Operation.Read, relativePath, readFirstLine(stderr));

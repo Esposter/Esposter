@@ -4,6 +4,7 @@ import { CONFIGURATION_DISTRIBUTION_PATH } from "#src/services/precheck/constant
 import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
 import { readFirstLine } from "#src/services/shared/readFirstLine";
+import { timedOutError } from "#src/services/shared/timedOutError";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
@@ -26,11 +27,7 @@ export const spawnGenerateExports = (
     timeout: CHILD_PROCESS_TIMEOUT_MS,
   });
   if (checkIsTimedOut(error))
-    throw new InvalidOperationError(
-      Operation.Update,
-      packageDirectory,
-      `the generator ran past ${CHILD_PROCESS_TIMEOUT_MS} ms and was killed`,
-    );
+    throw timedOutError(Operation.Update, packageDirectory, CHILD_PROCESS_TIMEOUT_MS, "the generator");
   if (status !== 0)
     throw new InvalidOperationError(
       Operation.Update,

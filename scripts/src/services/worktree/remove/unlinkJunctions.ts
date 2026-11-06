@@ -1,5 +1,6 @@
 import { checkIsTimedOut } from "#src/services/shared/checkIsTimedOut";
 import { CHILD_PROCESS_TIMEOUT_MS } from "#src/services/shared/constants";
+import { timedOutError } from "#src/services/shared/timedOutError";
 import { JUNCTION_UNLINK_COMMAND } from "#src/services/worktree/remove/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
@@ -15,10 +16,11 @@ export const unlinkJunctions = (worktreePath: string): void => {
     timeout: CHILD_PROCESS_TIMEOUT_MS,
   });
   if (checkIsTimedOut(error))
-    throw new InvalidOperationError(
+    throw timedOutError(
       Operation.Delete,
       worktreePath,
-      `its junctions were not unlinked: pwsh ran past ${CHILD_PROCESS_TIMEOUT_MS} ms and was killed`,
+      CHILD_PROCESS_TIMEOUT_MS,
+      "its junctions were not unlinked: pwsh",
     );
   if (status !== 0)
     throw new InvalidOperationError(Operation.Delete, worktreePath, `its junctions could not be unlinked: ${stderr}`);
