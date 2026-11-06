@@ -9,8 +9,8 @@ import { createParty } from "#src/services/party/createParty";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { createIdleInputState } from "genshin-engine";
 import { Object3D } from "three";
-import { ref } from "vue";
 import { describe, expect, test, vi } from "vitest";
+import { ref } from "vue";
 
 // Each step of the frame as a no-op, over a character on the field with nothing in reach and an input holding nothing, so
 // A test overrides only the step it watches
@@ -25,12 +25,12 @@ const createFrameOptions = (overrides: Partial<WorldFrameOptions> = {}): WorldFr
     turn: () => {},
   };
   return {
-    abyssChoices: ref(undefined),
+    abyssChoices: ref<unknown>(),
     characterBody: new Object3D(),
     checkIsPaused: () => false,
     closeShortcutWheel: () => {},
     dispatchInteraction: () => {},
-    domainClaimOffers: ref(undefined),
+    domainClaimOffers: ref<unknown>(),
     drawDayOutcrops: () => {},
     elementalSight: { isOn: false, origin: { x: 0, z: 0 }, spreadSeconds: 0 },
     getEquippedGadgetCooldown: () => 0,
