@@ -55,6 +55,11 @@
       "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
     },
     {
+      "allowedVersions": "<0.692.0",
+      "description": "`vize` 0.692.0 ships `virtual-ts-emits.d.ts`, which imports `$ConstructorEmitPropsFactory` from `virtual-ts.js`, and that file exports no such name, so the declaration builds of `genshin-interface` and `vue-phaserjs` fail with MISSING_EXPORT. The cap lifts at the first release that exports it.",
+      "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
+    },
+    {
       "allowedVersions": "<27",
       "description": "`.node-version` is the one node pin, and `@types/node` follows its major with its own minors lagging node's, so the two move in one branch. The pin stays on its major until every environment that runs node can run the next one, and `references/node-major.md` is the checklist that says when. The change that moves the pin with `pnpm update:node <major>` raises this cap to the next major beside it.",
       "groupName": "node",
