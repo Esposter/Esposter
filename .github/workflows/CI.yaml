@@ -134,6 +134,8 @@ jobs:
   # Runs the session's browser test by its path. `BROWSER_TEST_GLOB` keeps every `*.browser.test.ts` out of the
   # default run.
   # The provider launches the runner image's Microsoft Edge through its `msedge` channel, so no browser is installed here
+  # The job is advisory, not part of `queueStatusChecks` (`apps/infra/src/github/rulesets/queueStatusChecks.ts`),
+  # so its red does not gate a merge
   session-browser-test:
     name: Session Browser Test
     needs: build-packages

@@ -1,3 +1,4 @@
+import { regionDataPlugin } from "#parity/regionDataPlugin";
 import { terrainWorkerAlias } from "#parity/terrainWorkerAlias";
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
 import { tresCustomElements } from "#scripts/tres/tresCustomElements";
@@ -21,7 +22,12 @@ const { browser, define } = getVitestBrowserConfiguration(
 // Of what only a browser runs
 export default defineConfig({
   define,
-  plugins: [...getVuePlugins({ customElements: tresCustomElements }), dynamicJsonImportPlugin, gameDataMirrorPlugin],
+  plugins: [
+    ...getVuePlugins({ customElements: tresCustomElements }),
+    dynamicJsonImportPlugin,
+    gameDataMirrorPlugin,
+    regionDataPlugin,
+  ],
   // Its siblings from their source, as the page reads them
   resolve: { alias: terrainWorkerAlias, conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
