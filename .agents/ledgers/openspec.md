@@ -6,12 +6,7 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | ---------------------------- | ----- | ------------ |
 | genshin-character-kits       | —     | unreconciled |
 | genshin-character-screen     | —     | unreconciled |
-| genshin-characters           | —     | unreconciled |
 | genshin-commissions          | —     | unreconciled |
-| genshin-companionship        | —     | unreconciled |
-| genshin-constellations       | —     | unreconciled |
-| genshin-domains              | —     | unreconciled |
-| genshin-exploration-progress | —     | unreconciled |
 | genshin-imaginarium-theater  | —     | unreconciled |
 | genshin-ley-line-outcrops    | —     | unreconciled |
 | genshin-mail                 | —     | unreconciled |
