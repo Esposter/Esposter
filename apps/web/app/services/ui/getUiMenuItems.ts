@@ -3,7 +3,8 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 // An item's title is unique within its menu, so it is the value the menu hands back
 export const getUiMenuItems = (items: Item[]): UiMenuItem<string>[] =>
-  items.map(({ disabled, icon, isChecked, isDanger, isGroupStart, isSelected, meaning, title }) => ({
+  items.map(({ description, disabled, icon, isChecked, isDanger, isGroupStart, isSelected, meaning, title }) => ({
+    description,
     icon,
     isChecked,
     isDanger,

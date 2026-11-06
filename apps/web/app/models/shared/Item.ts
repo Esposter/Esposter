@@ -7,6 +7,8 @@ export type Item = {
   [key: string]: unknown;
   active?: boolean;
   badges?: { count: number; icon: string }[];
+  // Drawn after the title in the muted colour, and for a disabled action, the reason it cannot be taken
+  description?: string;
   disabled?: boolean;
   // A setting that is on or off, drawn with its mark while on, as a checkbox is: an item of its own, not a choice in a group
   isChecked?: boolean;

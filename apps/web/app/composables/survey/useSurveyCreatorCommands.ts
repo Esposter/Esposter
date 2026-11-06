@@ -3,11 +3,13 @@ import type { History, JsonPatchOperation } from "@esposter/shared";
 import type { BlockNodeProps } from "headless-block-editor";
 import type { SurveyDocument, SurveyNode, SurveyNodeType, SurveyRootProps } from "headless-survey-engine";
 
+import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
 import { ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
 import { getSurveyInsertTarget } from "@/services/resource/survey/getSurveyInsertTarget";
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
+import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { JsonPatchOperationType, redoHistory, undoHistory } from "@esposter/shared";
 import {
@@ -17,11 +19,8 @@ import {
   getBlockNode,
   getBlockPropPointer,
   getFocusAfterRemoval,
-  getSiblingMoveOperations,
   insertBlockNode,
   moveBlockNode,
-  moveIntoPreviousSibling,
-  moveOutAfterParent,
   removeBlockNode,
   updateBlockNodeProps,
 } from "headless-block-editor";
@@ -104,14 +103,16 @@ export const useSurveyCreatorCommands = () => {
     return target !== undefined && insertNodeAt(type, target.slotPointer, target.index);
   };
   const moveElement = (operations: JsonPatchOperation[]) => applyEdit(operations, "Move element");
-  const moveNodeDown = (nodePointer: string) =>
-    moveElement(getSiblingMoveOperations(document.value, surveyRegistry, surveyNodeChildren, nodePointer, 1));
-  const moveNodeUp = (nodePointer: string) =>
-    moveElement(getSiblingMoveOperations(document.value, surveyRegistry, surveyNodeChildren, nodePointer, -1));
-  const moveNodeIntoPrevious = (nodePointer: string) =>
-    moveElement(moveIntoPreviousSibling(document.value, surveyRegistry, surveyNodeChildren, nodePointer));
-  const moveNodeOut = (nodePointer: string) =>
-    moveElement(moveOutAfterParent(document.value, surveyRegistry, surveyNodeChildren, nodePointer));
+  // The move a node takes from its place. A move the selection cannot take has no operations, so it changes nothing, and the menu that
+  // Offers the move reads the same refusal from getSurveyNodeMove
+  const moveNode = (nodePointer: string, moveType: SurveyNodeMoveType) => {
+    const { operations } = getSurveyNodeMove(document.value, nodePointer, moveType);
+    return moveElement(operations);
+  };
+  const moveNodeDown = (nodePointer: string) => moveNode(nodePointer, SurveyNodeMoveType.Down);
+  const moveNodeUp = (nodePointer: string) => moveNode(nodePointer, SurveyNodeMoveType.Up);
+  const moveNodeIntoPrevious = (nodePointer: string) => moveNode(nodePointer, SurveyNodeMoveType.IntoPrevious);
+  const moveNodeOut = (nodePointer: string) => moveNode(nodePointer, SurveyNodeMoveType.Out);
   const moveNodeTo = (nodePointer: string, slotPointer: string, index: number) =>
     moveElement(moveBlockNode(document.value, surveyRegistry, surveyNodeChildren, nodePointer, slotPointer, index));
   // The renames a copy needs: each question in the copied subtree takes a name no element holds, since a copy would

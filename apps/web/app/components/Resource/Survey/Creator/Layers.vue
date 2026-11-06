@@ -3,7 +3,9 @@ import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
 import type { SurveyNode } from "headless-survey-engine";
 
+import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
 import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "headless-block-editor";
@@ -14,7 +16,8 @@ type LayerItem = UiListItem<string> & { depth: number };
 
 const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);
-const { duplicateNode, moveNodeTo, removeNode, select } = useSurveyCreatorCommands();
+const { duplicateNode, moveNodeDown, moveNodeIntoPrevious, moveNodeOut, moveNodeTo, moveNodeUp, removeNode, select } =
+  useSurveyCreatorCommands();
 // What a node is called in the tree and in a path: its title, else its name, else the label of its kind
 const getNodeLabel = (node: SurveyNode) =>
   ("title" in node.props && node.props.title) ||
@@ -82,7 +85,12 @@ const askRemove = (pointer: string) => {
   removingPointer.value = pointer;
   isRemoveOpen.value = true;
 };
-// What a row's overflow menu does to the node it is of: copy it, move it to a chosen place or ask to remove it
+// A move a row's menu offers, disabled with the reason it is refused as its description where the selection cannot take it
+const getMoveAction = (pointer: string, moveType: SurveyNodeMoveType) => {
+  const { refusal } = getSurveyNodeMove(surveyDocument.value, pointer, moveType);
+  return { description: refusal, disabled: Boolean(refusal) };
+};
+// What a row's overflow menu does to the node it is of: copy it, move it a step or to a chosen place, or ask to remove it
 const getActionItems = (pointer: string): Item[] => [
   {
     meaning: UiIconMeaning.Copy,
@@ -90,6 +98,38 @@ const getActionItems = (pointer: string): Item[] => [
       duplicateNode(pointer);
     },
     title: "Duplicate",
+  },
+  {
+    ...getMoveAction(pointer, SurveyNodeMoveType.Up),
+    meaning: UiIconMeaning.ArrowUp,
+    onClick: () => {
+      moveNodeUp(pointer);
+    },
+    title: "Move up",
+  },
+  {
+    ...getMoveAction(pointer, SurveyNodeMoveType.Down),
+    meaning: UiIconMeaning.ArrowDown,
+    onClick: () => {
+      moveNodeDown(pointer);
+    },
+    title: "Move down",
+  },
+  {
+    ...getMoveAction(pointer, SurveyNodeMoveType.IntoPrevious),
+    meaning: UiIconMeaning.ArrowRight,
+    onClick: () => {
+      moveNodeIntoPrevious(pointer);
+    },
+    title: "Move into the element before it",
+  },
+  {
+    ...getMoveAction(pointer, SurveyNodeMoveType.Out),
+    meaning: UiIconMeaning.ArrowLeft,
+    onClick: () => {
+      moveNodeOut(pointer);
+    },
+    title: "Move out of its parent",
   },
   {
     meaning: UiIconMeaning.Forward,

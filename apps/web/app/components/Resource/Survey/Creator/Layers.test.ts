@@ -1,9 +1,13 @@
 // @vitest-environment nuxt
 import ResourceSurveyCreatorLayers from "@/components/Resource/Survey/Creator/Layers.vue";
+import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
+import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
+import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const loadSurvey = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
@@ -60,6 +64,29 @@ describe("resourceSurveyCreatorLayers", () => {
     await component.get('[data-pointer="/content/0/props/children/0/props/children/0"]').trigger("click");
 
     expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/0/props/children/0");
+
+    component.unmount();
+  });
+
+  test("An action the selection cannot take says why", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(
+      createSurveyTestDocument([
+        createSurveyTestPage([createSurveyTestQuestion("question1"), createSurveyTestQuestion("question2")]),
+      ]),
+    );
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/1");
+    const component = await mountSuspended(ResourceSurveyCreatorLayers);
+    await component.get('[aria-label="question2 actions"]').trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    const moveDown = component.findAll('[role="menuitem"]').find((item) => item.text().startsWith("Move down"));
+
+    assert.exists(moveDown);
+    expect(moveDown.attributes("aria-disabled")).toBe("true");
+    expect(moveDown.text()).toBe("Move down It is last in its slot");
 
     component.unmount();
   });
