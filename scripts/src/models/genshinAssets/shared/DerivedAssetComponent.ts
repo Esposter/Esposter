@@ -15,5 +15,3 @@ export enum DerivedAssetComponent {
   Traveler = "traveler",
   Windrise = "windrise",
 }
-
-export const DerivedAssetComponents = Object.values(DerivedAssetComponent);
