@@ -44,7 +44,7 @@ Verify the result is what you asked for before renaming the folder — for a pur
 grep -cE "DROP|TRUNCATE|DELETE FROM" <migration>.sql   # expect 0
 ```
 
-**Any** schema change — not just a rename — invalidates two derived artifacts: `packages/db-mock`'s pre-migrated PGlite snapshot, which fails confusingly later (refreshed in the order `references/schema-registration.md` gives), and the bundles the size tests read, which a schema change grows wherever `@esposter/db-schema` is inlined. The snapshot is built from the schema, not from the migrations, so a plain added column fails every server test with `column "x" of relation "y" does not exist` — and a rename fails them with `relation "x" does not exist`. A ceiling that growth outgrows is raised only after the rebuild, as `build`'s `references/dist-size.md` sets out.
+**Any** schema change — not just a rename — invalidates two derived artifacts: `packages/db-mock`'s pre-migrated PGlite snapshot, which fails confusingly later (refreshed in the order `references/schema-registration.md` gives), and the bundles the size tests read, which a schema change grows wherever `@esposter/db-schema` is inlined. The snapshot is built from the schema, not from the migrations, so a plain added column fails every server test with `column "x" of relation "y" does not exist` — and a rename fails them with `relation "x" does not exist`. The bundle-size record that growth moves is regenerated with `pnpm bundle-sizes:gen` only after the rebuild, as `build`'s `references/dist-size.md` sets out.
 
 ## Fixing up the generated SQL
 

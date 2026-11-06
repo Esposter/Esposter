@@ -27,7 +27,7 @@ Per group: `task | vs base | mean (ms) | ±rme | p99 (ms) | samples`. Each colum
 - **`samples`** — the measured iteration count. `BENCHMARK_RUN_OPTIONS` holds it constant, but it stays as a confidence indicator since a registration may override its own iteration count.
 - The **Environment** block carries `Commit` for provenance, so an artifact can be tied to the code that produced it.
 
-Changing what is rendered means updating `BenchmarkResult` (schema + interface) and `formatBenchmarkMarkdown` / `buildBenchmarkFileReport` and their tests. The pipeline lives in `shared-node` and its wiring in `configuration`, both consumed as **built dist** — so **rebuild the changed package** before `pnpm bench` or the edit will not take effect. The `shared-node` declaration files are held to their types ceilings, which a change to an exported interface can outgrow (the `build` skill, `references/dist-size.md`).
+Changing what is rendered means updating `BenchmarkResult` (schema + interface) and `formatBenchmarkMarkdown` / `buildBenchmarkFileReport` and their tests. The pipeline lives in `shared-node` and its wiring in `configuration`, both consumed as **built dist** — so **rebuild the changed package** before `pnpm bench` or the edit will not take effect. The `shared-node` declaration files are held to the committed bundle-size record, which a change to an exported interface moves (the `build` skill, `references/dist-size.md`).
 
 ## Platform-specific benches — `*.platform.bench.ts`
 

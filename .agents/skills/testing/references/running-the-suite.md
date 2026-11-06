@@ -28,7 +28,7 @@ Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a packag
 
 ## Narrowing a run: `-t` and `-u`
 
-- **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — checking the bundle-size ceilings after a build is the standing case, `-t "size" index.test.ts` (`references/bundle-size.md`) — narrow it by path in the same command.
+- **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — a name filter such as `-t "parse"` on a package's tests is the common case — narrow it by path in the same command. The bundle-size record is checked by its own path, `pnpm -C scripts exec vitest run src/workspace/bundleSizes.test.ts` (`references/bundle-size.md`).
 
 ## Probing one test alone
 

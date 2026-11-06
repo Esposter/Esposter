@@ -116,7 +116,7 @@ Three consequences shape the rest of the pipeline. **The `default` arm is load-b
 
 ## The output directory is wiped on every build
 
-tsdown cleans `outDir` before each build. Every emitted chunk carries a content hash, so without that a changed build would write new files beside the old ones and a size measurement of `dist` would stop meaning anything. This is what makes the size tests (`*/src/index.test.ts`) a real signal — a bundle that outgrows its ceiling means something genuinely started being bundled.
+tsdown cleans `outDir` before each build. Every emitted chunk carries a content hash, so without that a changed build would write new files beside the old ones and a size measurement of `dist` would stop meaning anything. This is what makes the committed bundle-size record ([bundle-sizes](../bundle-sizes/design.md)) a real signal — a bundle that grows shows as its own file's size changing, not as a stale file beside a new one.
 
 ## A package builds as a task of the root
 
@@ -156,7 +156,7 @@ A build reads `tsconfig.json`, tsdown's default, so it shares the platform its s
 
 ## Declarations see the entrypoints, not the tsconfig
 
-The declaration build seeds its program from the entry files and follows imports, so an ambient `.d.ts` nothing imports is absent from it and every symbol it declares collapses to `any` while every other check passes. The Vue factory loads the tsconfig's full file list instead. A collapse makes a published package's `index.d.ts` smaller, and a size ceiling fails only growth, so no size test sees it (`.agents/skills/build/references/declarations.md`).
+The declaration build seeds its program from the entry files and follows imports, so an ambient `.d.ts` nothing imports is absent from it and every symbol it declares collapses to `any` while every other check passes. The Vue factory loads the tsconfig's full file list instead. A collapse makes a published package's `index.d.ts` smaller, and the bundle-size record holds exact bytes, so the shrink fails the workspace test rather than passing as it would under a growth-only ceiling (`.agents/skills/build/references/declarations.md`).
 
 ## The bootstrap package
 
