@@ -20,10 +20,16 @@ const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
 const { editedItem, visuals } = storeToRefs(visualStore);
-const { deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
+const { clearSelection, deleteVisual, editItem, moveVisual, updateVisual } = visualStore;
 const dashboardDialogStore = useDashboardDialogStore();
 const { deletingVisualId, movingVisualId } = storeToRefs(dashboardDialogStore);
 const isEmpty = computed(() => visuals.value.length === 0);
+const canvas = useTemplateRef("canvas");
+// A press on the empty canvas clears the selection. A visual's tile is a nested interaction of the canvas, so a press
+// On the tile passes over it
+onClickExceptDrag(canvas, () => {
+  clearSelection();
+});
 // Every grid of the editor takes these keys and binds none, so the editor registers them once, however many groups it holds
 // The keys are registered only while the editor draws a grid, since the empty dashboard has no visual for them to act on
 useCommands(() => (isEmpty.value ? [] : DASHBOARD_GRID_COMMANDS));
@@ -57,7 +63,7 @@ const { isOpen: isMoveOpen, item: movingVisual } = useSingletonDialog(movingVisu
     title="No visuals yet"
     flex-1
   />
-  <div v-else p-3 flex-1>
+  <div v-else ref="canvas" p-3 flex-1>
     <DashboardGrid
       :visuals
       :collision="dashboard.collision"

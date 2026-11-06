@@ -45,6 +45,7 @@ useResizeObserver(tile, (entries) => {
     absolute
     :aria-label="isEditable ? label : undefined"
     :data-editable="isEditable || undefined"
+    :data-nested-interaction="isEditable || undefined"
     :role="isEditable ? 'group' : undefined"
     :tabindex="isEditable ? 0 : undefined"
     :style="{
@@ -71,6 +72,8 @@ useResizeObserver(tile, (entries) => {
     "
     @pointerdown="(event) => emit('press', event)"
   >
+    <!-- An editable tile is a control of the canvas, handles included: the canvas's click passes over a press on it,
+      so a press on the tile never clears the selection -->
     <slot />
     <template v-if="isEditable">
       <span

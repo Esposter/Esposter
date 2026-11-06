@@ -156,6 +156,25 @@ describe("dashboardEditorContent", () => {
     );
   });
 
+  // A press on a visual selects it, and the canvas does not clear that selection on the same click
+  test("Pressing a visual selects it", async () => {
+    expect.hasAssertions();
+
+    const barVisual = new Visual({ type: VisualType.Bar });
+    const wrapper = await mountEditor([barVisual]);
+    const visualStore = useVisualStore();
+    const { selectedVisualId } = storeToRefs(visualStore);
+    const selectedVisualIdBeforePress = selectedVisualId.value;
+    const preview = takeOne(wrapper.findAllComponents(DashboardVisualPreviewContainer));
+    await preview.trigger("mousedown");
+    await preview.trigger("click");
+
+    expect({ after: selectedVisualId.value, before: selectedVisualIdBeforePress }).toStrictEqual({
+      after: barVisual.id,
+      before: "",
+    });
+  });
+
   // Fit height is saved with the visual, and the rows it then takes are the rows its content draws
   // Its content needs two rows, so a table five rows tall takes two
   test("turning on fit height for a table", async () => {
