@@ -16,6 +16,7 @@
 
 - [ ] 3.1 Build the contextual panel with its header, the mixed value and the document settings state. Verify: tests named after 'Nothing selected shows the document settings' and 'Differing values show as mixed', seen failing first.
 - [x] 3.2 Place the tool region at the bottom and open the panel from a button as a sheet on a compact window. Verify: tests named after 'Selecting an element leaves the canvas where it was', 'A compact window opens the panel from a button', 'A compact window places the tool region at the bottom' and 'Escape closes a sheet and returns focus', and one driven-browser look at a phone width after the edits, since happy-dom has no layout.
+- [x] 3.3 Draw the sheets' buttons in a strip below the canvas on a compact window, in the flow. Verify: a test named after 'A compact window draws its sheet buttons below the canvas', written first and seen failing, run under happy-dom.
 
 ## 4. Check
 

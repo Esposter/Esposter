@@ -138,6 +138,17 @@ On a compact window the contextual panel SHALL stay closed until the reader pres
 - **THEN** the panel is closed
 - **AND** a button that opens it is shown
 
+### Requirement: A compact window draws its sheet buttons below the canvas
+
+On a compact window the shell SHALL draw each sheet's button in a strip below the canvas, so no button covers a control of the canvas and the canvas's top edge stays where it was.
+
+#### Scenario: A compact window draws its sheet buttons below the canvas
+
+- **GIVEN** a compact window with an element selected
+- **WHEN** the editor is drawn
+- **THEN** the button that opens the panel is drawn in a strip below the canvas
+- **AND** the canvas holds no button
+
 ### Requirement: A compact window places the tool region at the bottom
 
 On a compact window the tool region SHALL sit at the bottom edge of the editor, not the top.

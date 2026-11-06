@@ -72,7 +72,7 @@ const overlayInset = computed(() => {
     top: (overlayEdgeRegionMap.get(RegionEdge.Top) ?? []).reduce((total, region) => total + region.size, 0),
   };
 });
-// Each sheet is opened by a button the shell draws over the canvas, and it is drawn only while the sheet holds a panel
+// Each sheet's button sits in the strip below the canvas, and is drawn only while the sheet holds a panel
 const sheetRegions = computed(() => presentationRegionMap.value.get(RegionPresentation.Sheet) ?? []);
 // The control that opened the sheet, which takes focus back when the sheet closes
 // A modal sheet is the only one open at a time, so one control is enough
@@ -120,18 +120,6 @@ defineExpose({ setActivePanel, toggleRegion });
           :registry
           @select-panel="(panelId) => setActivePanel(region.id, panelId)"
         />
-        <!-- Drawn out of the flow, so a selection that shows a button does not push the canvas down -->
-        <div v-if="sheetRegions.length" absolute right-0 top-0 z-10 p-1 flex gap-1>
-          <UiButton
-            v-for="region in sheetRegions"
-            :key="region.id"
-            :aria-expanded="region.isOpen"
-            aria-haspopup="dialog"
-            @click="(event: MouseEvent) => toggleSheet(event, region.id)"
-          >
-            {{ takeOne(regionNameMap, region.id) }}
-          </UiButton>
-        </div>
       </div>
       <EditorRegion
         v-for="region in dockedEdgeRegionMap.get(RegionEdge.End) ?? []"
@@ -143,6 +131,19 @@ defineExpose({ setActivePanel, toggleRegion });
         @resize="(newSize) => resizeRegion(region.id, newSize)"
         @select-panel="(panelId) => setActivePanel(region.id, panelId)"
       />
+    </div>
+    <!-- In the flow below the canvas, so a button covers no control of the canvas, and a selection that shows one moves
+      only the canvas's bottom edge -->
+    <div v-if="sheetRegions.length" flex gap-1 p-1 justify-end shrink-0>
+      <UiButton
+        v-for="region in sheetRegions"
+        :key="region.id"
+        :aria-expanded="region.isOpen"
+        aria-haspopup="dialog"
+        @click="(event: MouseEvent) => toggleSheet(event, region.id)"
+      >
+        {{ takeOne(regionNameMap, region.id) }}
+      </UiButton>
     </div>
     <EditorRegion
       v-for="region in dockedEdgeRegionMap.get(RegionEdge.Bottom) ?? []"

@@ -265,6 +265,26 @@ describe("editorShell", () => {
     expect(component.get("dialog").element.open).toBe(true);
   });
 
+  test("a compact window draws its sheet buttons below the canvas", () => {
+    expect.hasAssertions();
+
+    display.isCompact = true;
+    display.isMobile = true;
+    const component = mountShell();
+    const canvasElement = component.get("[data-canvas]").element;
+    const canvasWrapper = canvasElement.parentElement;
+    assert.exists(canvasWrapper);
+    const canvasRow = canvasWrapper.parentElement;
+    assert.exists(canvasRow);
+    const opener = component.get('[aria-haspopup="dialog"]').element;
+    const strip = opener.parentElement;
+    assert.exists(strip);
+
+    expect(canvasWrapper.querySelectorAll("button")).toHaveLength(0);
+    expect(strip.parentElement).toBe(canvasRow.parentElement);
+    expect(strip.previousElementSibling).toBe(canvasRow);
+  });
+
   test("a compact window places the tool region at the bottom", () => {
     expect.hasAssertions();
 
