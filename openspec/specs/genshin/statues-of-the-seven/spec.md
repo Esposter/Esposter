@@ -245,7 +245,7 @@ Each claim at the Worship Statue SHALL take the next level the region has reache
 
 ### Requirement: Each claimed level pays the rewards its region gives
 
-Each level of a region, when claimed, SHALL pay Adventure EXP, Primogems and Sigils everywhere, and the rewards its own region gives.
+Each level of a region, when claimed, SHALL pay Adventure EXP, Primogems and Sigils everywhere, and the rewards its own region gives. A Liyue level's Stones of Remembrance are not paid yet, since no Liyue statue is reachable.
 
 #### Scenario: Every region's level pays Adventure EXP, Primogems and Sigils
 
@@ -253,21 +253,21 @@ Each level of a region, when claimed, SHALL pay Adventure EXP, Primogems and Sig
 - **WHEN** the player claims that level
 - **THEN** the player gains the level's Adventure EXP, Primogems and Sigils
 
-#### Scenario: Liyue's level also pays its Stones of Remembrance
+#### Scenario: A Mondstadt level pays the items its own region gives
 
-- **GIVEN** a Liyue statue with a reached level not yet claimed
+- **GIVEN** a Mondstadt statue with a reached level not yet claimed
 - **WHEN** the player claims that level
-- **THEN** the player gains that level's Stones of Remembrance
+- **THEN** the player gains the items that level gives its region
 
 ### Requirement: The Traveler takes the element of the statue's region on resonance
 
-Resonating with a statue SHALL change the Traveler's element to the element of the statue's region. The constellations of that element are not given yet.
+Resonating with a statue SHALL change the Traveler's element to the element of the statue's region. The constellations of that element are not given yet, and a Liyue statue's element is not taken yet, since no Liyue statue is reachable.
 
-#### Scenario: Resonating with a Liyue statue makes the Traveler Geo
+#### Scenario: Resonating with a Mondstadt statue makes the Traveler Anemo
 
-- **GIVEN** the Traveler and a Liyue statue
+- **GIVEN** the Traveler and a Mondstadt statue
 - **WHEN** the player resonates with the statue
-- **THEN** the Traveler's element is Geo
+- **THEN** the Traveler's element is Anemo
 
 ### Requirement: F on a resonated statue opens the Worship Statue
 

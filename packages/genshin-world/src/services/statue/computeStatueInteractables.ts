@@ -4,8 +4,8 @@ import type { Landmark } from "#src/models/world/Landmark";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { InteractionKind } from "genshin-interface";
 
-// The unlocked Statues of The Seven, each an activation the caller names Worship: F on a resonated statue opens the
-// Worship screen, where a statue not yet resonated with is resonated with on the key instead
+// The unlocked Statues of The Seven, each an Activate interactable under the name the caller gives it. Which activation
+// Opens the Worship screen is the interaction dispatch's: a resonated statue's, while one not yet resonated with resonates
 export const computeStatueInteractables = (
   unlockedLandmarks: Landmark[],
   name: string,
