@@ -18,4 +18,4 @@ The survey creator draws three panes with tabs between them: Layers and Palette 
 
 ## Impact
 
-The creator's shell component is replaced by a layout and a registry on the [editor shell](../resource-editor-shell/design.md). The survey's store, document, commands, check and logic builder do not change, and its tab components are the registry's content.
+The creator's shell component is replaced by a layout and a registry on the [editor shell](../2026-11-06-resource-editor-shell/design.md). The survey's store, document, commands, check and logic builder do not change, and its tab components are the registry's content.

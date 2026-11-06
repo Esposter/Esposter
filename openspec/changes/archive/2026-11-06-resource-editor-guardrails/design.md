@@ -1,6 +1,6 @@
 # Editor guardrails
 
-How a guided editor keeps its reader from making a mistake. It is the third part of the [editor layout program](../resource-editor-layout-program/design.md), and it applies the enforcement ladder's first rung to an interface: where a wrong action can be made impossible to express, the editor does not offer it, and where it cannot, the editor says what is wrong and where.
+How a guided editor keeps its reader from making a mistake. It is the third part of the [editor layout program](../2026-11-06-resource-editor-layout-program/design.md), and it applies the enforcement ladder's first rung to an interface: where a wrong action can be made impossible to express, the editor does not offer it, and where it cannot, the editor says what is wrong and where.
 
 It changes no document model and no check's rules. The accepted types a slot carries, the survey check and the page builder's critique stay as they are. This change decides what the reader sees of them.
 
@@ -118,4 +118,4 @@ The survey's logic builder, the existing delete-reference warning and the page b
 - [Stripo's spam testing](https://stripo.email/blog/email-spam-testing-what-triggers-spam-filters-and-how-to-avoid-them-with-stripo/): a check run inside the editor on every plan and reported to the author, the shape of the problems surface's email findings.
 - [Unlayer's content audit](https://docs.unlayer.com/builder/content-settings/content-audit) (fetched): an Audit tab that flags missing alternative text, missing links in buttons and menus and missing image addresses before the design is finished, and is a paid feature. The problems surface, and the checks a document can answer without a service.
 - [GrapesJS's components](https://grapesjs.com/docs/modules/Components.html): a component's draggable and droppable options restrict what may be dropped into it, the same idea as a slot's accepted types.
-- [Laws of UX, Hick's law](https://lawsofux.com/hicks-law/), already cited by the [design sources](../../specs/architecture/design-sources/design.md): the cost of a longer menu.
+- [Laws of UX, Hick's law](https://lawsofux.com/hicks-law/), already cited by the [design sources](../../../specs/architecture/design-sources/design.md): the cost of a longer menu.

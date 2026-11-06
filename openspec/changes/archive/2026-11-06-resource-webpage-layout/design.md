@@ -1,6 +1,6 @@
 # Webpage layout
 
-The webpage editor on the [editor shell](../resource-editor-shell/design.md), the program's middle case. It is a part of the [editor layout program](../resource-editor-layout-program/design.md) and it changes the arrangement of the page builder's webpage editor, not its [canvas](../../specs/resource/page-builder/canvas/design.md), its [style panel](../../specs/resource/page-builder/style-panel/design.md) or its [critique](../../specs/resource/page-builder/critique/design.md).
+The webpage editor on the [editor shell](../2026-11-06-resource-editor-shell/design.md), the program's middle case. It is a part of the [editor layout program](../2026-11-06-resource-editor-layout-program/design.md) and it changes the arrangement of the page builder's webpage editor, not its [canvas](../../../specs/resource/page-builder/canvas/design.md), its [style panel](../../../specs/resource/page-builder/style-panel/design.md) or its [critique](../../../specs/resource/page-builder/critique/design.md).
 
 A webpage is guided by its block tree, where each slot accepts some kinds, and free within it, since a page has no mail client to satisfy. Its findings, a low contrast or a fixed width, tell the author what to improve and never stop a save. So the layout is the email's shape without a compile to wait for, and with a theme.
 

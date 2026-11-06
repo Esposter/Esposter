@@ -2,7 +2,7 @@
 
 Every resource editor is arranged from a layout description of its own, resolved by one headless engine and drawn by one shell. The program replaces the per-editor shell components, and the rule that the same chrome serves every editor, with a spectrum: a freeform editor asks for a toolbar and almost nothing else, and a guided editor asks for structure, constraints and a place where problems appear.
 
-It builds on the [editor compact chrome](../../specs/resource/editor-compact-chrome/design.md), whose palette shell, density tokens and overflow menu it keeps, and on the [page layout](../../specs/architecture/page-layout/design.md), which owns the page's own drawers and leaves what happens inside a resource editor to this program.
+It builds on the [editor compact chrome](../../../specs/resource/editor-compact-chrome/design.md), whose palette shell, density tokens and overflow menu it keeps, and on the [page layout](../../../specs/architecture/page-layout/design.md), which owns the page's own drawers and leaves what happens inside a resource editor to this program.
 
 ## How it works
 
@@ -32,21 +32,21 @@ The check is the point of making the layout data. A layout that leaves a selecti
 | Guided   | Produce a document that is correct to use | Show the structure, offer only what is valid, say what is wrong and where    | Survey, email, webpage, dashboard |
 | Document | Write prose                               | One bar over the text                                                        | Note, and every rich text field   |
 
-The poles differ in what the layout holds, not in the engine. A freeform layout has a tool region and a contextual panel, and its panels open on demand. A guided layout also has a structure region that is always present, modes that change which regions exist, and a problems surface the [guardrails](../resource-editor-guardrails/design.md) define.
+The poles differ in what the layout holds, not in the engine. A freeform layout has a tool region and a contextual panel, and its panels open on demand. A guided layout also has a structure region that is always present, modes that change which regions exist, and a problems surface the [guardrails](../2026-11-06-resource-editor-guardrails/design.md) define.
 
 ## Coverage
 
 Every editor the app mounts has a row, so none is left to drift.
 
-| Editor                       | Pole     | Layout change                                                                                   | Part                                                         |
-| :--------------------------- | :------- | :---------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |
-| Whiteboard                   | Freeform | One top toolbar of every tool, a contextual panel, zoom beside undo                             | [whiteboard layout](../resource-whiteboard-layout/design.md) |
-| Survey                       | Guided   | Design, Logic, Theme and Preview as modes, structure on the left, properties by selection scope | [survey layout](../resource-survey-layout/design.md)         |
-| Email                        | Guided   | Blocks on the left, Design and Preview in the top bar, email checks in the problems surface     | [email layout](../resource-email-layout/design.md)           |
-| Webpage                      | Guided   | Navigator and blocks on the left, device and mode in the top bar, the style panel by selection  | [webpage layout](../resource-webpage-layout/design.md)       |
-| Note                         | Document | Unchanged: one bar over the text, with no region beside it                                      | none                                                         |
-| Dashboard                    | Guided   | A palette the reader opens, an inspector in place of the edit dialog, the grid as the canvas    | [dashboard layout](../resource-dashboard-layout/design.md)   |
-| Blueprint, sheet, to-do list | none     | Not changed. They have no panels to arrange                                                     | none                                                         |
+| Editor                       | Pole     | Layout change                                                                                   | Part                                                                    |
+| :--------------------------- | :------- | :---------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| Whiteboard                   | Freeform | One top toolbar of every tool, a contextual panel, zoom beside undo                             | [whiteboard layout](../2026-11-06-resource-whiteboard-layout/design.md) |
+| Survey                       | Guided   | Design, Logic, Theme and Preview as modes, structure on the left, properties by selection scope | [survey layout](../2026-11-06-resource-survey-layout/design.md)         |
+| Email                        | Guided   | Blocks on the left, Design and Preview in the top bar, email checks in the problems surface     | [email layout](../2026-11-06-resource-email-layout/design.md)           |
+| Webpage                      | Guided   | Navigator and blocks on the left, device and mode in the top bar, the style panel by selection  | [webpage layout](../2026-11-06-resource-webpage-layout/design.md)       |
+| Note                         | Document | Unchanged: one bar over the text, with no region beside it                                      | none                                                                    |
+| Dashboard                    | Guided   | A palette the reader opens, an inspector in place of the edit dialog, the grid as the canvas    | [dashboard layout](../2026-11-06-resource-dashboard-layout/design.md)   |
+| Blueprint, sheet, to-do list | none     | Not changed. They have no panels to arrange                                                     | none                                                                    |
 
 ## Decisions
 
@@ -56,8 +56,8 @@ Every editor the app mounts has a row, so none is left to drift.
 - **The engine is our own, written from the behaviours and not ported.** The docking engines model a tree of tabs and splits a reader rearranges, with floating and popout windows, which no editor here needs; none collapses a panel to a sheet and none selects content by selection. The dependency-absorption skill's rule against porting holds here too, though no dependency is being replaced: what the engines settled, state kept apart from layout, panels by stable id, splitters with limits and the keyboard contract of a window splitter, is rewritten here, so no licence text travels with it. Rejected: adopting Dockview's Vue binding, which brings the docking and popout surface along for a layout of four regions.
 - **A freeform editor's tool region is one toolbar.** It holds every tool, groups variants of one tool in one slot, and folds what does not fit into one menu, as Excalidraw and tldraw do. Rejected: a palette beside a tool row, which is two places to look for the one thing a freeform editor is for.
 - **A guided editor never offers what its document refuses.** The insertion points, the move targets and the logic choices come from the core's accepted types, and a problems surface lists what the document check finds. Rejected: validating at save alone, which tells the reader after the work is done.
-- **Headless packages are Vue packages with one entry.** Every consumer is Vue code, the server being the same Nuxt app, so a second framework-free tier buys nothing and the composables an editor repeats are written once in the package. See the [package shape](../architecture-headless-package-shape/design.md). Rejected: a framework-free core with a Vue subpath.
-- **The grid package is not merged into the engine.** The grid places items inside a canvas by cells, with packing and collision; the engine places regions around a canvas by size class. Their models share nothing but a size and a pointer, and the engine's canvas region holds a grid, as the dashboard's does. Rejected: one engine for both, which would give the dashboard the editor's chrome model for a problem it does not have. Whether the grid is needed at all is a product question about free placement, and the [deferred retirement](../../deferred/resource/retire-grid-layout-package/design.md) holds it.
+- **Headless packages are Vue packages with one entry.** Every consumer is Vue code, the server being the same Nuxt app, so a second framework-free tier buys nothing and the composables an editor repeats are written once in the package. See the [package shape](../2026-11-06-architecture-headless-package-shape/design.md). Rejected: a framework-free core with a Vue subpath.
+- **The grid package is not merged into the engine.** The grid places items inside a canvas by cells, with packing and collision; the engine places regions around a canvas by size class. Their models share nothing but a size and a pointer, and the engine's canvas region holds a grid, as the dashboard's does. Rejected: one engine for both, which would give the dashboard the editor's chrome model for a problem it does not have. Whether the grid is needed at all is a product question about free placement, and the [deferred retirement](../../../deferred/resource/retire-grid-layout-package/design.md) holds it.
 - **A panel opens over the canvas, as before.** A selection never moves what the canvas shows, so the whiteboard's panel and the guided editors' contextual panels float over its edge. This keeps the compact chrome's decision and extends it from the whiteboard to every editor that opens a panel for a selection. Rejected: reflowing the canvas, which moves what the reader just selected.
 
 ## What the app already has
@@ -87,8 +87,8 @@ The engine first, then the shell over it, then the guardrails, then the editors,
 
 ## Not in this program
 
-- **Rearranging the layout.** A reader resizes and collapses regions. They do not drag a panel to another edge or float it. A layout the reader can rearrange needs a way back to the default and a saved arrangement per editor, for nothing an editor here has asked for. See the [rejected docking layout](../../rejected/resource/editor-docking-layout/design.md).
-- **Email client previews and a dark-mode preview.** Client previews need a rendering service the builders read meter by plan, and a dark preview is an approximation they label as one. See the [deferred idea](../../deferred/resource/email-client-and-dark-previews/design.md).
+- **Rearranging the layout.** A reader resizes and collapses regions. They do not drag a panel to another edge or float it. A layout the reader can rearrange needs a way back to the default and a saved arrangement per editor, for nothing an editor here has asked for. See the [rejected docking layout](../../../rejected/resource/editor-docking-layout/design.md).
+- **Email client previews and a dark-mode preview.** Client previews need a rendering service the builders read meter by plan, and a dark preview is an approximation they label as one. See the [deferred idea](../../../deferred/resource/email-client-and-dark-previews/design.md).
 - **A new document model.** The layouts arrange what each editor already edits. The whiteboard's tools arm and place elements the document already holds.
 
 ## Sources
@@ -113,7 +113,7 @@ Verification marks how each was read: fetched is the vendor's own page, excerpt 
 - [FlexLayout](https://github.com/caplin/FlexLayout), [Dockview](https://github.com/mathuo/dockview), [rc-dock](https://github.com/ticlo/rc-dock), [golden-layout](https://github.com/golden-layout/golden-layout) and [Lumino](https://github.com/jupyterlab/lumino) (readmes fetched): layout held as a serialisable tree that names panels by id and keeps the reader's sizes apart from it. The engine's state.
 - [Zag's splitter](https://zagjs.com/components/react/splitter) (fetched): panel ids, minimum and maximum sizes, collapsible panels and a controlled size. The engine's resize.
 - [WAI-ARIA window splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/) and [toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) patterns: the keyboard contract of a splitter and of a toolbar. The shell's controls.
-- [Material 3 window size classes](https://m3.material.io/foundations/layout/applying-layout/window-size-classes) and [canonical layouts](https://m3.material.io/foundations/layout/canonical-layouts/overview), already cited by the [design sources](../../specs/architecture/design-sources/design.md): the compact, medium and expanded classes the engine resolves for.
+- [Material 3 window size classes](https://m3.material.io/foundations/layout/applying-layout/window-size-classes) and [canonical layouts](https://m3.material.io/foundations/layout/canonical-layouts/overview), already cited by the [design sources](../../../specs/architecture/design-sources/design.md): the compact, medium and expanded classes the engine resolves for.
 
 ## Key files
 
