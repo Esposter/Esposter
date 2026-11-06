@@ -118,12 +118,6 @@ Nicole's burst SHALL project a copy of each hit the active character lands on an
 - **WHEN** that other character's hit lands on an enemy
 - **THEN** no projection lands
 
-#### Scenario: A Hexerei projection's bonus reads her attack with the buffs on her at its tick
-
-- **GIVEN** Nicole and the projected striker are Hexerei, two or more Hexerei are deployed, and an ATK buff is put on Nicole before the projection's tick
-- **WHEN** the projection lands on the enemy
-- **THEN** its flat damage is three times her attack with that buff counted
-
 ### Requirement: Nicole's first ascension
 
 Her first ascension SHALL give the character swapped in ATK 300 for as long as her skill's buff on that character stands, three seconds after the swap or at once for a Hexerei.
