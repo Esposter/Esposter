@@ -20,6 +20,7 @@ import {
   PURSUIT_FIELD_ID,
 } from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext, stepKitSecondsStriking } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -91,11 +92,19 @@ describe(createJahodaKitBehaviour, () => {
 
   // Jahoda and a partner on a team of two, with her burst cast, each member at the health share given. Her Max HP is
   // Large, so a heal moves a share too small to lift her past 70% of it over the burst's ticks
-  const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number, ascension = 0) => {
+  const createBurstHealContext = (
+    activeHealthShare: number,
+    partnerHealthShare: number,
+    ascension = 0,
+    baseAttack = 0,
+  ) => {
     const combatant: Combatant = {
       ...createJahodaCombatant(),
       ascension,
-      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: baseAttack },
+        { attribute: Attribute.BaseHealth, value: 100_000 },
+      ]),
       kit: JAHODA_KIT,
     };
     const partner: Combatant = { ...combatant, characterId: MOONSIGN_PARTNER_CHARACTER_ID };
@@ -249,6 +258,33 @@ describe(createJahodaKitBehaviour, () => {
     expect.hasAssertions();
     const context = createBurstHealContext(0.1, 1);
     expect(readHealedFrames(context, JAHODA_CHARACTER_ID)).toStrictEqual([12, 99, 186, 273, 360, 447, 534, 621, 708]);
+  });
+
+  test("each Hidden Aces heal prices her ATK with the buffs on her as they stand at that tick, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+    const context = createBurstHealContext(0.1, 1, 0, 1000);
+    let healthShare = getPartyMember(context.party, JAHODA_CHARACTER_ID).healthShare;
+    let frame = 0;
+    // Steps the burst up to a frame, and returns how far her health share rose over those frames
+    const stepUntil = (untilFrame: number): number => {
+      let raised = 0;
+      for (; frame < untilFrame; frame++) {
+        stepKitEffects(1 / 60, context);
+        const nextHealthShare = getPartyMember(context.party, JAHODA_CHARACTER_ID).healthShare;
+        raised += nextHealthShare - healthShare;
+        healthShare = nextHealthShare;
+      }
+      return raised;
+    };
+    const firstHeal = stepUntil(12);
+    buffKitMember(context.kitEffectState, JAHODA_CHARACTER_ID, {
+      amount: 1,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    const secondHeal = stepUntil(99);
+    expect(secondHeal).toBeGreaterThan(firstHeal);
   });
 
   test("above 70% of her health, Hidden Aces heals the lowest member as well, on its first tick", () => {

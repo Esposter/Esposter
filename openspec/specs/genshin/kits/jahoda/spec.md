@@ -66,7 +66,7 @@ Hidden Aces SHALL deal its first hit when Jahoda casts it.
 
 ### Requirement: Hidden Aces heals on its own clock
 
-Hidden Aces SHALL heal the active character every 87 frames from its 12th frame for the burst's 790 frames, and while the active character has over 70% of her health SHALL heal the member with the lowest share of health as well.
+Hidden Aces SHALL heal the active character every 87 frames from its 12th frame for the burst's 790 frames, and while the active character has over 70% of her health SHALL heal the member with the lowest share of health as well. Each heal's share of Jahoda's ATK SHALL read her ATK with the buffs on her as they stand at that tick.
 
 #### Scenario: The active character is healed on each of nine ticks
 
@@ -85,6 +85,13 @@ Hidden Aces SHALL heal the active character every 87 frames from its 12th frame 
 - **GIVEN** Jahoda is at 50% of her health and a partner at 40%
 - **WHEN** the player casts Hidden Aces
 - **THEN** the partner's health does not change
+
+#### Scenario: An ATK buff put on her after the first tick raises the next heal
+
+- **GIVEN** Jahoda is the character on the field at 10% of her health, and her Hidden Aces is cast
+- **AND** an ATK buff is put on her after the first tick
+- **WHEN** the second tick lands
+- **THEN** the second heal is larger than the first
 
 ### Requirement: Hidden Aces' robots absorb an aura and strike the three nearest enemies
 

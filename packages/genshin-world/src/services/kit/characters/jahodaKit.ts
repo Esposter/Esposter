@@ -31,6 +31,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -298,11 +299,12 @@ export const createJahodaKitBehaviour = ({
 
   // A heal tick of Hidden Aces, as gcsim runs it: while the active character is above 70% of her health, the member
   // With the lowest share of health is healed first, then the active character, each by a flat amount and a share of
-  // The healer's ATK as it stood at the cast
+  // The healer's ATK with the buffs on her as they stand at that tick, as gcsim's TotalAtk reads it on each tick
   const healBurst =
     (healer: Combatant, healMultiplier: number) =>
     (context: KitContext): void => {
-      const { activeCombatant, kitEffectState, party } = context;
+      const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
+      const { attack } = getBuffedCombatant(healer, kitEffectState.effects, party, characterIdCombatantMap).attributes;
       if (getPartyMember(party, activeCombatant.characterId).healthShare > BURST_ADDITIONAL_HEAL_HEALTH_SHARE) {
         // Ascension 4 gives the active character Elemental Mastery on each of these heals, restarting its buff
         if (healer.ascension >= JAHODA_ASCENSION_4)
@@ -318,14 +320,14 @@ export const createJahodaKitBehaviour = ({
             context,
             healer,
             lowestCharacterId,
-            (burstAdditionalFlatHeal + burstAdditionalAttackHealShare * healer.attributes.attack) * healMultiplier,
+            (burstAdditionalFlatHeal + burstAdditionalAttackHealShare * attack) * healMultiplier,
           );
       }
       changeKitMemberHealth(
         context,
         healer,
         activeCombatant.characterId,
-        (burstFlatHeal + burstAttackHealShare * healer.attributes.attack) * healMultiplier,
+        (burstFlatHeal + burstAttackHealShare * attack) * healMultiplier,
       );
     };
 
