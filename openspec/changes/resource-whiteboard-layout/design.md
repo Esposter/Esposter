@@ -54,6 +54,8 @@ flowchart TD
 - **A text box keeps the width of its drag and no height.** Its text sets its height, as the text box model stores it.
 - **The armed element is the tool in hand with the shape kind the shape tool holds.** The store holds the kind beside the tool and the lock beside both, rather than one armed value, so the toolbar's toggles bind to the tool and the shape slot binds to its kind.
 - **A placement selects its element only when the document accepts it.** A refused commit leaves the selection where it was, so no selection names an element that was never placed.
+- **Redo is the shared history's redo, under the shortcuts the page builder and the sheet bind.** The undo entry holds the operations as well as their inverses, as the page builder's entry does, so a redo reapplies them through the commit an edit takes, and its commands come from the shared undo and redo helper: Cmd+Z, Cmd+Shift+Z and Cmd+Y. Rejected: a redo rebuilt from the patch an undo returns, which would have to swap the entry the shared history moved onto the future stack. Rejected: a redo with one shortcut, which a reader on the other keyboard convention would not find.
+- **A new edit after an undo clears the redo stack.** The shared history does this on every push, and the whiteboard keeps that rule rather than adding one.
 
 ## Not in this change
 
