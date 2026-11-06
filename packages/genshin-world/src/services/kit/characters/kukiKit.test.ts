@@ -108,7 +108,7 @@ describe(createKukiKitBehaviour, () => {
     expect(ringsOf(kitEffectState.effects)).toHaveLength(1);
   });
 
-  test("each Grass Ring tick heals the active character and strikes 2 frames after it, from the 113th frame every 90", () => {
+  test("each Grass Ring tick heals the active character 3% of her Max HP and 288.89, and strikes 2 frames after it at 25.24%, from the 113th frame every 90", () => {
     expect.hasAssertions();
     const ring = castEffects(KUKI_KIT.elementalSkill)
       .filter((effect): effect is KitField => effect.kind === "field")
@@ -120,8 +120,9 @@ describe(createKukiKitBehaviour, () => {
 
     expect(ring?.nextTickSeconds).toBeCloseTo(113 / 60);
     expect(ring?.tickIntervalSeconds).toBeCloseTo(90 / 60);
-    expect(getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + 0.2524 + 288.8908 / 10_000);
+    expect(getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + 0.03 + 288.8908 / 10_000);
     expect(takeOne(tickSummon?.hits ?? []).hitmarkSeconds).toBeCloseTo(2 / 60);
+    expect(takeOne(tickSummon?.hits ?? []).talentMultiplier).toBeCloseTo(0.2524);
   });
 
   test("an Ascension 4 Grass Ring tick heals by 75% of the Elemental Mastery on her at that tick, buffs included", () => {

@@ -247,11 +247,14 @@
     "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
-  "hits.ringTick.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
-  "hits.ringTick.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.ringTick.gauge": { "file": "skill.go", "line": 118, "source": "Gcsim", "value": 1 },
   "hits.ringTick.hitmarkFrames": { "file": "skill.go", "line": 124, "source": "Gcsim", "value": 2 },
-  "hits.ringTick.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 6532 } },
+  "hits.ringTick.multiplier": {
+    "file": "zz_kukishinobu.dm.go",
+    "line": 193,
+    "source": "Gcsim",
+    "value": { "index": 3, "proudSkillGroupId": 6532 }
+  },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6531 } },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6531 } },
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 6531 } },
@@ -259,7 +262,7 @@
   "parameters.ringSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 6532 } },
   "parameters.grassRingMaxHealthHealingShare": {
     "cause": "Unsourced",
-    "value": { "index": 3, "proudSkillGroupId": 6532 }
+    "value": { "index": 1, "proudSkillGroupId": 6532 }
   },
   "parameters.grassRingFlatHealing": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6532 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6532 } }
