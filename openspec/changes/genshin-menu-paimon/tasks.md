@@ -1,6 +1,6 @@
 ## 1. The reference
 
-- [ ] 1.1 Replace the held menu reference with the frame at 25 seconds of `yt-jHr2bERjkYc` (`paimon-menu`, 1920 by 1080), the menu on the current build with no screen open, and read the open and close timings from `menu-paimon.mkv` once its clip lands. Verify: the menu's visual suite compares against the current-build reference, and the open and close timings are read by hand from the clip's frames.
+- [ ] 1.1 Replace the held menu reference with the frame at 25 seconds of `yt-jHr2bERjkYc` (`paimon-menu`, 1920 by 1080), the menu on the current build with no screen open, and read the open and close timings from `menu-paimon.mkv` once its clip lands. Verify: the menu's visual suite compares against the current-build reference. The open and close timings have no command that reads them off a recording's frames yet (`genshin:parity frames`, task 1.1 of [genshin-assets-effects-audio](../genshin-assets-effects-audio/tasks.md), is not built), so this box stays open until one does.
 
 ## 2. Paimon beside the menu
 
