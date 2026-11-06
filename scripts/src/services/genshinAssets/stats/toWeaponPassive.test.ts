@@ -1,3 +1,5 @@
+import type { ExcelEquipAffixRow } from "#src/models/genshinAssets/stats/ExcelEquipAffixRow";
+
 import { toWeaponPassive } from "#src/services/genshinAssets/stats/toWeaponPassive";
 import { Attribute } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -5,33 +7,27 @@ import { describe, expect, test } from "vitest";
 describe(toWeaponPassive, () => {
   const AFFIX_ID = 1;
   const NAME_TEXT_HASH = 3;
+  const FIRST_RANK_ROW: ExcelEquipAffixRow = {
+    addProps: [],
+    descTextMapHash: 1,
+    id: AFFIX_ID,
+    level: 0,
+    nameTextMapHash: NAME_TEXT_HASH,
+    paramList: [0.12, 0, 4, 0],
+  };
+  const SECOND_RANK_ROW: ExcelEquipAffixRow = {
+    addProps: [],
+    descTextMapHash: 2,
+    id: AFFIX_ID,
+    level: 1,
+    nameTextMapHash: NAME_TEXT_HASH,
+    paramList: [0.15, 0, 0, 0],
+  };
 
-  test("orders the ranks by level and cuts every rank to the widest rank's last used place", () => {
+  test("cuts every rank to the widest rank's last used place", () => {
     expect.hasAssertions();
 
-    expect(
-      toWeaponPassive(
-        [
-          {
-            addProps: [],
-            descTextMapHash: 2,
-            id: AFFIX_ID,
-            level: 1,
-            nameTextMapHash: NAME_TEXT_HASH,
-            paramList: [0.15, 0, 0, 0],
-          },
-          {
-            addProps: [],
-            descTextMapHash: 1,
-            id: AFFIX_ID,
-            level: 0,
-            nameTextMapHash: NAME_TEXT_HASH,
-            paramList: [0.12, 0, 4, 0],
-          },
-        ],
-        [],
-      ),
-    ).toStrictEqual({
+    expect(toWeaponPassive([FIRST_RANK_ROW, SECOND_RANK_ROW], [])).toStrictEqual({
       passiveNameTextId: String(NAME_TEXT_HASH),
       passiveRankAttributeLines: [[], []],
       passiveRankDescriptionTextIds: ["1", "2"],
@@ -40,6 +36,15 @@ describe(toWeaponPassive, () => {
         [0.15, 0, 0],
       ],
     });
+  });
+
+  test("passive ranks are shown in refinement order", () => {
+    expect.hasAssertions();
+
+    expect(toWeaponPassive([SECOND_RANK_ROW, FIRST_RANK_ROW], []).passiveRankDescriptionTextIds).toStrictEqual([
+      "1",
+      "2",
+    ]);
   });
 
   test("gives each rank's stats as attribute lines, and notes a prop no attribute names", () => {
