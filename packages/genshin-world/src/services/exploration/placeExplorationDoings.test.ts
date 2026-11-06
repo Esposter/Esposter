@@ -41,7 +41,7 @@ describe(placeExplorationDoings, () => {
   const OCULUS = { id: "made-up-oculus", kind: ExplorationKind.Oculus, position: { x: 20, z: 20 } };
   const PUZZLE = { id: "made-up-puzzle", kind: ExplorationKind.Puzzle, position: { x: 30, z: 30 } };
 
-  test("an opened chest adds its kind's weight to its area", () => {
+  test("An opened chest adds its kind's weight to its area", () => {
     expect.hasAssertions();
 
     // Each kind's weight is a tenth of the made-up area's total, so each done doing reads its weight in percent
