@@ -56,7 +56,7 @@
     },
     {
       "allowedVersions": "<0.692.0",
-      "description": "`vize` 0.692.0 ships `virtual-ts-emits.d.ts`, which imports `$ConstructorEmitPropsFactory` from `virtual-ts.js`, and that file exports no such name, so the declaration builds of `genshin-interface` and `vue-phaserjs` fail with MISSING_EXPORT. The cap lifts at the first release that exports it.",
+      "description": "`vize` 0.692.0 ships `virtual-ts-emits.d.ts`, which imports `$ConstructorEmitPropsFactory` from `virtual-ts.js`, and that file declares the type without `export` for TypeScript to export implicitly, so the declaration builds of `genshin-interface` and `vue-phaserjs` fail with MISSING_EXPORT in rolldown-plugin-dts. The cap lifts at the first release that exports it.",
       "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
     },
     {
