@@ -94,9 +94,32 @@ Each enemy's estimated level SHALL be drawn from the world level band of its reg
 - **THEN** each level is the region's band's estimate
 - **AND** the level is recorded as provisional
 
-### Requirement: Each Oculus and chest count in each region is checked against the wiki's count
+## MODIFIED Requirements
 
-Each region's Oculus and chest counts SHALL be checked against the wiki's counts, with each shortfall or surplus reported per kind.
+### Requirement: Report checks each region's Oculi against its reference count
+
+The fit report SHALL list each region in turn, Mondstadt first, with its matched points, its residual and its Oculi counted against its reference count, and SHALL print any shortfall or surplus as it stands, and each region's Oculus and chest counts SHALL be checked against the wiki's counts when its places are built, with each shortfall or surplus reported per kind.
+
+#### Scenario: Mondstadt reported first
+
+- **GIVEN** the fit has run
+- **WHEN** the report is printed
+- **THEN** Mondstadt is listed first with about fifty matched statues and waypoints
+- **AND** its Anemoculi count is compared with sixty-six
+
+#### Scenario: Shortfall kept as it stands
+
+- **GIVEN** a region's count of Oculi is below its reference count
+- **WHEN** the report is printed
+- **THEN** the shortfall is printed as it stands
+- **AND** no Oculus is added to fill it
+
+#### Scenario: Snezhnaya with no matched points
+
+- **GIVEN** Snezhnaya holds no transport points in the scene
+- **WHEN** the report is printed
+- **THEN** Snezhnaya matches no points (see Open)
+- **AND** its residual is reported as none
 
 #### Scenario: A kind short of the wiki's count is reported
 
