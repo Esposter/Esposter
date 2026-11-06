@@ -1,6 +1,6 @@
 ## 1. Serenitea Pot dialogue
 
-- [ ] 1.1 Open a pot companion's dialogue at Friendship Levels 4 and 7, reading the lines by their game text ids, once the pot's companions are invited. Verify: a test named after the scenario 'a pot companion's dialogue opens at Friendship Level 4', seen failing first. Waits on the pot's realm runtime, which the companions are invited into. Its publish, `pnpm -C scripts genshin:text standing-talks`, is held until a companion can be talked to in the realm ([roadmap](../genshin-roadmap/tasks.md)).
+- [ ] 1.1 Open a pot companion's dialogue at Friendship Levels 4 and 7, reading the lines by their game text ids, once the pot's companions are invited. Verify: tests named after the scenarios 'a pot companion's dialogue opens at Friendship Level 4' and 'a character who is not a pot companion opens no pot dialogue', seen failing first. Waits on the pot's realm runtime, which the companions are invited into. Its publish, `pnpm -C scripts genshin:text standing-talks`, is held until a companion can be talked to in the realm ([roadmap](../genshin-roadmap/tasks.md)).
 - [x] 1.2 Keep a dialogue that also waits on a quest closed until that quest is done. Verify: a test named after the scenario 'a dialogue that also waits on a quest stays closed until the quest is done', seen failing first.
 
 ## 2. The Friendship Level 10 cap
@@ -9,4 +9,4 @@
 
 ## 3. Claim values
 
-- [ ] 3.1 Replace the provisional Companionship EXP of the boss and domain claims with the values the recordings show. Verify: the values in the claim table match the Companionship EXP each recording shows, read off the clips.
+- [ ] 3.1 Replace the provisional Companionship EXP of the normal and weekly boss claims with the values the boss recording shows, and check the domain recording's Companionship EXP against the count the tree's reward preview holds. Verify: the values in the claim table match the Companionship EXP each recording shows, read off the clips.
