@@ -4,6 +4,12 @@
 
 The recreation SHALL draw every fish, rod, float, splash, animal, critter, pet and prop of this family from shapes of its own, serving none of the game's meshes, textures, clips or icons for them.
 
+#### Scenario: The published family holds no game asset
+
+- **GIVEN** the recreation is built and deployed
+- **WHEN** its published data and its served files are listed
+- **THEN** no mesh, texture, clip or icon of a fish, rod, float, animal, critter, pet or prop of the game is among them
+
 #### Scenario: A family asset without fitted parameters is drawn as its stand-in
 
 - **GIVEN** a fish or an animal has no fitted parameters yet
