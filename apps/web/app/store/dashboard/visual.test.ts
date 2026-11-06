@@ -308,6 +308,24 @@ describe(useVisualStore, () => {
     expect(visuals.value).toStrictEqual([]);
   });
 
+  // Opening a visual selects it, so the delete below has a selected visual to clear
+  test("Deleting the selected visual clears the selection", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { deleteVisual, editItem } = visualStore;
+    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    const { id } = takeOne(visuals.value);
+    await editItem({ id });
+    const selectedVisualIdBeforeDelete = selectedVisualId.value;
+    await deleteVisual({ id });
+
+    expect({ after: selectedVisualId.value, before: selectedVisualIdBeforeDelete }).toStrictEqual({
+      after: "",
+      before: id,
+    });
+  });
+
   // A copy of a group takes a fresh id everywhere in its subtree, so no two visuals in the tree share one
   test("duplicates a group with fresh ids for every visual it holds", async () => {
     expect.hasAssertions();

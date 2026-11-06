@@ -54,11 +54,21 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const targetVisuals = getNewVisualList(type, parentId);
     if (targetVisuals) targetVisuals.push(createNewVisual(type, cell));
   };
-  const editFormData = createEditFormData(
+  // The visual the reader selected last, "" for nothing. Opening a visual selects it, and a press on the canvas clears it
+  const selectedVisualId = ref<Visual["id"]>("");
+  const clearSelection = () => {
+    selectedVisualId.value = "";
+  };
+  const { editItem: openEditForm, ...restEditFormData } = createEditFormData(
     computed(() => listVisuals(visuals.value)),
     ["id"],
   );
-  const { isEditFormDialogOpen } = editFormData;
+  const { isEditFormDialogOpen } = restEditFormData;
+  // A press or Enter on a visual, and the Edit item of its menu, open its form through here, so they select it too
+  const editItem = (ids: { id: Visual["id"] }) => {
+    selectedVisualId.value = ids.id;
+    return openEditForm(ids);
+  };
   // The grid commits a visual's new placement by its id alone, so the placement lands on the visual wherever it sits
   const updateVisual = (visual: Partial<Visual> & Pick<Visual, "id">) => {
     const target = findVisual(visuals.value, visual);
@@ -102,6 +112,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     if (!location) return false;
 
     removeVisualFromList(dashboard, location.group, ids.id);
+    // The selection is cleared when it names the visual, or one a deleted group held with it
+    if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
     const isSuccessful = await saveDashboard();
     if (!isSuccessful) getVisualList(dashboard, location.group).push(location.visual);
     return isSuccessful;
@@ -157,13 +169,16 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   // The ambient operations first, so the persisting create and delete above are the ones the store hands out
   return {
-    ...editFormData,
+    ...restEditFormData,
     addVisual,
+    clearSelection,
     createVisual,
     deleteVisual,
     duplicateVisual,
+    editItem,
     moveVisual,
     save,
+    selectedVisualId,
     setAutoHeight,
     updateVisual,
     visuals,
