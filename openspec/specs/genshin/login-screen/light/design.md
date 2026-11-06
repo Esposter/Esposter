@@ -27,14 +27,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                      |
-| :--------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| `packages/genshin-world/src/services/login/scene/loginStoneLight.ts`         | The shared uniforms each hour writes its stone light into |
-| `packages/genshin-world/src/services/login/scene/LoginOcclusionRadiusMap.ts` | How far each hour's screen-space occlusion reaches        |
-| `packages/genshin-world/src/services/login/scene/LoginShadowBiasMap.ts`      | Each hour's shadow bias, the night's deeper               |
-| `packages/genshin-world/src/services/login/scene/LoginShadowIntensityMap.ts` | Each hour's shadow strength, the night's at 0.8           |
-| `packages/genshin-world/src/services/login/scene/LoginShadowRadiusMap.ts`    | Each hour's shadow softness, the night's over two texels  |
-| `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour            |
+| File                                                                         | Role                                                                             |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/login/scene/loginStoneLight.ts`         | The shared uniforms each hour writes its stone light into                        |
+| `packages/genshin-world/src/services/login/scene/LoginOcclusionRadiusMap.ts` | How far each hour's screen-space occlusion reaches                               |
+| `packages/genshin-world/src/services/login/scene/LoginShadowBiasMap.ts`      | Each hour's shadow bias, the night's deeper                                      |
+| `packages/genshin-world/src/services/login/scene/LoginShadowIntensityMap.ts` | Each hour's shadow strength, the night's at `LOGIN_NIGHT_SHADOW_INTENSITY`       |
+| `packages/genshin-world/src/services/login/scene/LoginShadowRadiusMap.ts`    | Each hour's shadow softness, the night's over `LOGIN_NIGHT_SHADOW_RADIUS` texels |
+| `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour                                   |
 
 ## Open
 

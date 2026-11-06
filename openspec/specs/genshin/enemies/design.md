@@ -50,7 +50,7 @@ A region's data places its enemies in camps, each member with its kind, its leve
 
 | Camp                   | A defeated member comes back                                                                                                                                     |
 | :--------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                                                             |
+| Common enemies only    | `COMMON_ENEMY_RESPAWN_DURATION` after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                                      |
 | With an elite among it | at the next daily reset, 04:00 on the server's clock (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`)                                    |
 | With a boss among it   | the timer (`BOSS_RESPAWN_AFTER_CLAIM_DURATION`) after its Trounce Blossom is claimed, and while unclaimed at the first teleport out of its area after its defeat |
 
