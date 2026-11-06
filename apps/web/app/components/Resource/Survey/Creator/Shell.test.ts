@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import EditorShell from "@/components/Editor/Shell.vue";
 import ResourceSurveyCreatorCanvas from "@/components/Resource/Survey/Creator/Canvas.vue";
 import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/Shell.vue";
 import ResourceSurveyRunner from "@/components/Resource/Survey/Runner.vue";
@@ -7,6 +6,7 @@ import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditor
 import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
+import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
 import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -184,8 +184,11 @@ describe("resourceSurveyCreatorShell", () => {
 
     expect(inspectorSheet.element.open).toBe(false);
 
-    // The shell's own button for the sheet is not built yet, so the shell's toggle opens it
-    component.getComponent(EditorShell).vm.toggleRegion(SurveyEditorRegion.Inspector);
+    // The shell draws a button for each sheet, named by the region it opens
+    await component
+      .findAll("button")
+      .find((button) => button.text() === SurveyEditorRegionNameMap[SurveyEditorRegion.Inspector])
+      ?.trigger("click");
     await flushPromises();
 
     expect(inspectorSheet.element.open).toBe(true);
