@@ -152,7 +152,7 @@ const { characterElement, characterName, elementMarkPath, elementName, menuEntri
         :adventure-rank
         :character
         :character-name
-        :element-mark-path="elementMarkPath"
+        :element-mark-path
         :friendship-level="friendshipLevelMap.get(character.id)"
         :game-text
         :material-data-map
