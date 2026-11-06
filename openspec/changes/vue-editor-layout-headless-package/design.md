@@ -8,7 +8,7 @@ Today nothing is built of it, and each editor arranges its own screen in its own
 
 A layout is plain data. It names **regions**, each placed at one edge of the window, and **panels**, each belonging to one region and carrying the condition it is shown under and the content it shows. The window's remaining space is the canvas, which the layout names once, so every layout has one and a resolved layout always answers it.
 
-Resolving is one pure function. It reads the layout, the context, the window's size class and the reader's state, and answers the regions to draw, each with its presentation, its size, whether it is open and the panels it holds.
+Resolving is one pure function. It reads the layout, the context, the window's size class and the reader's state, and answers the regions to draw, each with its presentation, its size and the limits that size is held between, whether it is open and the panels it holds.
 
 ```mermaid
 flowchart TD

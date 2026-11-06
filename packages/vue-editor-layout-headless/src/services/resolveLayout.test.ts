@@ -152,4 +152,18 @@ describe(resolveLayout, () => {
       resolveLayout(layout, context, SizeClass.Expanded, readerState).regions.map((region) => region.isOpen),
     ).toStrictEqual([true]);
   });
+
+  test("a resolved region carries its size limits", () => {
+    expect.hasAssertions();
+
+    const region = createRegion();
+    const layout = { canvasId: "b", panels: [createPanel()], regions: [region] };
+
+    expect(
+      resolveLayout(layout, context, SizeClass.Expanded, readerState).regions.map((resolvedRegion) => ({
+        maximumSize: resolvedRegion.maximumSize,
+        minimumSize: resolvedRegion.minimumSize,
+      })),
+    ).toStrictEqual([{ maximumSize: region.maximumSize, minimumSize: region.minimumSize }]);
+  });
 });

@@ -77,6 +77,16 @@ A region presented as a sheet SHALL stay closed until the reader opens it, wheth
 - **WHEN** the layout is resolved for an expanded window with something selected
 - **THEN** the region is open
 
+### Requirement: A resolved region carries its size limits
+
+A resolved region SHALL carry the largest and smallest size its layout region declares, so a region whose two sizes are equal is known to have no size to change.
+
+#### Scenario: A resolved region carries its size limits
+
+- **GIVEN** a region with a minimum of 200 and a maximum of 400
+- **WHEN** the layout is resolved
+- **THEN** the resolved region has the same minimum and maximum
+
 ### Requirement: A resize stays within the region's limits
 
 A resize SHALL set a region's size to the size asked for, held between the region's minimum and maximum.

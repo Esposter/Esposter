@@ -23,6 +23,8 @@ export const resolveRegion = (
     edge: placement.edge,
     id: region.id,
     isOpen: placement.isOpen,
+    maximumSize: region.maximumSize,
+    minimumSize: region.minimumSize,
     panels,
     presentation: placement.presentation,
     size,

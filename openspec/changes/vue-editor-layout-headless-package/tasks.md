@@ -7,6 +7,7 @@
 
 - [x] 2.1 Resolve a layout against a context. Verify: tests named after 'A panel is present only while its condition holds', 'Content follows the selection kind', 'A kind with no entry and no wildcard shows no panel' and 'An empty region is omitted', each seen failing first.
 - [x] 2.2 Present each region for the size class, at its edge for that class, and decide how it opens. Verify: tests named after 'A region's presentation follows the size class', 'A toolbar moves to the bottom when compact', 'A sheet waits for the reader' and 'A docked region opens with its content', seen failing first.
+- [x] 2.3 Carry each region's size limits into the resolved region. Verify: a test named after 'A resolved region carries its size limits', seen failing first.
 
 ## 3. Reader state
 
