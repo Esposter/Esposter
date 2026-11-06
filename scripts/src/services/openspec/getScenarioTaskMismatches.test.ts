@@ -48,4 +48,15 @@ describe(getScenarioTaskMismatches, () => {
 
     expect(getScenarioTaskMismatches(tasksText, [title])).toStrictEqual({ unheldByDelta: [], unnamedByTasks: [] });
   });
+
+  test("reads a longer quote whole past a held title that ends at an apostrophe inside it, and names no held title by it", () => {
+    expect.hasAssertions();
+
+    const tasksText = "- [ ] 1.1 Fit the rig. Verify: a test named after the scenario 'A rig's pose', written first.";
+
+    expect(getScenarioTaskMismatches(tasksText, ["A rig"])).toStrictEqual({
+      unheldByDelta: ["A rig's pose"],
+      unnamedByTasks: ["A rig"],
+    });
+  });
 });
