@@ -73,30 +73,33 @@ const overflowItems: Item[] = [
 </script>
 
 <template>
-  <div px-4 py-2 flex flex-wrap gap-4 ui-bar items-center>
-    <DatasetReferencePicker
-      v-if="session.data"
-      :error
-      :model-value="datasetReference"
-      @update:model-value="saveDatasetReference($event)"
-    />
-    <UiToggleGroup v-model="modelValue" :items="viewItems" label="View" :variant="UiToggleGroupVariant.Header" />
-    <UiTextField
-      v-model="previewText"
-      :counter="MAX_EMAIL_PREVIEW_LENGTH"
-      hint="The line an inbox shows beside the subject"
-      label="Preview text"
-    />
-    <PageBuilderCanvasDeviceToggle :resource-id />
-    <EditorProblems
-      :findings
-      :get-node-title="getNodeTitle"
-      @select="
-        (nodeId) => {
-          if (nodeId) setSelectedNodeId(resourceId, nodeId);
-        }
-      "
-    />
-    <UiOverflowMenu :items="overflowItems" label="More email actions" />
+  <!-- One row at every width: a narrow window scrolls it sideways, so no control wraps below the bar or hides behind the canvas -->
+  <div of-x-auto ui-bar>
+    <div px-4 py-2 flex gap-4 items-center w-max min-w-full>
+      <DatasetReferencePicker
+        v-if="session.data"
+        :error
+        :model-value="datasetReference"
+        @update:model-value="saveDatasetReference($event)"
+      />
+      <UiToggleGroup v-model="modelValue" :items="viewItems" label="View" :variant="UiToggleGroupVariant.Header" />
+      <UiTextField
+        v-model="previewText"
+        :counter="MAX_EMAIL_PREVIEW_LENGTH"
+        hint="The line an inbox shows beside the subject"
+        label="Preview text"
+      />
+      <PageBuilderCanvasDeviceToggle :resource-id />
+      <EditorProblems
+        :findings
+        :get-node-title="getNodeTitle"
+        @select="
+          (nodeId) => {
+            if (nodeId) setSelectedNodeId(resourceId, nodeId);
+          }
+        "
+      />
+      <UiOverflowMenu :items="overflowItems" label="More email actions" />
+    </div>
   </div>
 </template>
