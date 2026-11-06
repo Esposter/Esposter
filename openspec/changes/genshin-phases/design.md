@@ -1,6 +1,6 @@
 # Genshin phases
 
-The recreation is a large set of units of work: assets converted from the game, datasets, render passes, regions, screens, systems and quests. They depend on one another in a known order, but the work is taken in the order a machine can run it, so a screen is redrawn while the pass under its backdrop is still open, a quest is specified before the dialogue engine it plays on exists, and no unit says what finished means. This page orders the units into phases with gates, defines done for each kind, and fixes how the next unit is chosen. Its one open task, the first script, waits on [the quests change](../genshin-quests/design.md).
+The recreation is a large set of units of work: assets converted from the game, datasets, render passes, regions, screens, systems and quests. They depend on one another in a known order, but the work is taken in the order a machine can run it, so a screen is redrawn while the pass under its backdrop is still open, a quest is specified before the dialogue engine it plays on exists, and no unit says what finished means. This page orders the units into phases with gates, defines done for each kind, and fixes how the next unit is chosen. Its open work is listed in [its tasks](tasks.md).
 
 ## Decisions
 
