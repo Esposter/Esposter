@@ -33,8 +33,8 @@ export const GENSHIN_NO_COMMAND_NOTE = "no command reads it yet";
 // Design, "The phases". No command reads one yet, so each prints as not measurable
 export const GENSHIN_PHASE_GATES: readonly { gate: string; phase: number }[] = [
   { gate: "A fresh PC and Mac pair reproduces every published dataset and fit from the install", phase: 0 },
-  { gate: "Every asset family has a spec and a recipe", phase: 0 },
-  { gate: "Every kind of unit has a check", phase: 0 },
+  { gate: "every asset family has a spec and a recipe", phase: 0 },
+  { gate: "every kind of unit has a check", phase: 0 },
   {
     gate: "Every pass of the login and of Windrise holds and is frozen at every hour and weather, each reference scores under its bar, and the frame cost holds",
     phase: 1,
