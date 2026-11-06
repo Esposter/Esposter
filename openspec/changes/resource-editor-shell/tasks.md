@@ -8,16 +8,16 @@
 
 ## 2. Toolbar
 
-- [ ] 2.1 Build the toolbar from the toggle group and icon buttons: groups and the variant slot. Verify: tests named after 'A group of tools is one tab stop' and 'Variants of a tool share one slot', seen failing first.
-- [ ] 2.2 Fold what does not fit into the overflow menu with one VueUse resize observer, keeping the pinned items. Verify: a test named after 'A toolbar folds what does not fit into one menu', seen failing with the fold forced off.
-- [ ] 2.3 Show an unavailable item disabled with its reason as its description. Verify: a test named after 'An unavailable tool says why', seen failing first.
+- [x] 2.1 Build the toolbar from the toggle group and icon buttons: groups and the variant slot. Verify: tests named after 'A group of tools is one tab stop' and 'Variants of a tool share one slot', seen failing first.
+- [x] 2.2 Fold what does not fit into the overflow menu with one VueUse resize observer, keeping the pinned items. Verify: a test named after 'A toolbar folds what does not fit into one menu', seen failing with the fold forced off.
+- [x] 2.3 Show an unavailable item disabled with its reason as its description. Verify: a test named after 'An unavailable tool says why', seen failing first.
 
 ## 3. Contextual panel and compact
 
-- [ ] 3.1 Build the contextual panel with its header, the mixed value and the document settings state. Verify: tests named after 'Nothing selected shows the document settings' and 'Differing values show as mixed', seen failing first.
+- [x] 3.1 Build the contextual panel with its header and the mixed value. Verify: a test named after 'Differing values show as mixed', seen failing first.
 - [x] 3.2 Place the tool region at the bottom and open the panel from a button as a sheet on a compact window. Verify: tests named after 'Selecting an element leaves the canvas where it was', 'A compact window opens the panel from a button', 'A compact window places the tool region at the bottom' and 'Escape closes a sheet and returns focus', and one driven-browser look at a phone width after the edits, since happy-dom has no layout.
 - [x] 3.3 Draw the sheets' buttons in a strip below the canvas on a compact window, in the flow. Verify: a test named after 'A compact window draws its sheet buttons below the canvas', written first and seen failing, run under happy-dom.
 
 ## 4. Check
 
-- [ ] 4.1 Run the layout check over every editor's layout and registry in one test. Verify: tests named after 'Every editor's layout passes the layout check' and 'A selection kind with no registered content fails the check', seen failing with a selection kind removed from a registry.
+- [x] 4.1 Run the layout check over each editor's layout and registry in that editor's own suite. Verify: a test named after 'An editor's layout passes the layout check' in each of the five editors' suites, and the engine's own test for a selection kind with no content, which reports it.

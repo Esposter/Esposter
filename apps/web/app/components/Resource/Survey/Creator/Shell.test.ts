@@ -98,7 +98,7 @@ describe("resourceSurveyCreatorShell", () => {
     component.unmount();
   });
 
-  test("the survey's layout passes the layout check", () => {
+  test("an editor's layout passes the layout check", () => {
     expect.hasAssertions();
 
     expect(

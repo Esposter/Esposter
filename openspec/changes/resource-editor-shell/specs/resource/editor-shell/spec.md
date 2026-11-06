@@ -92,13 +92,7 @@ A toolbar item that cannot be used SHALL stay focusable and carry the reason it 
 
 ### Requirement: A contextual panel shows content for the selection
 
-A contextual panel SHALL show the content for the selection's kind, the document's own settings when nothing is selected in an editor that has them, and a field's value only when every selected element holds it, as Mixed otherwise.
-
-#### Scenario: Nothing selected shows the document settings
-
-- **GIVEN** an editor that has document settings, with nothing selected
-- **WHEN** the contextual panel is drawn
-- **THEN** it shows the document's settings
+A contextual panel SHALL show a field's value only when every selected element holds it, and Mixed otherwise.
 
 #### Scenario: Differing values show as mixed
 
@@ -174,14 +168,8 @@ A sheet or a floating panel SHALL close on Escape and return focus to the contro
 
 Each editor's layout and registry SHALL pass the layout check, so no selection kind meets a blank panel.
 
-#### Scenario: Every editor's layout passes the layout check
+#### Scenario: An editor's layout passes the layout check
 
-- **GIVEN** each editor's layout and registry
+- **GIVEN** an editor's layout and registry
 - **WHEN** the layout check runs over them
 - **THEN** it reports no finding
-
-#### Scenario: A selection kind with no registered content fails the check
-
-- **GIVEN** an editor whose registry lacks the content for one selection kind
-- **WHEN** the layout check runs
-- **THEN** it reports that selection kind

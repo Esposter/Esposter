@@ -204,7 +204,7 @@ describe("resourceDashboardEditor", () => {
     expect(palette.element.closest("dialog")?.open).toBe(true);
   });
 
-  test("the dashboard's layout passes the layout check", () => {
+  test("an editor's layout passes the layout check", () => {
     expect.hasAssertions();
 
     const selectionKinds = ["", DashboardSelectionKind.Group, DashboardSelectionKind.Visual];

@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 
 describe("whiteboardLayout", () => {
-  test("the whiteboard's layout passes the layout check", () => {
+  test("an editor's layout passes the layout check", () => {
     expect.hasAssertions();
 
     expect(

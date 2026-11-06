@@ -30,7 +30,7 @@ const changeFill = (value: string) => {
 </script>
 
 <template>
-  <EditorContextualPanel :selected-count="selectedIds.length" :title>
+  <EditorContextualPanel :title>
     <div v-if="fill" flex gap-2 items-center>
       <UiColorField
         :model-value="fill.isMixed ? '' : fill.value"

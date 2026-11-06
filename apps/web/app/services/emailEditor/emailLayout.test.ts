@@ -40,7 +40,7 @@ describe("emailLayout", () => {
   const previewContext: Context = { ...designContext, mode: EmailView.Preview };
   const readerState = getDefaultReaderState();
 
-  test("an email layout passes the layout check", () => {
+  test("an editor's layout passes the layout check", () => {
     expect.hasAssertions();
 
     expect(checkLayout(emailLayout, selectionKinds, registeredContentKeys)).toStrictEqual([]);

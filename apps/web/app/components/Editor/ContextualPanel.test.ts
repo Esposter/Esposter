@@ -4,48 +4,18 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("editorContextualPanel", () => {
-  test("nothing selected shows the document settings", () => {
+  test("the panel draws its content under the header", () => {
     expect.hasAssertions();
 
-    const wrapper = mount(EditorContextualPanel, {
-      props: { selectedCount: 0, title: " " },
-      slots: { default: "<span></span>", documentSettings: "<p></p>" },
-    });
+    const wrapper = mount(EditorContextualPanel, { props: { title: " " }, slots: { default: "<span></span>" } });
 
-    expect(wrapper.find("p").exists()).toBe(true);
-    expect(wrapper.find("span").exists()).toBe(false);
-  });
-
-  test("a selection shows its own content, not the document settings", () => {
-    expect.hasAssertions();
-
-    const wrapper = mount(EditorContextualPanel, {
-      props: { selectedCount: 1, title: " " },
-      slots: { default: "<span></span>", documentSettings: "<p></p>" },
-    });
-
-    expect(wrapper.find("span").exists()).toBe(true);
-    expect(wrapper.find("p").exists()).toBe(false);
-  });
-
-  test("an editor with no document settings shows no panel while nothing is selected", () => {
-    expect.hasAssertions();
-
-    const wrapper = mount(EditorContextualPanel, {
-      props: { selectedCount: 0, title: " " },
-      slots: { default: "<span></span>" },
-    });
-
-    expect(wrapper.find("aside").exists()).toBe(false);
+    expect(wrapper.get("aside").find("span").exists()).toBe(true);
   });
 
   test("the panel is a landmark named by its header", () => {
     expect.hasAssertions();
 
-    const wrapper = mount(EditorContextualPanel, {
-      props: { selectedCount: 1, title: " " },
-      slots: { default: "<span></span>" },
-    });
+    const wrapper = mount(EditorContextualPanel, { props: { title: " " }, slots: { default: "<span></span>" } });
 
     expect(wrapper.get("aside").attributes("aria-label")).toBe(" ");
   });

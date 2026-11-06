@@ -8,7 +8,7 @@ const selected = useWhiteboardSelectedElement();
 </script>
 
 <template>
-  <EditorContextualPanel v-if="selected" :selected-count="1" :title="getWhiteboardElementTitle(selected.element)">
+  <EditorContextualPanel v-if="selected" :title="getWhiteboardElementTitle(selected.element)">
     <ResourceWhiteboardEditorPropertiesFill
       v-if="
         selected.element.type === PositionedElementType.Shape ||

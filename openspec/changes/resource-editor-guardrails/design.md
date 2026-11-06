@@ -79,6 +79,7 @@ The survey's logic builder, the existing delete-reference warning and the page b
 - **An unavailable move stays focusable.** A disabled button leaves the tab order, so the toolbar's move is `aria-disabled` with its reason in its tooltip, as the menu's disabled items are. Rejected: the native `disabled`, which takes the reason out of reach.
 - **A document not yet held lists every kind.** With no document there is no slot to refuse a kind against, so the palette is whole until one loads.
 - **A disabled command runs nothing, from a shortcut as from the list.** `runCommand` refuses it and the palette keeps open rather than closing on it.
+- **A scenario's test carries its title with the first letter lowercased.** The delta writes a scenario in sentence case, and the repository's lint rule holds test titles to a lowercase first letter, so 'A warning does not refuse a save' is the test `a warning does not refuse a save`. One change of case maps each to the other, and a search for the scenario finds its test. Rejected: titling the scenario in lowercase, which reads badly as a heading, and exempting the tests from the lint rule, which every other suite would then ask for.
 
 ## Not in this change
 
