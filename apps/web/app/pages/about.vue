@@ -4,7 +4,16 @@ import { GlobeConfiguration } from "@/services/visual/GlobeConfiguration";
 // The globe is the last thing on the page and three.js is most of its weight, so its code is fetched only once the
 // Reader scrolls within a screen of it. The box holds the globe's size meanwhile, so nothing shifts when it arrives
 const globeContainer = useTemplateRef("globeContainer");
-const isGlobeNear = useElementVisibility(globeContainer, { once: true, rootMargin: GlobeConfiguration.loadMargin });
+const isGlobeNear = ref(false);
+const { stop } = useIntersectionObserver(
+  globeContainer,
+  (entries) => {
+    if (!entries.some(({ isIntersecting }) => isIntersecting)) return;
+    isGlobeNear.value = true;
+    stop();
+  },
+  { rootMargin: GlobeConfiguration.loadMargin },
+);
 </script>
 
 <template>
