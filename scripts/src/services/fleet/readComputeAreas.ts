@@ -15,7 +15,8 @@ export const readComputeAreas = (files: readonly QueueFile[]): ComputeArea[] => 
     .filter(({ path }) => basename(path) === COMPUTE_QUEUE_PAGE_FILE)
     .toSorted((firstFile, secondFile) => firstFile.path.localeCompare(secondFile.path))
     .map(({ path, text }) => {
-      const page = pages.get(basename(dirname(path)));
+      const folder = basename(dirname(path));
+      const page = pages.get(folder);
       if (page === undefined)
         throw new InvalidOperationError(
           Operation.Read,
@@ -24,6 +25,7 @@ export const readComputeAreas = (files: readonly QueueFile[]): ComputeArea[] => 
         );
       const reading = parseComputeQueue(text);
       return {
+        folder,
         kind: page.kind,
         phase: page.phase,
         queue: reading.entries.map((entry) => ({ ...entry, phase: page.phase })),

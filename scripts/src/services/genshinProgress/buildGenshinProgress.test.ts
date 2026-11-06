@@ -1,34 +1,42 @@
 import { ComputeKind } from "#src/models/fleet/ComputeKind";
+import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCheckState";
 import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
+import type { GenshinExitReadings } from "#src/models/genshinProgress/GenshinExitReadings";
 import { buildGenshinProgress } from "#src/services/genshinProgress/buildGenshinProgress";
+import { GENSHIN_NO_COMMAND_NOTE, GENSHIN_PHASE_GATES } from "#src/services/genshinProgress/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(buildGenshinProgress, () => {
+  const noExit: GenshinExitReadings = {
+    approvals: new Map(),
+    lockKeys: { indexes: [], objects: [] },
+    means: new Map(),
+    passReports: new Map(),
+    requiredKeys: { indexes: [], objects: [] },
+  };
+
   test("A phase's progress counts its units by kind", () => {
     expect.hasAssertions();
 
     const { phases } = buildGenshinProgress(
       {
         areas: [
-          { blockers: [], kind: ComputeKind.Screen, needs: [], phase: 2 },
-          { blockers: [], kind: ComputeKind.Screen, needs: [[]], phase: 2 },
-          { blockers: [], kind: ComputeKind.Region, needs: [[]], phase: 2 },
+          { blockers: [], folder: "gcg", kind: ComputeKind.Screen, needs: [], parityIds: [], phase: 2 },
+          { blockers: [], folder: "wish", kind: ComputeKind.Screen, needs: [[]], parityIds: [], phase: 2 },
+          { blockers: [], folder: "mondstadt", kind: ComputeKind.Region, needs: [[]], parityIds: [], phase: 2 },
         ],
         changes: [],
+        exit: noExit,
         roadmap: { items: [], names: new Map([[2, "The interface"]]) },
       },
       [],
     );
 
-    expect(takeOne(phases, 2)).toStrictEqual({
-      name: "The interface",
-      phase: 2,
-      rows: [
-        { blocked: 0, done: 1, firstBlocker: "", kind: ComputeKind.Screen, runnable: 1, units: 2, waiting: 0 },
-        { blocked: 0, done: 0, firstBlocker: "", kind: ComputeKind.Region, runnable: 1, units: 1, waiting: 0 },
-      ],
-    });
+    expect(takeOne(phases, 2).rows).toStrictEqual([
+      { blocked: 0, done: 1, firstBlocker: "", kind: ComputeKind.Screen, runnable: 1, units: 2, waiting: 0 },
+      { blocked: 0, done: 0, firstBlocker: "", kind: ComputeKind.Region, runnable: 1, units: 1, waiting: 0 },
+    ]);
   });
 
   test("A compute area with only waiting items counts as waiting and names its first blocker", () => {
@@ -36,8 +44,18 @@ describe(buildGenshinProgress, () => {
 
     const { phases } = buildGenshinProgress(
       {
-        areas: [{ blockers: ["a plate", "a clip"], kind: ComputeKind.Scene, needs: [], phase: 1 }],
+        areas: [
+          {
+            blockers: ["a plate", "a clip"],
+            folder: "login",
+            kind: ComputeKind.Scene,
+            needs: [],
+            parityIds: [],
+            phase: 1,
+          },
+        ],
         changes: [],
+        exit: noExit,
         roadmap: { items: [], names: new Map() },
       },
       [],
@@ -53,8 +71,18 @@ describe(buildGenshinProgress, () => {
 
     const { phases } = buildGenshinProgress(
       {
-        areas: [{ blockers: [], kind: ComputeKind.Pieces, needs: [["game-install"]], phase: 3 }],
+        areas: [
+          {
+            blockers: [],
+            folder: "interface",
+            kind: ComputeKind.Pieces,
+            needs: [["game-install"]],
+            parityIds: [],
+            phase: 3,
+          },
+        ],
         changes: [],
+        exit: noExit,
         roadmap: { items: [], names: new Map() },
       },
       ["linux"],
@@ -83,6 +111,7 @@ describe(buildGenshinProgress, () => {
             waiting: "",
           },
         ],
+        exit: noExit,
         roadmap: { items: [], names: new Map() },
       },
       [],
@@ -103,6 +132,7 @@ describe(buildGenshinProgress, () => {
       {
         areas: [],
         changes: [{ needs: [], phase: 6, tasks: [{ isDone: true, number: "1.1", phase: 6 }], waiting: "" }],
+        exit: noExit,
         roadmap: { items: [], names: new Map() },
       },
       [],
@@ -120,6 +150,7 @@ describe(buildGenshinProgress, () => {
       {
         areas: [],
         changes: [],
+        exit: noExit,
         roadmap: {
           items: [
             { isDone: true, phase: 0 },
@@ -133,6 +164,23 @@ describe(buildGenshinProgress, () => {
 
     expect(takeOne(phases, 0).rows).toStrictEqual([
       { blocked: 0, done: 1, firstBlocker: "", kind: GenshinProgressKind.Item, runnable: 1, units: 2, waiting: 0 },
+    ]);
+  });
+
+  test("A check with no command is not measurable", () => {
+    expect.hasAssertions();
+
+    const { phases } = buildGenshinProgress(
+      { areas: [], changes: [], exit: noExit, roadmap: { items: [], names: new Map() } },
+      [],
+    );
+
+    const scriptedSession = takeOne(
+      GENSHIN_PHASE_GATES.filter(({ phase }) => phase === 3),
+      0,
+    );
+    expect(takeOne(phases, 3).checks).toStrictEqual([
+      { name: scriptedSession.gate, notes: [GENSHIN_NO_COMMAND_NOTE], state: GenshinExitCheckState.NotMeasurable },
     ]);
   });
 });
