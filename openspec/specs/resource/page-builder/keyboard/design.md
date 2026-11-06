@@ -41,7 +41,8 @@ The page builder's keys. Each key the editor and the canvas take is a registered
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `apps/web/app/composables/pageBuilder/usePageBuilderKeyCommands.ts`     | the editor's commands, the Enter that starts a text edit, and the frame's hand-off to the window |
 | `apps/web/app/components/PageBuilder/Canvas/Index.vue`                  | the frame's arrows and Escape, the canvas's listed commands and the hand-off of every other key  |
-| `apps/web/app/components/PageBuilder/Editor.vue`                        | the shell's Enter, the delete confirmation's state and the keys the composables register         |
+| `apps/web/app/components/PageBuilder/Editor.vue`                        | the shell's Enter and the keys the composables register                                          |
+| `apps/web/app/composables/pageBuilder/usePageBuilderEditor.ts`          | the delete confirmation's state, which the editor's keys wait on                                 |
 | `apps/web/app/components/PageBuilder/Canvas/NodeToolbar.vue`            | the Delete button and the confirmation the editor's keys wait on                                 |
 | `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`            | the drag's Escape, bound only while a drag runs                                                  |
 | `apps/web/app/composables/pageBuilder/usePageBuilderHistoryCommands.ts` | undo and redo                                                                                    |
