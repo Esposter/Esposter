@@ -2,7 +2,7 @@
 
 ### Requirement: A regular area's weather turns through the game's standard chain
 
-A regular area's weather SHALL turn at each change through the game's standard chain of weathers, with each weather's next turn drawn from the chain's weights for it.
+A regular area's weather SHALL turn at each change the built interval gives, through the game's standard chain of weathers, with each weather's next turn drawn from the chain's weights for it.
 
 #### Scenario: Rain turns to clear or cloudy at the next change where the area's weathers hold one
 
