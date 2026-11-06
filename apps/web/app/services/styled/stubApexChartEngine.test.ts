@@ -8,11 +8,11 @@ export const resolveToChart = function (this: ApexCharts) {
 
 // The engine measures its SVG as it draws, which a DOM without layout cannot do, and it rejects a draw that is still
 // Pending when its chart is torn down. A test that mounts a chart only needs the component's own building, updating and
-// Tearing down, so the engine's drawing is stubbed
-export const stubApexChartEngine = () => {
-  vi.spyOn(ApexCharts.prototype, "render").mockImplementation(resolveToChart);
-  vi.spyOn(ApexCharts.prototype, "updateOptions").mockImplementation(resolveToChart);
-  vi.spyOn(ApexCharts.prototype, "destroy").mockReturnValue();
-};
+// Tearing down, so the engine's drawing is stubbed. It returns the spies, for a test that asserts on them
+export const stubApexChartEngine = () => ({
+  destroy: vi.spyOn(ApexCharts.prototype, "destroy").mockReturnValue(),
+  render: vi.spyOn(ApexCharts.prototype, "render").mockImplementation(resolveToChart),
+  updateOptions: vi.spyOn(ApexCharts.prototype, "updateOptions").mockImplementation(resolveToChart),
+});
 
 describe.todo("stubApexChartEngine");

@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
 import StyledApexChart from "@/components/Styled/ApexChart.vue";
-import { resolveToChart } from "@/services/styled/stubApexChartEngine.test";
+import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import ApexCharts from "apexcharts";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // The engine measures its SVG as it draws, which happy-dom cannot lay out, so its drawing is stubbed and what is under
@@ -17,7 +16,7 @@ describe(StyledApexChart, () => {
   test("#45 emits load once the chart has rendered, and hands out its instance from then on", async () => {
     expect.hasAssertions();
 
-    const render = vi.spyOn(ApexCharts.prototype, "render").mockImplementation(resolveToChart);
+    const { render } = stubApexChartEngine();
     const component = await mountSuspended(StyledApexChart, { props: { series: [] } });
     await flushPromises();
 
@@ -28,9 +27,7 @@ describe(StyledApexChart, () => {
   test("#129 rebuilds the chart when its options change the chart type", async () => {
     expect.hasAssertions();
 
-    const render = vi.spyOn(ApexCharts.prototype, "render").mockImplementation(resolveToChart);
-    const destroy = vi.spyOn(ApexCharts.prototype, "destroy").mockReturnValue();
-    const updateOptions = vi.spyOn(ApexCharts.prototype, "updateOptions").mockImplementation(resolveToChart);
+    const { destroy, render, updateOptions } = stubApexChartEngine();
     const component = await mountSuspended(StyledApexChart, {
       props: { options: { chart: { type: "bar" } }, series: [] },
     });
