@@ -13,7 +13,7 @@
 ## 3. Air and ground
 
 - [ ] 3.1 [phase 0] Add a measure that reads each cloud band's spread from its reference frame, beside the parity measure, and write each measured spread into the band's record. Verify: tests named after 'A cloud band spreads across the sky at its measured width' and 'A band with no measured width is not drawn', written first and seen failing, then `pnpm -C scripts genshin:parity measure <a login cloud reference>` prints the spread of each band.
-- [ ] 3.2 [phase 4] Give each sub-area with a catalogued extent a derivation root of its own, as a member of the component map, derived the way a capital is, so that `extract <sub-area>` runs. Verify: a test in `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts` named after 'A sub-area stands on its own ground' and 'A sub-area without a catalogued extent keeps its region's ground', written first and seen failing, then `pnpm -C scripts genshin:assets extract <dragonspine>` writes its exports.
+- [ ] 3.2 Give each sub-area with a catalogued extent a derivation root of its own, as a member of the component map, derived the way a capital is, so that `extract <sub-area>` runs. Verify: a test in `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts` named after 'A sub-area stands on its own ground' and 'A sub-area without a catalogued extent keeps its region's ground', written first and seen failing, then `pnpm -C scripts genshin:assets extract <dragonspine>` writes its exports.
 
 ## 4. Art
 
