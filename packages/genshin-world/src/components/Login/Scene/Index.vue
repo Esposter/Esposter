@@ -130,7 +130,7 @@ interface Props {
   // The bridges' and the pillars' hulls, and where each stands
   hulls: LoginHulls;
   // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
-  isBloomed?: boolean;
+  isBloomed?: false;
   isDoorLit: boolean;
   // The walkway's paving, carved and painted over its tops
   paving: LoginPavingData;

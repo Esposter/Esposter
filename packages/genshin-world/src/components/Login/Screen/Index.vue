@@ -33,7 +33,7 @@ interface Props {
   // The glide held still at this many metres scrolled, for a reference taken at one moment of the title's loop
   heldScrolled?: number;
   // Whether the scene draws the game's bloom, which a reference of the frame without it turns off to read the bloom by
-  isBloomed?: boolean;
+  isBloomed?: false;
   // The scene alone, as the recordings idling with no interface show it, for a reference to be scored against, and
   // Silent
   isInterfaceHidden: boolean;
@@ -62,7 +62,7 @@ const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving })
 const {
   gameText,
   heldScrolled,
-  isBloomed = true,
+  isBloomed,
   isInterfaceHidden,
   language,
   loginData,

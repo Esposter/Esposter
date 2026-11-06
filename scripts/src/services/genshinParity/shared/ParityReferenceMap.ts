@@ -1007,7 +1007,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     component: DerivedAssetComponent.Login,
     // Read off the frame: the arch's apex and the dais's front feet on the walkway's top
     landmarks: { doorApex: [1717, 575], doorFootLeft: [1585, 1028], doorFootRight: [1855, 1028] },
-    props: { heldScrolled: 320, isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
+    props: { heldScrolled: 320, isBloomed: false, isInterfaceHidden: true, stage: "Door", timeOfDay: "Night" },
     region: { height: 1300, width: 3100, x: 0, y: 0 },
     screen: "LoginScreen",
     source: "session-2.mp4 at 35.9s",
@@ -1058,7 +1058,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   "login-night-title": {
     component: DerivedAssetComponent.Login,
     isOtherBuild: true,
-    props: { heldScrolled: 135, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
+    props: { heldScrolled: 135, isBloomed: false, isInterfaceHidden: true, stage: "Title", timeOfDay: "Night" },
     screen: "LoginScreen",
     source: "yt-PnqNza4qWzs.mp4 at 12s",
   },
