@@ -115,6 +115,12 @@ From constellation 1, each heal of Charlotte's own that lands on a party member 
 - **WHEN** another heal of hers lands on that member within the six seconds
 - **THEN** no further heal over time starts for that member
 
+#### Scenario: An ATK buff put on her raises the heal over time from its next tick
+
+- **GIVEN** Charlotte is at constellation 1 and a member is healed over time by her
+- **WHEN** an ATK buff is put on her before the next heal over time falls
+- **THEN** that heal is for 80% of her ATK with the buff on her
+
 #### Scenario: Below constellation 1 a heal starts nothing
 
 - **GIVEN** Charlotte is at constellation 0

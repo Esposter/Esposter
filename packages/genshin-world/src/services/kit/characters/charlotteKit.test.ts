@@ -3,18 +3,24 @@ import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHARLOTTE_CHARACTER_ID, createCharlotteKitBehaviour } from "#src/services/kit/characters/charlotteKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
+import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const CHARLOTTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHARLOTTE_CHARACTER_ID);
@@ -113,5 +119,41 @@ describe(createCharlotteKitBehaviour, () => {
       { amount: 0.1, attribute: Attribute.HealingBonus },
       { amount: 0, attribute: Attribute.CryoDamageBonus },
     ]);
+  });
+
+  test("constellation 1's heals over time read Charlotte's ATK with the buffs on her as they stand at each tick, as gcsim's TotalAtk does", () => {
+    expect.hasAssertions();
+    const PARTNER_CHARACTER_ID = 10_000_001;
+    const charlotte = { ...createCharlotteCombatant(), constellationCount: 1 };
+    const partner = { ...createCharlotteCombatant(), characterId: PARTNER_CHARACTER_ID };
+    const context = createKitTestContext(charlotte, {
+      characterIdCombatantMap: new Map([
+        [CHARLOTTE_CHARACTER_ID, charlotte],
+        [PARTNER_CHARACTER_ID, partner],
+      ]),
+      party: createParty([CHARLOTTE_CHARACTER_ID, PARTNER_CHARACTER_ID]),
+    });
+    const member = getPartyMember(context.party, PARTNER_CHARACTER_ID);
+    member.healthShare = 0.1;
+    // Charlotte's heal lands on the partner, and the step sends the change, which starts constellation 1 and heals at once
+    changeKitMemberHealth(context, charlotte, PARTNER_CHARACTER_ID, 1);
+    emitKitEvent({ ...takeOne(context.party.healthChanges), kind: KitEventKind.HealthChanged }, context);
+    buffKitMember(context.kitEffectState, CHARLOTTE_CHARACTER_ID, {
+      amount: 1,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    // Steps the seconds given, and returns how far the partner's health share rose over them
+    const stepRaise = (seconds: number): number => {
+      const healthShare = member.healthShare;
+      stepKitSeconds(context, seconds);
+      return member.healthShare - healthShare;
+    };
+    const firstTickRaise = stepRaise(2.5);
+    const secondTickRaise = stepRaise(2);
+
+    expect(firstTickRaise).toBeCloseTo(0.16);
+    expect(secondTickRaise).toBeCloseTo(0.16);
   });
 });

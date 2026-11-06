@@ -20,6 +20,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -80,6 +81,18 @@ const countConstellation4Hits = (effects: readonly KitEffect[], characterId: num
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
 const BURST_OFFSET_METRES = 4.5;
 const BURST_HEAL_RADIUS = 7;
+
+// A heal of Constellation 1's on a member, for 80% of Charlotte's ATK with the buffs on her as they stand at the heal, as gcsim's
+// C1 heal reads TotalAtk each time it runs
+const healConstellation1 = (context: KitContext, combatant: Combatant, characterId: number): void => {
+  const { attack } = getBuffedCombatant(
+    combatant,
+    context.kitEffectState.effects,
+    context.party,
+    context.characterIdCombatantMap,
+  ).attributes;
+  changeKitMemberHealth(context, combatant, characterId, CONSTELLATION_1_HEAL_ATTACK_SHARE * attack);
+};
 
 const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, attackShare: number): void => {
   const healedHealth = flatHealth + attackShare * caster.attributes.attack;
@@ -216,8 +229,7 @@ export const createCharlotteKitBehaviour = ({
         const healedCharacterId = event.characterId;
         if (!startKitCooldown(kitEffectState, healedCharacterId, CONSTELLATION_1_STATUS_ID, CONSTELLATION_1_SECONDS))
           return;
-        const healAmount = CONSTELLATION_1_HEAL_ATTACK_SHARE * combatant.attributes.attack;
-        changeKitMemberHealth(context, combatant, healedCharacterId, healAmount);
+        healConstellation1(context, combatant, healedCharacterId);
         schedulePeriodicKitTask(
           kitEffectState,
           combatant.characterId,
@@ -227,7 +239,7 @@ export const createCharlotteKitBehaviour = ({
             untilSeconds: CONSTELLATION_1_SECONDS,
           },
           (tick) => {
-            changeKitMemberHealth(tick, combatant, healedCharacterId, healAmount);
+            healConstellation1(tick, combatant, healedCharacterId);
           },
         );
         return;
