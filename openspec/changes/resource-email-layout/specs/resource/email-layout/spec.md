@@ -23,13 +23,13 @@ The device toggle in the bar SHALL set the width of the design canvas and of the
 
 ### Requirement: The inspector's tabs follow the selection
 
-The inspector SHALL show the email's own settings with nothing selected, and the Content and Style tabs with a node selected, and SHALL NOT offer a Theme tab.
+The inspector SHALL be drawn only with a node selected, with the Content and Style tabs, and SHALL NOT offer a Theme tab.
 
-#### Scenario: Nothing selected shows the email's settings
+#### Scenario: Nothing selected draws no inspector
 
 - **GIVEN** an email with nothing selected
-- **WHEN** the inspector is drawn
-- **THEN** it shows the email's settings
+- **WHEN** the editor is drawn
+- **THEN** no inspector is drawn
 
 #### Scenario: A node selection offers Content and Style only
 

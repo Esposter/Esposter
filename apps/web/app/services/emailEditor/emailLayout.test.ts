@@ -57,21 +57,19 @@ describe("emailLayout", () => {
   test("preview removes the editing regions", () => {
     expect.hasAssertions();
 
-    const designLayout = resolveLayout(emailLayout, designContext, SizeClass.Expanded, readerState);
+    const designLayout = resolveLayout(emailLayout, nodeContext, SizeClass.Expanded, readerState);
     const previewLayout = resolveLayout(emailLayout, previewContext, SizeClass.Expanded, readerState);
 
     expect(designLayout.regions.map(({ id }) => id)).toStrictEqual([barRegionId, blocksRegionId, inspectorRegionId]);
     expect(previewLayout.regions.map(({ id }) => id)).toStrictEqual([barRegionId]);
   });
 
-  test("nothing selected shows the email's settings", () => {
+  test("nothing selected draws no inspector", () => {
     expect.hasAssertions();
 
     const resolvedLayout = resolveLayout(emailLayout, designContext, SizeClass.Expanded, readerState);
 
-    expect(getRegion(resolvedLayout, inspectorRegionId).panels).toStrictEqual([
-      { contentKey: EmailContentKey.Settings, id: "settings" },
-    ]);
+    expect(resolvedLayout.regions.map(({ id }) => id)).toStrictEqual([barRegionId, blocksRegionId]);
   });
 
   test("a node selection offers Content and Style only", () => {

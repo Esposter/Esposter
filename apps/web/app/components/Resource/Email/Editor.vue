@@ -123,7 +123,6 @@ const registry: Record<EmailContentKey, Component> = {
       startMergeFieldDrag,
       startPaletteDrag,
     }),
-  [EmailContentKey.Settings]: () => h(PageBuilderContentPanel, { kind: emailKind, resourceId }),
   [EmailContentKey.Style]: () => h(PageBuilderEmailStylePanel, { resourceId }),
 };
 </script>

@@ -48,13 +48,6 @@ export const emailLayout: Layout = {
       wildcardContentKey: EmailContentKey.Layers,
     },
     {
-      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Nothing] },
-      id: "settings",
-      regionId: "inspector",
-      selectionKindContentKeyMap: {},
-      wildcardContentKey: EmailContentKey.Settings,
-    },
-    {
       condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Node] },
       id: "content",
       regionId: "inspector",
