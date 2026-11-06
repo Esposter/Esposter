@@ -6,13 +6,13 @@
 ## 2. Viewer sink
 
 - [x] 2.1 Show each spoken line as a bubble and a sound on the model, paced by the clip's length. Verify: tests named after the scenarios 'A spoken line appears on the model' and 'The next line waits for the clip's own length' written first and seen failing.
-- [x] 2.2 Fall back to the stock player when no viewer listens or the viewer drops. Verify: tests named after the scenarios 'No viewer listening falls back to the stock player' and 'A viewer dropping mid-reply moves the rest to the player' written first and seen failing.
+- [x] 2.2 Fall back to the stock player when no viewer listens, the viewer drops, or its sound form needs a compressed clip. Verify: tests named after the scenarios 'No viewer listening falls back to the stock player', 'A viewer dropping mid-reply moves the rest to the player' and 'A compressed-only path keeps the sound on the stock player' written first and seen failing.
 - [x] 2.3 Stop the sound and clear the bubble when a newer turn arrives. Verify: a test named after the scenario 'A newer turn clears the bubble' written first and seen failing.
 - [x] 2.4 Replay the last line on a tap, sending no turn to the session, and keep only the last clip on disk. Verify: tests named after the scenarios 'A tap replays the last line' and 'A tap sends no turn to the session' written first and seen failing.
 
 ## 3. Reactions
 
-- [x] 3.1 Send the mapped motion on attention wanted and clear the expression at the end of a turn, behind the same file check. Verify: tests named after the scenarios 'Attention wanted turns the character' and 'An unmapped moment sends no motion to the viewer' written first and seen failing.
+- [x] 3.1 Send the mapped motion on attention wanted and clear the expression at the end of a turn, behind the same file check. Verify: tests named after the scenarios 'Attention wanted turns the character', 'An expression is cleared when a turn ends' and 'An unmapped moment sends no motion to the viewer' written first and seen failing.
 
 ## 4. The verb and no-viewer machines
 
@@ -21,4 +21,4 @@
 
 ## 5. Absent motion shape
 
-- [x] 5.1 Store an unmapped moment as `""` rather than deleting its key with `undefined`, so the motion map is a full record of the two moments and reads by truthiness. The reader's defaults, the verb's empty map, `getViewerReaction`'s return type and the stored file format change in the same commit, and `ViewerConfiguration.ts`'s `Partial<Record<…>>` shape goes with them. Verify: a test named after the scenario this adds to the spec delta, written first and seen failing, with the stored file of the previous shape read and rewritten.
+- [x] 5.1 Store an unmapped moment as `""` rather than deleting its key with `undefined`, so the motion map is a full record of the two moments and reads by truthiness. The reader's defaults, the verb's empty map, `getViewerReaction`'s return type and the stored file format change in the same commit, and `ViewerConfiguration.ts`'s `Partial<Record<…>>` shape goes with them. Verify: a test named after the scenario 'A stored motion map with a moment missing reads that moment as unmapped', written first and seen failing, with the stored file of the previous shape read and rewritten.
