@@ -20,12 +20,12 @@ const { editState, whiteboard } = storeToRefs(whiteboardStore);
 await loadContent();
 watchAutosave(whiteboard, saveWhiteboard);
 const whiteboardEditorStore = useWhiteboardEditorStore();
-const { canvasRect, selectedIds, viewport } = storeToRefs(whiteboardEditorStore);
+const { canvasRect, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
 const { fitTo } = whiteboardEditorStore;
 const { onPointer } = useWhiteboardGesture();
 const whiteboardDialogStore = useWhiteboardDialogStore();
 const { deletingIds } = storeToRefs(whiteboardDialogStore);
-const { confirmDelete, isDeleteOpen } = useWhiteboardKeyboard(editState, selectedIds, deletingIds);
+const { confirmDelete, isDeleteOpen } = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind);
 const {
   draft,
   onBlur,

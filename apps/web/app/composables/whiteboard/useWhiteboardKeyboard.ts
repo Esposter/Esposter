@@ -1,8 +1,9 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
-import type { Point } from "headless-block-editor";
+import type { Point, ShapeKind } from "headless-block-editor";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
@@ -13,18 +14,30 @@ import {
   WHITEBOARD_NUDGE_DIRECTIONS,
   WHITEBOARD_NUDGE_LARGE_STEP,
   WHITEBOARD_NUDGE_STEP,
+  WHITEBOARD_SHAPE_SHORTCUTS,
+  WHITEBOARD_TOOL_SHORTCUTS,
 } from "@/services/whiteboard/keyboard/constants";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
 // Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
-// Selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas
+// Selection's commands are bound only while there is a selection, and none is bound while that dialog asks, so its keys never reach the canvas.
+// A tool key chooses the tool in hand, and the shape keys choose the shape tool with the shape they name
 export const useWhiteboardKeyboard = (
   editState: Ref<WhiteboardEditState>,
   selectedIds: Ref<string[]>,
   deletingIds: Ref<string[]>,
+  tool: Ref<GestureTool>,
+  shapeKind: Ref<ShapeKind>,
 ) => {
   const { isOpen: isDeleteOpen } = useSingletonDialog(deletingIds);
 
+  const chooseTool = (nextTool: GestureTool) => {
+    tool.value = nextTool;
+  };
+  const chooseShape = (nextShapeKind: ShapeKind) => {
+    tool.value = GestureTool.Shape;
+    shapeKind.value = nextShapeKind;
+  };
   const confirmDelete = () => {
     const deletedIds = deletingIds.value;
     editState.value = deleteWhiteboardElements(editState.value, deletedIds);
@@ -121,11 +134,34 @@ export const useWhiteboardKeyboard = (
     ]),
   ];
 
+  const toolCommands: UiCommand[] = [
+    ...Object.entries(WHITEBOARD_TOOL_SHORTCUTS).map(([key, { meaning, title, tool: chosenTool }]) => ({
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: `whiteboard-tool-${chosenTool}`,
+      meaning,
+      run: () => {
+        chooseTool(chosenTool);
+      },
+      shortcut: key,
+      title: `${title} tool`,
+    })),
+    ...Object.entries(WHITEBOARD_SHAPE_SHORTCUTS).map(([key, { kind, meaning, title }]) => ({
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: `whiteboard-shape-${kind}`,
+      meaning,
+      run: () => {
+        chooseShape(kind);
+      },
+      shortcut: key,
+      title: `${title} tool`,
+    })),
+  ];
+
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value) return [];
-    if (selectedIds.value.length === 0) return [undoCommand];
+    if (selectedIds.value.length === 0) return [undoCommand, ...toolCommands];
 
-    return [undoCommand, ...selectionCommands];
+    return [undoCommand, ...toolCommands, ...selectionCommands];
   });
 
   return { confirmDelete, isDeleteOpen };

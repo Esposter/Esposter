@@ -2,6 +2,7 @@
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
+import { GestureTool } from "@/models/whiteboard/GestureTool";
 import {
   createWhiteboardEditState,
   pressKey,
@@ -15,14 +16,21 @@ import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperatio
 import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { ShapeKind } from "headless-block-editor";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 // The keyboard mounted as a surface, so its commands are bound for as long as the mount lasts and unbound when it unmounts
-const mountKeyboard = (editState: Ref<WhiteboardEditState>, selectedIds: Ref<string[]>, deletingIds: Ref<string[]>) =>
+const mountKeyboard = (
+  editState: Ref<WhiteboardEditState>,
+  selectedIds: Ref<string[]>,
+  deletingIds: Ref<string[]>,
+  tool: Ref<GestureTool> = ref(GestureTool.Select),
+  shapeKind: Ref<ShapeKind> = ref(ShapeKind.Rectangle),
+) =>
   mountSuspended(
     defineComponent({
       render: () => h("div"),
-      setup: () => useWhiteboardKeyboard(editState, selectedIds, deletingIds),
+      setup: () => useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind),
     }),
   );
 
@@ -224,5 +232,39 @@ describe(useWhiteboardKeyboard, () => {
 
     expect(editState.value.document).toStrictEqual(movedDocument);
     expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
+  });
+
+  test("A tool shortcut switches the tool", async () => {
+    expect.hasAssertions();
+
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref<string[]>([]);
+    const deletingIds = ref<string[]>([]);
+    const tool = ref(GestureTool.Select);
+    await mountKeyboard(editState, selectedIds, deletingIds, tool);
+
+    pressKey({ bubbles: true, key: "a" });
+
+    expect(tool.value).toBe(GestureTool.Arrow);
+  });
+
+  test("A shortcut typed into a text field is text", async () => {
+    expect.hasAssertions();
+
+    const textarea = document.createElement("textarea");
+    document.body.append(textarea);
+    onTestFinished(() => {
+      textarea.remove();
+    });
+    textarea.focus();
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref<string[]>([WHITEBOARD_PROCESS_ID]);
+    const deletingIds = ref<string[]>([]);
+    const tool = ref(GestureTool.Select);
+    await mountKeyboard(editState, selectedIds, deletingIds, tool);
+
+    pressKey({ bubbles: true, key: "a" }, textarea);
+
+    expect(tool.value).toBe(GestureTool.Select);
   });
 });
