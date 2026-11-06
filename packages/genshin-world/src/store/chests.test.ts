@@ -1,3 +1,4 @@
+import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { useWorldChestsStore } from "#src/store/chests";
@@ -28,6 +29,7 @@ const createChests = (puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzle
 describe(useWorldChestsStore, () => {
   const SEELIE_ID = "settled";
   const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
+  const TIME_TRIAL_ID = "time-trial";
   const puzzleOptions: Parameters<ReturnType<typeof useWorldPuzzlesStore>["start"]>[0] = {
     monumentPlaces: [],
     savedSettledSeelieIds: new Set([SEELIE_ID]),
@@ -64,5 +66,17 @@ describe(useWorldChestsStore, () => {
       chestInteractables: [],
       openedChestIds: [SEELIE_CHEST_ID],
     });
+  });
+
+  test("a chest stays locked while a puzzle within its reach is unsolved", () => {
+    expect.hasAssertions();
+
+    // The settled Seelie's court chest stands within the lock reach of this unsolved time trial
+    const { chestInteractables } = createChests({
+      ...puzzleOptions,
+      timeTrialPlaces: [{ id: TIME_TRIAL_ID, kind: PuzzleKind.TimeTrialChallenge, position: { x: 0, z: 0 } }],
+    });
+
+    expect(chestInteractables.value.map(({ id }) => id)).toStrictEqual([]);
   });
 });
