@@ -1,5 +1,5 @@
-/* An attribute's value takes no margin: the browser's definition margin is reset in the attribute rows and beside the
-   Friendship level */
+/* The sheet resets the browser's definition margin on an attribute's value, so a row or the Friendship level that
+   needs an offset sets its own */
 .value {
   margin: 0;
 }
