@@ -9,6 +9,7 @@ A banner whose featured five-star character has a trial SHALL offer that trial, 
 - **GIVEN** a banner whose featured five-star is a character with a trial
 - **WHEN** the Wish screen shows the banner
 - **THEN** the banner shows a trial button for that trial
+- **AND** clicking the trial button opens that trial
 
 #### Scenario: A banner with no trial offers none
 
@@ -28,9 +29,9 @@ A trial's party SHALL be its character at the trial's level, with the talent lev
 
 #### Scenario: The trial character takes its template's artifacts
 
-- **GIVEN** a trial at a level whose template gives five reliquaries
+- **GIVEN** a trial whose template names reliquaries
 - **WHEN** the trial's party is built
-- **THEN** the character wears those five reliquaries
+- **THEN** the character wears each named reliquary that the reliquary table holds
 
 ### Requirement: A trial's first clear pays its reward once
 
