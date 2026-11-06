@@ -15,7 +15,7 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
 // Loaded before there is anything to edit — and before a save has a resource to write to
@@ -25,7 +25,7 @@ const setupStore = async () => {
   await loadContent();
   return useVisualStore();
 };
-// The dialog hands `save` a clone of the visual, the way createEditFormData stages every edit
+// The form hands `applyEdit` a clone of the visual, the way createEditFormData stages every edit
 const createEditedVisual = (visual: Visual, type: VisualType) => {
   const editedVisual = structuredClone(toRawDeep(visual));
   editedVisual.type = type;
@@ -52,18 +52,36 @@ describe(useVisualStore, () => {
     await readResource();
   });
 
-  test("closes the dialog when the edit lands", async () => {
+  // The form's draft is written onto its visual as it changes, and the dashboard's autosave persists what is written
+  test("an applied edit writes its type onto the visual", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
-    const { save } = visualStore;
-    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
-    isEditFormDialogOpen.value = true;
-    const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
+    const { applyEdit } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const isSuccessful = applyEdit(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
 
-    expect(isSuccessful).toBe(true);
-    expect(takeOne(visuals.value).type).toBe(VisualType.Bar);
-    expect(isEditFormDialogOpen.value).toBe(false);
+    expect({ isSuccessful, type: takeOne(visuals.value).type }).toStrictEqual({
+      isSuccessful: true,
+      type: VisualType.Bar,
+    });
+  });
+
+  // The draft was copied when its form opened, so an apply writes the form's own fields and never the place or size the grid
+  // Has moved the visual to since
+  test("an applied edit keeps the visual's place and size", async () => {
+    expect.hasAssertions();
+
+    const visualStore = await setupStore();
+    const { applyEdit } = visualStore;
+    const { visuals } = storeToRefs(visualStore);
+    const visual = takeOne(visuals.value);
+    const editedVisual = createEditedVisual(visual, VisualType.Bar);
+    Object.assign(visual, { h: 2, w: 2, x: 4, y: 4 });
+    applyEdit(editedVisual);
+    const { h, type, w, x, y } = takeOne(visuals.value);
+
+    expect({ h, type, w, x, y }).toStrictEqual({ h: 2, type: VisualType.Bar, w: 2, x: 4, y: 4 });
   });
 
   // A published dashboard bakes its data into each binding, and a copy that kept it would draw that frozen data forever
@@ -104,59 +122,19 @@ describe(useVisualStore, () => {
     expect(duplicatedVisual.isAutoHeight).toBe(true);
   });
 
-  // A visual removed while its dialog was open has nothing to save onto, so the save is refused before the dashboard
-  // Is written and the dialog stays open on the draft
-  test("refuses an edit whose visual was removed and keeps the dialog open", async () => {
-    expect.hasAssertions();
-
-    const saveResourceContent = vi.fn<() => ReturnType<typeof createResource>>(() => createResource(1));
-    trpcMsw.dashboard.saveResourceContent.mutation(saveResourceContent);
-    const visualStore = await setupStore();
-    const { save } = visualStore;
-    const { isEditFormDialogOpen } = storeToRefs(visualStore);
-    isEditFormDialogOpen.value = true;
-    const isSuccessful = await save(new Visual({ type: VisualType.Bar }));
-
-    expect(isSuccessful).toBe(false);
-    expect(isEditFormDialogOpen.value).toBe(true);
-    expect(saveResourceContent).not.toHaveBeenCalled();
-  });
-
-  // The dashboard is persisted wholesale, so a rejected write has to leave the visual showing what the server
-  // Still has — and the dialog open, or the user's draft is gone with no way to retry it
-  test("reverts the visual and keeps the dialog open when the save fails", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.dashboard.saveResourceContent.mutation(() => {
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const visualStore = await setupStore();
-    const { save } = visualStore;
-    const { isEditFormDialogOpen, visuals } = storeToRefs(visualStore);
-    isEditFormDialogOpen.value = true;
-    const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
-
-    expect(takeOne(visuals.value).type).toBe(VisualType.Area);
-    expect(isEditFormDialogOpen.value).toBe(true);
-    expect(isSuccessful).toBe(false);
-  });
-
-  // A save is not instant, so the user can add a visual while one is in flight
-  test("keeps a visual added while the edit was in flight when the save fails", async () => {
+  // A visual removed while its form was open has nothing to write onto, so the edit is refused and the dashboard is left as it was
+  test("refuses an edit whose visual was removed", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
-    const { createVisual, save } = visualStore;
+    const { applyEdit } = visualStore;
     const { visuals } = storeToRefs(visualStore);
-    trpcMsw.dashboard.saveResourceContent.mutation(() => {
-      createVisual();
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
-    });
-    const isSuccessful = await save(createEditedVisual(takeOne(visuals.value), VisualType.Bar));
+    const isSuccessful = applyEdit(new Visual({ type: VisualType.Bar }));
 
-    expect(isSuccessful).toBe(false);
-    expect(visuals.value).toHaveLength(2);
-    expect(takeOne(visuals.value).type).toBe(VisualType.Area);
+    expect({ isSuccessful, type: takeOne(visuals.value).type }).toStrictEqual({
+      isSuccessful: false,
+      type: VisualType.Area,
+    });
   });
 
   // Same for the delete path, which unwinds by putting its own visual back
@@ -178,12 +156,13 @@ describe(useVisualStore, () => {
     expect(visuals.value.some((visual) => visual.id === id)).toBe(true);
   });
 
+  // The delete closes the visual's form with its selection, so the refusal reopens the form the selection names
   test("restores the selection of a visual whose delete failed", async () => {
     expect.hasAssertions();
 
     const visualStore = await setupStore();
     const { deleteVisual } = visualStore;
-    const { selectedVisualId, visuals } = storeToRefs(visualStore);
+    const { editedItem, selectedVisualId, visuals } = storeToRefs(visualStore);
     const { id } = takeOne(visuals.value);
     selectedVisualId.value = id;
     trpcMsw.dashboard.saveResourceContent.mutation(() => {
@@ -191,7 +170,24 @@ describe(useVisualStore, () => {
     });
     await deleteVisual({ id });
 
-    expect(selectedVisualId.value).toBe(id);
+    expect({ editedItemId: editedItem.value?.id, selectedVisualId: selectedVisualId.value }).toStrictEqual({
+      editedItemId: id,
+      selectedVisualId: id,
+    });
+  });
+
+  // A link to a visual names it in its query, so a load that finds it selects it, and its form opens in the inspector
+  test("a deep-linked visual is selected on restore", async () => {
+    expect.hasAssertions();
+
+    const linkedVisual = new Visual({ type: VisualType.Bar });
+    content = new Dashboard({ visuals: [linkedVisual] });
+    await useRouter().replace({ query: { id: linkedVisual.id } });
+    const visualStore = await setupStore();
+    const { selectedVisualId } = storeToRefs(visualStore);
+    await nextTick();
+
+    expect(selectedVisualId.value).toBe(linkedVisual.id);
   });
 
   // The rollback lands after the save's await, and by then the blade may hold another dashboard — put back through
@@ -543,18 +539,18 @@ describe(useVisualStore, () => {
     expect(held.x).toBe(3);
   });
 
-  // The edit form copies a group as it stood when it opened, so saving it keeps the visuals added to the group since
-  test("keeps the visuals a group holds when its edit is saved", async () => {
+  // The form copies a group as it stood when it opened, so applying it keeps the visuals added to the group since
+  test("keeps the visuals a group holds when its edit is applied", async () => {
     expect.hasAssertions();
 
     content = new Dashboard({ visuals: [new Visual({ type: VisualType.Group, visuals: [] })] });
     const visualStore = await setupStore();
-    const { addVisual, save } = visualStore;
+    const { addVisual, applyEdit } = visualStore;
     const { visuals } = storeToRefs(visualStore);
     const group = takeOne(visuals.value);
     const editedGroup = createEditedVisual(group, VisualType.Group);
     addVisual(VisualType.Bar, { h: 1, w: 1, x: 0, y: 0 }, group.id);
-    const isSuccessful = await save(editedGroup);
+    const isSuccessful = applyEdit(editedGroup);
 
     expect(isSuccessful).toBe(true);
     expect(group.visuals?.map(({ type }) => type)).toStrictEqual([VisualType.Bar]);

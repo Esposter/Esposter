@@ -5,9 +5,12 @@ import type { ToData } from "@esposter/shared";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
+// `onEdit` hears every open of an item, a press, a menu's Edit and a restore from the query params alike, so a caller that
+// Keeps a selection of its own writes it in one place
 export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(
   items: ComputedRef<TItem[]>,
   idKeys: [...TIdKeys],
+  onEdit?: (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => void,
 ) => {
   const router = useRouter();
   const isEditFormDialogOpen = ref(false);
@@ -39,6 +42,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     const item = items.value.find((candidateItem) => checkIsEntityIdEqual(candidateItem));
     if (!item) return;
 
+    onEdit?.(ids);
     editedItem.value = structuredClone(toRawDeep(item));
     isEditFormDialogOpen.value = true;
     await router.replace({ query: { ...router.currentRoute.value.query, ...ids } });

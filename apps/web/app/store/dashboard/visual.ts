@@ -14,7 +14,7 @@ import { removeVisualFromList } from "@/services/dashboard/visual/removeVisualFr
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { useAlertStore } from "@/store/alert";
 import { useDashboardStore } from "@/store/dashboard";
-import { toRawDeep } from "@esposter/shared";
+import { getSynchronizedFunction, toRawDeep } from "@esposter/shared";
 import { getFirstFreeCell } from "vue-grid-layout-headless";
 
 export const useVisualStore = defineStore("dashboard/visual", () => {
@@ -73,42 +73,42 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
       },
     };
   });
-  const clearSelection = () => {
-    selectedVisualId.value = "";
-  };
-  const { editItem: openEditForm, ...restEditFormData } = createEditFormData(
+  // The form's draft of the selected visual. Every open of a form goes through the primitive's editItem, a press, a menu's
+  // Edit and a link's restore alike, so each one selects the visual it opens
+  const { editedItem, editItem, resetItem } = createEditFormData(
     computed(() => listVisuals(visuals.value)),
     ["id"],
+    (ids) => {
+      selectedVisualId.value = ids.id;
+    },
   );
-  const { isEditFormDialogOpen } = restEditFormData;
-  // A press or Enter on a visual, and the Edit item of its menu, open its form through here, so they select it too
-  const editItem = (ids: { id: Visual["id"] }) => {
-    selectedVisualId.value = ids.id;
-    return openEditForm(ids);
+  // Clearing the selection closes the form it opened and the query that restores it, so a reload does not reopen the form
+  const clearSelection = () => {
+    selectedVisualId.value = "";
+    getSynchronizedFunction(resetItem)();
   };
   // The grid commits a visual's new placement by its id alone, so the placement lands on the visual wherever it sits
   const updateVisual = (visual: Partial<Visual> & Pick<Visual, "id">) => {
     const target = findVisual(visuals.value, visual);
     if (target) Object.assign(target, visual);
   };
-  // One write path: apply the edit locally, persist the dashboard, revert on failure. The dialog closes only
-  // On success so a rejected write keeps the user's draft open for retry instead of losing it. The rollback lands after
-  // The save's await, when the blade may hold another dashboard, so it writes to the visual it found on the dashboard the edit started on
-  const save = async (editedVisual: Visual) => {
-    const previousVisual = findVisual(visuals.value, editedVisual);
-    // A visual removed while its dialog was open has nothing to save onto, so the save is refused and the draft kept
-    if (!previousVisual) {
-      createAlert("The visual was removed, so the edit was not saved", "error");
+  // The form's draft written onto its visual as the form changes: the type, chart and dataset the form edits, and nothing
+  // Else. The place and size, fit height and a group's visuals are the grid's and the menu's, so a draft copied before one
+  // Of them moved never puts it back. The dashboard's autosave persists what is written, so this is not a save of its own
+  const applyEdit = (editedVisual: Visual) => {
+    const targetVisual = findVisual(visuals.value, editedVisual);
+    // A visual removed while its form was open has nothing to write onto, so the edit is refused and nothing changes
+    if (!targetVisual) {
+      createAlert("The visual was removed, so the edit was not applied", "error");
       return false;
     }
-    // Cloned because the edit is assigned onto the live visual. A group keeps the visuals it holds now rather than the
-    // Ones its form copied when it opened, so an edit never drops a visual added since
-    const snapshot = structuredClone(toRawDeep(previousVisual));
-    Object.assign(previousVisual, editedVisual, { visuals: previousVisual.visuals });
-    const isSuccessful = await saveDashboard();
-    if (isSuccessful) isEditFormDialogOpen.value = false;
-    else Object.assign(previousVisual, snapshot, { visuals: previousVisual.visuals });
-    return isSuccessful;
+
+    Object.assign(targetVisual, {
+      chart: structuredClone(toRawDeep(editedVisual.chart)),
+      dataset: structuredClone(toRawDeep(editedVisual.dataset)),
+      type: editedVisual.type,
+    });
+    return true;
   };
   // Fit height is a flag written on its own, so it is saved and taken back on a refusal like an edit, but opens no form
   const setAutoHeight = async (ids: { id: Visual["id"] }, isAutoHeight: boolean) => {
@@ -131,14 +131,17 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     const previousSelectedVisualId = selectedVisualId.value;
     removeVisualFromList(dashboard, location.group, ids.id);
     // The selection is cleared when it names the visual, or one a deleted group held with it
-    if (findVisual([location.visual], { id: selectedVisualId.value })) clearSelection();
+    const isSelectionCleared = Boolean(findVisual([location.visual], { id: selectedVisualId.value }));
+    if (isSelectionCleared) clearSelection();
     const selectionWriteCountAfterDelete = selectionWriteCount;
     const isSuccessful = await saveDashboard();
-    // A refused save also restores the selection the delete cleared, so the store is as it was before the delete. A selection
-    // Made while the save was in flight is the reader's, so it is kept, even when it lands back on the value the delete left
+    // A refused save also restores the selection the delete cleared, and its form with it, so the store is as it was before the
+    // Delete. A selection made while the save was in flight is the reader's, so it is kept, even when it lands back on the value
+    // The delete left
     if (!isSuccessful) {
       getVisualList(dashboard, location.group).push(location.visual);
-      if (selectionWriteCount === selectionWriteCountAfterDelete) selectedVisualId.value = previousSelectedVisualId;
+      if (isSelectionCleared && selectionWriteCount === selectionWriteCountAfterDelete)
+        await editItem({ id: previousSelectedVisualId });
     }
     return isSuccessful;
   };
@@ -193,15 +196,15 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   };
   // The ambient operations first, so the persisting create and delete above are the ones the store hands out
   return {
-    ...restEditFormData,
     addVisual,
+    applyEdit,
     clearSelection,
     createVisual,
     deleteVisual,
     duplicateVisual,
+    editedItem,
     editItem,
     moveVisual,
-    save,
     selectedVisualId,
     setAutoHeight,
     updateVisual,
