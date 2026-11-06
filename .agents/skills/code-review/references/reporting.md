@@ -4,17 +4,17 @@ Read when writing up a round's report.
 
 The table rule itself — every finding, one compact table, flush-left — is in `SKILL.md`. This page is the shape of the table and what each column renders.
 
-| #   | Finding                                     | Where              | Lane        | Severity    | Origin                             | Disposition                       |
-| --- | ------------------------------------------- | ------------------ | ----------- | ----------- | ---------------------------------- | --------------------------------- |
-| 1   | Reordered write drops entity on DB failure  | createThing.ts:40  | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
-| 2   | Truncated buffer decoded with wrong charset | decodeOutput.ts:15 | correctness | 🟡 major    | new                                | Fixed                             |
-| 3   | Comment names a deleted symbol              | helper.ts:6        | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
-| 4   | Third copy of the branch-restore rollback   | roomInvite.ts:22   | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreFoo` |
+| #   | Finding                                     | Where                           | Lane        | Severity    | Origin                             | Disposition                       |
+| --- | ------------------------------------------- | ------------------------------- | ----------- | ----------- | ---------------------------------- | --------------------------------- |
+| 1   | Reordered write drops entity on DB failure  | `createThing.ts`, createThing   | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
+| 2   | Truncated buffer decoded with wrong charset | `decodeOutput.ts`, decodeOutput | correctness | 🟡 major    | new                                | Fixed                             |
+| 3   | Comment names a deleted symbol              | `helper.ts`, helper             | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
+| 4   | Third copy of the branch-restore rollback   | `roomInvite.ts`, roomInvite     | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreFoo` |
 
 Fixes committed as abc1234. Refuted while reading: removeThing timeout bound, batch submission ordering.
 
 - **Finding** — the claim alone, ≤60 characters, no rationale or consequence clause. The trigger is what proved it; it does not go in the table. Append `×N` when the same defect was reached from N independent directions.
-- **Where** — `file:line`, plus `(+N)` when the same root cause shows at other lines, named under the table.
+- **Where** — the file in backticks and the symbol it sits in, plus `(+N)` when the same root cause shows at other symbols, named under the table.
 - **Lane** — `quality` or `correctness` (SKILL.md). Omit the column when the round ran one lane only.
 - **Severity** — 🔴 critical, 🟡 major (default), 🟢 minor. Sort by it, correctness above quality at equal severity. Quality findings are always minor.
 - **Origin** — how the finding arose: `new` (bare, no source), `regression <sha>` (the cited line came from an earlier fix — look there next), `reopened <page>` (the record settled this; say what the code does that the record does not cover, or it is a false positive), `stale-record <path>` (the code is right and the doc is wrong, so the fix is the doc edit).

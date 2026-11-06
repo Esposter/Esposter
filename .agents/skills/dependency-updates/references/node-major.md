@@ -26,6 +26,6 @@ A major moves when every line holds. A line that does not hold is the reason to 
 
 In one change, in this order, so no commit leaves the pin ahead of an environment:
 
-1. Move the Functions sites' `WEBSITE_NODE_DEFAULT_VERSION` to the new major, and any other runtime from line 3 with it. Preview and apply (`pnpm infra:preview`; the `pulumi-infra` skill's `references/operations.md`). When only the host is catching up to the existing pin, this step is the whole change.
+1. Move the Functions sites' `WEBSITE_NODE_DEFAULT_VERSION` to the new major, and any other runtime the checklist's item on other runtimes names with it. Preview and apply (`pnpm infra:preview`; the `pulumi-infra` skill's `references/operations.md`). When only the host is catching up to the existing pin, this step is the whole change.
 2. Raise the `node` group's `allowedVersions` in `renovate.json` to the next major.
 3. `pnpm update:node <major>`, then `pnpm refresh:lockfile` (`references/updating-node.md`), then the follow-through a bump owes (`references/bump-follow-through.md`).
