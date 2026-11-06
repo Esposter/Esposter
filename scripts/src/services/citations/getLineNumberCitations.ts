@@ -50,7 +50,7 @@ export const getLineNumberCitations = (markdown: string): LineNumberCitation[] =
 
     return getLineCitations(rawLine.replaceAll(URL_REGEX, " "))
       .filter(({ file }) => file === undefined || !checkIsExternalFile(file))
-      .toSorted((a, b) => a.index - b.index)
+      .toSorted((firstCitation, secondCitation) => firstCitation.index - secondCitation.index)
       .map(({ text }) => ({ line: lineIndex + 1, text }));
   });
 };

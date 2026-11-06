@@ -10,7 +10,7 @@ export const readVueSegments = (text: string): VueSegment[] => {
   const bodies = [script, scriptSetup]
     .filter((block) => block !== null)
     .map(({ loc }) => loc)
-    .toSorted((a, b) => a.start - b.start);
+    .toSorted((firstBody, secondBody) => firstBody.start - secondBody.start);
   const bytes = Buffer.from(text, "utf8");
   const segments: VueSegment[] = [];
   let cursor = 0;
