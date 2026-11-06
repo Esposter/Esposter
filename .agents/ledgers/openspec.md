@@ -33,8 +33,6 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-nod-krai             | —     | unreconciled |
 | genshin-offering-systems     | —     | unreconciled |
 | genshin-party                | —     | unreconciled |
-| genshin-playtest-tools       | —     | unreconciled |
-| genshin-program              | —     | unreconciled |
 | genshin-puzzles              | —     | unreconciled |
 | genshin-reference-first      | —     | unreconciled |
 | genshin-reputation           | —     | unreconciled |
