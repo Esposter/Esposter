@@ -4,7 +4,7 @@ import { GeometryType } from "#src/models/globeLandMask/GeometryType";
 import { rasterizeLandMask } from "#src/services/globeLandMask/rasterizeLandMask";
 import { describe, expect, test } from "vitest";
 
-const createSquare = (west: number, south: number, east: number, north: number) => [
+const createSquare = (west: number, south: number, east: number, north: number): [number, number][] => [
   [west, south],
   [east, south],
   [east, north],

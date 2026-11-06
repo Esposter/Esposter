@@ -17,15 +17,13 @@ export const rasterizeLandMask = (
   const height = 180 * cellsPerDegree;
   const spansByRow: [number, number][][] = Array.from({ length: height }, () => []);
   for (const { geometry } of features) {
-    const polygons = (
-      geometry.type === GeometryType.Polygon ? [geometry.coordinates] : geometry.coordinates
-    ) as number[][][][];
+    const polygons = geometry.type === GeometryType.Polygon ? [geometry.coordinates] : geometry.coordinates;
     for (const polygon of polygons) {
       const edges: [number, number, number, number][] = [];
       for (const ring of polygon)
         for (let i = 0; i < ring.length - 1; i++) {
-          const [x1, y1] = ring[i] as [number, number];
-          const [x2, y2] = ring[i + 1] as [number, number];
+          const [x1, y1] = takeOne(ring, i);
+          const [x2, y2] = takeOne(ring, i + 1);
           if (y1 !== y2) edges.push([x1, y1, x2, y2]);
         }
       for (let row = 0; row < height; row++) {
