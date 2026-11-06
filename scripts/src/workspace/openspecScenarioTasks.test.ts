@@ -55,7 +55,7 @@ describe("openspecScenarioTasks", () => {
         ({ id, mismatches: { unheldByDelta, unnamedByTasks } }) =>
           `${id}: unheld by its delta ${JSON.stringify(unheldByDelta)}, unnamed by its tasks ${JSON.stringify(unnamedByTasks)}`,
       );
-    const reconciled = Array.from(openRows)
+    const reconciled = [...openRows]
       .filter((id) => !violatingIds.has(id))
       .map((id) => `${id}: agrees now, so date its row or delete it`);
 
