@@ -20,7 +20,7 @@ The weapons are the one held-item family the recreation has no picture of. The t
 | Install blocks                           | `{data-root}/genshin-parity/game/GenshinImpact_Data/StreamingAssets/AssetBundles/blocks`, and the hotfix copies under `Persistent`                              | Roughly two thousand block files and a couple of hundred hotfix copies, at the version the game's `config.ini` states                                                                                      | Yes, but this Mac's exports are not taken as the PC's, for the reason the conversion path gives |
 | Drop prefabs                             | in the blocks, each reached from a weapon row's `gadgetId`                                                                                                      | One gadget id per row                                                                                                                                                                                      | The blocks: yes. The prefab: not exported                                                       |
 
-The index names a weapon's meshes, animators and icons by their file, never by the weapon. The table is the only place a weapon is named, and it reaches the index through its texture folder's name, which the name map of gap G3 has to handle. The table's kinds are six, because one crossbow row is a template; the repo's own `WeaponType` names five, and the builder leaves the crossbow out with a note.
+The index names a weapon's meshes, animators and icons by their file, never by the weapon. The table is the only place a weapon is named, and it reaches the index through its texture folder's name, which the name map of gap G3 has to handle. The table also holds a crossbow, which `WeaponType` does not name: one crossbow row is a template, and the builder leaves the crossbow out, with the reason noted in `scripts/src/services/genshinAssets/stats/constants.ts`.
 
 ## What the repo draws today
 
@@ -35,7 +35,7 @@ The index names a weapon's meshes, animators and icons by their file, never by t
 | Inventory grid              | `packages/genshin-interface/src/components/InventoryScreen/Index.vue`                                                                 | Tiles with no art                                                                         |
 | Character's Weapons tab     | `packages/genshin-interface/src/components/CharacterMenu/Weapons/Index.vue`                                                           | Squares and text. Its lock glyph is left to the game's art, by its own comment            |
 | Weapon data                 | `packages/genshin-world/src/models/weapon/WeaponData.ts`, built by `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`       | Table values only. No model, icon, grip, drop or effect field                             |
-| Weapon kinds                | `packages/genshin-world/src/models/weapon/WeaponType.ts`                                                                              | The five kinds the open world gives                                                       |
+| Weapon kinds                | `packages/genshin-world/src/models/weapon/WeaponType.ts`                                                                              | The kinds the open world gives, one member each                                           |
 | Trails                      | none for weapons. `packages/genshin-engine/src/vegetation/stepGrassTrail.ts` is the grass's                                           | Nothing                                                                                   |
 | Kits                        | `packages/genshin-engine/src/kits`                                                                                                    | Three kit folders: architecture, statue and tree                                          |
 
@@ -146,8 +146,6 @@ flowchart LR
 
 ## Notes
 
-- The change names phase 0, the lowest phase whose gate fails without it: its spec and recipe are the family's share of phase 0's exit gate, and its two commands are phase 0 tasks. Every task carries its phase as a marker, the phase 0 tasks included, so each task reads the same way in the pick.
-- This Mac's map and index are its own output. The map's sources are this Mac's paths, and its build log reports its own assets and collisions, while the acceptance that would tie this Mac's build to the Windows CLI has not run. So every index and export read here is this Mac's until that acceptance is recorded, and a record built from one is checked against the PC's export before it publishes.
 - G5 and G6 each have a task in phase 0 that builds the command the family cannot run without, and a later task in phase 2 or 7 that uses it. The phase 0 task holds only the command, so the screen and motion work is not pulled into phase 0.
 
 ## Key files

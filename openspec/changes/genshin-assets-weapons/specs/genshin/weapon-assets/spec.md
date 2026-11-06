@@ -4,12 +4,6 @@
 
 The recreation SHALL draw each weapon's picture, model and effect from parameters fitted to the game's own exports. No weapon mesh, texture, icon or effect file of the game is bundled, committed or published.
 
-#### Scenario: The deployed build holds no weapon file
-
-- **GIVEN** a developer's machine holds the game's weapon exports
-- **WHEN** the deployed build is made
-- **THEN** the build holds no weapon mesh, texture, icon or effect file
-
 #### Scenario: A published icon record holds outlines and no pixel
 
 - **GIVEN** a weapon's icon has been traced to its outline
@@ -50,6 +44,12 @@ A weapon's tile and the weapon screen's portrait frame SHALL show the outline of
 - **WHEN** its tile is drawn
 - **THEN** the tile shows the rarity face alone
 
+#### Scenario: A traced icon outline is loops in its own unit square
+
+- **GIVEN** a weapon's icon is traced from its own alpha
+- **WHEN** the outline is fitted
+- **THEN** the outline is loops inside the icon's own unit square
+
 ### Requirement: A dropped weapon is drawn as its own shape
 
 A dropped weapon SHALL be drawn with its own fitted shape, and a drop with no fitted shape stays a sphere.
@@ -83,6 +83,12 @@ A weapon's strike SHALL leave a trail whose width, colour and fade are the value
 - **WHEN** a weapon of that kind strikes
 - **THEN** no trail is drawn
 
+#### Scenario: A trail's width is read from the frames its strike draws
+
+- **GIVEN** a claymore strike is captured in a recording
+- **WHEN** the strike's trail is measured
+- **THEN** its width is read from the frames the strike draws
+
 ### Requirement: A sword attack plays its clip on the body
 
 A sword's attack SHALL play one of the game's sword attack clips on the character's body, in the clip's own timing.
@@ -114,3 +120,42 @@ The weapon screen SHALL draw the picked weapon's fitted blade behind its grid, o
 - **GIVEN** a picked weapon whose blade is not fitted
 - **WHEN** the screen is drawn
 - **THEN** the backdrop shows no blade
+
+### Requirement: The weapon fits take each held weapon from the game's exports
+
+The weapon fits SHALL take each held weapon's mesh, its row and its standby clip from the game's own exports, so that no mesh or grip is guessed from a weapon's name.
+
+#### Scenario: The weapons' roots reach every held mesh the index names
+
+- **GIVEN** the asset index names the held meshes of the weapons
+- **WHEN** the weapons' roots are exported
+- **THEN** every held mesh the index names is reached by the export
+
+#### Scenario: A row whose folder names no mesh is recorded with none, not a guessed one
+
+- **GIVEN** a weapon row whose texture folder names no mesh in the index
+- **WHEN** the row-to-mesh map is written
+- **THEN** the row is recorded with no mesh
+
+#### Scenario: A thin blade is fitted as blades, not one stack
+
+- **GIVEN** a held weapon's mesh is a thin blade
+- **WHEN** its shape is fitted
+- **THEN** it is fitted as blades, not as one stack
+
+#### Scenario: A kind's grip is read from its standby clip's hand curves
+
+- **GIVEN** a weapon kind has a standby clip that carries hand curves
+- **WHEN** its grip is fitted
+- **THEN** the grip is read from the curves of the WeaponR or WeaponL bone they name
+
+### Requirement: A weapon icon the index does not name is reported
+
+The weapon icon export SHALL report each icon name the asset index does not hold, instead of skipping it.
+
+#### Scenario: A weapon icon the index does not name is reported, not skipped
+
+- **GIVEN** a weapon row names an icon the asset index does not hold
+- **WHEN** the weapon icons are exported
+- **THEN** the export reports that icon name
+- **AND** the export writes no icon file for it
