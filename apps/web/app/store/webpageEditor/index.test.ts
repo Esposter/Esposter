@@ -83,7 +83,7 @@ describe(useWebpageEditorStore, () => {
     expect(webpageEditorStore.webpageEditor.imageUrl).toBe(TEST_URL);
   });
 
-  test("A warning does not refuse a save", async () => {
+  test("a warning does not refuse a save", async () => {
     expect.hasAssertions();
 
     const webpageEditorStore = useWebpageEditorStore();

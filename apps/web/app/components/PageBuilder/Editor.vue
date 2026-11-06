@@ -1,17 +1,26 @@
 <script setup lang="ts">
+import type { EditorRegistry } from "@/models/editor/EditorRegistry";
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { Context } from "vue-editor-layout-headless";
 
+import PageBuilderBar from "@/components/PageBuilder/Bar.vue";
+import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
+import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
+import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
+import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
+import PageBuilderStylePanel from "@/components/PageBuilder/StylePanel/Index.vue";
+import PageBuilderThemePanel from "@/components/PageBuilder/ThemePanel/Index.vue";
+import { EditorType } from "@/models/editor/EditorType";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
+import { emailLayout } from "@/services/pageBuilder/emailLayout";
 import {
-  CHECK_PANEL,
-  CONTENT_PANEL,
-  DEFAULT_SIDE_PANE_WIDTH,
-  STYLE_PANEL,
-  THEME_PANEL,
-} from "@/services/pageBuilder/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
+  PAGE_BUILDER_CONTENT_KEY_MAP,
+  PAGE_BUILDER_PANEL_ID_MAP,
+  PAGE_BUILDER_REGION_ID_MAP,
+  PAGE_BUILDER_REGION_NAME_MAP,
+  PAGE_BUILDER_SELECTION_KIND_MAP,
+} from "@/services/pageBuilder/pageBuilderLayout";
+import { webpageLayout } from "@/services/pageBuilder/webpageLayout";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
@@ -22,29 +31,27 @@ interface Props {
 }
 
 const { kind, resourceId } = defineProps<Props>();
-// The settings tabs the kind has content for: an email has no theme or check yet, so its tabs stop at content and style
-const panelItems = computed<UiTabItem<string>[]>(() => [
-  { title: CONTENT_PANEL, value: CONTENT_PANEL },
-  { title: STYLE_PANEL, value: STYLE_PANEL },
-  ...(kind.editor === PageBuilderEditor.Email
-    ? []
-    : [
-        { title: THEME_PANEL, value: THEME_PANEL },
-        { title: CHECK_PANEL, value: CHECK_PANEL },
-      ]),
-]);
-
+// The layout the kind is arranged by, its settings tabs and the names of its tabs
+const pageBuilderLayout = kind.editor === PageBuilderEditor.Email ? emailLayout : webpageLayout;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 // The document the resource holds under either kind, read through the kind the shell is given
 const getPageDocument = () => getHeldDocument(resourceId)?.document;
 const pageDocument = computed(getPageDocument);
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-const { getEditingNodeId } = pageBuilderCanvasStore;
+const { getEditingNodeId, getSelectedNodeId } = pageBuilderCanvasStore;
+// A node is the one selection kind a page builder layout names, and nothing selected is the empty kind
+const context = computed<Context>(() => {
+  const isNodeSelected = getSelectedNodeId(resourceId) !== "";
+  return {
+    mode: "",
+    selectionCount: isNodeSelected ? 1 : 0,
+    selectionKind: isNodeSelected ? PAGE_BUILDER_SELECTION_KIND_MAP.Node : PAGE_BUILDER_SELECTION_KIND_MAP.Nothing,
+    tool: "",
+  };
+});
 const shell = useTemplateRef("shell");
-const leftWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
-const rightWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
-const panel = ref(CONTENT_PANEL);
+const editorShell = useTemplateRef("editorShell");
 // The one live region every announcement goes through. Clearing first lets a repeat of the same text be announced again
 const announcement = ref("");
 const announce = (message: string) => {
@@ -73,13 +80,43 @@ watch(refusal, (message) => {
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
-// Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame
+// The findings the critique holds for the page, which the bar's problems surface lists, and the title of each finding's node
+const { findings, getFindingNodeTitle } = usePageBuilderCritique(() => resourceId);
+// What fills each panel, by the content key the layout names it with
+const registry: EditorRegistry = {
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Bar]: () =>
+    h(PageBuilderBar, { findings: findings.value, getNodeTitle: getFindingNodeTitle, resourceId }),
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Blocks]: () =>
+    h(PageBuilderPalette, {
+      announce,
+      getDocument: getPageDocument,
+      getFrameGeometry,
+      kind,
+      resourceId,
+      startMergeFieldDrag,
+      startPaletteDrag,
+    }),
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Content]: () => h(PageBuilderContentPanel, { kind, resourceId }),
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Layers]: () => h(PageBuilderLayers, { getDocument: getPageDocument, kind, resourceId }),
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Style]: () =>
+    kind.editor === PageBuilderEditor.Email
+      ? h(PageBuilderEmailStylePanel, { resourceId })
+      : h(PageBuilderStylePanel, { resourceId }),
+  [PAGE_BUILDER_CONTENT_KEY_MAP.Theme]: () => h(PageBuilderThemePanel, { resourceId }),
+};
+// Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame. The tree is
+// The layers tab of the blocks region, so that tab is shown before the row is focused
 watch(
   () => getEditingNodeId(resourceId),
   (nodeId, previousNodeId) => {
     if (nodeId || !previousNodeId) return;
 
-    shell.value?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)?.focus();
+    editorShell.value?.setActivePanel(PAGE_BUILDER_REGION_ID_MAP.Blocks, PAGE_BUILDER_PANEL_ID_MAP.Layers);
+    nextTick(() => {
+      shell.value
+        ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
+        ?.focus();
+    });
   },
 );
 </script>
@@ -89,34 +126,19 @@ watch(
     v-if="pageDocument"
     ref="shell"
     :class="{ 'pointer-events-none': isDragging }"
-    flex
-    gap-2
     h-full
     min-h-0
     @keydown="handleEnterKeydown($event)"
   >
-    <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col gap-4 min-h-0 relative>
-      <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-        <PageBuilderPalette
-          :announce
-          :get-document="getPageDocument"
-          :get-frame-geometry
-          :kind
-          :resource-id
-          :start-merge-field-drag
-          :start-palette-drag
-        />
-        <PageBuilderLayers :get-document="getPageDocument" :kind :resource-id />
-      </div>
-      <UiResizeHandle
-        v-model="leftWidth"
-        label="Resize the palette and layers"
-        :max="MAX_SIDE_PANE_WIDTH"
-        :min="MIN_SIDE_PANE_WIDTH"
-      />
-    </div>
-    <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
-      <PageBuilderCanvasDeviceToggle :resource-id />
+    <EditorShell
+      ref="editorShell"
+      :context
+      :editor-type="EditorType.PageBuilder"
+      :layout="pageBuilderLayout.layout"
+      :panel-title-map="pageBuilderLayout.panelTitleMap"
+      :region-name-map="PAGE_BUILDER_REGION_NAME_MAP"
+      :registry
+    >
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" />
       <PageBuilderCanvas
         v-else
@@ -129,34 +151,7 @@ watch(
         :resource-id
         @canvas-keydown="handleCanvasKeydown($event)"
       />
-    </div>
-    <div :style="{ width: `${rightWidth}px` }" shrink-0 min-h-0 relative>
-      <UiResizeHandle
-        v-model="rightWidth"
-        is-reversed
-        label="Resize the content panel"
-        :max="MAX_SIDE_PANE_WIDTH"
-        :min="MIN_SIDE_PANE_WIDTH"
-      />
-      <UiTabs
-        v-model="panel"
-        :items="panelItems"
-        label="Node settings"
-        is-filling
-        :variant="UiTabsVariant.Header"
-        px-3
-        h-full
-      >
-        <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :kind :resource-id />
-        <PageBuilderEmailStylePanel
-          v-if="panel === STYLE_PANEL && kind.editor === PageBuilderEditor.Email"
-          :resource-id
-        />
-        <PageBuilderStylePanel v-else-if="panel === STYLE_PANEL" :resource-id />
-        <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
-        <PageBuilderCheck v-if="panel === CHECK_PANEL" :resource-id />
-      </UiTabs>
-    </div>
+    </EditorShell>
     <!-- The ghost names the block, or says why the block is refused over the frame where no slot takes it -->
     <UiDragGhost
       v-if="dragPoint && draggedType"

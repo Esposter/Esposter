@@ -87,18 +87,10 @@ export const ROOT_POINTER = "/root";
 export const ROOT_INTERACTION_ID = "content:root";
 // The width the page builder's side panes start at, in pixels, within the bounds every side pane shares
 export const DEFAULT_SIDE_PANE_WIDTH = 260;
-// The content panel's title, which is also its value in the node settings tabs
-export const CONTENT_PANEL = "Content";
-// The theme panel's title, which is also its value in the node settings tabs
-export const THEME_PANEL = "Theme";
-// The check panel's title, which is also its value in the node settings tabs
-export const CHECK_PANEL = "Check";
 // The colour a new theme colour starts as, until the colour field changes it
 export const DEFAULT_THEME_COLOR = "#000000";
 // The stack a new font-stack token starts as, until its field changes it
 export const DEFAULT_FONT_STACK = "system-ui, sans-serif";
-// The style panel's title, which is also its value in the node settings tabs
-export const STYLE_PANEL = "Style";
 // The name each breakpoint's override is shown under, where the base is the desktop
 export const STYLE_BREAKPOINT_TITLE_MAP = {
   [StyleBreakpoint.Base]: "Desktop",

@@ -2,13 +2,15 @@ import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishStat
 import { checkHasSurveyInvite } from "#shared/services/pageBuilder/critique/checkHasSurveyInvite";
 import { critiqueWebpage } from "#shared/services/pageBuilder/critique/critiqueWebpage";
 import { getCritiqueEditorFinding } from "@/services/pageBuilder/getCritiqueEditorFinding";
-import { getCritiqueFindingRow } from "@/services/pageBuilder/getCritiqueFindingRow";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { readBrowserColor } from "@/services/shared/readBrowserColor";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { MAX_READ_LIMIT, parseJsonPointer } from "@esposter/shared";
 
-// The critique of the open webpage, unsaved edits included, as the rows the Check panel lists. A survey is published when
-// The owner's published surveys list it. Until that list is read, or when it is cut short before the survey, the invite is
+// The critique of the open webpage, unsaved edits included, as the findings the problems surface lists. A survey is published
+// When the owner's published surveys list it. Until that list is read, or when it is cut short before the survey, the invite is
 // Unchecked rather than reported as unpublished
 export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
@@ -33,14 +35,8 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
     return surveys.hasMore ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
   };
   const critiqueSources = { lookupSurveyPublishState, readColor: readBrowserColor };
-  const critiqueRows = computed(() => {
-    const document = getDocument(toValue(resourceId));
-    if (!document) return [];
-
-    return critiqueWebpage(document, critiqueSources).map((finding) => getCritiqueFindingRow(document, finding));
-  });
   // The critique as the problems surface's findings, computed once the document settles as every editor's check is. Each
-  // is a warning, and the save never reads them, so a finding informs and nothing waits on it
+  // Is a warning, and the save never reads them, so a finding informs and nothing waits on it
   const findings = useEditorFindings(
     () => getDocument(toValue(resourceId)),
     (document) => {
@@ -49,6 +45,16 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
       return critiqueWebpage(document, critiqueSources).map((finding) => getCritiqueEditorFinding(finding));
     },
   );
+  // The title of the node a finding names, as the layers tree titles it, or "" when the document holds no such node
+  const getFindingNodeTitle = (nodeId: string) => {
+    const document = getDocument(toValue(resourceId));
+    if (!document) return "";
 
-  return { critiqueRows, findings };
+    const nodePointer = getNodePointer(webpageKind, document, nodeId);
+    if (nodePointer === undefined) return "";
+
+    return getNodeTitle(webpageKind, document, parseJsonPointer(nodePointer));
+  };
+
+  return { findings, getFindingNodeTitle };
 };
