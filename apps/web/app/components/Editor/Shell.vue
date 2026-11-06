@@ -60,6 +60,18 @@ const presentationRegionMap = computed(() =>
 const dockedEdgeRegionMap = computed(() =>
   Map.groupBy(presentationRegionMap.value.get(RegionPresentation.Docked) ?? [], (region) => region.edge),
 );
+// The open overlay bars at each end of the canvas. An overlay column gives up their sizes, so that a bar and a
+// Column never claim the same corner
+const overlayInset = computed(() => {
+  const overlayEdgeRegionMap = Map.groupBy(
+    presentationRegionMap.value.get(RegionPresentation.Overlay) ?? [],
+    (region) => region.edge,
+  );
+  return {
+    bottom: (overlayEdgeRegionMap.get(RegionEdge.Bottom) ?? []).reduce((total, region) => total + region.size, 0),
+    top: (overlayEdgeRegionMap.get(RegionEdge.Top) ?? []).reduce((total, region) => total + region.size, 0),
+  };
+});
 // Each sheet is opened by a button the shell draws over the canvas, and it is drawn only while the sheet holds a panel
 const sheetRegions = computed(() => presentationRegionMap.value.get(RegionPresentation.Sheet) ?? []);
 // The control that opened the sheet, which takes focus back when the sheet closes
@@ -102,6 +114,7 @@ defineExpose({ setActivePanel, toggleRegion });
           v-for="region in presentationRegionMap.get(RegionPresentation.Overlay) ?? []"
           :key="region.id"
           :name="takeOne(regionNameMap, region.id)"
+          :overlay-inset="overlayInset"
           :panel-name-map="panelNameMap"
           :region
           :registry

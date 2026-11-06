@@ -116,6 +116,17 @@ A contextual panel that opens for a selection SHALL open over the canvas and lea
 - **WHEN** an element is selected
 - **THEN** the canvas keeps its width
 
+### Requirement: An overlay column sits clear of an overlay bar
+
+An overlay column SHALL start below each open overlay bar at the top edge and end above each open overlay bar at the bottom edge, so a bar and a column never claim the same corner.
+
+#### Scenario: An overlay column sits clear of an overlay bar
+
+- **GIVEN** an open overlay bar at the top edge and an open overlay column at the end edge
+- **WHEN** the shell is drawn
+- **THEN** the column starts at the bar's bottom edge
+- **AND** with the bar closed, the column starts at the top edge
+
 ### Requirement: A compact window opens the panel from a button
 
 On a compact window the contextual panel SHALL stay closed until the reader presses the button the shell shows while something is selected.

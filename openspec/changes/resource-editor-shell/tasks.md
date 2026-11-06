@@ -4,6 +4,7 @@
 - [x] 1.2 Wire the existing resize handle to each docked region's resolved size and limits, writing its answer through the package's resize. Verify: tests named after 'A handle resizes from the keyboard' and 'A resize past a limit stops at the limit', seen failing first.
 - [x] 1.3 Hold each editor type's reader state in a Pinia store over local storage, read back through the package's parse. Verify: a test named after 'A stored size is restored on the next open', seen failing first.
 - [x] 1.4 Draw no handle on a docked region whose minimum and maximum size are equal. Verify: a test named after 'A region with equal limits draws no resize handle'.
+- [x] 1.5 Inset each open overlay column by the open overlay bars at its ends, so a bar and a column never claim the same corner. Verify: a test named after 'An overlay column sits clear of an overlay bar', seen failing first.
 
 ## 2. Toolbar
 

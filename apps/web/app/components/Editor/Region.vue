@@ -9,13 +9,16 @@ import { RegionEdge, RegionPresentation } from "vue-editor-layout-headless";
 interface Props {
   // The name the region is announced by: its landmark's label, or a sheet's title
   name: string;
+  // The space the open overlay bars take at the top and bottom of the canvas. An overlay column starts below the top bars
+  // And ends above the bottom ones, so it never claims a corner a bar claims. Any other region takes no inset
+  overlayInset?: { bottom: number; top: number };
   // The name of each panel, keyed by panel id, which the tabs of a region holding several panels are titled by
   panelNameMap: Record<string, string>;
   region: ResolvedRegion;
   registry: EditorRegistry;
 }
 
-const { name, panelNameMap, region, registry } = defineProps<Props>();
+const { name, overlayInset, panelNameMap, region, registry } = defineProps<Props>();
 // A docked region reports the size its handle asks for, a sheet asks to be opened or closed, and a tabbed region reports the
 // Panel its reader picked, which the shell answers
 const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string]; toggle: [] }>();
@@ -28,6 +31,11 @@ const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
 );
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
+// An inline inset beats the `inset-y-0` class the overlay map gives a column, so that map stays as it is
+const overlayInsetStyle = computed(() => {
+  if (region.presentation !== RegionPresentation.Overlay || isVertical.value || !overlayInset) return {};
+  return { bottom: `${overlayInset.bottom}px`, top: `${overlayInset.top}px` };
+});
 </script>
 
 <template>
@@ -51,7 +59,7 @@ const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px
     v-else
     :aria-label="name"
     :class="region.presentation === RegionPresentation.Overlay ? RegionEdgeOverlayClassMap[region.edge] : 'relative'"
-    :style="sizeStyle"
+    :style="[sizeStyle, overlayInsetStyle]"
     ui-frame
     flex
     flex-col

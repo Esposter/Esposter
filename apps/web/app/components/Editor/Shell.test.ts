@@ -56,14 +56,12 @@ describe("editorShell", () => {
   });
   const layout = createLayout(region);
   // A selection's panel floats over the canvas on an expanded window, so it never takes a column beside the canvas
-  const overlayLayout = createLayout({
-    ...region,
-    sizeClassPresentationMap: {
-      [SizeClass.Compact]: RegionPresentation.Sheet,
-      [SizeClass.Expanded]: RegionPresentation.Overlay,
-      [SizeClass.Medium]: RegionPresentation.Sheet,
-    },
-  });
+  const overlayPresentationMap = {
+    [SizeClass.Compact]: RegionPresentation.Sheet,
+    [SizeClass.Expanded]: RegionPresentation.Overlay,
+    [SizeClass.Medium]: RegionPresentation.Sheet,
+  };
+  const overlayLayout = createLayout({ ...region, sizeClassPresentationMap: overlayPresentationMap });
   // A tool region at the top of an expanded window, which a compact window moves to the bottom edge
   const toolLayout = createLayout({
     ...region,
@@ -76,6 +74,29 @@ describe("editorShell", () => {
       [SizeClass.Medium]: RegionPresentation.Docked,
     },
   });
+  // An overlay bar over the canvas's top edge, sized at the maximum so its height is told apart from the column's width
+  const overlayBarRegion: Region = {
+    ...region,
+    defaultSize: maximumSize,
+    edge: RegionEdge.Top,
+    id: toolRegionId,
+    sizeClassPresentationMap: overlayPresentationMap,
+  };
+  // The column is listed first, so it is the shell's first aside, the one drawn before the bar
+  const overlayBarLayout: Layout = {
+    ...overlayLayout,
+    panels: [
+      ...overlayLayout.panels,
+      {
+        condition: { selectionKinds: [selectionKind] },
+        id: overlayBarRegion.id,
+        regionId: overlayBarRegion.id,
+        selectionKindContentKeyMap: {},
+        wildcardContentKey: contentKey,
+      },
+    ],
+    regions: [...overlayLayout.regions, overlayBarRegion],
+  };
   const registry: EditorRegistry = { [contentKey]: () => h("p") };
   // The shell is attached to the document so focus can move to and from its controls
   const mountShell = ({
@@ -209,6 +230,18 @@ describe("editorShell", () => {
     expect(component.get("[data-canvas]").element).toBe(canvasElement);
     expect(component.get("aside").element.parentElement).toBe(canvasWrapper);
     expect(canvasRow.children).toHaveLength(1);
+  });
+
+  test("an overlay column sits clear of an overlay bar", async () => {
+    expect.hasAssertions();
+
+    const component = mountShell({ layout: overlayBarLayout });
+
+    expect(component.get("aside").element.style.top).toBe(`${maximumSize}px`);
+
+    await component.setProps({ layout: overlayLayout });
+
+    expect(component.get("aside").element.style.top).toBe("0px");
   });
 
   test("a compact window opens the panel from a button", async () => {
