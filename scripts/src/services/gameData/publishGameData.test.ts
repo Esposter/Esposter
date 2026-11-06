@@ -50,12 +50,7 @@ describe(publishGameData, () => {
   test("stores each object once per account and plans the lock it names", async () => {
     expect.hasAssertions();
 
-    const result = await publishGameData({
-      currentLock: emptyLock,
-      createContainerClientMap: createContainerClientMap,
-      publication,
-      scopes,
-    });
+    const result = await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
 
     const plannedLock = getPlannedLock(result);
     expect(Object.keys(plannedLock.objects)).toStrictEqual(["stats/weapons"]);
@@ -75,15 +70,15 @@ describe(publishGameData, () => {
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        currentLock: emptyLock,
         createContainerClientMap: () => containerClientMap,
+        currentLock: emptyLock,
         publication,
         scopes,
       }),
     );
     const rerun = await publishGameData({
-      currentLock,
       createContainerClientMap: () => containerClientMap,
+      currentLock,
       publication,
       scopes,
     });
@@ -103,8 +98,8 @@ describe(publishGameData, () => {
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        currentLock: emptyLock,
         createContainerClientMap: () => containerClientMap,
+        currentLock: emptyLock,
         publication,
         scopes,
       }),
@@ -114,8 +109,8 @@ describe(publishGameData, () => {
     prodBlobs?.delete(getGameDataBlobName(record.dataset, record.hash));
 
     const rerun = await publishGameData({
-      currentLock,
       createContainerClientMap: () => containerClientMap,
+      currentLock,
       publication,
       scopes,
     });
@@ -136,8 +131,8 @@ describe(publishGameData, () => {
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        currentLock: emptyLock,
         createContainerClientMap: () => containerClientMap,
+        currentLock: emptyLock,
         publication,
         scopes,
       }),
@@ -147,8 +142,8 @@ describe(publishGameData, () => {
       indexes: { "profile/English": { ...publication.indexes["profile/English"], "10000003": { name: "c" } } },
     };
     const result = await publishGameData({
-      currentLock,
       createContainerClientMap: () => containerClientMap,
+      currentLock,
       publication: changedPublication,
       scopes,
     });
@@ -165,19 +160,9 @@ describe(publishGameData, () => {
   test("rewrites a stored object that is past the reuse window and that no lock names", async () => {
     expect.hasAssertions();
 
-    await publishGameData({
-      currentLock: emptyLock,
-      createContainerClientMap: createContainerClientMap,
-      publication,
-      scopes,
-    });
+    await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
-    const result = await publishGameData({
-      currentLock: emptyLock,
-      createContainerClientMap: createContainerClientMap,
-      publication,
-      scopes,
-    });
+    const result = await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
 
     expect(result).toStrictEqual({
       outcome: GameDataPublishOutcome.Published,
@@ -207,20 +192,10 @@ describe(publishGameData, () => {
       objects: {},
     };
     const first = getPlannedLock(
-      await publishGameData({
-        currentLock: emptyLock,
-        createContainerClientMap: createContainerClientMap,
-        publication: ascending,
-        scopes,
-      }),
+      await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication: ascending, scopes }),
     );
     const second = getPlannedLock(
-      await publishGameData({
-        currentLock: emptyLock,
-        createContainerClientMap: createContainerClientMap,
-        publication: descending,
-        scopes,
-      }),
+      await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication: descending, scopes }),
     );
 
     expect(formatGameDataLock(second)).toBe(formatGameDataLock(first));
@@ -250,8 +225,8 @@ describe(publishGameData, () => {
 
     const createContainerClientMapSpy = vi.fn<() => Record<GameDataTarget, ContainerClient>>(createContainerClientMap);
     const result = await publishGameData({
-      currentLock: emptyLock,
       createContainerClientMap: createContainerClientMapSpy,
+      currentLock: emptyLock,
       publication: { indexes: {}, objects: {} },
       scopes,
     });
@@ -267,15 +242,15 @@ describe(publishGameData, () => {
     const containerClientMap = createContainerClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        currentLock: emptyLock,
         createContainerClientMap: () => containerClientMap,
+        currentLock: emptyLock,
         publication,
         scopes,
       }),
     );
     const result = await publishGameData({
-      currentLock,
       createContainerClientMap: () => containerClientMap,
+      currentLock,
       publication: { indexes: {}, objects: {} },
       scopes,
     });
@@ -299,8 +274,8 @@ describe(publishGameData, () => {
 
     await expect(
       publishGameData({
-        currentLock: emptyLock,
         createContainerClientMap: () => containerClientMap,
+        currentLock: emptyLock,
         publication,
         scopes,
       }),
