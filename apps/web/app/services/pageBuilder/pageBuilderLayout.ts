@@ -36,11 +36,17 @@ export const PAGE_BUILDER_REGION_NAME_MAP = {
 } as const;
 // The bar holds one row of controls, so it is held at that one size and its handle has nothing to move
 const PAGE_BAR_SIZE = 48;
-const SIDE_REGION_PRESENTATION_MAP = {
+export const SIDE_REGION_PRESENTATION_MAP = {
   [SizeClass.Compact]: RegionPresentation.Sheet,
   [SizeClass.Expanded]: RegionPresentation.Docked,
   [SizeClass.Medium]: RegionPresentation.Sheet,
 } as const satisfies Record<SizeClass, RegionPresentation>;
+// The size a side region opens at, and is held between
+export const SIDE_REGION_SIZE = {
+  defaultSize: DEFAULT_SIDE_PANE_WIDTH,
+  maximumSize: MAX_SIDE_PANE_WIDTH,
+  minimumSize: MIN_SIDE_PANE_WIDTH,
+};
 // A side region is a column beside the canvas while the window has room for it, and a sheet from its edge otherwise. The medium
 // Class is the one the page's drawers are sheets in, where two columns would leave the canvas too little width to edit in
 export const PAGE_BUILDER_REGIONS: Region[] = [
@@ -59,21 +65,17 @@ export const PAGE_BUILDER_REGIONS: Region[] = [
     },
   },
   {
-    defaultSize: DEFAULT_SIDE_PANE_WIDTH,
+    ...SIDE_REGION_SIZE,
     edge: RegionEdge.Start,
     id: PAGE_BUILDER_REGION_ID_MAP.Blocks,
-    maximumSize: MAX_SIDE_PANE_WIDTH,
-    minimumSize: MIN_SIDE_PANE_WIDTH,
     opening: RegionOpening.OnDemand,
     sizeClassEdgeMap: {},
     sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
   },
   {
-    defaultSize: DEFAULT_SIDE_PANE_WIDTH,
+    ...SIDE_REGION_SIZE,
     edge: RegionEdge.End,
     id: PAGE_BUILDER_REGION_ID_MAP.Inspector,
-    maximumSize: MAX_SIDE_PANE_WIDTH,
-    minimumSize: MIN_SIDE_PANE_WIDTH,
     opening: RegionOpening.WithContent,
     sizeClassEdgeMap: {},
     sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,

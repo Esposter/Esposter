@@ -3,24 +3,16 @@ import type { Layout } from "vue-editor-layout-headless";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
-import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
-import { PAGE_BUILDER_PANEL_ID_MAP, PAGE_BUILDER_PANEL_NAME_MAP } from "@/services/pageBuilder/pageBuilderLayout";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
+import {
+  PAGE_BUILDER_PANEL_ID_MAP,
+  PAGE_BUILDER_PANEL_NAME_MAP,
+  SIDE_REGION_PRESENTATION_MAP,
+  SIDE_REGION_SIZE,
+} from "@/services/pageBuilder/pageBuilderLayout";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
 // The bar is one row where its controls fit, and a reader drags it taller where they wrap
 const BAR_SIZE = { defaultSize: 56, maximumSize: 160, minimumSize: 56 };
-const SIDE_REGION_SIZE = {
-  defaultSize: DEFAULT_SIDE_PANE_WIDTH,
-  maximumSize: MAX_SIDE_PANE_WIDTH,
-  minimumSize: MIN_SIDE_PANE_WIDTH,
-};
-// A side region is docked beside the canvas on a wide window, and a sheet from its edge on a narrower one, as the page's drawers are
-const SIDE_REGION_PRESENTATION_MAP = {
-  [SizeClass.Compact]: RegionPresentation.Sheet,
-  [SizeClass.Expanded]: RegionPresentation.Docked,
-  [SizeClass.Medium]: RegionPresentation.Sheet,
-};
 // The blocks region holds the layers tree as its structure tab, so a text edit's end shows that tab before it returns focus to
 // The tree. The ids are named here, so the editor's reveal and the layout name the same panel
 export const EMAIL_BLOCKS_REGION_ID = "blocks";
