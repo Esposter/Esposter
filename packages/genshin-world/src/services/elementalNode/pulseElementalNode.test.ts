@@ -29,7 +29,7 @@ describe(pulseElementalNode, () => {
     expect(enemy.statuses[0]?.secondsRemaining).toBe(Infinity);
   });
 
-  test("a buffed enemy gains the buffed pulse gauge more, up to the node's most", () => {
+  test("a buffed enemy gains 1.2 more gauge, up to 3.6", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();

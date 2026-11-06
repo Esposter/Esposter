@@ -9,7 +9,7 @@ import { stepElementalNodeBuffs } from "#src/services/elementalNode/stepElementa
 import { describe, expect, test } from "vitest";
 
 describe(stepElementalNodeBuffs, () => {
-  test("a buff a reaction depletes is lifted at the next step, and its enemy waits two pulses to regain it", () => {
+  test("a buff a reaction depletes is lifted at the next step and its enemy waits two pulses to regain it", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();
