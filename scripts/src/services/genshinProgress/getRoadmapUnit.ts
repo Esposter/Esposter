@@ -17,7 +17,7 @@ export const getRoadmapUnit = (
       phase,
       state: isDone ? GenshinUnitState.Done : GenshinUnitState.Runnable,
     };
-  if (isDone) return { blocker: "", kind: GenshinProgressKind.Quest, phase, state: GenshinUnitState.Done };
+  if (isDone) return { blocker: "", kind: GenshinProgressKind.Quest, phase, quest, state: GenshinUnitState.Done };
   const state = scriptedQuests.includes(quest) ? GenshinUnitState.Scripted : GenshinUnitState.NotMeasurable;
-  return { blocker: "", kind: GenshinProgressKind.Quest, phase, state };
+  return { blocker: "", kind: GenshinProgressKind.Quest, phase, quest, state };
 };

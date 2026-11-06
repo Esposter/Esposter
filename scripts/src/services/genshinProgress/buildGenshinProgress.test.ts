@@ -3,6 +3,7 @@ import { GenshinExitCheckState } from "#src/models/genshinProgress/GenshinExitCh
 import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
 import type { GenshinExitReadings } from "#src/models/genshinProgress/GenshinExitReadings";
 import { buildGenshinProgress } from "#src/services/genshinProgress/buildGenshinProgress";
+import { formatGenshinProgress } from "#src/services/genshinProgress/formatGenshinProgress";
 import { GENSHIN_NO_COMMAND_NOTE, GENSHIN_PHASE_GATES } from "#src/services/genshinProgress/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -256,7 +257,7 @@ describe(buildGenshinProgress, () => {
   test("A quest with a script is reported as scripted, not done", () => {
     expect.hasAssertions();
 
-    const { phases } = buildGenshinProgress(
+    const progress = buildGenshinProgress(
       {
         areas: [],
         changes: [],
@@ -273,7 +274,7 @@ describe(buildGenshinProgress, () => {
       [],
     );
 
-    expect(takeOne(phases, 4).rows).toStrictEqual([
+    expect(takeOne(progress.phases, 4).rows).toStrictEqual([
       {
         blocked: 0,
         done: 0,
@@ -286,6 +287,9 @@ describe(buildGenshinProgress, () => {
         waiting: 0,
       },
     ]);
+    const lines = formatGenshinProgress(progress);
+    expect(lines).toContain("  scripted: quest 351");
+    expect(lines).toContain("  not measurable: quest 352");
   });
 
   test("A check with no command is not measurable", () => {
