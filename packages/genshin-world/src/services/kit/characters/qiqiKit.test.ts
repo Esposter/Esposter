@@ -21,6 +21,7 @@ import { createQiqiKitBehaviour, QIQI_CHARACTER_ID } from "#src/services/kit/cha
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -188,6 +189,49 @@ describe(createQiqiKitBehaviour, () => {
     takeDamage(travelerCombatant);
 
     expect(travelerMember.healthShare).toBeCloseTo(0.5 + (577.3388 + 0.9 * 1000) / 10_000);
+  });
+
+  test("a Talisman heal reads Qiqi's ATK with the buffs on her as they stand at that heal", () => {
+    expect.hasAssertions();
+    const combatant = createQiqiCombatant();
+    const party = createParty([QIQI_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, {
+      activeCombatant: travelerCombatant,
+      characterIdCombatantMap: new Map([
+        [QIQI_CHARACTER_ID, combatant],
+        [TRAVELER_CHARACTER_ID, travelerCombatant],
+      ]),
+      party,
+    });
+    const travelerMember = getPartyMember(party, TRAVELER_CHARACTER_ID);
+    travelerMember.healthShare = 0.5;
+    // The share of her health the Traveler's hit on a marked enemy raises her by
+    const healFromTalisman = (): number => {
+      const healthShare = travelerMember.healthShare;
+      QIQI_KIT.onKitEvent?.(
+        {
+          enemy: createTalismanEnemy(),
+          hit: takeOne(QIQI_KIT.normalAttacks[0]?.hits ?? []),
+          isCritical: false,
+          isDefeated: false,
+          kind: KitEventKind.DamageTaken,
+          striker: travelerCombatant,
+        },
+        context,
+        combatant,
+      );
+      return travelerMember.healthShare - healthShare;
+    };
+    const firstHeal = healFromTalisman();
+    buffKitMember(context.kitEffectState, QIQI_CHARACTER_ID, {
+      amount: 1,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    const secondHeal = healFromTalisman();
+
+    expect(secondHeal).toBeGreaterThan(firstHeal);
   });
 
   test("ascension 4's Normal Attack hit gives the enemy a Talisman, once in 30 seconds", () => {

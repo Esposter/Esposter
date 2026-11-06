@@ -16,6 +16,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -142,7 +143,7 @@ export const createQiqiKitBehaviour = ({
     // Attack of Qiqi's may give the enemy a Talisman from Ascension 4, and the Herald's hits on it give her energy from
     // One constellation
     onKitEvent: (event, context, combatant) => {
-      const { activeCombatant, kitEffectState, party, random } = context;
+      const { activeCombatant, characterIdCombatantMap, kitEffectState, party, random } = context;
       if (event.kind === KitEventKind.ReactionTriggered) {
         if (
           combatant.ascension >= ASCENSION_1 &&
@@ -170,11 +171,17 @@ export const createQiqiKitBehaviour = ({
           id: TALISMAN_HEAL_COOLDOWN_STATUS_ID,
           secondsRemaining: TALISMAN_HEAL_COOLDOWN_SECONDS,
         });
+        const { attack } = getBuffedCombatant(
+          combatant,
+          kitEffectState.effects,
+          party,
+          characterIdCombatantMap,
+        ).attributes;
         changeKitMemberHealth(
           context,
           combatant,
           striker.characterId,
-          talismanHealHealth + talismanHealAttackShare * combatant.attributes.attack,
+          talismanHealHealth + talismanHealAttackShare * attack,
         );
       }
 

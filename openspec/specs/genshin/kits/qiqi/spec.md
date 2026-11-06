@@ -75,6 +75,13 @@ Damage the active character deals an enemy holding the Talisman SHALL heal that 
 - **WHEN** the active character deals damage to that enemy twice within one second
 - **THEN** the active character is healed only once in that second
 
+#### Scenario: An ATK buff put on Qiqi raises the next heal
+
+- **GIVEN** the active character's damage has healed her from one enemy holding a Talisman
+- **AND** an ATK buff is put on Qiqi
+- **WHEN** the active character deals damage to another enemy holding a Talisman
+- **THEN** that heal is larger than the first
+
 ### Requirement: A Glimpse into Arcanum keeps a longer Talisman
 
 From Ascension 4, a Talisman with six seconds or more left SHALL NOT be replaced by a new cast, and the new cast SHALL spend no cooldown.
