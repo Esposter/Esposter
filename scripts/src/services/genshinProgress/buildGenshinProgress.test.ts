@@ -144,7 +144,7 @@ describe(buildGenshinProgress, () => {
     ]);
   });
 
-  test("a compute area whose only open line has no id is waiting on that line, never done or runnable", () => {
+  test("a compute page whose only open line has no id waits on that line", () => {
     expect.hasAssertions();
 
     const progress = buildGenshinProgress(
