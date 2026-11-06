@@ -12,9 +12,18 @@ import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-ed
 
 // The size class is read from the display composable, so a test says how small the window is before the shell mounts
 const display = vi.hoisted(() => ({ isCompact: false, isMobile: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), () => ({
-  useUiDisplay: () => ({ isMobile: shallowRef(display.isMobile), xs: shallowRef(display.isCompact) }),
-}));
+vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    useUiDisplay: () => ({
+      ...actual.useUiDisplay(),
+      isMobile: shallowRef(display.isMobile),
+      xs: shallowRef(display.isCompact),
+    }),
+  };
+});
 
 describe("editorShell", () => {
   const contentKey = "properties";
