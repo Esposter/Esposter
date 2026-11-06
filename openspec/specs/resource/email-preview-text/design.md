@@ -11,7 +11,7 @@ flowchart LR
   HTML --> SUB[substituteMergeFields per row]
 ```
 
-- **The field is the root's form.** The email's root form holds one field, `preview`, and nothing else of the head. It is edited through the page builder's history like any other root edit, so an undo takes the line back.
+- **The field is the editor bar's.** The [email editor's bar](../page-builder/email/design.md) holds one text field for the line, which writes the root's `preview` and nothing else of the head. It is edited through the page builder's history as one root edit, so an undo takes the line back.
 - **It compiles to markup.** The [MJML blocks](../../mjml-blocks/README.md) package writes the root's `preview` as an `mj-preview` in the head, its text escaped, and reads the element back into the same prop on import. A preview left unset writes no element.
 - **A new email starts with a placeholder.** The starter document carries a short line that shows under the subject in most inboxes, which the author replaces.
 - **Merge fields work in it.** A `{{column}}` in the preview text is substituted per row on export like any token in the body, since substitution runs over the whole compiled HTML ([email personalization](../email-personalization/design.md)).
@@ -23,12 +23,12 @@ flowchart LR
 
 ## Key files
 
-| File                                                                | Role                                                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form's `preview` field, the only head field it edits |
-| `apps/web/shared/services/pageBuilder/email/starterEmailSource.ts`  | the starter email's placeholder preview                       |
-| `packages/mjml-blocks/src/services/renderMjmlHead.ts`               | the preview written into the head as `mj-preview`             |
-| `packages/mjml-blocks/src/services/readMjmlHead.ts`                 | the preview read back from `mj-preview` on import             |
+| File                                                               | Role                                                    |
+| ------------------------------------------------------------------ | ------------------------------------------------------- |
+| `apps/web/app/components/PageBuilder/Email/Bar.vue`                | the bar's text field, which writes the root's `preview` |
+| `apps/web/shared/services/pageBuilder/email/starterEmailSource.ts` | the starter email's placeholder preview                 |
+| `packages/mjml-blocks/src/services/renderMjmlHead.ts`              | the preview written into the head as `mj-preview`       |
+| `packages/mjml-blocks/src/services/readMjmlHead.ts`                | the preview read back from `mj-preview` on import       |
 
 ## Sources
 

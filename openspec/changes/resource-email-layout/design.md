@@ -42,6 +42,12 @@ flowchart TD
 - **The device toggle is in the bar for both modes.** The width is a property of how the message is viewed, not of one mode. Rejected: the toggle above the canvas only in Design, which leaves Preview with its own.
 - **No Theme tab and no per-breakpoint tab.** The email has no theme today and no breakpoints, and a tab with nothing to show is what the survey's layout removes. Rejected: keeping the page builder's tabs for uniformity.
 - **Structure is kept for the keyboard.** See above. Rejected: dropping the layers tree because none of the email builders read in full documented one, since they are pointer tools and the repo holds a keyboard path for every move.
+- **The bar is a docked region the reader sizes.** Its controls wrap on a narrow window, so one fixed row would clip them. The region holds one row at its default and a reader drags it taller, within a range. Rejected: a fixed one-row region, and a bar that folds its controls into the overflow menu, which would hide the dataset and the preview text the author edits.
+- **The email has its own editor type.** The webpage and the email have different regions, so one reader state under the page builder's key would hold both layouts' sizes, and an id they share would take the other's size. Rejected: the shared page builder member the shell design named, which keeps the two sizes in one record.
+- **A region with several panels draws tabs.** The inspector's Content and Style and the blocks' Blocks and Structure are one region each, and the reader chooses between them. The shell drew only the first panel, so the shell now draws a tab strip labelled by the shell's `panelNameMap`, which names every panel, the way `regionNameMap` names every region. Rejected: a second region for each tab, which would dock two panels where one fits, and a tab strip in each registry entry, which would hold the reader's choice outside the layout's state.
+- **The registry binds each component to the blade's state.** The palette, the canvas's drag and the key commands are the blade's own composition, which no store holds, and the repo bans `provide` and `inject`. So each registry entry is a function that renders its component with the state the blade holds, which the shell draws with no props. Rejected: a store for the drag, which would outlive the open document it belongs to.
+- **Preview compiles in Design too, so its messages reach the bar.** Preview is mounted beneath Design, so the findings are the compile's whatever the mode. This compiles once per settled edit in both modes, where it compiled only in Preview. Rejected: compiling on entering Design alone, which would miss an edit made there before a switch.
+- **The root form holds no field.** The preview text is the bar's, so the settings panel with nothing selected draws nothing today. The panel stays, since the design names default attributes as the next root props, and the lead decides whether an empty panel should wait for a field.
 
 ## Not in this change
 
@@ -51,15 +57,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                          | Role                                                                                      |
-| :------------------------------------------------------------ | :---------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Email/Editor.vue`           | the editor's arrangement, with its dataset picker and mode toggle, replaced by the layout |
-| `apps/web/app/components/PageBuilder/Editor.vue`              | the shared arrangement, replaced by a layout for each of the webpage and the email        |
-| `apps/web/app/components/PageBuilder/Palette.vue`             | the palette, registered as the Blocks tab                                                 |
-| `apps/web/app/components/PageBuilder/Layers.vue`              | the layers tree, registered as the Structure tab                                          |
-| `apps/web/app/components/PageBuilder/Canvas/DeviceToggle.vue` | the device toggle, which moves into the bar                                               |
-| `openspec/specs/resource/page-builder/email/design.md`        | the email editor's design, whose shell and preview sentences this supersedes              |
-| `openspec/specs/resource/email-preview-text/design.md`        | the preview text the bar's field binds                                                    |
+| File                                                           | Role                                                                                        |
+| :------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `apps/web/app/components/Resource/Email/Editor.vue`            | the blade on the editor shell: the layout, the registry and the compile's findings          |
+| `apps/web/app/components/PageBuilder/Email/Bar.vue`            | the bar: the mode switch, the dataset, the preview text, the device and the problems        |
+| `apps/web/app/services/emailEditor/emailLayout.ts`             | the email's layout, its panels and the names the shell draws its regions and tabs under     |
+| `apps/web/app/composables/pageBuilder/usePageBuilderEditor.ts` | the page builder's editing composition, which the blade calls beside the webpage's own copy |
+| `apps/web/app/components/PageBuilder/Editor.vue`               | the shared arrangement, which the email no longer mounts and the webpage's layout replaces  |
+| `apps/web/app/components/PageBuilder/Palette.vue`              | the palette, registered as the Blocks tab                                                   |
+| `apps/web/app/components/PageBuilder/Layers.vue`               | the layers tree, registered as the Structure tab                                            |
+| `apps/web/app/components/PageBuilder/Canvas/DeviceToggle.vue`  | the device toggle, which the bar mounts and the webpage's arrangement still mounts          |
+| `openspec/specs/resource/page-builder/email/design.md`         | the email editor's design, whose shell and preview sentences this supersedes                |
+| `openspec/specs/resource/email-preview-text/design.md`         | the preview text the bar's field binds                                                      |
 
 ## Sources
 

@@ -30,7 +30,7 @@ Each element on the design canvas SHALL show what its attributes resolve to: its
 
 ### Requirement: Preview shows the email as a client receives it
 
-Preview SHALL show the compiled email at the width the owner chooses, and SHALL show the validator's messages above it.
+Preview SHALL show the compiled email at the width the owner chooses, and the problems surface SHALL list the validator's messages as findings in Design and in Preview.
 
 #### Scenario: preview shows the compiled email at mobile width
 
@@ -38,11 +38,11 @@ Preview SHALL show the compiled email at the width the owner chooses, and SHALL 
 - **WHEN** the owner switches Preview to mobile width
 - **THEN** the compiled email is shown at 375 pixels wide
 
-#### Scenario: validator messages show above the preview
+#### Scenario: validator messages are findings in the problems surface
 
 - **GIVEN** an email whose markup fails strict validation
-- **WHEN** the owner views Preview
-- **THEN** an alert lists each validator message above the preview
+- **WHEN** the owner edits it in Design
+- **THEN** the problems surface lists each validator message as an error finding
 
 ### Requirement: The preview text is shown as the email's inbox preview
 
@@ -153,6 +153,6 @@ Preview SHALL compile the email once after a run of edits settles, and SHALL NOT
 
 #### Scenario: a run of edits compiles once
 
-- **GIVEN** an email open in the editor with Preview shown
+- **GIVEN** an email open in the editor
 - **WHEN** the owner types several characters in a row and stops
 - **THEN** one compile is requested once the edits settle
