@@ -1,49 +1,38 @@
 <script setup lang="ts">
 import type { UiCommand } from "@/models/ui/UiCommand";
-import type { UiTabItem } from "@/models/ui/UiTabItem";
+import type { Context } from "vue-editor-layout-headless";
 
+import { EditorType } from "@/models/editor/EditorType";
+import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
-import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
 import {
-  CANVAS_TAB,
-  LAYERS_TAB,
-  LOGIC_TAB,
-  PALETTE_TAB,
-  PROPERTIES_TAB,
-  STRUCTURE_TAB,
   SURVEY_CREATOR_COMMAND_GROUP,
-  THEME_TAB,
+  SURVEY_DESIGN_MODE,
+  SURVEY_PREVIEW_MODE,
 } from "@/services/resource/survey/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
+import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
+import { SurveyEditorPanelNameMap } from "@/services/resource/survey/SurveyEditorPanelNameMap";
+import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
+import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
+import { noop } from "@esposter/shared";
 
-// The tabs a narrow screen stacks the three panes into, one pane at a time: the structure pane's two tabs as one tab
-const narrowTabItems: UiTabItem<string>[] = [
-  { title: CANVAS_TAB, value: CANVAS_TAB },
-  { title: STRUCTURE_TAB, value: STRUCTURE_TAB },
-  { title: PROPERTIES_TAB, value: PROPERTIES_TAB },
-  { title: LOGIC_TAB, value: LOGIC_TAB },
-  { title: THEME_TAB, value: THEME_TAB },
-];
-const leftTabItems: UiTabItem<string>[] = [
-  { title: LAYERS_TAB, value: LAYERS_TAB },
-  { title: PALETTE_TAB, value: PALETTE_TAB },
-];
-const rightTabItems: UiTabItem<string>[] = [
-  { title: PROPERTIES_TAB, value: PROPERTIES_TAB },
-  { title: LOGIC_TAB, value: LOGIC_TAB },
-  { title: THEME_TAB, value: THEME_TAB },
-];
 const surveyCreatorStore = useSurveyCreatorStore();
-const { selectedPointer } = storeToRefs(surveyCreatorStore);
+const { document: surveyDocument, isPreview, selectedNode, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { moveNodeDown, moveNodeIntoPrevious, moveNodeOut, moveNodeUp, redo, undo } = useSurveyCreatorCommands();
+// What the layout is resolved for: the mode, and what is selected, which is one node or nothing. The survey has no tool in hand
+const context = computed<Context>(() => ({
+  mode: isPreview.value ? SURVEY_PREVIEW_MODE : SURVEY_DESIGN_MODE,
+  selectionCount: selectedNode.value ? 1 : 0,
+  selectionKind: selectedNode.value ? SurveyEditorSelectionKind.Node : "",
+  tool: "",
+}));
 // A move acts on the selected element, and does nothing while nothing is selected
 const moveSelected = (move: (pointer: string) => unknown) => () => {
   if (selectedPointer.value) move(selectedPointer.value);
 };
-// The keyboard's moves of the selected element and its history, bound while the creator is mounted, whichever pane has focus
+// The keyboard's moves of the selected element and its history, bound while the creator is mounted, whichever region has focus
 useCommands([
   ...getHistoryCommands({
     group: SURVEY_CREATOR_COMMAND_GROUP,
@@ -90,73 +79,18 @@ useCommands([
     title: "Move the selected element out of its parent",
   },
 ] satisfies UiCommand[]);
-const { smAndDown } = useUiDisplay();
-const leftWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
-const rightWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
-const narrowTab = ref(CANVAS_TAB);
-const leftTab = ref(LAYERS_TAB);
-const rightTab = ref(PROPERTIES_TAB);
 </script>
 
 <template>
-  <!-- A narrow screen shows one pane at a time as a tab, and a wider one lays the three side by side with the same panes -->
-  <div v-if="smAndDown" flex flex-col h-full min-h-0>
-    <UiTabs v-model="narrowTab" :items="narrowTabItems" :label="SURVEY_CREATOR_COMMAND_GROUP" is-filling>
-      <template #default="{ value }">
-        <div v-if="value === CANVAS_TAB" flex flex-col gap-2 h-full min-h-0>
-          <ResourceSurveyCreatorWorkspace />
-        </div>
-        <div v-else-if="value === STRUCTURE_TAB" flex flex-col gap-2>
-          <ResourceSurveyCreatorPalette />
-          <ResourceSurveyCreatorLayers />
-        </div>
-        <ResourceSurveyCreatorProperties v-else-if="value === PROPERTIES_TAB" />
-        <ResourceSurveyCreatorLogicPane v-else-if="value === LOGIC_TAB" />
-        <ResourceSurveyCreatorTheme v-else />
-      </template>
-    </UiTabs>
-  </div>
-  <div v-else flex gap-2 h-full min-h-0>
-    <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col min-h-0 relative>
-      <UiTabs v-model="leftTab" :items="leftTabItems" label="Structure" is-filling h-full>
-        <template #default="{ value }">
-          <ResourceSurveyCreatorLayers v-if="value === LAYERS_TAB" />
-          <ResourceSurveyCreatorPalette v-else />
-        </template>
-      </UiTabs>
-      <UiResizeHandle
-        v-model="leftWidth"
-        label="Resize the structure pane"
-        :max="MAX_SIDE_PANE_WIDTH"
-        :min="MIN_SIDE_PANE_WIDTH"
-      />
-    </div>
-    <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
-      <ResourceSurveyCreatorWorkspace />
-    </div>
-    <div :style="{ width: `${rightWidth}px` }" shrink-0 min-h-0 relative>
-      <UiResizeHandle
-        v-model="rightWidth"
-        is-reversed
-        label="Resize the settings pane"
-        :max="MAX_SIDE_PANE_WIDTH"
-        :min="MIN_SIDE_PANE_WIDTH"
-      />
-      <UiTabs
-        v-model="rightTab"
-        :items="rightTabItems"
-        label="Survey settings"
-        is-filling
-        :variant="UiTabsVariant.Header"
-        px-2
-        h-full
-      >
-        <template #default="{ value }">
-          <ResourceSurveyCreatorProperties v-if="value === PROPERTIES_TAB" />
-          <ResourceSurveyCreatorLogicPane v-else-if="value === LOGIC_TAB" />
-          <ResourceSurveyCreatorTheme v-else />
-        </template>
-      </UiTabs>
-    </div>
-  </div>
+  <EditorShell
+    :context
+    :editor-type="EditorType.Survey"
+    :layout="SurveyEditorLayout"
+    :panel-name-map="SurveyEditorPanelNameMap"
+    :region-name-map="SurveyEditorRegionNameMap"
+    :registry="SurveyEditorRegistry"
+  >
+    <ResourceSurveyRunner v-if="isPreview" :document="surveyDocument" :on-complete="noop" />
+    <ResourceSurveyCreatorCanvas v-else />
+  </EditorShell>
 </template>

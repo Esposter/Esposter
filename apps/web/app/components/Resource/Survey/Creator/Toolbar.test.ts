@@ -2,6 +2,7 @@
 import ResourceSurveyCreatorToolbar from "@/components/Resource/Survey/Creator/Toolbar.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { flushPromises } from "@vue/test-utils";
 import { surveyDocumentSchema, SurveyNodeType } from "headless-survey-engine";
 import { describe, expect, test } from "vitest";
 
@@ -13,8 +14,8 @@ describe("resourceSurveyCreatorToolbar", () => {
     surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
-    expect(component.get<HTMLButtonElement>('[aria-label="Undo"]').element.disabled).toBe(true);
-    expect(component.get<HTMLButtonElement>('[aria-label="Redo"]').element.disabled).toBe(true);
+    expect(component.get('[aria-label="Undo"]').attributes("aria-disabled")).toBe("true");
+    expect(component.get('[aria-label="Redo"]').attributes("aria-disabled")).toBe("true");
   });
 
   test("the Preview choice makes the store preview the survey, and Design takes it back", async () => {
@@ -29,32 +30,33 @@ describe("resourceSurveyCreatorToolbar", () => {
     );
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
-    await component
-      .findAll("button")
-      .find((button) => button.text() === "Preview")
-      ?.trigger("click");
+    await component.get('[aria-label="Preview"]').trigger("click");
 
     expect(surveyCreatorStore.isPreview).toBe(true);
 
-    await component
-      .findAll("button")
-      .find((button) => button.text() === "Design")
-      ?.trigger("click");
+    await component.get('[aria-label="Design"]').trigger("click");
 
     expect(surveyCreatorStore.isPreview).toBe(false);
   });
 
-  test("a narrow toolbar folds into a menu", async () => {
+  test("import, Export and Clear are in the overflow menu", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
     surveyCreatorStore.load(surveyDocumentSchema.parse({ content: [], root: { props: {} } }));
-    // Happy-dom measures every width as zero, which is narrower than the row needs
     const component = await mountSuspended(ResourceSurveyCreatorToolbar);
 
-    expect(component.find('[aria-label="Survey actions"]').exists()).toBe(true);
     expect(component.find('[aria-label="Import"]').exists()).toBe(false);
     expect(component.find('[aria-label="Export"]').exists()).toBe(false);
     expect(component.find('[aria-label="Clear"]').exists()).toBe(false);
+
+    await component.get('[aria-label="More Survey actions"]').trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+
+    expect(component.findAll('[role="menuitem"]').map((item) => item.text())).toStrictEqual([
+      "Import",
+      "Export",
+      "Clear",
+    ]);
   });
 });

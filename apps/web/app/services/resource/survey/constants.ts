@@ -173,21 +173,13 @@ export const SURVEY_PALETTE_GROUPS: readonly { title: string; types: SurveyNodeT
 export const SURVEY_DESIGN_MODE = "Design";
 export const SURVEY_PREVIEW_MODE = "Preview";
 
-// The pixel width the toolbar's whole row needs, its controls at a touch target's size so it fits under any pointer. Narrower,
-// Add page, Import, Export and Clear fold into the overflow menu
-export const SURVEY_TOOLBAR_UNFOLDED_WIDTH = 544;
+// The pixel height of the bar across the top of the creator, one row of its touch-sized controls
+export const SURVEY_BAR_HEIGHT = 48;
 
 // The key the other option of a choice question is drawn under, with its title, and the title its none option falls back to
 export const SURVEY_OTHER_KEY = "other";
 export const SURVEY_OTHER_TITLE = "Other";
 export const SURVEY_NONE_TITLE = "None";
 
-// The shell's command group, and the name of each pane it opens as a tab
+// The creator's command group, which its undo, redo and move shortcuts are listed under
 export const SURVEY_CREATOR_COMMAND_GROUP = "Survey creator";
-export const CANVAS_TAB = "Canvas";
-export const STRUCTURE_TAB = "Structure";
-export const LAYERS_TAB = "Layers";
-export const PALETTE_TAB = "Palette";
-export const PROPERTIES_TAB = "Properties";
-export const LOGIC_TAB = "Logic";
-export const THEME_TAB = "Theme";
