@@ -2,6 +2,7 @@ import type { ScenarioBlock } from "#src/models/openspec/ScenarioBlock";
 
 import { checkScenario } from "#src/services/openspec/checkScenario";
 import { HEADING_REGEX, SCENARIO_HEADING_REGEX } from "#src/services/openspec/constants";
+import { getScenarioTitle } from "#src/services/openspec/getScenarioTitle";
 
 const STEP_REGEX = /^-\s+\*\*(?<keyword>GIVEN|WHEN|THEN|AND)\*\*\s+\S/u;
 
@@ -18,7 +19,7 @@ export const lintScenarios = (path: string, markdown: string): string[] => {
       findings.push(...checkScenario(path, scenario));
       scenario = undefined;
     }
-    if (heading) scenario = { keywords: [], line, title: (heading.groups?.title ?? "").trim() };
+    if (heading) scenario = { keywords: [], line, title: getScenarioTitle(text) };
     else if (scenario && text.trim() !== "") {
       const step = STEP_REGEX.exec(text);
       const keyword = step?.groups?.keyword;
