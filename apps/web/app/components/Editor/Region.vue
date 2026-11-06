@@ -67,13 +67,17 @@ const overlayInsetStyle = computed(() => {
     min-w-0
     shrink-0
   >
-    <EditorRegionContent
-      :name
-      :panel-name-map="panelNameMap"
-      :region
-      :registry
-      @select-panel="(panelId) => emit('selectPanel', panelId)"
-    />
+    <!-- Content taller than its region scrolls inside it, so it never paints over the canvas or a column beside it. The handle sits
+         outside, since it straddles the region's edge -->
+    <div flex flex-1 flex-col min-h-0 min-w-0 of-auto>
+      <EditorRegionContent
+        :name
+        :panel-name-map="panelNameMap"
+        :region
+        :registry
+        @select-panel="(panelId) => emit('selectPanel', panelId)"
+      />
+    </div>
     <UiResizeHandle
       v-if="isResizable"
       :is-reversed="isReversed || undefined"

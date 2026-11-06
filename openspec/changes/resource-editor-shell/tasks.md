@@ -5,6 +5,7 @@
 - [x] 1.3 Hold each editor type's reader state in a Pinia store over local storage, read back through the package's parse. Verify: a test named after 'A stored size is restored on the next open', seen failing first.
 - [x] 1.4 Draw no handle on a docked region whose minimum and maximum size are equal. Verify: a test named after 'A region with equal limits draws no resize handle'.
 - [x] 1.5 Inset each open overlay column by the open overlay bars at its ends, so a bar and a column never claim the same corner. Verify: a test named after 'An overlay column sits clear of an overlay bar', seen failing first.
+- [ ] 1.6 Scroll a region's content inside the region when it is taller than the region, with the resize handle outside the scrolling box. Verify: a driven-browser look at the email bar in Design at a wide window and at a phone width, which has no test since happy-dom has no layout, and the scenario 'Content taller than its region scrolls inside it' is that look.
 
 ## 2. Toolbar
 

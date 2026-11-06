@@ -11,6 +11,17 @@ The shell SHALL draw each resolved region docked beside the canvas, floating ove
 - **THEN** the region is a docked column on the expanded window
 - **AND** it is a closed sheet on the compact one
 
+### Requirement: A region's content stays inside its region
+
+A docked or overlay region SHALL scroll content taller than itself inside the region, so its content never paints over the canvas or a region beside it.
+
+#### Scenario: Content taller than its region scrolls inside it
+
+- **GIVEN** a docked bar whose content is taller than the bar
+- **WHEN** the shell is drawn
+- **THEN** the content scrolls inside the bar
+- **AND** the canvas below the bar is not covered
+
 ### Requirement: A handle resizes regions from the pointer and the keyboard
 
 A handle between docked regions SHALL resize them by the pointer and by the arrow keys, with Home and End moving to the limits, and SHALL report its value to assistive technology.

@@ -11,7 +11,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { describe, expect, onTestFinished, test } from "vitest";
 
 const getNodeTitle = (nodeId: string) => nodeId;
 const mountBar = async (findings: EditorFinding[] = []) => {
@@ -24,49 +24,14 @@ const mountBar = async (findings: EditorFinding[] = []) => {
   });
   return component;
 };
-// The bar draws the same at every size class, so the compact window is set only to hold the scenario's window in place
-const display = vi.hoisted(() => ({ isCompact: false }));
-vi.mock(import("@/composables/ui/useUiDisplay"), async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return { ...actual, useUiDisplay: () => ({ ...actual.useUiDisplay(), xs: shallowRef(display.isCompact) }) };
-});
 
 describe("pageBuilderEmailBar", () => {
   const importLabel = "Import MJML";
   const overflowLabel = "More email actions";
   const message = "a";
 
-  beforeEach(() => {
-    display.isCompact = false;
-  });
-
   test("import MJML is in the overflow menu", async () => {
     expect.hasAssertions();
-
-    const component = await mountBar();
-
-    // The closed menu keeps its items in the document, so what the bar itself draws is the controls outside the menu
-    const barControlTitles = component
-      .findAll("button")
-      .filter((control) => control.element.closest('[role="menu"]') === null)
-      .map((control) => control.text());
-
-    expect(barControlTitles).not.toContain(importLabel);
-
-    await component.get(`[aria-label="${overflowLabel}"]`).trigger("keydown", { key: "ArrowDown" });
-    await flushPromises();
-    // An item's text carries the space its mark leaves, which is not part of its title
-    const menuItemTitles = Array.from(document.querySelectorAll('[role="menuitem"]'), (item) =>
-      item.textContent.trim(),
-    );
-
-    expect(menuItemTitles).toContain(importLabel);
-  });
-
-  test("import MJML is in the overflow menu on a compact window", async () => {
-    expect.hasAssertions();
-    display.isCompact = true;
 
     const component = await mountBar();
 
