@@ -1,15 +1,11 @@
 // @vitest-environment nuxt
 import StyledApexChart from "@/components/Styled/ApexChart.vue";
+import { resolveToChart } from "@/services/styled/stubApexChartEngine.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import ApexCharts from "apexcharts";
 import { afterEach, describe, expect, test, vi } from "vitest";
-
-// The engine resolves a render or an update to the chart it ran on
-const resolveToChart = function (this: ApexCharts) {
-  return Promise.resolve(this);
-};
 
 // The engine measures its SVG as it draws, which happy-dom cannot lay out, so its drawing is stubbed and what is under
 // Test is when the component builds, updates and tears the engine down

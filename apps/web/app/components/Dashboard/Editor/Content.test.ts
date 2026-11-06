@@ -18,6 +18,7 @@ import {
   DASHBOARD_GRID_MARGIN,
 } from "@/services/dashboard/constants";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
+import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -42,6 +43,7 @@ describe("dashboardEditorContent", () => {
     stubGridWidth(gridWidth);
   });
   beforeEach(() => {
+    stubApexChartEngine();
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.dashboard.readResourcePublication.query(() => undefined);

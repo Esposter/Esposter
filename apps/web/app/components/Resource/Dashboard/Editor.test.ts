@@ -20,6 +20,7 @@ import { DashboardEditorRegistry } from "@/services/dashboard/editor/DashboardEd
 import { DashboardLayout } from "@/services/dashboard/editor/DashboardLayout";
 import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
+import { stubApexChartEngine } from "@/services/styled/stubApexChartEngine.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -60,6 +61,7 @@ describe("resourceDashboardEditor", () => {
     stubGridWidth(gridWidth);
   });
   beforeEach(() => {
+    stubApexChartEngine();
     display.isCompact = false;
     display.isMobile = false;
     localStorage.clear();
