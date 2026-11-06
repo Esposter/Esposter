@@ -1,5 +1,16 @@
 ## ADDED Requirements
 
+### Requirement: No picture the game draws is shipped
+
+The app SHALL NOT ship any picture the game draws, such as a portrait, a card face, a banner or a hall picture, and a stand-in fills the place of each such picture.
+
+#### Scenario: A screen with a portrait holds a stand-in
+
+- **GIVEN** a screen whose layout places a character portrait
+- **WHEN** the screen is shown
+- **THEN** a stand-in fills the portrait's place
+- **AND** the deployed files hold no image of that portrait
+
 ### Requirement: Marks and icons are drawn as traced shapes
 
 Each mark, icon and ornament the app draws from the game SHALL be a shape traced from the game's own mark, never an image of it.
