@@ -1,0 +1,81 @@
+import { createSessionDriver } from "#src/components/World/Session/createSessionDriver.fixture";
+import { Currency } from "#src/models/inventory/Currency";
+import type { DevRegistry } from "#src/models/dev/DevRegistry";
+import { genshinSaveSchema } from "#src/models/save/GenshinSave";
+import type { GenshinSave } from "#src/models/save/GenshinSave";
+import { QuestId } from "#src/models/quest/QuestId";
+import { createDevRegistry } from "#src/services/dev/createDevRegistry";
+import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
+import { EMPTY_GENSHIN_SAVE, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
+import { assert, describe, expect, onTestFinished, test } from "vitest";
+import { z } from "zod";
+
+describe("worldSession", () => {
+  // A session's world is drawn in a headless browser slower than on a screen, and each scripted frame waits on one
+  const timeoutMs = 240_000;
+
+  // The three readings a session holds across a save: a quest's step, the defeats the Archive counts and Mora in the wallet
+  const readHolds = (devRegistry: DevRegistry) => ({
+    defeats: devRegistry.run("kills"),
+    mora: devRegistry.run(`bag ${Currency.Mora}`),
+    questStep: devRegistry.run(`quest ${QuestId.WanderersTrail}`),
+  });
+
+  test(
+    "A load restores what the save holds",
+    async () => {
+      expect.hasAssertions();
+
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      // A save that holds one step of Wanderer's Trail, one defeat and one Mora, so each reading is off its empty value
+      const seededSave: GenshinSave = {
+        ...EMPTY_GENSHIN_SAVE,
+        archive: { ...EMPTY_GENSHIN_SAVE.archive, kills: { "-1": 1 } },
+        quests: { [QuestId.WanderersTrail]: { objectiveCounts: [], stepIndex: 1 } },
+        wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies: { ...EMPTY_CURRENCIES, [Currency.Mora]: 1 } },
+      };
+      const mounted = await sessionDriver.mount(seededSave);
+      const readingsBeforeSave = readHolds(devRegistry);
+      const saved = await sessionDriver.save();
+      const loaded = await sessionDriver.load();
+      const readingsAfterLoad = readHolds(devRegistry);
+
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(readingsBeforeSave).toStrictEqual({
+        defeats: { ok: true, value: 1 },
+        mora: { ok: true, value: 1 },
+        questStep: { ok: true, value: expect.stringMatching(/^step 2 of \d+$/u) },
+      });
+      expect(saved).toStrictEqual({ ok: true });
+      expect(loaded).toStrictEqual({ ok: true });
+      expect(readingsAfterLoad).toStrictEqual(readingsBeforeSave);
+    },
+    timeoutMs,
+  );
+
+  test(
+    "A save the schema refuses fails the script",
+    async () => {
+      expect.hasAssertions();
+
+      const devRegistry = createDevRegistry();
+      const sessionDriver = createSessionDriver(devRegistry);
+      onTestFinished(() => sessionDriver.dispose());
+      // A traveler's name one character past the save's bound, which the world carries through as it was saved
+      const refusedSave: GenshinSave = {
+        ...EMPTY_GENSHIN_SAVE,
+        travelerName: "a".repeat(MAX_TRAVELER_NAME_LENGTH + 1),
+      };
+      const mounted = await sessionDriver.mount(refusedSave);
+      const saved = await sessionDriver.save();
+      const refusal = genshinSaveSchema.safeParse(refusedSave);
+
+      assert.exists(refusal.error);
+      expect(mounted).toStrictEqual({ ok: true });
+      expect(saved).toStrictEqual({ error: z.prettifyError(refusal.error), ok: false });
+    },
+    timeoutMs,
+  );
+});

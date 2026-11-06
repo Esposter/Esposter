@@ -22,3 +22,6 @@ export const SCRIPTED_START_MS = Temporal.Instant.from("2026-01-01T00:00:00Z").e
 // The space a record's fields are split on: the one before a lower-case key and its equals sign, so a value keeps
 // Its own spaces
 export const DEV_RECORD_FIELD_SEPARATOR_REGEX = / (?=[a-z]+=)/u;
+// The most frames a scripted session steps while it waits on the world, to be ready, to settle, before it fails: a minute of
+// Scripted time, far past what a settle takes on a screen
+export const SCRIPTED_FRAME_LIMIT = 3600;

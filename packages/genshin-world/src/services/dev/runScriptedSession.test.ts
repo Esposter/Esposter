@@ -10,7 +10,7 @@ const createStubDriver = (run: ScriptedSessionDriver["run"]): ScriptedSessionDri
   frame: () => Promise.resolve(),
   load: () => Promise.resolve({ ok: true }),
   run,
-  save: () => ({ ok: true }),
+  save: () => Promise.resolve({ ok: true }),
 });
 
 describe(runScriptedSession, () => {
