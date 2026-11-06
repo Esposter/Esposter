@@ -8,6 +8,7 @@ import WorldScreen from "#src/components/World/Screen/Index.vue";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
 import { createScriptedClock } from "#src/services/dev/createScriptedClock.fixture";
+import { settleScriptedSession } from "#src/services/dev/settleScriptedSession";
 import { createPinia } from "pinia";
 import { render } from "vitest-browser-vue";
 import { z } from "zod";
@@ -42,10 +43,6 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
     await frame();
     return stepFramesUntil(checkIsDone, frameLimit - 1);
   };
-  const checkIsSettled = () => {
-    const result = devRegistry.run("settled");
-    return result.ok && result.value === true;
-  };
   const checkIsReady = () => isWorldReady && lastSave !== undefined;
   const unmount = async () => {
     await unmountScreen?.();
@@ -73,16 +70,10 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
 
     return { error: `the world is not ready after ${SCRIPTED_FRAME_LIMIT} frames`, ok: false };
   };
-  // Steps frames until `settled` reads yes, the terrain having no tile in flight, so a save is taken of a settled world
-  const settle = async (): Promise<ScriptedSessionOutcome> => {
-    if (await stepFramesUntil(checkIsSettled, SCRIPTED_FRAME_LIMIT)) return { ok: true };
-
-    return { error: `not settled after ${SCRIPTED_FRAME_LIMIT} frames`, ok: false };
-  };
   // Settles, then takes the world's last save through JSON and the save schema, and unmounts the screen whatever the
   // Outcome. A save the schema refuses fails with the schema's own message
   const save = async (): Promise<ScriptedSessionOutcome> => {
-    const settled = await settle();
+    const settled = await settleScriptedSession(driver);
     if (!settled.ok) return settled;
 
     const emittedSave = lastSave;
