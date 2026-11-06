@@ -17,6 +17,7 @@ import {
   WHITEBOARD_SHAPE_SHORTCUTS,
   WHITEBOARD_TOOL_SHORTCUTS,
 } from "@/services/whiteboard/keyboard/constants";
+import { WhiteboardPaletteIconMap } from "@/services/whiteboard/palette/WhiteboardPaletteIconMap";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection. Delete and Backspace do not delete at once: they
 // Name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it. The
@@ -145,10 +146,10 @@ export const useWhiteboardKeyboard = (
       shortcut: key,
       title: `${title} tool`,
     })),
-    ...Object.entries(WHITEBOARD_SHAPE_SHORTCUTS).map(([key, { kind, meaning, title }]) => ({
+    ...Object.entries(WHITEBOARD_SHAPE_SHORTCUTS).map(([key, { kind, title }]) => ({
       group: WHITEBOARD_COMMAND_GROUP,
       id: `whiteboard-shape-${kind}`,
-      meaning,
+      meaning: WhiteboardPaletteIconMap[kind],
       run: () => {
         chooseShape(kind);
       },

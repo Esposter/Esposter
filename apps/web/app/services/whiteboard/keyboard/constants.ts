@@ -23,9 +23,9 @@ export const WHITEBOARD_TOOL_SHORTCUTS = {
   t: { meaning: UiIconMeaning.ReadableText, title: "Text", tool: GestureTool.Text },
   v: { meaning: UiIconMeaning.Pointer, title: "Select", tool: GestureTool.Select },
 } as const;
-// The key each shape is placed by with the shape tool, which places the shape its key names
+// The key each shape is placed by with the shape tool, which places the shape its key names. Its mark is the palette's icon for that kind
 export const WHITEBOARD_SHAPE_SHORTCUTS = {
-  d: { kind: ShapeKind.Diamond, meaning: UiIconMeaning.Tag, title: "Diamond" },
-  o: { kind: ShapeKind.Ellipse, meaning: UiIconMeaning.Record, title: "Ellipse" },
-  r: { kind: ShapeKind.Rectangle, meaning: UiIconMeaning.Block, title: "Rectangle" },
+  d: { kind: ShapeKind.Diamond, title: "Diamond" },
+  o: { kind: ShapeKind.Ellipse, title: "Ellipse" },
+  r: { kind: ShapeKind.Rectangle, title: "Rectangle" },
 } as const;
