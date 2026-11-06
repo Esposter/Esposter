@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's rivers and waterfalls in the anime style, built on the still water's material. A flow carries the ripples and foam downstream, a river is a ribbon along its course at the water's width and level whose bends gather foam on their outer bank, and a waterfall is a sheet whose streaks fall with its height. The falls of Mondstadt and Liyue and the rivers of Liyue are fitted from the game's witness exports.
+Genshin's rivers and waterfalls in the anime style, built on the still water's material. A flow carries the ripples and foam downstream, a river is a ribbon along its course at the water's width and level whose bends gather foam on their outer bank, and a waterfall is a sheet whose streaks fall with its height. The falls of every region whose witness export holds them, and the rivers of Liyue, are fitted from the game's witness exports.
 
 ## Requirements
 
