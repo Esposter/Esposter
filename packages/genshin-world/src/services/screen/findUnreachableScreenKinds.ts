@@ -22,13 +22,13 @@ export const findUnreachableScreenKinds = (
   ScreenKinds.filter((screenKind) => {
     const opener = screenKindOpenerMap[screenKind];
     switch (opener) {
+      case ScreenKindOpener.Interaction:
+      case ScreenKindOpener.World:
+        return false;
       case ScreenKindOpener.PaimonMenu:
         return !menuScreenKinds.has(screenKind);
       case ScreenKindOpener.Shortcut:
         return !inputActionScreenKinds.has(screenKind) && !wheelScreenKinds.has(screenKind);
-      case ScreenKindOpener.Interaction:
-      case ScreenKindOpener.World:
-        return false;
       default:
         return exhaustiveGuard(opener);
     }

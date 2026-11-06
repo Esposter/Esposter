@@ -1,5 +1,5 @@
-import type { FriendshipDialogue } from "#src/models/friendship/FriendshipDialogue";
 import type { Talk } from "#src/models/dialogue/Talk";
+import type { FriendshipDialogue } from "#src/models/friendship/FriendshipDialogue";
 
 import { talkSchema } from "#src/models/dialogue/Talk";
 import { z } from "zod";
