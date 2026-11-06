@@ -165,7 +165,7 @@ describe(createXingqiuKitBehaviour, () => {
       3,
     ],
   ])(
-    "raincutter's waves follow the field's normal attack starts once a second",
+    "with %i constellations, raincutter's waves follow the field's normal attack starts once a second: %j swords per wave",
     (constellationCount, swordCounts, status, energy) => {
       expect.hasAssertions();
       const combatant = createXingqiuCombatant(0, constellationCount);
