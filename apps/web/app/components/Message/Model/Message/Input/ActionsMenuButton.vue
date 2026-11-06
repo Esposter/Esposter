@@ -4,10 +4,10 @@ import type { Item } from "@/models/shared/Item";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { pickFiles } from "@/services/file/pickFiles";
 import { MENU_SLASH_COMMANDS } from "@/services/message/slashCommands/constants";
+import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
-const executeSlashCommand = useExecuteSlashCommand();
 const items = computed<Item[]>(() => [
   {
     icon: "i-mdi:file-upload-outline",

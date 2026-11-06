@@ -20,7 +20,7 @@ Triggered by `/` in the message input. The TipTap suggestion API powers the pick
 
 ## How it works
 
-All execution happens in `useExecuteSlashCommand` via a `switch` on `SlashCommandType` — the definition is static metadata only, with no `execute()` method. Three execution paths:
+All execution happens in `executeSlashCommand` via a `switch` on `SlashCommandType` — the definition is static metadata only, with no `execute()` method. Three execution paths:
 
 - **Client-only** (`Flip`, `Me`, `Roll`, `Shrug`, `Spoiler`, `TableFlip`, `Unflip`) — build the `sendMessage` input inline and fall through to the normal `sendMessage`.
 - **Server call** (`Topic`) — call a tRPC mutation directly (`room.updateRoom`), no message posted by the command itself.
@@ -32,7 +32,7 @@ All execution happens in `useExecuteSlashCommand` via a `switch` on `SlashComman
 flowchart TD
     A([User types /]) --> B[TipTap suggestion activates]
     B --> C{User picks command}
-    C -->|no parameters| D[useExecuteSlashCommand immediately]
+    C -->|no parameters| D[executeSlashCommand immediately]
     C -->|has parameters| E[SlashCommandSuggestion.command fires]
     E --> F[Read remaining editor text after range]
     F --> G[Delete from range.from to doc end]
@@ -62,7 +62,7 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 | :-------------------------------------------------------------------------- | :------------------------------------------------------------ |
 | `apps/web/app/models/message/slashCommands/SlashCommandType.ts`             | command enum                                                  |
 | `apps/web/app/services/message/slashCommands/SlashCommandDefinitionMap.ts`  | `Record<SlashCommandType, SlashCommand>` — static definitions |
-| `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`   | execution switch                                              |
+| `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`        | execution switch                                              |
 | `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | TipTap extension (mirrors `MentionExtension`)                 |
 | `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts`     | picker suggestion config                                      |
 | `apps/web/app/services/message/slashCommands/parseTextAndParameters.ts`     | text → parameterValues re-parsing                             |
@@ -71,6 +71,6 @@ Collapsing parameter mode back to text (Escape, or Backspace in an empty command
 
 ## Notes
 
-The three commands that open a dialog rather than send something — `/poll`, `/schedule` and `/remind` — are also the composer's `+` menu, which is Discord's home for creating a poll. The menu runs the same `useExecuteSlashCommand` with the same type and takes each entry's icon from `SlashCommandDefinitionMap`, so a command and its menu entry cannot drift; only the entry's wording differs, because a command's title names the command (`/poll`) where a menu of actions wants a verb.
+The three commands that open a dialog rather than send something — `/poll`, `/schedule` and `/remind` — are also the composer's `+` menu, which is Discord's home for creating a poll. The menu runs the same `executeSlashCommand` with the same type and takes each entry's icon from `SlashCommandDefinitionMap`, so a command and its menu entry cannot drift; only the entry's wording differs, because a command's title names the command (`/poll`) where a menu of actions wants a verb.
 
 The send pipeline is untouched by commands: `sendComposerMessage`, `RichTextEditor`, and the mention suggestion know nothing about slash commands.

@@ -6,6 +6,7 @@ import type { Except } from "type-fest";
 import SlashCommandList from "@/components/Message/Model/Message/Suggestion/SlashCommandList.vue";
 import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getRender } from "@/services/message/getRender";
+import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
 import { SlashCommandDefinitions } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { searchItems } from "@/services/search/searchItems";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
@@ -28,7 +29,6 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         return;
       }
 
-      const executeSlashCommand = useExecuteSlashCommand();
       // The branch above returned for every command that declares parameters, which is what leaves this one
       // Parameterless — a fact about the array's length that its type has no way to carry
       await executeSlashCommand({ parameterValues: {}, type: slashCommand.type as SlashCommandTypeWithoutParameters });

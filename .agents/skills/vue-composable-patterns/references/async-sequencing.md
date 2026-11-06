@@ -20,6 +20,7 @@ Read when a composable issues a read or a write that can overlap another, or per
 
 - **`isPending` / `checkIsPending(key)`** come from the same instance, so a read composable returns that `isPending` under its own name instead of keeping a ref of its own (the `naming` skill, `references/boolean-families.md`).
 - **A row's own pending over writes that must share one key** — the key is the target, so rows whose writes queue on one key all read one pending flag. Each row's write is wrapped in a second instance's write keyed by the row, and `checkIsPending(rowKey)` on that instance holds for the issuing row alone, including while it waits in the shared queue (`apps/web/app/components/User/LinkedAccountsCard`). Never a per-row key on the shared write, which drops the queue the key was for.
+- **A write reached from more than one call site gets its executor from a store, never from a `useMutation()` made at each site.** A queue lives on the instance, so a per-site instance gives every site its own queue while the shared `key` reads as if they serialised, and a site that is a callback outside setup cannot hold one at all (`openspec/specs/architecture/async-operations/design.md`, "A key queues only within one `useMutation()` instance").
 - **`getSynchronizedFunction(fn)`** (`@esposter/shared`) fires an async fn from a sync context (a watcher callback, or a fetch kicked off during setup with no Suspense boundary). Pair it with the entry point instead of floating the promise.
 
 ## Staleness is per target

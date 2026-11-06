@@ -1,6 +1,6 @@
 ---
 name: slash-commands
-description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter's slash commands — a command's definition, how it runs and how its parameters are entered as chips.
+description: Apply when writing or modifying slash commands, executeSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter's slash commands — a command's definition, how it runs and how its parameters are entered as chips.
 ---
 
 # Slash Command Conventions
@@ -20,7 +20,7 @@ Parameters are inline chips over raw inputs, validated by `safeParse` into the s
 
 ## Execution Modes
 
-A command with no parameters runs at once, one with parameters goes pending; the one switch over `SlashCommandType` is in `useExecuteSlashCommand`, closed by `exhaustiveGuard` (`references/execution.md`).
+A command with no parameters runs at once, one with parameters goes pending; the one switch over `SlashCommandType` is in `executeSlashCommand`, closed by `exhaustiveGuard` (`references/execution.md`).
 
 ## Adding a New Command
 

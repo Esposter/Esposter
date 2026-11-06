@@ -2,12 +2,13 @@
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
+import { executeSlashCommand } from "@/services/message/slashCommands/executeSlashCommand";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";
 import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe(useExecuteSlashCommand, () => {
+describe(executeSlashCommand, () => {
   const { trpcMsw } = setupMswTrpc();
   const room = createRoom("name");
   const otherRoom = createRoom("otherName");
@@ -31,7 +32,6 @@ describe(useExecuteSlashCommand, () => {
     const roomStore = useRoomStore();
     const { currentRoom } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;
-    const executeSlashCommand = useExecuteSlashCommand();
     pushRooms({ ...room });
     await Promise.all([
       executeSlashCommand({ parameterValues: { text: acceptedTopic }, type: SlashCommandType.Topic }),
@@ -54,7 +54,6 @@ describe(useExecuteSlashCommand, () => {
     const roomStore = useRoomStore();
     const { rooms } = storeToRefs(roomStore);
     const { pushRooms } = roomStore;
-    const executeSlashCommand = useExecuteSlashCommand();
     pushRooms({ ...room, topic: acceptedTopic }, { ...otherRoom, topic: rejectedTopic });
     const pendingCommand = executeSlashCommand({
       parameterValues: { text: rejectedTopic },

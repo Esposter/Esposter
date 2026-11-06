@@ -6,12 +6,12 @@ Read when a command runs, or when adding one.
 
 Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field. `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts` (which contains **no switch** — it only routes) branches on it:
 
-- **Immediate** — `parameters: []` — `useExecuteSlashCommand()` runs straight away
+- **Immediate** — `parameters: []` — `executeSlashCommand()` runs straight away
 - **Parameterized** — one or more parameters — `setPendingSlashCommand(slashCommand, remainingText)`, which parses any already-typed text into parameter values
 
 ## The execution switch
 
-The only switch over `SlashCommandType` is in `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new enum value fails typecheck until handled.
+The only switch over `SlashCommandType` is in `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new enum value fails typecheck until handled. It is a plain function, since the suggestion menu, the parameter chips and the actions menu all reach it, and it takes the one `useMutation` executor from the slash command store so a topic typed through one queues behind a topic typed through another.
 
 Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
 
@@ -23,7 +23,7 @@ The typecheck rejects a bare string such as `"Me"` where a `SlashCommandType` is
 
 ## Adding a command
 
-The enum value comes first, and typecheck then names what is missing: the `SlashCommandDefinitionMap` entry (`as const satisfies Record<SlashCommandType, SlashCommand>`) and the `case` in `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`. What the case does is one of three:
+The enum value comes first, and typecheck then names what is missing: the `SlashCommandDefinitionMap` entry (`as const satisfies Record<SlashCommandType, SlashCommand>`) and the `case` in `apps/web/app/services/message/slashCommands/executeSlashCommand.ts`. What the case does is one of three:
 
 - **Posting a message** — assign `message` and `break`; the shared tail parses and sends it.
 - **Opening a dialog** — flip the dialog store's state (`isOpen.value = true`, `open(ScheduledMessageJobType.X)`).

@@ -25,10 +25,10 @@ The composer marks an attachment as a spoiler when its filename starts with `SPO
 
 ## Key files
 
-| File                                                                      | Role                                             |
-| ------------------------------------------------------------------------- | ------------------------------------------------ |
-| `apps/web/app/composables/message/spoiler/useSpoilerExtension.ts`         | Tiptap mark, input rule and keyboard shortcut    |
-| `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts` | `/spoiler` text wrapper                          |
-| `apps/web/app/store/message/input/uploadFile.ts`                          | filename detection and pending attachment toggle |
-| `apps/web/app/components/Message/Model/Message/File/Index.vue`            | blurred spoiler tile and first-activation reveal |
-| `packages/db-schema/src/models/azure/table/FileEntity.ts`                 | persisted flag and its default                   |
+| File                                                                 | Role                                             |
+| -------------------------------------------------------------------- | ------------------------------------------------ |
+| `apps/web/app/composables/message/spoiler/useSpoilerExtension.ts`    | Tiptap mark, input rule and keyboard shortcut    |
+| `apps/web/app/services/message/slashCommands/executeSlashCommand.ts` | `/spoiler` text wrapper                          |
+| `apps/web/app/store/message/input/uploadFile.ts`                     | filename detection and pending attachment toggle |
+| `apps/web/app/components/Message/Model/Message/File/Index.vue`       | blurred spoiler tile and first-activation reveal |
+| `packages/db-schema/src/models/azure/table/FileEntity.ts`            | persisted flag and its default                   |
