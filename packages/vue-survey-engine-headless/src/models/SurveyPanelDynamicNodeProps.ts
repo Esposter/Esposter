@@ -1,5 +1,6 @@
 import type { SurveyQuestionBaseProps } from "#src/models/SurveyQuestionBaseProps";
 import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
+import type { OwnProps } from "vue-block-editor-headless";
 
 import { surveyQuestionBasePropsShape } from "#src/models/SurveyQuestionBaseProps";
 import { MAX_SURVEY_PANEL_COUNT, MAX_SURVEY_TEXT_LENGTH } from "#src/services/constants";
@@ -31,4 +32,4 @@ export const surveyPanelDynamicNodePropsSchema: z.ZodObject<
   minPanelCount: z.int().min(0).max(MAX_SURVEY_PANEL_COUNT).default(0),
   panelCount: z.int().min(0).max(MAX_SURVEY_PANEL_COUNT).default(1),
   removePanelText: z.string().max(MAX_SURVEY_TEXT_LENGTH).default(""),
-});
+}) satisfies z.ZodType<OwnProps<SurveyPanelDynamicNodeProps>>;
