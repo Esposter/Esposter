@@ -179,12 +179,12 @@ catalog:
   # @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
   # Remove this dependency when Nitro resolves the alias from Nuxt (nuxt/nuxt)
   mocked-exports: ^0.1.1
-  msw: ^3.0.3
+  msw: ^3.0.4
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
   # @TODO: no upstream issue — nuxt/nuxt: Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
   nitro: npm:nitro-nightly@latest
-  node-html-parser: ^9.0.6
+  node-html-parser: ^9.0.7
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
   nuxt: npm:nuxt-nightly@5x
   ohash: ^2.0.12
@@ -199,8 +199,8 @@ catalog:
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.1.0
-  playwright: ^1.64.1
-  postgres: ^4.0.0
+  playwright: ^1.65.0
+  postgres: ^4.1.0
   publint: ^0.3.25
   rate-limiter-flexible: ^11.3.0
   re2js: ^2.9.1
