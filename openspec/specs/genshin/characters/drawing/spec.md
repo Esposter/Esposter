@@ -162,12 +162,12 @@ The player's character SHALL be drawn on the character body from its published p
 - **WHEN** the world starts
 - **THEN** the Traveler's model is drawn on the body
 
-#### Scenario: Missing pack stops the loading and draws no capsule
+#### Scenario: A pack that cannot be downloaded holds the loading on the failure
 
-- **GIVEN** the character's pack could not be downloaded
-- **WHEN** the loading stops
-- **THEN** the failure is shown
-- **AND** no capsule is drawn in its place
+- **GIVEN** the character's pack could not be downloaded after its attempts
+- **WHEN** the download gives up
+- **THEN** the startup loading screen shows the download failure with a retry
+- **AND** the world does not mount, so no model is drawn
 
 ### Requirement: A model that fails to read is drawn in the Traveler's place
 
