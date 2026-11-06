@@ -4,11 +4,11 @@
 
 A normal boss's defeat SHALL leave a Trounce Blossom at its place, which the player claims for 40 Original Resin.
 
-#### Scenario: a defeated normal boss leaves a Trounce Blossom at its place
+#### Scenario: a defeated normal boss leaves an unclaimed Trounce Blossom at its place
 
 - **GIVEN** a normal boss in its arena
 - **WHEN** the player defeats that boss
-- **THEN** a Trounce Blossom appears at the boss's place
+- **THEN** an unclaimed Trounce Blossom appears at the boss's place
 
 #### Scenario: a normal boss's claim pays Mora and its own drop for the World Level
 
@@ -106,11 +106,11 @@ A weekly boss's Trounce Blossom SHALL be claimed once per week.
 
 A weekly boss's claim SHALL pay its talent materials, Mora and experience for the World Level, and its highest difficulty's first clear SHALL give one of each of its materials.
 
-#### Scenario: a weekly boss's claim pays its talent materials and Mora
+#### Scenario: a weekly boss's claim spends its offer's resin and pays its talent materials and Mora
 
 - **GIVEN** a player at a World Level who can claim a weekly boss
 - **WHEN** the player claims that boss's blossom
-- **THEN** the player receives the boss's talent materials and Mora for that World Level
+- **THEN** the offer's Original Resin is spent, and the player receives the boss's talent materials and Mora for that World Level
 
 #### Scenario: the first clear of the highest difficulty pays one of each material
 

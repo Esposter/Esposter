@@ -6,6 +6,7 @@ import type { WorldSessionContext } from "#src/models/world/WorldSessionContext"
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
+import { EnemyType } from "#src/models/enemy/EnemyType";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
@@ -24,6 +25,7 @@ import {
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
+import { checkIsEnemyRespawned } from "#src/services/enemy/checkIsEnemyRespawned";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -38,6 +40,7 @@ import { readCatalogue } from "#src/services/world/readCatalogue";
 import { useWorldAdventureRankStore } from "#src/store/adventureRank";
 import { startTestWorldFriendship } from "#src/store/friendship.fixture";
 import { startTestWorldGround } from "#src/store/ground.fixture";
+import { useWorldMapStore } from "#src/store/map";
 import { finishTestMainQuests } from "#src/store/quests.fixture";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { takeOne } from "@esposter/shared";
@@ -54,6 +57,9 @@ const createTrounceSave = () => ({ lastTeleportAts: new Map(), trounceBlossoms: 
 
 describe(useWorldTrounceBlossoms, () => {
   const SPAWN_KEY = "spawn";
+  // The map fixture's player stands in the Sea of Clouds, and the far point is past every area's outline
+  const SEA_OF_CLOUDS_ID = "sea-of-clouds";
+  const OUTSIDE_EVERY_AREA = { x: 1e6, z: 1e6 };
   const UNIQUE_DROP_ID = 9003;
   const UNIQUE_DROP_NAME_TEXT_ID = "9003";
   // The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after
@@ -135,11 +141,43 @@ describe(useWorldTrounceBlossoms, () => {
       enemyKindMap: new Map(),
       savedState: createTrounceSave(),
     });
-    // The map fixture's player stands in the Sea of Clouds, and the far point is past every outline
     events.emit("teleport", { heightOffset: 0, point: { x: -2390, z: -1560 }, yaw: 0 });
-    events.emit("teleport", { heightOffset: 0, point: { x: 1e6, z: 1e6 }, yaw: 0 });
+    events.emit("teleport", { heightOffset: 0, point: OUTSIDE_EVERY_AREA, yaw: 0 });
 
-    expect([...lastTeleportAts.value.keys()]).toStrictEqual(["sea-of-clouds", ""]);
+    expect([...lastTeleportAts.value.keys()]).toStrictEqual([SEA_OF_CLOUDS_ID, ""]);
+  });
+
+  test("an unclaimed blossom keeps the boss defeated until the player teleports away", () => {
+    expect.hasAssertions();
+
+    // The boss is defeated at the epoch in the Sea of Clouds, and the player jumps out of that area a second later
+    const teleportedAt = epoch.add({ seconds: 1 });
+    startEpochSession({ getWorldNow: () => teleportedAt });
+    startTestWorldGround();
+    startTestWorldFriendship();
+    const { lastTeleportAts, trounceBlossoms } = useWorldTrounceBlossoms({
+      catalogue,
+      emitGrant: () => {},
+      enemyKindMap: new Map(),
+      savedState: createTrounceSave(),
+    });
+    trounceBlossoms.value = new Map<string, TrounceBlossom>([[SPAWN_KEY, createNormalBoss()]]);
+    const checkIsBossRespawned = () =>
+      checkIsEnemyRespawned(
+        [EnemyType.Boss],
+        epoch,
+        teleportedAt,
+        SEA_OF_CLOUDS_ID,
+        lastTeleportAts.value,
+        trounceBlossoms.value.get(SPAWN_KEY),
+      );
+
+    expect(checkIsBossRespawned()).toBe(false);
+
+    const worldMapStore = useWorldMapStore();
+    worldMapStore.jumpTo({ heightOffset: 0, point: OUTSIDE_EVERY_AREA, yaw: 0 });
+
+    expect(checkIsBossRespawned()).toBe(true);
   });
 
   test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {

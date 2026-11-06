@@ -50,7 +50,7 @@ describe(claimTrounceBlossom, () => {
     expect(countInventoryItem(claim?.inventory.items ?? [], UNIQUE_DROP_ID)).toBe(1);
   });
 
-  test("a claim with less Original Resin than its price is refused", () => {
+  test("a claim with less than 40 Original Resin is refused", () => {
     expect.hasAssertions();
 
     expect(
