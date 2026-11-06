@@ -13,7 +13,7 @@ The Player Level SHALL follow the game's level table, starting at level one with
 
 #### Scenario: Passing a level's EXP raises the Player Level
 
-- **GIVEN** the player's Player Level is below ten
+- **GIVEN** the player's Player Level is below ten, and every level lock at or below it has its main quest done
 - **WHEN** the player's EXP reaches the EXP that passes the current level
 - **THEN** the player's Player Level rises by one
 
@@ -42,7 +42,7 @@ The Card Shop SHALL sell cards for Lucky Coins at the prices the game gives them
 
 - **GIVEN** the player holds enough Lucky Coins for a card
 - **WHEN** the player buys the card at the Card Shop
-- **THEN** the card is added to the player's collection
+- **THEN** the card is added to the player's bag
 - **AND** the price in Lucky Coins is taken from the player
 
 #### Scenario: A card the player cannot afford is not sold
