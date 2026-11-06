@@ -3,6 +3,7 @@ import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
+import type { HeadingNode, ImageNode } from "#src/services/constants.test";
 
 import { TEST_HEADING_ID, TEST_SECTION_ID, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
 import { renderBlockNodes } from "#src/services/renderBlockNodes";
@@ -10,11 +11,6 @@ import { exhaustiveGuard } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-type HeadingNode = BlockNode<"heading", HeadingNodeProps>;
-interface HeadingNodeProps extends BlockNodeProps {
-  text: string;
-}
-type ImageNode = BlockNode<"image">;
 type SectionNode = BlockNode<"section", SectionNodeProps>;
 interface SectionNodeProps extends BlockNodeProps {
   children: HeadingNode[];
