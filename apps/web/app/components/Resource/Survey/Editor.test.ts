@@ -99,7 +99,7 @@ describe("resourceSurveyEditor", () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  test("A refused save leaves the findings in view", async () => {
+  test("a refused save leaves the findings in view", async () => {
     expect.hasAssertions();
 
     await mountSuspended(ResourceSurveyEditor);

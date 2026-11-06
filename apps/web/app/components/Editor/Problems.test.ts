@@ -17,7 +17,7 @@ describe("editorProblems", () => {
     { message, nodeId: secondNodeId, severity: EditorFindingSeverity.Error },
   ];
 
-  test("The problems surface lists each finding with its node", async () => {
+  test("the problems surface lists each finding with its node", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(EditorProblems, { props: { findings, getNodeTitle } });
@@ -30,7 +30,7 @@ describe("editorProblems", () => {
     expect(takeOne(rows, 1).text()).toContain(message);
   });
 
-  test("A document with no findings shows no count", async () => {
+  test("a document with no findings shows no count", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(EditorProblems, { props: { findings: [], getNodeTitle } });
@@ -38,7 +38,7 @@ describe("editorProblems", () => {
     expect(component.find("button").exists()).toBe(false);
   });
 
-  test("Choosing a finding selects its node", async () => {
+  test("choosing a finding selects its node", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(EditorProblems, { props: { findings, getNodeTitle } });

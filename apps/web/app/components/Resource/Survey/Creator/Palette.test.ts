@@ -33,7 +33,7 @@ describe("resourceSurveyCreatorPalette", () => {
     );
   });
 
-  test("choosing a kind inserts it after the selected question", async () => {
+  test("owner adds a rating question", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
@@ -68,9 +68,32 @@ describe("resourceSurveyCreatorPalette", () => {
       SurveyNodeType.Rating,
       SurveyNodeType.Text,
     ]);
+    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/1");
   });
 
-  test("An insertion menu offers only the kinds the slot accepts", async () => {
+  test("owner adds a question to a selected page", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(
+      createSurveyTestDocument([
+        createSurveyTestPage([createSurveyTestQuestion("first"), createSurveyTestQuestion("second")]),
+      ]),
+    );
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0");
+    const component = await mountSuspended(ResourceSurveyCreatorPalette);
+
+    await component
+      .findAll("button:not([aria-expanded])")
+      .find((button) => button.text() === surveyNodeTypeDefinitionMap[SurveyNodeType.Text].label)
+      ?.trigger("click");
+
+    expect(surveyCreatorStore.document.content[0]?.props.children).toHaveLength(3);
+    expect(surveyCreatorStore.selectedPointer).toBe("/content/0/props/children/2");
+  });
+
+  test("an insertion menu offers only the kinds the slot accepts", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();
@@ -98,7 +121,7 @@ describe("resourceSurveyCreatorPalette", () => {
     );
   });
 
-  test("A kind no slot accepts here is absent", async () => {
+  test("a kind no slot accepts here is absent", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();

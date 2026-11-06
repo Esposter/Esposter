@@ -162,7 +162,7 @@ describe("dashboardEditorContent", () => {
   });
 
   // A press on a visual selects it, and the canvas does not clear that selection on the same click
-  test("Pressing a visual selects it", async () => {
+  test("pressing a visual selects it", async () => {
     expect.hasAssertions();
 
     const barVisual = new Visual({ type: VisualType.Bar });

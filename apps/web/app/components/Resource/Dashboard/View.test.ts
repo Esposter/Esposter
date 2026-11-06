@@ -61,7 +61,7 @@ describe("resourceDashboardView", () => {
   });
 
   // The editor's bar, palette and inspector are drawn by the editor's shell alone, so a viewer gets none of them
-  test("The published page draws no editor regions", async () => {
+  test("the published page draws no editor regions", async () => {
     expect.hasAssertions();
 
     mockPublishedDashboard(new Dashboard({ visuals: [new Visual({ h: 2, type: VisualType.Card, w: 2, x: 0, y: 0 })] }));

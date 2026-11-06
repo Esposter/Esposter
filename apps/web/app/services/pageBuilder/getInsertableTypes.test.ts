@@ -21,7 +21,7 @@ describe(getInsertableTypes, () => {
   const TEST_TYPES = [WebpageNodeType.Column, WebpageNodeType.Text, WebpageNodeType.Tab, WebpageNodeType.Section];
   const TEST_EMAIL_TYPES = [MjmlNodeType.Section, MjmlNodeType.Column, MjmlNodeType.Text, MjmlNodeType.Button];
 
-  test("An insertion menu offers only the kinds the slot accepts", () => {
+  test("an insertion menu offers only the kinds the slot accepts", () => {
     expect.hasAssertions();
 
     const document: WebpageDocument = {
@@ -45,7 +45,7 @@ describe(getInsertableTypes, () => {
     ]);
   });
 
-  test("A kind no slot accepts here is absent", () => {
+  test("a kind no slot accepts here is absent", () => {
     expect.hasAssertions();
 
     const document: WebpageDocument = {

@@ -35,7 +35,7 @@ describe("editorToolbar", () => {
     return component;
   };
 
-  test("A group of tools is one tab stop", async () => {
+  test("a group of tools is one tab stop", async () => {
     expect.hasAssertions();
 
     const firstTool = takeOne(tools, 0);
@@ -53,7 +53,7 @@ describe("editorToolbar", () => {
     expect(component.emitted("update:modelValue")).toStrictEqual([[takeOne(tools, 1).value]]);
   });
 
-  test("Variants of a tool share one slot", async () => {
+  test("variants of a tool share one slot", async () => {
     expect.hasAssertions();
 
     const variants = [UiIconMeaning.Arrow, UiIconMeaning.Pen, UiIconMeaning.Hand].map((meaning, index) => ({
@@ -100,7 +100,7 @@ describe("editorToolbar", () => {
     expect(slotIcon?.props("meaning")).toBe(takeOne(variants, 1).meaning);
   });
 
-  test("A toolbar folds what does not fit into one menu", async () => {
+  test("a toolbar folds what does not fit into one menu", async () => {
     expect.hasAssertions();
 
     const observe = vi.fn<(callback: ResizeObserverCallback) => void>();
@@ -145,7 +145,7 @@ describe("editorToolbar", () => {
     ).toStrictEqual([takeOne(tools, 1).title, takeOne(tools, 2).title]);
   });
 
-  test("An unavailable tool says why", async () => {
+  test("an unavailable tool says why", async () => {
     expect.hasAssertions();
 
     const reason = "reason";
@@ -168,7 +168,7 @@ describe("editorToolbar", () => {
     expect(component.get(`#${radio.attributes("aria-describedby")}`).text()).toBe(reason);
   });
 
-  test("An unavailable command stays focusable and says why, and is not run", async () => {
+  test("an unavailable command stays focusable and says why, and is not run", async () => {
     expect.hasAssertions();
 
     const reason = "reason";

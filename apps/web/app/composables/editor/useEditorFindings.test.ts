@@ -18,7 +18,7 @@ describe(useEditorFindings, () => {
     vi.useRealTimers();
   });
 
-  test("A fix removes its finding", async () => {
+  test("a fix removes its finding", async () => {
     expect.hasAssertions();
 
     const editorDocument = ref({ firstName: "", secondName: "" });

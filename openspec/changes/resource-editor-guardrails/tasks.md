@@ -6,7 +6,7 @@
 
 ## 2. Never offered
 
-- [ ] 2.1 Build the insertion menu from the core's accepted types for the slot at the insertion point, in the survey creator, the page builder and the email editor. Verify: tests named after 'An insertion menu offers only the kinds the slot accepts' and 'A kind no slot accepts here is absent', seen failing first.
+- [ ] 2.1 Build the insertion menu from the core's accepted types for the slot at the insertion point, in the survey creator, the page builder and the email editor. Verify: tests named after 'An insertion menu offers only the kinds the slot accepts', 'A kind no slot accepts here is absent', 'Owner adds a rating question' and 'Owner adds a question to a selected page', seen failing first.
 - [ ] 2.2 Show a move or insert that the selection cannot take as disabled with the refusal's reason. Verify: a test named after 'An action the selection cannot take says why', seen failing first.
 
 ## 3. Findings per editor

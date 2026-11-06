@@ -147,7 +147,7 @@ describe(usePageBuilderMoves, () => {
     expect(moveToScope.commands().map(({ title }) => title)).toStrictEqual(["Section 1 › Columns"]);
   });
 
-  test("An action the selection cannot take says why", () => {
+  test("an action the selection cannot take says why", () => {
     expect.hasAssertions();
 
     const { getMoveDownRefusal } = setup("b");

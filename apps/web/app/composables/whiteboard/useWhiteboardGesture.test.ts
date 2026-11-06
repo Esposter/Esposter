@@ -31,7 +31,7 @@ describe(useWhiteboardGesture, () => {
     vi.restoreAllMocks();
   });
 
-  test("A placement the document check refuses leaves the document unchanged", () => {
+  test("a placement the document check refuses leaves the document unchanged", () => {
     expect.hasAssertions();
 
     // The placed shape takes the id of the process already on the canvas, which the document check refuses

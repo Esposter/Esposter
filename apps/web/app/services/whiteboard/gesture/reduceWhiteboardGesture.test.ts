@@ -501,7 +501,7 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
-  test("A click with a shape tool places a shape at the point", () => {
+  test("a click with a shape tool places a shape at the point", () => {
     expect.hasAssertions();
 
     const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
@@ -529,7 +529,7 @@ describe(reduceWhiteboardGesture, () => {
     expect(up.state.selectedIds).toStrictEqual([PLACED_SHAPE_ID]);
   });
 
-  test("A drag with a shape tool sizes the shape", () => {
+  test("a drag with a shape tool sizes the shape", () => {
     expect.hasAssertions();
 
     const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
@@ -557,7 +557,7 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
-  test("A placement returns the tool to select", () => {
+  test("a placement returns the tool to select", () => {
     expect.hasAssertions();
 
     const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
@@ -568,7 +568,7 @@ describe(reduceWhiteboardGesture, () => {
     expect(up.state.tool).toBe(GestureTool.Select);
   });
 
-  test("A locked tool stays in hand", () => {
+  test("a locked tool stays in hand", () => {
     expect.hasAssertions();
 
     const state = createState(

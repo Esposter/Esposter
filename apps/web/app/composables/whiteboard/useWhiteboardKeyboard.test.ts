@@ -238,7 +238,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
   });
 
-  test("A tool shortcut switches the tool", async () => {
+  test("a tool shortcut switches the tool", async () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
@@ -252,7 +252,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(tool.value).toBe(GestureTool.Arrow);
   });
 
-  test("A shortcut typed into a text field is text", async () => {
+  test("a shortcut typed into a text field is text", async () => {
     expect.hasAssertions();
 
     const textarea = document.createElement("textarea");

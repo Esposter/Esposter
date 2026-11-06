@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 describe(getSurveyEditorFindings, () => {
   const name = "a";
 
-  test("The problems surface lists each finding with its node", () => {
+  test("the problems surface lists each finding with its node", () => {
     expect.hasAssertions();
 
     const duplicateQuestion = createSurveyTestQuestion(name);

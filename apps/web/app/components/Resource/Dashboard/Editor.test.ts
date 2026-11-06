@@ -125,7 +125,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // The inspector takes the selected visual's form, and the grid stays drawn beside it so the change is seen on the canvas
-  test("Selecting a visual shows its edit form in the inspector", async () => {
+  test("selecting a visual shows its edit form in the inspector", async () => {
     expect.hasAssertions();
 
     const barVisual = new Visual({ type: VisualType.Bar });
@@ -140,7 +140,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // The form's change is written onto the visual while the canvas is in view, so the tile it draws redraws as the type changes
-  test("A form change redraws the visual", async () => {
+  test("a form change redraws the visual", async () => {
     expect.hasAssertions();
 
     const barVisual = new Visual({ type: VisualType.Bar });
@@ -159,7 +159,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // A group has no chart to edit, so its inspector entry is its title alone
-  test("A group selected shows its title", async () => {
+  test("a group selected shows its title", async () => {
     expect.hasAssertions();
 
     const groupVisual = new Visual({ type: VisualType.Group, visuals: [] });
@@ -174,7 +174,7 @@ describe("resourceDashboardEditor", () => {
   });
 
   // With nothing selected the inspector shows how visuals pack and what a drop does, which the bar's popover held
-  test("Nothing selected shows the dashboard's layout settings", async () => {
+  test("nothing selected shows the dashboard's layout settings", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountEditor([new Visual({ type: VisualType.Bar })]);
@@ -187,7 +187,7 @@ describe("resourceDashboardEditor", () => {
 
   // A compact window draws the palette as a sheet that stays shut until the reader opens it. The shell's button for it is
   // Not yet drawn, so the test opens the region through the shell's own function, the one the button will call
-  test("The palette is a region the reader opens", async () => {
+  test("the palette is a region the reader opens", async () => {
     expect.hasAssertions();
 
     display.isCompact = true;

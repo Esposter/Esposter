@@ -68,7 +68,7 @@ describe("resourceSurveyCreatorLayers", () => {
     component.unmount();
   });
 
-  test("An action the selection cannot take says why", async () => {
+  test("an action the selection cannot take says why", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();

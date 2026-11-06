@@ -4,7 +4,7 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
 describe("editorContextualPanel", () => {
-  test("Nothing selected shows the document settings", () => {
+  test("nothing selected shows the document settings", () => {
     expect.hasAssertions();
 
     const wrapper = mount(EditorContextualPanel, {
@@ -16,7 +16,7 @@ describe("editorContextualPanel", () => {
     expect(wrapper.find("span").exists()).toBe(false);
   });
 
-  test("A selection shows its own content, not the document settings", () => {
+  test("a selection shows its own content, not the document settings", () => {
     expect.hasAssertions();
 
     const wrapper = mount(EditorContextualPanel, {
@@ -28,7 +28,7 @@ describe("editorContextualPanel", () => {
     expect(wrapper.find("p").exists()).toBe(false);
   });
 
-  test("An editor with no document settings shows no panel while nothing is selected", () => {
+  test("an editor with no document settings shows no panel while nothing is selected", () => {
     expect.hasAssertions();
 
     const wrapper = mount(EditorContextualPanel, {
@@ -39,7 +39,7 @@ describe("editorContextualPanel", () => {
     expect(wrapper.find("aside").exists()).toBe(false);
   });
 
-  test("The panel is a landmark named by its header", () => {
+  test("the panel is a landmark named by its header", () => {
     expect.hasAssertions();
 
     const wrapper = mount(EditorContextualPanel, {

@@ -6,7 +6,7 @@ import { toEmailValidatorFinding } from "@/services/emailEditor/toEmailValidator
 import { describe, expect, test } from "vitest";
 
 describe(toEmailValidatorFinding, () => {
-  test("A validator message becomes a finding", () => {
+  test("a validator message becomes a finding", () => {
     expect.hasAssertions();
 
     const validatorMessages: EmailValidatorMessage[] = [

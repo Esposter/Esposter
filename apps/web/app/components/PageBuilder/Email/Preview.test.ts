@@ -73,7 +73,7 @@ describe("pageBuilderEmailPreview", () => {
     wrapper.unmount();
   });
 
-  test("A validator message becomes a finding", async () => {
+  test("a validator message becomes a finding", async () => {
     expect.hasAssertions();
 
     trpcMsw.email.compile.mutation(() => ({

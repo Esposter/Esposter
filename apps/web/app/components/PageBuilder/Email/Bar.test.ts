@@ -29,7 +29,7 @@ describe("pageBuilderEmailBar", () => {
     return component;
   };
 
-  test("Import MJML is in the overflow menu", async () => {
+  test("import MJML is in the overflow menu", async () => {
     expect.hasAssertions();
 
     const component = await mountBar();
