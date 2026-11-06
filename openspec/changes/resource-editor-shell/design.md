@@ -74,11 +74,18 @@ The canvas is the main landmark, the toolbar a toolbar with a name, and each sid
 - **A sheet's placement is its edge's drawer, and a top or bottom sheet has none.** A start or end sheet uses the drawer placements the page's drawers use. The library has no top or bottom drawer, so a sheet from there stands high or in the middle (`RegionEdgeDialogPlacementMap`).
 - **A handle sits on the region's inner edge, and the shell assumes left-to-right.** A region at the end or the bottom takes its handle on its start or top side. `ResizeHandle` places itself by physical side, so a right-to-left page would put a handle on the wrong side. No editor is right-to-left yet, so the case is left to the first editor that is.
 - **Only docked regions take a handle, and a closed docked or overlay region draws nothing.** The spec puts handles between docked regions, and an on-demand region that is closed takes no space. A sheet stays mounted closed, so the reader can open it.
+- **A sheet's button is the shell's, one per sheet, labelled by the region's name.** The shell derives it from the sheets the layout presents, so no layout names a button, and it is drawn only while the sheet resolves, which is while the region holds a panel. Rejected: a button each layout names, which repeats the label and the open state in every editor.
+- **The sheet's button sits at the canvas's top corner, out of the flow.** A button in the flow would push the canvas down when a selection shows it, the movement the selection requirement rules out. Rejected: a button in the tool region, which moves to the bottom edge on a phone and would tie the opener to the layout's edges.
+- **Focus returns to the opener from the shell, not from `Ui/Dialog.vue`.** The dialog focuses itself on open and returns nothing on close. The native `<dialog>` restores focus to what the browser had focused before the modal, and Safari on macOS does not focus a button on click, so that restore is not dependable; happy-dom has none. The shell focuses the opener once the close has drawn, since the open modal leaves the opener inert until then. Rejected: changing the dialog, which every dialog shares, for one editor's need.
+- **Escape closes sheets in this change, and no floating panel.** Escape closes a sheet, because a sheet's model takes the browser's cancel as a close. A floating panel has no close the shell draws: the selection's panel is open while it holds a panel, and an on-demand overlay has no button until an editor adds one. An on-demand floating panel waits for that editor, since its Escape has nothing to close until its button exists. Rejected: an Escape listener on every overlay now, which would close a panel no control can reopen.
+- **The compact tool region's edge comes from the layout, and the toolbar's fold needs no shell rule.** The layout's compact edge places the region, and the shell draws it where the resolved edge says. The toolbar folds by its own measured width, so a full-width bottom bar on a phone folds at a narrower width than the desktop bar it replaces. Rejected: a compact flag on the toolbar, or a width the shell reads a second time to fold earlier.
+
+## Build
 
 ## Build
 
 ```text
-apps/web/app/components/Editor/Shell.vue          the shell: regions, handles, sheets, landmarks
+apps/web/app/components/Editor/Shell.vue          the shell: regions, handles, sheets with their buttons, landmarks
 apps/web/app/components/Editor/Region.vue         one region: its landmark or sheet, its handle and its content
 apps/web/app/components/Editor/Toolbar.vue        groups, the variant slot, the fold, the keyboard contract
 apps/web/app/components/Editor/ContextualPanel.vue  the header, mixed values and the document settings state
