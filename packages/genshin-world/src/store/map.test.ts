@@ -16,6 +16,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { QuestId, QuestIds } from "#src/models/quest/QuestId";
 import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { LandmarkIdStatuePointId } from "#src/models/statue/LandmarkIdStatuePointId";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMondstadtExplorationAreas } from "#src/services/exploration/readMondstadtExplorationAreas";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
@@ -24,6 +25,7 @@ import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
+import { LandmarkIdStatuePointIdMap } from "#src/services/statue/LandmarkIdStatuePointIdMap";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
 import { readRegionData } from "#src/services/world/readRegionData";
@@ -35,7 +37,7 @@ import { useWorldReputationStore } from "#src/store/reputation";
 import { startTestWorldSession } from "#src/store/session.fixture";
 import { GameTextKey } from "genshin-text";
 import { storeToRefs } from "pinia";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { computed, shallowRef } from "vue";
 
 vi.mock(import("#src/services/exploration/readMondstadtExplorationAreas"));
@@ -535,6 +537,24 @@ describe(useWorldMapStore, () => {
 
     expect(wallet.value).toStrictEqual(EMPTY_WALLET);
     expect(gainWorldAdventureExp).not.toHaveBeenCalled();
+  });
+
+  test("first unlock of Windrise's statue", async () => {
+    expect.hasAssertions();
+
+    const statuePointId = LandmarkIdStatuePointIdMap[LandmarkIdStatuePointId.WindriseStatueOfTheSeven];
+    assert.exists(statuePointId);
+    vi.mocked(readOpenWorldTransPointRewards).mockResolvedValue([
+      { adventureExp: TRANS_POINT_ADVENTURE_EXP, pointId: statuePointId, primogems: TRANS_POINT_PRIMOGEMS },
+    ]);
+    const { activateLandmark, gainWorldAdventureExp, wallet } = createWorldMap();
+    await waitForReads();
+
+    activateLandmark(LandmarkIdStatuePointId.WindriseStatueOfTheSeven);
+    await waitForReads();
+
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Primogem]: TRANS_POINT_PRIMOGEMS });
+    expect(gainWorldAdventureExp).toHaveBeenCalledExactlyOnceWith(TRANS_POINT_ADVENTURE_EXP);
   });
 
   test("the first unlock of a domain entrance emits its entry id, and a later unlock emits nothing", async () => {
