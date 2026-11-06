@@ -10,6 +10,14 @@ describe(getLineNumberCitations, () => {
     ).toStrictEqual([{ line: 1, text: "packages/genshin-world/src/services/liyue/constants.ts:44-47" }]);
   });
 
+  test("finds a colon citation whose closing backtick sits before its colon", () => {
+    expect.hasAssertions();
+
+    expect(
+      getLineNumberCitations("The mount is set in `packages/genshin-world/src/services/liyue/constants.ts`:44-47."),
+    ).toStrictEqual([{ line: 1, text: "packages/genshin-world/src/services/liyue/constants.ts:44-47" }]);
+  });
+
   test("finds a prose citation of the lines of the repository file its sentence names", () => {
     expect.hasAssertions();
 
@@ -56,6 +64,7 @@ describe(getLineNumberCitations, () => {
           "The page says so (`{data-root}/cache/genshin-wiki/Page_Fatui.json`, wikitext line 13).",
           "The burst is `burst.go` lines 20 and 27 of the pinned gcsim.",
           "Its row is `Category_Lisa_Talents.json` line 1.",
+          "The mesh is `{data-root}/genshin-parity/extracted/maps/blocks/00/00612967.blk`, lines 641 to 928.",
         ].join("\n"),
       ),
     ).toStrictEqual([]);

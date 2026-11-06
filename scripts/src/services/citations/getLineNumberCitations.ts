@@ -5,9 +5,9 @@ import { getCitedFile } from "#src/services/citations/getCitedFile";
 import { FENCE_REGEX } from "#src/services/openspec/constants";
 
 const URL_REGEX = /https?:\/\/\S+/gu;
-// A colon citation names its file: `path.ts:44-47`, `path.ts:4,24`
+// A colon citation names its file: `path.ts:44-47`, `path.ts:4,24`, or `path.ts`:44-47 with the backtick closed first
 const COLON_CITATION_REGEX =
-  /(?<path>[^\s`'"()[\]<>,;:|]*?\.[A-Za-z][\dA-Za-z]*):(?<line>\d+(?:-\d+)?(?:,\s?\d+(?:-\d+)?)*)(?!\w)/gu;
+  /(?<path>[^\s`'"()[\]<>,;:|]*?\.[A-Za-z][\dA-Za-z]*)`?:(?<line>\d+(?:-\d+)?(?:,\s?\d+(?:-\d+)?)*)(?!\w)/gu;
 // A shorthand line names none, so the file is the one its sentence names before it: `path.ts:10`, `:11`
 const SHORTHAND_CITATION_REGEX = /`(?<line>:\d+(?:-\d+)?(?:,\s?\d+(?:-\d+)?)*)`/gu;
 // A measure a count of lines can carry in prose, `lines 32 units apart`, is a size and not a line of a file
@@ -20,10 +20,10 @@ const LINE_LOCATOR_REGEX = new RegExp(
 
 // Every citation on a line, with the file it names, or none where the sentence names none
 const getLineCitations = (line: string) => [
-  ...Array.from(line.matchAll(COLON_CITATION_REGEX), ({ 0: text, groups, index }) => ({
+  ...Array.from(line.matchAll(COLON_CITATION_REGEX), ({ 0: match, groups, index }) => ({
     file: groups?.path,
     index,
-    text,
+    text: match.replaceAll("`", ""),
   })),
   ...Array.from(line.matchAll(SHORTHAND_CITATION_REGEX), ({ 0: match, groups, index }) => ({
     file: getCitedFile(line, index, index + match.length),
