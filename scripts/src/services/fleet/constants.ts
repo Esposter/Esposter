@@ -57,7 +57,8 @@ export const COMPUTE_QUEUE_INDEX_FILE = "README.md";
 export const COMPUTE_QUEUE_PHASE_HEADING = "## Phases";
 // The blocker a waiting item shows when its line names none, so the report says so rather than printing a blank
 export const COMPUTE_UNNAMED_BLOCKER = "none named on its line";
-// The last Genshin phase: a change or a compute page that names a phase past it names none
+// The last Genshin phase. A change whose x-phase is past it fails its read, and a compute row past it leaves its design
+// Without a row, which fails the read naming the design; a task marker past it reads as no marker
 export const MAX_GENSHIN_PHASE = 7;
 // A worker's name: letters, digits and dashes, since it names a pid file and follows the slash in `machine/worker`
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
