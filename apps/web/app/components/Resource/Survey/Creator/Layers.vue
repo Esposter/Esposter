@@ -6,8 +6,9 @@ import type { SurveyNode } from "headless-survey-engine";
 import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
+import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
-import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
+import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 import { getAcceptingSlotPointers, getBlockLayerRows, getBlockNode } from "headless-block-editor";
 import { surveyNodeChildren, surveyNodeTypeDefinitionMap, surveyRegistry } from "headless-survey-engine";
 
@@ -72,9 +73,8 @@ const openMoveTo = (pointer: string) => {
 };
 // A node taken out of the slot it is in leaves that slot one shorter, so the end of that slot is one index less
 const moveTo = (slotPointer: string) => {
-  const slotNodes = readJsonValue(surveyDocument.value, parseJsonPointer(slotPointer));
   const sameSlotOffset = getSlotPointer(movingPointer.value) === slotPointer ? 1 : 0;
-  const index = Array.isArray(slotNodes) ? slotNodes.length - sameSlotOffset : 0;
+  const index = getSurveySlotLength(surveyDocument.value, slotPointer) - sameSlotOffset;
   moveNodeTo(movingPointer.value, slotPointer, index);
   isMoveOpen.value = false;
 };
