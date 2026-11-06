@@ -1,0 +1,10 @@
+# Retire the grid layout package
+
+Remove the grid layout package, move the dashboard's tiles onto something simpler, and unpublish the package.
+
+## Why not
+
+- **The engine does not do the grid's job.** The grid places items inside a canvas on a grid of cells, with packing, collision and compaction, and runs the pointer gestures that move and resize them. The [layout engine](../../../specs/vue-editor-layout-headless/layout-engine/design.md) arranges regions around a canvas by the window's size class and what is selected, and holds the reader's sizes and open regions. Neither package holds a term of the other's: the engine has no cell, collision or gesture, and the grid has no region, panel or size class. They share a size and a pointer and nothing else.
+- **Folding one into the other builds the same package.** For the engine to place tiles it would grow a cell grid with packing and gestures of its own, which is the grid package under a new name, and the dashboard would take the editor's chrome model for a problem it does not have. The [editor shell](../../../specs/resource/editor-shell/design.md) rejected one engine for both on the same ground. The engine's canvas region holds the grid, as the dashboard's does, and that is the whole of their meeting.
+- **Nothing replaces it at the dashboard.** The dashboard's controls and its saved layout are built on free placement: a tile is placed by its cell, moved and resized by the grid's gestures, and a group nests a grid of its own inside a tile. A plain CSS grid does none of that, and ordering tiles by span in a reflowing grid is a different product for the dashboard, which its [grid design](../../../specs/resource/dashboard-grid/design.md) and [layout](../../../specs/resource/dashboard-layout/design.md) do not ask for.
+- **Removal is also a release question.** A package that has been published for a while cannot always be unpublished from npm, so the route would be the repository's own removal and a deprecation of each published version, with unpublishing only where npm allows it. That cost buys nothing while the package has a job.
