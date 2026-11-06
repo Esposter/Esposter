@@ -168,7 +168,7 @@ const groups = computed<EditorToolbarGroup[]>(() => [
 
 <template>
   <div flex gap-1 items-center min-w-0>
-    <EditorToolbar v-model="mode" flex-1 label="Survey actions" :groups />
+    <EditorToolbar v-model="mode" label="Survey actions" :groups flex-1 />
     <EditorProblems
       :findings
       :get-node-title="getNodeTitle"
