@@ -11,14 +11,10 @@ import { freezeFrameGeometry } from "@/services/pageBuilder/freezeFrameGeometry"
 import { getDropRefusal } from "@/services/pageBuilder/getDropRefusal";
 import { getEdgeScrollVelocity } from "@/services/pageBuilder/getEdgeScrollVelocity";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
-import { getPressMoveOutcome } from "@/services/pageBuilder/getPressMoveOutcome";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
-import { DRAG_START_DISTANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
-import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
-import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
 import { noop } from "@esposter/shared";
 import { getBlockLayerRows } from "headless-block-editor";
 
@@ -71,14 +67,11 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // The palette block type being dragged, which a merge field's drag leaves undefined, so only a block gets a ghost
   const draggedType = shallowRef<TNode["type"]>();
-  // The viewport point the pointer is at while a drag is held, where the ghost is drawn
-  const dragPoint = shallowRef<{ x: number; y: number }>();
+  // The press's own state: whether it has passed the threshold, so the editor can let the pointer pass through the canvas frame,
+  // Whose document would take it, and the viewport point the pointer is at, where the ghost is drawn
+  const { cancel: cancelDrag, isDragging, point: dragPoint, startPress } = usePressDrag();
   // Why a block is refused while the pointer is over the frame and no slot takes it, and empty otherwise
   const refusal = shallowRef("");
-  // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
-  const isDragging = ref(false);
-  // Escape cancels the drag in progress, so it is bound only while there is one, and listed in the shortcuts dialog only then
-  const cancelDrag = shallowRef<() => void>();
   // The edge scroll of the drag in progress, which the loop runs each animation frame while the drag is held
   let scrollDragEdge: ((delta: number) => void) | undefined;
   const { pause: pauseEdgeScroll, resume: resumeEdgeScroll } = useRafFn(
@@ -87,105 +80,57 @@ export const usePageBuilderDrag = <
     },
     { immediate: false },
   );
+  // Escape cancels the drag in progress, so it is listed in the shortcuts dialog only then
   useCommands((): UiCommand[] => {
-    const cancel = cancelDrag.value;
-    if (!cancel) return [];
+    if (!isDragging.value) return [];
 
     return [
       {
         group: PAGE_BUILDER_COMMAND_GROUP,
         id: "page-builder-cancel-drag",
         meaning: UiIconMeaning.Close,
-        run: cancel,
+        run: cancelDrag,
         shortcut: "escape",
         title: "Cancel the drag",
       },
     ];
   });
-  // Tracks a press until its release, a cancel or Escape. Each move of the drag reaches onMove, and the release reaches
-  // `onRelease` with its point only while the press was dragging
+  // Tracks a press until its release, a cancel or Escape, through the shared press tracker. Each move of the drag reaches
+  // `onMove`, and the release reaches `onRelease` with its point only while the press was dragging
   const trackDrag = (
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
     onMove: (point: { x: number; y: number }) => void,
     onRelease: (point: { x: number; y: number }) => void,
   ) => {
-    const abortController = new AbortController();
-    const { clientX: startX, clientY: startY, pointerId, pointerType } = event;
-    // Where the pointer was last, which a finger's drag that starts on its rest is drawn at
-    let latestPoint = { x: startX, y: startY };
-    // Whether the pointer has moved past the threshold, since a finger that rested and lifted without moving is a click
-    let hasMoved = false;
-    let restTimer: ReturnType<typeof setTimeout> | undefined;
-    const endDrag = () => {
-      abortController.abort();
-      clearTimeout(restTimer);
-      pauseEdgeScroll();
-      scrollDragEdge = undefined;
-      cancelDrag.value = undefined;
-      dropTarget.value = undefined;
-      refusal.value = "";
-      draggedType.value = undefined;
-      dragPoint.value = undefined;
-      isDragging.value = false;
-    };
-    const moveTo = (point: { x: number; y: number }) => {
-      dragPoint.value = point;
-      onMove(point);
-    };
     // Scrolls the frame toward the edge the pointer is near, then resolves the drop again, as the content moved under it
     const scrollToEdge = (delta: number) => {
       const geometry = getFrameGeometry();
-      if (!geometry?.scrollBy) return;
+      const point = dragPoint.value;
+      if (!geometry?.scrollBy || !point) return;
 
-      const velocity = getEdgeScrollVelocity(latestPoint.y, geometry.frameRect);
+      const velocity = getEdgeScrollVelocity(point.y, geometry.frameRect);
       if (velocity === 0) return;
 
       // A frame pixel is `scale` to a viewport pixel, and a step is at least a pixel, which a browser would round away
       geometry.scrollBy(Math.sign(velocity) * Math.max((Math.abs(velocity) * delta) / geometry.scale, 1));
-      moveTo(latestPoint);
+      onMove(point);
     };
-    const startDragging = () => {
-      isDragging.value = true;
-      scrollDragEdge = scrollToEdge;
-      resumeEdgeScroll();
-      moveTo(latestPoint);
-    };
-    const onPointerMove = (moveEvent: PointerEvent) => {
-      // A second pointer on the page is not this press, so it moves neither the drag's point nor its drop target
-      if (moveEvent.pointerId !== pointerId) return;
-
-      latestPoint = { x: moveEvent.clientX, y: moveEvent.clientY };
-      const distance = Math.hypot(latestPoint.x - startX, latestPoint.y - startY);
-      if (distance >= DRAG_START_DISTANCE) hasMoved = true;
-      if (isDragging.value) {
-        moveTo(latestPoint);
-        return;
-      }
-
-      const outcome = getPressMoveOutcome(pointerType, distance);
-      if (outcome === "start") startDragging();
-      else if (outcome === "cancel") endDrag();
-    };
-    const onPointerUp = (upEvent: PointerEvent) => {
-      // Releasing another pointer neither lands the drag nor ends it, which waits for this press's own release
-      if (upEvent.pointerId !== pointerId) return;
-
-      if (isDragging.value) {
-        onRelease({ x: upEvent.clientX, y: upEvent.clientY });
-        if (hasMoved) swallowNextWindowClick();
-      }
-      endDrag();
-    };
-    const { signal } = abortController;
-    cancelDrag.value = endDrag;
-    window.addEventListener("pointermove", onPointerMove, { signal });
-    window.addEventListener("pointerup", onPointerUp, { signal });
-    window.addEventListener("pointercancel", endDrag, { signal });
-    if (pointerType === "touch") {
-      restTimer = setTimeout(startDragging, TOUCH_DRAG_DELAY_MS);
-      holdPageStillWhile(() => isDragging.value, signal);
-    }
+    startPress(event, {
+      onEnd: () => {
+        pauseEdgeScroll();
+        scrollDragEdge = undefined;
+        dropTarget.value = undefined;
+        refusal.value = "";
+        draggedType.value = undefined;
+      },
+      onMove,
+      onRelease,
+      onStart: () => {
+        scrollDragEdge = scrollToEdge;
+        resumeEdgeScroll();
+      },
+    });
   };
   // Resolves a block at the pointer, and where no slot takes it over the frame, says why it is refused
   const moveBlock = (type: TNode["type"], point: { x: number; y: number }, geometry: FrameGeometry | undefined) => {

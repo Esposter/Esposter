@@ -6,15 +6,14 @@ describe(holdPageStillWhile, () => {
   test("a touch move is held only while the drag is", () => {
     expect.hasAssertions();
 
-    const abortController = new AbortController();
     let isDragging = false;
-    holdPageStillWhile(() => isDragging, abortController.signal);
+    const stop = holdPageStillWhile(() => isDragging);
     const beforeDrag = new Event("touchmove", { cancelable: true });
     window.dispatchEvent(beforeDrag);
     isDragging = true;
     const duringDrag = new Event("touchmove", { cancelable: true });
     window.dispatchEvent(duringDrag);
-    abortController.abort();
+    stop();
     const afterDrag = new Event("touchmove", { cancelable: true });
     window.dispatchEvent(afterDrag);
 

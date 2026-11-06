@@ -1,5 +1,5 @@
-import { getPressMoveOutcome } from "@/services/pageBuilder/getPressMoveOutcome";
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
+import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE } from "@/services/ui/constants";
+import { getPressMoveOutcome } from "@/services/ui/getPressMoveOutcome";
 import { describe, expect, test } from "vitest";
 
 describe(getPressMoveOutcome, () => {
@@ -15,15 +15,15 @@ describe(getPressMoveOutcome, () => {
     expect(getPressMoveOutcome("mouse", DRAG_START_DISTANCE - 1)).toBe("wait");
   });
 
-  test("a finger that moves past the threshold before it rests is scrolling, so its press is cancelled", () => {
+  test("a finger that drifts past the tolerance before it rests is scrolling, so its press is cancelled", () => {
     expect.hasAssertions();
 
-    expect(getPressMoveOutcome("touch", DRAG_START_DISTANCE)).toBe("cancel");
+    expect(getPressMoveOutcome("touch", LONG_PRESS_MOVE_TOLERANCE + 1)).toBe("cancel");
   });
 
-  test("a finger inside the threshold waits for its rest, which starts the drag", () => {
+  test("a finger inside the tolerance waits for its rest, which starts the drag", () => {
     expect.hasAssertions();
 
-    expect(getPressMoveOutcome("touch", DRAG_START_DISTANCE - 1)).toBe("wait");
+    expect(getPressMoveOutcome("touch", LONG_PRESS_MOVE_TOLERANCE)).toBe("wait");
   });
 });

@@ -127,14 +127,8 @@ const onFrameKeydown = (event: KeyboardEvent) => {
   event.preventDefault();
   frameKeyAction();
 };
-// The frame's document is the one the keys are pressed in, so its listener is attached once the page is drawn in it and removed with it
-watch(contentRoot, (element, _previousElement, onCleanup) => {
-  const frameDocument = element?.ownerDocument;
-  if (!frameDocument) return;
-
-  frameDocument.addEventListener("keydown", onFrameKeydown);
-  onCleanup(() => frameDocument.removeEventListener("keydown", onFrameKeydown));
-});
+// The frame's document is the one the keys are pressed in, so its listener follows the content root drawn in it
+useEventListener(() => contentRoot.value?.ownerDocument, "keydown", onFrameKeydown);
 defineExpose({ getFrameGeometry });
 // While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
 // The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded

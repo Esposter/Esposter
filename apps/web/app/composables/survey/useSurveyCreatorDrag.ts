@@ -7,9 +7,6 @@ import { createSurveyNode } from "@/services/resource/survey/createSurveyNode";
 import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeLocation";
 import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNodePointerById";
 import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
-import { DRAG_START_DISTANCE, LONG_PRESS_MOVE_TOLERANCE, TOUCH_DRAG_DELAY_MS } from "@/services/ui/constants";
-import { holdPageStillWhile } from "@/services/ui/holdPageStillWhile";
-import { swallowNextWindowClick } from "@/services/ui/swallowNextWindowClick";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
 import { getBlockNode } from "headless-block-editor";
@@ -28,6 +25,7 @@ export const useSurveyCreatorDrag = () => {
   const surveyCreatorStore = useSurveyCreatorStore();
   const { document: surveyDocument } = storeToRefs(surveyCreatorStore);
   const { insertNodeAt, moveNodeTo } = useSurveyCreatorCommands();
+  const { startPress } = usePressDrag();
   // The slots a drag lands in, read off the canvas as the drag starts, so the preview it draws moves no box a move reads. A node
   // cannot land inside itself, and its own slot loses the node's box, so the index a drop resolves is the one the core takes once
   // the node is removed
@@ -52,65 +50,22 @@ export const useSurveyCreatorDrag = () => {
       source,
     }: { draggedNodeId: string; draggedType: SurveyNodeType; land: (target: DropTarget) => void; source?: DragSource },
   ) => {
-    const abortController = new AbortController();
-    const { signal } = abortController;
-    const { clientX, clientY, pointerId, pointerType } = event;
-    let lastPoint = { x: clientX, y: clientY };
-    let isStarted = false;
     let slots: SurveyDropSlot[] = [];
-    let touchTimer: ReturnType<typeof setTimeout> | undefined;
     const resolveAt = (point: { x: number; y: number }) => resolveSurveyDropTarget({ draggedType: type, point, slots });
-    const endPress = () => {
-      abortController.abort();
-      clearTimeout(touchTimer);
-      if (isStarted) clearDrag();
-    };
-    const startDrag = () => {
-      isStarted = true;
-      slots = getDropSlots(source);
-      setDrag(type, nodeId);
-      moveDrag(lastPoint, resolveAt(lastPoint));
-    };
-    const onPointerMove = (moveEvent: PointerEvent) => {
-      if (moveEvent.pointerId !== pointerId) return;
-
-      lastPoint = { x: moveEvent.clientX, y: moveEvent.clientY };
-      if (isStarted) {
-        moveDrag(lastPoint, resolveAt(lastPoint));
-        return;
-      }
-
-      const distance = Math.hypot(lastPoint.x - clientX, lastPoint.y - clientY);
-      if (pointerType === "touch") {
-        if (distance > LONG_PRESS_MOVE_TOLERANCE) endPress();
-      } else if (distance >= DRAG_START_DISTANCE) startDrag();
-    };
-    const onPointerUp = (upEvent: PointerEvent) => {
-      if (upEvent.pointerId !== pointerId) return;
-
-      if (isStarted) {
-        const target = resolveAt({ x: upEvent.clientX, y: upEvent.clientY });
+    startPress(event, {
+      onEnd: clearDrag,
+      onMove: (point) => {
+        moveDrag(point, resolveAt(point));
+      },
+      onRelease: (point) => {
+        const target = resolveAt(point);
         if (target !== undefined) land(target);
-        swallowNextWindowClick();
-      }
-      endPress();
-    };
-    // Escape cancels a drag in progress and goes no further, so a dialog the canvas sits in stays open
-    const onKeyDown = (keyEvent: KeyboardEvent) => {
-      if (keyEvent.key !== "Escape" || !isStarted) return;
-
-      keyEvent.preventDefault();
-      keyEvent.stopPropagation();
-      endPress();
-    };
-    window.addEventListener("pointermove", onPointerMove, { signal });
-    window.addEventListener("pointerup", onPointerUp, { signal });
-    window.addEventListener("pointercancel", endPress, { signal });
-    window.addEventListener("keydown", onKeyDown, { capture: true, signal });
-    if (pointerType === "touch") {
-      touchTimer = setTimeout(startDrag, TOUCH_DRAG_DELAY_MS);
-      holdPageStillWhile(() => isStarted, signal);
-    }
+      },
+      onStart: () => {
+        slots = getDropSlots(source);
+        setDrag(type, nodeId);
+      },
+    });
   };
   // A palette kind is inserted where a drop lands it, through the same insert a click on the palette makes
   const startPaletteDrag = (type: SurveyNodeType, event: PointerEvent) => {
