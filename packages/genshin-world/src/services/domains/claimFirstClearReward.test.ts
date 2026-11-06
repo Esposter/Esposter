@@ -18,7 +18,7 @@ describe(claimFirstClearReward, () => {
     });
   });
 
-  test("a repeat clear of a one-time domain gives nothing", () => {
+  test("A repeat clear of a one-time domain gives nothing", () => {
     expect.hasAssertions();
 
     expect(claimFirstClearReward(new Set([DOMAIN_ID]), DOMAIN_ID, rewards)).toStrictEqual({

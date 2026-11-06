@@ -173,7 +173,7 @@ describe(useWorldDomains, () => {
     expect(step()).toStrictEqual([STORMTERROR_FINALE_ATTACK]);
   });
 
-  test("entering a domain fades into its scene", async () => {
+  test("Entering a domain fades into its scene", async () => {
     expect.hasAssertions();
 
     const { domains, jumpTo } = createDomains();
@@ -200,7 +200,7 @@ describe(useWorldDomains, () => {
     expect(closeScreen).toHaveBeenCalledTimes(1);
   });
 
-  test("leaving a domain fades back to its entrance", async () => {
+  test("Leaving a domain fades back to its entrance", async () => {
     expect.hasAssertions();
 
     const { domains, jumpTo } = createDomains();

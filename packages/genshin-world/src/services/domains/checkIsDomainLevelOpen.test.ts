@@ -23,14 +23,14 @@ describe(checkIsDomainLevelOpen, () => {
     treeRewards: [],
   };
 
-  test("a level at or below the player's Adventure Rank is open", () => {
+  test("A level at or below the player's Adventure Rank is open", () => {
     expect.hasAssertions();
 
     expect(checkIsDomainLevelOpen(DomainKind.Mastery, LEVEL, 30, MONDAY)).toBe(true);
     expect(checkIsDomainLevelOpen(DomainKind.Mastery, LEVEL, 35, MONDAY)).toBe(true);
   });
 
-  test("a level above the player's Adventure Rank is refused", () => {
+  test("A level above the player's Adventure Rank is refused", () => {
     expect.hasAssertions();
 
     expect(checkIsDomainLevelOpen(DomainKind.Mastery, LEVEL, 28, MONDAY)).toBe(false);
