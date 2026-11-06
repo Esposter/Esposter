@@ -1,9 +1,11 @@
 import type { LandRows } from "#src/models/globeLandMask/LandRows";
 import type { WorldFeature } from "#src/models/globeLandMask/WorldFeature";
 
-// A scanline fill: each row's centre latitude crosses every edge it spans, and between the sorted crossings of one
-// Country the line is inside it (an even count of crossings, so a hole's edges close their own gap). A country is
-// Filled on its own, and the spans of all of them are merged afterwards, so touching countries become one run
+/**
+ * A scanline fill: each row's centre latitude crosses every edge it spans, and between the sorted crossings of one
+ * country the line is inside it (an even count of crossings, so a hole's edges close their own gap). A country is
+ * filled on its own, and the spans of all of them are merged afterwards, so touching countries become one run
+ */
 export const rasterizeLandMask = (features: readonly WorldFeature[], cellsPerDegree: number) => {
   const width = 360 * cellsPerDegree;
   const height = 180 * cellsPerDegree;
