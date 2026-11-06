@@ -6,7 +6,7 @@
 
 ## 2. Compact
 
-- [ ] 2.1 Replace the narrow layout's tab per pane with the canvas and two sheets opened from the Structure and Inspector buttons. Verify: the scenario 'A compact window opens the inspector as a sheet' as a failing-first test, and a single driven-browser session at a phone width that selects a question and reads its settings while the question stays in view, since happy-dom has no layout.
+- [x] 2.1 Replace the narrow layout's tab per pane with the canvas and two sheets opened from the Structure and Inspector buttons. Verify: the scenario 'A compact window opens the inspector as a sheet' as a failing-first test, and a single driven-browser session at a phone width that selects a question and reads its settings in the Inspector sheet, since happy-dom has no layout.
 
 ## 3. Specs
 

@@ -38,7 +38,7 @@ flowchart TD
 
 **The bar's controls are by use.** Undo, redo and Add page are every-edit actions and are pinned. The mode switch and the problems surface are always shown. Import, Export and Clear are occasional, and fold into the bar's overflow menu at every width, which keeps the bar one row on a phone with no second bar of buttons.
 
-**A compact window.** The canvas keeps the window. Two buttons the shell places, Structure and Inspector, open the two regions as sheets from their own edges. Both buttons are always shown in the design mode: each region holds a panel whatever is selected, since the inspector's Survey, Logic and Theme tabs show with nothing selected. The buttons sit in one row in the strip below the canvas. This replaces the one-pane-at-a-time tabs of the current narrow layout, which swap the canvas away to show a pane, so a reader who selects a question no longer loses sight of it to see its settings.
+**A compact window.** The canvas keeps the window. Two buttons the shell places, Structure and Inspector, open the two regions as sheets from their own edges. Both buttons are always shown in the design mode: each region holds a panel whatever is selected, since the inspector's Survey, Logic and Theme tabs show with nothing selected. The buttons sit in one row in the strip below the canvas. This replaces the one-pane-at-a-time tabs of the current narrow layout. A sheet on a phone is as wide as the window and covers the canvas while it is open, so a question's settings are read with the question out of sight, and closing the sheet returns to the canvas with the question still selected.
 
 ## Decisions
 
@@ -55,6 +55,8 @@ flowchart TD
 - **An import's refusal is an alert.** The bar is one row of a fixed height, with no room for the line of text the refusal was drawn as beneath it. Rejected: a line beneath the bar, which pushes the canvas down on the one action that is rare.
 
 ## Not in this change
+
+- **A sheet that leaves the selected question in view on a phone.** The library's drawers stand at the start and end edges only, and a drawer is as wide as a phone, so the sheet covers the canvas. A partial-height sheet from the bottom edge is a change to the library's dialog placements, not to this layout.
 
 - **A graph view of the logic.** See the decision above.
 - **New survey kinds, conditions or checks.** The document and its rules are as they are.

@@ -11,7 +11,7 @@
 - [x] 2.3 Wire redo from the shared history into the whiteboard store and register it as a command beside undo, then add both to the view region beside zoom. Verify: a test named after 'Undo and redo are buttons beside zoom', seen failing first, and one that a redo restores the undone edit.
 - [x] 2.4 Delete the palette, its drag and its search. Verify: the typecheck, and a `git grep` of the palette's component and composable names returning nothing outside the archive.
 - [x] 2.5 Hold the compact toolbar at the bottom. Verify: a test named after 'A compact window moves the toolbar to the bottom', seen failing first.
-- [ ] 2.6 Drive the whiteboard in a browser once after the edits at a wide window and at a phone width. Verify: a shape placed by click and by drag, the panel opening for a selection and absent for none, and the toolbar at the bottom with the panel behind its button on the narrow window; this has no test, since happy-dom has no layout.
+- [x] 2.6 Drive the whiteboard in a browser once after the edits at a wide window and at a phone width. Verify: a shape placed by click and by drag, the panel opening for a selection and absent for none, and the toolbar at the bottom with the panel behind its button on the narrow window; this has no test, since happy-dom has no layout.
 
 ## 3. Specs
 
