@@ -55,7 +55,7 @@ Enemy camps SHALL be formed by clustering a family's enemy marks by distance, ea
 - **GIVEN** a camp formed from a family's enemy marks in a region
 - **WHEN** the player meets the camp
 - **THEN** each enemy is of its family's kind
-- **AND** each enemy's level is estimated from the region's world level band
+- **AND** each enemy's level is estimated from the world level band
 
 #### Scenario: The stand-in camp in Mondstadt is replaced
 
@@ -83,15 +83,15 @@ Enemy marks of one family SHALL join one camp when they lie within a single clus
 
 ### Requirement: The world level band of a camp's levels
 
-Each enemy's estimated level SHALL be drawn from the world level band of its region.
+Each enemy's estimated level SHALL be drawn from the one world level band that every region shares.
 
 **Provisional.** The band is the design's own estimate. The map gives no level, and a region's camps hold levels only as the enemies page sets out: Windrise's camp level is ours until the game's own spawns are read. No measure in this change checks a level, since the wiki's counts do not reach one. The band stays provisional until a camp's level is read from the game.
 
-#### Scenario: A camp's level is a provisional estimate from its region's band
+#### Scenario: A camp's level is a provisional estimate from the world level band
 
 - **GIVEN** a camp built in a region
 - **WHEN** its enemies' levels are set
-- **THEN** each level is the region's band's estimate
+- **THEN** each level is the world level band's estimate
 - **AND** the level is recorded as provisional
 
 ## MODIFIED Requirements
@@ -105,7 +105,7 @@ The fit report SHALL list each region in turn, Mondstadt first, with its matched
 - **GIVEN** the fit has run
 - **WHEN** the report is printed
 - **THEN** Mondstadt is listed first with about fifty matched statues and waypoints
-- **AND** its Anemoculi count is compared with sixty-six
+- **AND** its Anemoculi count is compared with its reference count
 
 #### Scenario: Shortfall kept as it stands
 

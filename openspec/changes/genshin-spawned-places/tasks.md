@@ -6,7 +6,7 @@
 ## 2. Enemy camps
 
 - [x] 2.1 Cluster each family's enemy marks into camps and write them into each region. Verify: a test named after the scenario 'Nearby enemy marks form one camp', and the test in `scripts/src/services/genshinAssets/camps/clusterEnemyMarks.test.ts` that holds "Marks farther apart than the clustering distance form separate camps".
-- [x] 2.2 Give each camp's enemies their family's kind and an estimated level, replacing the Mondstadt stand-in. Verify: tests named after 'A camp's enemies take their family's kind and an estimated level' and 'The stand-in camp in Mondstadt is replaced'. The scenario "A camp's level is a provisional estimate from its region's band" is held by the first of those tests; its provisional mark has no test of its own.
+- [x] 2.2 Give each camp's enemies their family's kind and an estimated level, replacing the Mondstadt stand-in. Verify: tests named after 'A camp's enemies take their family's kind and an estimated level' and 'The stand-in camp in Mondstadt is replaced'. The scenario "A camp's level is a provisional estimate from the world level band" is held by the first of those tests; its provisional mark has no test of its own.
 - [ ] 2.3 Publish the enemy kinds the camps place to the enemies dataset, by running `genshin:assets enemies` over the new region data. Verify: a test named after the scenario 'Every kind a camp places is published to the enemies dataset', written first and seen failing.
 
 ## 3. Counts
@@ -14,4 +14,5 @@
 - [x] 3.1 Check each region's Oculi and chests against the wiki's count and report the difference per kind
       (`reportKindCount`, called by `buildOculusPlaces.ts` and `buildChestPlaces.ts`). Enemy kinds are not checked, since
       the wiki gives no per-region count for them. Verify: tests named after 'A kind short of the wiki's count is reported'
-      and 'A kind matching the wiki's count reports nothing'. The fit report's three scenarios, "Mondstadt reported first", "Shortfall kept as it stands" and "Snezhnaya with no matched points", are the built fit report's and have no test of their own; they are named here so the change lists every scenario its delta holds.
+      and 'A kind matching the wiki's count reports nothing'.
+- [ ] 3.2 Hold the built fit report's three scenarios with a test each: 'Mondstadt reported first', 'Shortfall kept as it stands' and 'Snezhnaya with no matched points'. Verify: a test named after each scenario passes as first written, since the report is built.
