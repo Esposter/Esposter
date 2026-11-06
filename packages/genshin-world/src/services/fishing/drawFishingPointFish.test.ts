@@ -63,4 +63,12 @@ describe(drawFishingPointFish, () => {
 
     expect(drawFishingPointFish(standingStocks, FIRST_ROLL, new Set([OTHER_FISH_ID]))).toBeUndefined();
   });
+
+  test("a point in a region with no pool draws nothing", () => {
+    expect.hasAssertions();
+
+    const standingStocks = computeStandingFishingStocks(TWO_POOLS, " ", HOUR, new Map(), CAUGHT_AT);
+
+    expect(drawFishingPointFish(standingStocks, FIRST_ROLL, BAITED_FISH_IDS)).toBeUndefined();
+  });
 });
