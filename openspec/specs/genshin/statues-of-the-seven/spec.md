@@ -313,7 +313,7 @@ The statues' levels, levels claimed, held counts and found Oculi SHALL be kept w
 
 - **GIVEN** a region only the guest holds
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds no such region, and the Oculi it held stay found but not held
+- **THEN** the merged save holds no such region, and the Oculi it held are found only as the account found them
 
 #### Scenario: A region both saves hold is the account's
 
