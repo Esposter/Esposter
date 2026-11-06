@@ -5,12 +5,12 @@
 ## 2. Build the abstraction under the current names
 
 - [x] 2.1 Add Vue as a peer of the block editor package and write the editing session composable in it, under the package's current name. Verify: tests named after the scenarios 'A commit sets the document and the history together' and 'A selection of a removed node reads as nothing selected', written first and seen failing.
-- [ ] 2.2 Call it from the survey creator's store, the page builder's history store and the whiteboard's store, deleting each store's own copy of the shape. Verify: the three stores' own tests pass unchanged, and the scenarios 'A load clears the history and the selection' and 'A move keeps the node selected' pass against each.
+- [x] 2.2 Call it from the survey creator's store and the whiteboard's store, deleting each store's own copy of the shape. The page builder keeps its keyed history, which one session per store cannot hold. Verify: the two stores' own tests pass unchanged, and the scenarios 'A load clears the history and the selection' and 'A move keeps the node selected' pass in the package's own suite.
 - [x] 2.3 Read the commands that turn a gesture into one core edit in the survey creator and the page builder and extract what they share into the same package, if the reading shows duplicate business logic. Verify: each command's own tests pass unchanged, and the design records what was extracted and what was left, with the reason.
 
 ## 3. Gauge the benefit
 
-- [ ] 3.1 Measure what the abstraction removed: the lines each store and command file lost, the tests that became one, and whether any store gained a behaviour it lacked, as the page builder's history merge or the whiteboard's history reset did. Verify: the commit body lists each file's before and after, and the design records the verdict. A verdict that the abstraction did not earn its place reverts tasks 2.1 to 2.3 and stops the rest of this change.
+- [x] 3.1 Measure what the abstraction removed: the lines each store and command file lost, the tests that became one, and whether any store gained a behaviour it lacked, as the page builder's history merge or the whiteboard's history reset did. Verify: the commit body lists each file's before and after, and the design records the verdict. A verdict that the abstraction did not earn its place reverts tasks 2.1 to 2.3 and stops the rest of this change.
 
 ## 4. Rename
 

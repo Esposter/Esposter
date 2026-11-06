@@ -113,8 +113,6 @@ export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // The narrowest and widest a resizable side pane is, in CSS pixels, shared by the message layout's sidebars and the page
 // Builder's panes
 export const MIN_SIDE_PANE_WIDTH = 200;
-// The width a side pane starts at, in pixels, within those bounds
-export const DEFAULT_SIDE_PANE_WIDTH = 260;
 export const MAX_SIDE_PANE_WIDTH = 480;
 // What an event calendar's keys are listed under in the shortcuts dialog and the palette
 export const CALENDAR_COMMAND_GROUP = "Calendar";
