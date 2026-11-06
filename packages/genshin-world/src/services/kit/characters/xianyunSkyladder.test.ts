@@ -182,8 +182,8 @@ describe(createXianyunKitBehaviour, () => {
     const party = createParty([XIANYUN_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const context = createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([
-        [XIANYUN_CHARACTER_ID, combatant],
         [TRAVELER_CHARACTER_ID, traveler],
+        [XIANYUN_CHARACTER_ID, combatant],
       ]),
       party,
     });
