@@ -11,6 +11,17 @@ The whiteboard SHALL hold select, hand, the shapes, arrow, freehand, text, stick
 - **THEN** the toolbar holds a button or slot for each of those tools
 - **AND** no palette is drawn
 
+### Requirement: The image tool opens a file picker
+
+The image tool SHALL open a file picker and insert the chosen files as a pasted image is inserted.
+
+#### Scenario: The image tool opens the file picker
+
+- **GIVEN** a whiteboard on an expanded window
+- **WHEN** the image tool is pressed
+- **THEN** a file picker opens
+- **AND** the chosen images are inserted as a paste inserts them
+
 ### Requirement: A shape tool places an element by a click or a drag
 
 With a placing tool in hand, a click on the canvas SHALL place an element of the default size at the point, and a drag SHALL place it with the size of the drag.
