@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(getViewerReaction, () => {
   const MOTION = "tap:mtn1";
 
-  test("Attention wanted turns the character", () => {
+  test("attention wanted turns the character", () => {
     expect.hasAssertions();
 
     expect(
@@ -14,7 +14,7 @@ describe(getViewerReaction, () => {
     ).toStrictEqual({ isExpressionCleared: false, motion: MOTION });
   });
 
-  test("An expression is cleared when a turn ends", () => {
+  test("an expression is cleared when a turn ends", () => {
     expect.hasAssertions();
 
     expect(getViewerReaction(ViewerMoment.TurnEnd, EMPTY_VIEWER_MOTIONS)).toStrictEqual({
@@ -23,7 +23,7 @@ describe(getViewerReaction, () => {
     });
   });
 
-  test("An unmapped moment sends no motion to the viewer", () => {
+  test("an unmapped moment sends no motion to the viewer", () => {
     expect.hasAssertions();
 
     expect(getViewerReaction(ViewerMoment.Attention, EMPTY_VIEWER_MOTIONS)).toStrictEqual({
