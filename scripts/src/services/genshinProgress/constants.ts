@@ -14,6 +14,8 @@ export const ROADMAP_PHASE_HEADING_REGEX = new RegExp(
   `^## Phase (?<phase>[0-${MAX_GENSHIN_PHASE}]): (?<name>.+)$`,
   "u",
 );
+// The quest a roadmap item or a script names, in the form `quest <id>`, with the id as its one capture
+export const QUEST_ID_PATTERN = String.raw`quest (?<id>\d+)`;
 // The folder of the scripted sessions, one file per session, which the report reads for the quests each one names. Until
 // The first session is written the folder is absent, and the report names no quest
 export const GENSHIN_SESSIONS_DIRECTORY = "packages/genshin-world/src/services/dev/sessions";

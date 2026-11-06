@@ -1,12 +1,12 @@
 import type { GenshinRoadmapItem } from "#src/models/genshinProgress/GenshinRoadmapItem";
 import type { GenshinRoadmapReading } from "#src/models/genshinProgress/GenshinRoadmapReading";
 
-import { ROADMAP_PHASE_HEADING_REGEX } from "#src/services/genshinProgress/constants";
+import { QUEST_ID_PATTERN, ROADMAP_PHASE_HEADING_REGEX } from "#src/services/genshinProgress/constants";
 
 // A checkbox line is one roadmap item, ticked when its mark is an x
 const ITEM_REGEX = /^- \[(?<mark>[ x])\] /u;
-// The quest an item names, by the quest's id in the form `quest <id>`
-const QUEST_REGEX = /\bquest (?<id>\d+)\b/u;
+// The quest an item names, as a whole word
+const QUEST_REGEX = new RegExp(String.raw`\b${QUEST_ID_PATTERN}\b`, "u");
 
 // The roadmap's items, each with the phase its heading names, whether it is ticked and the quest it names, and the name of
 // Every phase
