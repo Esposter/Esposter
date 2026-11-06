@@ -50,6 +50,10 @@ flowchart TD
 - **The panel is on the start edge.** It is where Excalidraw's properties and a reader's eye on a left-to-right page both rest, and the top-right keeps the page's own controls clear. It still opens over the canvas below the toolbar's row, so it never moves what was just selected. The panel was on the end edge only because the palette held the start edge.
 - **Shapes share one slot.** A button for every shape would be the crowded strip this change removes the palette to avoid. Rejected: a button per shape.
 - **The toolbar floats over the canvas on a wide window and docks at the bottom on a compact one.** A floating island keeps the canvas whole and the tool within reach of the cursor, and the bottom edge is within a thumb's reach, as Excalidraw's phone bar is. Rejected: a docked top bar on a wide window, which spends a row of the canvas on a bar that is mostly empty.
+- **A click centres the default size on its point, and a drag is anchored at its press.** The palette this replaces centred each element on the point it was placed at, so a click keeps that meaning. A drag's box runs from the press's corner to the pointer, as a drag does in every drawing tool, and holds the minimum element size. Nothing is drawn before a drag starts, so a click's element never changes size under the reader.
+- **A text box keeps the width of its drag and no height.** Its text sets its height, as the text box model stores it.
+- **The armed element is the tool in hand with the shape kind the shape tool holds.** The store holds the kind beside the tool and the lock beside both, rather than one armed value, so the toolbar's toggles bind to the tool and the shape slot binds to its kind.
+- **A placement selects its element only when the document accepts it.** A refused commit leaves the selection where it was, so no selection names an element that was never placed.
 
 ## Not in this change
 
