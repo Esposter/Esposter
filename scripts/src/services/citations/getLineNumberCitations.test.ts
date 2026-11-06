@@ -64,6 +64,7 @@ describe(getLineNumberCitations, () => {
           "The page says so (`{data-root}/cache/genshin-wiki/Page_Fatui.json`, wikitext line 13).",
           "The burst is `burst.go` lines 20 and 27 of the pinned gcsim.",
           "Its row is `Category_Lisa_Talents.json` line 1.",
+          "The build is `packages/vue-phaserjs/dist/index.js:12`, and the copy is `packages/vue-phaserjs/dist/index.js` line 12.",
           "The mesh is `{data-root}/genshin-parity/extracted/maps/blocks/00/00612967.blk`, lines 641 to 928.",
         ].join("\n"),
       ),
