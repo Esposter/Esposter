@@ -95,10 +95,10 @@ packages/vue-editor-layout-headless/
 
 ## Key files
 
-| File                                             | Role                                                                                                             |
-| :----------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/composables/ui/useUiDisplay.ts`    | the app's one reading of the breakpoint scale, from which the shell derives the size class                       |
-| `packages/vue-grid-layout-headless/package.json` | the manifest the new package's follows, with Vue as a peer beside the schema library, as the grid package's does |
+| File                                             | Role                                                                                       |
+| :----------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| `apps/web/app/composables/ui/useUiDisplay.ts`    | the app's one reading of the breakpoint scale, from which the shell derives the size class |
+| `packages/vue-grid-layout-headless/package.json` | the manifest the new package's follows, with Vue as its peer, as the grid package's does   |
 
 ## Sources
 
