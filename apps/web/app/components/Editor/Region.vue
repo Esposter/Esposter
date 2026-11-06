@@ -15,10 +15,12 @@ interface Props {
 }
 
 const { name, region, registry } = defineProps<Props>();
-// A sheet asks to be opened or closed, which the shell answers by toggling the region
-const emit = defineEmits<{ toggle: [] }>();
+// A docked region reports the size its handle asks for, and a sheet asks to be opened or closed, which the shell answers
+const emit = defineEmits<{ resize: [size: number]; toggle: [] }>();
 // A top or bottom region is a bar, sized by its height, and a start or end region a column, sized by its width
 const isVertical = computed(() => [RegionEdge.Bottom, RegionEdge.Top].includes(region.edge));
+// The handle sits on the region's inner edge, so a region at the end or the bottom takes it on its start or top side
+const isReversed = computed(() => [RegionEdge.Bottom, RegionEdge.End].includes(region.edge));
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
 const contentComponent = computed(() => getRegionComponent(region, registry));
 </script>
@@ -47,5 +49,15 @@ const contentComponent = computed(() => getRegionComponent(region, registry));
     shrink-0
   >
     <component :is="contentComponent" v-if="contentComponent" />
+    <UiResizeHandle
+      v-if="region.presentation === RegionPresentation.Docked"
+      :is-reversed="isReversed || undefined"
+      :is-vertical="isVertical || undefined"
+      :label="`Resize ${name}`"
+      :max="region.maximumSize"
+      :min="region.minimumSize"
+      :model-value="region.size"
+      @update:model-value="(newSize) => emit('resize', newSize)"
+    />
   </aside>
 </template>

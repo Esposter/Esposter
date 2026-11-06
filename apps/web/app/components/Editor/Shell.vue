@@ -31,7 +31,7 @@ const sizeClass = computed(() => {
   else if (isMobile.value) return SizeClass.Medium;
   else return SizeClass.Expanded;
 });
-const { resolvedLayout, toggleRegion } = useEditorLayout(
+const { resizeRegion, resolvedLayout, toggleRegion } = useEditorLayout(
   () => layout,
   () => context,
   sizeClass,
@@ -58,6 +58,7 @@ defineExpose({ toggleRegion });
       :name="takeOne(regionNameMap, region.id)"
       :region
       :registry
+      @resize="(newSize) => resizeRegion(region.id, newSize)"
     />
     <div flex flex-1 min-h-0 min-w-0>
       <EditorRegion
@@ -66,6 +67,7 @@ defineExpose({ toggleRegion });
         :name="takeOne(regionNameMap, region.id)"
         :region
         :registry
+        @resize="(newSize) => resizeRegion(region.id, newSize)"
       />
       <div relative flex flex-1 flex-col min-h-0 min-w-0>
         <slot />
@@ -83,6 +85,7 @@ defineExpose({ toggleRegion });
         :name="takeOne(regionNameMap, region.id)"
         :region
         :registry
+        @resize="(newSize) => resizeRegion(region.id, newSize)"
       />
     </div>
     <EditorRegion
@@ -91,6 +94,7 @@ defineExpose({ toggleRegion });
       :name="takeOne(regionNameMap, region.id)"
       :region
       :registry
+      @resize="(newSize) => resizeRegion(region.id, newSize)"
     />
     <EditorRegion
       v-for="region in presentationRegionMap.get(RegionPresentation.Sheet) ?? []"

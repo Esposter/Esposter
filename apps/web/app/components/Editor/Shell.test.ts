@@ -69,4 +69,26 @@ describe("editorShell", () => {
     expect(compactComponent.get("dialog").element.open).toBe(false);
     expect(compactComponent.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.DrawerEnd);
   });
+
+  test("a handle resizes from the keyboard", async () => {
+    expect.hasAssertions();
+
+    const component = mountShell();
+    await component.get('[role="separator"]').trigger("keydown", { key: "ArrowLeft" });
+
+    expect(component.get("aside").element.style.width).toBe(`${defaultSize + RESIZE_HANDLE_KEYBOARD_STEP}px`);
+  });
+
+  test("a resize past a limit stops at the limit", async () => {
+    expect.hasAssertions();
+
+    const component = mountShell();
+    const separator = component.get('[role="separator"]');
+    // Two steps reach the maximum, and the third asks for more than it allows
+    await separator.trigger("keydown", { key: "ArrowLeft" });
+    await separator.trigger("keydown", { key: "ArrowLeft" });
+    await separator.trigger("keydown", { key: "ArrowLeft" });
+
+    expect(component.get("aside").element.style.width).toBe(`${maximumSize}px`);
+  });
 });
