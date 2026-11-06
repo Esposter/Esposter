@@ -53,7 +53,7 @@ describe(placeMapPoints, () => {
     });
   });
 
-  test("an offering appears at its map point", () => {
+  test("an offering's label is placed at its map point", () => {
     expect.hasAssertions();
     // The Sacred Sakura's label stands on one ground point of Inazuma's area, which the fit leaves where it lies
     const transform = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
