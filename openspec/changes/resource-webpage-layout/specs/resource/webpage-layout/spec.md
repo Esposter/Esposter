@@ -49,13 +49,20 @@ The critique's findings SHALL be listed in the problems surface as warnings, eac
 - **WHEN** a save is attempted
 - **THEN** the save lands
 
-### Requirement: A compact window opens the panes as sheets
+### Requirement: A compact or medium window opens the panes as sheets
 
-On a compact window the webpage editor SHALL keep the canvas in view and open the blocks region and the inspector as sheets from their buttons.
+On a compact or medium window the webpage editor SHALL keep the canvas in view and open the blocks region and the inspector as sheets from their buttons. Two columns of the default width leave the canvas too little width to edit in at the medium class, so the side regions are sheets there too.
 
 #### Scenario: A compact window opens the inspector as a sheet
 
 - **GIVEN** a compact window with a node selected
+- **WHEN** the author presses the inspector's button
+- **THEN** the inspector opens as a sheet
+- **AND** the canvas is still drawn beneath it
+
+#### Scenario: A medium window opens the inspector as a sheet
+
+- **GIVEN** a medium window with a node selected
 - **WHEN** the author presses the inspector's button
 - **THEN** the inspector opens as a sheet
 - **AND** the canvas is still drawn beneath it
