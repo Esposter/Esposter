@@ -60,6 +60,12 @@ The fleet SHALL offer a machine the first unit of the lowest phase that the mach
 
 The progress report's done column SHALL count a unit once its own source has nothing left open: a compute page with no queue item and no waiting item, where an open line with no id counts as a waiting item, a change with no open task, or a roadmap item or quest ticked. Each kind's check SHALL be reported apart from that column as met, not met or not measurable, and only those checks SHALL gate a phase. A check that no command can read SHALL be reported as not measurable and never as met.
 
+#### Scenario: A compute page whose only open line has no id waits on that line
+
+- **GIVEN** a compute page whose only open line carries no `{id}`
+- **WHEN** the progress report reads its unit
+- **THEN** the page is waiting, its blocker is the missing id, and it is neither done nor runnable
+
 #### Scenario: A screen's check is met when every id is under its bar
 
 - **GIVEN** a screen with three parity ids, each under its bar
