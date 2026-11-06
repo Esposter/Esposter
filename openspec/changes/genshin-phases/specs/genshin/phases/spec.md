@@ -62,6 +62,12 @@ The progress report's done column SHALL count a unit once its own source has not
 
 #### Scenario: A screen's check is met when every id is under its bar
 
+- **GIVEN** a screen with three parity ids, each under its bar
+- **WHEN** the screen's check is read
+- **THEN** the check is met and names no id
+
+#### Scenario: A screen's check is not met when an id is over its bar
+
 - **GIVEN** a screen with three parity ids, two under their bars and one over
 - **WHEN** the screen's check is read
 - **THEN** the check is not met and names the id over its bar, so the screen does not gate its phase
