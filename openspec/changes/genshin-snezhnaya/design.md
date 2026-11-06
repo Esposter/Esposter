@@ -11,7 +11,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 
 ## Chill levels
 
-Provisional. The cached wiki Weather page names the three levels and maps none to an area, so each area's level in this table is a placement until a source places the zones.
+Provisional. Each area's level in this table is a placement until a source places the zones.
 
 | Area                  | Chill level |
 | :-------------------- | :---------- |
