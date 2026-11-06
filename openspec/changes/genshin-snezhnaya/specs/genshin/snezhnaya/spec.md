@@ -27,6 +27,16 @@ Each settlement's Kresnik's Torch SHALL show as a warm light, and SHALL be the b
 - **THEN** the torch shows as a warm light with bloom
 - **AND** it is the brightest point in the view
 
+### Requirement: Snezhnaya's factories stand among its industrial landmarks
+
+Snezhnaya SHALL place a factory among the nation's industrial landmarks, as the game places its factories.
+
+#### Scenario: A factory stands among the nation's industrial landmarks
+
+- **GIVEN** an industrial area of Snezhnaya with its landmarks placed
+- **WHEN** the player looks across the area
+- **THEN** a factory stands among the industrial landmarks
+
 ### Requirement: Snezhnaya's vegetation is birch, conifer and tundra grass
 
 Snezhnaya SHALL show white birch forests, dark conifers on its peaks and sparse tundra grass showing through the snow.

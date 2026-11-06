@@ -1,7 +1,7 @@
 ## 1. Cold and light
 
 - [ ] 1.1 Thicken fog and snowfall with each area's chill level, from the provisional table in the design. Verify: a test named after the scenario 'A colder area has denser fog and heavier snowfall', written first and seen failing, with 'A milder area has regular snow weather' beside it.
-- [ ] 1.2 Light each settlement's Kresnik's Torch as the brightest point at night, and place a factory among the nation's industrial landmarks. Verify: a test named after the scenario 'A village's torch is the brightest light at night'.
+- [ ] 1.2 Light each settlement's Kresnik's Torch as the brightest point at night, and place a factory among the nation's industrial landmarks. Verify: tests named after the scenarios 'A village's torch is the brightest light at night' and 'A factory stands among the nation's industrial landmarks'.
 
 ## 2. Vegetation and areas
 
