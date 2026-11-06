@@ -11,6 +11,7 @@ export const stepFramesUntil = async <T>(
 ): Promise<T | undefined> => {
   let frames = 0;
   while (frames < minFrames) {
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each frame lands before the next steps
     await frame();
     frames += 1;
   }
@@ -19,6 +20,7 @@ export const stepFramesUntil = async <T>(
   while (result === undefined) {
     if (frames === SCRIPTED_FRAME_LIMIT) return undefined;
 
+    // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: the check reads what the frame just drew
     await frame();
     frames += 1;
     result = check();

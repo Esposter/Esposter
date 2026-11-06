@@ -19,11 +19,13 @@ export const runScriptedSession = async (
     const step = takeOne(steps, index);
     if (typeof step === "string") {
       const lines = takeScriptedLines(steps, index);
+      // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a refused line ends the script, and each run reads what the last wrote
       const result = await runScriptedLines(driver, lines, index + 1);
       if (!result.ok) return result;
 
       index += lines.length;
     } else {
+      // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a failed step ends the script, and each step reads what the last wrote
       const outcome = await runScriptedStep(driver, step);
       if (!outcome.ok) return { error: `step ${index + 1}: ${outcome.error}`, ok: false, usage: "" };
 

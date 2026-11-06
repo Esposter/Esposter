@@ -10,7 +10,7 @@ import { SCRIPTED_FRAME_LIMIT } from "#src/services/dev/constants";
 import { createScriptedClock } from "#src/services/dev/createScriptedClock.fixture";
 import { settleScriptedSession } from "#src/services/dev/settleScriptedSession";
 import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
-import { withFinalizerAsync } from "@esposter/shared";
+import { jsonDateParse, withFinalizerAsync } from "@esposter/shared";
 import { createPinia } from "pinia";
 import { render } from "vitest-browser-vue";
 import { z } from "zod";
@@ -75,7 +75,7 @@ export const createSessionDriver = (devRegistry: DevRegistry) => {
       const emittedSave = lastSave;
       if (emittedSave === undefined) return { error: "the world has emitted no save", ok: false };
 
-      const parsedResult = genshinSaveSchema.safeParse(JSON.parse(JSON.stringify(emittedSave)));
+      const parsedResult = genshinSaveSchema.safeParse(jsonDateParse(JSON.stringify(emittedSave)));
       if (!parsedResult.success) return { error: z.prettifyError(parsedResult.error), ok: false };
 
       savedSave = parsedResult.data;
