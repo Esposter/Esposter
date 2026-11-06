@@ -78,14 +78,18 @@ describe("editorShell", () => {
   });
   const registry: EditorRegistry = { [contentKey]: () => h("p") };
   // The shell is attached to the document so focus can move to and from its controls
-  const mountShell = ({ context: shellContext = selectedContext, layout: shellLayout = layout } = {}) =>
+  const mountShell = ({
+    context: shellContext = selectedContext,
+    layout: shellLayout = layout,
+    panelNameMap = {},
+  }: { context?: Context; layout?: Layout; panelNameMap?: Record<string, string> } = {}) =>
     mount(EditorShell, {
       attachTo: document.body,
       props: {
         context: shellContext,
         editorType: EditorType.Whiteboard,
         layout: shellLayout,
-        panelNameMap: {},
+        panelNameMap,
         registry,
         regionNameMap: { [regionId]: regionName, [toolRegionId]: regionName },
       },
@@ -150,6 +154,33 @@ describe("editorShell", () => {
     const reopenedComponent = mountShell();
 
     expect(reopenedComponent.get("aside").element.style.width).toBe(`${defaultSize + RESIZE_HANDLE_KEYBOARD_STEP}px`);
+  });
+
+  test("a region with several panels draws a tab for each", async () => {
+    expect.hasAssertions();
+
+    const otherPanelId = "other";
+    const tabbedLayout: Layout = {
+      ...layout,
+      panels: [
+        ...layout.panels,
+        {
+          condition: { selectionKinds: [selectionKind] },
+          id: otherPanelId,
+          regionId,
+          selectionKindContentKeyMap: {},
+          wildcardContentKey: contentKey,
+        },
+      ],
+    };
+    const component = mountShell({ layout: tabbedLayout, panelNameMap: { [regionId]: "a", [otherPanelId]: "b" } });
+
+    expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual(["a", "b"]);
+
+    await component.get('[role="tab"][aria-selected="true"]').trigger("keydown", { key: "ArrowRight" });
+
+    expect(component.get('[role="tab"][aria-selected="true"]').text()).toBe("b");
+    component.unmount();
   });
 
   test("selecting an element leaves the canvas where it was", async () => {
