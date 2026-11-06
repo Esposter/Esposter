@@ -13,7 +13,7 @@
 
 ## 3. Renames and closing the program
 
-- [ ] 3.0 Rename the four legacy packages through the package shape's rename tasks once the editors run on the abstractions and the benefit is measured. Verify: the package shape's own tasks.
+- [ ] 3.0 Rename the legacy packages that ship a Vue abstraction (the block editor and the survey engine) through the package shape's rename tasks once the editors run on the abstractions and the benefit is measured. Verify: the package shape's own tasks.
 
 - [ ] 3.1 Rewrite the editor compact chrome design as built, deleting each decision this program superseded and naming it as rejected where the new decision overturns it. Verify: the OpenSpec scenario and citation checks pass in `scripts`.
 - [ ] 3.2 Add each source a shipped surface took something from to the design sources page, with the one line saying what it gave. Verify: the citation checks pass in `scripts`, and every source this program's design cites as an excerpt has been read in full or dropped.

@@ -21,7 +21,7 @@ flowchart TD
 
 The abstraction is built before anything is renamed. The editing session composable goes into the block editor package under its current name, the three stores call it, and what it removed is measured. Only a measured benefit carries on to the renames, which then follow the convention in one pass each. A rename done first would move every consumer twice if the abstraction changed the package's surface, and would be decided before the benefit that justifies it is known.
 
-## Why every package can be a Vue package
+## Why a headless package can be a Vue package
 
 Every consumer of these packages is Vue code or runs beside it. The Nuxt app and its sibling packages are Vue, and the app's server, which checks a save, applies an agent's edit and compiles an email, is the same Nuxt app with Vue installed. The Azure Functions app has no Vue, and none of these packages has a consumer there. A package that needs Vue costs the server nothing it does not already carry.
 
@@ -29,17 +29,17 @@ The functions stay pure. A function over a document is the same function with a 
 
 ## What the audit found
 
-The block editor, the survey engine, the survey expression language and the MJML blocks hold all their logic in pure functions, and each editor's store and commands wrap them. They join the three packages already named for Vue under one convention and one set of manifest rules.
+The block editor and the survey engine hold their logic in pure functions, and each editor's store or page wraps them in reactive state: the block editor's editing session, which the editor stores repeat, and the survey engine's runner, which the app wrapped in a composable of its own. Both wrappers are written once in their package, so each package ships a Vue abstraction, imports Vue, and takes the convention's name. The survey expression language and the MJML blocks are pure functions with no state for a composable to keep, and no wrapper of theirs exists in the app, so a Vue peer on either would be cargo: they keep their names, as the math expression compiler does.
 
 The math expression compiler is the one editor-adjacent package that stays as it is. It compiles an expression to a function of numbers, holds no state for a composable to keep and has a single consumer, so a Vue peer on it would be cargo. If a consumer later wants reactive state over it, it follows the convention then.
 
-| Package today                                                           | Becomes                        | Why                                                             |
-| :---------------------------------------------------------------------- | :----------------------------- | :-------------------------------------------------------------- |
-| headless-block-editor                                                   | vue-block-editor-headless      | The home of the editing session composable                      |
-| headless-survey-engine                                                  | vue-survey-engine-headless     | A survey runner's state is a composable over its functions      |
-| survey-expression                                                       | vue-survey-expression-headless | One shape for the survey packages, as the owner asked           |
-| mjml-blocks                                                             | vue-mjml-blocks-headless       | Built on the block editor, so it takes the block editor's shape |
-| vue-grid-layout-headless, vue-pdfjs-headless, vue-canvas-frame-headless | unchanged                      | Already the convention                                          |
+| Package today                                                           | Becomes                    | Why                                                              |
+| :---------------------------------------------------------------------- | :------------------------- | :--------------------------------------------------------------- |
+| headless-block-editor                                                   | vue-block-editor-headless  | The home of the editing session composable                       |
+| headless-survey-engine                                                  | vue-survey-engine-headless | Its runner's reactive wrapper moved in as `useSurveyRunner`      |
+| survey-expression                                                       | unchanged                  | Pure functions over answers, with no Vue abstraction to claim    |
+| mjml-blocks                                                             | unchanged                  | Pure render and read functions, with no Vue abstraction to claim |
+| vue-grid-layout-headless, vue-pdfjs-headless, vue-canvas-frame-headless | unchanged                  | Already the convention                                           |
 
 ## Pinia
 
@@ -72,7 +72,7 @@ A session holds one document and one history, so a store that edits one document
 
 - **Every headless package is a Vue package.** Its consumers are all Vue, so a second tier buys nothing, and the composables an editor repeats are written once in the package. Rejected: a framework-free core with an optional Vue subpath and an optional peer, which was this change's first design. It needs a check on which file is which, a second entry per package and a second place to look for every composable, to protect a consumer that does not exist.
 - **One entry.** A function and a composable come from the same import, and the manifest exports the package entry and nothing else. Rejected: a subpath per concern, which is the same second tier under another name.
-- **The name says it is a Vue package and headless.** The three packages that exist already follow `vue-<thing>-headless`, so the four renamed packages follow it and the convention is one rule. Rejected: keeping `headless-<thing>` for the packages that hold no composable yet, which makes the prefix mean "has a composable today" and changes when one is added.
+- **The name says the package ships a Vue abstraction, and a check holds it.** A package named `vue-<thing>-headless` declares Vue as a peer and imports it in its source, so the prefix is never a claim with nothing behind it. The block editor ships the editing session and the survey engine ships the survey runner. Rejected: renaming the survey expression language and the MJML blocks for uniformity with a Vue peer nothing imports, which was this change's earlier direction, and keeping `headless-<thing>` for a package that holds no composable yet, which made the prefix mean "has a composable today".
 - **The rename waits for the measurement.** Building the composable and wiring the three stores shows what a Vue package saves, and the names follow. Rejected: renaming first, which commits every consumer to a name before the abstraction behind it is proven.
 - **No old name is kept.** A renamed package deletes its old name, its spec area and its inventory rows, and updates every consumer in the same change, as the repo's no-compatibility-debt rule asks. Rejected: a re-exporting package under the old name for a release.
 - **No headless package imports Pinia.** A store is the app's, and a shared shape is a composable the app's store calls. A manifest check holds it. Rejected: a rule in a skill alone, which is the enforcement ladder's last rung when a test can hold it.
@@ -95,8 +95,8 @@ A session holds one document and one history, so a store that edits one document
 | `packages/vue-block-editor-headless/src/composables/useEditSession.ts`        | the editing session composable, over one document                                      |
 | `packages/vue-block-editor-headless/src/services/getSiblingMoveOperations.ts` | the move to the sibling index, which the survey creator and the page builder both call |
 | `packages/vue-survey-engine-headless/package.json`                            | renamed                                                                                |
-| `packages/survey-expression/package.json`                                     | renamed                                                                                |
-| `packages/mjml-blocks/package.json`                                           | renamed                                                                                |
+| `packages/survey-expression/package.json`                                     | unchanged: no Vue abstraction, so no Vue name                                          |
+| `packages/mjml-blocks/package.json`                                           | unchanged: no Vue abstraction, so no Vue name                                          |
 | `packages/vue-grid-layout-headless/package.json`                              | already the convention, and the reference for a manifest with Vue as a peer            |
 | `apps/web/app/store/survey/creator.ts`                                        | the survey creator's store, one of the three with the shared shape                     |
 | `apps/web/app/store/pageBuilder/history.ts`                                   | the page builder's keyed history, the second                                           |

@@ -22,6 +22,16 @@ A headless package SHALL be named vue-, then what it is, then -headless, and SHA
 - **WHEN** the package check runs
 - **THEN** the check fails and names the package
 
+### Requirement: A headless package ships a Vue abstraction
+
+A headless package SHALL import Vue in its source, so a name that says Vue is never claimed by a package with no composable or component logic of its own.
+
+#### Scenario: A headless package that never imports Vue fails the check
+
+- **GIVEN** a headless package whose source files import no Vue
+- **WHEN** the package check runs
+- **THEN** the check fails and names the package
+
 ### Requirement: A headless package has one entry
 
 A headless package SHALL export its package entry and its manifest only, so a function and a composable come from the same import.

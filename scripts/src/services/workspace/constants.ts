@@ -5,6 +5,12 @@ export const HEADLESS_NAME_REGEX: RegExp = new RegExp(
   String.raw`^vue-[a-z\d]+(?:-[a-z\d]+)*-${RegExp.escape(HEADLESS_KEYWORD)}$`,
   "u",
 );
+const VUE_PACKAGE_NAME = "vue";
+// A module named by `from "vue"`, `import "vue"` or `import("vue")`: a source file that holds one uses Vue
+export const VUE_IMPORT_REGEX: RegExp = new RegExp(
+  String.raw`(?:\bfrom\s*|\bimport\s*\(?\s*)["']${RegExp.escape(VUE_PACKAGE_NAME)}["']`,
+  "u",
+);
 const PINIA_PACKAGE_NAME = "pinia";
 const PINIA_SCOPE = "@pinia/";
 // Pinia itself, or any package under its scope, as the name a module specifier holds

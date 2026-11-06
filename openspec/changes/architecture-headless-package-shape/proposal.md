@@ -10,8 +10,8 @@ Every consumer of these packages is Vue code. The Nuxt app, its server and the s
 
 One shape for every headless package: a Vue package with one entry. The abstractions are built and measured first, and the renames follow.
 
-- A headless package is named `vue-<thing>-headless`, declares Vue as a peer, and exports one entry holding its functions and its composables together.
-- The block editor, the survey engine, the survey expression language and the MJML blocks are renamed to the convention, with every consumer updated and no old name kept.
+- A headless package is named `vue-<thing>-headless`, declares Vue as a peer and imports it, and exports one entry holding its functions and its composables together.
+- The block editor and the survey engine, the two legacy packages that ship a Vue abstraction (the editing session and the survey runner), are renamed to the convention, with every consumer updated and no old name kept. The survey expression language and the MJML blocks ship none, so they keep their names.
 - No headless package imports Pinia. A store is the app's, and the shared shape of three stores is a generic composable they call in their setup.
 - The editing session the three editor stores repeat becomes one composable in the block editor package.
 
@@ -22,4 +22,4 @@ One shape for every headless package: a Vue package with one entry. The abstract
 
 ## Impact
 
-Four packages and their spec areas are renamed, and their descriptions, which say "no framework", are rewritten. The math expression compiler is not renamed: it holds no state for Vue to act on and has a single consumer.
+Two packages and their spec areas are renamed, and their descriptions, which say "no framework", are rewritten. The survey runner's reactive wrapper moves from the app into the survey engine package. The math expression compiler, the survey expression language and the MJML blocks are not renamed: they hold no state for Vue to act on.
