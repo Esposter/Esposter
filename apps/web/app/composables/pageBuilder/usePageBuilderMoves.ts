@@ -12,7 +12,6 @@ import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { getSiblingMoveOperations } from "@/services/pageBuilder/getSiblingMoveOperations";
 import { getSiblingMoveRefusal } from "@/services/pageBuilder/getSiblingMoveRefusal";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
