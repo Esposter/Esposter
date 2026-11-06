@@ -54,6 +54,7 @@
     "tsdown": "catalog:"
   },
   "peerDependencies": {
+    "vue": "catalog:",
     "zod": "catalog:"
   }
 }
