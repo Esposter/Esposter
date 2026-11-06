@@ -78,11 +78,11 @@ A unit SHALL count as done only when the check its kind defines passes, and a un
 - **WHEN** the harness plays the quest from a script with a save and a load in the middle
 - **THEN** the quest reaches its end and what it changed in the world persists across the load
 
-#### Scenario: A system with no finished screen is not done
+#### Scenario: A screen kind whose claimed opener does not hold is unreachable
 
-- **GIVEN** a system whose scenarios pass and no finished screen reaches it
-- **WHEN** the system's check is read
-- **THEN** the system is not done
+- **GIVEN** a screen kind whose table entry says the Paimon menu opens it and a menu that does not list it
+- **WHEN** the reachability check runs
+- **THEN** the check fails and names the screen kind
 
 ### Requirement: Progress is computed from the tree
 
