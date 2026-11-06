@@ -65,7 +65,7 @@ const sheetRegions = computed(() => presentationRegionMap.value.get(RegionPresen
 // The control that opened the sheet, which takes focus back when the sheet closes
 // A modal sheet is the only one open at a time, so one control is enough
 const openerElement = shallowRef<HTMLElement>();
-defineExpose({ toggleRegion });
+defineExpose({ setActivePanel, toggleRegion });
 </script>
 
 <template>

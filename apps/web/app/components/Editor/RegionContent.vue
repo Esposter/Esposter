@@ -3,6 +3,7 @@ import type { EditorRegistry } from "@/models/editor/EditorRegistry";
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 import type { ResolvedRegion } from "vue-editor-layout-headless";
 
+import { UiTabsVariant } from "@/models/ui/UiTabsVariant";
 import { getRegionComponent } from "@/services/editor/getRegionComponent";
 import { takeOne } from "@esposter/shared";
 
@@ -32,6 +33,10 @@ const contentComponent = computed(() => getRegionComponent(region, registry));
     :label="name"
     :model-value="region.activePanelId"
     is-filling
+    :variant="UiTabsVariant.Header"
+    flex-1
+    min-h-0
+    min-w-0
     @update:model-value="(panelId) => emit('selectPanel', panelId)"
   >
     <component :is="contentComponent" v-if="contentComponent" />
