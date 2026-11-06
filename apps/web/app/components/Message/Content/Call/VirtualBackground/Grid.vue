@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { getCallBackgroundSelection } from "@/services/message/room/call/getCallBackgroundSelection";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
@@ -22,7 +23,6 @@ const { isOpen: isDeleteOpen, item: deletingCallBackground } = useSingletonDialo
     (callBackground) => getCallBackgroundSelection(callBackground) === deletingSelection.value,
   ),
 );
-const validateFile = useValidateFile();
 
 onMounted(async () => {
   await readCallBackgrounds();
@@ -119,7 +119,7 @@ onMounted(async () => {
           async (file) => {
             fileInput?.reset();
             if (!file) return;
-            if (!validateFile(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
+            if (!validateFileWithAlert(file, MAX_CALL_BACKGROUND_SIZE_BYTES)) return;
 
             await createCallBackground(file);
           }

@@ -1,16 +1,16 @@
 # Composables
 
-Composable shape and, first, the primitives that already own a job: ordering overlapping async work, dirty-check saves, intervals, pan/zoom, read-or-insert. Rules: the `vue-composable-patterns` skill.
+Composable shape and, first, the primitives that already own a job: ordering overlapping async work, dirty-check saves, intervals, pan/zoom, read-or-insert, and whether a function is a composable at all or a service (`references/composables-and-services.md`). Rules: the `vue-composable-patterns` skill.
 
 | Unit                                                       | Swept                   | Notes                                                                             |
 | ---------------------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
-| `app/composables/shared`                                   | 2026-10-05 · Opus 5.5   | the primitives themselves — a counter here is the implementation, not a violation |
-| `app/composables/resource`                                 | 2026-10-05 · Opus 5.5   |                                                                                   |
+| `app/composables/shared`                                   | 2026-11-06 · Sonnet 5.5 | the primitives themselves — a counter here is the implementation, not a violation |
+| `app/composables/resource`                                 | 2026-11-06 · Sonnet 5.5 |                                                                                   |
 | `app/composables/message`                                  | 2026-11-06 · Sonnet 5.5 |                                                                                   |
-| `app/composables/data`, `app/composables/file`, root files | 2026-10-05 · Opus 5.5   |                                                                                   |
-| `app/composables/dungeons`, `app/composables/clicker`      | 2026-10-05 · Opus 5.5   | Phaser-driven; frame loops are not async ordering                                 |
+| `app/composables/data`, `app/composables/file`, root files | 2026-11-06 · Sonnet 5.5 |                                                                                   |
+| `app/composables/dungeons`, `app/composables/clicker`      | 2026-11-06 · Sonnet 5.5 | Phaser-driven; frame loops are not async ordering                                 |
 | `app/store` as call sites                                  | 2026-11-06 · Sonnet 5.5 | shape is the `pinia` ledger's; this reads only the bookkeeping around an `await`  |
-| `app/composables/ui`                                       | 2026-10-05 · Opus 5.5   |                                                                                   |
+| `app/composables/ui`                                       | 2026-11-06 · Sonnet 5.5 |                                                                                   |
 
 ## The find recipe
 
@@ -32,6 +32,19 @@ a callback and is the majority of what the second grep returns.
 
 Proof the recipe can fail: it was written against a hand-kept armed-autosave count, and re-running it after that was replaced
 by a flag no longer returns the site.
+
+## The composables-and-services recipe
+
+Two greps, and the first decides.
+
+```bash
+# a composable called from a service: it is not at setup, so it is a service or a store lookup
+rg -n "\buse[A-Z]\w*\(" apps/web/app/services --glob '!*.test.*' | rg -v "use\w*Store\(|useNuxtApp\(|useRuntimeConfig\(|useRouter\(|useRoute\("
+# a composable with no reactive call, lifecycle hook or composable call in it
+for f in $(git ls-files apps/web/app/composables | rg -v "\.test\.|\.bench\." | rg "\.ts$"); do rg -q "\b(ref|shallowRef|computed|reactive|watch\w*|onMounted|onUnmounted|onScopeDispose|tryOnScopeDispose|use[A-Z]\w*)[<(]" "$f" || echo "$f"; done
+```
+
+A hit is a finding when the function is not at setup and reads no setup-only context. The dungeons states call `use*` hooks inside a scene's `onCreate` scope and the Tiptap `use*Extension` factories are named by their skill, so neither is a hit; `useExecuteSlashCommand` and `useExportPersonalizedHtml` are read by service callbacks and left to the `slash-commands` and `resource` owners. The second grep needs the generic bracket in its pattern: `useScript<typeof Desmos>(` is a composable call and a pattern ending at `(` misses it.
 
 ## Exclusions
 

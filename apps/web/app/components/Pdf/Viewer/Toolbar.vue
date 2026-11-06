@@ -6,6 +6,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { importFile } from "@/services/file/importFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
@@ -39,7 +40,6 @@ const isDisabled = computed(() => pagesCount.value === 0);
 const { cloned: pageInput } = useCloned(() => (currentPageNumber.value ? String(currentPageNumber.value) : ""));
 // The readout is the reset as well as the scale, and reads nothing before a document sets one
 const zoomPercent = computed(() => (scale.value ? `${Math.round(scale.value * 100)}%` : ""));
-const importFile = useImportFile();
 // The file's text is imported. A refusal alerts the reader with the file's name and the reason it was refused, and a file
 // That cannot be read is a failure the error alert names
 const importAnnotations = async (file: File) => {

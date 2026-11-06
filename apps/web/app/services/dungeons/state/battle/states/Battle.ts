@@ -3,6 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import { PlayerOption } from "@/models/dungeons/scene/battle/menu/PlayerOption";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
+import { getAttackStatePriorityMap } from "@/services/dungeons/scene/battle/getAttackStatePriorityMap";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
 import { useActionStore } from "@/store/dungeons/battle/action";
 
@@ -17,7 +18,7 @@ export const Battle: State<StateName.Battle> = {
     // 5. Repeat for the other monster if necessary
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
-    attackStatePriorityMap.value = useAttackStatePriorityMap();
+    attackStatePriorityMap.value = getAttackStatePriorityMap();
 
     if (
       PlayerBattleMenuOptionGrid.value === PlayerOption.Fight &&

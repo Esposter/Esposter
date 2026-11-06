@@ -5,6 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { activateItem } from "@/services/dungeons/item/activateItem";
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
@@ -32,7 +33,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
           switch (itemOptionGrid.value.effect.type) {
             // Capture items can only be used in the battle scene (the previous scene).
             case ItemEffectType.Capture: {
-              await useItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
+              await activateItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
               break;
             }
             case ItemEffectType.Heal:

@@ -5,6 +5,7 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
 import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
@@ -30,7 +31,6 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
     storeUploadFileThumbnails,
     storeUploadStart,
   } = uploadFileStore;
-  const validateFile = useValidateFile();
   return async (newFiles: File[] | null) => {
     const targetValue = toValue(target);
     const files = getComposerFiles(targetValue);
@@ -46,7 +46,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
     // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly. One
     // Rejected file rejects the whole drop, naming it, rather than silently uploading the rest of the selection.
     for (const file of newFiles)
-      if (!validateFile(file, maxFileSizeBytes)) return;
+      if (!validateFileWithAlert(file, maxFileSizeBytes)) return;
       else if (room && !room.allowedMimeCategories.includes(getMimeCategory(file.type))) {
         createAlert(
           `${file.name}: this room only allows ${room.allowedMimeCategories.join(", ").toLowerCase()} attachments!`,

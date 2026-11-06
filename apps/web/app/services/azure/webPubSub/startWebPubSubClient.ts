@@ -5,7 +5,7 @@ import { WebPubSubClient } from "@azure/web-pubsub-client";
 // A started client on one hub, and the stopper its subscriber owes back. Every hub is consumed the same way —
 // Mint an access url through tRPC, start, listen for the one group the token joined — so what a caller brings
 // Is the url it mints and what it does with a message, and never the lifecycle around them.
-export const useWebPubSubClient = async (
+export const startWebPubSubClient = async (
   getClientAccessUrl: (signal?: AbortSignal) => Promise<string>,
   onGroupMessage: (groupDataMessage: OnGroupDataMessageArgs) => void,
 ) => {

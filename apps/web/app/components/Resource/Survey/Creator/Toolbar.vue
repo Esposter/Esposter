@@ -7,6 +7,7 @@ import type { SurveyDocument } from "headless-survey-engine";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiToken } from "@/models/ui/UiToken";
+import { importJsonFile } from "@/services/file/importJsonFile";
 import {
   SURVEY_DESIGN_MODE,
   SURVEY_PREVIEW_MODE,
@@ -37,7 +38,6 @@ const { applyEdit, insertNode, redo, undo } = useSurveyCreatorCommands();
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
 const exportJsonFile = useExportJsonFile();
-const importJsonFile = useImportJsonFile();
 // The switch chooses between the editor and the runner, so a preview is a view of the survey rather than an edit of it
 const mode = computed({
   get: () => (isPreview.value ? SURVEY_PREVIEW_MODE : SURVEY_DESIGN_MODE),

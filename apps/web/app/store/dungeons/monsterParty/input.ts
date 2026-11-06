@@ -5,6 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { activateItem } from "@/services/dungeons/item/activateItem";
 import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
@@ -70,7 +71,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
         const itemOptionGrid = useItemOptionGrid();
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel)
           throw new InvalidOperationError(Operation.Update, onPlayerConfirmInput.name, itemOptionGrid.value);
-        await useItem(scene, toRef(itemOptionGrid.value), toRef(value));
+        await activateItem(scene, toRef(itemOptionGrid.value), toRef(value));
         return;
       }
       default:

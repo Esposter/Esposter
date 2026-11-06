@@ -2,6 +2,8 @@
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { importFile } from "@/services/file/importFile";
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { parseBlueprintManifest } from "@/services/resource/blueprint/parseBlueprintManifest";
 import { stringifyBlueprintManifest } from "@/services/resource/blueprint/stringifyBlueprintManifest";
 import { BLUEPRINT_MANIFEST_ACCEPT } from "@/services/resource/constants";
@@ -39,11 +41,9 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
     await loadContent();
     const versionHistoryStore = useVersionHistoryStore();
     const { saveResourceRevision } = versionHistoryStore;
-    const importFile = useImportFile();
-    const validateFile = useValidateFile();
     await importFile(MimeType.Json, BLUEPRINT_MANIFEST_ACCEPT, async (file) => {
       // A file over the app's file limit is refused before it is read, so no text is replaced for it
-      if (!validateFile(file)) return;
+      if (!validateFileWithAlert(file)) return;
 
       const manifest = parseBlueprintManifest(await file.text());
       // A file read after the owner moved to another resource is that resource's import, and must not fill this one

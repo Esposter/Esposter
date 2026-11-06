@@ -50,6 +50,6 @@ flowchart TD
 | `apps/web/app/components/Resource/Survey/Runner.vue`                     | the runner that draws the logo and applies the theme                   |
 | `apps/web/app/composables/resource/useUploadResourceFile.ts`             | the resource's file upload                                             |
 | `apps/web/app/composables/resource/useDeleteResourceFile.ts`             | the resource's file delete                                             |
-| `apps/web/app/composables/file/useValidateFile.ts`                       | the file validation every upload runs first                            |
+| `apps/web/app/services/file/validateFileWithAlert.ts`                    | the file validation every upload runs first                            |
 | `apps/web/app/components/Ui/ColorField.vue`                              | the colour field the accent and background use                         |
 | `apps/web/app/components/Ui/FileField.vue`                               | the file field the logo and picture uploads use                        |

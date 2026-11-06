@@ -1,5 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { startWebPubSubClient } from "@/services/azure/webPubSub/startWebPubSubClient";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -19,7 +20,7 @@ export const useMessageSubscribables = () => {
 
     // The only step that can reject is the WebPubSub start, so it runs before any tRPC subscription is opened: a
     // Rejected start then leaves nothing open for the next attempt to stack another set beside
-    const stopWebPubSubClient = await useWebPubSubClient(
+    const stopWebPubSubClient = await startWebPubSubClient(
       (signal) => $trpc.message.generateWebPubSubClientAccessUrl.query({ roomId }, { signal }),
       getSynchronizedFunction(({ message: { data } }) =>
         getResultAsync(async () => {

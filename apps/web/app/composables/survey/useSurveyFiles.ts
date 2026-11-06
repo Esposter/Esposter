@@ -1,5 +1,6 @@
 import type { SurveyDocument } from "headless-survey-engine";
 
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { collectSurveyFileUrls } from "@/services/resource/survey/collectSurveyFileUrls";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useResourceStore } from "@/store/resource";
@@ -11,7 +12,6 @@ import { getResultAsync, noop } from "@esposter/shared";
 // It, since an edit the owner undoes would otherwise leave a picture broken. Only a file the editor's session held is
 // Ever deleted: one the survey held when the editor opened, or one the session uploaded
 export const useSurveyFiles = () => {
-  const validateFile = useValidateFile();
   const resourceStore = useResourceStore();
   const getResourceId = () => resourceStore.currentResourceId;
   const uploadFile = useUploadResourceFile(ResourceType.Survey, getResourceId);
@@ -27,7 +27,7 @@ export const useSurveyFiles = () => {
   // A file that lands after the editor closed is deleted at once, since the close has already swept, and is handed back
   // To nothing
   const upload = async (file: File) => {
-    if (!validateFile(file)) return undefined;
+    if (!validateFileWithAlert(file)) return undefined;
 
     const url = await uploadFile(file);
     if (isClosed.value) {

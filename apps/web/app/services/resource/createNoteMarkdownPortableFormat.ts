@@ -5,6 +5,8 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
 import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeNoteMarkdown";
+import { importFile } from "@/services/file/importFile";
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { NOTE_MARKDOWN_ACCEPT } from "@/services/resource/constants";
 import { useResourceStore } from "@/store/resource";
 import { useNoteStore } from "@/store/resource/note";
@@ -35,13 +37,11 @@ export const createNoteMarkdownPortableFormat = (): PortableFormat => ({
     const noteStore = useNoteStore();
     const { loadContent } = noteStore;
     await loadContent();
-    const importFile = useImportFile();
-    const validateFile = useValidateFile();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     await importFile(MimeType.Markdown, NOTE_MARKDOWN_ACCEPT, async (file) => {
       // A file over the app's file limit is refused before it is read, so no preview opens over the note for it
-      if (!validateFile(file)) return;
+      if (!validateFileWithAlert(file)) return;
 
       const doc = deserializeNoteMarkdown(await file.text());
       if (!noteDocumentSchema.safeParse(doc).success)

@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync } from "@esposter/shared";
 
@@ -14,7 +15,6 @@ interface Props {
 const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
 const { name, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
-const validateFile = useValidateFile();
 const fileInput = useTemplateRef("fileInput");
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));
 </script>
@@ -50,7 +50,7 @@ const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfi
         async (file) => {
           if (!file) return;
 
-          if (!validateFile(file)) return;
+          if (!validateFileWithAlert(file)) return;
 
           await getResultAsync(() =>
             uploadImage(file, () => {

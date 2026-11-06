@@ -1,3 +1,4 @@
+import { startWebPubSubClient } from "@/services/azure/webPubSub/startWebPubSubClient";
 import { useStorageStore } from "@/store/storage";
 import { checkIsServer, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
@@ -29,7 +30,7 @@ export const useStorageSubscribables = async () => {
       // Again before the rejection leaves: the setup returns its unsubscribe only on the path that succeeds, so
       // Nothing else ever holds a handle to it and the socket outlives the session that opened it
       const stopWebPubSubClient = await getResultAsync(() =>
-        useWebPubSubClient(
+        startWebPubSubClient(
           (signal) => $trpc.storage.generateWebPubSubClientAccessUrl.query(undefined, { signal }),
           getSynchronizedFunction(() => getResultAsync(refetchStorageUsage).match(noop, console.error)),
         ),

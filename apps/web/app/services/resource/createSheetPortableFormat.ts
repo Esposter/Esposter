@@ -1,6 +1,7 @@
 import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
+import { importFile } from "@/services/file/importFile";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
@@ -37,7 +38,6 @@ export const createSheetPortableFormat = (type: DataSourceType): PortableFormat 
     // A format other than the sheet's own is read with that format's defaults rather than rewriting the settings
     // The sheet already has — the same fallback the export dialog makes
     const settings = sheetStore.settings.type === type ? sheetStore.settings : createDefaultSheetSettings(type);
-    const importFile = useImportFile();
     const sheetPortableDialogStore = useSheetPortableDialogStore();
     const { openPreview } = sheetPortableDialogStore;
     await importFile(configuration.mimeType, configuration.accept, async (file) => {

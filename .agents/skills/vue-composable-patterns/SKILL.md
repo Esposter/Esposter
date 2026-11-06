@@ -42,6 +42,7 @@ single operation resolves is a bug wearing rigour.
 - `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions.
 - `references/resource-cleanup.md` — when setting up an interval, listener, observer or pan/zoom surface, or deciding when to tear one down.
 - `references/earning-a-composable.md` — when a composable is about to be written, or reviewed for whether it should exist and what it returns.
+- `references/composables-and-services.md` — when a function is about to go in `composables/` or `services/`, a composable is called from a service or a callback, or the same listener or state is kept in two places.
 - `references/shared-state.md` — when reactive state is shared between callers, or a `ref` is about to sit at module scope.
 - `references/composable-arguments.md` — when choosing between `MaybeRefOrGetter`, a getter and a plain argument.
 - `references/mutation-blocks.md` — when one mutation block repeats across siblings, or its input is a discriminated union.
@@ -49,6 +50,7 @@ single operation resolves is a bug wearing rigour.
 
 ## Composable Rules
 
+- **A composable needs setup; a function that does not is a service** — it owns reactive state across calls, registers what a scope tears down, or reads setup-only context, and otherwise it lives in `services/` with no `use` (`references/composables-and-services.md`).
 - **A composable that only re-exposes something is deleted** — it earns its file only by composing: local state, async sequencing, a lifecycle hook, or two sources joined (`references/earning-a-composable.md`).
 - **Minimal public surface** — return only what callers use, and a single function directly (`references/earning-a-composable.md`).
 - **Shared reactive state lives in a Pinia store** — never `createSharedComposable`, never a bare `ref` at module scope (both `no-restricted-syntax`, `references/shared-state.md`).
