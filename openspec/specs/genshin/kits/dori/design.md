@@ -23,7 +23,7 @@ flowchart LR
 
 ## Provisional constants
 
-- **The charged attack's spin timing and both circles are unsourced.** The record holds the spin at 0 frames and the final at 300, against the claymore rule's 30 and 60 frames and 72 of animation (`NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES` and `NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES` in `scripts/src/services/genshinAssets/kits/constants.ts`), which the overlay names as the source they differ from (`DiffersFromSource`); the cached wiki does not name Dori's weapon type, so that classification is the overlay's. The 0 frames has no source, and the radius of 2 metres on both circles is marked `Unsourced`. Both wait on a recording.
+- **The charged attack's spin timing and both circles are unsourced.** The record holds the spin at 0 frames and the final at 300, against the claymore rule's hitmark and animation frames (`NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES` and `NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES` in `scripts/src/services/genshinAssets/kits/constants.ts`), which the overlay names as the source they differ from (`DiffersFromSource`); the cached wiki does not name Dori's weapon type, so that classification is the overlay's. The 0 frames has no source, and the radius of 2 metres on both circles is marked `Unsourced`. Both wait on a recording.
 
 ## Key files
 

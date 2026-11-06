@@ -19,7 +19,7 @@
 
 - `scripts/src/services/genshinAssets/commands/fitCommand.ts`'s `fitCommand` `meta` (its `name`, `fit`): the verb the base-ground item names.
 - `packages/genshin-world/src/data/regions/snezhnaya.json` (its `snezhnograd` key) and `packages/genshin-world/src/data/catalogue.json`: the files the base-ground item reads, checked to exist; their contents are not read here.
-- `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`'s `snezhnaya` entry (`snezhnaya: { landmarkId: "snezhnograd", position: { x: 3750, z: -10730 } }`), the hand-set centre the base-ground item names.
+- `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`'s `snezhnaya` entry, the hand-set centre the base-ground item names.
 - `scripts/src/services/genshinAssets/fit/computeTerrainDetail.ts` and `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`: the detail solver the Bar names, checked to exist; the solver's body is not read here.
 - `scripts/src/services/gameData/readAuthoredGameData.ts`'s comment above `readAuthoredGameData` and its check inside `readAuthoredGameData`: a ground file whose region a fit has drawn is refused until deleted, the rule the base-ground item states.
 - `{data-root}/genshin-parity/references/everfrozen-earth-location.png`, present on the Mac: the reference the Camera, Light and Score items read.
