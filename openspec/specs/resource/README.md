@@ -86,7 +86,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy
 - [Whiteboard](whiteboard/design.md) — a freeform canvas of shapes, arrows bound to them, strokes, text, images and sticky notes, exported as SVG or PNG
 - [Editor drag preview](editor-drag-preview/design.md) — the page builder, the survey Creator and the whiteboard draw a dragged block where it would land, with a ghost at the pointer, edge autoscroll, a touch hold and an Escape cancel
-- [Editor compact chrome](editor-compact-chrome/design.md) — one grouped, searchable palette for the three editors, a whiteboard panel that floats over the canvas, a readable survey canvas and a toolbar that folds
+- [Editor compact chrome](editor-compact-chrome/design.md) — one grouped, searchable palette for the survey and the page builder, a whiteboard panel that floats over the canvas, a readable survey canvas and a toolbar that folds
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
@@ -118,4 +118,4 @@ Azure service at any point.
 - **Content-addressed assets** — uploaded files addressed by the hash of their bytes, reference rows written from a scan of each version, and one release for every path that can unreference a file.
 - **[Whiteboard](whiteboard/design.md)** — the freeform canvas, drawn on the headless editor core's positioned elements with no third-party dependency and one enum migration, shipped without its read-only published view.
 - **Flowchart retirement** — the Flowchart type, its Vue Flow dependency and every stored flowchart removed in one release, once the whiteboard covered its feature check. Stored flowcharts were deleted, not converted.
-- **Editor revamp** — the survey Creator, the page builder and the whiteboard share one palette and one drag that previews the drop, and carry one compact chrome, on the headless cores the editors already sat on and with no new dependency.
+- **Editor revamp** — the survey Creator and the page builder share one palette and one drag that previews the drop, the whiteboard places its elements from its toolbar, and the editors carry one compact chrome, on the headless cores the editors already sat on and with no new dependency.

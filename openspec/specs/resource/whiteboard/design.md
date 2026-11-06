@@ -4,7 +4,7 @@ A whiteboard is a freeform canvas resource for sketching ideas and connected dia
 
 ## How it works
 
-The editor opens on the saved document and draws it over a pannable, zoomable canvas. The palette places the basic shapes, the six flowchart shapes, a sticky note and a text box, by a pointer drag or by a click that puts the element at the middle of the view. With snap on, which is the default, a move, a resize and a placement land on the dot grid behind the canvas, and the toolbar's toggle turns it off. Keyboard nudges move by their step without snapping, and the grid is not exported. The toolbar switches the tool between select, arrow, freehand and pan. Each element is drawn by its kind, in the order the document holds them, so the element list is the z-order.
+The editor opens on the saved document and draws it over a pannable, zoomable canvas, inside the editor shell that draws every editor's screen. The one top toolbar holds every tool: select and hand, the shape slot with the basic shapes and the six flowchart shapes, arrow, freehand, text, sticky note, the image picker, the lock that keeps a tool in hand, and the grid snap. A shape, a text box or a sticky note is placed by choosing its tool and then clicking, which places the default size centred on the point, or dragging, which sizes it to the drag. The tool returns to select after one placement unless it is locked. With snap on, which is the default, a move, a resize and a placement land on the dot grid behind the canvas, and the toolbar's toggle turns it off. Keyboard nudges move by their step without snapping, and the grid is not exported. The view beside the canvas holds undo, redo and zoom. A panel opens over the canvas for a selection, and is absent with nothing selected. Each element is drawn by its kind, in the order the document holds them, so the element list is the z-order.
 
 Every gesture on the canvas goes to one reducer, which reads the tool in use and the press it started on. A gesture in progress is shown as a preview, the document the gesture would leave, and nothing is committed until the pointer is released. The release is one core command, which returns the JSON Patch that makes the edit. The open editor applies that patch to its edit state as one history entry, and the server applies the same patch when an agent moves an element, in one save at the content version the agent read.
 
@@ -22,7 +22,7 @@ An arrow is drawn with the arrow tool. A press on a shape's connection point, or
 
 A double click on a shape, a sticky note or an arrow's label opens an inline editor over the element. A commit by blur or Enter writes one command, Escape discards the draft, and a commit made during input-method composition waits for the composition to end. A text wraps at its element's width by the core's rule, and an arrow's label sits at its route's midpoint, wrapped at a fixed label width.
 
-Selection is a click, a Shift-click to add, or a marquee over the elements it fully covers. The keyboard commands are registered under one Whiteboard group: Delete and Backspace ask first, through a confirmation dialog, before they remove the selection, Escape clears it, the arrow keys nudge it with a larger step under Shift, Cmd+D duplicates it, and Cmd+Z undoes the last edit.
+Selection is a click, a Shift-click to add, or a marquee over the elements it fully covers. The keyboard commands are registered under one Whiteboard group: Delete and Backspace ask first, through a confirmation dialog, before they remove the selection, Escape clears it, the arrow keys nudge it with a larger step under Shift, Cmd+D duplicates it, Cmd+Z undoes the last edit, and Cmd+Shift+Z or Cmd+Y redoes it. A tool's key chooses the tool in hand, V for select, H for hand, A for arrow, P for freehand, T for text and N for a sticky note, and R, O and D choose the shape tool with a rectangle, an ellipse or a diamond. The panel for a selection of one element holds its fill, its stacking and the duplicate and delete buttons, and a selection of several holds the fill they share, or Mixed where they differ, with the same two buttons.
 
 A pasted image is uploaded as a file asset of its whiteboard, and the element keeps the file's id and no image bytes. A sticky note takes a fill from the properties panel and holds its text.
 
@@ -30,34 +30,35 @@ A pasted image is uploaded as a file asset of its whiteboard, and the element ke
 
 Each feature of the editor, and what the whiteboard does for it.
 
-| Feature                                 | Whiteboard                                                                                                        |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Process shape                           | the set's rectangle, drawn by the core's outline                                                                  |
-| Diagram shape set                       | terminal, process, decision, input/output, predefined process, annotation, each drawn by the core's outline       |
-| Annotation                              | a shape that takes no connection                                                                                  |
-| Shape label                             | text inside the shape, edited by double click                                                                     |
-| Shape colour                            | fill colour in the panel                                                                                          |
-| Shape resize                            | handles, with one minimum for every element                                                                       |
-| Palette                                 | the basic shapes, the six flowchart shapes, a sticky note and a text box, placed by a pointer drag or a click     |
-| Connection points                       | four connection points per shape, numbered from the top clockwise                                                 |
-| Arrow and arrowhead                     | an arrowhead at either end, set for each end                                                                      |
-| Arrow binds to shapes                   | an arrow binds each end to a connection point; an end drawn from empty space stays free                           |
-| Path kinds                              | straight, curved or right-angled, computed by the core                                                            |
-| Right-angled routing                    | a right-angled route, with no obstacle avoidance                                                                  |
-| Arrow follows its shapes                | the move command reroutes bound arrows in the same patch                                                          |
-| Arrow label                             | text at the arrow's midpoint, edited by double click                                                              |
-| Delete a shape                          | confirm; arrows bound only to it go with it                                                                       |
-| Delete an arrow                         | from the keyboard, with no panel control                                                                          |
-| Pan and zoom                            | the editor's own viewport                                                                                         |
-| Zoom and fit controls                   | zoom in and out, and fit to content                                                                               |
-| Background grid and snap                | a dot grid behind the canvas, and moves, resizes and placements snap to it                                        |
-| Selection and multi-select              | single selection, Shift to add, and a marquee                                                                     |
-| Keyboard                                | Delete and Backspace ask before deleting, Enter commits a label, Escape clears, arrow keys nudge, Cmd+D and Cmd+Z |
-| Undo                                    | the shared history over inverse patches                                                                           |
-| Export PNG and SVG                      | both drawn from the model                                                                                         |
-| Export background and fonts             | the export draws the canvas background and each element's text from the model                                     |
-| Agent tools                             | the generic tools, plus a typed move that reroutes                                                                |
-| Versions, recycle bin, tags, favourites | the generic resource layer, as for every type                                                                     |
+| Feature                                 | Whiteboard                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Process shape                           | the set's rectangle, drawn by the core's outline                                                                                                                                      |
+| Diagram shape set                       | terminal, process, decision, input/output, predefined process, annotation, each drawn by the core's outline                                                                           |
+| Annotation                              | a shape that takes no connection                                                                                                                                                      |
+| Shape label                             | text inside the shape, edited by double click                                                                                                                                         |
+| Shape colour                            | fill colour in the panel                                                                                                                                                              |
+| Shape resize                            | handles, with one minimum for every element                                                                                                                                           |
+| Placing                                 | the basic shapes, the six flowchart shapes, a sticky note and a text box, placed by choosing the tool and drawing                                                                     |
+| Palette                                 | not built: the kinds are the toolbar's, since a list beside the toolbar is a second place for the same elements                                                                       |
+| Connection points                       | four connection points per shape, numbered from the top clockwise                                                                                                                     |
+| Arrow and arrowhead                     | an arrowhead at either end, set for each end                                                                                                                                          |
+| Arrow binds to shapes                   | an arrow binds each end to a connection point; an end drawn from empty space stays free                                                                                               |
+| Path kinds                              | straight, curved or right-angled, computed by the core                                                                                                                                |
+| Right-angled routing                    | a right-angled route, with no obstacle avoidance                                                                                                                                      |
+| Arrow follows its shapes                | the move command reroutes bound arrows in the same patch                                                                                                                              |
+| Arrow label                             | text at the arrow's midpoint, edited by double click                                                                                                                                  |
+| Delete a shape                          | confirm; arrows bound only to it go with it                                                                                                                                           |
+| Delete an arrow                         | from the keyboard, with no panel control                                                                                                                                              |
+| Pan and zoom                            | the editor's own viewport                                                                                                                                                             |
+| Zoom and fit controls                   | zoom in and out, and fit to content, in the view beside undo and redo                                                                                                                 |
+| Background grid and snap                | a dot grid behind the canvas, and moves, resizes and placements snap to it                                                                                                            |
+| Selection and multi-select              | single selection, Shift to add, and a marquee                                                                                                                                         |
+| Keyboard                                | Delete and Backspace ask before deleting, Enter commits a label, Escape clears, arrow keys nudge, Cmd+D, Cmd+Z, Cmd+Shift+Z and Cmd+Y, and V, H, A, P, T, N, R, O and D choose a tool |
+| Undo and redo                           | the shared history over inverse patches, redone from the operations each entry holds, as buttons beside zoom and as keys                                                              |
+| Export PNG and SVG                      | both drawn from the model                                                                                                                                                             |
+| Export background and fonts             | the export draws the canvas background and each element's text from the model                                                                                                         |
+| Agent tools                             | the generic tools, plus a typed move that reroutes                                                                                                                                    |
+| Versions, recycle bin, tags, favourites | the generic resource layer, as for every type                                                                                                                                         |
 
 ## Decisions
 
@@ -69,6 +70,10 @@ Each feature of the editor, and what the whiteboard does for it.
 - **The export is drawn from the model.** Neither format is captured from the page, so the files do not depend on the editor's theme or fonts.
 - **An export survives an image that cannot be loaded.** The export leaves that image out of both files and alerts the owner with how many, so one dead image does not block the rest of the board from exporting. The alternative was to stop the export at the first failed fetch, which a single dead image would turn into a board that cannot be exported at all.
 - **Snapping happens in document units, not in screen pixels.** A move, a resize and a placement round the document point they land on to the grid, so the same edit lands on the same grid point at every zoom. Rejected: pixel snapping, which rounds the screen point and so puts the same drag on different grid lines at each zoom.
+- **The palette is removed, and its kinds are the toolbar's.** The shapes sit in one slot, and the text box and the sticky note are tools beside the arrow, so the reader looks in one place for every element. Rejected: keeping the palette beside the toolbar, which is two places for one thing, and keeping its search, since the shape slot's menu needs none.
+- **An element is placed by its tool and a click or a drag, not dragged out of a list.** A click places the default size centred on its point, and a drag sizes the element to the drag from the press. A placement returns the tool to select unless the tool is locked. Rejected: a drag from a list, which places only at a default size and needs the pointer to cross the canvas from the list's edge, and a click that places at the middle of the view, which the reader then drags to where it belongs.
+- **The toolbar holds one value for the tool in hand.** A shape tool's value is the kind it places, so the shape slot binds to its kind and every other tool binds to the tool. A choice in the slot, or a shape key, sets both. Rejected: a second toolbar model for the kind, which the shell's toolbar would have to read beside the tool.
+- **Redo is the shared history's redo.** The entry holds its operations beside their inverses, so a redo reapplies them through the same commit an edit takes, and a new edit clears the redo stack as the shared history does. Rejected: rebuilding a redo from the patch an undo returns, which would have to swap the entry the history moved onto the future stack.
 
 ## Export
 
@@ -104,6 +109,7 @@ A commit the document check refuses leaves the open document unchanged, and the 
 - **Strokes are not smoothed.** A freehand stroke is a polyline through the points the pointer passed, sampled as it moves.
 - **Text wrapping is an estimate.** A line may draw wider or narrower than its box, because the rule wraps at estimated widths and no measurement corrects it.
 - **No server writes an export.** The SVG writer is a pure function, but only the browser calls it, and an export is a download.
+- **A selection of several has no stacking control.** The stacking moves one element by its index, and moving several needs one operation list over the whole selection, which the panel does not build yet. The panel for several holds its fill and its footer.
 - **The read-only published view is deferred.** It is [the deferred proposal](../../../deferred/resource/whiteboard-published-view/design.md) that settles the public route and the Publishable capability. The whiteboard declares no publish capability, so no public route exists for it.
 
 ## Notes
@@ -114,55 +120,68 @@ A commit the document check refuses leaves the open document unchanged, and the 
 
 ## Key files
 
-| File                                                                                  | Role                                                                                                        |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/whiteboard/WhiteboardResource.ts`                    | the whiteboard's content schema, the core's element list checked by the document refinement                 |
-| `apps/web/shared/models/resource/whiteboard/WhiteboardElement.ts`                     | the element schema the agent's description reads, with the arrow end's point marked read-only               |
-| `apps/web/shared/models/db/resource/whiteboard/MoveWhiteboardElementInput.ts`         | the typed move's input: the content version read, the element index and the point                           |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                          | the whiteboard's definition, declaring the file assets and portable capabilities                            |
-| `apps/web/app/services/resource/ResourceEditorComponentMap.ts`                        | maps the whiteboard to its async editor                                                                     |
-| `apps/web/app/services/resource/ResourceTypeDescriptionMap.ts`                        | the whiteboard's description in the create flow                                                             |
-| `apps/web/app/services/resource/PortableFormatMap.ts`                                 | the PNG and SVG exports on the whiteboard's resource menu                                                   |
-| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                              | the editor: the canvas, the palette, the properties panel and the delete dialog                             |
-| `apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue`                        | the canvas, which takes the pointer and draws the elements in z-order                                       |
-| `apps/web/app/components/Resource/Whiteboard/Element.vue`                             | draws one element by its kind                                                                               |
-| `apps/web/app/components/Resource/Whiteboard/ElementArrow.vue`                        | draws an arrow along its route, with an arrowhead at each end that has one                                  |
-| `apps/web/app/components/Resource/Whiteboard/ElementShape.vue`                        | draws a shape's sketched outline and its label                                                              |
-| `apps/web/app/components/Resource/Whiteboard/Label.vue`                               | draws an element's wrapped text from the layout the export uses                                             |
-| `apps/web/app/composables/whiteboard/useWhiteboardPaletteDrag.ts`                     | a palette item's pointer drag, with a ghost at the pointer                                                  |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrow.vue`               | an arrow's route, the arrowhead at each end, and the detach of each bound end                               |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`               | the selected element's stacking: one step forward or back, or to the front or the back                      |
-| `packages/headless-block-editor/src/services/changePositionedElementZOrder.ts`        | the core's z-order move, which the stacking controls commit as one edit                                     |
-| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                       | the tool switch and the snap toggle that turns grid snapping on and off                                     |
-| `apps/web/app/components/Resource/Whiteboard/EditorTextEdit.vue`                      | the inline text editor, which handles input-method composition                                              |
-| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                         | feeds the pointer events to the gesture reducer                                                             |
-| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                        | registers the keyboard commands and the delete confirmation                                                 |
-| `apps/web/app/composables/whiteboard/useWhiteboardTextEdit.ts`                        | the in-place text edit, committed once on blur or Enter                                                     |
-| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`                    | uploads a pasted image as a file asset and inserts its element                                              |
-| `packages/headless-block-editor/src/services/snapToGrid.ts`                           | rounds a value to the nearest grid line, which a move, a resize and a placement snap to                     |
-| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`                 | the one gesture reducer, which dispatches to each gesture's transition                                      |
-| `apps/web/app/services/whiteboard/gesture/getArrowEnd.ts`                             | the end an arrow takes where a point lands: bound to a connection point, or free                            |
-| `apps/web/app/services/whiteboard/gesture/getStrokeOperations.ts`                     | the operations that add a freehand stroke as one element                                                    |
-| `apps/web/app/services/whiteboard/edit/applyWhiteboardEdit.ts`                        | applies a command's operations to the edit state and records their inverse                                  |
-| `apps/web/app/services/whiteboard/edit/deleteWhiteboardElements.ts`                   | deletes the selection through the core's delete                                                             |
-| `apps/web/app/services/whiteboard/edit/duplicateWhiteboardElements.ts`                | copies the selection, rebinding a copied arrow's end to the copy of its shape when that shape is copied too |
-| `apps/web/app/services/whiteboard/edit/undoWhiteboardEdit.ts`                         | undoes the last edit from the history                                                                       |
-| `apps/web/app/services/whiteboard/text/getTextEditOperations.ts`                      | the operation that writes an edited text                                                                    |
-| `apps/web/app/services/whiteboard/keyboard/constants.ts`                              | the keyboard group's name and the nudge steps                                                               |
-| `apps/web/app/services/whiteboard/palette/constants.ts`                               | the palette's groups and the size and fill each placed element starts with                                  |
-| `apps/web/app/services/whiteboard/viewport/getFitViewport.ts`                         | the viewport that fits the content to the canvas                                                            |
-| `apps/web/app/services/whiteboard/export/exportWhiteboard.ts`                         | the export: the SVG download, or the PNG drawn from the same SVG, and the alert for images it left out      |
-| `apps/web/app/services/whiteboard/export/getWhiteboardImageUrls.ts`                   | fetches each image of the document as a data URL for the export, and names the ones it could not fetch      |
-| `apps/web/app/services/capture/rasterizeSvg.ts`                                       | draws an SVG onto a canvas and writes the PNG, shared with the dashboard's page image export                |
-| `apps/web/app/store/resource/whiteboard/index.ts`                                     | the open document, its edit state and history, and the commit of each edit                                  |
-| `apps/web/app/store/resource/whiteboard/editor.ts`                                    | the editor's view: the selection, the tool, the viewport and the gesture in progress                        |
-| `apps/web/app/store/resource/whiteboard/dialog.ts`                                    | the delete confirmation's target                                                                            |
-| `apps/web/server/trpc/routers/whiteboard.ts`                                          | the whiteboard router, which holds the typed move beside the generic procedures                             |
-| `apps/web/server/services/resource/whiteboard/moveWhiteboardElement.ts`               | the typed move: the core's move saved in one write at the content version read                              |
-| `apps/web/server/db/migrations/20261102082233_whiteboard_resource_type/migration.sql` | adds the whiteboard value to the resource type enum                                                         |
-| `packages/db-schema/src/models/resource/ResourceType.ts`                              | the resource type enum, which holds the whiteboard                                                          |
-| `packages/db-schema/src/services/resource/ResourceOwnedTablesMap.ts`                  | the whiteboard's entry, with no table of its own                                                            |
-| `packages/db-schema/src/schema/resource/resourcesInResource.ts`                       | the resource type column the migration extends                                                              |
+| File                                                                                  | Role                                                                                                                 |
+| :------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/whiteboard/WhiteboardResource.ts`                    | the whiteboard's content schema, the core's element list checked by the document refinement                          |
+| `apps/web/shared/models/resource/whiteboard/WhiteboardElement.ts`                     | the element schema the agent's description reads, with the arrow end's point marked read-only                        |
+| `apps/web/shared/models/db/resource/whiteboard/MoveWhiteboardElementInput.ts`         | the typed move's input: the content version read, the element index and the point                                    |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                          | the whiteboard's definition, declaring the file assets and portable capabilities                                     |
+| `apps/web/app/services/resource/ResourceEditorComponentMap.ts`                        | maps the whiteboard to its async editor                                                                              |
+| `apps/web/app/services/resource/ResourceTypeDescriptionMap.ts`                        | the whiteboard's description in the create flow                                                                      |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                                 | the PNG and SVG exports on the whiteboard's resource menu                                                            |
+| `apps/web/app/components/Resource/Whiteboard/Editor.vue`                              | the editor: the editor shell over the whiteboard's layout and registry, with the canvas and the delete dialog        |
+| `apps/web/app/services/whiteboard/layout/constants.ts`                                | the whiteboard's layout: its regions, its panels keyed by selection kind, and the names its regions are announced by |
+| `apps/web/app/services/whiteboard/layout/WhiteboardContentComponentMap.ts`            | the component each content key of the layout draws                                                                   |
+| `apps/web/app/services/whiteboard/layout/getWhiteboardSelectionKind.ts`               | the selection kind the layout's panels are keyed by: one element's type, several, or none                            |
+| `apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue`                        | the canvas, which takes the pointer and draws the elements in z-order                                                |
+| `apps/web/app/components/Resource/Whiteboard/Element.vue`                             | draws one element by its kind                                                                                        |
+| `apps/web/app/components/Resource/Whiteboard/ElementArrow.vue`                        | draws an arrow along its route, with an arrowhead at each end that has one                                           |
+| `apps/web/app/components/Resource/Whiteboard/ElementShape.vue`                        | draws a shape's sketched outline and its label                                                                       |
+| `apps/web/app/components/Resource/Whiteboard/Label.vue`                               | draws an element's wrapped text from the layout the export uses                                                      |
+| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                       | the toolbar's items: every tool, the shape slot, the image picker, the lock and the grid snap                        |
+| `apps/web/app/components/Resource/Whiteboard/EditorControls.vue`                      | the view beside the canvas: undo, redo, zoom and fit to content                                                      |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`               | the panel of one element: its fill, its stacking and the footer                                                      |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrowPanel.vue`          | the panel of an arrow: its route and arrowheads, its stacking and the footer                                         |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue`        | the panel of a selection of several: the fill they share, or Mixed where they differ                                 |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesFooter.vue`              | duplicates and deletes the selection from a panel, the delete asking first                                           |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrow.vue`               | an arrow's route, the arrowhead at each end, and the detach of each bound end                                        |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`               | the selected element's stacking: one step forward or back, or to the front or the back                               |
+| `packages/headless-block-editor/src/services/changePositionedElementZOrder.ts`        | the core's z-order move, which the stacking controls commit as one edit                                              |
+| `apps/web/app/components/Resource/Whiteboard/EditorTextEdit.vue`                      | the inline text editor, which handles input-method composition                                                       |
+| `apps/web/app/composables/whiteboard/useWhiteboardGesture.ts`                         | feeds the pointer events to the gesture reducer                                                                      |
+| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                        | registers the keyboard commands, the tool shortcuts and the delete confirmation                                      |
+| `apps/web/app/composables/whiteboard/useWhiteboardTextEdit.ts`                        | the in-place text edit, committed once on blur or Enter                                                              |
+| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`                    | uploads a pasted or picked image as a file asset and inserts its element                                             |
+| `packages/headless-block-editor/src/services/snapToGrid.ts`                           | rounds a value to the nearest grid line, which a move, a resize and a placement snap to                              |
+| `apps/web/app/services/whiteboard/gesture/reduceWhiteboardGesture.ts`                 | the one gesture reducer, which dispatches to each gesture's transition, placing included                             |
+| `apps/web/app/services/whiteboard/gesture/getArrowEnd.ts`                             | the end an arrow takes where a point lands: bound to a connection point, or free                                     |
+| `apps/web/app/services/whiteboard/gesture/getStrokeOperations.ts`                     | the operations that add a freehand stroke as one element                                                             |
+| `apps/web/app/services/whiteboard/edit/applyWhiteboardEdit.ts`                        | applies a command's operations to the edit state and records their inverse                                           |
+| `apps/web/app/services/whiteboard/edit/deleteWhiteboardElements.ts`                   | deletes the selection through the core's delete                                                                      |
+| `apps/web/app/services/whiteboard/edit/duplicateWhiteboardElements.ts`                | copies the selection, rebinding a copied arrow's end to the copy of its shape when that shape is copied too          |
+| `apps/web/app/services/whiteboard/edit/undoWhiteboardEdit.ts`                         | undoes the last edit from the history                                                                                |
+| `apps/web/app/services/whiteboard/edit/redoWhiteboardEdit.ts`                         | redoes the newest undone edit by reapplying its operations                                                           |
+| `apps/web/app/services/whiteboard/text/getTextEditOperations.ts`                      | the operation that writes an edited text                                                                             |
+| `apps/web/app/services/whiteboard/keyboard/constants.ts`                              | the keyboard group's name and the nudge steps                                                                        |
+| `apps/web/app/services/whiteboard/tool/WhiteboardToolItemMap.ts`                      | the tools the toolbar chooses: each one's mark, title and key                                                        |
+| `apps/web/app/services/whiteboard/tool/WhiteboardShapeItemMap.ts`                     | the shapes the shape tool places, each with its mark, and the keys of the three that have one                        |
+| `apps/web/app/services/whiteboard/tool/constants.ts`                                  | the shape slot the toolbar draws, and the image types the picker accepts                                             |
+| `apps/web/app/services/whiteboard/getWhiteboardElementTitle.ts`                       | the title a panel names one element by                                                                               |
+| `apps/web/app/services/whiteboard/getSelectedElements.ts`                             | the elements a selection names, each with its index, for a panel of several                                          |
+| `apps/web/app/services/whiteboard/palette/constants.ts`                               | the size and fill each placed element starts with                                                                    |
+| `apps/web/app/services/whiteboard/viewport/getFitViewport.ts`                         | the viewport that fits the content to the canvas                                                                     |
+| `apps/web/app/services/whiteboard/export/exportWhiteboard.ts`                         | the export: the SVG download, or the PNG drawn from the same SVG, and the alert for images it left out               |
+| `apps/web/app/services/whiteboard/export/getWhiteboardImageUrls.ts`                   | fetches each image of the document as a data URL for the export, and names the ones it could not fetch               |
+| `apps/web/app/services/capture/rasterizeSvg.ts`                                       | draws an SVG onto a canvas and writes the PNG, shared with the dashboard's page image export                         |
+| `apps/web/app/store/resource/whiteboard/index.ts`                                     | the open document, its edit state and history, its undo and redo, and the commit of each edit                        |
+| `apps/web/app/store/resource/whiteboard/editor.ts`                                    | the editor's view: the selection, the tool and its lock, the viewport and the gesture in progress                    |
+| `apps/web/app/store/resource/whiteboard/dialog.ts`                                    | the delete confirmation's target                                                                                     |
+| `apps/web/server/trpc/routers/whiteboard.ts`                                          | the whiteboard router, which holds the typed move beside the generic procedures                                      |
+| `apps/web/server/services/resource/whiteboard/moveWhiteboardElement.ts`               | the typed move: the core's move saved in one write at the content version read                                       |
+| `apps/web/server/db/migrations/20261102082233_whiteboard_resource_type/migration.sql` | adds the whiteboard value to the resource type enum                                                                  |
+| `packages/db-schema/src/models/resource/ResourceType.ts`                              | the resource type enum, which holds the whiteboard                                                                   |
+| `packages/db-schema/src/services/resource/ResourceOwnedTablesMap.ts`                  | the whiteboard's entry, with no table of its own                                                                     |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`                       | the resource type column the migration extends                                                                       |
 
 ## Sources
 
