@@ -120,6 +120,19 @@ export const useNotificationStore = defineStore("notification", () => {
       return consumedNotification;
     });
   };
+  // The delivered list and its unread total move together, so an optimistic write takes both and gives both back
+  const snapshotDeliveredNotifications = () => {
+    const previousNotifications = deliveredNotifications.value;
+    const previousUnreadDeliveredCount = unreadDeliveredCount.value;
+    return {
+      previousNotifications,
+      previousUnreadDeliveredCount,
+      restore: () => {
+        deliveredNotifications.value = previousNotifications;
+        unreadDeliveredCount.value = previousUnreadDeliveredCount;
+      },
+    };
+  };
   const dismissNotification = async (id: string) => {
     dismissSnackbar(id);
     const localNotification = localNotifications.value.find((notification) => notification.id === id);
@@ -131,17 +144,13 @@ export const useNotificationStore = defineStore("notification", () => {
 
     await executeDeleteNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
       applyOptimistic: () => {
-        const previousNotifications = deliveredNotifications.value;
-        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
+        const { previousNotifications, previousUnreadDeliveredCount, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.filter((notification) => notification.id !== id);
         // A deleted row is one fewer unread, and the total is the server's — so it is adjusted here rather than
         // Re-read, exactly as the list itself is
         if (previousNotifications.some((notification) => notification.id === id && !notification.isRead))
           unreadDeliveredCount.value = previousUnreadDeliveredCount - 1;
-        return () => {
-          deliveredNotifications.value = previousNotifications;
-          unreadDeliveredCount.value = previousUnreadDeliveredCount;
-        };
+        return restore;
       },
       key: id,
     });
@@ -151,14 +160,10 @@ export const useNotificationStore = defineStore("notification", () => {
     snackbarIds.value = [];
     await executeDeleteNotificationsMutation(() => $trpc.notification.deleteNotifications.mutate(), {
       applyOptimistic: () => {
-        const previousNotifications = deliveredNotifications.value;
-        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
+        const { restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = [];
         unreadDeliveredCount.value = 0;
-        return () => {
-          deliveredNotifications.value = previousNotifications;
-          unreadDeliveredCount.value = previousUnreadDeliveredCount;
-        };
+        return restore;
       },
       key: DatabaseEntityType.Notification,
     });
@@ -172,14 +177,10 @@ export const useNotificationStore = defineStore("notification", () => {
 
     await executeReadStatusMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
       applyOptimistic: () => {
-        const previousNotifications = deliveredNotifications.value;
-        const previousUnreadDeliveredCount = unreadDeliveredCount.value;
+        const { previousNotifications, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.map((notification) => markRead(notification));
         unreadDeliveredCount.value = 0;
-        return () => {
-          deliveredNotifications.value = previousNotifications;
-          unreadDeliveredCount.value = previousUnreadDeliveredCount;
-        };
+        return restore;
       },
       key: DatabaseEntityType.Notification,
     });
