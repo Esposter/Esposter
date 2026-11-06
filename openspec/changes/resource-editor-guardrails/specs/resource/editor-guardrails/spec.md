@@ -86,3 +86,14 @@ A finding of warning severity SHALL NOT refuse a save, and only an error SHALL.
 - **WHEN** a save is attempted
 - **THEN** the save lands
 - **AND** the warning stays listed
+
+### Requirement: An email's validator messages are findings
+
+An email's validator messages SHALL become findings of the severity the validator gives each one, and only an error SHALL refuse a save.
+
+#### Scenario: A validator message becomes a finding
+
+- **GIVEN** an email whose validator reports one error and one warning
+- **WHEN** Design is drawn
+- **THEN** the error is listed as an error finding and the warning as a warning finding
+- **AND** a save is refused only while the error stands

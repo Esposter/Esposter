@@ -11,6 +11,6 @@
 
 ## 3. Findings per editor
 
-- [ ] 3.1 Map the survey check to findings, all errors, and show not saved while one stands. Verify: tests named after 'A refused save leaves the findings in view' and 'A name clash is listed with the clashing node', seen failing first.
+- [ ] 3.1 Map the survey check to findings, all errors, and show not saved while one stands. Verify: tests named after 'A refused save leaves the findings in view' and 'The problems surface lists each finding with its node', seen failing first.
 - [ ] 3.2 Map the page builder's critique to findings, all warnings. Verify: a test named after 'A warning does not refuse a save', seen failing first.
 - [ ] 3.3 Map the email validator's messages to findings by the severity the validator gives. Verify: a test named after 'A validator message becomes a finding', seen failing first.
