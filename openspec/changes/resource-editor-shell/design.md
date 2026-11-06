@@ -48,7 +48,7 @@ One component serves every window. A compact window is not a second shell: the l
 
 ## Keyboard and focus
 
-The canvas is the main landmark, the toolbar a toolbar with a name, and each side region a complementary landmark with a name, so a screen reader can jump between them. A handle between docked regions is the app's resize handle, which already is a separator that reports its value and moves by an arrow key, with Home and End as its limits, as the WAI-ARIA window splitter sets out. A sheet or a floating panel closes on Escape and returns focus to the control that opened it. Motion follows the reduced-motion preference through the motion tokens the app already has.
+The canvas is the main landmark, the toolbar a toolbar with a name, and each side region a complementary landmark with a name, so a screen reader can jump between them. A handle between docked regions is the app's resize handle, which already is a separator that reports its value and moves by an arrow key, with Home and End as its limits, as the WAI-ARIA window splitter sets out. A sheet closes on Escape and returns focus to the control that opened it; a floating panel has no close until an editor adds its control (see the decisions). Motion follows the reduced-motion preference through the motion tokens the app already has.
 
 ## Decisions
 
@@ -79,8 +79,6 @@ The canvas is the main landmark, the toolbar a toolbar with a name, and each sid
 - **Focus returns to the opener from the shell, not from `Ui/Dialog.vue`.** The dialog focuses itself on open and returns nothing on close. The native `<dialog>` restores focus to what the browser had focused before the modal, and Safari on macOS does not focus a button on click, so that restore is not dependable; happy-dom has none. The shell focuses the opener once the close has drawn, since the open modal leaves the opener inert until then. Rejected: changing the dialog, which every dialog shares, for one editor's need.
 - **Escape closes sheets in this change, and no floating panel.** Escape closes a sheet, because a sheet's model takes the browser's cancel as a close. A floating panel has no close the shell draws: the selection's panel is open while it holds a panel, and an on-demand overlay has no button until an editor adds one. An on-demand floating panel waits for that editor, since its Escape has nothing to close until its button exists. Rejected: an Escape listener on every overlay now, which would close a panel no control can reopen.
 - **The compact tool region's edge comes from the layout, and the toolbar's fold needs no shell rule.** The layout's compact edge places the region, and the shell draws it where the resolved edge says. The toolbar folds by its own measured width, so a full-width bottom bar on a phone folds at a narrower width than the desktop bar it replaces. Rejected: a compact flag on the toolbar, or a width the shell reads a second time to fold earlier.
-
-## Build
 
 ## Build
 
