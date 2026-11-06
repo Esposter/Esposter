@@ -35,7 +35,7 @@ The pnpm store is keyed on the lockfile's hash. `install-projects` saves it afte
 | `.github/actions/install-projects/action.yaml`           | saves the pnpm store after a full install, on a miss from the two branches |
 | `.github/actions/run-cached-task/action.yaml`            | restores and saves the vp task cache; the save is gated                    |
 | `.github/workflows/build-packages.yaml`                  | restores the game-data mirror everywhere; fills and saves it on the two    |
-| `.github/workflows/CI.yaml`                              | the coverage shards restore the mirror and never save it                   |
+| `.github/workflows/CI.yaml`                              | the coverage shards and the session job restore the mirror, never save it  |
 | `scripts/src/workspace/ciCaches.test.ts`                 | the guard: no combined cache action, no per-run store cache, gated saves   |
 
 ## Notes

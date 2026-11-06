@@ -57,7 +57,7 @@ No workflow or action SHALL enable the pnpm store's own cache, since that cache 
 
 ### Requirement: The game data mirror is filled and saved only from the saving branches
 
-Every branch SHALL restore the newest game data mirror it can see. Only the default branch and ai/queue SHALL fill a missing mirror and save it under its lock's key, before the coverage shards start.
+Every branch SHALL restore the newest game data mirror it can see. Only the default branch and ai/queue SHALL fill a missing mirror and save it under its lock's key, before the coverage shards and the session browser test start.
 
 #### Scenario: a branch that cannot save restores the newest mirror
 
@@ -70,7 +70,7 @@ Every branch SHALL restore the newest game data mirror it can see. Only the defa
 
 - **GIVEN** a run on `ai/queue` whose lock's key has no saved mirror
 - **WHEN** the build packages job runs
-- **THEN** the mirror is filled and saved under the lock's key before any coverage shard restores it
+- **THEN** the mirror is filled and saved under the lock's key before any coverage shard or the session browser test restores it
 
 ### Requirement: The cache rule is held by a test
 
