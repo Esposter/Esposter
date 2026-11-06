@@ -7,4 +7,6 @@ x-touches:
     "apps/web/app/components/Resource/Whiteboard/**",
     "apps/web/app/components/Resource/Survey/Creator/**",
     "apps/web/app/components/PageBuilder/**",
+    "apps/web/app/components/Editor/**",
+    "apps/web/app/models/editor/**",
   ]

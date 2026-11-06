@@ -117,6 +117,16 @@ On a compact window the contextual panel SHALL stay closed until the reader pres
 - **THEN** the panel is closed
 - **AND** a button that opens it is shown
 
+### Requirement: A compact window places the tool region at the bottom
+
+On a compact window the tool region SHALL sit at the bottom edge of the editor, not the top.
+
+#### Scenario: A compact window places the tool region at the bottom
+
+- **GIVEN** a freeform editor on a compact window
+- **WHEN** the editor is drawn
+- **THEN** the tool region is at the bottom edge
+
 ### Requirement: A sheet or a floating panel closes on Escape
 
 A sheet or a floating panel SHALL close on Escape and return focus to the control that opened it.
