@@ -16,10 +16,11 @@ import { DOCKED_REGION_PRESENTATION_MAP, SIDE_REGION_PRESENTATION_MAP } from "@/
 import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The dashboard editor's layout as data. The bar holds the visual count and Add visual across the top, always. The visuals
-// Palette sits at the start, closed until the reader opens it. The inspector sits at the end and shows what is selected: the
-// Dashboard's settings when nothing is, and the visual's form or the group's title otherwise. The canvas is the rest of the
-// Window, so the grid is the shell's default slot. A medium window is where the page's own drawers become sheets, so the
-// Palette and the inspector are sheets there too, since a docked inspector would leave the grid too few columns to lay out
+// Palette sits at the start: a column beside the grid on a wide window, open until the reader closes it, and a sheet on a
+// Narrower window. The inspector sits at the end and shows what is selected: the Dashboard's settings when nothing is, and
+// The visual's form or the group's title otherwise. The canvas is the rest of the Window, so the grid is the shell's default
+// Slot. A medium window is where the page's own drawers become sheets, so the Palette and the inspector are sheets there too,
+// Since a docked inspector would leave the grid too few columns to lay out
 export const DashboardLayout: Layout = {
   canvasId: "canvas",
   panels: [
