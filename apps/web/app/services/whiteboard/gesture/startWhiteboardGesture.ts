@@ -13,10 +13,13 @@ import { getPressedSelection } from "@/services/whiteboard/gesture/getPressedSel
 import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
 import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
+import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingGesture";
 import { applyPatches, exhaustiveGuard, takeOne } from "@esposter/shared";
+import { PositionedElementType } from "headless-block-editor";
 
 // An idle canvas takes a press. The middle button and the hand tool pan, the freehand tool starts a stroke, and the arrow tool starts an arrow
-// From the press. The select tool takes the press on a resize handle, an element or the canvas. Any other event changes nothing
+// From the press. A shape, sticky note or text tool starts a placement at the press. The select tool takes the press on a resize handle, an
+// Element or the canvas. Any other event changes nothing
 export const startWhiteboardGesture = (
   state: WhiteboardGestureState,
   event: GesturePointerEvent,
@@ -66,6 +69,12 @@ export const startWhiteboardGesture = (
         },
       };
     }
+    case GestureTool.Shape:
+      return startPlacingGesture(state, event, { kind: state.shapeKind, type: PositionedElementType.Shape });
+    case GestureTool.StickyNote:
+      return startPlacingGesture(state, event, { type: PositionedElementType.StickyNote });
+    case GestureTool.Text:
+      return startPlacingGesture(state, event, { type: PositionedElementType.Text });
     case GestureTool.Select: {
       const tolerance = getHitTolerance(state.viewport.scale);
       const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);

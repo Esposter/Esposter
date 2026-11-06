@@ -3,6 +3,7 @@ import type { GestureDrawing } from "@/models/whiteboard/GestureDrawing";
 import type { GestureMarquee } from "@/models/whiteboard/GestureMarquee";
 import type { GestureMoving } from "@/models/whiteboard/GestureMoving";
 import type { GesturePanning } from "@/models/whiteboard/GesturePanning";
+import type { GesturePlacing } from "@/models/whiteboard/GesturePlacing";
 import type { GesturePressed } from "@/models/whiteboard/GesturePressed";
 import type { GestureResizing } from "@/models/whiteboard/GestureResizing";
 
@@ -13,5 +14,6 @@ export type WhiteboardGesture =
   | GestureMarquee
   | GestureMoving
   | GesturePanning
+  | GesturePlacing
   | GesturePressed
   | GestureResizing;

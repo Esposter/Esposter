@@ -14,6 +14,7 @@ import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
+import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { ArrowPathKind, PositionedElementType, ShapeKind } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -39,6 +40,7 @@ describe(reduceWhiteboardGesture, () => {
   const ANNOTATION_ID = crypto.randomUUID();
   const DECISION_ID = crypto.randomUUID();
   const NEW_ARROW_ID = crypto.randomUUID();
+  const PLACED_SHAPE_ID = crypto.randomUUID();
   const STROKE_ID = crypto.randomUUID();
   const VIEWPORT: Viewport = { scale: 1, x: 0, y: 0 };
   const PROCESS_BOUNDS: Bounds = { height: 50, width: 100, x: 100, y: 100 };
@@ -70,7 +72,9 @@ describe(reduceWhiteboardGesture, () => {
     createId: () => STROKE_ID,
     document,
     isSnapEnabled: false,
+    isToolLocked: false,
     selectedIds: [],
+    shapeKind: ShapeKind.Rectangle,
     tool: GestureTool.Select,
     viewport: VIEWPORT,
     ...overrides,
@@ -495,5 +499,86 @@ describe(reduceWhiteboardGesture, () => {
     expect(up.operations).toStrictEqual([
       { op: JsonPatchOperationType.Replace, path: "/elements/1/end/point", value: { x: 260, y: 270 } },
     ]);
+  });
+
+  test("A click with a shape tool places a shape at the point", () => {
+    expect.hasAssertions();
+
+    const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 125 }));
+    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 200, y: 125 }));
+
+    expect(up.operations).toStrictEqual([
+      {
+        op: JsonPatchOperationType.Add,
+        path: "/elements/0",
+        value: {
+          fill: WHITEBOARD_SHAPE_FILL,
+          height: WHITEBOARD_SHAPE_SIZE.height,
+          id: PLACED_SHAPE_ID,
+          kind: ShapeKind.Rectangle,
+          text: "",
+          type: PositionedElementType.Shape,
+          width: WHITEBOARD_SHAPE_SIZE.width,
+          x: 200 - WHITEBOARD_SHAPE_SIZE.width / 2,
+          y: 125 - WHITEBOARD_SHAPE_SIZE.height / 2,
+        },
+      },
+    ]);
+    expect(up.state.selectedIds).toStrictEqual([PLACED_SHAPE_ID]);
+  });
+
+  test("A drag with a shape tool sizes the shape", () => {
+    expect.hasAssertions();
+
+    const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 300, y: 185 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 300, y: 185 }));
+
+    expect(up.operations).toStrictEqual([
+      {
+        op: JsonPatchOperationType.Add,
+        path: "/elements/0",
+        value: {
+          fill: WHITEBOARD_SHAPE_FILL,
+          height: 60,
+          id: PLACED_SHAPE_ID,
+          kind: ShapeKind.Rectangle,
+          text: "",
+          type: PositionedElementType.Shape,
+          width: 100,
+          x: 200,
+          y: 125,
+        },
+      },
+    ]);
+  });
+
+  test("A placement returns the tool to select", () => {
+    expect.hasAssertions();
+
+    const state = createState({ elements: [] }, { createId: () => PLACED_SHAPE_ID, tool: GestureTool.Shape });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 125 }));
+    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 200, y: 125 }));
+
+    expect(up.state.tool).toBe(GestureTool.Select);
+  });
+
+  test("A locked tool stays in hand", () => {
+    expect.hasAssertions();
+
+    const state = createState(
+      { elements: [] },
+      { createId: () => PLACED_SHAPE_ID, isToolLocked: true, tool: GestureTool.Shape },
+    );
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 125 }));
+    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 200, y: 125 }));
+
+    expect(up.state.tool).toBe(GestureTool.Shape);
   });
 });

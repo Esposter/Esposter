@@ -5,6 +5,7 @@ export enum GesturePhase {
   Marquee = "marquee",
   Moving = "moving",
   Panning = "panning",
+  Placing = "placing",
   Pressed = "pressed",
   Resizing = "resizing",
 }

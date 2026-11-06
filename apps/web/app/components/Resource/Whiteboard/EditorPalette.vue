@@ -4,11 +4,12 @@ import type { Point } from "headless-block-editor";
 
 import { useWhiteboardPaletteDrag } from "@/composables/whiteboard/useWhiteboardPaletteDrag";
 import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
+import { getSnappedPoint } from "@/services/whiteboard/gesture/getSnappedPoint";
+import { getPlacedBounds } from "@/services/whiteboard/getPlacedBounds";
 import { getWhiteboardPaletteGroups } from "@/services/whiteboard/palette/getWhiteboardPaletteGroups";
 import { getWhiteboardPaletteItem } from "@/services/whiteboard/palette/getWhiteboardPaletteItem";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { GRID_SIZE, snapToGrid } from "headless-block-editor";
 
 // The things a whiteboard places. A click places one at the middle of the canvas, and a drag places it where the pointer is let go
 // Over the canvas, so nothing is placed by a drop that lands on the palette or the page around the canvas. With snap on, it is placed on the grid
@@ -18,8 +19,10 @@ const whiteboardEditorStore = useWhiteboardEditorStore();
 const { checkIsInCanvas, getCentrePoint, getDocumentPoint } = whiteboardEditorStore;
 const { isSnapEnabled } = storeToRefs(whiteboardEditorStore);
 const placeAt = (item: WhiteboardPaletteItem, point: Point) => {
-  const centre = isSnapEnabled.value ? { x: snapToGrid(point.x, GRID_SIZE), y: snapToGrid(point.y, GRID_SIZE) } : point;
-  insertElement(createWhiteboardElement(item, centre));
+  const centre = getSnappedPoint(point, isSnapEnabled.value);
+  const placedBounds = getPlacedBounds(item, centre);
+  const id = crypto.randomUUID();
+  insertElement(createWhiteboardElement(item, id, placedBounds));
 };
 const { ghost, startDrag } = useWhiteboardPaletteDrag((item, point) => {
   if (checkIsInCanvas(point)) placeAt(item, getDocumentPoint(point));

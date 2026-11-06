@@ -1,7 +1,4 @@
-import type { PositionedElementType, ShapeKind } from "headless-block-editor";
+import type { WhiteboardPlacement } from "@/models/whiteboard/WhiteboardPlacement";
 
-// One thing the palette places: a shape of a kind, a sticky note, or a text box
-export type WhiteboardPaletteItem =
-  | { kind: ShapeKind; title: string; type: PositionedElementType.Shape }
-  | { title: string; type: PositionedElementType.StickyNote }
-  | { title: string; type: PositionedElementType.Text };
+// One thing the palette places: a placement, under the title the palette lists it by
+export type WhiteboardPaletteItem = WhiteboardPlacement & { title: string };

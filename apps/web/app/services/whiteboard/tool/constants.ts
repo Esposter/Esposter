@@ -9,4 +9,7 @@ export const WHITEBOARD_TOOL_ITEMS: UiMenuItem<GestureTool>[] = [
   { meaning: UiIconMeaning.Arrow, title: "Arrow", value: GestureTool.Arrow },
   { meaning: UiIconMeaning.Hand, title: "Hand", value: GestureTool.Hand },
   { meaning: UiIconMeaning.Pen, title: "Freehand", value: GestureTool.Freehand },
+  { meaning: UiIconMeaning.Block, title: "Shape", value: GestureTool.Shape },
+  { meaning: UiIconMeaning.ReadableText, title: "Text", value: GestureTool.Text },
+  { meaning: UiIconMeaning.Edit, title: "Sticky note", value: GestureTool.StickyNote },
 ];

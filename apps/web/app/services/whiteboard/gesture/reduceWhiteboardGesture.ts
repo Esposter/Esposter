@@ -8,6 +8,7 @@ import { reduceDrawingGesture } from "@/services/whiteboard/gesture/reduceDrawin
 import { reduceMarqueeGesture } from "@/services/whiteboard/gesture/reduceMarqueeGesture";
 import { reduceMovingGesture } from "@/services/whiteboard/gesture/reduceMovingGesture";
 import { reducePanningGesture } from "@/services/whiteboard/gesture/reducePanningGesture";
+import { reducePlacingGesture } from "@/services/whiteboard/gesture/reducePlacingGesture";
 import { reducePressedGesture } from "@/services/whiteboard/gesture/reducePressedGesture";
 import { reduceResizingGesture } from "@/services/whiteboard/gesture/reduceResizingGesture";
 import { startWhiteboardGesture } from "@/services/whiteboard/gesture/startWhiteboardGesture";
@@ -34,6 +35,8 @@ export const reduceWhiteboardGesture = (
       return reduceMovingGesture(state, gesture, event);
     case GesturePhase.Panning:
       return reducePanningGesture(state, gesture, event);
+    case GesturePhase.Placing:
+      return reducePlacingGesture(state, gesture, event);
     case GesturePhase.Pressed:
       return reducePressedGesture(state, gesture, event);
     case GesturePhase.Resizing:
