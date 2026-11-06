@@ -5,6 +5,8 @@ import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
 import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -39,12 +41,24 @@ const createFixtureDocument = (): WebpageDocument => ({
   root: TEST_ROOT,
 });
 
-const setup = (selectedNodeId: string, document = createFixtureDocument()) => {
+type DocumentStore = ReturnType<typeof usePageBuilderDocumentStore>;
+
+// Seeds one open resource of the kind through `seed`, selects the node, and wires the moves to read it back through `read`
+const setupMoves = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  seed: (pageBuilderDocumentStore: DocumentStore, resourceId: string) => void,
+  read: (pageBuilderDocumentStore: DocumentStore, resourceId: string) => TDocument | undefined,
+  selectedNodeId: string,
+) => {
   setActivePinia(createPinia());
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { setDocument } = pageBuilderDocumentStore;
-  setDocument(resourceId, webpageKind, document);
+  seed(pageBuilderDocumentStore, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
@@ -53,9 +67,18 @@ const setup = (selectedNodeId: string, document = createFixtureDocument()) => {
     pageBuilderCanvasStore,
     pageBuilderDocumentStore,
     resourceId,
-    ...usePageBuilderMoves(webpageKind, () => pageBuilderDocumentStore.getDocument(resourceId), resourceId, announce),
+    ...usePageBuilderMoves(kind, () => read(pageBuilderDocumentStore, resourceId), resourceId, announce),
   };
 };
+const setup = (selectedNodeId: string, document = createFixtureDocument()) =>
+  setupMoves(
+    webpageKind,
+    (pageBuilderDocumentStore, resourceId) => {
+      pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+    },
+    (pageBuilderDocumentStore, resourceId) => pageBuilderDocumentStore.getDocument(resourceId),
+    selectedNodeId,
+  );
 
 describe(usePageBuilderMoves, () => {
   test("alt Down moves the selected node after its next sibling", () => {
@@ -143,18 +166,13 @@ describe(usePageBuilderMoves, () => {
   test("a move out of the top level of an email says it is already there", () => {
     expect.hasAssertions();
 
-    setActivePinia(createPinia());
-    const resourceId = crypto.randomUUID();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_SECTION_ID);
-    const announce = vi.fn<(message: string) => void>();
-    const { getMoveLeftRefusal } = usePageBuilderMoves(
+    const { getMoveLeftRefusal } = setupMoves(
       emailKind,
-      () => pageBuilderDocumentStore.getEmailDocument(resourceId),
-      resourceId,
-      announce,
+      (pageBuilderDocumentStore, resourceId) => {
+        pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
+      },
+      (pageBuilderDocumentStore, resourceId) => pageBuilderDocumentStore.getEmailDocument(resourceId),
+      TEST_SECTION_ID,
     );
 
     expect(getMoveLeftRefusal()).toBe(TOP_LEVEL_MESSAGE);
