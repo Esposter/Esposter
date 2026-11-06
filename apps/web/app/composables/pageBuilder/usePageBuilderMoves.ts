@@ -6,10 +6,14 @@ import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } fr
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getMoveIntoRefusal } from "@/services/pageBuilder/getMoveIntoRefusal";
+import { getMoveOutRefusal } from "@/services/pageBuilder/getMoveOutRefusal";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
+import { getSiblingMoveOperations } from "@/services/pageBuilder/getSiblingMoveOperations";
+import { getSiblingMoveRefusal } from "@/services/pageBuilder/getSiblingMoveRefusal";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
@@ -153,6 +157,30 @@ export const usePageBuilderMoves = <
     query: ref(""),
     title: "Move to",
   };
+  // The reason the selected node cannot take a move, from the same function that gives the move its operations, or none when
+  // It can or nothing is selected. A move the selection cannot take is shown unavailable with this reason, never hidden
+  const getSelectedRefusal = (
+    getRefusal: (
+      kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
+      document: TDocument,
+      nodePointer: string,
+    ) => string | undefined,
+  ) => {
+    const selection = getSelection();
+    if (!selection) return undefined;
+
+    return getRefusal(selection.kind, selection.document, selection.nodePointer);
+  };
+  const getMoveDownRefusal = () =>
+    getSelectedRefusal((selectedKind, document, nodePointer) =>
+      getSiblingMoveRefusal(selectedKind, document, nodePointer, 1),
+    );
+  const getMoveUpRefusal = () =>
+    getSelectedRefusal((selectedKind, document, nodePointer) =>
+      getSiblingMoveRefusal(selectedKind, document, nodePointer, -1),
+    );
+  const getMoveLeftRefusal = () => getSelectedRefusal(getMoveOutRefusal);
+  const getMoveRightRefusal = () => getSelectedRefusal(getMoveIntoRefusal);
   // The copy is the node placed straight after the selected one in its slot, so it is selected and announced once it lands
   const duplicateSelected = () => {
     const selection = getSelection();
@@ -210,5 +238,19 @@ export const usePageBuilderMoves = <
     if (nodeId) deleteNode(nodeId);
   };
 
-  return { deleteNode, deleteSelected, duplicateSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
+  return {
+    deleteNode,
+    deleteSelected,
+    duplicateSelected,
+    getMoveDownRefusal,
+    getMoveLeftRefusal,
+    getMoveRightRefusal,
+    getMoveUpRefusal,
+    moveDown,
+    moveLeft,
+    moveRight,
+    moveTo,
+    moveToScope,
+    moveUp,
+  };
 };

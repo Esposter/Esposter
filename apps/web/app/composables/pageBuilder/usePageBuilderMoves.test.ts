@@ -10,6 +10,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { createTestImageNode, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
+import { FIRST_IN_SLOT_MESSAGE, LAST_IN_SLOT_MESSAGE, TOP_LEVEL_MESSAGE } from "@/services/pageBuilder/constants";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -119,6 +120,42 @@ describe(usePageBuilderMoves, () => {
     const { moveToScope } = setup("d");
 
     expect(moveToScope.commands().map(({ title }) => title)).toStrictEqual(["Section 1 › Columns"]);
+  });
+
+  test("An action the selection cannot take says why", () => {
+    expect.hasAssertions();
+
+    const { getMoveDownRefusal } = setup("b");
+
+    expect(getMoveDownRefusal()).toBe(LAST_IN_SLOT_MESSAGE);
+  });
+
+  test("a move out of the top level says it is already there", () => {
+    expect.hasAssertions();
+
+    const { getMoveLeftRefusal } = setup("a");
+
+    expect(getMoveLeftRefusal()).toBe(TOP_LEVEL_MESSAGE);
+  });
+
+  test("a move into the block before it says why when that block takes no node of its type", () => {
+    expect.hasAssertions();
+
+    const document: WebpageDocument = {
+      content: [createColumns("c", [createColumn("d", [])]), createSection("b", [])],
+      root: TEST_ROOT,
+    };
+    const { getMoveRightRefusal } = setup("b", document);
+
+    expect(getMoveRightRefusal()).toBe("The block before it takes no Section");
+  });
+
+  test("the first block gives no reason to move down, and says why it cannot move up", () => {
+    expect.hasAssertions();
+
+    const { getMoveDownRefusal, getMoveUpRefusal } = setup("a");
+
+    expect([getMoveDownRefusal(), getMoveUpRefusal()]).toStrictEqual([undefined, FIRST_IN_SLOT_MESSAGE]);
   });
 
   test("deleting a node moves focus to a neighbour", () => {

@@ -13,6 +13,10 @@ export const MAX_PAGE_BUILDER_HISTORY_SIZE = 100;
 export const PAGE_BUILDER_COMMAND_GROUP = "Page builder";
 // The announcement for a block that a paste or insert cannot place where it was aimed
 export const CANNOT_GO_HERE_MESSAGE = "This block cannot go here";
+// The reasons a move the selected node cannot take gives, shown on the move while it is unavailable
+export const FIRST_IN_SLOT_MESSAGE = "It is first in its slot";
+export const LAST_IN_SLOT_MESSAGE = "It is last in its slot";
+export const TOP_LEVEL_MESSAGE = "It is already at the top level";
 // The title each webpage node type is shown by
 export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, string>> = Object.freeze({
   [WebpageNodeType.Button]: "Button",
