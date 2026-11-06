@@ -139,7 +139,7 @@ describe("worldScreen", () => {
   );
 
   test(
-    "Held screen reads its tables and mounts no session",
+    "held screen reads its tables and mounts no session",
     async () => {
       expect.hasAssertions();
 
@@ -157,7 +157,7 @@ describe("worldScreen", () => {
   );
 
   test(
-    "Released screen opens its session",
+    "released screen opens its session",
     async () => {
       expect.hasAssertions();
 
