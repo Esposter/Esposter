@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { SurveyNode } from "headless-survey-engine";
 
 import { SurveyNodeMoveType } from "@/models/resource/survey/SurveyNodeMoveType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getSurveyNodeLabel } from "@/services/resource/survey/getSurveyNodeLabel";
 import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
 import { getSurveySlotLength } from "@/services/resource/survey/getSurveySlotLength";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
@@ -19,11 +19,6 @@ const surveyCreatorStore = useSurveyCreatorStore();
 const { document: surveyDocument, selectedPointer } = storeToRefs(surveyCreatorStore);
 const { duplicateNode, moveNodeDown, moveNodeIntoPrevious, moveNodeOut, moveNodeTo, moveNodeUp, removeNode, select } =
   useSurveyCreatorCommands();
-// What a node is called in the tree and in a path: its title, else its name, else the label of its kind
-const getNodeLabel = (node: SurveyNode) =>
-  ("title" in node.props && node.props.title) ||
-  ("name" in node.props && node.props.name) ||
-  surveyNodeTypeDefinitionMap[node.type].label;
 // A node's slot is its pointer without the node's own index, and the node's place is that index
 const getSlotPointer = (pointer: string) => toJsonPointer(parseJsonPointer(pointer).slice(0, -1));
 const getIndex = (pointer: string) => parseArrayIndex(parseJsonPointer(pointer).at(-1) ?? "", Number.MAX_SAFE_INTEGER);
@@ -39,7 +34,7 @@ const layerItems = computed<LayerItem[]>(() =>
         description: surveyNodeTypeDefinitionMap[node.type].label,
         hasLeadingSlot: true,
         isCurrent: selectedPointer.value === nodePointer,
-        title: getNodeLabel(node),
+        title: getSurveyNodeLabel(node),
         value: nodePointer,
       },
     ];
@@ -55,7 +50,7 @@ const getSlotPath = (slotPointer: string) => {
   const titles: string[] = [];
   for (let length = 2; length <= ownerSegments.length; length += 3) {
     const node = getBlockNode(surveyDocument.value, toJsonPointer(ownerSegments.slice(0, length)), surveyNodeChildren);
-    if (node) titles.push(getNodeLabel(node));
+    if (node) titles.push(getSurveyNodeLabel(node));
   }
   return titles.join(" › ");
 };

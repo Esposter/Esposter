@@ -114,6 +114,10 @@ export const MIN_SIDE_PANE_WIDTH = 200;
 export const MAX_SIDE_PANE_WIDTH = 480;
 // What an event calendar's keys are listed under in the shortcuts dialog and the palette
 export const CALENDAR_COMMAND_GROUP = "Calendar";
+// The shortcuts an editor's undo and redo carry, in Vuetify 0's hotkey syntax, redo's Y shortcut beside its usual one
+export const HISTORY_UNDO_SHORTCUT = "cmd+z";
+export const HISTORY_REDO_SHORTCUT = "cmd+shift+z";
+export const HISTORY_REDO_Y_SHORTCUT = "cmd+y";
 // How often a calendar reads the clock, so today's ring and the current-time line move on without a reload
 export const CALENDAR_CLOCK_INTERVAL_MS = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 // The colour a colour field's picker shows for a colour the browser cannot read: the black a picker holds for a value
