@@ -28,7 +28,7 @@ describe(getConstellationActivationRefusal, () => {
     { descriptionTextId: "3", nameTextId: "3", paramList: [] },
   ];
 
-  test("activate is disabled with no Stella Fortuna held", () => {
+  test("Activate is disabled with no Stella Fortuna held", () => {
     expect.hasAssertions();
 
     expect(getConstellationActivationRefusal({ ...CHARACTER, stellaFortunaCount: 0 }, CONSTELLATIONS)).toBe(
@@ -36,7 +36,7 @@ describe(getConstellationActivationRefusal, () => {
     );
   });
 
-  test("activate is disabled when all six constellations are active", () => {
+  test("Activate is disabled when all six constellations are active", () => {
     expect.hasAssertions();
 
     expect(getConstellationActivationRefusal({ ...CHARACTER, constellationCount: 3 }, CONSTELLATIONS)).toBe(
