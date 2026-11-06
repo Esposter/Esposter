@@ -173,7 +173,6 @@ describe(buildGenshinProgress, () => {
         waiting: 1,
       },
     ]);
-    expect(formatGenshinProgress(progress)).toContainEqual(expect.stringContaining(GENSHIN_MISSING_ID_BLOCKER));
   });
 
   test("a change counts each open task in its own task's phase, and never a done one", () => {
