@@ -13,7 +13,7 @@ The creator declares a layout of four regions and a registry of panel content, i
 | Inspector | end         | with content | Design | the selection's tabs, below                                    |
 | Canvas    | the rest    | always       | both   | the page canvas in Design, the runner in Preview               |
 
-Structure and Inspector are docked and resizable on a wide window, and sheets on a compact one. Preview removes both, so the runner has the width a respondent has.
+Structure and Inspector are docked and resizable on an expanded window, and sheets on a medium or a compact one. Preview removes both, so the runner has the width a respondent has.
 
 **The inspector's tabs follow the selection.** What is selected decides which tabs exist, so no tab is ever offered that has nothing to show. A page holds a visibility condition as an element does, so it takes the Logic tab too, and the calculated values, which belong to the survey, are in the Logic tab only while nothing is selected.
 
@@ -49,6 +49,10 @@ flowchart TD
 - **A compact window keeps the canvas and opens panes as sheets.** The reader selects on the canvas and wants to see what they selected. Rejected: the current one pane at a time, which makes selecting and seeing the settings two screens.
 - **Occasional commands fold into the overflow menu at every width.** It is the responsive ladder's third rung, and the only rung a phone and a desktop can share. Rejected: a second bar of buttons on a narrow window.
 - **The creator keeps its canvas width cap.** A question is read at a measure a form is read at, as the compact chrome settled. Nothing here changes it.
+- **A tabbed region draws a tab per panel, titled by a map keyed by panel id.** A region holding several present panels needs one tab for each, and the shell drew only the active panel. The title is kept beside the layout, as a region's name is kept by region id, so the layout holds no words and a panel's stored tab survives a retitle. Rejected: a title on the panel, which the layout package leaves to its editor, and the panel id as the title, which would make a word the reader's stored choice is keyed by.
+- **Medium is a sheet, as the page's drawers are.** Between the small breakpoint and the mobile one, a docked structure and inspector leave the canvas a few hundred pixels, narrower than a question is read at, and the page's own drawers are sheets over that band. Rejected: docked on medium, which narrows the canvas below a readable measure.
+- **Import, Export and Clear are held in the overflow menu by a flag.** Folding by width alone puts an occasional command in the bar on a wide window, where the menu is meant to hold it. The toolbar takes an item flagged to stay in its menu at every width, and does not measure it, since the bar never draws it.
+- **An import's refusal is an alert.** The bar is one row of a fixed height, with no room for the line of text the refusal was drawn as beneath it. Rejected: a line beneath the bar, which pushes the canvas down on the one action that is rare.
 
 ## Not in this change
 
@@ -58,19 +62,20 @@ flowchart TD
 
 ## Key files
 
-| File                                                          | Role                                                                              |
-| :------------------------------------------------------------ | :-------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Survey/Creator/Shell.vue`   | the three panes and the narrow tabs, replaced by the layout                       |
-| `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue` | the bar's controls, which become the bar region's items                           |
-| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`  | the outline, unchanged and registered as the Outline tab                          |
-| `apps/web/app/components/Resource/Survey/Creator/Palette.vue` | the palette, registered as the Add tab                                            |
-| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`  | the page canvas                                                                   |
-| `apps/web/app/components/Resource/Survey/Runner.vue`          | the runner Preview draws                                                          |
-| `apps/web/app/store/survey/creator.ts`                        | the document, history, preview flag and selection, from which the context is read |
-| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts` | the commands the bar and the menus call                                           |
-| `openspec/specs/resource/survey-creator/design.md`            | the creator's design, whose Shell and Toolbar sentences this supersedes           |
-| `openspec/specs/resource/survey-logic-builder/design.md`      | the Logic tab's content, unchanged                                                |
-| `openspec/specs/resource/survey-properties/design.md`         | the Properties tab's content, unchanged                                           |
+| File                                                          | Role                                                                                       |
+| :------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Creator/Shell.vue`   | the layout, registry and context the creator hands the editor shell, in place of its panes |
+| `apps/web/app/components/Resource/Survey/Creator/Toolbar.vue` | the bar, drawn by the editor's toolbar and problems components                             |
+| `apps/web/app/services/resource/survey/SurveyEditorLayout.ts` | the regions, panels and the content each panel shows for each selection kind               |
+| `apps/web/app/components/Resource/Survey/Creator/Layers.vue`  | the outline, unchanged and registered as the Outline tab                                   |
+| `apps/web/app/components/Resource/Survey/Creator/Palette.vue` | the palette, registered as the Add tab                                                     |
+| `apps/web/app/components/Resource/Survey/Creator/Canvas.vue`  | the page canvas                                                                            |
+| `apps/web/app/components/Resource/Survey/Runner.vue`          | the runner Preview draws                                                                   |
+| `apps/web/app/store/survey/creator.ts`                        | the document, history, preview flag and selection, from which the context is read          |
+| `apps/web/app/composables/survey/useSurveyCreatorCommands.ts` | the commands the bar and the menus call                                                    |
+| `openspec/specs/resource/survey-creator/design.md`            | the creator's design, whose Shell and Toolbar sentences this supersedes                    |
+| `openspec/specs/resource/survey-logic-builder/design.md`      | the Logic tab's content, unchanged                                                         |
+| `openspec/specs/resource/survey-properties/design.md`         | the Properties tab's content, unchanged                                                    |
 
 ## Sources
 

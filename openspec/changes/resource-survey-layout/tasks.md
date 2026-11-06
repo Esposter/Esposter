@@ -1,8 +1,8 @@
 ## 1. Layout
 
-- [ ] 1.1 Declare the creator's layout and registry on the shell: the bar, the structure region with its two tabs, the inspector and the canvas, in Design and Preview. Verify: the shell's layout check passes for the survey, and tests named after the scenarios 'Preview removes the editing regions' and 'The structure region has two tabs', written first and seen failing.
-- [ ] 1.2 Choose the inspector's tabs by the selection: the survey's texts, calculated values and theme with nothing selected, and a node's properties and conditions with one. Verify: tests named after 'A node selection offers no Theme tab' and 'Nothing selected offers the Theme tab', seen failing first.
-- [ ] 1.3 Make the bar's items: undo, redo and Add page pinned, the mode switch and the problems surface, and Import, Export and Clear in the overflow menu at every width. Verify: a test named after 'Import, Export and Clear are in the overflow menu', seen failing first.
+- [x] 1.1 Declare the creator's layout and registry on the shell: the bar, the structure region with its two tabs, the inspector and the canvas, in Design and Preview. Verify: the shell's layout check passes for the survey, and tests named after the scenarios 'Preview removes the editing regions' and 'The structure region has two tabs', written first and seen failing.
+- [x] 1.2 Choose the inspector's tabs by the selection: the survey's texts, calculated values and theme with nothing selected, and a node's properties and conditions with one. Verify: tests named after 'A node selection offers no Theme tab' and 'Nothing selected offers the Theme tab', seen failing first.
+- [x] 1.3 Make the bar's items: undo, redo and Add page pinned, the mode switch and the problems surface, and Import, Export and Clear in the overflow menu at every width. Verify: a test named after 'Import, Export and Clear are in the overflow menu', seen failing first.
 
 ## 2. Compact
 
