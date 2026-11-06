@@ -2,6 +2,7 @@
 import type { SurveyDocument } from "headless-survey-engine";
 
 import { useAlertStore } from "@/store/alert";
+import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
@@ -15,6 +16,8 @@ const { document: editedDocument } = storeToRefs(surveyCreatorStore);
 const { load } = surveyCreatorStore;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
+const resourceStore = useResourceStore();
+const { refuseSaveContent } = resourceStore;
 const { sweep, track } = useSurveyFiles();
 // The creator holds its own copy of the document, so a restore is loaded into it, not left the pre-restore one
 useAdoptResourceContent(ResourceType.Survey, () => {
@@ -29,11 +32,13 @@ onBeforeUnmount(() => {
 await loadContent();
 load(storedDocument.value);
 track(storedDocument.value);
-// A document the survey check refuses is not written: its first issue is shown, and the save reports the refusal
+// A document the survey check refuses is not written: its first issue is shown, the editor reads not saved while the refusal
+// Stands, and the save reports the refusal
 const saveEditedDocument = (newDocument: SurveyDocument) => {
   const [issue] = checkSurveyDocument(newDocument);
   if (issue) {
     createAlert(`${issue.pointer}: ${issue.message}`, "error");
+    refuseSaveContent();
     return Promise.resolve(false);
   }
 

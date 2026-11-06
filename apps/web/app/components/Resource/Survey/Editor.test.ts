@@ -6,6 +6,8 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceSurveyEditor from "@/components/Resource/Survey/Editor.vue";
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
+import { EditorFindingSeverity } from "@/models/editor/EditorFindingSeverity";
+import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
 import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
@@ -14,6 +16,7 @@ import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { checkSurveyDocument } from "headless-survey-engine";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -94,6 +97,37 @@ describe("resourceSurveyEditor", () => {
 
     expect(alerts.value.map(({ text }) => text)).toStrictEqual([`${firstIssue?.pointer}: ${firstIssue?.message}`]);
     expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
+  test("A refused save leaves the findings in view", async () => {
+    expect.hasAssertions();
+
+    await mountSuspended(ResourceSurveyEditor);
+    Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
+    const surveyCreatorStore = useSurveyCreatorStore();
+    const { document: creatorDocument } = storeToRefs(surveyCreatorStore);
+    const resourceStore = useResourceStore();
+    const { saveState } = storeToRefs(resourceStore);
+    const findings = useSurveyCreatorFindings();
+    const duplicateQuestion = createSurveyTestQuestion("a");
+    const duplicateDocument = createSurveyTestDocument([
+      createSurveyTestPage([createSurveyTestQuestion("a"), duplicateQuestion]),
+    ]);
+    const issues = checkSurveyDocument(duplicateDocument);
+    creatorDocument.value = duplicateDocument;
+    // The refusal and the findings each settle on the real clock's debounce, so the wait is for what both leave behind
+    await until(() => saveState.value === ResourceSaveState.Failed && findings.value.length > 0).toBe(true);
+
+    expect(findings.value).toStrictEqual([
+      {
+        message: takeOne(issues, 0).message,
+        nodeId: duplicateQuestion.props.id,
+        severity: EditorFindingSeverity.Error,
+      },
+    ]);
+    expect(creatorDocument.value).toStrictEqual(duplicateDocument);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+    expect(saveState.value).toBe(ResourceSaveState.Failed);
   });
 
   test("closing the editor sweeps the document as it stands, once", async () => {
