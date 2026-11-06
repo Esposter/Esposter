@@ -1,6 +1,6 @@
 # Headless package shape
 
-The one shape a headless package takes: a Vue package named `vue-<thing>-headless` that declares Vue as a peer and imports it, with one entry holding its functions and its composables together. It is a repo-wide standard, so it sits under the architecture area, and the [editor layout package](../../vue-editor-layout-headless/layout-engine/spec.md) is built to it.
+The one shape a headless package takes: a Vue package named `vue-<thing>-headless` that declares Vue as a peer and imports it, with one entry holding its functions and its composables together. It is a repo-wide standard, so it sits under the architecture area, and the [editor layout package](../../vue-editor-layout-headless/layout-engine/design.md) is built to it.
 
 ## How it works
 

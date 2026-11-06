@@ -1,6 +1,6 @@
 # Whiteboard layout
 
-The whiteboard's arrangement on the [editor shell](../editor-shell/spec.md): every tool is one press away in a single top toolbar, a panel appears only for what is selected, and undo and redo sit beside zoom. The shell draws the screen over a layout and a registry the whiteboard declares, and the [whiteboard design](../whiteboard/design.md) holds its document, its commands and its export.
+The whiteboard's arrangement on the [editor shell](../editor-shell/design.md): every tool is one press away in a single top toolbar, a panel appears only for what is selected, and undo and redo sit beside zoom. The shell draws the screen over a layout and a registry the whiteboard declares, and the [whiteboard design](../whiteboard/design.md) holds its document, its commands and its export.
 
 ## How it works
 

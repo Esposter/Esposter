@@ -1,6 +1,6 @@
 # Webpage layout
 
-The webpage editor's arrangement on the [editor shell](../editor-shell/spec.md). It places the webpage's panels in the shell's regions and does not own the [canvas](../page-builder/canvas/design.md), the [style panel](../page-builder/style-panel/design.md) or the [critique](../page-builder/critique/design.md), which keep their own designs.
+The webpage editor's arrangement on the [editor shell](../editor-shell/design.md). It places the webpage's panels in the shell's regions and does not own the [canvas](../page-builder/canvas/design.md), the [style panel](../page-builder/style-panel/design.md) or the [critique](../page-builder/critique/design.md), which keep their own designs.
 
 A webpage is guided by its block tree, where each slot accepts some kinds, and free within it, since a page has no mail client to satisfy. Its findings, a low contrast or a fixed width, tell the author what to improve and never stop a save. So the layout is the email's shape without a compile to wait for, and with a theme.
 

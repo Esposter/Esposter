@@ -1,6 +1,6 @@
 # Editor guardrails
 
-How a guided editor keeps its reader from making a mistake. It is a part of the [editor layout](../editor-shell/spec.md), and it applies the [enforcement ladder](../../architecture/enforcement-ladder/design.md)'s first rung to an interface: where a wrong action can be made impossible to express, the editor does not offer it, and where it cannot, the editor says what is wrong and where.
+How a guided editor keeps its reader from making a mistake. It is a part of the [editor layout](../editor-shell/design.md), and it applies the [enforcement ladder](../../architecture/enforcement-ladder/design.md)'s first rung to an interface: where a wrong action can be made impossible to express, the editor does not offer it, and where it cannot, the editor says what is wrong and where.
 
 It changes no document model and no check's rules. The accepted types a slot carries, the survey check and the page builder's critique stay as they are, and this capability decides what the reader sees of them.
 

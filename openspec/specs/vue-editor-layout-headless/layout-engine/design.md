@@ -1,6 +1,6 @@
 # Headless editor layout engine
 
-A Vue package that holds an editor's layout as data and resolves it for what the reader is doing and the window they are in. An editor hands the engine its layout, and the engine answers with the regions to draw, which the [editor shell](../../resource/editor-shell/spec.md) draws. Its shape follows the [package shape](../../architecture/headless-package-shape/design.md): pure functions and the composable that keeps their state, from one entry.
+A Vue package that holds an editor's layout as data and resolves it for what the reader is doing and the window they are in. An editor hands the engine its layout, and the engine answers with the regions to draw, which the [editor shell](../../resource/editor-shell/design.md) draws. Its shape follows the [package shape](../../architecture/headless-package-shape/design.md): pure functions and the composable that keeps their state, from one entry.
 
 ## How it works
 

@@ -4,7 +4,7 @@ The editing session is the composable `useEditSession` in the block editor packa
 
 ## How it works
 
-The package ships the session beside its functions, in its one entry, so a store imports it from the same place as the commands it calls. It is the package's one Vue abstraction, which is why the package imports Vue and declares it as a peer, and the rule that holds that shape is the [headless package shape](../../architecture/headless-package-shape/spec.md). A store calls the composable inside its own setup and returns the members it needs. Pinia stays in the app.
+The package ships the session beside its functions, in its one entry, so a store imports it from the same place as the commands it calls. It is the package's one Vue abstraction, which is why the package imports Vue and declares it as a peer, and the rule that holds that shape is the [headless package shape](../../architecture/headless-package-shape/design.md). A store calls the composable inside its own setup and returns the members it needs. Pinia stays in the app.
 
 A store creates a session with three arguments: the document ref it already holds, the history limit its own constant gives, and an optional selection port of two functions that convert between a node id and its pointer. The session owns none of the three. It adds one history, a shallow ref started from [the shared bounded history](../../shared/bounded-history/design.md) with that limit, and one selected id, a string that is empty when nothing is selected. It returns four members:
 

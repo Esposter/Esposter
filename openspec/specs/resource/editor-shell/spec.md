@@ -170,9 +170,9 @@ On a compact window the tool region SHALL sit at the bottom edge of the editor, 
 - **WHEN** the editor is drawn
 - **THEN** the tool region is at the bottom edge
 
-### Requirement: A sheet or a floating panel closes on Escape
+### Requirement: A sheet closes on Escape
 
-A sheet or a floating panel SHALL close on Escape and return focus to the control that opened it.
+A sheet SHALL close on Escape and return focus to the control that opened it. The shell draws no close for a floating panel yet, so a floating panel is not part of this requirement.
 
 #### Scenario: Escape closes a sheet and returns focus
 

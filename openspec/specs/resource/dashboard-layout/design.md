@@ -1,6 +1,6 @@
 # Dashboard layout
 
-The dashboard editor is one part of the [editor layout program](../editor-shell/spec.md): a bar, a palette the reader opens, an inspector for the selection and the grid as the canvas. It keeps what the [dashboard grid](../dashboard-grid/design.md) settled about the grid, the tiles and the published page.
+The dashboard editor is one part of the [editor layout program](../editor-shell/design.md): a bar, a palette the reader opens, an inspector for the selection and the grid as the canvas. It keeps what the [dashboard grid](../dashboard-grid/design.md) settled about the grid, the tiles and the published page.
 
 ## How it works
 
