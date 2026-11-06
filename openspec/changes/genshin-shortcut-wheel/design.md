@@ -21,7 +21,7 @@ The default entries are the wiki's, in the order the spec's first requirement gi
 - **Gadgets are not on the wheel.** The wiki's Shortcut Wheel lists menus only. Gadgets are used from Z, which `genshin-gadgets` builds, so the wheel does not take `quickSwapItemIds`.
 - **Customization is deferred, and the wheel ships its defaults.** The wiki gates customizing the entries on Adventure Rank 20, not the wheel, so the wheel is open from the start with its defaults. Customizing waits until the wheel is drawn, then opens its own change: [customization](../../deferred/genshin/shortcut-wheel-customization/design.md).
 - **Hold to open, release to choose** is provisional. The wiki gives no hold length, so the wheel opens on a press and the choice is read on release; the same hold rule as the quick swap's is not reused.
-- **The wheel's layout is provisional.** The wiki's eight-direction screenshot sits on a CDN that refused the download from this machine, so the wheel is drawn from the wiki's description: eight entries clockwise from the top, four on the other layout. The parity trace of the game's own wheel replaces the drawing. The Tab and bumper hold that opens it is wired (task 2.1): the session passes the held `OpenShortcutWheel` action, bound to Tab and the left bumper, to the wheel's step and mounts the wheel.
+- **The wheel's layout is provisional.** The wiki's eight-direction screenshot sits on a CDN that refused the download from this machine, so the wheel is drawn from the wiki's description: eight entries clockwise from the top, four on the other layout. The parity trace of the game's own wheel replaces the drawing (task 3.1). The Tab and bumper hold that opens it is wired (task 2.1): the session passes the held `OpenShortcutWheel` action, bound to Tab and the left bumper, to the wheel's step and mounts the wheel.
 
 ## Key files
 
@@ -35,6 +35,7 @@ The session file already exists and changes; the wheel's new files sit in a tree
 packages/genshin-world/src/services/shortcutWheel/   ← the entries, the direction and the hold and release step, pure and tested
 packages/genshin-world/src/models/shortcutWheel/     ← the direction count, as an enum, and the step between two frames
 packages/genshin-world/src/components/Hud/ShortcutWheel/ ← the wheel drawn from the picked direction count, with its browser test
+packages/genshin-world/src/composables/useWorldShortcutWheel.ts ← the wheel's state and its step, which the session holds beside its other composables
 ```
 
 ## Notes

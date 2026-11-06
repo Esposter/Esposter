@@ -9,3 +9,7 @@
 
 - [x] 2.1 Show the wheel while Tab or the left bumper is held, and open the picked entry's screen on release. Verify: tests named after the scenarios 'Holding Tab opens the wheel' and 'Releasing on an entry opens its screen' written first and seen failing.
 - [x] 2.2 Hold the character still while the wheel is open, so its move only picks the entry. Verify: the browser test named after the scenario 'Holding Tab stops the character walking' (with its walking control) written first and seen failing with the held-move wiring reverted; the wheel's move is read raw either way.
+
+## 3. The layout from the game's own still
+
+- [ ] 3.1 Trace the wheel's layout and glyphs from the game's own still in place of the drawn wiki description, and score the wheel against that still. Verify: the wheel's parity compare, once its reference is named in `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`; no test pins the layout's numbers, which are provisional until the trace.

@@ -3,4 +3,10 @@ affected_areas: [genshin]
 x-phase: 3
 x-model: claude-haiku-5-5
 x-touches:
-  ["packages/genshin-world/src/services/shortcutWheel/**", "packages/genshin-world/src/models/shortcutWheel/**"]
+  [
+    "packages/genshin-world/src/services/shortcutWheel/**",
+    "packages/genshin-world/src/models/shortcutWheel/**",
+    "packages/genshin-world/src/components/Hud/ShortcutWheel/**",
+    "packages/genshin-world/src/composables/useWorldShortcutWheel.ts",
+  ]
+x-waiting: "task 3.1 waits on a still of the game's own wheel: the wiki's eight-direction screenshot sits on a CDN that refused the download from this machine"
