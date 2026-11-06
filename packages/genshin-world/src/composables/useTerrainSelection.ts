@@ -1,5 +1,5 @@
 import type { TerrainOptions, TerrainSelection, TileStreamer } from "genshin-engine";
-import type { Camera, Mesh } from "three";
+import type { Camera } from "three";
 import type { MaybeRefOrGetter } from "vue";
 
 import { FINEST_TILE_LEVEL, TILE_SELECTION_CAPACITY } from "#src/services/constants";
@@ -36,7 +36,7 @@ export const useTerrainSelection = ({
   isGroundSettled: MaybeRefOrGetter<boolean>;
   onReady: () => void;
   terrainOptions: TerrainOptions;
-  tileStreamer: TileStreamer<Mesh | number>;
+  tileStreamer: Pick<TileStreamer<unknown>, "checkIsSettled" | "has" | "pendingCount" | "update">;
 }) => {
   const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
   const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);

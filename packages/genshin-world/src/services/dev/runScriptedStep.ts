@@ -29,6 +29,6 @@ export const runScriptedStep = async (
       return { ok: true };
     }
     default:
-      return exhaustiveGuard(step.kind);
+      return exhaustiveGuard(step);
   }
 };

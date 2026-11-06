@@ -17,7 +17,7 @@ describe("openspecScenarioTasks", () => {
     const specsDirectory = join(changeDirectory, SPECS_FOLDER);
     if (!existsSync(specsDirectory)) return [];
 
-    return readdirSync(specsDirectory, { recursive: true })
+    return readdirSync(specsDirectory, { encoding: "utf8", recursive: true })
       .filter((path) => path.endsWith(SPEC_FILE))
       .flatMap((path) => readFileSync(join(specsDirectory, path), "utf8").split(/\r?\n/u))
       .map((line) => getScenarioTitle(line))
