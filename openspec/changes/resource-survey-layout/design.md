@@ -75,6 +75,6 @@ flowchart TD
 ## Sources
 
 - [SurveyJS Creator's user interface](https://surveyjs.io/survey-creator/documentation/end-user-guide/user-interface): the Designer, Preview and Themes tabs as modes, and a property grid scoped to a question, a page or the survey. The inspector's scopes.
-- [Typeform's logic map](https://help.typeform.com/hc/en-us/articles/5514792640916-Use-the-Logic-Map-to-add-Logic-to-your-forms) (excerpt): logic as a map across the survey, which this change leaves for later and does not confuse with an element's own conditions.
+- [Typeform's logic map](https://help.typeform.com/hc/en-us/articles/5514792640916-Use-the-Logic-Map-to-add-Logic-to-your-forms): the logic paths of a form drawn in its Workflow tab, where dragging from one question to another opens that question's own rule editor, so the map is a second way into the same per-question rules and holds no other model of logic. Outcome and score logic cannot be edited from it. This change leaves such a map for later, and the Logic tab stays one element's rows.
 - [Tally's create a form](https://tally.so/help/create-a-form): a block inserted where the reader is, by a slash, which the insertion menu follows.
 - [Google Forms' question settings](https://support.google.com/docs/answer/2839737?hl=en): settings reached from the question itself.
