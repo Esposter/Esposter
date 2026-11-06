@@ -19,7 +19,11 @@ const readReport = (path: string): Promise<string> => (existsSync(path) ? readFi
 // Every reading the exit checks take, each read once off the working tree: the committed scores, every reference's bar, the
 // Passes report of each region whose folder names a component, and the lock beside the key list the world reads
 export const readGenshinExitReadings = async (areas: readonly GenshinArea[]): Promise<GenshinExitReadings> => {
-  const lock = await readGameDataLock();
+  const [lock, scoresReport, keyList] = await Promise.all([
+    readGameDataLock(),
+    readReport(PARITY_SCORES_PATH),
+    readFile(GAME_DATA_KEYS_PATH, "utf8"),
+  ]);
   const regionComponents = areas
     .filter(({ kind }) => kind === ComputeKind.Region)
     .map(({ folder }) => folder)
@@ -32,8 +36,8 @@ export const readGenshinExitReadings = async (areas: readonly GenshinArea[]): Pr
       Object.entries(ParityReferenceMap).map(([id, { approval }]) => [id, approval ?? DEFAULT_APPROVAL] as const),
     ),
     lockKeys: { indexes: Object.keys(lock.indexes), objects: Object.keys(lock.objects) },
-    means: getReportMeans(await readReport(PARITY_SCORES_PATH)),
+    means: getReportMeans(scoresReport),
     passReports: new Map(passReports),
-    requiredKeys: parseGameDataKeyList(await readFile(GAME_DATA_KEYS_PATH, "utf8")),
+    requiredKeys: parseGameDataKeyList(keyList),
   };
 };
