@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 5
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
+x-waiting: "task 2.1 waits on the scene groups this build holds, which carry no node, and whose group scripts need the PC export (the genshin-puzzles change); task 2.2 waits on the stones' gadget identity being confirmed in the world, and on the stone hit points and weakness data the dump does not hold; task 2.3 waits on task 2.1, since no node stands in the world to pulse"
 x-touches:
   [
     "packages/genshin-world/src/models/elementalNode/**",
