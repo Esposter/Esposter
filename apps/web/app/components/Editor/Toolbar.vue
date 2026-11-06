@@ -23,6 +23,8 @@ const toolbar = useTemplateRef("toolbar");
 const isMeasuring = ref(false);
 const itemWidths = shallowRef<number[]>([]);
 const overflowWidth = ref(0);
+// The bar and its groups space their items by one gap, so the bar's column gap is the gap every item takes after it
+const gap = ref(0);
 // Nothing folds until the observer has read the toolbar's width
 const availableWidth = ref(Number.POSITIVE_INFINITY);
 // The variant each slot last drew, by its group's label
@@ -35,6 +37,7 @@ const folds = computed(() => {
 
   return getToolbarFolds({
     availableWidth: availableWidth.value,
+    gap: gap.value,
     items: flatEntries.value.map(({ item }, index) => ({
       isPinned: item.isPinned,
       width: itemWidths.value[index] ?? 0,
@@ -143,6 +146,9 @@ const measure = async () => {
   const itemElements = toolbar.value?.querySelectorAll('[role="radio"], [data-toolbar-item]') ?? [];
   itemWidths.value = Array.from(itemElements, (element) => element.getBoundingClientRect().width);
   overflowWidth.value = toolbar.value?.querySelector("[data-toolbar-overflow]")?.getBoundingClientRect().width ?? 0;
+  const bar = toolbar.value;
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("4px"), Number() would be NaN
+  gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) : 0;
   isMeasuring.value = false;
 };
 
