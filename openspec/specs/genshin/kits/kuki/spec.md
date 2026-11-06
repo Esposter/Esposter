@@ -77,6 +77,13 @@ Kuki's Ascension 1, Ascension 4 and Constellations 1 and 2 SHALL take effect, an
 - **WHEN** her health is at half or less
 - **THEN** her Healing Bonus is raised by 15%
 
+#### Scenario: Ascension 4's ring heal reads her Elemental Mastery at each tick
+
+- **GIVEN** Kuki has Ascension 4 and Grass Ring of Sanctification is on the field
+- **AND** an Elemental Mastery buff is put on her after the first tick
+- **WHEN** the second tick lands
+- **THEN** the second heal is larger than the first
+
 #### Scenario: Built constellations apply
 
 - **GIVEN** Kuki has Constellation 1 or 2 unlocked

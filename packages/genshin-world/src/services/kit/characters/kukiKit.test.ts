@@ -11,6 +11,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createKukiKitBehaviour, KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -121,6 +122,32 @@ describe(createKukiKitBehaviour, () => {
     expect(ring?.tickIntervalSeconds).toBeCloseTo(90 / 60);
     expect(getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + 0.2524 + 288.8908 / 10_000);
     expect(takeOne(tickSummon?.hits ?? []).hitmarkSeconds).toBeCloseTo(2 / 60);
+  });
+
+  test("an Ascension 4 Grass Ring tick heals by 75% of the Elemental Mastery on her at that tick, buffs included", () => {
+    expect.hasAssertions();
+    const combatant = createKukiCombatant(4, 0, 200);
+    const ring = castEffects(KUKI_KIT.elementalSkill, combatant).find(
+      (effect): effect is KitField => effect.kind === "field" && Number.isFinite(effect.tickIntervalSeconds),
+    );
+    const context = createKitTestContext(combatant);
+    getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare = 0.1;
+    // The share of her health a tick raises her by
+    const healFromTick = (tickIndex: number): number => {
+      const healthShare = getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare;
+      ring?.onTick(context, tickIndex);
+      return getPartyMember(context.party, KUKI_CHARACTER_ID).healthShare - healthShare;
+    };
+    const firstHeal = healFromTick(0);
+    buffKitMember(context.kitEffectState, KUKI_CHARACTER_ID, {
+      amount: 200,
+      attribute: Attribute.ElementalMastery,
+      secondsRemaining: 100,
+      source: "test",
+    });
+    const secondHeal = healFromTick(1);
+
+    expect(secondHeal).toBeGreaterThan(firstHeal);
   });
 
   test("the cast drains 30% of her health share, and no further than 20%", () => {

@@ -11,6 +11,7 @@ import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
@@ -95,8 +96,8 @@ export const createKukiKitBehaviour = ({
   const burstHits = readHits("gyoeiNarukamiKariyamaRite");
   const constellationBurstHits = readHits("toCloisterCompassionGyoeiNarukamiKariyamaRite");
 
-  // The ring ticks from its first tick each interval, and each tick's DMG and healing reads the ring's caster as it stood at
-  // The cast, with its heal from the caster's Max HP and its Elemental Mastery at Ascension 4
+  // The ring ticks from its first tick each interval. Each tick's heal reads the ring's caster's Max HP, and from Ascension 4 her
+  // Elemental Mastery, each with the buffs on her as they stand at that tick
   const castRing = (
     kitEffectState: KitEffectState,
     { facing, height, position }: KitBody,
@@ -110,7 +111,10 @@ export const createKukiKitBehaviour = ({
       onTick: (tick) => {
         const ascensionHealing =
           combatant.ascension >= ASCENSION_4
-            ? elementalMasteryMultiplier(combatant, ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE)
+            ? elementalMasteryMultiplier(
+                getBuffedCombatant(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
+                ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE,
+              )
             : 0;
         const maxHealth = getKitMaxHealth(
           combatant,
