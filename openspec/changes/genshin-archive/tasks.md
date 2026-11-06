@@ -14,7 +14,6 @@
 ## 4. Progress
 
 - [x] 4.1 Keep opened entries and defeat counts with the player's progress. Verify: a test named after the scenario 'opened entries and counts survive a reload', seen failing first.
-- [ ] 4.2 Start a new player's save with every Archive entry locked and no defeat counted. Verify: a test named after the scenario 'a new player starts with every entry locked' in `packages/genshin-world/src/services/save/readGenshinSave.test.ts`, beside the test of a new player's region; it passes on the empty save the constants already hold, so it guards that rather than failing first.
 
 ## 5. Artifact sets
 

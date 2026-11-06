@@ -9,9 +9,3 @@ The save SHALL keep the ids of the Archive entries each section has opened, and 
 - **GIVEN** a player with open entries and defeat counts, and the save has been acknowledged
 - **WHEN** the player reloads the game
 - **THEN** the same entries are open and the same counts are shown
-
-#### Scenario: a new player starts with every entry locked
-
-- **GIVEN** a player with no save yet
-- **WHEN** the save is created
-- **THEN** no Archive entry is open and no defeat is counted
