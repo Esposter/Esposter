@@ -8,10 +8,10 @@ import { getToolbarFolds } from "@/services/editor/getToolbarFolds";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
-  // The toolbar's accessible name, as a landmark
-  label: string;
   // Each group's items in the order the bar draws them. A tool with variants is a group of its own, holding that tool
   groups: EditorToolbarGroup[];
+  // The toolbar's accessible name, as a landmark
+  label: string;
 }
 // The tool in hand, which a tool group chooses among
 const modelValue = defineModel<string>({ default: "" });
@@ -32,6 +32,9 @@ const usedVariantValues = shallowReactive(new Map<string, string>());
 const flatEntries = computed(() =>
   groups.flatMap(({ items, kind, label: groupLabel }) => items.map((item) => ({ item, kind, label: groupLabel }))),
 );
+// The items always held in the overflow menu, which the bar never draws
+const heldEntries = computed(() => flatEntries.value.filter(({ item }) => item.isInOverflow));
+const isOverflowHeld = computed(() => heldEntries.value.length > 0);
 // The items the bar draws and measures, in the order it draws them. An item held in the overflow menu is never drawn, so it
 // Takes no width and is not one of the measured items
 const drawnEntries = computed(() => flatEntries.value.filter(({ item }) => !item.isInOverflow));
@@ -41,6 +44,7 @@ const drawnFolds = computed(() => {
   return getToolbarFolds({
     availableWidth: availableWidth.value,
     gap: gap.value,
+    isOverflowHeld: isOverflowHeld.value,
     items: drawnEntries.value.map(({ item }, index) => ({
       isPinned: item.isPinned,
       width: itemWidths.value[index] ?? 0,
@@ -52,7 +56,7 @@ const drawnFolds = computed(() => {
 const foldedValues = computed(
   () =>
     new Set([
-      ...flatEntries.value.filter(({ item }) => item.isInOverflow).map(({ item }) => item.value),
+      ...heldEntries.value.map(({ item }) => item.value),
       ...drawnEntries.value.filter((_entry, index) => drawnFolds.value[index]).map(({ item }) => item.value),
     ]),
 );
@@ -156,8 +160,8 @@ const measure = async () => {
   itemWidths.value = Array.from(itemElements, (element) => element.getBoundingClientRect().width);
   overflowWidth.value = toolbar.value?.querySelector("[data-toolbar-overflow]")?.getBoundingClientRect().width ?? 0;
   const bar = toolbar.value;
-  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("4px"), Number() would be NaN
   // A gap the browser does not report (a computed style with none, as happy-dom gives) reads NaN, which is no gap
+  // oxlint-disable-next-line unicorn/prefer-number-coercion -- computed styles are px-suffixed ("4px"), Number() would be NaN
   gap.value = bar ? Number.parseFloat(window.getComputedStyle(bar).columnGap) || 0 : 0;
   isMeasuring.value = false;
 };
@@ -186,7 +190,7 @@ watch(
 </script>
 
 <template>
-  <div ref="toolbar" role="toolbar" :aria-label="label" p-1 flex gap-1 items-center min-w-0 ui-lifted>
+  <div ref="toolbar" role="toolbar" :aria-label="label" p-1 flex gap-1 min-w-0 items-center ui-lifted>
     <div v-for="view of views" :key="view.label" role="group" :aria-label="view.label" flex gap-1 items-center>
       <template v-if="view.slot">
         <UiMenu

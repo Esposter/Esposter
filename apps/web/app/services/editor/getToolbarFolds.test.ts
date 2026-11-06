@@ -11,7 +11,13 @@ describe(getToolbarFolds, () => {
   test("folds nothing while every item fits", () => {
     expect.hasAssertions();
 
-    const folds = getToolbarFolds({ availableWidth: width + width, gap, items: [{ width }, { width }], overflowWidth });
+    const folds = getToolbarFolds({
+      availableWidth: width + width,
+      gap,
+      isOverflowHeld: false,
+      items: [{ width }, { width }],
+      overflowWidth,
+    });
 
     expect(folds).toStrictEqual([false, false]);
   });
@@ -22,6 +28,7 @@ describe(getToolbarFolds, () => {
     const folds = getToolbarFolds({
       availableWidth,
       gap,
+      isOverflowHeld: false,
       items: [{ isPinned: true, width }, { width }, { width }, { isPinned: true, width }],
       overflowWidth,
     });
@@ -35,6 +42,7 @@ describe(getToolbarFolds, () => {
     const folds = getToolbarFolds({
       availableWidth,
       gap,
+      isOverflowHeld: false,
       items: [{ width }, { width: wideWidth }, { width }],
       overflowWidth,
     });
@@ -48,10 +56,26 @@ describe(getToolbarFolds, () => {
     const folds = getToolbarFolds({
       availableWidth: 170,
       gap: 4,
+      isOverflowHeld: false,
       items: Array.from({ length: 5 }, () => ({ width: 32 })),
       overflowWidth: 1,
     });
 
     expect(folds).toStrictEqual([false, false, false, false, true]);
+  });
+
+  test("reserves the overflow button in the fit when the bar always holds items in it", () => {
+    expect.hasAssertions();
+
+    // The two items fit the bar alone, but not beside the button the bar draws for its held items
+    const folds = getToolbarFolds({
+      availableWidth: 130,
+      gap: 4,
+      isOverflowHeld: true,
+      items: [{ width: 48 }, { width: 48 }],
+      overflowWidth: 40,
+    });
+
+    expect(folds).toStrictEqual([false, true]);
   });
 });
