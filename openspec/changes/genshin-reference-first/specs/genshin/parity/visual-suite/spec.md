@@ -37,9 +37,3 @@ A subscreen's approved image SHALL be written beside its component whatever its 
 - **GIVEN** a subscreen whose compare does not clear the bar
 - **WHEN** approval runs
 - **THEN** its image is written beside its component under its own name, and its status against the bar is printed as over it
-
-#### Scenario: Render drifts from its approved image
-
-- **GIVEN** a subscreen whose render no longer matches its approved image
-- **WHEN** the visual suite runs
-- **THEN** the subscreen is listed after the run's cases, worst first, and the run passes
