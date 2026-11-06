@@ -8,11 +8,16 @@ describe(readEncounterPoints, () => {
   const dailyReset = epoch.subtract({ hours: GAME_DAY_START_HOUR });
   const now = dailyReset.add({ hours: 12 });
 
-  test("points earned before the daily reset are gone, and the day counts from that reset", () => {
+  test("encounter Points earned before the daily reset are gone", () => {
+    expect.hasAssertions();
+    const points = readEncounterPoints({ earnedOn: dailyReset.subtract({ minutes: 1 }), halfPoints: 6 }, now);
+    expect(points.halfPoints).toBe(0);
+  });
+
+  test("the day counts from that reset", () => {
     expect.hasAssertions();
     const points = readEncounterPoints({ earnedOn: dailyReset.subtract({ minutes: 1 }), halfPoints: 6 }, now);
     expect(points.earnedOn.equals(dailyReset)).toBe(true);
-    expect(points.halfPoints).toBe(0);
   });
 
   test("points earned at or after the daily reset are held as they are", () => {

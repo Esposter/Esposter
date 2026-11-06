@@ -116,7 +116,19 @@ describe(useWorldCommissions, () => {
     expect(commissionDay.value.dealtAt.toString()).toBe(afterReset.toString());
   });
 
-  test("a finished Archon quest earns four Encounter Points, and a World quest earns none", () => {
+  test("a finished Archon quest earns four Encounter Points", () => {
+    expect.hasAssertions();
+    const { encounterPoints, events } = useAfterReset();
+    events.emit(
+      "finishQuest",
+      { id: "archon", kind: QuestKind.Archon } as Quest,
+      {} as QuestProgress,
+      {} as QuestProgress,
+    );
+    expect(encounterPoints.value.halfPoints).toBe(8);
+  });
+
+  test("a World quest earns none", () => {
     expect.hasAssertions();
     const { encounterPoints, events } = useAfterReset();
     events.emit(
@@ -126,13 +138,6 @@ describe(useWorldCommissions, () => {
       {} as QuestProgress,
     );
     expect(encounterPoints.value.halfPoints).toBe(0);
-    events.emit(
-      "finishQuest",
-      { id: "archon", kind: QuestKind.Archon } as Quest,
-      {} as QuestProgress,
-      {} as QuestProgress,
-    );
-    expect(encounterPoints.value.halfPoints).toBe(8);
   });
 
   test("a finished Archon quest past the storage keeps the overflow as Long-Term Encounter Points", () => {
@@ -156,13 +161,18 @@ describe(useWorldCommissions, () => {
     expect(wholeEncounterPoints.value).toBe(0);
   });
 
-  test("a collected item the wiki lists earns a half point, and an item it does not list earns none", () => {
+  test("a collected Crimson Agate earns a half Encounter Point", () => {
     expect.hasAssertions();
     const { encounterPoints, events } = useAfterReset();
     events.emit("gatheringPickedUp", "107010");
     expect(encounterPoints.value.halfPoints).toBe(1);
+  });
+
+  test("an item the wiki does not list earns none", () => {
+    expect.hasAssertions();
+    const { encounterPoints, events } = useAfterReset();
     events.emit("gatheringPickedUp", "107033");
-    expect(encounterPoints.value.halfPoints).toBe(1);
+    expect(encounterPoints.value.halfPoints).toBe(0);
   });
 
   test("a Crimson Agate held by a chest earns none", () => {
