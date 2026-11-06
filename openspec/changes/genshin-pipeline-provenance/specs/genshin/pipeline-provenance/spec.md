@@ -72,7 +72,7 @@ Every external source a command fetches SHALL be fetched at a commit whose SHA i
 
 ### Requirement: A tool is installed from its pinned archive
 
-Every tool a stage runs SHALL be installed from its pinned archive, checked by its SHA-256, and found at that install rather than on the PATH.
+Every tool a stage runs, other than the system's tar and sysctl, SHALL be installed from its pinned archive, checked by its SHA-256, and found at that install rather than on the PATH.
 
 #### Scenario: A tool whose archive fails its SHA-256 is refused
 
@@ -85,3 +85,10 @@ Every tool a stage runs SHALL be installed from its pinned archive, checked by i
 - **GIVEN** a different tool of the same name on the PATH
 - **WHEN** the stage runs
 - **THEN** it runs its pinned install
+
+#### Scenario: The system's tar and sysctl run from their system paths
+
+- **GIVEN** a stage that unpacks a zip or reads the operating system's build
+- **WHEN** the stage runs
+- **THEN** it runs the system's tar or sysctl from its system path
+- **AND** a tool of the same name on the PATH is not run
