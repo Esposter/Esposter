@@ -62,8 +62,8 @@ const dockedEdgeRegionMap = computed(() =>
 );
 // Each sheet is opened by a button the shell draws over the canvas, and it is drawn only while the sheet holds a panel
 const sheetRegions = computed(() => presentationRegionMap.value.get(RegionPresentation.Sheet) ?? []);
-// The control that opened the sheet, which takes focus back when the sheet closes. A modal sheet is the only one open at a
-// Time, so one control is enough
+// The control that opened the sheet, which takes focus back when the sheet closes
+// A modal sheet is the only one open at a time, so one control is enough
 const openerElement = shallowRef<HTMLElement>();
 defineExpose({ toggleRegion });
 </script>
@@ -142,7 +142,7 @@ defineExpose({ toggleRegion });
       @select-panel="(panelId) => setActivePanel(region.id, panelId)"
     />
     <!-- A sheet closes from its own close button or Escape, and its control takes focus only once the close has drawn, since the
-      Open modal leaves that control inert until then -->
+      open modal leaves that control inert until then -->
     <EditorRegion
       v-for="region in sheetRegions"
       :key="region.id"
