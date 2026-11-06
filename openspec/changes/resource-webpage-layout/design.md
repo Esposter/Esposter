@@ -60,5 +60,6 @@ flowchart TD
 ## Sources
 
 - [Webflow's navigator](https://help.webflow.com/glossary/navigator) (excerpt) and [Wix Studio's layers panel](https://support.wix.com/en/article/studio-editor-using-the-layers-panel) (excerpt): a tree of the page's elements beside the canvas, which the Layers tab is.
-- [GrapesJS's layer manager](https://grapesjs.com/docs/modules/Layers.html): the page's component tree as its own panel.
+- [GrapesJS's layer manager](https://grapesjs.com/docs/modules/Layers.html): the page's component tree as its own panel (fetched).
+- [GrapesJS's device manager](https://grapesjs.com/docs/api/device_manager.html) and [its device](https://grapesjs.com/docs/api/device.html) (fetched): a device sets the canvas width and a separate width for media queries. The device toggle.
 - [Puck's overrides](https://next.puckeditor.com/docs/api-reference/overrides) (experimental): an outline and a fields panel as separate replaceable parts, with the fields following the selected item.

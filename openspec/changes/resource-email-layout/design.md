@@ -41,13 +41,13 @@ flowchart TD
 - **The compile's messages join the problems surface.** An alert above the preview is seen only in Preview, after the edit. Rejected: leaving the alert, which tells the author in the one mode they are not editing in.
 - **The device toggle is in the bar for both modes.** The width is a property of how the message is viewed, not of one mode. Rejected: the toggle above the canvas only in Design, which leaves Preview with its own.
 - **No Theme tab and no per-breakpoint tab.** The email has no theme today and no breakpoints, and a tab with nothing to show is what the survey's layout removes. Rejected: keeping the page builder's tabs for uniformity.
-- **Structure is kept for the keyboard.** See above. Rejected: dropping the layers tree because no surveyed email builder documented one, since the surveyed builders are pointer tools and the repo holds a keyboard path for every move.
+- **Structure is kept for the keyboard.** See above. Rejected: dropping the layers tree because none of the email builders read in full documented one, since they are pointer tools and the repo holds a keyboard path for every move.
 
 ## Not in this change
 
 - **Email client and dark-mode previews.** See the [deferred idea](../../deferred/resource/email-client-and-dark-previews/design.md).
 - **New email checks.** Contrast, links and alternative text are computations over the document and a later change; the problems surface lists the validator's messages today.
-- **Sending, a subject line and a plain-text version.** Sending is its own [deferred idea](../../deferred/resource/email-sending/design.md), and no surveyed builder documented the other two in its builder.
+- **Sending, a subject line and a plain-text version.** Sending is its own [deferred idea](../../deferred/resource/email-sending/design.md). Stripo documents a subject and a preheader in a message-settings form and Klaviyo documents a plain-text version in a separate editor, so both are known shapes, and neither is designed here.
 
 ## Key files
 
@@ -64,6 +64,8 @@ flowchart TD
 ## Sources
 
 - [MJML's documentation](https://documentation.mjml.io/): sections hold columns and columns hold content, which the document's accepted types already hold and the insertion menu mirrors.
-- [Litmus Builder's QA checks](https://help.litmus.com/article/674-qa-tab-in-builder) (excerpt): checks apart from the visual editor, and the cost of client previews, which the deferred idea records.
+- [Stripo's editor guide](https://support.stripo.email/en/articles/6448082-new-editor-how-does-stripo-editor-work) (fetched): blocks and structures in panels on the left, a settings panel, and a switch between the desktop and mobile versions in the top toolbar.
+- [Klaviyo's guide to its template editor](https://help.klaviyo.com/hc/en-us/articles/4407911841435) (fetched): a preview that checks the desktop and mobile layouts, and a test send from the preview sidebar.
+- [Stripo's built-in dark mode](https://stripo.email/en/blog/built-in-dark-mode-in-stripo-how-stripo-helps-you-test-emails-faster) (fetched): a dark preview in the editor labelled indicative, which the deferred idea records.
 - [Beefree's configuration parameters](https://docs.beefree.io/beefree-sdk/readme/installation/configuration-parameters): a mobile design width and merge tags as configured parts of an email editor, which the device toggle and the dataset picker are.
 - [Mailchimp's new builder](https://mailchimp.com/help/design-an-email-new-builder/): content blocks, layouts and a desktop and mobile switch in one editor.

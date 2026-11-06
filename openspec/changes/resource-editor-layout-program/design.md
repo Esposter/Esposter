@@ -88,7 +88,7 @@ The engine first, then the shell over it, then the guardrails, then the editors,
 ## Not in this program
 
 - **Rearranging the layout.** A reader resizes and collapses regions. They do not drag a panel to another edge or float it. A layout the reader can rearrange needs a way back to the default and a saved arrangement per editor, for nothing an editor here has asked for. See the [rejected docking layout](../../rejected/resource/editor-docking-layout/design.md).
-- **Email client previews and a dark-mode preview.** They need a rendering service or an approximation with no surveyed standard. See the [deferred idea](../../deferred/resource/email-client-and-dark-previews/design.md).
+- **Email client previews and a dark-mode preview.** Client previews need a rendering service the builders read meter by plan, and a dark preview is an approximation they label as one. See the [deferred idea](../../deferred/resource/email-client-and-dark-previews/design.md).
 - **A new document model.** The layouts arrange what each editor already edits. The whiteboard's tools arm and place elements the document already holds.
 
 ## Sources
@@ -107,7 +107,9 @@ Verification marks how each was read: fetched is the vendor's own page, excerpt 
 - [Beefree's configuration parameters](https://docs.beefree.io/beefree-sdk/readme/installation/configuration-parameters) (fetched): sidebar position, default tab, merge tags and a limit to one editable row. What an embedder may configure of an email editor.
 - [Puck's overrides](https://next.puckeditor.com/docs/api-reference/overrides) (fetched, experimental) and [its slot field](https://puckeditor.com/docs/api-reference/fields/slot) (excerpt): a header, an outline, a fields panel and a drawer as replaceable parts, and an allow and a disallow list per slot. The webpage's outline and the accepted-types rule it already holds.
 - [GrapesJS's layer manager](https://grapesjs.com/docs/modules/Layers.html) (fetched): a tree of the page's components. The navigator.
-- [Litmus Builder](https://help.litmus.com/article/674-qa-tab-in-builder) (excerpt): checks grouped by accessibility, links, tracking and loading speed, apart from the visual editor. The email checks.
+- [Stripo's built-in dark mode](https://stripo.email/en/blog/built-in-dark-mode-in-stripo-how-stripo-helps-you-test-emails-faster) and [its spam testing](https://stripo.email/blog/email-spam-testing-what-triggers-spam-filters-and-how-to-avoid-them-with-stripo/) (fetched): a dark preview labelled indicative rather than exact, and a spam check inside the editor. The email's checks, and the label a preview of an approximation carries.
+- [Klaviyo's guide to its template editor](https://help.klaviyo.com/hc/en-us/articles/4407911841435) (fetched): content organised into sections with a Styles and a Display tab, a preview with desktop and mobile layouts, and a send-a-test field in the preview sidebar. The email's modes.
+- [GrapesJS's device manager](https://grapesjs.com/docs/api/device_manager.html) (fetched): a device sets the canvas width and a separate width for media queries. The webpage's device toggle.
 - [FlexLayout](https://github.com/caplin/FlexLayout), [Dockview](https://github.com/mathuo/dockview), [rc-dock](https://github.com/ticlo/rc-dock), [golden-layout](https://github.com/golden-layout/golden-layout) and [Lumino](https://github.com/jupyterlab/lumino) (readmes fetched): layout held as a serialisable tree that names panels by id and keeps the reader's sizes apart from it. The engine's state.
 - [Zag's splitter](https://zagjs.com/components/react/splitter) (fetched): panel ids, minimum and maximum sizes, collapsible panels and a controlled size. The engine's resize.
 - [WAI-ARIA window splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/) and [toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) patterns: the keyboard contract of a splitter and of a toolbar. The shell's controls.
