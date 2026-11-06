@@ -8,6 +8,16 @@ import { checkSurveyOptionalExpression } from "#src/services/checkSurveyOptional
 import { checkSurveyQuestion } from "#src/services/checkSurveyQuestion";
 import { getBlockPropPointer } from "vue-block-editor-headless";
 
+// The visibility condition a node holds, pointed at the node's own prop
+const checkSurveyVisibility = (visibleIf: string, nodePointer: string, issues: SurveyDocumentIssue[]): void => {
+  checkSurveyOptionalExpression(
+    visibleIf,
+    "visibility condition",
+    getBlockPropPointer(nodePointer, "visibleIf"),
+    issues,
+  );
+};
+
 // Walks a list of nodes in document order. A page's and a panel's nodes share the names of their scope
 // A dynamic panel's template is a scope of its own, so its questions are named among themselves and may repeat a name outside the panel
 export const checkSurveyNodes = (
@@ -46,29 +56,14 @@ export const checkSurveyNodes = (
         break;
       case SurveyNodeType.Html:
       case SurveyNodeType.Image:
-        checkSurveyOptionalExpression(
-          node.props.visibleIf,
-          "visibility condition",
-          getBlockPropPointer(nodePointer, "visibleIf"),
-          issues,
-        );
+        checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
         break;
       case SurveyNodeType.Page:
-        checkSurveyOptionalExpression(
-          node.props.visibleIf,
-          "visibility condition",
-          getBlockPropPointer(nodePointer, "visibleIf"),
-          issues,
-        );
+        checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
         checkSurveyNodes(node.props.children, getBlockPropPointer(nodePointer, "children"), names, issues);
         break;
       case SurveyNodeType.Panel:
-        checkSurveyOptionalExpression(
-          node.props.visibleIf,
-          "visibility condition",
-          getBlockPropPointer(nodePointer, "visibleIf"),
-          issues,
-        );
+        checkSurveyVisibility(node.props.visibleIf, nodePointer, issues);
         checkSurveyOptionalExpression(
           node.props.enableIf,
           "enable condition",
