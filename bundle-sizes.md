@@ -25,7 +25,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-text               | index.js                                                     |   91030 |   88.9 |
 | genshin-engine             | index.d.ts                                                   |   85564 |   83.6 |
 | math-expression-compiler   | index.js                                                     |   81815 |   79.9 |
-| vue-survey-engine-headless | index.js                                                     |   74143 |   72.4 |
+| vue-survey-engine-headless | index.js                                                     |   74283 |   72.5 |
 | vue-phaserjs               | index.js                                                     |   71697 |   70.0 |
 | mjml-blocks                | index.js                                                     |   62272 |   60.8 |
 | genshin-text               | Thai-[hash].js                                               |   62111 |   60.7 |
@@ -41,9 +41,9 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-text               | Italian-[hash].js                                            |   41720 |   40.7 |
 | genshin-text               | French-[hash].js                                             |   41562 |   40.6 |
 | genshin-text               | Spanish-[hash].js                                            |   41144 |   40.2 |
+| vue-survey-engine-headless | index.d.ts                                                   |   41091 |   40.1 |
 | genshin-text               | Japanese-[hash].js                                           |   41088 |   40.1 |
 | genshin-text               | Turkish-[hash].js                                            |   41042 |   40.1 |
-| vue-survey-engine-headless | index.d.ts                                                   |   40984 |   40.0 |
 | genshin-text               | Korean-[hash].js                                             |   40522 |   39.6 |
 | genshin-text               | Indonesian-[hash].js                                         |   40240 |   39.3 |
 | genshin-text               | ChineseTraditional-[hash].js                                 |   36874 |   36.0 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21729190 bytes, 21219.9 KiB, 20.72 MiB
+**Total:** 569 files, 21729437 bytes, 21220.2 KiB, 20.72 MiB
