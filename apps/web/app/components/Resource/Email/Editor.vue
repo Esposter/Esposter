@@ -7,9 +7,11 @@ import PageBuilderEmailBar from "@/components/PageBuilder/Email/Bar.vue";
 import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
 import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
 import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
+import UiEmptyState from "@/components/Ui/EmptyState.vue";
 import { EditorType } from "@/models/editor/EditorType";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailView } from "@/models/pageBuilder/EmailView";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import {
   EMAIL_BLOCKS_REGION_ID,
   EMAIL_STRUCTURE_PANEL_ID,
@@ -122,6 +124,14 @@ const registry: Record<EmailContentKey, Component> = {
       resourceId,
       startMergeFieldDrag,
       startPaletteDrag,
+    }),
+  // The email has no document settings of its own, so with nothing selected the inspector asks for a selection and the canvas
+  // Keeps its width when one is made
+  [EmailContentKey.Prompt]: () =>
+    h(UiEmptyState, {
+      description: "Select a block on the canvas to edit its content and style.",
+      meaning: UiIconMeaning.Pointer,
+      title: "Nothing selected",
     }),
   [EmailContentKey.Style]: () => h(PageBuilderEmailStylePanel, { resourceId }),
 };

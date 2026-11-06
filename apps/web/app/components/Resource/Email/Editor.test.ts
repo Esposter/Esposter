@@ -50,6 +50,17 @@ describe("resourceEmailEditor", () => {
     expect(component.find('[aria-label="Problems: 1"]').exists()).toBe(true);
   });
 
+  test("nothing selected asks for a selection", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.email.compile.mutation(() => ({ html }));
+    const component = await mountSuspended(ResourceEmailEditor);
+    await waitForSynchronizedFunctions();
+    await flushPromises();
+
+    expect(component.text()).toContain("Select a block on the canvas");
+  });
+
   test("the device toggle applies to both modes", async () => {
     expect.hasAssertions();
 

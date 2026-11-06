@@ -23,13 +23,13 @@ The device toggle in the bar SHALL set the width of the design canvas and of the
 
 ### Requirement: The inspector's tabs follow the selection
 
-The inspector SHALL be drawn only with a node selected, with the Content and Style tabs, and SHALL NOT offer a Theme tab.
+The inspector SHALL ask for a selection with nothing selected and show the Content and Style tabs with a node selected, and SHALL NOT offer a Theme tab.
 
-#### Scenario: Nothing selected draws no inspector
+#### Scenario: Nothing selected asks for a selection
 
 - **GIVEN** an email with nothing selected
-- **WHEN** the editor is drawn
-- **THEN** no inspector is drawn
+- **WHEN** the inspector is drawn
+- **THEN** it asks the author to select a block
 
 #### Scenario: A node selection offers Content and Style only
 

@@ -5,6 +5,7 @@ export const EmailContentKey = {
   Content: "content",
   Layers: "layers",
   Palette: "palette",
+  Prompt: "prompt",
   Style: "style",
 } as const;
 export type EmailContentKey = (typeof EmailContentKey)[keyof typeof EmailContentKey];

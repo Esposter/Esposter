@@ -48,6 +48,13 @@ export const emailLayout: Layout = {
       wildcardContentKey: EmailContentKey.Layers,
     },
     {
+      condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Nothing] },
+      id: "prompt",
+      regionId: "inspector",
+      selectionKindContentKeyMap: {},
+      wildcardContentKey: EmailContentKey.Prompt,
+    },
+    {
       condition: { modes: [EmailView.Design], selectionKinds: [PAGE_BUILDER_SELECTION_KIND_MAP.Node] },
       id: "content",
       regionId: "inspector",
@@ -100,5 +107,6 @@ export const emailPanelNameMap: Record<string, string> = {
   blocks: "Blocks",
   content: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Content],
   [EMAIL_STRUCTURE_PANEL_ID]: "Structure",
+  prompt: "Nothing selected",
   style: PAGE_BUILDER_PANEL_NAME_MAP[PAGE_BUILDER_PANEL_ID_MAP.Style],
 };

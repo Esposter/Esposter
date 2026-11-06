@@ -2,7 +2,7 @@
 
 - [x] 1.1 Declare the email's layout and registry on the shell: the bar, Blocks, the inspector and the canvas, in Design and Preview. Verify: the shell's layout check passes for the email, and a test named after the scenario 'Preview removes the editing regions', written first and seen failing.
 - [x] 1.2 Move the dataset picker, the preview text field and the device toggle into the bar, and Import MJML into its overflow menu. Verify: tests named after 'The device toggle applies to both modes' and 'Import MJML is in the overflow menu', seen failing first.
-- [x] 1.3 Choose the inspector's tabs by the selection: no inspector with nothing selected, Content and Style with a node. Verify: tests named after 'Nothing selected draws no inspector' and 'A node selection offers Content and Style only', seen failing first.
+- [x] 1.3 Choose the inspector's tabs by the selection: a prompt with nothing selected, Content and Style with a node. Verify: tests named after 'Nothing selected asks for a selection' and 'A node selection offers Content and Style only', seen failing first.
 
 ## 2. Findings
 
