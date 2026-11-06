@@ -3,8 +3,8 @@ import { getLineNumberCitations } from "#src/services/citations/getLineNumberCit
 import { readWorkingTreeFiles } from "#src/services/shared/readWorkingTreeFiles";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 
-// Every line-number citation in the specs and the skills, one `path:line → text` each. The repository's listing is
-// The set a cited file is checked against, so a file the listing lacks is external and is no finding
+// Every line-number citation in the specs and the skills, one `path:line → text` each.
+// The repository's listing is the set a cited file is checked against, so a file the listing lacks is external and is no finding
 export const readLineNumberCitationFindings = (): string[] => {
   const repositoryPaths = new Set(readSweepFilePaths());
   return readWorkingTreeFiles(...LINE_NUMBER_PATHSPECS)
