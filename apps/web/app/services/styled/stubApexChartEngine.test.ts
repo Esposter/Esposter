@@ -2,7 +2,7 @@ import ApexCharts from "apexcharts";
 import { describe, vi } from "vitest";
 
 // The engine resolves a render or an update to the chart it ran on
-export const resolveToChart = function (this: ApexCharts) {
+const resolveToChart = function (this: ApexCharts) {
   return Promise.resolve(this);
 };
 
