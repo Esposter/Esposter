@@ -8,7 +8,7 @@ The gathering page holds the plants, the specialties and the ores, struck until 
 
 From Adventure Rank 30 each region's mining outcrops come daily, and investigation spots give their rewards up to a daily cap.
 
-- From Adventure Rank 30 a region's mining outcrops stand at a few places drawn each day, and come at the 04:00 reset in UTC+8.
+- From Adventure Rank 30 a region's mining outcrops stand at a few places drawn each day, and come at the 06:00 respawn in UTC+8, two hours after the daily reset.
 - A mined outcrop stays gone until the next day's draw.
 - Investigating a spot gives its rewards once.
 - Investigation stops spawning new spots once a hundred investigations are counted in the game day, which starts at the 04:00 reset.
