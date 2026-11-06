@@ -496,17 +496,13 @@ describe("constellation 4 and 6", () => {
   test("at constellation 6, a damage that would take Hu Tao to none leaves her at 1 HP", () => {
     expect.hasAssertions();
 
-    const { attributes } = createHuTaoCombatant();
-
-    expect(takeLethalHits(6, 1)).toStrictEqual([1 / attributes.maxHealth]);
+    expect(takeLethalHits(6, 1)).toStrictEqual([1 / createHuTaoCombatant().attributes.maxHealth]);
   });
 
   test("a second damage that would take Hu Tao to none within a minute takes her down", () => {
     expect.hasAssertions();
 
-    const { attributes } = createHuTaoCombatant();
-
-    expect(takeLethalHits(6, 2)).toStrictEqual([1 / attributes.maxHealth, 0]);
+    expect(takeLethalHits(6, 2)).toStrictEqual([1 / createHuTaoCombatant().attributes.maxHealth, 0]);
   });
 
   test("below constellation 6, a damage that would take Hu Tao to none takes her down", () => {

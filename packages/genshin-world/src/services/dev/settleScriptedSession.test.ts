@@ -10,7 +10,7 @@ describe(settleScriptedSession, () => {
     expect.hasAssertions();
 
     // The view answers from its old selection, which reads settled, until a frame has run the selection on the new view.
-    // The frame after that the new view's tiles are asked for and not given yet, and from the next frame on they are
+    // The frame after that the new view's tiles are asked for and not given yet, and from the next frame on they are given
     let framesSinceLine = 0;
     const readsAtFrames: number[] = [];
     const driver: ScriptedSessionDriver = {

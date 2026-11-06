@@ -11,12 +11,14 @@ describe(getProfileEntries, () => {
   test("the Profile tab lists the character's voice-over lines", () => {
     expect.hasAssertions();
     const profileText: ProfileText = { namecardIconName: "", stories: [], voices: [VOICE] };
+
     expect(getProfileEntries(profileText)).toStrictEqual([VOICE]);
   });
 
   test("the profile tab lists the character's stories, then its voice-over lines", () => {
     expect.hasAssertions();
     const profileText: ProfileText = { namecardIconName: "", stories: [STORY], voices: [VOICE] };
+
     expect(getProfileEntries(profileText)).toStrictEqual([STORY, VOICE]);
   });
 });
