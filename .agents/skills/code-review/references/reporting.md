@@ -4,12 +4,12 @@ Read when writing up a round's report.
 
 The table rule itself — every finding, one compact table, flush-left — is in `SKILL.md`. This page is the shape of the table and what each column renders.
 
-| #   | Finding                                     | Where                           | Lane        | Severity    | Origin                             | Disposition                       |
-| --- | ------------------------------------------- | ------------------------------- | ----------- | ----------- | ---------------------------------- | --------------------------------- |
-| 1   | Reordered write drops entity on DB failure  | `createThing.ts`, createThing   | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
-| 2   | Truncated buffer decoded with wrong charset | `decodeOutput.ts`, decodeOutput | correctness | 🟡 major    | new                                | Fixed                             |
-| 3   | Comment names a deleted symbol              | `helper.ts`, helper             | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
-| 4   | Third copy of the branch-restore rollback   | `roomInvite.ts`, roomInvite     | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreFoo` |
+| #   | Finding                                     | Where                       | Lane        | Severity    | Origin                             | Disposition                       |
+| --- | ------------------------------------------- | --------------------------- | ----------- | ----------- | ---------------------------------- | --------------------------------- |
+| 1   | Reordered write drops entity on DB failure  | `createFoo.ts`, createFoo   | correctness | 🔴 critical | regression 57dcbd3                 | Fixed                             |
+| 2   | Truncated buffer decoded with wrong charset | `decodeFoo.ts`, decodeFoo   | correctness | 🟡 major    | new                                | Fixed                             |
+| 3   | Comment names a deleted symbol              | `helper.ts`, helper         | correctness | 🟢 minor    | stale-record readPublishHistory.ts | Fixed                             |
+| 4   | Third copy of the branch-restore rollback   | `roomInvite.ts`, roomInvite | quality     | 🟢 minor    | new                                | Fixed — extracted to `restoreFoo` |
 
 Fixes committed as abc1234. Refuted while reading: removeThing timeout bound, batch submission ordering.
 
