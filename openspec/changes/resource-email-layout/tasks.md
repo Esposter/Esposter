@@ -11,5 +11,5 @@
 
 ## 3. Compact and specs
 
-- [ ] 3.1 Put Blocks and the inspector behind their buttons as sheets when the window is compact. Verify: 'A compact window opens the inspector as a sheet' written as a test and seen failing, then one pass in the driven browser at a phone's width.
+- [x] 3.1 Put Blocks and the inspector behind their buttons as sheets when the window is compact. Verify: 'A compact window opens the inspector as a sheet' written as a test and seen failing, then one pass in the driven browser at a phone's width.
 - [x] 3.2 Rewrite the email editor design as built: its shell, bar and preview sentences and its key files. Verify: the OpenSpec citation checks pass in `scripts`.
