@@ -4,7 +4,7 @@
 
 ## 2. The world engine
 
-- [ ] 2.1 Build the engine pages, each when Windrise's passes reach what it draws, and show each first in Windrise's scene. Verify: a test named after the scenario "The world's geometry is generated rather than loaded", written first and seen failing. Open: the engine pages it names are open in their own folders (the recreation passes, trees and scatter, ground detail and the Windrise derivation pages), and the named test does not exist.
+- [ ] 2.1 Build the engine pages, each when Windrise's passes reach what it draws, and show each first in Windrise's scene. Verify: a test named after the scenario "The world's geometry is generated rather than loaded", written first and seen failing. Open: the engine pages it names are open in their own folders (the recreation passes, trees and scatter, ground detail, the Windrise derivation and weather pages), and the named test does not exist.
 - [ ] 2.2 Keep the world's frame cost tied to what the camera sees as each engine page lands. Verify: a test named after the scenario "Regions out of view do not raise the frame cost", written first and seen failing. Open: the culling is in code (createFrustumSetter and the grass culling compute), but the rule is held per engine page as each lands, and the named test does not exist.
 
 ## 3. The regions
