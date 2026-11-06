@@ -12,7 +12,13 @@ import { EditorType } from "@/models/editor/EditorType";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailSelectionKind } from "@/models/emailEditor/EmailSelectionKind";
 import { EmailView } from "@/models/pageBuilder/EmailView";
-import { emailLayout, emailPanelNameMap, emailRegionNameMap } from "@/services/emailEditor/emailLayout";
+import {
+  EMAIL_BLOCKS_REGION_ID,
+  EMAIL_STRUCTURE_PANEL_ID,
+  emailLayout,
+  emailPanelNameMap,
+  emailRegionNameMap,
+} from "@/services/emailEditor/emailLayout";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { getNodeTitleById } from "@/services/pageBuilder/getNodeTitleById";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -52,6 +58,7 @@ onUnmounted(() => {
   setMergeFieldColumns(resourceId, []);
 });
 const root = useTemplateRef("root");
+const editorShell = useTemplateRef("editorShell");
 const {
   announce,
   announcement,
@@ -67,7 +74,12 @@ const {
   refusal,
   startMergeFieldDrag,
   startPaletteDrag,
-} = usePageBuilderEditor(emailKind, resourceId, () => root.value);
+} = usePageBuilderEditor(
+  emailKind,
+  resourceId,
+  () => root.value,
+  () => editorShell.value?.setActivePanel(EMAIL_BLOCKS_REGION_ID, EMAIL_STRUCTURE_PANEL_ID),
+);
 const preview = useTemplateRef("preview");
 // The problems the compile found, which the bar lists in both modes
 const findings = computed<EditorFinding[]>(() => preview.value?.findings ?? []);
@@ -121,6 +133,7 @@ const registry: Record<EmailContentKey, Component> = {
   <div ref="root" flex flex-col h-full min-h-0 @keydown="handleEnterKeydown($event)">
     <EditorShell
       v-if="emailDocument"
+      ref="editorShell"
       :class="{ 'pointer-events-none': isDragging }"
       :context
       :editor-type="EditorType.Email"

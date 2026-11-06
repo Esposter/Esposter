@@ -4,8 +4,8 @@ import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
 import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
 import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
 
-// The parts every page builder editor's layout shares: a bar over the page, the blocks at the start, the settings at the end and
-// The canvas in the rest. The webpage and the email name these the same, so each editor's layout differs only in its settings
+// The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the end and
+// The canvas in the rest. The webpage's layout adds its settings tabs to these
 export const PAGE_BUILDER_CANVAS_ID = "canvas";
 export const PAGE_BUILDER_REGION_ID_MAP = { Bar: "bar", Blocks: "blocks", Inspector: "inspector" } as const;
 export const PAGE_BUILDER_PANEL_ID_MAP = {

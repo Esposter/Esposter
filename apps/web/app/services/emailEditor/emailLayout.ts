@@ -20,6 +20,10 @@ const SIDE_REGION_PRESENTATION_MAP = {
   [SizeClass.Expanded]: RegionPresentation.Docked,
   [SizeClass.Medium]: RegionPresentation.Sheet,
 };
+// The blocks region holds the layers tree as its structure tab, so a text edit's end shows that tab before it returns focus to
+// The tree. The ids are named here, so the editor's reveal and the layout name the same panel
+export const EMAIL_BLOCKS_REGION_ID = "blocks";
+export const EMAIL_STRUCTURE_PANEL_ID = "structure";
 // The email's arrangement: the bar over the canvas, the blocks at the start and the inspector at the end. The blocks and the
 // Inspector are drawn in Design alone, so Preview shows the compiled message with nothing editing beside it
 export const emailLayout: Layout = {
@@ -35,14 +39,14 @@ export const emailLayout: Layout = {
     {
       condition: { modes: [EmailView.Design] },
       id: "blocks",
-      regionId: "blocks",
+      regionId: EMAIL_BLOCKS_REGION_ID,
       selectionKindContentKeyMap: {},
       wildcardContentKey: EmailContentKey.Palette,
     },
     {
       condition: { modes: [EmailView.Design] },
-      id: "structure",
-      regionId: "blocks",
+      id: EMAIL_STRUCTURE_PANEL_ID,
+      regionId: EMAIL_BLOCKS_REGION_ID,
       selectionKindContentKeyMap: {},
       wildcardContentKey: EmailContentKey.Layers,
     },
@@ -84,7 +88,7 @@ export const emailLayout: Layout = {
     {
       ...SIDE_REGION_SIZE,
       edge: RegionEdge.Start,
-      id: "blocks",
+      id: EMAIL_BLOCKS_REGION_ID,
       opening: RegionOpening.OnDemand,
       sizeClassEdgeMap: {},
       sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
@@ -102,7 +106,7 @@ export const emailLayout: Layout = {
 // The name each region is announced by, and each panel's tab is labelled by. A panel with no tab of its own is named too
 export const emailRegionNameMap: Record<string, string> = {
   bar: "Email bar",
-  blocks: "Blocks",
+  [EMAIL_BLOCKS_REGION_ID]: "Blocks",
   inspector: "Inspector",
 };
 export const emailPanelNameMap: Record<string, string> = {
@@ -110,6 +114,6 @@ export const emailPanelNameMap: Record<string, string> = {
   blocks: "Blocks",
   content: CONTENT_PANEL,
   settings: "Email settings",
-  structure: "Structure",
+  [EMAIL_STRUCTURE_PANEL_ID]: "Structure",
   style: STYLE_PANEL,
 };

@@ -6,11 +6,13 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 // The editing of one open page builder document, which every arrangement of the builder shares: what a screen reader hears, the
 // Keys, the history and style commands, and the drag from the palette or a merge field onto the canvas. An arrangement draws the
 // Palette, the canvas and the rest, and passes them what this answers. The canvas is the template ref "canvas", and getRoot answers
-// The element the layers tree sits in, which a text edit's end returns focus to
+// The element the layers tree sits in, which a text edit's end returns focus to. revealLayers shows the tree's tab before that, where
+// The tree is a tab, since a tab's content is not in the DOM until it is shown
 export const usePageBuilderEditor = (
   kind: AnyPageBuilderKind,
   resourceId: string,
   getRoot: () => HTMLElement | null | undefined,
+  revealLayers?: () => void,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getHeldDocument } = pageBuilderDocumentStore;
@@ -45,15 +47,19 @@ export const usePageBuilderEditor = (
   const canvas = useTemplateRef("canvas");
   // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
   const getFrameGeometry = () => canvas.value?.getFrameGeometry();
-  // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame
+  // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame. A tab's
+  // Content is not in the DOM until the tab is shown, so the tab is revealed first and the row is focused on the next tick
   watch(
     () => getEditingNodeId(resourceId),
     (nodeId, previousNodeId) => {
       if (nodeId || !previousNodeId) return;
 
-      getRoot()
-        ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
-        ?.focus();
+      revealLayers?.();
+      nextTick(() => {
+        getRoot()
+          ?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)
+          ?.focus();
+      });
     },
   );
   return {

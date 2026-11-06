@@ -10,7 +10,6 @@ import {
   TEST_OTHER_ID,
   TEST_ROOT,
   TEST_SURVEY_ID,
-  TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
 import {
@@ -33,7 +32,6 @@ import {
   TEST_SECTION_ID,
   TEST_TEXT_CONTENT,
 } from "@/services/pageBuilder/constants.test";
-import { emailKind } from "@/services/pageBuilder/emailKind";
 import { PAGE_BUILDER_REGION_ID_MAP, PAGE_BUILDER_REGION_NAME_MAP } from "@/services/pageBuilder/pageBuilderLayout";
 import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
@@ -44,7 +42,6 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 // The editor's keys are bound on the page's window, so a key is pressed on the element that has focus and bubbles up to it
@@ -100,23 +97,6 @@ describe("pageBuilderEditor", () => {
       WEBPAGE_PALETTE_CATEGORIES.map(({ category }) => category),
     );
     expect(component.find("iframe").exists()).toBe(true);
-  });
-
-  test("an email's settings tabs leave out the theme, which an email has no controls for", async () => {
-    expect.hasAssertions();
-
-    const resourceId = crypto.randomUUID();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
-
-    const component = await mountSuspended(PageBuilderEditor, { props: { kind: emailKind, resourceId } });
-
-    expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual([
-      "Blocks",
-      "Layers",
-      "Content",
-      "Style",
-    ]);
   });
 
   test("nothing selected offers Page and Theme", async () => {
@@ -437,40 +417,6 @@ describe("pageBuilderEditor", () => {
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
-
-    await component.trigger("keydown", { key: "Enter" });
-
-    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
-  });
-
-  test("enter edits a selected email text block in place", async () => {
-    expect.hasAssertions();
-    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-
-    const resourceId = crypto.randomUUID();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
-      content: [
-        {
-          props: {
-            children: [
-              {
-                props: {
-                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text }],
-                  id: TEST_THIRD_ID,
-                },
-                type: MjmlNodeType.Column,
-              },
-            ],
-            id: TEST_SECTION_ID,
-          },
-          type: MjmlNodeType.Section,
-        },
-      ],
-      root: { props: {} },
-    });
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { kind: emailKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 

@@ -55,7 +55,7 @@ flowchart TD
 
 | File                                                             | Role                                                             |
 | :--------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/app/components/PageBuilder/Editor.vue`                 | the page builder host, drawn on the shell with the kind's layout |
+| `apps/web/app/components/PageBuilder/Editor.vue`                 | the page builder host, drawn on the shell with its layout        |
 | `apps/web/app/services/pageBuilder/webpageLayout.ts`             | the webpage's layout: the settings tabs chosen by the selection  |
 | `apps/web/app/services/pageBuilder/pageBuilderLayout.ts`         | the regions, panels and names both page builder layouts share    |
 | `apps/web/app/components/PageBuilder/Bar.vue`                    | the bar: the device toggle and the problems surface              |

@@ -57,18 +57,18 @@ flowchart TD
 
 ## Key files
 
-| File                                                           | Role                                                                                        |
-| :------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `apps/web/app/components/Resource/Email/Editor.vue`            | the blade on the editor shell: the layout, the registry and the compile's findings          |
-| `apps/web/app/components/PageBuilder/Email/Bar.vue`            | the bar: the mode switch, the dataset, the preview text, the device and the problems        |
-| `apps/web/app/services/emailEditor/emailLayout.ts`             | the email's layout, its panels and the names the shell draws its regions and tabs under     |
-| `apps/web/app/composables/pageBuilder/usePageBuilderEditor.ts` | the page builder's editing composition, which the blade calls beside the webpage's own copy |
-| `apps/web/app/components/PageBuilder/Editor.vue`               | the shared arrangement, which the email no longer mounts and the webpage's layout replaces  |
-| `apps/web/app/components/PageBuilder/Palette.vue`              | the palette, registered as the Blocks tab                                                   |
-| `apps/web/app/components/PageBuilder/Layers.vue`               | the layers tree, registered as the Structure tab                                            |
-| `apps/web/app/components/PageBuilder/Canvas/DeviceToggle.vue`  | the device toggle, which the bar mounts and the webpage's arrangement still mounts          |
-| `openspec/specs/resource/page-builder/email/design.md`         | the email editor's design, whose shell and preview sentences this supersedes                |
-| `openspec/specs/resource/email-preview-text/design.md`         | the preview text the bar's field binds                                                      |
+| File                                                           | Role                                                                                    |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Email/Editor.vue`            | the blade on the editor shell: the layout, the registry and the compile's findings      |
+| `apps/web/app/components/PageBuilder/Email/Bar.vue`            | the bar: the mode switch, the dataset, the preview text, the device and the problems    |
+| `apps/web/app/services/emailEditor/emailLayout.ts`             | the email's layout, its panels and the names the shell draws its regions and tabs under |
+| `apps/web/app/composables/pageBuilder/usePageBuilderEditor.ts` | the page builder's editing composition, which the blade and the webpage both call       |
+| `apps/web/app/components/PageBuilder/Editor.vue`               | the webpage's host, drawn on the shell with the webpage's layout                        |
+| `apps/web/app/components/PageBuilder/Palette.vue`              | the palette, registered as the Blocks tab                                               |
+| `apps/web/app/components/PageBuilder/Layers.vue`               | the layers tree, registered as the Structure tab                                        |
+| `apps/web/app/components/PageBuilder/Canvas/DeviceToggle.vue`  | the device toggle, which the bar mounts and the webpage's arrangement still mounts      |
+| `openspec/specs/resource/page-builder/email/design.md`         | the email editor's design, whose shell and preview sentences this supersedes            |
+| `openspec/specs/resource/email-preview-text/design.md`         | the preview text the bar's field binds                                                  |
 
 ## Sources
 

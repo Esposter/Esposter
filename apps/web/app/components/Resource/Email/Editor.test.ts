@@ -4,8 +4,10 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidationLevel";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
+import { TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useSession } from "@/services/auth/authClient.test";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { useResourceStore } from "@/store/resource";
@@ -13,6 +15,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { MjmlNodeType } from "mjml-blocks";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -58,5 +61,44 @@ describe("resourceEmailEditor", () => {
     await flushPromises();
 
     expect(component.get("iframe").element.style.width).toBe(`${DEVICE_WIDTH_MAP[PageBuilderDevice.Mobile]}px`);
+  });
+
+  test("enter edits a selected text block in place", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+
+    trpcMsw.email.readResourceContent.query(
+      () =>
+        new EmailEditor({
+          content: [
+            {
+              props: {
+                children: [
+                  {
+                    props: {
+                      children: [
+                        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text },
+                      ],
+                      id: TEST_THIRD_ID,
+                    },
+                    type: MjmlNodeType.Column,
+                  },
+                ],
+                id: TEST_SECTION_ID,
+              },
+              type: MjmlNodeType.Section,
+            },
+          ],
+          root: { props: {} },
+        }),
+    );
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(ResourceEmailEditor);
+    await waitForSynchronizedFunctions();
+    await flushPromises();
+
+    await component.trigger("keydown", { key: "Enter" });
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
   });
 });
