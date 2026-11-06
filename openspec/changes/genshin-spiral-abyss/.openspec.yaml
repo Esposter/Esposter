@@ -3,6 +3,7 @@ affected_areas: [genshin]
 x-phase: 6
 x-model: claude-sonnet-5-5
 x-needs: [game-exports]
+x-waiting: "2.2 waits on the game's scene group export for dungeons 3665 to 3670 and 3683 to 3688, which holds the current Moon Spire chambers' monsters; 3.2 waits on Musk Reef's scene being derived from the game's scene export"
 x-touches:
   [
     "scripts/src/services/genshinAssets/spiralAbyss/**",
