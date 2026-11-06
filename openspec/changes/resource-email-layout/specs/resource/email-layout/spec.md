@@ -75,6 +75,13 @@ The bar SHALL hold Import MJML in its overflow menu at every width.
 - **THEN** Import MJML is not in the bar
 - **AND** it is in the overflow menu
 
+#### Scenario: Import MJML is in the overflow menu on a compact window
+
+- **GIVEN** an email in Design on a compact window
+- **WHEN** the bar is drawn
+- **THEN** Import MJML is not in the bar
+- **AND** it is in the overflow menu
+
 ### Requirement: A compact window opens the panes as sheets
 
 On a compact window the email editor SHALL keep the canvas in view and open the blocks region and the inspector as sheets from their buttons.
