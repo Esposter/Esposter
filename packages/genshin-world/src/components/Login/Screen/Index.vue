@@ -62,7 +62,7 @@ const stage = defineModel<LoginStage>("stage", { default: LoginStage.Arriving })
 const {
   gameText,
   heldScrolled,
-  isBloomed,
+  isBloomed = true,
   isInterfaceHidden,
   language,
   loginData,
@@ -153,7 +153,7 @@ const onClick = (event: MouseEvent): void => {
         :door="loginData.door"
         :held-scrolled
         :hulls="loginData.hulls"
-        :is-bloomed
+        :is-bloomed="isBloomed ? undefined : false"
         :is-door-lit="stage === LoginStage.Entering"
         :paving="loginData.paving"
         :quality-tier
