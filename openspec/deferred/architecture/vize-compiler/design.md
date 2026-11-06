@@ -1,6 +1,6 @@
 # Vize compiler
 
-Vize compiles Vue single-file components in Rust. The library builds and Vitest already compile through it ([build pipeline](../../../specs/architecture/build-pipeline/design.md), "Vue components compile through Vize"). The app does not: Nuxt compiles it through `@vitejs/plugin-vue`. `@vizejs/nuxt` is the Nuxt module that would take that role. This page sets out its shape under the Vize release the last re-trial ran, which the catalog does not yet take, and what stands between the app and adopting it.
+Vize compiles Vue single-file components in Rust. The library builds and Vitest already compile through it ([build pipeline](../../../specs/architecture/build-pipeline/design.md), "Vue components compile through Vize"). The app does not: Nuxt compiles it through `@vitejs/plugin-vue`. `@vizejs/nuxt` is the Nuxt module that would take that role. This page sets out its shape under the Vize release the last re-trial ran, which the catalog has since moved past, and what stands between the app and adopting it.
 
 ## How the module compiles
 
@@ -15,11 +15,11 @@ flowchart TD
 
 ## Blockers
 
-### The release that carries the compiler fixes ships a declaration the library builds cannot bundle
+### The declaration the library builds could not bundle is exported from 0.697.0
 
-The Vize release that carries the compiler repairs the module needs also ships `virtual-ts-emits.d.ts`, which imports `$ConstructorEmitPropsFactory` from `virtual-ts.js`. `virtual-ts.d.ts` declares that type without `export`. TypeScript accepts the import, because it exports every top-level declaration of a declaration file that has no export declaration, and so does `rollup-plugin-dts`. `rolldown-plugin-dts` reads each declaration file as an ES module and refuses it. The declaration build of a package whose components declare emits fails in rolldown with `MISSING_EXPORT` on that import when Vize is a dev dependency, which tsdown inlines: `genshin-interface` and `vue-phaserjs` fail this way and every other library build passes. The same two files are on Vize's main branch. [vize#11982](https://github.com/ubugeeei-prod/vize/issues/11982) holds the standalone reproduction, the isolation and the one-word fix, which a patched copy of the release confirmed. Two workarounds build today and neither is taken: a `pnpm patch` of the release forks a toolchain package that moves weekly, and keeping `vize` external with `deps.neverBundle` leaves `import("vize/virtual-ts")` in the published declarations, so every consumer of a library then needs `vize` installed.
+Vize 0.692.0 through 0.696.0 shipped `virtual-ts-emits.d.ts`, which imports `$ConstructorEmitPropsFactory` from `virtual-ts.js`, while `virtual-ts.d.ts` declared that type without `export`. TypeScript accepts the import, because it exports every top-level declaration of a declaration file that has no export declaration, and so does `rollup-plugin-dts`. `rolldown-plugin-dts` reads each declaration file as an ES module and refuses it, so the declaration build of a package whose components declare emits failed in rolldown with `MISSING_EXPORT` on that import when Vize was a dev dependency, which tsdown inlines: `genshin-interface` and `vue-phaserjs` failed this way. [vize#11982](https://github.com/ubugeeei-prod/vize/issues/11982) holds the standalone reproduction and the one-word fix. Vize 0.697.0 exports the type, so the declaration builds pass with the group on 0.702.0. The catalog takes 0.702.0 and the `renovate.json` cap on the group is deleted in `6bdd767151`, so the blocker no longer holds the module back.
 
-The four packages the `vize` rule in `renovate.json` groups pin each other's version, so the module cannot move to the release alone. The catalog stays on the release before it, and a second rule in `renovate.json` caps the group below it until a release exports the type.
+The four packages the `vize` rule in `renovate.json` groups pin each other's version, so the module moves with the whole group, which now sits on 0.702.0.
 
 ### The server HTML differs from Vue's compiler on one route
 
@@ -44,7 +44,7 @@ The module takes its TresJS elements as `compiler.customElements`, the list the 
 
 ## Revisit when
 
-The first Vize release after the held one exports `$ConstructorEmitPropsFactory` from its `virtual-ts` declaration, so the declaration builds of `genshin-interface` and `vue-phaserjs` pass with the whole group on it. The cap in `renovate.json` lifts at that release. The re-trial then confirms, under that release, that the module's production client has no page error and that the server HTML of every route but `/about` matches the baseline's after the normalisation named above. What it leaves is one decision: whether `/about`'s `<!--placeholder-->` is accepted or [ubugeeei-prod/vize#11757](https://github.com/ubugeeei-prod/vize/issues/11757) is fixed first.
+The group is on 0.702.0, where the declaration builds of `genshin-interface` and `vue-phaserjs` pass, so the revival waits on the re-trial alone. The re-trial confirms, under 0.702.0, that the module's production client has no page error and that the server HTML of every route but `/about` matches the baseline's after the normalisation named above. What it leaves is one decision: whether `/about`'s `<!--placeholder-->` is accepted or [ubugeeei-prod/vize#11757](https://github.com/ubugeeei-prod/vize/issues/11757) is fixed first.
 
 A re-trial builds the app with and without the module, serves each output, and compares the parsed server HTML of every public route after the normalisation above. It then loads every public route in Chromium, compares console errors and page errors, and clicks the `/clicker` cocktail in both. Bare `vue` specifiers are counted in the chunks the client entry loads by walking its static imports, since a directory count also includes chunks of other builds. Both builds must run against a database, and a build served from a copy of `.output` needs the app's `node_modules` reachable from the copy, or the rate limiter's `drizzle-orm` import fails and `/clicker` shows its error screen in both. In a sandbox that cannot reach the font providers, `@nuxt/fonts` is left out of both builds.
 
@@ -57,7 +57,7 @@ A re-trial builds the app with and without the module, serves each output, and c
 | `packages/genshin-world/scripts/tres/tresCustomElements.ts`     | the element names the library builds hand Vize, which the module takes too  |
 | `packages/tresjs-nuxt/src/services/checkIsTresCustomElement.ts` | the TresJS predicate the Nuxt module sets for Nuxt's own compiler           |
 | `packages/db-schema/package.json`                               | the private package, with no declarations, whose props types must resolve   |
-| `renovate.json`                                                 | the rule that caps the `vize` group below the release with the bad import   |
+| `renovate.json`                                                 | the `vize` group rule, which moves the four packages together               |
 | `pnpm-workspace.yaml`                                           | the `vize` and `@vizejs/*` catalog entries                                  |
 
 ## Sources
