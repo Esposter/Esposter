@@ -4,7 +4,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                                                         |   Bytes |    KiB |
 | :------------------------- | :----------------------------------------------------------- | ------: | -----: |
-| @esposter/functions        | index.js                                                     | 5207038 | 5085.0 |
+| @esposter/functions        | index.js                                                     | 5228408 | 5105.9 |
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
 | genshin-world              | index.js                                                     | 2559820 | 2499.8 |
 | @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
@@ -58,7 +58,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | survey-expression          | index.d.ts                                                   |   17174 |   16.8 |
 | genshin-world              | furinaKit-[hash].js                                          |   17118 |   16.7 |
 | genshin-world              | jahodaKit-[hash].js                                          |   16780 |   16.4 |
-| @esposter/functions        | tslib.es6-[hash].js                                          |   16139 |   15.8 |
+| @esposter/functions        | tslib.es6-[hash].js                                          |   16200 |   15.8 |
 | @esposter/functions        | open-[hash].js                                               |   15437 |   15.1 |
 | genshin-world              | columbinaKit-[hash].js                                       |   13804 |   13.5 |
 | genshin-world              | alhaithamKit-[hash].js                                       |   12944 |   12.6 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21641175 bytes, 21134.0 KiB, 20.64 MiB
+**Total:** 569 files, 21662606 bytes, 21154.9 KiB, 20.66 MiB
