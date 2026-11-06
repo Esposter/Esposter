@@ -7,12 +7,6 @@ import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { describe, expect, test } from "vitest";
 
-/**
- * A screen's image in the visual suite only holds it still; what says it matches the game is `compare` against a
- * reference. A screen with a fixture and no reference therefore reaches the suite without ever being compared, and
- * its image locks in whatever it draws. Every screen the suite shoots is held to having a reference here,
- * and every reference to a screen that exists, so `compare --all` scores them all.
- */
 // A subscreen is covered by an entry naming both its screen and its variant, so an entry for its base alone covers none of its variants
 const findSubscreensWithoutEntry = (
   subscreens: readonly { screen: string; variant: string }[],
@@ -22,6 +16,12 @@ const findSubscreensWithoutEntry = (
     ({ screen, variant }) => !entries.some((entry) => entry.screen === screen && entry.variant === variant),
   );
 
+/**
+ * A screen's image in the visual suite only holds it still; what says it matches the game is `compare` against a
+ * reference. A screen with a fixture and no reference therefore reaches the suite without ever being compared, and
+ * its image locks in whatever it draws. Every screen the suite shoots is held to having a reference here,
+ * and every reference to a screen that exists, so `compare --all` scores them all.
+ */
 describe("parityReferenceMap", () => {
   const COMPONENTS_DIRECTORY = join(GENSHIN_WORLD_DIRECTORY, "src", "components");
   // Each screen is a folder holding its `Index.vue` and `Index.fixture.ts`, named by its path as the package's barrel
