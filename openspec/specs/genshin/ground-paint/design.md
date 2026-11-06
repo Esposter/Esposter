@@ -55,7 +55,7 @@ flowchart TD
 
 ## Notes
 
-- **The cell is the surface pass's call.** Windrise's field is fitted at 32 metres, the cell at which the surface pass reads the Ground's colour inside its gate `scripts/src/services/genshinAssets/shared/constants.ts` (`GROUND_LAYER_CELL_SIZE` = 32). The cell sizes it was chosen against are [scene derivation](../scene-derivation/design.md)'s.
+- **The cell is the surface pass's call.** Windrise's field is fitted at `GROUND_LAYER_CELL_SIZE`, the cell at which the surface pass reads the Ground's colour inside its gate `scripts/src/services/genshinAssets/shared/constants.ts`. The cell sizes it was chosen against are [scene derivation](../scene-derivation/design.md)'s.
 - **The game's layer textures carry detail under a metre.** Ours is a pair of colours across patches tens of metres wide `packages/genshin-engine/src/terrain/createGroundPaintColor.ts`; a per-pixel layer node would add that detail, and it is built only if the surface pass's structure, not its mean colour, says the ground needs it ([ground detail](../../../changes/genshin-ground-detail/design.md)).
 
 ## Open
