@@ -10,7 +10,7 @@ export interface TileStreamer<TTile> {
   fail: (key: number) => boolean;
   get: (key: number) => TTile | undefined;
   has: (key: number) => boolean;
-  // How many tiles are asked for and not yet given, the ones still generating: neither received nor failed
+  // How many tiles are asked for and not yet given, the ones still generating or failed and not yet asked for again
   pendingCount: () => number;
   // Takes a tile the worker has finished, freed first once the cache is full if it is no longer wanted, in place of
   // The one held under its key, which is freed unless it is the same tile

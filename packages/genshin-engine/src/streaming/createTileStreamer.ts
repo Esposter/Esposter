@@ -30,6 +30,8 @@ export const createTileStreamer = <TTile>({
   // Each key's failures so far, and the keys given up for the session once they reach MAX_TILE_ATTEMPTS
   const failedAttemptMap = new Map<number, number>();
   const givenUpKeySet = new Set<number>();
+  // The keys that failed and are not given up, in flight until the next update asks for them again or drops them
+  const retryKeySet = new Set<number>();
   // The keys generating when the last refresh came, whose tiles arrive built over what it replaced
   const stalePendingKeySet = new Set<number>();
   let frame = 0;
@@ -65,6 +67,7 @@ export const createTileStreamer = <TTile>({
       pendingWantedFrameMap.clear();
       failedAttemptMap.clear();
       givenUpKeySet.clear();
+      retryKeySet.clear();
       stalePendingKeySet.clear();
     },
     fail: (key) => {
@@ -72,13 +75,16 @@ export const createTileStreamer = <TTile>({
       stalePendingKeySet.delete(key);
       const attempts = (failedAttemptMap.get(key) ?? 0) + 1;
       failedAttemptMap.set(key, attempts);
-      if (attempts < MAX_TILE_ATTEMPTS) return false;
+      if (attempts < MAX_TILE_ATTEMPTS) {
+        retryKeySet.add(key);
+        return false;
+      }
       givenUpKeySet.add(key);
       return true;
     },
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
-    pendingCount: () => pendingWantedFrameMap.size,
+    pendingCount: () => pendingWantedFrameMap.size + retryKeySet.size,
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);
@@ -98,6 +104,8 @@ export const createTileStreamer = <TTile>({
     },
     update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;
+      // A failed tile is asked for again below if it is still wanted, so the ones not wanted any more leave the count
+      retryKeySet.clear();
       // An ancestor drawn in place of a tile still coming is used as much as a wanted one
       for (const { count, keys } of [wanted, drawn, surrounding])
         for (let index = 0; index < count; index++) {

@@ -224,6 +224,34 @@ describe(createTileStreamer, () => {
     expect(requestTile.mock.calls).toStrictEqual([[fineKey], [fineKey]]);
   });
 
+  test("counts a failed tile as in flight until an update asks for it again or drops it", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 1,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.fail(fineKey);
+    const beforeUpdate = tileStreamer.pendingCount();
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    const afterRequest = tileStreamer.pendingCount();
+    tileStreamer.fail(fineKey);
+    tileStreamer.update(emptySelection, emptySelection, emptySelection);
+
+    expect({ afterDrop: tileStreamer.pendingCount(), afterRequest, beforeUpdate }).toStrictEqual({
+      afterDrop: 0,
+      afterRequest: 1,
+      beforeUpdate: 1,
+    });
+  });
+
   test("gives up a tile failed MAX_TILE_ATTEMPTS times, which then counts as settled", () => {
     expect.hasAssertions();
 
