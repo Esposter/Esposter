@@ -2,13 +2,13 @@ import { checkIsSheerColdArea } from "#src/services/sheerCold/checkIsSheerColdAr
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSheerColdArea, () => {
-  test("should hold Dragonspine's sheer cold", () => {
+  test("hold Dragonspine's sheer cold", () => {
     expect.hasAssertions();
 
     expect(checkIsSheerColdArea({ id: "dragonspine" })).toBe(true);
   });
 
-  test("should hold no sheer cold in another area, or where no area holds the character", () => {
+  test("hold no sheer cold elsewhere", () => {
     expect.hasAssertions();
 
     expect(checkIsSheerColdArea({ id: "galesong-hill" })).toBe(false);
