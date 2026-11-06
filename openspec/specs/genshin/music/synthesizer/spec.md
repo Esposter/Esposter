@@ -1,6 +1,6 @@
 ## Purpose
 
-The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock `packages/genshin-engine/src/audio/createMusicPlayer.ts`, looping the playlist while its `isLooping` flag is set (`packages/genshin-engine/src/audio/collectMusicSegments.ts`, lines 14 and 15); the login's playlist sets that flag (`{data-root}/genshin-parity/extracted/login/music/playlist.json`, line 2).
+The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock `packages/genshin-engine/src/audio/createMusicPlayer.ts`, looping the playlist while its `isLooping` flag is set (`packages/genshin-engine/src/audio/collectMusicSegments.ts`'s `collectMusicSegments`); the login's playlist sets that flag (`{data-root}/genshin-parity/extracted/login/music/playlist.json`, line 2).
 
 ## Requirements
 

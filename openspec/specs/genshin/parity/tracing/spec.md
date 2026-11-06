@@ -12,7 +12,7 @@ A mark that is already a vector SHALL be drawn from its published paths unchange
 
 - **GIVEN** a game logo published as a vector
 - **WHEN** the screen draws it
-- **THEN** its published paths are drawn as they are (`packages/genshin-world/src/components/Splash/Publisher/Index.vue` lines 42 to 47)
+- **THEN** its published paths are drawn as they are (`packages/genshin-world/src/components/Splash/Publisher/Index.vue`'s template, where its `PUBLISHER_LETTERS` paths are drawn)
 
 ### Requirement: A glyph is traced from the game's own mark at full resolution
 

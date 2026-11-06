@@ -29,7 +29,7 @@ flowchart LR
 ## Open
 
 - [ ] **The charged attack's reach** — no source yet: a recording of the attack, since the record's 5.8-metre area is `Unsourced` and Ayato's 0.8-metre charge, which the frames come from, is no source for Gaming's reach. Searched: gcsim's `charge` action has no hitbox (`{data-root}/cache/gcsim-v2.47.2/internal/characters/gaming/config.yml` line 62) and the package has no charge file; the wiki's Stellar Rend says only "all nearby opponents"; the dump's proud skill and avatar skill tables give no radius; a recording of the charged attack settles it, and `{data-root}/genshin-parity/captures/` holds none.
-- [ ] **The charged attack's stamina** — contradicted by `{data-root}/cache/genshin-wiki/Category_Gaming_Talents.json` (Stellar Rend, Attribute Scaling): `stamina=40/s` over `maxduration=5s`, a rate of 40 stamina per second over a 5-second maximum, whose cyclic, final, stamina and duration rows sit where the table's indices 4 to 7 do (62.52, 113.09, 40 and 5). The record spends the table's 40 once as the charged attack starts (`packages/genshin-world/src/services/kit/startNextKitAction.ts` line 57); the drain over time is not modelled.
+- [ ] **The charged attack's stamina** — contradicted by `{data-root}/cache/genshin-wiki/Category_Gaming_Talents.json` (Stellar Rend, Attribute Scaling): `stamina=40/s` over `maxduration=5s`, a rate of 40 stamina per second over a 5-second maximum, whose cyclic, final, stamina and duration rows sit where the table's indices 4 to 7 do (62.52, 113.09, 40 and 5). The record spends the table's 40 once as the charged attack starts (`startNextKitAction` in `packages/genshin-world/src/services/kit/startNextKitAction.ts`); the drain over time is not modelled.
 
 ## Key files
 

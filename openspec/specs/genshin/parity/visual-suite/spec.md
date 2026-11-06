@@ -115,4 +115,4 @@ A moving screen SHALL be held still for the visual suite through its fixture's s
 
 ## Open
 
-- [ ] **The opening's run fails when a screen is skipped** — no source yet: the browser test expects each screen in turn (`packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts` lines 145 to 153), but no run that skips a screen is cited; `pnpm test:visual src/components/Game/Opening/Index.browser.test.ts` in `packages/genshin-world`, with one splash dropped from that loop, must fail.
+- [ ] **The opening's run fails when a screen is skipped** — no source yet: the browser test expects each screen in turn (the "plays the splashes, the login's title, flight and door, the startup marks, then finishes" test in `packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts`, its splash loop), but no run that skips a screen is cited; `pnpm test:visual src/components/Game/Opening/Index.browser.test.ts` in `packages/genshin-world`, with one splash dropped from that loop, must fail.

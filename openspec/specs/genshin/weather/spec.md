@@ -69,7 +69,7 @@ A weather change SHALL blend over nine seconds, eased in and out, starting from 
 
 - **GIVEN** the world is loading
 - **WHEN** the first frame is drawn
-- **THEN** the weather is already set with no blend (`packages/genshin-world/src/components/World/Weather/Index.vue`, line 112 blends it in at amount 1 and line 113 starts the transition full, so the blend at line 138 does nothing)
+- **THEN** the weather is already set with no blend (`packages/genshin-world/src/components/World/Weather/Index.vue`: its `blendWeatherState` call blends it in at amount 1, and `transitionSeconds` starts full, so the `transitionSeconds` check in its `onBeforeRender` callback does nothing)
 
 ### Requirement: One kind of particle falls at a time
 

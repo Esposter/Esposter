@@ -89,7 +89,7 @@ An enemy immune to Air staggers SHALL stay on the ground when a launching hit st
 
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
-- **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and `packages/genshin-world/src/models/kit/KitHit.ts` line 60 names them too), whose poise damage breaks an enemy's poise
+- **GIVEN** a launching hit, one whose stagger level is Air (the wiki's common impulse types 5 to 9 are Air, `{data-root}/cache/genshin-wiki/Page_Interruption_Resistance%2FStagger.json`, wikitext lines 123 to 131, and the `isLaunching` field of `packages/genshin-world/src/models/kit/KitHit.ts` names them too), whose poise damage breaks an enemy's poise
 - **WHEN** the hit lands
 - **THEN** the enemy carries the launched status for the stagger's seconds
 
@@ -142,7 +142,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 - **GIVEN** a common enemy at a level
 - **WHEN** it is defeated
-- **THEN** it drops Mora, Character EXP and materials by its level's band (the wiki's drops data, `{data-root}/cache/genshin-wiki/Page_Module:Drops_Table%2Fdata.json`, wikitext lines 4, 7 to 26, 29 to 50 and 51, gives the shares and an "EXP" column by level band; `packages/genshin-world/src/services/enemy/constants.ts` lines 49 to 80 hold the same rows, and `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` line 28 takes the band)
+- **THEN** it drops Mora, Character EXP and materials by its level's band (the wiki's drops data, `{data-root}/cache/genshin-wiki/Page_Module:Drops_Table%2Fdata.json`, wikitext lines 4, 7 to 26, 29 to 50 and 51, gives the shares and an "EXP" column by level band; `packages/genshin-world/src/services/enemy/constants.ts`'s `COMMON_ENEMY_MORA_SHARES` through `ELITE_ENEMY_CHARACTER_EXPERIENCES` hold the same rows, and `computeEnemyDrops` in `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts` takes the band)
 
 ### Requirement: A boss drops nothing
 
@@ -262,7 +262,7 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 - **GIVEN** an enemy falling to a health threshold
 - **WHEN** the threshold is passed
-- **THEN** its energy drops (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 390, which counts an HP% threshold once per instance of an enemy, healed or not; `packages/genshin-world/src/services/enemy/damageEnemy.ts` lines 25 to 29 take each threshold once)
+- **THEN** its energy drops (`{data-root}/cache/genshin-wiki/Page_Energy%2FData.json`, wikitext line 390, which counts an HP% threshold once per instance of an enemy, healed or not; `damageEnemy`'s loop over its energy drops in `packages/genshin-world/src/services/enemy/damageEnemy.ts` takes each threshold once)
 
 #### Scenario: Falling to the same threshold again drops no energy
 

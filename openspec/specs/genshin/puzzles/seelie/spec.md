@@ -51,4 +51,4 @@ A Seelie that has settled at its court SHALL stay settled.
 ## Open
 
 - [ ] **A Seelie rests until followed, as the game does** — NEEDS-RECORDING: no line of `{data-root}/cache/genshin-wiki/Page_Seelie.json` gives the rest before the first follow, and the led-home capture's sheet (`{data-root}/genshin-parity/frames/yt-sN0MlNE-ByM-seelie-led-home@0/sheet.png`) does not isolate that moment; a recording of a Seelie before any follow would settle it.
-- [ ] **A settled Seelie stays settled at its court** — NEEDS-RECORDING: line 10 of the same wiki page gives the return only for a Seelie not led back to its court, which a settled one already is, and no line says a settled one stays; a recording of a settled Seelie left unfollowed would settle it.
+- [ ] **A settled Seelie stays settled at its court** — NEEDS-RECORDING: line 10 of `{data-root}/cache/genshin-wiki/Page_Seelie.json` gives the return only for a Seelie not led back to its court, which a settled one already is, and no line says a settled one stays; a recording of a settled Seelie left unfollowed would settle it.

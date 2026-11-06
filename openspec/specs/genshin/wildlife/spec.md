@@ -1,6 +1,6 @@
 ## Purpose
 
-The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's slice of the game data and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them and their drops is built, as is picking up a material source, a point such as a crystalfly that is not an animal (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, line 221; `packages/genshin-world/src/services/wildlife/pickUpMaterialSource.ts`); only the boar's drop waits, on the wiki's entry for the boar (`packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`, lines 5 to 7).
+The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox and the Squirrel, fitted into each region's slice of the game data and stood in Windrise's scene, each running from the character when it comes within its escape radius. Striking them and their drops is built, as is picking up a material source, a point such as a crystalfly that is not an animal (the `strikeKitWildlife` call in `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`; `packages/genshin-world/src/services/wildlife/pickUpMaterialSource.ts`); only the boar's drop waits, on the wiki's entry for the boar (the comment above `WildlifeKindDropMap` in `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`).
 
 ## Requirements
 
@@ -67,10 +67,10 @@ Striking an animal SHALL make it fall and give its drop where it fell: a Crimson
 #### Scenario: Striking an animal
 
 - **GIVEN** an animal stands in Windrise's scene
-- **WHEN** the player strikes it with an area hit that reaches it (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, line 220)
-- **THEN** it falls and gives its drop where it fell (`packages/genshin-world/src/services/wildlife/strikeKitWildlife.ts`, lines 20 to 25; `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`, lines 9 to 11)
+- **WHEN** the player strikes it with an area hit that reaches it (the hit loop of `strikeKitEnemies` in `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`, where a hit with no target reaches the animals)
+- **THEN** it falls and gives its drop where it fell (the loop of `strikeKitWildlife` in `packages/genshin-world/src/services/wildlife/strikeKitWildlife.ts`; the `WildlifeKind.CrimsonFox`, `WildlifeKind.Squirrel` and `WildlifeKind.WhitePigeon` entries of `WildlifeKindDropMap` in `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`)
 - **AND** no material source appears
-- **AND** striking it again gives nothing (`packages/genshin-world/src/services/wildlife/strikeWildlife.ts`, line 10)
+- **AND** striking it again gives nothing (the `WildlifeState.Struck` check in `strikeWildlife`, `packages/genshin-world/src/services/wildlife/strikeWildlife.ts`)
 
 ## Open
 

@@ -20,8 +20,8 @@ flowchart LR
 
 ## Notes
 
-- **The prompt's measure is written from its parent's box**, `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule at line 415, with the 128 canvas units at line 409). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
-- **The login's foot rides on the screen's bottom.** The game's "LoginMainPage/GrpLogin/Bottom" is anchored from `[0, 0]` to `[1, 0]` and is 128 units high (`{data-root}/genshin-parity/extracted/login/interface/interface.json` lines 1400 to 1412, its path at line 1445), and the loading row (line 710), the account (line 778), the build string (line 767) and both button columns (lines 1003 and 1230) sit under it, so they stay on the screen's bottom on any window. `packages/genshin-world/src/components/Login/Interface/Index.vue` lines 190 to 221 nests them under that rect.
+- **The prompt's measure is written from its parent's box**, `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (the `bottom` rule of `.prompt` in `packages/genshin-world/src/components/Login/Interface/Index.vue`'s scoped styles, with the 128 canvas units its comment gives). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
+- **The login's foot rides on the screen's bottom.** The game's "LoginMainPage/GrpLogin/Bottom" is anchored from `[0, 0]` to `[1, 0]` and is 128 units high (`{data-root}/genshin-parity/extracted/login/interface/interface.json` lines 1400 to 1412, its path at line 1445), and the loading row (line 710), the account (line 778), the build string (line 767) and both button columns (lines 1003 and 1230) sit under it, so they stay on the screen's bottom on any window. The template's `Bottom` `GameRect` in `packages/genshin-world/src/components/Login/Interface/Index.vue` nests them under that rect.
 
 ## Key files
 

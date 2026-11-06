@@ -93,5 +93,5 @@ The haze over the stone SHALL take colours solved together with the light, while
 
 ## Open
 
-- [ ] **The solve hands back the light it was shown on the game's exports drawn under it, within a small margin** — the synthetic recovery test (`scripts/src/services/genshinParity/witness/solveStoneLight.test.ts` lines 100 to 109, to two decimals) settles the synthetic bins only; no run against the exports is kept, and a `--self` run would settle it.
+- [ ] **The solve hands back the light it was shown on the game's exports drawn under it, within a small margin** — the synthetic recovery test (the test "recovers the ramp, the harmonics, the light fading with height and the haze's colours under a known occlusion" in `scripts/src/services/genshinParity/witness/solveStoneLight.test.ts`, to two decimals) settles the synthetic bins only; no run against the exports is kept, and a `--self` run would settle it.
 - [ ] **The cloud sea keeps the colours measured where it shows** — no source yet: the cloud-sea colour measure was not traced to its code.

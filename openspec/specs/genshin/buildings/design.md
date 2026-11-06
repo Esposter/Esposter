@@ -34,4 +34,4 @@ The building is centred on the origin and stands on it, so a caller places it on
 ## Open
 
 - [ ] **Natlan's building meshes match the kit's box-and-cone form** — no source yet: a measurement of the meshes under `{data-root}/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*.obj`) against the kit's form.
-- [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: the parity reference names the hall's corners and roof tips (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` line 1020), but the extraction has no mesh for its landmarks (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` line 95), so no pose places the hall.
+- [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: the parity reference names the hall's corners and roof tips (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`'s `people-of-the-springs-location` entry), but the extraction has no mesh for its landmarks (`scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts`'s `DerivedAssetComponent.Natlan` entry), so no pose places the hall.

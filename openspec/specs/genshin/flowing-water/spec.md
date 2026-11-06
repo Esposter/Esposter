@@ -102,4 +102,4 @@ The open world SHALL draw the rivers and the waterfalls its region data records,
 
 ## Open
 
-- [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the game's water material's flow or a recording of a river's ripples and foam, which the river material at `packages/genshin-engine/src/nodes/createRiverMaterial.ts:12` waits on, so it draws still until then.
+- [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the game's water material's flow or a recording of a river's ripples and foam, which the river material in `packages/genshin-engine/src/nodes/createRiverMaterial.ts`'s `createRiverMaterial` waits on, so it draws still until then.

@@ -50,4 +50,4 @@ flowchart TD
 
 ## Open
 
-- [ ] **The kit caps the Blessing's points at the 45 it starts with** — contradicted by `{data-root}/cache/genshin-wiki/Category_Xilonen_Talents.json` line 1 (a one-line file): the Yohual's Scratch page gives `nightsoulpointlimit=90`, where the kit holds `NIGHTSOUL_POINTS = 45` (`packages/genshin-world/src/services/kit/characters/xilonenKit.ts` line 27).
+- [ ] **The kit caps the Blessing's points at the 45 it starts with** — contradicted by `{data-root}/cache/genshin-wiki/Category_Xilonen_Talents.json` line 1 (a one-line file): the Yohual's Scratch page gives `nightsoulpointlimit=90`, where the kit holds `NIGHTSOUL_POINTS = 45` (`packages/genshin-world/src/services/kit/characters/xilonenKit.ts`'s `NIGHTSOUL_POINTS` constant).

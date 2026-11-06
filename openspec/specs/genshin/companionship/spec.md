@@ -71,7 +71,7 @@ A character SHALL hold its namecard once its total reaches level 10.
 
 ## Sources
 
-- The wiki's Companionship EXP page, `{data-root}/cache/genshin-wiki/Page_Companionship_EXP.json`: every character in the current party receives the full amount regardless of whether it is fallen, the Traveler excepted, and its sources list the Original Resin claims at Ley Line Outcrops, Normal Bosses, Weekly Bosses and Challenge Domains. The Traveler's exclusion is held in code by `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts` line 16.
+- The wiki's Companionship EXP page, `{data-root}/cache/genshin-wiki/Page_Companionship_EXP.json`: every character in the current party receives the full amount regardless of whether it is fallen, the Traveler excepted, and its sources list the Original Resin claims at Ley Line Outcrops, Normal Bosses, Weekly Bosses and Challenge Domains. The Traveler's exclusion is held in code by `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`'s `gainCompanionshipExp`.
 
 ## Open
 

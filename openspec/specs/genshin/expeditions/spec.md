@@ -90,7 +90,7 @@ Two expeditions SHALL be out at once at first, and one more SHALL be allowed at 
 
 - **GIVEN** two expeditions out and an Adventure Rank below 26
 - **WHEN** a third is sent
-- **THEN** the send is refused (the wikitext in `{data-root}/cache/genshin-wiki/Page_Expedition.json` lines 16 and 19 to 23 gives two expeditions at first and three from Adventure Rank 26; `packages/genshin-world/src/services/expedition/constants.ts` line 2 sets the base at 2)
+- **THEN** the send is refused (the wikitext in `{data-root}/cache/genshin-wiki/Page_Expedition.json` lines 16 and 19 to 23 gives two expeditions at first and three from Adventure Rank 26; `EXPEDITION_BASE_LIMIT` in `packages/genshin-world/src/services/expedition/constants.ts` sets the base at 2)
 
 #### Scenario: A third expedition is allowed from Adventure Rank 26
 
@@ -130,7 +130,7 @@ A claim SHALL put each rolled item into the bag and the Mora into the wallet, an
 
 - **GIVEN** a returned expedition whose items would overflow the bag
 - **WHEN** it is claimed
-- **THEN** the claim is refused (`packages/genshin-world/src/services/expedition/claimExpedition.ts` line 48 returns before the list is filtered at line 53)
+- **THEN** the claim is refused (`packages/genshin-world/src/services/expedition/claimExpedition.ts`'s `claimExpedition` returns before its return filters the list)
 - **AND** the expedition stays on the list
 
 ### Requirement: A recall forfeits the reward
@@ -142,7 +142,7 @@ Recalling an expedition SHALL take its character off the list and give no reward
 - **GIVEN** an expedition away
 - **WHEN** it is recalled
 - **THEN** its character is taken off the list
-- **AND** no reward is given (`packages/genshin-world/src/services/expedition/recallExpedition.ts` lines 5 to 6 return the list alone)
+- **AND** no reward is given (`packages/genshin-world/src/services/expedition/recallExpedition.ts`'s `recallExpedition` returns the list alone)
 
 ### Requirement: Each reward item's count is drawn between its least and most
 
@@ -162,7 +162,7 @@ Expeditions SHALL be held for the session only, so that a reload of the page emp
 
 - **GIVEN** an expedition away
 - **WHEN** the page is reloaded
-- **THEN** the expedition is no longer on the list (`packages/genshin-world/src/composables/useWorldExpeditionRoster.ts` line 15 holds the list in a `shallowRef`, and no save service holds an expedition)
+- **THEN** the expedition is no longer on the list (`packages/genshin-world/src/composables/useWorldExpeditionRoster.ts`'s `expeditions` holds the list in a `shallowRef`, and no save service holds an expedition)
 
 ### Requirement: Katheryne's talk opens the expedition screen
 

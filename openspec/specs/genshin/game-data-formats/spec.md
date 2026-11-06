@@ -140,6 +140,6 @@ A session deriving game data SHALL look for a scene's parts from its roots and f
 
 ## Open
 
-- [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps; `pnpm -C scripts genshin:assets extract <capital>` must print the line that `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts` writes at line 117.
+- [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps; `pnpm -C scripts genshin:assets extract <capital>` must print the line that `deriveCapitalWorld` in `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts` writes.
 - [ ] **Scripts: a field with no known shape is measured off the captures** — no source yet: a measured value of such a field, which no record holds.
 - [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, as the scan under "Scripts" in `openspec/specs/genshin/game-data-formats/design.md` describes; no game source is cited for it, and the only Lua export kept is scene 3's, under `{data-root}/genshin-parity/extracted/lua/raw/`.

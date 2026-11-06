@@ -155,7 +155,7 @@ The quest tracker SHALL show the quest that V navigates to, with its step and ho
 - **GIVEN** a quest is in progress
 - **WHEN** the player presses V in the world or presses the tracker (V is "Quest Navigation" on the wiki's Controls page, `{data-root}/cache/genshin-wiki/Page_Controls.json`, wikitext line 109)
 - **THEN** the tracker's quest is navigated to
-- **AND** a beam rises over its first objective once the character is 50 metres or more from it (`packages/genshin-world/src/components/Quest/Beam/Index.vue`, line 48; the wiki's Quest page gives the same distance, `{data-root}/cache/genshin-wiki/Page_Quest.json`, wikitext line 33)
+- **AND** a beam rises over its first objective once the character is 50 metres or more from it (`onBeforeRender` in `packages/genshin-world/src/components/Quest/Beam/Index.vue`, which sets it from `QUEST_BEAM_MIN_DISTANCE`; the wiki's Quest page gives the same distance, `{data-root}/cache/genshin-wiki/Page_Quest.json`, wikitext line 33)
 
 #### Scenario: With no quest loaded the tracker stays empty
 
@@ -236,9 +236,9 @@ A mouse press on a heads-up display piece SHALL NOT act in the world, while a cl
 ## Open
 
 - [ ] **The backslash hides the HUD under every other menu, the map, a talk and a photo mode** — no source yet: the wiki's Controls and Paimon Menu pages say nothing of the HUD under a menu, and the Paimon menu still is the only menu frame read here; a recording of the map, a talk and a photo mode would settle it.
-- [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked; `packages/genshin-world/src/services/hud/constants.ts` (lines 10-13) reads the eighth off the climb clip's frames at 32.75 and 32.83 seconds, which are not in `{data-root}/genshin-parity/frames/`.
+- [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked; `STAMINA_METER_LOW_SHARE` in `packages/genshin-world/src/services/hud/constants.ts` reads the eighth off the climb clip's frames at 32.75 and 32.83 seconds, which are not in `{data-root}/genshin-parity/frames/`.
 - [ ] **A charged burst's disc takes its element's colour** — no source yet: no on-disk frame of a charged burst button is checked.
 - [ ] **A cooling skill's countdown runs in tenths of a second** — no source yet: no on-disk frame of a cooldown countdown is checked; the frames in `{data-root}/genshin-parity/frames/yt-_d3TQI7UBL4-gadget-cooldown-pause/` are a gadget's, not a skill's.
-- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages); `packages/genshin-world/src/services/hud/InputActionGlyphLayersMap.ts` line 6 traces its glyphs from those renders, so a frame of a skill button beside its drawn icon would settle it.
+- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages); `InputActionGlyphLayersMap` in `packages/genshin-world/src/services/hud/InputActionGlyphLayersMap.ts` traces its glyphs from those renders, so a frame of a skill button beside its drawn icon would settle it.
 - [ ] **Other portraits darken during that cooldown** — no source yet: the wiki's Party page gives the one-second cooldown and no darkening; a recording of the portrait row straight after a switch would settle it.
 - [ ] **The stamina meter fades out when full** — no source yet: the wiki's Stamina page says only that the meter hides itself once fully charged; a frame of the climb clip after its pool fills would show the fade.

@@ -35,24 +35,24 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                                                                                                                 |
-| :--------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`          | builds each city's region record under its key, from the dump's four tables                                                                          |
-| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                                                                                       |
-| `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                                                                                           |
-| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                                                                                        |
-| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`               | a kind's Adventure Rank and the nations whose areas it needs unlocked                                                                                |
-| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`                 | a region's kinds, sections and places, as its slice is written                                                                                       |
-| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`      | whether a kind is open at a rank with the listed areas unlocked                                                                                      |
-| `packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`        | the day's draw of each kind's starting place, lines 23 to 27                                                                                         |
-| `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts`                | the draw of fitted place ids no kind before holds, each taken once, lines 6 to 14                                                                    |
-| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                | the Ley Line Blossoms of the official map written into each region's outcrop places                                                                  |
-| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`           | the camp a touch spawns at an outcrop's place, of provisional size and kinds                                                                         |
-| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`         | the blossom reveals once every enemy of its place's camp is down                                                                                     |
-| `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                                                                                        |
-| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer                                                                     |
-| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                                                                                  |
-| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | the nearest other fitted place, or none where no place is free (lines 15 to 23: line 16 for an unfitted claim, lines 18 to 23 when no place is left) |
+| File                                                                         | Role                                                                                                                                              |
+| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`          | builds each city's region record under its key, from the dump's four tables                                                                       |
+| `scripts/src/services/genshinAssets/leyLine/toLeyLineRegions.ts`             | each city's kinds, places and ordered sections from the tables                                                                                    |
+| `scripts/src/services/genshinAssets/leyLine/constants.ts`                    | the refresh types and the two conditions the kinds open by                                                                                        |
+| `packages/genshin-world/src/models/leyLine/OutcropKind.ts`                   | the Revelation and the Wealth                                                                                                                     |
+| `packages/genshin-world/src/models/leyLine/OutcropKindRule.ts`               | a kind's Adventure Rank and the nations whose areas it needs unlocked                                                                             |
+| `packages/genshin-world/src/models/leyLine/OutcropRegion.ts`                 | a region's kinds, sections and places, as its slice is written                                                                                    |
+| `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`      | whether a kind is open at a rank with the listed areas unlocked                                                                                   |
+| `packages/genshin-world/src/services/leyLine/computeDailyOutcrops.ts`        | the day's draw of each kind's starting place, the `drawPlaceIds` call in `computeDailyOutcrops`                                                   |
+| `packages/genshin-world/src/services/leyLine/drawPlaceIds.ts`                | the draw of fitted place ids no kind before holds, each taken once, in `drawPlaceIds`                                                             |
+| `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                | the Ley Line Blossoms of the official map written into each region's outcrop places                                                               |
+| `packages/genshin-world/src/services/leyLine/createOutcropCamp.ts`           | the camp a touch spawns at an outcrop's place, of provisional size and kinds                                                                      |
+| `packages/genshin-world/src/services/leyLine/advanceOutcropFight.ts`         | the blossom reveals once every enemy of its place's camp is down                                                                                  |
+| `packages/genshin-world/src/services/leyLine/computeOutcropInteractables.ts` | the claim prompt at a cleared outcrop's place                                                                                                     |
+| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                 | the day's outcrops: touched, fought, revealed, and the F claim through its offer                                                                  |
+| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`    | the choice of claims F offers at a revealed blossom                                                                                               |
+| `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`     | `computeNextOutcropPlace`: the nearest other fitted place, or none where no place is free (none for an unfitted claim, and when no place is left) |
 
 ## Sources
 
