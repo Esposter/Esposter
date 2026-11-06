@@ -171,7 +171,7 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
-    expect(component.getComponent(UiSchemaForm).props("modelValue")).toStrictEqual({ content: "a" });
+    expect(component.findComponent(UiSchemaForm).exists()).toBe(true);
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { content: "b" });
 

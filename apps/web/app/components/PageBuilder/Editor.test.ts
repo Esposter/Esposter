@@ -206,7 +206,7 @@ describe("pageBuilderEditor", () => {
     await settingsButton?.trigger("click");
     await flushPromises();
 
-    expect(inspector.element.open).toBe(true);
+    expect(inspector?.element.open).toBe(true);
     expect(component.find("iframe").exists()).toBe(true);
   });
 

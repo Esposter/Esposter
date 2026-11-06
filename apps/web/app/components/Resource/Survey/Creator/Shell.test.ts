@@ -4,7 +4,6 @@ import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/She
 import ResourceSurveyRunner from "@/components/Resource/Survey/Runner.vue";
 import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
 import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
 import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
 import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
