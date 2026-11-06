@@ -7,7 +7,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-interface GenshinChange {
+interface OpenGenshinChange {
   areas: string[];
   hasOpenTask: boolean;
   id: string;
@@ -17,9 +17,10 @@ interface GenshinChange {
 
 // Every open Genshin change names the phase its lowest open task holds, the phase whose exit gate fails without it. The
 // Roadmap is the one exemption: it groups its open items under a heading per phase (`roadmapPhases`) rather than naming
-// One. Each change's files are read once here, and both tests read the same list
+// One. Each change's files are read once here, and both tests read the same list. This is not `readProposalChanges`: it
+// Skips a change with no design.md, which this check counts, and it does not return a change's open tasks
 const ROADMAP_ID = "genshin-roadmap";
-const readGenshinChanges = (): GenshinChange[] => {
+const readOpenGenshinChanges = (): OpenGenshinChange[] => {
   const changesDirectory = join(REPOSITORY_ROOT, PROPOSALS_DIRECTORY);
   return readdirSync(changesDirectory, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && existsSync(join(changesDirectory, entry.name, PROPOSAL_METADATA_FILE)))
@@ -37,11 +38,11 @@ const readGenshinChanges = (): GenshinChange[] => {
     })
     .filter(({ areas, id }) => areas[0] === GENSHIN_FLEET_AREA && id !== ROADMAP_ID);
 };
-const describeChange = ({ id, phase, pickPhase }: GenshinChange): string =>
+const describeChange = ({ id, phase, pickPhase }: OpenGenshinChange): string =>
   `${id}: x-phase ${phase ?? "absent"}, pick phase ${pickPhase ?? "absent"}`;
 
 describe("genshinChangePhases", () => {
-  const genshinChanges = readGenshinChanges();
+  const genshinChanges = readOpenGenshinChanges();
 
   test("A genshin change names its phase", () => {
     expect.hasAssertions();
