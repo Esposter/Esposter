@@ -13,7 +13,7 @@ describe(strikeKitWildlife, () => {
   const AREA: AttackArea = { angle: Math.PI / 2, height: 2, radius: 3 };
   const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
 
-  test("A hit in the attack area strikes a bird", () => {
+  test("a hit in the attack area strikes a bird", () => {
     expect.hasAssertions();
 
     const whitePigeon = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: -2 } });
@@ -23,7 +23,7 @@ describe(strikeKitWildlife, () => {
     expect(placeWildlifeDrops).toHaveBeenCalledExactlyOnceWith(whitePigeon, [{ count: 1, itemId: 100_064 }]);
   });
 
-  test("A hit outside the attack area does not strike a bird", () => {
+  test("a hit outside the attack area does not strike a bird", () => {
     expect.hasAssertions();
 
     const whitePigeon = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: 2 } });
