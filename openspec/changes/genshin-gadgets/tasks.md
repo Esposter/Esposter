@@ -1,6 +1,6 @@
 ## 1. Gadgets in the bag
 
-- [x] 1.1 Make each gadget a bag item of the widget material type, filed under the gadget category. Verify: a test named after the scenario 'A gadget appears in the gadget tab' written first and seen failing.
+- [ ] 1.1 Make each gadget a bag item of the widget material type, filed under the gadget category. Verify: a test named after the scenario 'A gadget appears in the gadget tab' written first and seen failing. Open: nothing tests the category a gadget is filed under, so the tab's listing is unproven.
 - [x] 1.2 Equip an equipable gadget from its tab and refuse one the game does not mark equipable. Verify: tests named after the scenarios 'An equipable gadget is equipped from its tab' and 'A gadget the game does not mark equipable is refused' written first and seen failing.
 
 ## 2. The quick-use slot
@@ -10,13 +10,13 @@
 
 ## 3. Detectors
 
-- [x] 3.1 Point a Treasure Compass to the nearest treasure box once its city joins a region's chest slice. Verify: a test named after the scenario 'A compass points to the nearest box in its city' written first and seen failing.
-- [x] 3.2 Point a Seelie detector to the nearest Seelie crystal in its region. Verify: a test named after the scenario 'A Seelie detector points to the nearest crystal in its region', seen failing first.
+- [ ] 3.1 Point a Treasure Compass to the nearest treasure box once its city joins a region's chest slice. Verify: a test named after the scenario 'A compass points to the nearest box in its city' written first and seen failing. Open: no code calls the finder yet, so no compass points at a box.
+- [ ] 3.2 Point a Seelie detector to the nearest Seelie crystal in its region. Verify: a test named after the scenario 'A Seelie detector points to the nearest crystal in its region', seen failing first. Open: no code calls the finder yet, so no detector points at a crystal.
 - [x] 3.3 Decide the Oculus Resonance Stone's detector. Options: read its target from a table other than the config, or leave the stone without a detector until a target is found. Decides nothing here; the choice is recorded before the stone's detector is built.
 
 ## 4. Collectors and placed devices
 
-- [x] 4.1 Build the collector and placed-device kinds one at a time, each as its own module, with a scenario for each kind added to this change's specs before its module is built. Verify: the new scenario written first and seen failing.
+- [x] 4.1 Build the collector and placed-device kinds one at a time, each as its own module, with a scenario for each kind added to this change's specs before its module is built. Verify: the new scenarios 'A collector stores its points up to its maximum' and 'A placed device is refused past its scene or player limit' written first and seen failing.
 
 ## 5. The quick swap's slots in the bag and the save
 
