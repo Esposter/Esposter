@@ -7,7 +7,7 @@ import { getResultAsync } from "@esposter/shared";
 
 // The readers of every published pack, each read from the cache the opening downloaded the packs into.
 // Each is identified by the id of the character it is of. A pack whose reader cannot be made is logged and left out.
-// So its character is drawn by no model rather than the world waiting on it.
+// So its character draws the Traveler's model rather than the world waiting on it (`getCharacterPackReader`).
 export const readCharacterPackReaders = async (gameDataBaseUrl: string): Promise<Map<number, CharacterPackReader>> => {
   const { avatars } = await readCharacterPackIndex(gameDataBaseUrl);
   const cache = await caches.open(CHARACTER_PACK_CACHE_NAME);
