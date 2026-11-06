@@ -106,9 +106,9 @@ A contextual panel SHALL show the content for the selection's kind, the document
 - **WHEN** the contextual panel is drawn
 - **THEN** the fill field shows Mixed
 
-### Requirement: A selection never moves the canvas
+### Requirement: A selection never moves what the canvas shows
 
-A contextual panel that opens for a selection SHALL open over the canvas and leave the canvas's size and position as they were.
+A contextual panel that opens for a selection SHALL open over the canvas and leave the canvas's width and its top edge as they were. A compact window's sheet buttons sit in a strip below the canvas, which shortens it from below and moves nothing the reader selected.
 
 #### Scenario: Selecting an element leaves the canvas where it was
 

@@ -36,7 +36,7 @@ A toolbar is one component and every editor's tool region is one. It holds group
 
 ## The contextual panel
 
-A contextual panel's content follows the selection, and in an editor that has document settings it shows them when nothing is selected, as Figma's panel does. An editor with nothing of the kind, the whiteboard, has no panel while nothing is selected. A panel with several selected elements shows a field's value when every element holds the same one and "Mixed" when they differ, and a change writes to each. The panel's header names what is selected, "Arrow" or "3 shapes", so a reader knows what a change will touch. The panel opens over the canvas, below the toolbar's row, so opening it never moves the canvas. An overlay column also starts below each open overlay bar at the top edge, inset by that bar's size, so the panel and the toolbar never claim the same corner.
+A contextual panel's content follows the selection, and in an editor that has document settings it shows them when nothing is selected, as Figma's panel does. An editor with nothing of the kind, the whiteboard, has no panel while nothing is selected. A panel with several selected elements shows a field's value when every element holds the same one and "Mixed" when they differ, and a change writes to each. The panel's header names what is selected, "Arrow" or "3 shapes", so a reader knows what a change will touch. The panel opens over the canvas, below the toolbar's row, so a selection never moves what the canvas shows. An overlay column also starts below each open overlay bar at the top edge, inset by that bar's size, so the panel and the toolbar never claim the same corner.
 
 ## A compact window
 
