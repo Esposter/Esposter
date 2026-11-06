@@ -10,7 +10,7 @@ describe(computeShownAreaWeather, () => {
     getNextAreaWeather(WeatherKind.Clear, AREA_WEATHERS, () => index / 1000),
   );
 
-  test("A city's weather never turns to rain", () => {
+  test("a city's weather never turns to rain", () => {
     expect.hasAssertions();
 
     expect(new Set(TURNS)).toStrictEqual(new Set(AREA_WEATHERS));

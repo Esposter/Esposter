@@ -59,7 +59,7 @@ describe(getNextAreaWeather, () => {
     expect(getNextAreaWeather(WeatherKind.Snow, [WeatherKind.Snow], () => 0.5)).toBe(WeatherKind.Snow);
   });
 
-  test("An area turns only among its own weathers", () => {
+  test("an area turns only among its own weathers", () => {
     expect.hasAssertions();
 
     const withoutThunderstorm = [WeatherKind.Clear, WeatherKind.Cloudy, WeatherKind.Rain];
