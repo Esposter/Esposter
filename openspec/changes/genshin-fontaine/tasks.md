@@ -13,7 +13,7 @@
 
 ## 4. Remaining regions and generators
 
-- [x] 4.1 Build Erinnyes Forest, Liffey, the Research Institute and Morte, each area listed under its game name. Verify: the catalogue is the proof, and no separate test is owed. It holds the four under the Fontaine region by the game's names, and the map's jump list names each area from that name, so a test over those strings would pin the data to itself (the testing skill's what-earns-a-test criterion).
+- [ ] 4.1 Build Erinnyes Forest, Liffey, the Research Institute and Morte, each area listed under its game name. Verify: the scenario 'Fontaine's areas appear as the game names them' is proved by the catalogue and the map's jump list naming each area from its game name, and no separate test is owed, since a test over those strings would pin the data to itself (the testing skill's what-earns-a-test criterion). Open: the catalogue holds Liffey and Morte only as region names, and the jump list names neither as an area.
 - [ ] 4.2 Build the aqueduct, clock tower and machinery generators, each fitted against its exports when its shape is reached. Verify: a test named after the scenario 'An aqueduct is a kit piece of its own' written first and seen failing.
 
 ## 5. Nostoi and the Sea of Bygone Eras
