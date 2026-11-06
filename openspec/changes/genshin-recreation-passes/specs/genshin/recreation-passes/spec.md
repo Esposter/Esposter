@@ -66,13 +66,13 @@ The login scene SHALL draw bloom on pixels brighter than the game's threshold, b
 - **WHEN** the frame is drawn
 - **THEN** the bright stone glows past its edges
 
-### Requirement: Bloom is judged on the brightest pixels of each reference
+### Requirement: Bloom is judged on the brightest pixels of each reference that draws it
 
-The bloom SHALL be judged on the brightest pixels of each reference, and SHALL close only where drawn bloom reads closer than no bloom.
+The bloom SHALL be judged on the brightest pixels of each reference whose screen draws the game's bloom, and SHALL close only where drawn bloom reads closer than no bloom.
 
 #### Scenario: Bloom closes where it brings the brightest pixels closer
 
-- **GIVEN** a reference has brightest pixels at the curve's white
+- **GIVEN** a reference whose screen draws the bloom has brightest pixels at the curve's white
 - **WHEN** the bloom is drawn and compared with it off
 - **THEN** the bloom closes only where the drawn bloom reads closer
 
