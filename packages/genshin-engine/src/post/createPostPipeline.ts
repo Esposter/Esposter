@@ -2,10 +2,10 @@ import type { PostPipeline } from "#src/models/post/PostPipeline";
 import type { PostPipelineOptions } from "#src/models/post/PostPipelineOptions";
 import type { Node } from "three/webgpu";
 
+import { GameBloomNode } from "#src/models/nodes/GameBloomNode";
 import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import { AntialiasingMode } from "#src/models/renderer/AntialiasingMode";
 import { STONE_MASK_OUTPUT } from "#src/nodes/constants";
-import { createGameBloomNode } from "#src/post/createGameBloomNode";
 import { createHeightFogNode } from "#src/post/createHeightFogNode";
 import { createOcclusionNode } from "#src/post/createOcclusionNode";
 import { createSightNode } from "#src/post/createSightNode";
@@ -124,7 +124,7 @@ export const createPostPipeline = ({
   let bloomedNode: Node<"vec4"> = sightedNode;
 
   if (isBloomed && isBloomEnabled) {
-    const bloomNode = createGameBloomNode(sightedNode);
+    const bloomNode = new GameBloomNode(sightedNode);
     passNodes.push(bloomNode);
     bloomedNode = sightedNode.add(bloomNode);
   }

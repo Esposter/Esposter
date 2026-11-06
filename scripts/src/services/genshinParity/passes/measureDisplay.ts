@@ -6,6 +6,7 @@ import { readDisplaySamples } from "#src/services/genshinParity/display/readDisp
 import { solveToneContrast } from "#src/services/genshinParity/display/solveToneContrast";
 import { computeBloomReading } from "#src/services/genshinParity/passes/computeBloomReading";
 import { BLOOM_READING_GATE, DISPLAY_CONTRAST_GATE, DISPLAY_WIDTH } from "#src/services/genshinParity/passes/constants";
+import { getBloomReferenceIds } from "#src/services/genshinParity/passes/getBloomReferenceIds";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { mergeParityPassMeasures } from "#src/services/genshinParity/passes/mergeParityPassMeasures";
 import { readBloomFrames } from "#src/services/genshinParity/passes/readBloomFrames";
@@ -21,8 +22,9 @@ const MIN_SAMPLE_COUNT = 3;
 // (`readDisplaySamples`), and the tone curve's contrast its light lies flattest under (`solveToneContrast`). Its reading
 // Is how much more the shipped contrast leaves than that one, gated where the profile's other values stand well apart,
 // And a reference with too few pixels to read fails it. The curve's exposure only scales the light the light pass
-// Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over each reference's brightest
-// Pixels, our frame drawn with the game's bloom less ours drawn without it, gated at zero where the drawn bloom closes
+// Solves, so no reference measures it. The bloom's reading (`computeBloomReading`) follows, over the brightest pixels of each
+// Reference whose screen draws the bloom (`getBloomReferenceIds`), our frame drawn with the game's bloom less ours drawn
+// Without it, gated at zero where the drawn bloom closes
 export const measureDisplay = async (component: DerivedAssetComponent): Promise<ParityPassMeasure> => {
   await fetchReferences();
   const measures: ParityPassMeasure[] = [];
@@ -56,7 +58,7 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
       ],
     });
   }
-  for (const referenceId of referenceIds) {
+  for (const referenceId of getBloomReferenceIds(referenceIds)) {
     // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const { bloomed, height, reference, unbloomed } = await readBloomFrames(referenceId, component);
     const reading = computeBloomReading(reference, bloomed, unbloomed, DISPLAY_WIDTH, height);

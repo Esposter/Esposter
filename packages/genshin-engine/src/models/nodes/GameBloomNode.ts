@@ -1,4 +1,4 @@
-import type { NodeBuilder, NodeFrame, PassNode, Renderer, TextureNode } from "three/webgpu";
+import type { NodeBuilder, NodeFrame, Renderer, TextureNode } from "three/webgpu";
 
 import {
   BLOOM_BLUR_TEXELS,
@@ -8,8 +8,8 @@ import {
   GENSHIN_BLOOM_WEIGHTS,
 } from "#src/renderer/constants";
 import { HalfFloatType, Vector2 } from "three";
-import { context, float, max, passTexture, texture, uniform, uv, vec2, vec3, vec4 } from "three/tsl";
-import { Node, NodeMaterial, NodeUpdateType, QuadMesh, RenderTarget, RendererUtils } from "three/webgpu";
+import { context, float, max, texture, uniform, uv, vec2, vec3, vec4 } from "three/tsl";
+import { Node, NodeMaterial, NodeUpdateType, QuadMesh, RendererUtils, RenderTarget } from "three/webgpu";
 
 // Each blur's four taps are two a side at each distance in texels, each weighed alike so the four sum to one
 const BLUR_TAP_WEIGHT = 1 / (2 * BLOOM_BLUR_TEXELS.length);
@@ -20,6 +20,9 @@ const DOWNSAMPLE_TAP_OFFSETS: readonly (readonly [number, number])[] = [
   [-0.5, 0.5],
   [0.5, 0.5],
 ];
+// The two blur directions, along the rows and down the columns, hoisted so no frame builds one
+const BLUR_ROW_DIRECTION = new Vector2(1, 0);
+const BLUR_COLUMN_DIRECTION = new Vector2(0, 1);
 
 // One level of the chain: its box-downsample, the blur's horizontal pass and its blurred result, each half the one
 // Above, with the texture the compose reads the blurred result through and the weight the compose sums it by
@@ -53,11 +56,13 @@ export class GameBloomNode extends Node<"vec4"> {
   readonly #downsampleMaterial = new NodeMaterial();
   readonly #downsampleTexture = texture(null);
   readonly #levels: GameBloomLevel[];
+  readonly #materials: NodeMaterial[];
+  #output?: Node<"vec4">;
   readonly #prefilterMaterial = new NodeMaterial();
   readonly #prefilterTarget = createRenderTarget("GameBloom.prefilter");
   readonly #quad = new QuadMesh(new NodeMaterial());
+  readonly #rendererState: RendererUtils.RendererState = {};
   readonly #size = new Vector2();
-  #output?: Node<"vec4">;
 
   constructor(inputNode: Node<"vec4">) {
     super("vec4");
@@ -94,46 +99,7 @@ export class GameBloomNode extends Node<"vec4"> {
       .reduce((sum, level) => sum.add(level))
       .mul(float(GENSHIN_BLOOM_INTENSITY));
     this.#composeMaterial.fragmentNode = vec4(composed, 0);
-  }
-
-  // Each frame the prefilter, then every level's box-downsample and two blur passes, then the compose, all drawn into
-  // Their own targets before the frame's final pass reads the output
-  override updateBefore(frame: NodeFrame): boolean | undefined {
-    const { renderer } = frame;
-    const rendererState = RendererUtils.saveRendererState(renderer);
-    const size = renderer.getDrawingBufferSize(this.#size);
-    this.#setSize(size.width, size.height);
-    this.#renderPass(renderer, this.#prefilterTarget, this.#prefilterMaterial);
-    let input = this.#prefilterTarget;
-    for (const level of this.#levels) {
-      this.#downsampleTexture.value = input.texture;
-      this.#downsampleInverseSize.value.set(1 / input.width, 1 / input.height);
-      this.#renderPass(renderer, level.downsampled, this.#downsampleMaterial);
-      this.#renderBlur(renderer, level.downsampled, level.horizontal, new Vector2(1, 0));
-      this.#renderBlur(renderer, level.horizontal, level.blurred, new Vector2(0, 1));
-      input = level.blurred;
-    }
-    for (const level of this.#levels) level.sampled.value = level.blurred.texture;
-    this.#renderPass(renderer, this.#composeTarget, this.#composeMaterial);
-    RendererUtils.restoreRendererState(renderer, rendererState);
-    return undefined;
-  }
-
-  // The bloom is the compose's result, read by the frame's final pass through a pass texture, which is what three's own
-  // Bloom hands its frame so the chain above is drawn before the frame reads it
-  override setup(builder: NodeBuilder): Node<"vec4"> {
-    const sharedContext = context(builder.getSharedContext());
-    for (const material of [
-      this.#prefilterMaterial,
-      this.#downsampleMaterial,
-      this.#blurMaterial,
-      this.#composeMaterial,
-    ]) {
-      material.contextNode = sharedContext;
-      material.needsUpdate = true;
-    }
-    this.#output ??= passTexture(this as unknown as PassNode, this.#composeTarget.texture);
-    return this.#output;
+    this.#materials = [this.#prefilterMaterial, this.#downsampleMaterial, this.#blurMaterial, this.#composeMaterial];
   }
 
   override dispose(): void {
@@ -144,13 +110,43 @@ export class GameBloomNode extends Node<"vec4"> {
       ...this.#levels.flatMap(({ blurred, downsampled, horizontal }) => [blurred, downsampled, horizontal]),
     ])
       renderTarget.dispose();
-    for (const material of [
-      this.#prefilterMaterial,
-      this.#downsampleMaterial,
-      this.#blurMaterial,
-      this.#composeMaterial,
-    ])
-      material.dispose();
+    for (const material of this.#materials) material.dispose();
+  }
+
+  // The bloom is the compose's result, read by the frame's final pass through the compose target's texture, which the
+  // Node's updateBefore has drawn before the frame reads it
+  override setup(builder: NodeBuilder): Node<"vec4"> {
+    const sharedContext = context(builder.getSharedContext());
+    for (const material of this.#materials) {
+      material.contextNode = sharedContext;
+      material.needsUpdate = true;
+    }
+    this.#output ??= texture(this.#composeTarget.texture);
+    return this.#output;
+  }
+
+  // Each frame the prefilter, then every level's box-downsample and two blur passes, then the compose, all drawn into
+  // Their own targets before the frame's final pass reads the output. The renderer's state is saved into one object the
+  // Node keeps, so a frame builds none
+  override updateBefore(frame: NodeFrame): boolean | undefined {
+    const { renderer } = frame;
+    RendererUtils.saveRendererState(renderer, this.#rendererState);
+    const size = renderer.getDrawingBufferSize(this.#size);
+    this.#setSize(size.width, size.height);
+    this.#renderPass(renderer, this.#prefilterTarget, this.#prefilterMaterial);
+    let input = this.#prefilterTarget;
+    for (const level of this.#levels) {
+      this.#downsampleTexture.value = input.texture;
+      this.#downsampleInverseSize.value.set(1 / input.width, 1 / input.height);
+      this.#renderPass(renderer, level.downsampled, this.#downsampleMaterial);
+      this.#renderBlur(renderer, level.downsampled, level.horizontal, BLUR_ROW_DIRECTION);
+      this.#renderBlur(renderer, level.horizontal, level.blurred, BLUR_COLUMN_DIRECTION);
+      input = level.blurred;
+    }
+    for (const level of this.#levels) level.sampled.value = level.blurred.texture;
+    this.#renderPass(renderer, this.#composeTarget, this.#composeMaterial);
+    RendererUtils.restoreRendererState(renderer, this.#rendererState);
+    return undefined;
   }
 
   #renderBlur(renderer: Renderer, source: RenderTarget, target: RenderTarget, direction: Vector2): void {
@@ -181,6 +177,3 @@ export class GameBloomNode extends Node<"vec4"> {
     }
   }
 }
-
-// The game's bloom node over a scene colour, drawn beside the frame it lights and added onto it by the caller
-export const createGameBloomNode = (inputNode: Node<"vec4">): GameBloomNode => new GameBloomNode(inputNode);
