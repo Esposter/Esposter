@@ -96,6 +96,8 @@ The rule that generalises: **keep the data and the hard algorithm, take back the
 
 [charts](../charts/design.md) is a component wrapper absorbed, and the shape that takes. `vue3-apexcharts` mounted the chart engine and added a second copy of everything the engine already offers: a component event per engine callback, a method per engine method, a plugin and a global. Its replacement stays in the app, because it adds only the app's theme and lifecycle over the engine, and it reaches the engine only through the engine: the options pass through as given and the instance is handed out.
 
+[about globe](../about-globe/design.md) is a rendering engine absorbed into code of the app's own, and the shape that takes when the engine is a layer over a larger one. `three-globe` sat on three.js and added seventeen packages of geometry and scale libraries, a runtime hex tiling of a half-megabyte GeoJSON, and labels the page could not afford. The replacement keeps three.js and takes back the layer: land is dots read off a mask a generator writes once, arcs are Bezier tubes, and a frame-rate watcher steps the quality down.
+
 ## The stop list
 
 These stay packages whatever their size or call-site count, so the initiative cannot talk itself into the expensive mistake later:

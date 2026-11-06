@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [architecture]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "apps/web/app/components/Visual/Globe/**",
+    "apps/web/app/services/visual/globe/**",
+    "apps/web/app/assets/about/**",
+    "scripts/src/globeLandMask/**",
+    "scripts/src/services/globeLandMask/**",
+  ]

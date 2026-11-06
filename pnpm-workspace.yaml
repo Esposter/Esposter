@@ -215,7 +215,6 @@ catalog:
   superjson: ^2.2.6
   temporal-polyfill: ^1.0.8
   three: ^0.187.0
-  three-globe: ^2.45.6
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.5
   tsrs: ^0.22.0-ts7.1.0-beta

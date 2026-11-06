@@ -143,7 +143,6 @@
     "survey-expression": "workspace:*",
     "temporal-polyfill": "catalog:",
     "three": "catalog:",
-    "three-globe": "catalog:",
     "trpc-nuxt-module": "workspace:*",
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",

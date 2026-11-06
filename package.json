@@ -82,6 +82,7 @@
     "coverage": "vitest run --coverage",
     "crossOS": "pnpm -C scripts crossOS",
     "format": "vp fmt",
+    "globe:gen": "pnpm -C scripts globe:gen",
     "graph:gen": "pnpm -C scripts graph:gen",
     "lint:fix:eslint": "eslint --fix .",
     "lint:fix:oxlint": "vp lint --debug=timings --format=default --fix --disable-nested-config",
