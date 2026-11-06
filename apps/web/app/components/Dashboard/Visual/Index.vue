@@ -42,6 +42,8 @@ const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData 
 // The rows a visual draws, which the editor's menu and a viewer's export both take, and nothing for a demo or a failed read
 const drawnDataset = computed(() => (visualPropsData.value ? resolvedDataset.value : undefined));
 const isGroup = computed(() => visual.type === VisualType.Group);
+// A chart draws its own toolbar along the top right of the tile, so the tile's marks start below it
+const isChart = computed(() => !isGroup.value && visual.type !== VisualType.Card && visual.type !== VisualType.Table);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,
@@ -103,8 +105,16 @@ const { copy } = clipboardStore;
     </div>
     <!-- The corner's marks clear the corner handle: the right inset is the cap, which resolves against the width, and
       the top is the whole handle, since the cap's percentage has no height to resolve against on an auto-height
-      tile -->
-    <div right="[var(--dashboard-cap)]" top="[var(--dashboard-handle)]" flex gap-1 pointer-events-auto absolute z-1>
+      tile, or below a chart's own toolbar -->
+    <div
+      :class="isChart ? 'top-9' : 'top-[var(--dashboard-handle)]'"
+      right="[var(--dashboard-cap)]"
+      flex
+      gap-1
+      pointer-events-auto
+      absolute
+      z-1
+    >
       <slot name="actions" :dataset="drawnDataset" />
       <!-- A viewer's file is the published rows, which the snapshot holds, so the export reads nothing live -->
       <UiIconButton
