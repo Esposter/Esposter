@@ -5,4 +5,5 @@
 
 ## 2. Standard and city chains
 
-- [x] 2.1 Keep the standard chain and the city chain as the game reads them. Verify: tests named after 'Rain always turns to clear or cloudy at the next change' and 'A city's weather never turns to rain'.
+- [ ] 2.1 Keep the standard chain and the city chain as the game reads them. Verify: tests named after the scenarios 'Rain turns to clear or cloudy at the next change where the area's weathers hold one', 'Snow and mist do not turn at a change', 'An area turns only among its own weathers' and 'A city's weather never turns to rain'.
+- [ ] 2.2 Turn each area's weather once each change interval, the interval provisional until the game's schedule is measured. Verify: a test named after the scenario 'An area's weather changes once each change interval' passes.
