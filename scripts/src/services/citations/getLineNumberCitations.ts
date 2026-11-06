@@ -38,8 +38,14 @@ const getLineCitations = (line: string) => [
 ];
 
 // The line-number citations of a page of markdown that name a file of the repository, in reading order. A fenced block
-// Is a program or a log rather than a citation, and a line the citation names by no file is one a reader cannot find
-export const getLineNumberCitations = (markdown: string): LineNumberCitation[] => {
+// Is a program or a log rather than a citation, and a line the citation names by no file is one a reader cannot find.
+// `repositoryPaths` is every file the repository holds, so a citation of any other file is external. `pagePath` is the
+// Page the markdown is, which a relative link resolves from
+export const getLineNumberCitations = (
+  pagePath: string,
+  markdown: string,
+  repositoryPaths: ReadonlySet<string>,
+): LineNumberCitation[] => {
   let isInFence = false;
   return markdown.split(/\r?\n/u).flatMap((rawLine, lineIndex) => {
     if (FENCE_REGEX.test(rawLine)) {
@@ -49,7 +55,7 @@ export const getLineNumberCitations = (markdown: string): LineNumberCitation[] =
     if (isInFence) return [];
 
     return getLineCitations(rawLine.replaceAll(URL_REGEX, " "))
-      .filter(({ file }) => file === undefined || !checkIsExternalFile(file))
+      .filter(({ file }) => file === undefined || !checkIsExternalFile(file, pagePath, repositoryPaths))
       .toSorted((firstCitation, secondCitation) => firstCitation.index - secondCitation.index)
       .map(({ text }) => ({ line: lineIndex + 1, text }));
   });
