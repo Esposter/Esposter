@@ -34,11 +34,20 @@ describe("pageBuilderEmailBar", () => {
 
     const component = await mountBar();
 
-    expect(component.text()).not.toContain(importLabel);
+    // The closed menu keeps its items in the document, so what the bar itself draws is the controls outside the menu
+    const barControlTitles = component
+      .findAll("button")
+      .filter((control) => control.element.closest('[role="menu"]') === null)
+      .map((control) => control.text());
+
+    expect(barControlTitles).not.toContain(importLabel);
 
     await component.get(`[aria-label="${overflowLabel}"]`).trigger("keydown", { key: "ArrowDown" });
     await flushPromises();
-    const menuItemTitles = Array.from(document.querySelectorAll('[role="menuitem"]'), (item) => item.textContent);
+    // An item's text carries the space its mark leaves, which is not part of its title
+    const menuItemTitles = Array.from(document.querySelectorAll('[role="menuitem"]'), (item) =>
+      item.textContent.trim(),
+    );
 
     expect(menuItemTitles).toContain(importLabel);
   });

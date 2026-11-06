@@ -68,7 +68,9 @@ describe("pageBuilderEditor", () => {
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
   });
 
+  // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -240,9 +242,6 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     // The findings settle on the autosave's cadence, so the test moves the clock past it rather than waiting for it
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
     const resourceId = crypto.randomUUID();
@@ -260,8 +259,8 @@ describe("pageBuilderEditor", () => {
       ],
       root: TEST_ROOT,
     });
-    vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
-    await nextTick();
+    await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
+    await flushPromises();
 
     expect(findingsBeforeEdit).toStrictEqual([]);
     expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
@@ -279,11 +278,13 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
-    await flushPromises();
 
-    expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
-      "Survey invite Invite to a survey with no published version",
-    ]);
+    // The survey list is read through the mock server, so the invite reads as unchecked until its answer arrives
+    await vi.waitFor(() => {
+      expect(component.findAll(problemRows).map((row) => row.text())).toStrictEqual([
+        "Survey invite Invite to a survey with no published version",
+      ]);
+    });
   });
 
   test("a document with no survey invite reads no survey list", async () => {
