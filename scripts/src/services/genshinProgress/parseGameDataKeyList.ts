@@ -15,8 +15,8 @@ const KEY_REGEX = /: "(?<key>[^"]+)"/gu;
 const readLeaves = (text: string, name: string): string[] => {
   const escapedOpening = RegExp.escape(renderConstantOpening(name));
   const escapedClosing = RegExp.escape(RENDERED_CONSTANT_CLOSING);
-  const body =
-    text.match(new RegExp(`${escapedOpening}\\n(?<body>[\\s\\S]*?)\\n${escapedClosing}`, "u"))?.groups?.body ?? "";
+  const pattern = new RegExp(`${escapedOpening}\\n(?<body>[\\s\\S]*?)\\n${escapedClosing}`, "u");
+  const body = pattern.exec(text)?.groups?.body ?? "";
   return Array.from(body.matchAll(KEY_REGEX), ({ groups }) => groups?.key ?? "");
 };
 
