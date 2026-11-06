@@ -86,10 +86,16 @@ Hu Tao's Constellation 4 SHALL give each other deployed member 12% CRIT Rate for
 - **WHEN** that enemy is defeated
 - **THEN** each other deployed member gains 12% CRIT Rate for 15 seconds
 
-#### Scenario: defeating an enemy that Blood Blossom did not mark, or whose mark has run out, gives no CRIT Rate
+#### Scenario: defeating an enemy that Blood Blossom did not mark gives no CRIT Rate
 
 - **GIVEN** Hu Tao is at Constellation 4
-- **WHEN** an enemy with no Blood Blossom on it, or with one whose seconds have run out, is defeated
+- **WHEN** an enemy with no Blood Blossom on it is defeated
+- **THEN** no member gains CRIT Rate
+
+#### Scenario: defeating an enemy whose Blood Blossom has run out gives no CRIT Rate
+
+- **GIVEN** Hu Tao is at Constellation 4
+- **WHEN** an enemy whose Blood Blossom has run out is defeated
 - **THEN** no member gains CRIT Rate
 
 #### Scenario: below constellation 4, defeating an enemy Blood Blossom marked gives no CRIT Rate
