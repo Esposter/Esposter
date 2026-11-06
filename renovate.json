@@ -50,9 +50,9 @@
       "matchPackageNames": ["drizzle-kit", "drizzle-orm"]
     },
     {
-      "description": "`@vizejs/vite-plugin` pins `vize` and `@vizejs/unplugin` to its own version exactly, and `vize` pins `@vizejs/native`, so a bump of one alone installs a second copy of the others and the mapper, the plugins and the scripts' parser would compile with different Vize builds. The four move in one branch.",
+      "description": "`@vizejs/nuxt` and `@vizejs/vite-plugin` pin the Vize packages they build on to their own version exactly, and `vize` pins `@vizejs/native`, so a bump of one alone installs a second copy of the others and the module, the plugins, the mapper and the scripts' parser would compile with different Vize builds. They move in one branch.",
       "groupName": "vize",
-      "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/unplugin", "@vizejs/vite-plugin"]
+      "matchPackageNames": ["vize", "@vizejs/native", "@vizejs/nuxt", "@vizejs/unplugin", "@vizejs/vite-plugin"]
     },
     {
       "allowedVersions": "<27",

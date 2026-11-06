@@ -1,6 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 import type { ModuleOptions } from "trpc-nuxt-module";
 
+import { tresCustomElements } from "../../../packages/genshin-world/scripts/tres/tresCustomElements.ts";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.ts";
 
 // The workspace's own modules are registered by their source rather than their package name: `nuxt prepare` loads every
@@ -34,6 +35,7 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@nuxtjs/seo",
   "@pinia/nuxt",
   "@unocss/nuxt",
+  ["@vizejs/nuxt", { compiler: { customElements: tresCustomElements }, lint: false }],
   "@vueuse/nuxt",
   NUXT_SECURITY_MODULE_PATH,
   TRESJS_NUXT_MODULE_PATH,
