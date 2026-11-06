@@ -1,6 +1,6 @@
 # Survey Runner
 
-The state a respondent's session moves through, as plain functions in the `headless-survey-engine` package with no DOM and no framework, over the [typed document](../survey-document/design.md) and the [expression language](../survey-expression/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so all three refuse the same answer for the same reason. An answer is checked by the schema of the question's kind.
+The state a respondent's session moves through, as plain functions in the `headless-survey-engine` package with no DOM, and the Vue composable that holds that state for a component, over the [typed document](../survey-document/design.md) and the [expression language](../survey-expression/design.md). The respondent's browser, the Creator's preview and the server's check of a written response call the same functions, so all three refuse the same answer for the same reason. An answer is checked by the schema of the question's kind.
 
 ## How it works
 
@@ -96,15 +96,15 @@ A required question is unanswered when its answer is absent, text of nothing but
 
 `getSurveyOrderedChoices` returns the list's own order, sorted by text, or a shuffle for the random order. The shuffle is seeded by the session's seed string, which is the response's id or an id generated when the page loads: a 32-bit hash of the seed drives a small seeded generator, so the order holds still across renders and across a reload that resumes the same response. Rejected: an unseeded shuffle, which reorders the choices under a respondent's cursor each time the page redraws.
 
-## The app's wrapper and page
+## The wrapper and page
 
-`useSurveyRunner` holds the state in a ref and exposes the page's element views, the errors, the progress, the navigation and the completion. It refreshes the clock on every action, so a date the expressions read is the moment of the answer or the move. Its `questionNumbers` numbers the questions of the pages up to the current one continuously, so a page carries on from the pages before it. A blocked move keeps the state and sets the errors; moving back clears them.
+`useSurveyRunner`, the package's Vue composable over these functions, holds the state in a ref and exposes the page's element views, the errors, the progress, the navigation and the completion. It refreshes the clock on every action, so a date the expressions read is the moment of the answer or the move. Its `questionNumbers` numbers the questions of the pages up to the current one continuously, so a page carries on from the pages before it. A blocked move keeps the state and sets the errors; moving back clears them.
 
 `Runner.vue` draws the document over that wrapper. Its progress bar sits at the top or the bottom of the page as the root's `showProgressBar` says. Previous is hidden on the first shown page, and the last page's button completes the survey. An alert above the page repeats the first error's message, and a blocked move moves focus to the control of the first error. The page passes the session's seed to each element as a `seed` prop, and the elements pass it down to the fields that order their choices. It passes the row views the same way, a function a dynamic panel calls for each of its rows. It emits `change` on every answer and page move, and `complete` with the answers of a passing completion. `RunnerElement.vue` draws one element of the page: a panel is a `fieldset` with its legend and its children, and a question is a field of its kind, with its number before it.
 
 ## Decisions
 
-- **Plain functions, not a class.** The app's reactive wrapper holds the state in a ref and calls the functions, and the server calls them on a record. Rejected: a stateful class, which the server would construct per request to use one method, and which the preview would have to reset between runs.
+- **Plain functions, not a class.** The package's reactive wrapper, `useSurveyRunner`, holds the state in a ref and calls the functions, and the server calls them on a record. Rejected: a stateful class, which the server would construct per request to use one method, and which the preview would have to reset between runs.
 - **Invisible answers are kept until completion.** An answer to a question that becomes hidden stays in the state, so a respondent who changes an earlier answer back finds theirs again. Completion drops it. A dynamic panel's row keeps a template answer it hides in the same way, and completion drops that one from the row.
 - **A condition that fails reads as not holding.** A survey that passed the save check cannot hold a malformed expression, so a failure here is an evaluation fault such as a function given a wrong argument. The safe reading shows the question rather than hiding a required one.
 - **The clock is a parameter.** Tests and the preview fix it; the app passes the current time.
@@ -118,12 +118,12 @@ A required question is unanswered when its answer is absent, text of nothing but
 | `packages/headless-survey-engine/src/services/runner/validateSurveyAnswers.ts`    | the server's check of a written response's answers                                                                  |
 | `packages/headless-survey-engine/src/services/runner/getSurveyRunnerValues.ts`    | the calculated values, computed in bounded passes                                                                   |
 | `packages/headless-survey-engine/src/services/runner/completeSurvey.ts`           | completion: the errors, or the answers a result keeps                                                               |
-| `packages/headless-survey-engine/src/services/runner/constants.ts`                | the messages a refused answer and a required question show, and the rating scale of a matrix's cells                |
+| `packages/headless-survey-engine/src/services/runner/constants.ts`                | the messages a refused answer and a required question show, a matrix's rating scale, and the unnumbered nodes       |
 | `packages/headless-survey-engine/src/models/`                                     | `SurveyRunnerState`, `SurveyElementView`, `SurveyPageError`, `SurveyAnswerValue` and the other models of the runner |
 | `packages/headless-survey-engine/src/services/getSurveyOrderedChoices.ts`         | the choice order, with the seeded shuffle                                                                           |
 | `packages/headless-survey-engine/src/services/getSurveyChoiceText.ts`             | the text a respondent reads for a choice                                                                            |
 | `packages/headless-survey-engine/src/services/hashSurveySeed.ts`                  | the 32-bit hash of a seed string                                                                                    |
 | `packages/headless-survey-engine/package.json`                                    | the package, which depends on `survey-expression` for expressions and `re2js` for patterns                          |
-| `apps/web/app/composables/survey/useSurveyRunner.ts`                              | the reactive wrapper over the state                                                                                 |
+| `packages/headless-survey-engine/src/composables/useSurveyRunner.ts`              | the reactive wrapper over the state                                                                                 |
 | `apps/web/app/components/Resource/Survey/Runner.vue`                              | the page: progress, navigation, the alert and the focus of a blocked move                                           |
 | `apps/web/app/components/Resource/Survey/RunnerElement.vue`                       | one element of the page: a panel as a fieldset, a question as a field with its number                               |

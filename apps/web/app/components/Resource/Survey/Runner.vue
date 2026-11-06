@@ -3,7 +3,7 @@ import type { SurveyAnswers, SurveyDocument } from "headless-survey-engine";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { SURVEY_FOCUSABLE_SELECTOR } from "@/services/resource/survey/constants";
-import { SurveyProgressBarPlacement } from "headless-survey-engine";
+import { SurveyProgressBarPlacement, useSurveyRunner } from "headless-survey-engine";
 
 interface Props {
   document: SurveyDocument;

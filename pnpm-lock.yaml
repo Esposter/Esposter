@@ -1798,6 +1798,9 @@ importers:
       survey-expression:
         specifier: workspace:*
         version: link:../survey-expression
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
       vue-block-editor-headless:
         specifier: workspace:*
         version: link:../vue-block-editor-headless

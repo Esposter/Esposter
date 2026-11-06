@@ -98,13 +98,6 @@ export const SURVEY_CALCULATED_VALUES_POINTER = "/root/props/calculatedValues";
 export const SURVEY_CALCULATED_VALUE_NAME = "value";
 export const SURVEY_CALCULATED_VALUE_EXPRESSION = "0";
 
-// The nodes a respondent is not asked a question about, so they carry no number
-export const SURVEY_UNNUMBERED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set([
-  SurveyNodeType.Html,
-  SurveyNodeType.Image,
-  SurveyNodeType.Panel,
-]);
-
 // The kinds that order their choices by the session's seed, so each takes the seed the runner passes down
 export const SURVEY_SEEDED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set([
   SurveyNodeType.Checkbox,

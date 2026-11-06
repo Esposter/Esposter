@@ -1,40 +1,29 @@
-import type {
-  SurveyAnswers,
-  SurveyAnswerValue,
-  SurveyDocument,
-  SurveyElementView,
-  SurveyPageError,
-  SurveyPanelDynamicNode,
-  SurveyPanelRowView,
-} from "headless-survey-engine";
+import type { SurveyAnswers } from "#src/models/SurveyAnswers";
+import type { SurveyAnswerValue } from "#src/models/SurveyAnswerValue";
+import type { SurveyDocument } from "#src/models/SurveyDocument";
+import type { SurveyPageError } from "#src/models/SurveyPageError";
+import type { SurveyPanelDynamicNode } from "#src/models/SurveyPanelDynamicNode";
+import type { SurveyPanelRowView } from "#src/models/SurveyPanelRowView";
+import type { SurveyRunner } from "#src/models/SurveyRunner";
+import type { MaybeRefOrGetter } from "vue";
 
-import { SURVEY_UNNUMBERED_NODE_TYPES } from "@/services/resource/survey/constants";
-import {
-  checkIsLastSurveyPage,
-  completeSurvey,
-  createSurveyRunnerState,
-  getSurveyPageElements,
-  getSurveyPanelRowViews,
-  getSurveyProgress,
-  getSurveyRunnerValues,
-  getSurveyVisiblePageIndexes,
-  goToNextSurveyPage,
-  goToPreviousSurveyPage,
-  setSurveyAnswer,
-  SurveyNodeType,
-} from "headless-survey-engine";
-
-// Questions are numbered in order across the survey, so a page carries on from the pages before it
-const numberQuestions = (views: SurveyElementView[], numbers: Map<string, number>) => {
-  for (const view of views) {
-    // The next number is one past every question numbered so far
-    if (!SURVEY_UNNUMBERED_NODE_TYPES.has(view.node.type)) numbers.set(view.pointer, numbers.size + 1);
-    numberQuestions(view.children, numbers);
-  }
-};
+import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { checkIsLastSurveyPage } from "#src/services/runner/checkIsLastSurveyPage";
+import { completeSurvey } from "#src/services/runner/completeSurvey";
+import { createSurveyRunnerState } from "#src/services/runner/createSurveyRunnerState";
+import { getSurveyPageElements } from "#src/services/runner/getSurveyPageElements";
+import { getSurveyPanelRowViews } from "#src/services/runner/getSurveyPanelRowViews";
+import { getSurveyProgress } from "#src/services/runner/getSurveyProgress";
+import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
+import { getSurveyVisiblePageIndexes } from "#src/services/runner/getSurveyVisiblePageIndexes";
+import { goToNextSurveyPage } from "#src/services/runner/goToNextSurveyPage";
+import { goToPreviousSurveyPage } from "#src/services/runner/goToPreviousSurveyPage";
+import { numberSurveyQuestions } from "#src/services/runner/numberSurveyQuestions";
+import { setSurveyAnswer } from "#src/services/runner/setSurveyAnswer";
+import { computed, ref, toValue } from "vue";
 
 // A respondent's session over a survey document: the state the runner's functions move, the errors that block a move and
-// The clock they read. The app's reactive wrapper, so the page holds nothing of the survey's own
+// the clock they read. The Vue wrapper over those functions, so the page holds nothing of the survey's own
 export const useSurveyRunner = (
   document: MaybeRefOrGetter<SurveyDocument>,
   {
@@ -43,7 +32,7 @@ export const useSurveyRunner = (
     // A session's seed orders the choices of a question that shuffles them, so one respondent sees one order throughout
     seed: initialSeed = crypto.randomUUID(),
   }: { answers?: SurveyAnswers; pageIndex?: number; seed?: string } = {},
-) => {
+): SurveyRunner => {
   const getDocument = () => toValue(document);
   // Refreshed by every action, so a date the expressions read is the moment of the answer or the move
   const now = ref(new Date());
@@ -75,7 +64,7 @@ export const useSurveyRunner = (
     for (const visiblePageIndex of visiblePageIndexes.value) {
       if (visiblePageIndex > state.value.pageIndex) break;
 
-      numberQuestions(
+      numberSurveyQuestions(
         getSurveyPageElements(getDocument(), { ...state.value, pageIndex: visiblePageIndex }, now.value),
         numbers,
       );

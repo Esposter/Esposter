@@ -1,16 +1,22 @@
-import { useSurveyRunner } from "@/composables/survey/useSurveyRunner";
-import { createSurveyTestDocument } from "@/services/survey/createSurveyTestDocument.test";
-import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.test";
-import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
+import { useSurveyRunner } from "#src/composables/useSurveyRunner";
+import { SurveyNodeType } from "#src/models/SurveyNodeType";
+import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
+import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { describe, expect, test } from "vitest";
+
+// A text question under its name, held to the required and visibility flags a test sets
+const createTextQuestion = (name: string, props: { isRequired?: boolean; visibleIf?: string } = {}) => ({
+  props: { id: crypto.randomUUID(), name, ...props },
+  type: SurveyNodeType.Text,
+});
 
 describe(useSurveyRunner, () => {
   test("moves through a two-page document once the page's required question is answered", () => {
     expect.hasAssertions();
 
-    const surveyDocument = createSurveyTestDocument([
-      createSurveyTestPage([createSurveyTestQuestion("first", { isRequired: true })]),
-      createSurveyTestPage([createSurveyTestQuestion("second")]),
+    const surveyDocument = createSurveyRunnerDocument([
+      createSurveyPage([createTextQuestion("first", { isRequired: true })]),
+      createSurveyPage([createTextQuestion("second")]),
     ]);
     const runner = useSurveyRunner(surveyDocument);
     runner.next();
@@ -28,12 +34,12 @@ describe(useSurveyRunner, () => {
   test("a move blocked by two required questions names the first one", () => {
     expect.hasAssertions();
 
-    const surveyDocument = createSurveyTestDocument([
-      createSurveyTestPage([
-        createSurveyTestQuestion("first", { isRequired: true }),
-        createSurveyTestQuestion("second", { isRequired: true }),
+    const surveyDocument = createSurveyRunnerDocument([
+      createSurveyPage([
+        createTextQuestion("first", { isRequired: true }),
+        createTextQuestion("second", { isRequired: true }),
       ]),
-      createSurveyTestPage([createSurveyTestQuestion("third")]),
+      createSurveyPage([createTextQuestion("third")]),
     ]);
     const runner = useSurveyRunner(surveyDocument);
     runner.next();
@@ -45,10 +51,10 @@ describe(useSurveyRunner, () => {
   test("a page hidden by its condition is skipped when moving forward", () => {
     expect.hasAssertions();
 
-    const surveyDocument = createSurveyTestDocument([
-      createSurveyTestPage([createSurveyTestQuestion("first")]),
-      createSurveyTestPage([createSurveyTestQuestion("second")], "{first} = 'show'"),
-      createSurveyTestPage([createSurveyTestQuestion("third")]),
+    const surveyDocument = createSurveyRunnerDocument([
+      createSurveyPage([createTextQuestion("first")]),
+      createSurveyPage([createTextQuestion("second")], "{first} = 'show'"),
+      createSurveyPage([createTextQuestion("third")]),
     ]);
     const runner = useSurveyRunner(surveyDocument);
     runner.next();
@@ -59,9 +65,9 @@ describe(useSurveyRunner, () => {
   test("numbers the questions of the current page on from the pages before it", () => {
     expect.hasAssertions();
 
-    const surveyDocument = createSurveyTestDocument([
-      createSurveyTestPage([createSurveyTestQuestion("first")]),
-      createSurveyTestPage([createSurveyTestQuestion("second")]),
+    const surveyDocument = createSurveyRunnerDocument([
+      createSurveyPage([createTextQuestion("first")]),
+      createSurveyPage([createTextQuestion("second")]),
     ]);
     surveyDocument.root.props.isQuestionNumbersVisible = true;
     const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
@@ -72,9 +78,9 @@ describe(useSurveyRunner, () => {
   test("numbers no question when the survey's question numbering is off", () => {
     expect.hasAssertions();
 
-    const surveyDocument = createSurveyTestDocument([
-      createSurveyTestPage([createSurveyTestQuestion("first")]),
-      createSurveyTestPage([createSurveyTestQuestion("second")]),
+    const surveyDocument = createSurveyRunnerDocument([
+      createSurveyPage([createTextQuestion("first")]),
+      createSurveyPage([createTextQuestion("second")]),
     ]);
     const runner = useSurveyRunner(surveyDocument, { pageIndex: 1 });
 

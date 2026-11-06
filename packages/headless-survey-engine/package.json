@@ -1,7 +1,7 @@
 {
   "name": "headless-survey-engine",
   "version": "4.5.0",
-  "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save and a runner whose state is plain functions, with no framework or DOM",
+  "description": "The survey as a typed document on the headless block editor — its question kinds, the checks on a save, its runner's functions and the Vue composable that holds a session over them, with no styling or DOM",
   "keywords": [
     "typescript"
   ],
@@ -56,6 +56,7 @@
     "tsdown": "catalog:"
   },
   "peerDependencies": {
+    "vue": "catalog:",
     "zod": "catalog:"
   }
 }

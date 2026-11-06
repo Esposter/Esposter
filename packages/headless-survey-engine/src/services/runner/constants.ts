@@ -1,3 +1,5 @@
+import { SurveyNodeType } from "#src/models/SurveyNodeType";
+
 // The message a question with no answer shows when it is required, and the one an empty answer to a field shows
 export const SURVEY_REQUIRED_MESSAGE = "Please answer this question.";
 // The message a respondent sees for an answer of the wrong shape, which no more specific message covers
@@ -24,3 +26,9 @@ export const SURVEY_NONE_ANSWER = "none";
 export const SURVEY_UNKNOWN_QUESTION_MESSAGE = "Unknown question";
 // The message for an answer to a question the survey does not show, since its visibility condition does not hold
 export const SURVEY_NOT_SHOWN_MESSAGE = "This question is not shown";
+// The nodes a respondent is not asked a question about, so they carry no number
+export const SURVEY_UNNUMBERED_NODE_TYPES: ReadonlySet<SurveyNodeType> = new Set([
+  SurveyNodeType.Html,
+  SurveyNodeType.Image,
+  SurveyNodeType.Panel,
+]);
