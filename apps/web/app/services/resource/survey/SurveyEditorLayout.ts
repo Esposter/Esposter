@@ -4,10 +4,13 @@ import { SurveyEditorContent } from "@/models/resource/survey/SurveyEditorConten
 import { SurveyEditorPanel } from "@/models/resource/survey/SurveyEditorPanel";
 import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
 import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
-import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
+import {
+  DOCKED_REGION_PRESENTATION_MAP,
+  SIDE_REGION_PRESENTATION_MAP,
+  SIDE_REGION_SIZE,
+} from "@/services/editor/constants";
 import { SURVEY_BAR_HEIGHT, SURVEY_DESIGN_MODE } from "@/services/resource/survey/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
-import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
+import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The survey's editor as plain data: a bar across the top, the structure beside the canvas and the inspector beyond it. Preview
 // Removes the structure and the inspector, so the runner has the width a respondent has. On a window below the mobile breakpoint
@@ -77,39 +80,23 @@ export const SurveyEditorLayout: Layout = {
       minimumSize: SURVEY_BAR_HEIGHT,
       opening: RegionOpening.WithContent,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Docked,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Docked,
-      },
+      sizeClassPresentationMap: DOCKED_REGION_PRESENTATION_MAP,
     },
     {
-      defaultSize: DEFAULT_SIDE_PANE_WIDTH,
+      ...SIDE_REGION_SIZE,
       edge: RegionEdge.Start,
       id: SurveyEditorRegion.Structure,
-      maximumSize: MAX_SIDE_PANE_WIDTH,
-      minimumSize: MIN_SIDE_PANE_WIDTH,
       opening: RegionOpening.OnDemand,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Sheet,
-      },
+      sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
     },
     {
-      defaultSize: DEFAULT_SIDE_PANE_WIDTH,
+      ...SIDE_REGION_SIZE,
       edge: RegionEdge.End,
       id: SurveyEditorRegion.Inspector,
-      maximumSize: MAX_SIDE_PANE_WIDTH,
-      minimumSize: MIN_SIDE_PANE_WIDTH,
       opening: RegionOpening.WithContent,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Sheet,
-      },
+      sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
     },
   ],
 };

@@ -12,7 +12,8 @@ import {
   DASHBOARD_EDITOR_PALETTE_MINIMUM_WIDTH,
   DASHBOARD_EDITOR_PALETTE_WIDTH,
 } from "@/services/dashboard/constants";
-import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
+import { DOCKED_REGION_PRESENTATION_MAP, SIDE_REGION_PRESENTATION_MAP } from "@/services/editor/constants";
+import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The dashboard editor's layout as data. The bar holds the visual count and Add visual across the top, always. The visuals
 // Palette sits at the start, closed until the reader opens it. The inspector sits at the end and shows what is selected: the
@@ -57,11 +58,7 @@ export const DashboardLayout: Layout = {
       minimumSize: DASHBOARD_EDITOR_BAR_HEIGHT,
       opening: RegionOpening.WithContent,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Docked,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Docked,
-      },
+      sizeClassPresentationMap: DOCKED_REGION_PRESENTATION_MAP,
     },
     {
       defaultSize: DASHBOARD_EDITOR_PALETTE_WIDTH,
@@ -71,11 +68,7 @@ export const DashboardLayout: Layout = {
       minimumSize: DASHBOARD_EDITOR_PALETTE_MINIMUM_WIDTH,
       opening: RegionOpening.OnDemand,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Sheet,
-      },
+      sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
     },
     {
       defaultSize: DASHBOARD_EDITOR_INSPECTOR_WIDTH,
@@ -85,11 +78,7 @@ export const DashboardLayout: Layout = {
       minimumSize: DASHBOARD_EDITOR_INSPECTOR_MINIMUM_WIDTH,
       opening: RegionOpening.WithContent,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Sheet,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Sheet,
-      },
+      sizeClassPresentationMap: SIDE_REGION_PRESENTATION_MAP,
     },
   ],
 };

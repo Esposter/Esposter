@@ -3,13 +3,16 @@ import type { Layout } from "vue-editor-layout-headless";
 import { EmailContentKey } from "@/models/emailEditor/EmailContentKey";
 import { EmailView } from "@/models/pageBuilder/EmailView";
 import {
+  DOCKED_REGION_PRESENTATION_MAP,
+  SIDE_REGION_PRESENTATION_MAP,
+  SIDE_REGION_SIZE,
+} from "@/services/editor/constants";
+import {
   PAGE_BUILDER_PANEL_ID_MAP,
   PAGE_BUILDER_PANEL_NAME_MAP,
   PAGE_BUILDER_SELECTION_KIND_MAP,
-  SIDE_REGION_PRESENTATION_MAP,
-  SIDE_REGION_SIZE,
 } from "@/services/pageBuilder/pageBuilderLayout";
-import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
+import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The bar is one row where its controls fit, and a reader drags it taller where they wrap
 const BAR_SIZE = { defaultSize: 56, maximumSize: 160, minimumSize: 56 };
@@ -72,11 +75,7 @@ export const emailLayout: Layout = {
       id: "bar",
       opening: RegionOpening.WithContent,
       sizeClassEdgeMap: {},
-      sizeClassPresentationMap: {
-        [SizeClass.Compact]: RegionPresentation.Docked,
-        [SizeClass.Expanded]: RegionPresentation.Docked,
-        [SizeClass.Medium]: RegionPresentation.Docked,
-      },
+      sizeClassPresentationMap: DOCKED_REGION_PRESENTATION_MAP,
     },
     {
       ...SIDE_REGION_SIZE,

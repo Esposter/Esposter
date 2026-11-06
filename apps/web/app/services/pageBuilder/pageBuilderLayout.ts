@@ -1,8 +1,11 @@
 import type { Panel, Region } from "vue-editor-layout-headless";
 
-import { DEFAULT_SIDE_PANE_WIDTH } from "@/services/pageBuilder/constants";
-import { MAX_SIDE_PANE_WIDTH, MIN_SIDE_PANE_WIDTH } from "@/services/ui/constants";
-import { RegionEdge, RegionOpening, RegionPresentation, SizeClass } from "vue-editor-layout-headless";
+import {
+  DOCKED_REGION_PRESENTATION_MAP,
+  SIDE_REGION_PRESENTATION_MAP,
+  SIDE_REGION_SIZE,
+} from "@/services/editor/constants";
+import { RegionEdge, RegionOpening } from "vue-editor-layout-headless";
 
 // The parts the page builder's layout is built from: a bar over the page, the blocks at the start, the settings at the end and
 // The canvas in the rest. The webpage's layout adds its settings tabs to these
@@ -36,19 +39,7 @@ export const PAGE_BUILDER_REGION_NAME_MAP = {
 } as const;
 // The bar holds one row of controls, so it is held at that one size and its handle has nothing to move
 const PAGE_BAR_SIZE = 48;
-export const SIDE_REGION_PRESENTATION_MAP = {
-  [SizeClass.Compact]: RegionPresentation.Sheet,
-  [SizeClass.Expanded]: RegionPresentation.Docked,
-  [SizeClass.Medium]: RegionPresentation.Sheet,
-} as const satisfies Record<SizeClass, RegionPresentation>;
-// The size a side region opens at, and is held between
-export const SIDE_REGION_SIZE = {
-  defaultSize: DEFAULT_SIDE_PANE_WIDTH,
-  maximumSize: MAX_SIDE_PANE_WIDTH,
-  minimumSize: MIN_SIDE_PANE_WIDTH,
-};
-// A side region is a column beside the canvas while the window has room for it, and a sheet from its edge otherwise. The medium
-// Class is the one the page's drawers are sheets in, where two columns would leave the canvas too little width to edit in
+// The bar over the page, the blocks at its start and the settings at its end
 export const PAGE_BUILDER_REGIONS: Region[] = [
   {
     defaultSize: PAGE_BAR_SIZE,
@@ -58,11 +49,7 @@ export const PAGE_BUILDER_REGIONS: Region[] = [
     minimumSize: PAGE_BAR_SIZE,
     opening: RegionOpening.WithContent,
     sizeClassEdgeMap: {},
-    sizeClassPresentationMap: {
-      [SizeClass.Compact]: RegionPresentation.Docked,
-      [SizeClass.Expanded]: RegionPresentation.Docked,
-      [SizeClass.Medium]: RegionPresentation.Docked,
-    },
+    sizeClassPresentationMap: DOCKED_REGION_PRESENTATION_MAP,
   },
   {
     ...SIDE_REGION_SIZE,
