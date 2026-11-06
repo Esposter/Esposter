@@ -60,7 +60,7 @@ The fleet SHALL offer a machine the first unit of the lowest phase that the mach
 
 The progress report's done column SHALL count a unit once its own source has nothing left open: a compute page with no queue item and no waiting item, a change with no open task, or a roadmap item or quest ticked. Each kind's check SHALL be reported apart from that column as met, not met or not measurable, and only those checks SHALL gate a phase. A check that no command can read SHALL be reported as not measurable and never as met.
 
-#### Scenario: A screen is done when every id is under its bar
+#### Scenario: A screen's check is met when every id is under its bar
 
 - **GIVEN** a screen with three parity ids, two under their bars and one over
 - **WHEN** the screen's check is read
