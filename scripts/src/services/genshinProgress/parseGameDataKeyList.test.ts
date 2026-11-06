@@ -1,3 +1,5 @@
+import { GAME_DATA_INDEX_KEYS_NAME, GAME_DATA_KEYS_NAME } from "#src/services/gameData/constants";
+import { renderConstant } from "#src/services/gameData/renderConstant";
 import { parseGameDataKeyList } from "#src/services/genshinProgress/parseGameDataKeyList";
 import { describe, expect, test } from "vitest";
 
@@ -6,14 +8,9 @@ describe(parseGameDataKeyList, () => {
     expect.hasAssertions();
 
     const text = [
-      "export const GameDataKeys = {",
-      '  achievements: { achievements: "achievements/achievements" },',
-      '  tips: "tips",',
-      "} as const;",
+      renderConstant(GAME_DATA_KEYS_NAME, ["achievements/achievements", "tips"]),
       "",
-      "export const GameDataIndexKeys = {",
-      '  domains: "domains",',
-      "} as const;",
+      renderConstant(GAME_DATA_INDEX_KEYS_NAME, ["domains"]),
     ].join("\n");
 
     expect(parseGameDataKeyList(text)).toStrictEqual({

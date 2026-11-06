@@ -19,6 +19,11 @@ export const GAME_DATA_LOCK_REPOSITORY_PATH = "packages/genshin-world/src/genera
 // The nested keys a publish writes beside the lock, which code imports in place of the lock's own key strings
 export const GAME_DATA_KEYS_FILE_NAME = "gameDataKeys.ts";
 export const GAME_DATA_KEYS_PATH: string = join(dirname(GAME_DATA_LOCK_PATH), GAME_DATA_KEYS_FILE_NAME);
+// The names of the two nested constants that file exports, which its readers find them by
+export const GAME_DATA_KEYS_NAME = "GameDataKeys";
+export const GAME_DATA_INDEX_KEYS_NAME = "GameDataIndexKeys";
+// The line that closes each constant `renderConstant` writes, after its body
+export const RENDERED_CONSTANT_CLOSING = "} as const;";
 export const DAY_MS: number = Temporal.Duration.from({ hours: 24 }).total("milliseconds");
 // An object a lock no longer names is kept this long, so a revert within this window still resolves it
 export const GAME_DATA_RETENTION_MS: number = 90 * DAY_MS;
