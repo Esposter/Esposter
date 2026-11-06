@@ -4,7 +4,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
-import { Currency } from "#src/models/inventory/Currency";
+import { Currencies } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { REALM_DEPOT_SHOP_ID } from "#src/services/shop/constants";
@@ -54,7 +54,7 @@ describe("shopScreen", () => {
   });
   const inventory: Inventory = { items: [], nextId: 1, quickSwapItemIds: [] };
   const wallet: Wallet = {
-    ...Object.fromEntries(Object.values(Currency).map((currency) => [currency, 0])),
+    ...Object.fromEntries(Currencies.map((currency) => [currency, 0])),
     originalResinChangedAt: Temporal.Instant.fromEpochMilliseconds(0),
     primogemResinRefillCount: 0,
     primogemResinRefillDay: Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate(),

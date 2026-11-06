@@ -2,7 +2,7 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute, Attributes } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { Currency } from "#src/models/inventory/Currency";
+import { Currencies, Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
@@ -314,7 +314,7 @@ describe("genshinSaveSchema", () => {
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
       wallet: {
-        currencies: Object.fromEntries(Object.values(Currency).map((currency) => [currency, maxNumber])),
+        currencies: Object.fromEntries(Currencies.map((currency) => [currency, maxNumber])),
         originalResinChangedAt: maxInstant,
         primogemResinRefillCount: maxNumber,
         primogemResinRefillDay: epoch.toZonedDateTimeISO("UTC").toPlainDate().toString(),

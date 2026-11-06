@@ -8,7 +8,7 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
-import { Currency } from "#src/models/inventory/Currency";
+import { Currencies } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
@@ -291,7 +291,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
   wallet: {
-    currencies: Object.fromEntries(Object.values(Currency).map((currency) => [currency, MAX_SAVE_NUMBER])),
+    currencies: Object.fromEntries(Currencies.map((currency) => [currency, MAX_SAVE_NUMBER])),
     originalResinChangedAt: MAX_SAVE_INSTANT,
     primogemResinRefillCount: MAX_SAVE_NUMBER,
     primogemResinRefillDay: "9999-12-31",

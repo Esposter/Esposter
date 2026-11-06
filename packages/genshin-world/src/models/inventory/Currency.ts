@@ -22,3 +22,5 @@ export enum Currency {
   PyroSigil = "PyroSigil",
   RealmCurrency = "RealmCurrency",
 }
+
+export const Currencies: readonly Currency[] = Object.values(Currency);
