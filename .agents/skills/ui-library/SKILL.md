@@ -36,7 +36,7 @@ How the palette reaches UnoCSS and the first response is `openspec/specs/archite
 
 - **A colour is a token.** A new colour is an entry in `UiPaletteMap` for both themes; a component or a template never writes a hex value or a palette colour the token set already covers.
 - **A length is a whole number of `--ui-step`, and a duration is `--ui-motion-short`, `-medium` or `-long`** — never a time, an easing or a `steps()` of its own (`references/tokens.md`).
-- **Type is the library's type rules** — `ui-body` on a page's root, `ui-heading`, `ui-title` or `ui-display` on a heading, and never a font family, size or weight of the template's own (`references/tokens.md`).
+- **Type is the library's type rules** — `ui-body` on a page's root, `ui-heading`, `ui-title` or `ui-display` on a heading, `ui-lede` on the quiet line under one, and never a font family, size or weight of the template's own (`references/tokens.md`).
 - **Adding a palette pair or a style token, or selecting a theme,** follows `references/tokens.md`: a pair that fails the palette test is re-picked, only `NuxtTheme` selects, and a drawing value is a style token.
 
 ## Icons

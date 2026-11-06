@@ -12,4 +12,4 @@ Read when adding a colour pair, a style token or a theme, or when anything selec
 
 ## Type
 
-- **Type is the library's type rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of them takes `text-heading-color`.
+- **Type is the library's type rules.** A page's root wears `ui-body`, and a heading wears `ui-heading`, `ui-title` or `ui-display`, while the line under a heading or a card's title wears `ui-lede`, the heading's size at normal weight in the colour it sits in, which `text-muted` quiets; a template never sets a font family, a size or a weight of its own. Each face is its own token — `--ui-font-body`, which the readable-text setting swaps, `--ui-font-heading`, and `--ui-font-mono` for code — and a title that is none of them takes `text-heading-color`.

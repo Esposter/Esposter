@@ -116,7 +116,9 @@ const uiShapeUtilities = { "ui-pill": { "border-radius": "var(--ui-pill-radius)"
 >;
 // The library's type: four sizes, each read from the style tier with its face, weight and colour. Each reads a face
 // Token, so the readable-text setting swaps the tokens and no component knows about it; every size above the body is
-// A heading, in the heading face, weight and colour
+// A heading, in the heading face, weight and colour, except the lede, which is the heading's size set as body text and
+// Sets no colour, so it reads the text colour it sits in and `text-muted` can quiet it: the line under a heading or a
+// Card's title, larger than the body
 const getUiTypeUtility = (
   size: string,
   fontFamily = "var(--ui-font-heading)",
@@ -133,6 +135,12 @@ const uiTypeUtilities = {
   "ui-body": getUiTypeUtility("body", "var(--ui-font-body)", "var(--ui-text)", "normal"),
   "ui-display": getUiTypeUtility("display"),
   "ui-heading": getUiTypeUtility("heading"),
+  "ui-lede": {
+    "font-family": "var(--ui-font-body)",
+    "font-size": "var(--ui-text-heading)",
+    "font-weight": "normal",
+    "line-height": "1.2",
+  },
   "ui-title": getUiTypeUtility("title"),
 } as const satisfies Record<string, Record<string, string>>;
 // The preset accepts two spellings for most of what it generates — `pa-4` beside `p-4`, `border-2` beside

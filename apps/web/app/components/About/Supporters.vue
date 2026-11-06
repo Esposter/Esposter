@@ -9,7 +9,7 @@ const cardType = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, CardTypes, CardType.
 
 <template>
   <section flex flex-col gap-4 w-full>
-    <h2 text-center ui-heading>Thanks to all these lovely people for making this possible! 💖</h2>
+    <h2 text-center ui-title>Thanks to all these lovely people for making this possible! 💖</h2>
     <UiTabs v-model="cardType" :items="CardTypeItems" label="How the supporters are shown">
       <template #default="{ value }">
         <VisualCardMarquee v-if="value === CardType.Marquee" :cards="SupporterCards" />

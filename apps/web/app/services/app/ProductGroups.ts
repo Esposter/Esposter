@@ -37,11 +37,6 @@ export const ProductGroups = [
         icon: "i-custom:genshin",
         title: "Genshin",
       },
-    ],
-    title: "Build",
-  },
-  {
-    items: [
       {
         description: "Click. Upgrade. Repeat.",
         href: RoutePath.Clicker,

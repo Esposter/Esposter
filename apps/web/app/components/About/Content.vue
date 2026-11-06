@@ -4,10 +4,10 @@ import { SITE_NAME } from "@esposter/shared";
 </script>
 
 <template>
-  <section flex flex-col gap-4 max-w-prose>
+  <section text-center flex flex-col gap-2 max-w-prose>
     <h2 ui-title>Why {{ SITE_NAME }}?</h2>
-    <p>
-      One person's attempt to keep the best parts of social media and leave out the rest. Made, and still being made, by
+    <p ui-lede>
+      A minimal, lean place to do and create whatever you want, made by
       <NuxtLink text-info no-underline hover:underline target="_blank" :to="LINKEDIN_PROFILE_URL">Jimmy Chen</NuxtLink>.
     </p>
   </section>

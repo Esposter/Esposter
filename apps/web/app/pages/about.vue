@@ -18,13 +18,14 @@ const { stop } = useIntersectionObserver(
 
 <template>
   <NuxtLayout>
-    <article px-4 py-6 flex flex-col gap-12 items-center ui-body>
+    <article px-4 py-6 flex flex-col gap-8 items-center ui-body>
       <AboutHeader />
+      <AboutPoweredBy />
       <AboutProducts />
       <AboutContent />
       <AboutSupporters />
       <section flex flex-col gap-4 items-center>
-        <h2 text-center ui-heading>Here's a globe for you to play around with if you are bored 🙂</h2>
+        <h2 text-center ui-title>Here's a globe for you to play around with if you are bored 🙂</h2>
         <div ref="globeContainer" max-w-180 w-full aspect-square>
           <LazyVisualGlobe v-if="isGlobeNear" />
         </div>

@@ -151,6 +151,15 @@ describe("unoConfig", () => {
             },
           ],
           [
+            "ui-lede",
+            {
+              "font-family": "var(--ui-font-body)",
+              "font-size": "var(--ui-text-heading)",
+              "font-weight": "normal",
+              "line-height": "1.2",
+            },
+          ],
+          [
             "ui-title",
             {
               "color": "var(--ui-heading-color)",
