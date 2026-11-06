@@ -8,7 +8,6 @@ import { WhiteboardExportFormat } from "@/models/whiteboard/WhiteboardExportForm
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { compileStoredEmail } from "@/services/emailEditor/compileStoredEmail";
-import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
 import { exportPersonalizedRows } from "@/services/emailEditor/exportPersonalizedRows";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
 import { createBlueprintPortableFormat } from "@/services/resource/createBlueprintPortableFormat";
@@ -19,7 +18,6 @@ import { exportWhiteboard } from "@/services/whiteboard/export/exportWhiteboard"
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
-import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
@@ -81,28 +79,6 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       },
       icon: "i-mdi:language-html5",
       label: "Personalized HTML",
-    },
-    {
-      icon: "i-mdi:code-tags",
-      // The command opens the code field for the email it was run on, which the Editor blade renders
-      import: () => {
-        const alertStore = useAlertStore();
-        const { createAlert } = alertStore;
-        const resourceStore = useResourceStore();
-        const { resource } = storeToRefs(resourceStore);
-        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-        const { getEmailDocument } = pageBuilderDocumentStore;
-        if (!resource.value || !getEmailDocument(resource.value.id)) {
-          createAlert(REOPEN_EMAIL_MESSAGE, "warning");
-          return Promise.resolve();
-        }
-
-        const emailImportDialogStore = useEmailImportDialogStore();
-        const { openImport } = emailImportDialogStore;
-        openImport(resource.value.id);
-        return Promise.resolve();
-      },
-      label: "MJML",
     },
   ],
   [ResourceType.Note]: [createNoteMarkdownPortableFormat()],
