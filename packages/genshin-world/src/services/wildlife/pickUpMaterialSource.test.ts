@@ -28,7 +28,7 @@ describe(pickUpMaterialSource, () => {
   const crystalfly: MaterialSourcePlace = { id: "crystalfly", kind: ITEM_ID, position: { x: 1, z: 2 } };
   const otherCrystalfly: MaterialSourcePlace = { id: "other", kind: ITEM_ID, position: { x: 3, z: 4 } };
 
-  test("a crystalfly picked up gives its item and vanishes", () => {
+  test("A crystalfly picked up gives its item and vanishes", () => {
     expect.hasAssertions();
 
     const pickUp = pickUpMaterialSource(

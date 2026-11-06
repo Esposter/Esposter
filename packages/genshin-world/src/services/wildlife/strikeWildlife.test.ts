@@ -9,13 +9,13 @@ const createCrimsonFox = (): Wildlife =>
   createWildlife({ id: "fox", kind: WildlifeKind.CrimsonFox, position: { x: 0, z: 0 } });
 
 describe(strikeWildlife, () => {
-  test("a Crimson Fox gives two Raw Meat when struck", () => {
+  test("A Crimson Fox gives two Raw Meat when struck", () => {
     expect.hasAssertions();
 
     expect(strikeWildlife(createCrimsonFox())).toStrictEqual({ count: 2, itemId: 100_061 });
   });
 
-  test("a struck animal gives nothing when struck again", () => {
+  test("A struck animal gives nothing when struck again", () => {
     expect.hasAssertions();
 
     const crimsonFox = createCrimsonFox();

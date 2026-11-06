@@ -44,16 +44,16 @@ describe(stepWildlife, () => {
     });
   });
 
-  test("runs an idle animal in reach straight away from the target", () => {
+  test("A White Pigeon flees when approached within its escape radius", () => {
     expect.hasAssertions();
 
-    const wildlife = createNearWildlife();
+    const wildlife = createWildlife({ id: "animal", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: 1 } });
     stepWildlife(wildlife, TARGET, STEP_SECONDS);
     expect(wildlife).toStrictEqual({
       heading: 0,
       home: { x: 0, z: 1 },
       id: "animal",
-      kind: WildlifeKind.Squirrel,
+      kind: WildlifeKind.WhitePigeon,
       position: { x: 0, z: 1 + WILDLIFE_FLEE_SPEED * STEP_SECONDS },
       state: WildlifeState.Fleeing,
       stateSeconds: 0,
@@ -69,7 +69,7 @@ describe(stepWildlife, () => {
     expect(wildlife.position).toStrictEqual({ x: 0, z: 1 + WILDLIFE_FLEE_SPEED * STEP_SECONDS * 2 });
   });
 
-  test("goes idle once its escape time has passed with the target out of reach", () => {
+  test("A fleeing animal returns to idle after its escape time", () => {
     expect.hasAssertions();
 
     const wildlife = createNearWildlife();
@@ -105,7 +105,7 @@ describe(stepWildlife, () => {
     expect(wildlife.stateSeconds).toBe(0);
   });
 
-  test("a boar charges a player standing in its way", () => {
+  test("A boar charges a player standing in its way", () => {
     expect.hasAssertions();
 
     // A boar on the player's reach, charging straight at the player until it makes contact
