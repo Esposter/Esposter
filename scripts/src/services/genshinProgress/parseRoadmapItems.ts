@@ -3,7 +3,6 @@ import type { GenshinRoadmapReading } from "#src/models/genshinProgress/GenshinR
 
 import { ROADMAP_PHASE_HEADING_REGEX } from "#src/services/genshinProgress/constants";
 
-const HEADING_REGEX = /^## /u;
 // A checkbox line is one roadmap item, ticked when its mark is an x
 const ITEM_REGEX = /^- \[(?<mark>[ x])\] /u;
 // The quest an item names, by the quest's id in the form `quest <id>`
@@ -21,7 +20,7 @@ export const parseRoadmapItems = (text: string): GenshinRoadmapReading => {
     if (heading !== undefined) {
       phase = Number(heading.phase);
       names.set(phase, heading.name ?? "");
-    } else if (HEADING_REGEX.test(line)) phase = undefined;
+    } else if (line.startsWith("## ")) phase = undefined;
     else if (mark !== undefined) items.push({ isDone: mark === "x", phase, quest: QUEST_REGEX.exec(line)?.groups?.id });
   }
   return { items, names };
