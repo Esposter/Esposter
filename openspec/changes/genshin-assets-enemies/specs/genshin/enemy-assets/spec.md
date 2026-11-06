@@ -80,3 +80,45 @@ An enemy's attack SHALL deal the damage its combat table gives it; an attack the
 - **GIVEN** an enemy whose combat table names no damage for an attack it makes
 - **WHEN** the attack lands on a target
 - **THEN** the target takes the flat strike's damage from the enemy's attack
+
+### Requirement: Each placed kind's prefab is named from its monster row
+
+A placed kind's prefab, controller and combat config SHALL be named from its monster row through the asset index.
+
+#### Scenario: A placed kind's prefab is named from its monster row
+
+- **GIVEN** a placed kind whose monster row holds its prefab's hash
+- **WHEN** the monster rows are read
+- **THEN** the prefab's path name is given beside the kind
+
+#### Scenario: A hash the index cannot name is counted
+
+- **GIVEN** a monster row holds a prefab hash the asset index does not name
+- **WHEN** the monster rows are read
+- **THEN** the hash is counted as unnamed and no path name is guessed for it
+
+### Requirement: The enemy family pages are fetched only when the wiki cache lacks them
+
+The enemy family pages SHALL be fetched into the wiki cache only when the cache does not hold them.
+
+#### Scenario: A cached enemy page is not fetched again
+
+- **GIVEN** an enemy family page is already in the wiki cache
+- **WHEN** the family pages are fetched
+- **THEN** that page is not requested from the wiki again
+
+### Requirement: Each family label a camp names maps to a variant its page lists
+
+Each family label that a camp names SHALL map to one of the variants its wiki family page lists.
+
+#### Scenario: Every family label a camp names maps to a variant its page lists
+
+- **GIVEN** a camp names a family label
+- **WHEN** the family labels are mapped to kinds
+- **THEN** the label maps to a variant its wiki family page lists
+
+#### Scenario: A family label no variant of its page matches is reported
+
+- **GIVEN** a camp names a family label whose page lists no variant the dump holds
+- **WHEN** the family labels are mapped to kinds
+- **THEN** the label is reported as unmapped and no kind is assigned to it
