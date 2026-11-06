@@ -75,6 +75,31 @@ describe("editorToolbar", () => {
     expect(component.findAll('[data-toolbar-item="shape"]')).toHaveLength(1);
   });
 
+  test("a variant a key puts in hand is the one its slot draws once another tool is in hand", async () => {
+    expect.hasAssertions();
+
+    const variants = [UiIconMeaning.Arrow, UiIconMeaning.Pen, UiIconMeaning.Hand].map((meaning, index) => ({
+      meaning,
+      title: `variant${index}`,
+      value: `variant${index}`,
+    }));
+    const shape = { meaning: UiIconMeaning.Arrow, title: "shape", value: "shape", variants };
+    const component = mountToolbar(
+      [
+        { items: [shape], kind: EditorToolbarGroupKind.Tool, label: groupLabel },
+        { items: [takeOne(tools, 0)], kind: EditorToolbarGroupKind.Tool, label: "other" },
+      ],
+      takeOne(variants, 1).value,
+    );
+    await flushPromises();
+    await component.setProps({ modelValue: takeOne(tools, 0).value });
+    await flushPromises();
+    const slot = component.get('[data-toolbar-item="shape"]');
+    const slotIcon = component.findAllComponents(UiIcon).find((icon) => slot.element.contains(icon.element));
+
+    expect(slotIcon?.props("meaning")).toBe(takeOne(variants, 1).meaning);
+  });
+
   test("A toolbar folds what does not fit into one menu", async () => {
     expect.hasAssertions();
 

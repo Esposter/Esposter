@@ -27,7 +27,7 @@ const overflowWidth = ref(0);
 const gap = ref(0);
 // Nothing folds until the observer has read the toolbar's width
 const availableWidth = ref(Number.POSITIVE_INFINITY);
-// The variant each slot last drew, by its group's label
+// The variant each slot last drew, by its group's label. A variant in hand is the one its slot draws, whether a click or a key put it there
 const usedVariantValues = shallowReactive(new Map<string, string>());
 const flatEntries = computed(() =>
   groups.flatMap(({ items, kind, label: groupLabel }) => items.map((item) => ({ item, kind, label: groupLabel }))),
@@ -69,8 +69,7 @@ const getShownVariant = (variants: EditorToolbarItem[], groupLabel: string) => {
   const lastUsedVariant = variants.find(({ value }) => value === usedVariantValues.get(groupLabel));
   return inHandVariant ?? lastUsedVariant ?? takeOne(variants);
 };
-const chooseVariant = (groupLabel: string, value: string) => {
-  usedVariantValues.set(groupLabel, value);
+const chooseVariant = (value: string) => {
   modelValue.value = value;
 };
 const getSlot = ({ title, value, variants = [] }: EditorToolbarItem, groupLabel: string) => {
@@ -122,7 +121,7 @@ const foldedMenuItems = computed<Item[]>(() =>
         onClick: item.isDisabled
           ? undefined
           : () => {
-              chooseVariant(groupLabel, shownVariant.value);
+              chooseVariant(shownVariant.value);
             },
         title: shownVariant.title,
       };
@@ -173,6 +172,17 @@ onMounted(async () => {
 watch(flatEntries, async () => {
   await measure();
 });
+// The slot of a variant in hand draws that variant from then on, so a choice a key makes is the one the slot shows once the tool moves on
+watch(
+  modelValue,
+  (value) => {
+    for (const { items, label: groupLabel } of groups) {
+      const [family] = items;
+      if (family?.variants?.some((variant) => variant.value === value)) usedVariantValues.set(groupLabel, value);
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -184,7 +194,7 @@ watch(flatEntries, async () => {
           :data-toolbar-item="view.slot.value"
           :items="view.slot.menuItems"
           :label="view.slot.title"
-          @select="(value) => chooseVariant(view.label, value)"
+          @select="(value) => chooseVariant(value)"
         >
           <UiIcon :meaning="view.slot.meaning" />
         </UiMenu>
