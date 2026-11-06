@@ -25,7 +25,7 @@ Along each wall a building's bays SHALL be the fewest that keep each no wider th
 #### Scenario: Wall wider than a bay
 
 - **WHEN** a wall is longer than three metres
-- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres (`getLiyueBays` in `packages/genshin-world/src/services/liyue/getLiyueBays.ts`, with `LIYUE_BAY_WIDTH` at 3 in `packages/genshin-world/src/services/liyue/constants.ts`), and a column stands at each bay's start and at the far end of the front and back walls (`createLiyueBuildingGeometries` in `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts`)
+- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres (`getLiyueBays` in `packages/genshin-world/src/services/liyue/getLiyueBays.ts`, with the bay width in `LIYUE_BAY_WIDTH` in `packages/genshin-world/src/services/liyue/constants.ts`), and a column stands at each bay's start and at the far end of the front and back walls (`createLiyueBuildingGeometries` in `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts`)
 
 ### Requirement: Lattice openwork
 
@@ -34,7 +34,7 @@ Each bay between two columns SHALL carry a lattice panel with a rail at its sill
 #### Scenario: Lattice between columns
 
 - **WHEN** a bay lies between two columns
-- **THEN** its lattice shows bars standing flat to the wall (`createLiyueLatticeBoxes` in `packages/genshin-world/src/services/liyue/createLiyueLatticeBoxes.ts` draws each bar as a box `LIYUE_LATTICE_BAR_SIZE` (0.06 metres, its value in `packages/genshin-world/src/services/liyue/constants.ts`) square in section, and `createLiyueWallBox` in `packages/genshin-world/src/services/liyue/createLiyueWallBox.ts` centres it on the wall's face, so it lies in the wall's plane)
+- **THEN** its lattice shows bars standing flat to the wall (`createLiyueLatticeBoxes` in `packages/genshin-world/src/services/liyue/createLiyueLatticeBoxes.ts` draws each bar as a box square in section, its side `LIYUE_LATTICE_BAR_SIZE` in `packages/genshin-world/src/services/liyue/constants.ts`, and `createLiyueWallBox` in `packages/genshin-world/src/services/liyue/createLiyueWallBox.ts` centres it on the wall's face, so it lies in the wall's plane)
 
 ### Requirement: Upturned eaves and finials
 
@@ -43,7 +43,7 @@ Each roof tier SHALL rise in a shell that is steep at the eave and levels toward
 #### Scenario: Eave corners lift
 
 - **WHEN** a roof tier is drawn
-- **THEN** its eave corners curl upward past its middle (`createLiyueRoofTierGeometry` in `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts` lifts each eave point by its squared distance from the centre, so a corner, at 2, lifts more than a side's middle, at 1, with `LIYUE_ROOF_EAVE_CURL` at 0.9 in `packages/genshin-world/src/services/liyue/constants.ts`)
+- **THEN** its eave corners curl upward past its middle (`createLiyueRoofTierGeometry` in `packages/genshin-world/src/services/liyue/createLiyueRoofTierGeometry.ts` lifts each point by `LIYUE_ROOF_EAVE_CURL` in `packages/genshin-world/src/services/liyue/constants.ts`, times its squared distance from the centre and halved, scaled down linearly up the shell, so a corner lifts more than a side's middle and the top does not lift)
 
 ### Requirement: One geometry per material
 
@@ -65,4 +65,4 @@ The building palette SHALL draw lacquer in red and gold and terraces in stone, w
 
 ## Open
 
-- [ ] **Columns and beams read red and gold, and the terrace reads as stone** — contradicted by `packages/genshin-world/src/services/liyue/constants.ts`'s `LIYUE_LACQUER_COLOR` and `LIYUE_ROOF_COLOR`: the lacquer that holds the columns, beams and lattice (the returned `lacquer` part of `createLiyueBuildingGeometries` in `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts`) is red (`LIYUE_LACQUER_COLOR`, 0xa8262a), and the gold is the roof's (`LIYUE_ROOF_COLOR`, 0xd8a33a), each given its part by the `BuildingKit.Liyue` entry of `BuildingKitPartsMap` in `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`, where the page holds the columns and beams as red and gold. The hosted palette record, `regions/liyue/palette`, replaces these where it samples them, and it is not on disk.
+- [ ] **Columns and beams read red and gold, and the terrace reads as stone** — contradicted by `packages/genshin-world/src/services/liyue/constants.ts`'s `LIYUE_LACQUER_COLOR` and `LIYUE_ROOF_COLOR`: the lacquer that holds the columns, beams and lattice (the returned `lacquer` part of `createLiyueBuildingGeometries` in `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.ts`) is red (`LIYUE_LACQUER_COLOR`), and the gold is the roof's (`LIYUE_ROOF_COLOR`), each given its part by the `BuildingKit.Liyue` entry of `BuildingKitPartsMap` in `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`, where the page holds the columns and beams as red and gold. The hosted palette record, `regions/liyue/palette`, replaces these where it samples them, and it is not on disk.
