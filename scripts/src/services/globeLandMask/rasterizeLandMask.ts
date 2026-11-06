@@ -1,6 +1,7 @@
 import type { LandRows } from "#src/models/globeLandMask/LandRows";
 import type { WorldFeature } from "#src/models/globeLandMask/WorldFeature";
 
+import { GeometryType } from "#src/models/globeLandMask/GeometryType";
 import { takeOne } from "@esposter/shared";
 
 /**
@@ -16,7 +17,9 @@ export const rasterizeLandMask = (
   const height = 180 * cellsPerDegree;
   const spansByRow: [number, number][][] = Array.from({ length: height }, () => []);
   for (const { geometry } of features) {
-    const polygons = (geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates) as number[][][][];
+    const polygons = (
+      geometry.type === GeometryType.Polygon ? [geometry.coordinates] : geometry.coordinates
+    ) as number[][][][];
     for (const polygon of polygons) {
       const edges: [number, number, number, number][] = [];
       for (const ring of polygon)

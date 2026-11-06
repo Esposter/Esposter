@@ -1,5 +1,6 @@
 import type { WorldFeature } from "#src/models/globeLandMask/WorldFeature";
 
+import { GeometryType } from "#src/models/globeLandMask/GeometryType";
 import { rasterizeLandMask } from "#src/services/globeLandMask/rasterizeLandMask";
 import { describe, expect, test } from "vitest";
 
@@ -15,7 +16,7 @@ describe(rasterizeLandMask, () => {
   test("a square lands in the cells whose centres it holds", () => {
     expect.hasAssertions();
 
-    const feature: WorldFeature = { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: "Polygon" } };
+    const feature: WorldFeature = { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: GeometryType.Polygon } };
     const { rows } = rasterizeLandMask([feature], 1);
 
     expect(rows).toHaveLength(180);
@@ -27,7 +28,7 @@ describe(rasterizeLandMask, () => {
     expect.hasAssertions();
 
     const feature: WorldFeature = {
-      geometry: { coordinates: [createSquare(0, 0, 4, 4), createSquare(1, 1, 3, 3)], type: "Polygon" },
+      geometry: { coordinates: [createSquare(0, 0, 4, 4), createSquare(1, 1, 3, 3)], type: GeometryType.Polygon },
     };
 
     expect(rasterizeLandMask([feature], 1).rows[88]).toStrictEqual([180, 181, 183, 184]);
@@ -37,8 +38,8 @@ describe(rasterizeLandMask, () => {
     expect.hasAssertions();
 
     const features: WorldFeature[] = [
-      { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: "Polygon" } },
-      { geometry: { coordinates: [[createSquare(1, 0, 2, 1)]], type: "MultiPolygon" } },
+      { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: GeometryType.Polygon } },
+      { geometry: { coordinates: [[createSquare(1, 0, 2, 1)]], type: GeometryType.MultiPolygon } },
     ];
 
     expect(rasterizeLandMask(features, 1).rows[89]).toStrictEqual([180, 182]);
@@ -47,7 +48,7 @@ describe(rasterizeLandMask, () => {
   test("the resolution scales the grid", () => {
     expect.hasAssertions();
 
-    const feature: WorldFeature = { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: "Polygon" } };
+    const feature: WorldFeature = { geometry: { coordinates: [createSquare(0, 0, 1, 1)], type: GeometryType.Polygon } };
     const { cellsPerDegree, rows } = rasterizeLandMask([feature], 2);
 
     expect(cellsPerDegree).toBe(2);
