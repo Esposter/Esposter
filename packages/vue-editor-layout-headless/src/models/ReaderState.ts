@@ -2,8 +2,9 @@ import { MAX_LAYOUT_ID_LENGTH, MAX_LAYOUT_REGION_COUNT } from "#src/services/con
 import { createRecordSchema } from "@esposter/shared";
 import { z } from "zod";
 
-// What a reader has changed of a layout. Each map is keyed by the id of the region it is about, and holds that region's size,
-// Whether an on-demand region is open, or the active panel of a tabbed region
+// What a reader has changed of a layout. Each map is keyed by the id of the region it is about.
+// The size map holds that region's size. The open map holds whether an on-demand region is open.
+// The panel map holds the active panel of a tabbed region.
 export interface ReaderState {
   regionActivePanelIdMap: Record<string, string>;
   regionOpenMap: Record<string, boolean>;
