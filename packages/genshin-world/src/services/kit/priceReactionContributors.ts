@@ -3,11 +3,10 @@ import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { Except } from "type-fest";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { checkIsLunarReactionType } from "#src/services/combat/checkIsLunarReactionType";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { checkIsEnumValue } from "@esposter/shared";
 
 // Each deployed contributor's damage from the price of its level and attributes, priced alone with its own CRIT, in the
 // Order the team lists them, as a reaction's contributors are weighted. A Lunar reaction's CRIT Rate, CRIT DMG and DMG Bonus
@@ -22,7 +21,7 @@ export const priceReactionContributors = (
   reaction?: Except<KitReaction, "combatant">,
 ): number[] => {
   const { characterIdCombatantMap, kitEffectState, party, random } = context;
-  const lunarReaction = reaction && checkIsEnumValue(LunarReactionType, reaction.reactionType) ? reaction : undefined;
+  const lunarReaction = reaction && checkIsLunarReactionType(reaction.reactionType) ? reaction : undefined;
   return getDeployedCharacterIds(party).flatMap((characterId) => {
     const combatant = characterIdCombatantMap.get(characterId);
     if (!combatant || !contributorIds.has(characterId)) return [];
