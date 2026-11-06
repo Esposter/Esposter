@@ -1,8 +1,8 @@
 ## 1. Shell
 
-- [ ] 1.1 Draw resolved regions docked, floating and as sheets, with a registry from content key to component. Verify: a test named after the scenario 'A region is drawn as the layout presents it', written first and seen failing, run under happy-dom.
-- [ ] 1.2 Wire the existing resize handle to each docked region's resolved size and limits, writing its answer through the package's resize. Verify: tests named after 'A handle resizes from the keyboard' and 'A resize past a limit stops at the limit', seen failing first.
-- [ ] 1.3 Hold each editor type's reader state in a Pinia store over local storage, read back through the package's parse. Verify: a test named after 'A stored size is restored on the next open', seen failing first.
+- [x] 1.1 Draw resolved regions docked, floating and as sheets, with a registry from content key to component. Verify: a test named after the scenario 'A region is drawn as the layout presents it', written first and seen failing, run under happy-dom.
+- [x] 1.2 Wire the existing resize handle to each docked region's resolved size and limits, writing its answer through the package's resize. Verify: tests named after 'A handle resizes from the keyboard' and 'A resize past a limit stops at the limit', seen failing first.
+- [x] 1.3 Hold each editor type's reader state in a Pinia store over local storage, read back through the package's parse. Verify: a test named after 'A stored size is restored on the next open', seen failing first.
 
 ## 2. Toolbar
 
