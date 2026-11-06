@@ -19,3 +19,6 @@ export const MAX_DEV_NAME_SUGGESTION_COUNT = 5;
 export const SCRIPTED_FRAME_MS = 1000 / 60;
 // The instant a scripted clock starts at, fixed so the world's daily resets fall on the same frames in every run
 export const SCRIPTED_START_MS = Temporal.Instant.from("2026-01-01T00:00:00Z").epochMilliseconds;
+// The space a record's fields are split on: the one before a lower-case key and its equals sign, so a value keeps
+// Its own spaces
+export const DEV_RECORD_FIELD_SEPARATOR_REGEX = / (?=[a-z]+=)/u;
