@@ -412,6 +412,9 @@ describe(stepActiveKit, () => {
     expect.hasAssertions();
     const context = createContext([createKitCombatant(BEIDOU_CHARACTER_ID, BEIDOU_KIT)]);
     BEIDOU_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toHaveLength(1);
+
     damagePartyMember(context.party, BEIDOU_CHARACTER_ID, 1);
     const kitState = createKitState();
     const controls = createControls();
