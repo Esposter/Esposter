@@ -1,7 +1,6 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
@@ -15,7 +14,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
@@ -98,10 +97,6 @@ const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
   };
 };
 
-// The ATK a heal of hers reads at its tick, with the buffs on her as they stand then, as gcsim's TotalAtk reads it on each tick
-const getTickAttack = (tick: KitContext, caster: Combatant): number =>
-  getBuffedCombatant(caster, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap).attributes.attack;
-
 export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
@@ -143,7 +138,7 @@ export const createEscoffierKitBehaviour = ({
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              burstHealFlat + burstHealAttackShare * getTickAttack(tick, combatant),
+              burstHealFlat + burstHealAttackShare * getBuffedAttack(combatant, tick),
             );
           },
           radius: burstRadius,
@@ -161,7 +156,7 @@ export const createEscoffierKitBehaviour = ({
               tick,
               combatant,
               tick.activeCombatant.characterId,
-              REHAB_DIET_SCALING * getTickAttack(tick, combatant),
+              REHAB_DIET_SCALING * getBuffedAttack(combatant, tick),
             );
           },
           radius: burstRadius,

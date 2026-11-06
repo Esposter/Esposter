@@ -20,7 +20,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -85,13 +85,12 @@ const BURST_HEAL_RADIUS = 7;
 // A heal of Constellation 1's on a member, for 80% of Charlotte's ATK with the buffs on her as they stand at the heal, as gcsim's
 // C1 heal reads TotalAtk each time it runs
 const healConstellation1 = (context: KitContext, combatant: Combatant, characterId: number): void => {
-  const { attack } = getBuffedCombatant(
+  changeKitMemberHealth(
+    context,
     combatant,
-    context.kitEffectState.effects,
-    context.party,
-    context.characterIdCombatantMap,
-  ).attributes;
-  changeKitMemberHealth(context, combatant, characterId, CONSTELLATION_1_HEAL_ATTACK_SHARE * attack);
+    characterId,
+    CONSTELLATION_1_HEAL_ATTACK_SHARE * getBuffedAttack(combatant, context),
+  );
 };
 
 const healTeam = (context: KitContext, caster: Combatant, flatHealth: number, attackShare: number): void => {

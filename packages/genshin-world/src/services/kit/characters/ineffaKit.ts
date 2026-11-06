@@ -24,7 +24,7 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getBuffedAttack } from "#src/services/kit/effects/getBuffedAttack";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -166,15 +166,9 @@ export const createIneffaKitBehaviour = ({
   // The shield her skill and Constellation 2's burst place, priced from her ATK with the buffs on her as the task that places it runs
   const scheduleShield = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void => {
     scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) => {
-      const { attack } = getBuffedCombatant(
-        combatant,
-        tick.kitEffectState.effects,
-        tick.party,
-        tick.characterIdCombatantMap,
-      ).attributes;
       castKitShield(tick, combatant.characterId, {
         element: Element.Electro,
-        health: shieldAttackShare * attack + shieldFlatHealth,
+        health: shieldAttackShare * getBuffedAttack(combatant, tick) + shieldFlatHealth,
         secondsRemaining: shieldSeconds,
       });
     });
@@ -253,7 +247,7 @@ export const createIneffaKitBehaviour = ({
         return {};
       const ineffa = context.characterIdCombatantMap.get(INEFFA_CHARACTER_ID);
       if (!ineffa) return {};
-      const { attack } = getBuffedCombatant(ineffa, effects, context.party, context.characterIdCombatantMap).attributes;
+      const attack = getBuffedAttack(ineffa, context);
       return {
         damageBonus: Math.min(attack * CONSTELLATION_1_DAMAGE_BONUS_PER_ATTACK, CONSTELLATION_1_DAMAGE_BONUS_CAP),
       };
