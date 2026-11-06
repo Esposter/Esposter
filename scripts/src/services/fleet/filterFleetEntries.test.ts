@@ -25,13 +25,13 @@ describe(filterFleetEntries, () => {
   test("keeps every entry when no lane or kind is named", () => {
     expect.hasAssertions();
 
-    expect(filterFleetEntries(ENTRIES, "", "")).toStrictEqual(ENTRIES);
+    expect(filterFleetEntries(ENTRIES, "", undefined)).toStrictEqual(ENTRIES);
   });
 
   test("keeps only the queue items of one lane, so a page runner never takes a cpu item", () => {
     expect.hasAssertions();
 
-    expect(filterFleetEntries(ENTRIES, "page", "").map(({ id }) => id)).toStrictEqual(["page-item"]);
+    expect(filterFleetEntries(ENTRIES, "page", undefined).map(({ id }) => id)).toStrictEqual(["page-item"]);
   });
 
   test("keeps only the entries of one kind, and a unit, which has no lane, never matches a named lane", () => {

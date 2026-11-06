@@ -1,9 +1,7 @@
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 import { claimNextFleetEntry } from "#src/services/fleet/claimNextFleetEntry";
 import { createFleetWorker } from "#src/services/fleet/createFleetWorker";
-import { checkIsEnumValue } from "#src/services/shared/checkIsEnumValue";
 import { runCommand } from "#src/services/timing/runCommand";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 
 // `pnpm ai:fleet:next [--lane <lane>] [--kind <queue|unit>]` — claims the first entry this worker may take, lowest phase
@@ -14,7 +12,11 @@ import { defineCommand } from "citty";
 await runCommand(
   defineCommand({
     args: {
-      kind: { default: "", description: "Only entries of this kind, queue or unit; any when empty", type: "string" },
+      kind: {
+        description: "Only entries of this kind, queue or unit; any when omitted",
+        options: Object.values(FleetEntryKind),
+        type: "enum",
+      },
       lane: {
         default: "",
         description: "Only queue items on this lane, such as page or cpu; any when empty",
@@ -26,8 +28,6 @@ await runCommand(
       name: "next",
     },
     run: async ({ args }) => {
-      if (args.kind !== "" && !checkIsEnumValue(FleetEntryKind, args.kind))
-        throw new InvalidOperationError(Operation.Read, args.kind, "--kind is queue or unit");
       const worker = process.env.FLEET_WORKER || createFleetWorker();
       const entry = await claimNextFleetEntry(args.lane, args.kind, worker);
       if (entry !== undefined) console.info(`claimed ${entry.id} as worker ${worker}`);

@@ -1,4 +1,5 @@
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
+import type { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
 
 import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
 import { claimFleetEntry } from "#src/services/fleet/claimFleetEntry";
@@ -14,7 +15,7 @@ import { selectTakeableEntries } from "#src/services/fleet/selectTakeableEntries
 // Undefined when none is takeable. A queue line with no id is warned about on stderr, so a missing id is never silent
 export const claimNextFleetEntry = async (
   lane: string,
-  kind: string,
+  kind: FleetEntryKind | undefined,
   worker: string,
 ): Promise<FleetEntry | undefined> => {
   const profile = readRequiredMachineProfile();
