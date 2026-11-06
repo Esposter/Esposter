@@ -9,3 +9,6 @@ export const CITING_PATHSPECS: string[] = [
   "CONTRIBUTING.md",
   "SCORE.md",
 ];
+// The trees the line-number rule reads: the specs and the skills, short of the archive, which is the record of what
+// Shipped and ages with the code by design
+export const LINE_NUMBER_PATHSPECS: string[] = ["openspec", ":(exclude)openspec/changes/archive", ".agents/skills"];
