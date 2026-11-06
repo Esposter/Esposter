@@ -68,10 +68,12 @@ describe("pageBuilderEditor", () => {
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
   });
 
-  // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of
+  // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of.
+  // No global is unstubbed here: the mock server stubs fetch and Headers in its beforeAll, and unstubbing every global
+  // would restore the real fetch, so each later request would miss the mock and hang
   afterEach(() => {
     vi.useRealTimers();
-    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   test("the editor draws the palette, the canvas and the content panel", async () => {
@@ -554,8 +556,7 @@ describe("pageBuilderEditor", () => {
 
   test("ctrl C copies the selected node to the clipboard", async () => {
     expect.hasAssertions();
-    const writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
-    vi.stubGlobal("navigator", { clipboard: { writeText } });
+    const writeText = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue(undefined);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
