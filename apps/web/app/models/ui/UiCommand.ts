@@ -11,6 +11,9 @@ export type UiCommand = {
   // What it is listed under, in the palette and in the shortcuts dialog: the surface that registered it
   group: string;
   id: string;
+  // Listed and drawn unavailable, its description saying why, for a command the selection cannot take now. It is never
+  // Chosen, and it is given no `to`, since a link would still go where it leads
+  isDisabled?: boolean;
   // Whether it is the one chosen among its group, as a theme mode is: a group of choices lists every member, so the
   // Reader sees what there is to pick, and marks the chosen one rather than cycling through them behind one command
   isSelected?: boolean;

@@ -103,10 +103,16 @@ watch(
           :is="command.to ? NuxtInvisibleLink : 'div'"
           :id="getOptionId(index)"
           :="command.to ? { to: command.to } : {}"
+          :aria-disabled="command.isDisabled || undefined"
           :aria-selected="command.id === highlightedId"
+          class="aria-disabled:op-disabled"
           role="option"
           ui-item
-          @click="emit('select', command)"
+          @click="
+            () => {
+              if (!command.isDisabled) emit('select', command);
+            }
+          "
           @mousedown.prevent
         >
           <UiItemContent

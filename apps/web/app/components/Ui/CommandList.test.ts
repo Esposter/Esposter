@@ -75,6 +75,23 @@ describe("uiCommandList", () => {
       expect(component.emitted("select")).toBeUndefined();
     });
 
+    test("lists a disabled command as unavailable and never chooses it", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiCommandList, {
+        props: {
+          commands: [{ ...takeOne(commands, 0), isDisabled: true }],
+          label: "label",
+          placeholder: "",
+          query: "",
+        },
+      });
+      await component.get('[role="option"]').trigger("click");
+
+      expect(component.get('[role="option"]').attributes("aria-disabled")).toBe("true");
+      expect(component.emitted("select")).toBeUndefined();
+    });
+
     test("marks the chosen member of a group of choices", () => {
       expect.hasAssertions();
 
