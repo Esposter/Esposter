@@ -7,3 +7,5 @@ export enum ComputeKind {
   Pieces = "Pieces",
   Dataset = "Dataset",
 }
+
+export const ComputeKinds = Object.values(ComputeKind);

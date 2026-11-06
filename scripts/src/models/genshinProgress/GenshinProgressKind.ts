@@ -5,3 +5,5 @@ export enum GenshinProgressKind {
   Item = "Item",
   Quest = "Quest",
 }
+
+export const GenshinProgressKinds = Object.values(GenshinProgressKind);

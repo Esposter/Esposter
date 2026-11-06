@@ -1,7 +1,9 @@
-import { ComputeKind } from "#src/models/fleet/ComputeKind";
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { ComputeKind } from "#src/models/fleet/ComputeKind";
+import type { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
+
+import { ComputeKinds } from "#src/models/fleet/ComputeKind";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
-import { GenshinProgressKind } from "#src/models/genshinProgress/GenshinProgressKind";
+import { GenshinProgressKinds } from "#src/models/genshinProgress/GenshinProgressKind";
 import { MAX_GENSHIN_PHASE } from "#src/services/fleet/constants";
 
 // The Genshin roadmap, whose phase headings group every open item and name each phase
@@ -17,8 +19,8 @@ export const ROADMAP_PHASE_HEADING_REGEX: RegExp = new RegExp(
 export const GENSHIN_SESSIONS_DIRECTORY = "packages/genshin-world/src/services/dev/sessions";
 // The order the report's rows read in: the compute kinds, then the change, the roadmap item and the quest
 export const GENSHIN_ROW_KINDS: readonly (ComputeKind | GenshinProgressKind)[] = [
-  ...Object.values(ComputeKind),
-  ...Object.values(GenshinProgressKind),
+  ...ComputeKinds,
+  ...GenshinProgressKinds,
 ];
 // The header over each phase's table of rows
 export const GENSHIN_PHASE_HEADER: readonly string[] = [
@@ -34,8 +36,6 @@ export const GENSHIN_PHASE_HEADER: readonly string[] = [
 ];
 // The most characters of a first blocker a table row prints, its full words being on the unit's own line
 export const GENSHIN_BLOCKER_WIDTH = 100;
-// The components a region's passes report is kept under, each named by its folder
-export const GENSHIN_COMPONENTS: readonly DerivedAssetComponent[] = Object.values(DerivedAssetComponent);
 // The passes a scene may not owe: their measures return `isNotOwed` (`measureMotion.ts`, `measureAudio.ts`), so a row
 // Missing for one is not owed or not run, which the report does not record. Every other pass with no row was not held
 export const GENSHIN_OPTIONAL_PASSES: readonly ParityPass[] = [ParityPass.Motion, ParityPass.Audio];
