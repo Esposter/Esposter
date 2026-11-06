@@ -3,7 +3,7 @@ import { DRAG_AUTOSCROLL_EDGE, DRAG_AUTOSCROLL_SPEED } from "@/services/ui/const
 import { describe, expect, test } from "vitest";
 
 describe(getEdgeScrollVelocity, () => {
-  test("a drag at the edge scrolls, up at the top and down at the bottom", () => {
+  test("a drag at the edge scrolls", () => {
     expect.hasAssertions();
     const frameRect = { height: 500, top: 100 };
 

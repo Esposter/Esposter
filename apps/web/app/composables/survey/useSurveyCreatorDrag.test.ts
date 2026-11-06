@@ -44,7 +44,7 @@ const setup = (content: SurveyPageNode[]) => {
 };
 
 describe(useSurveyCreatorDrag, () => {
-  test("a palette kind released over a slot is inserted there, and one undo takes it back out", () => {
+  test("a release inserts once", () => {
     expect.hasAssertions();
 
     const { document, original, registerSlots, startPaletteDrag, undo } = setup([
@@ -81,10 +81,10 @@ describe(useSurveyCreatorDrag, () => {
     expect(isUndoable.value).toBe(false);
   });
 
-  test("Escape ends a drag in progress, so the release after it inserts nothing", () => {
+  test("a cancelled drag leaves no history entry", () => {
     expect.hasAssertions();
 
-    const { document, isDragging, original, registerSlots, startPaletteDrag } = setup([
+    const { document, isDragging, isUndoable, original, registerSlots, startPaletteDrag } = setup([
       createPage([createQuestion("question1"), createQuestion("question2")]),
     ]);
     registerSlots(() => [createPageSlot()]);
@@ -97,5 +97,25 @@ describe(useSurveyCreatorDrag, () => {
     window.dispatchEvent(createPointerEvent("pointerup", 200, 30));
 
     expect(document.value).toStrictEqual(original);
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("a question is dragged from the palette", () => {
+    expect.hasAssertions();
+
+    const questionOne = createQuestion("question1");
+    const questionTwo = createQuestion("question2");
+    const { document, registerSlots, startPaletteDrag } = setup([createPage([questionOne, questionTwo])]);
+    registerSlots(() => [createPageSlot()]);
+    startPaletteDrag(SurveyNodeType.Text, createPointerEvent("pointerdown", 200, 10));
+    window.dispatchEvent(createPointerEvent("pointermove", 200, 30));
+    window.dispatchEvent(createPointerEvent("pointerup", 200, 30));
+
+    const children = document.value.content[0]?.props.children ?? [];
+
+    expect(children).toHaveLength(3);
+    expect(children[0]?.props.id).toBe(questionOne.props.id);
+    expect(children[1]?.type).toBe(SurveyNodeType.Text);
+    expect(children[2]?.props.id).toBe(questionTwo.props.id);
   });
 });

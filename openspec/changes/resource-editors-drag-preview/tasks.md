@@ -1,14 +1,14 @@
 ## 1. The shared session
 
-- [x] 1.1 Share the pieces of a drag: the ghost chip, the edge scroll's speed rule, the touch hold's decision and the refusal text, each a tested pure function or component the three editors use. Verify: tests beside `getEdgeScrollVelocity`, `getPressMoveOutcome` and `getDropRefusal`.
+- [x] 1.1 Share the pieces of a drag: the ghost chip, the edge scroll's speed rule, the touch hold's decision and the refusal text, each a tested pure function or component the three editors use. Verify: tests beside `getEdgeScrollVelocity`, `getPressMoveOutcome` and `getDropRefusal`. Tests named after the scenarios 'A release on a refusing slot inserts nothing' in usePageBuilderDrag.test.ts and 'A drag at the edge scrolls' in getEdgeScrollVelocity.test.ts.
 - [x] 1.2 Draw the pending insertion through each editor's own render path, the page builder from a derived document and the survey canvas from a derived slot list. Verify: a test named after the scenario 'A palette kind is drawn in the slot it would land in' written first and seen failing.
-- [x] 1.3 Cancel on Escape and on a release over no slot. Verify: the page builder's and the survey's drag composable tests; the red run was not captured for each.
-- [x] 1.4 Insert or move on release as one history entry. Verify: the drag composable tests, and the survey's `insertNodeAt` test, whose red run was not captured.
+- [x] 1.3 Cancel on Escape and on a release over no slot. Verify: the page builder's and the survey's drag composable tests; the red run was not captured for each. Tests named after the scenario 'A cancelled drag leaves no history entry' in useSurveyCreatorDrag.test.ts.
+- [x] 1.4 Insert or move on release as one history entry. Verify: the drag composable tests, and the survey's `insertNodeAt` test, whose red run was not captured. Tests named after the scenario 'A release inserts once' in useSurveyCreatorDrag.test.ts.
 
 ## 2. The three editors
 
 - [ ] 2.1 Show the preview, the ghost, the edge scroll and the touch hold in the page builder's webpage and email canvases. Verify: driven in the browser once after the edits. Open: the code and its unit tests are in; no browser run has driven a block over a slot, and the drop index's stability at a boundary rests on the unshifting rule's unit test alone.
-- [x] 2.2 Make the survey Creator's palette and canvas draggable. Verify: the resolver's and the composable's tests, whose red run was not captured.
+- [x] 2.2 Make the survey Creator's palette and canvas draggable. Verify: the resolver's and the composable's tests, whose red run was not captured. Tests named after the scenario 'A question is dragged from the palette' in useSurveyCreatorDrag.test.ts.
 - [ ] 2.3 Give the whiteboard's palette drag a ghost at the pointer. Verify: driven in the browser once after the edits. Open: the ghost and the drag are built and unit-tested; no browser run has dragged an item onto the canvas.
 
 ## 3. One press tracker
