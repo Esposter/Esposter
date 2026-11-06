@@ -21,9 +21,7 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-follow-camera        | —     | unreconciled |
 | genshin-fontaine             | —     | unreconciled |
 | genshin-gadgets              | —     | unreconciled |
-| genshin-genius-invokation    | —     | unreconciled |
 | genshin-ground-detail        | —     | unreconciled |
-| genshin-hud                  | —     | unreconciled |
 | genshin-imaginarium-theater  | —     | unreconciled |
 | genshin-ley-line-outcrops    | —     | unreconciled |
 | genshin-mail                 | —     | unreconciled |
@@ -31,13 +29,11 @@ Each open change's tasks and its spec delta name the same scenarios (the `opensp
 | genshin-menu-quit-prompt     | —     | unreconciled |
 | genshin-nod-krai             | —     | unreconciled |
 | genshin-offering-systems     | —     | unreconciled |
-| genshin-party                | —     | unreconciled |
 | genshin-puzzles              | —     | unreconciled |
 | genshin-reputation           | —     | unreconciled |
 | genshin-serenitea-pot        | —     | unreconciled |
 | genshin-sheer-cold           | —     | unreconciled |
 | genshin-shops                | —     | unreconciled |
-| genshin-spawned-places       | —     | unreconciled |
 | genshin-statues-of-the-seven | —     | unreconciled |
 | genshin-sumeru               | —     | unreconciled |
 | genshin-trees-and-scatter    | —     | unreconciled |
