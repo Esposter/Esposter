@@ -6,11 +6,11 @@ The Genius Invokation board's runs: its duel frame's recording fetched, and its 
 
 ### Requirement: The Genius Invokation duel board
 
-The Genius Invokation duel board SHALL be compared over its whole frame, its score reported against the global default difference bar, and its image written by approve.
+The Genius Invokation duel board SHALL be compared over its frame less the game's card art (the art its mask leaves out), its score reported against the global default difference bar, and its image written by approve.
 
 #### Scenario: A board whose frame scores above the bar still gets its image
 
-- **GIVEN** the duel board's whole frame is compared against its reference
+- **GIVEN** the duel board is compared over its frame less the card art against its reference
 - **WHEN** its perceptual difference score is above the global default bar
 - **THEN** the score is reported over the bar, and the board's image is still written
 

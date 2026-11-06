@@ -1,6 +1,6 @@
 ## Purpose
 
-The adventurer handbook's runs: its experience page compared over the whole frame.
+The adventurer handbook's runs: its experience page compared over what the page draws.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ The adventurer handbook's experience page SHALL be compared over what the page d
 
 #### Scenario: An experience page above the bar still gets its image
 
-- **GIVEN** the experience page's whole frame is compared against its reference
+- **GIVEN** the experience page is compared over what it draws against its reference
 - **WHEN** its perceptual difference score is above the global default bar
 - **THEN** the score is reported over the bar, and the page's image is still written
 
