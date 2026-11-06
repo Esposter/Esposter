@@ -58,12 +58,6 @@ The world SHALL show a Mora chest at each Mora chest marker of Mondstadt that th
 - **WHEN** the player comes near a Mora chest marker
 - **THEN** a Mora chest stands on its ground there
 
-#### Scenario: No Mora chest is drawn before its rows are published
-
-- **GIVEN** the Mora chest rows of a region are not published
-- **WHEN** the player comes near the marker of a Mora chest in that region
-- **THEN** no Mora chest is drawn there
-
 ### Requirement: Every region's unopened chests are offered in the world
 
 The world SHALL offer the unopened chests of each region's chest record, not only Mondstadt's.
@@ -116,8 +110,33 @@ The world SHALL draw each region's Statue of the Seven with that region's fitted
 - **WHEN** the player stands at that region's statue
 - **THEN** the statue stands as the fitted shape of its own region
 
-#### Scenario: A region with no statue record draws no statue
+### Requirement: Mondstadt's chests, gather points and puzzles stand at the game's own group placements
 
-- **GIVEN** a region's statue record is not published
-- **WHEN** the player is in that region
-- **THEN** no Statue of the Seven is drawn there
+The world SHALL place Mondstadt's chests, gather points and puzzles at the placements that the game's own gadget groups give, in place of the public map's.
+
+#### Scenario: A scene's gadget group is read from its block script
+
+- **GIVEN** a scene's gadget group is held by its block script
+- **WHEN** the scene's chests, gather points and puzzles are placed in the world
+- **THEN** each one of the group stands at the placement the group gives
+- **AND** no placement from the public map is used in its place
+
+### Requirement: The Mondstadt gate is drawn from its fitted hull
+
+The deployed build SHALL draw the Mondstadt gate and door part from its fitted hull, a part it does not draw today.
+
+#### Scenario: A gate is drawn from its fitted hull in the deployed build
+
+- **GIVEN** the Mondstadt gate's hull is fitted from the gate and door meshes its export holds
+- **WHEN** the deployed build draws Mondstadt
+- **THEN** the gate stands as its fitted hull
+
+### Requirement: The Serenitea Pot realm is drawn from its fitted island
+
+The world SHALL draw the Serenitea Pot realm from its fitted island, in place of the disc and two boxes the realm stands as until then.
+
+#### Scenario: The realm is drawn from its fitted island
+
+- **GIVEN** the realm's island outline is fitted from its export
+- **WHEN** the player is in the realm
+- **THEN** the realm stands as its fitted island
