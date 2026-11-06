@@ -86,6 +86,13 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy
 - [Whiteboard](whiteboard/design.md) — a freeform canvas of shapes, arrows bound to them, strokes, text, images and sticky notes, exported as SVG or PNG
 - [Editor drag preview](editor-drag-preview/design.md) — the page builder, the survey Creator and the whiteboard draw a dragged block where it would land, with a ghost at the pointer, edge autoscroll, a touch hold and an Escape cancel
+- [Editor shell](editor-shell/design.md) — one shell draws every editor from a layout it is given: docked, sheet and overlay regions, a toolbar that folds, a contextual panel that follows the selection and a strip of buttons that open the sheets
+- [Editor guardrails](editor-guardrails/design.md) — the survey and the page builder refuse an edit that would break the document, say why where the reader is working and list the problems in one surface
+- [Whiteboard layout](whiteboard-layout/design.md) — every tool one press away in a single toolbar, and properties that appear only for what is selected
+- [Survey layout](survey-layout/design.md) — the survey's structure first, with the inspector and the logic beside the canvas and a sheet for each on a phone
+- [Email layout](email-layout/design.md) — a bar of the email's own controls, the blocks beside the canvas and an inspector that asks for a selection
+- [Webpage layout](webpage-layout/design.md) — the blocks and the inspector docked around the canvas, and sheets behind buttons on a narrow window
+- [Dashboard layout](dashboard-layout/design.md) — the visuals and the inspector around the grid, with the grid kept as the canvas
 - [Editor compact chrome](editor-compact-chrome/design.md) — one grouped, searchable palette for the survey and the page builder, a whiteboard panel that floats over the canvas, a readable survey canvas and a toolbar that folds
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header

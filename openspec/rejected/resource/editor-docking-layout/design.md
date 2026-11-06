@@ -9,4 +9,4 @@ A reader moves an editor's panels: drags a panel to another edge, groups it into
 - **It is the part of the libraries that costs the most.** Floating windows, popouts and drag-to-dock are most of what Dockview and golden-layout hold, and none of it is a behaviour any surveyed freeform or structured editor offers its reader. Excalidraw, tldraw, SurveyJS Creator, Typeform and the email builders surveyed all have fixed arrangements.
 - **A reader's resize is enough.** The layout engine keeps what the libraries settled that an editor uses: panels named by id, the reader's sizes kept apart from the layout, limits and collapsing, and a splitter operated from the keyboard.
 
-Adopting Dockview's Vue binding is rejected for the same reason: it brings the docking and popout surface along for a layout of four regions. See the [editor layout program](../../../changes/resource-editor-layout-program/design.md).
+Adopting Dockview's Vue binding is rejected for the same reason: it brings the docking and popout surface along for a layout of four regions. See the [editor layout program](../../../specs/resource/editor-shell/design.md).
