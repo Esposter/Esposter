@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The deterministic checks over a webpage's document that report what is wrong with it before it is published, shown in the editor's Check panel and answered to an agent under the Resources scope.
+The deterministic checks over a webpage's document that report what is wrong with it before it is published, shown as warnings in the editor's problems surface and answered to an agent under the Resources scope.
 
 ## Requirements
 

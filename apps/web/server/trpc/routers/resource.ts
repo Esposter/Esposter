@@ -220,7 +220,7 @@ export const resourceRouter = router({
         sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
       });
     }),
-  // The critique the owner's Check panel shows, answered beside the content version it was read at. A type that declares
+  // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type that declares
   // No critique is refused by name, so an empty list is never read as a clean page
   readCritique: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
     .meta({

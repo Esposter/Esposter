@@ -19,6 +19,6 @@ The survey Creator is a separate editor shell, not the page builder, but it has 
 
 - when the built design of any page-builder subject is in question: `openspec/specs/resource/page-builder/README.md`
 - when a node type, the document or its publish changes: `openspec/specs/resource/page-builder/document-model/design.md`
-- when a webpage's critique, one of its checks, the Check panel or the agent's critique read changes: `openspec/specs/resource/page-builder/critique/design.md`
+- when a webpage's critique, one of its checks, the problems surface or the agent's critique read changes: `openspec/specs/resource/page-builder/critique/design.md`
 - when a key is bound, or an editor's or canvas's keydown changes: `openspec/specs/resource/page-builder/keyboard/design.md`
 - when undo, redo or an edit's history changes: `openspec/specs/resource/page-builder/undo-as-patches/design.md`

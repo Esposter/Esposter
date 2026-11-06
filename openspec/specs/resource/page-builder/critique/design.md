@@ -1,6 +1,6 @@
 # Page builder critique
 
-A critique of the webpage document: a set of deterministic checks that report what is wrong with a page before it is published, shown in the editor's Check panel and answered to an agent under the Resources scope. It is built on the [document model](../document-model/design.md), whose nodes and styles it reads, and on the [style panel](../style-panel/design.md), whose per-breakpoint values it checks. It uses no model: every finding is a computation over the document, so it costs nothing to run and sends nothing anywhere.
+A critique of the webpage document: a set of deterministic checks that report what is wrong with a page before it is published, shown in the editor's problems surface, in the bar above the canvas, and answered to an agent under the Resources scope. It is built on the [document model](../document-model/design.md), whose nodes and styles it reads, and on the [style panel](../style-panel/design.md), whose per-breakpoint values it checks. It uses no model: every finding is a computation over the document, so it costs nothing to run and sends nothing anywhere.
 
 ## How it works
 
@@ -48,7 +48,7 @@ The critique takes each colour as a resolved sRGB value from its caller, so the 
 
 **The survey invite's target is passed in.** Whether a survey is published is a database fact, so the function takes a lookup from its caller, and the server supplies it from the survey's publish state. The alternative was for the function to read the database, which would make it server-only and break the browser's use of it. The owner's published surveys are read only for a page that holds an invite, since only an invite asks for one: the server reads them for such a page, and the editor fetches them once an open page first holds one. The alternative was to read them for every page, which spends a query on a page with nothing to look up.
 
-**A finding names its node by id, and its row by the id and the kind.** The canvas selects by node id, so a finding carries the id it names. One node can carry two findings, a width and a contrast, so the Check panel keys each row by the node id followed by the finding's kind, and choosing a row reads the node id back from the first part of its key. A node id holds no separator, so that first part is always the node's. The alternative was to key the row by the node id alone, which gives both rows one key and one DOM id, so keyboard focus reaches only the first.
+**A finding names its node by id, and its row by its place in the list.** The canvas selects by node id, so a finding carries the id it names. One node can carry two findings, a width and a contrast, so the problems surface keys each row by the finding's index in the list, and choosing a row reads that finding back by the same index. The alternative was to key the row by the node id alone, which gives both rows one key and one DOM id, so keyboard focus reaches only the first.
 
 **Text colour inherits down the tree, as CSS inherits it.** A text takes the nearest ancestor's text colour, not only its background, so the check reads the colour the browser draws it in. The alternative was to carry the background alone and check each text against the page's default black, which passes a light text inside a section that sets a light colour on the white page, a text the browser draws with low contrast.
 
@@ -86,7 +86,7 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 
 - **Theme tokens are not resolved.** A colour the style panel picks from the page's swatches is stored as a reference to the token, `var(--color-…)`. The probe reads that reference in the editor's own document, where the page's tokens are not declared: they are declared on the canvas frame's document only, which the page's css is adopted into. The browser computes the reference as undeclared, so a text coloured from a swatch is checked against the colour the editor inherits rather than the token's colour, and a background from a swatch reads as transparent and is reported unchecked. The critique does not read the page's tokens.
 - **The non-sRGB colour path is proven only against a mocked canvas.** The test environment rejects oklch, so the path that reads a colour the browser computes outside sRGB is tested by stubbing the canvas's 2D context to return fixed pixels. No test drives a real colour in another space through a browser.
-- **The email's checks are not built.** Only the webpage's definition declares a critique, so the read tool refuses an email by name and the Check panel is offered on a webpage alone.
+- **The email's checks are not built.** Only the webpage's definition declares a critique, so the read tool refuses an email by name and the problems surface lists a webpage's findings alone.
 
 ## Key files
 
@@ -133,9 +133,9 @@ The critique is pure, so it has no retry. A survey lookup that fails leaves its 
 | `apps/web/app/services/shared/readBrowserColor.ts`                       | a colour read off a probe element the browser computes its value on                                               |
 | `apps/web/app/services/shared/getCanvasSrgbColor.ts`                     | a colour the browser computes outside sRGB, read off a one-pixel canvas                                           |
 | `apps/web/app/services/shared/parseRgbColor.ts`                          | a computed rgb colour as its channels, or nothing when it is translucent                                          |
-| `apps/web/app/services/pageBuilder/getCritiqueFindingRow.ts`             | a finding as a Check panel row, keyed by its node id and kind                                                     |
-| `apps/web/app/components/PageBuilder/Check/Index.vue`                    | the Check panel: the findings list, and choosing a row selects its node on the canvas                             |
-| `apps/web/app/components/PageBuilder/Editor.vue`                         | the editor's tabs, which include the Check panel for a webpage                                                    |
+| `apps/web/app/components/Editor/Problems.vue`                            | the problems surface: each finding as a row naming its node, and choosing a row selects that node                 |
+| `apps/web/app/components/PageBuilder/Bar.vue`                            | the bar over the canvas, holding the device toggle and the problems surface wired to the node selection           |
+| `apps/web/app/components/PageBuilder/Editor.vue`                         | the page builder's arrangement on the editor shell, whose bar lists the webpage's findings                        |
 | `apps/web/app/store/pageBuilder/document.ts`                             | the open, unsaved document the panel checks                                                                       |
 | `apps/web/app/store/pageBuilder/canvas.ts`                               | the selection a finding's row sets                                                                                |
 
