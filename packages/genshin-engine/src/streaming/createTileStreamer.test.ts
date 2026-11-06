@@ -252,6 +252,33 @@ describe(createTileStreamer, () => {
     });
   });
 
+  test("keeps a failed tile counted while it is still wanted but no slot is free to ask for it again", () => {
+    expect.hasAssertions();
+
+    const requestTile = vi.fn<(key: number) => void>();
+    const tileStreamer = createTileStreamer({
+      disposeTile: vi.fn<(tile: number) => void>(),
+      maxCachedCount: 2,
+      maxPendingCount: 1,
+      requestTile,
+    });
+    const wanted = createTerrainSelection(1);
+    wanted.keys.set([fineKey]);
+    wanted.count = 1;
+    tileStreamer.update(wanted, emptySelection, emptySelection);
+    tileStreamer.fail(fineKey);
+    // The coarser tile takes the only slot, so the failed one is still wanted but cannot be asked for this update
+    const coarserWanted = createTerrainSelection(2);
+    coarserWanted.keys.set([fineKey, coarseKey]);
+    coarserWanted.count = 2;
+    tileStreamer.update(coarserWanted, emptySelection, emptySelection);
+
+    expect({ count: tileStreamer.pendingCount(), requested: requestTile.mock.calls }).toStrictEqual({
+      count: 2,
+      requested: [[fineKey], [coarseKey]],
+    });
+  });
+
   test("gives up a tile failed MAX_TILE_ATTEMPTS times, which then counts as settled", () => {
     expect.hasAssertions();
 

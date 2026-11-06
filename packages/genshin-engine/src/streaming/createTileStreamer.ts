@@ -104,7 +104,9 @@ export const createTileStreamer = <TTile>({
     },
     update: (wanted: TerrainSelection, drawn: TerrainSelection, surrounding: TerrainSelection) => {
       frame++;
-      // A failed tile is asked for again below if it is still wanted, so the ones not wanted any more leave the count
+      // A failed tile is asked for again below if a slot is free, and the ones still in view that no slot took stay counted
+      // Until a later update asks for them or finds them out of view
+      const failedKeys = [...retryKeySet];
       retryKeySet.clear();
       // An ancestor drawn in place of a tile still coming is used as much as a wanted one
       for (const { count, keys } of [wanted, drawn, surrounding])
@@ -129,6 +131,10 @@ export const createTileStreamer = <TTile>({
             pendingWantedFrameMap.set(key, frame);
             requestTile(key);
           }
+      }
+      for (const key of failedKeys) {
+        const isInView = [wanted, drawn, surrounding].some(({ count, keys }) => keys.subarray(0, count).includes(key));
+        if (isInView && !pendingWantedFrameMap.has(key)) retryKeySet.add(key);
       }
     },
   };
