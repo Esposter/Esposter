@@ -1,27 +1,33 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
+import type { Tree } from "#src/models/genshinText/Tree";
 
 import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_CONFIG_FILE,
   GCSIM_MAIN_COMMIT,
   GCSIM_RAW_URL,
+  GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
 import { GcsimFolderSubfoldersMap } from "#src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
+import { readGitHubHeaders } from "#src/services/genshinText/readGitHubHeaders";
+import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { runGh } from "#src/services/shared/runGh";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { posix } from "node:path";
 
 const FETCH_CONCURRENCY = 8;
 
 // The named character folders gcsim's main branch holds at its pinned commit, each with the subfolders its files sit in,
-// Read only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file read
-// Through its raw URL into memory, never written anywhere
+// Read only to classify a value a kit holds that the tag does not: the tree is listed through the API, authorized by
+// GITHUB_TOKEN when one is set, and each file read through its raw URL into memory, never written anywhere. A tree the
+// API cut short throws, so a listing is never silently missing characters
 export const readGcsimMainCharacters = async (folders: readonly string[]): Promise<Map<string, GcsimCharacter>> => {
-  const { tree } = parseMachineJson<{ tree: { path: string; type: string }[] }>(
-    runGh(["api", `repos/genshinsim/gcsim/git/trees/${GCSIM_MAIN_COMMIT}?recursive=1`]),
+  const { tree, truncated } = await fetchJson<Tree>(
+    `${GCSIM_TREES_URL}/${GCSIM_MAIN_COMMIT}?recursive=1`,
+    readGitHubHeaders(process.env.GITHUB_TOKEN),
   );
+  if (truncated) throw new InvalidOperationError(Operation.Read, GCSIM_MAIN_COMMIT, "its tree listing was truncated");
   const subfolderPaths = new Set(
     folders.flatMap((folder) =>
       (GcsimFolderSubfoldersMap[folder] ?? [""]).map((subfolder) =>

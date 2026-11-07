@@ -3,36 +3,48 @@ import {
   GCSIM_CONFIG_FILE,
   GCSIM_MAIN_COMMIT,
   GCSIM_RAW_URL,
+  GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
+import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
-import { runGh } from "#src/services/shared/runGh";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/kits/gcsim/readGcsimCharacter"));
+vi.mock(import("#src/services/shared/fetchJson"));
 vi.mock(import("#src/services/shared/fetchOk"));
-vi.mock(import("#src/services/shared/runGh"));
 
 describe(readGcsimMainCharacters, () => {
   const folder = "albedo";
   const configPath = `${GCSIM_CHARACTERS_PATH}/${folder}/${GCSIM_CONFIG_FILE}`;
 
   afterEach(() => {
+    vi.unstubAllEnvs();
     vi.resetAllMocks();
   });
 
   test("A fetched source is pinned to a commit", async () => {
     expect.hasAssertions();
 
-    vi.mocked(runGh).mockReturnValueOnce(JSON.stringify({ tree: [{ path: configPath, type: "blob" }] }));
+    // An empty token is no token, so the listing's headers are absent and the call's arguments are the URL alone
+    vi.stubEnv("GITHUB_TOKEN", "");
+    vi.mocked(fetchJson).mockResolvedValueOnce({ tree: [{ path: configPath, type: "blob" }], truncated: false });
     vi.mocked(fetchOk).mockResolvedValueOnce(new Response(""));
 
     await readGcsimMainCharacters([folder]);
 
-    expect(vi.mocked(runGh)).toHaveBeenCalledExactlyOnceWith([
-      "api",
-      expect.stringContaining(`git/trees/${GCSIM_MAIN_COMMIT}?recursive=1`),
-    ]);
+    expect(vi.mocked(fetchJson)).toHaveBeenCalledExactlyOnceWith(
+      `${GCSIM_TREES_URL}/${GCSIM_MAIN_COMMIT}?recursive=1`,
+      undefined,
+    );
     expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${configPath}`);
+  });
+
+  test("A tree the API cut short throws", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(fetchJson).mockResolvedValueOnce({ tree: [], truncated: true });
+
+    await expect(readGcsimMainCharacters([folder])).rejects.toThrowError(GCSIM_MAIN_COMMIT);
   });
 });

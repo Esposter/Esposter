@@ -13,6 +13,7 @@ export const GCSIM_TAG = "v2.47.2";
 export const GCSIM_MAIN_COMMIT = "5dacbb4f0e27944a1409743342a7ad17998eae53";
 export const GCSIM_REPOSITORY_URL = "https://github.com/genshinsim/gcsim";
 export const GCSIM_RAW_URL = "https://raw.githubusercontent.com/genshinsim/gcsim";
+export const GCSIM_TREES_URL = "https://api.github.com/repos/genshinsim/gcsim/git/trees";
 export const GCSIM_CHARACTERS_PATH = "internal/characters";
 // A character folder's config, which a folder holding only other folders, the Traveler's, does not have
 export const GCSIM_CONFIG_FILE = "config.yml";
