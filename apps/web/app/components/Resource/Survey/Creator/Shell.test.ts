@@ -4,6 +4,7 @@ import ResourceSurveyCreatorShell from "@/components/Resource/Survey/Creator/She
 import ResourceSurveyRunner from "@/components/Resource/Survey/Runner.vue";
 import { SurveyEditorRegion } from "@/models/resource/survey/SurveyEditorRegion";
 import { SurveyEditorSelectionKind } from "@/models/resource/survey/SurveyEditorSelectionKind";
+import { findSheet } from "@/services/editor/findSheet.test";
 import { SurveyEditorLayout } from "@/services/resource/survey/SurveyEditorLayout";
 import { SurveyEditorRegionNameMap } from "@/services/resource/survey/SurveyEditorRegionNameMap";
 import { SurveyEditorRegistry } from "@/services/resource/survey/SurveyEditorRegistry";
@@ -179,10 +180,7 @@ describe("resourceSurveyCreatorShell", () => {
     const { select } = useSurveyCreatorCommands();
     select(firstQuestionPointer);
     const component = await mountSuspended(ResourceSurveyCreatorShell);
-    // Every sheet of a compact window rises from the bottom, so the inspector's is the one named by its region
-    const inspectorSheet = component
-      .findAll<HTMLDialogElement>("dialog")
-      .find((dialog) => dialog.text().startsWith(SurveyEditorRegionNameMap[SurveyEditorRegion.Inspector]));
+    const inspectorSheet = findSheet(component, SurveyEditorRegionNameMap[SurveyEditorRegion.Inspector]);
 
     expect(inspectorSheet?.element.open).toBe(false);
 

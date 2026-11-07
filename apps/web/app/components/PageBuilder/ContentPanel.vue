@@ -20,7 +20,7 @@ const { formSchema, formValue, setFormValue, validationSchema } = usePageBuilder
 );
 // Nothing is drawn for a resource whose document is not held, since there is no node or root to edit
 const jsonSchema = computed(() => formSchema.value && zodToJsonSchema(formSchema.value));
-// A block whose content is edited on the canvas, as a text block's is, or that has none, as a column has none, holds no field
+// A block whose content is edited on the canvas, as an email's text block's is, or that has none, as a column has none, holds no field
 const hasFields = computed(() => Object.keys(jsonSchema.value?.properties ?? {}).length > 0);
 </script>
 

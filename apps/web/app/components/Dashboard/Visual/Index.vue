@@ -10,6 +10,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/constants";
 import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
 import { checkIsAxisVisualPropsData } from "@/services/dashboard/checkIsAxisVisualPropsData";
+import { checkIsChartVisualType } from "@/services/dashboard/checkIsChartVisualType";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useClipboardStore } from "@/store/clipboard";
@@ -43,7 +44,7 @@ const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData 
 const drawnDataset = computed(() => (visualPropsData.value ? resolvedDataset.value : undefined));
 const isGroup = computed(() => visual.type === VisualType.Group);
 // A chart draws its own toolbar along the top right of the tile, so the tile's marks start below it
-const isChart = computed(() => !isGroup.value && visual.type !== VisualType.Card && visual.type !== VisualType.Table);
+const isChart = computed(() => !isGroup.value && checkIsChartVisualType(visual.type));
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,

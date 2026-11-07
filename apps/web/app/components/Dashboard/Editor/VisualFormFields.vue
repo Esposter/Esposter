@@ -5,6 +5,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
+import { checkIsChartVisualType } from "@/services/dashboard/checkIsChartVisualType";
 import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { setVisualType } from "@/services/dashboard/setVisualType";
 import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
@@ -27,9 +28,7 @@ watchDeep(editedItem, (newEditedItem) => {
 });
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 // A card and a table draw no chart, so the chart type and the chart's settings have nothing to set for them
-const isChartVisual = computed(
-  () => editedItem.value.type !== VisualType.Card && editedItem.value.type !== VisualType.Table,
-);
+const isChartVisual = computed(() => checkIsChartVisualType(editedItem.value.type));
 // A group is made from the palette and keeps its type, so a chart's type picker offers every type but the group's
 const visualTypeItems = VisualTypeCategoryDefinitions.flatMap(({ items }) => items).filter(
   ({ value }) => value !== VisualType.Group,

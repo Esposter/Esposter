@@ -2,6 +2,7 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
+import type { MjmlColumnNode } from "mjml-blocks";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -21,7 +22,7 @@ import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
 import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { TEST_EMAIL, TEST_NESTED_TEXT_ID } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
@@ -53,19 +54,12 @@ const createPublication = (resourceId: string): ResourcePublicationInResource =>
   resourceId,
   updatedAt: new Date(0),
 });
-const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument => ({
+// An email's leaf block sits in a column of a section
+const createEmailLeafDocument = (leaf: MjmlColumnNode["props"]["children"][number]): EmailDocument => ({
   content: [
     {
       props: {
-        children: [
-          {
-            props: {
-              children: [{ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: EmailNodeType.SurveyInvite }],
-              id: TEST_OTHER_ID,
-            },
-            type: MjmlNodeType.Column,
-          },
-        ],
+        children: [{ props: { children: [leaf], id: TEST_OTHER_ID }, type: MjmlNodeType.Column }],
         id: TEST_THIRD_ID,
       },
       type: MjmlNodeType.Section,
@@ -73,46 +67,12 @@ const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument => ({
   ],
   root: { props: {} },
 });
+const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument =>
+  createEmailLeafDocument({ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: EmailNodeType.SurveyInvite });
 
-// An email's button sits in a column of a section, and its form edits its label
-const createEmailButtonDocument = (content: string): EmailDocument => ({
-  content: [
-    {
-      props: {
-        children: [
-          {
-            props: { children: [{ props: { content, id: TEST_ID }, type: MjmlNodeType.Button }], id: TEST_OTHER_ID },
-            type: MjmlNodeType.Column,
-          },
-        ],
-        id: TEST_THIRD_ID,
-      },
-      type: MjmlNodeType.Section,
-    },
-  ],
-  root: { props: {} },
-});
-// A text block holds its text on the canvas, so its form holds no field
-const createEmailTextDocument = (): EmailDocument => ({
-  content: [
-    {
-      props: {
-        children: [
-          {
-            props: {
-              children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text }],
-              id: TEST_OTHER_ID,
-            },
-            type: MjmlNodeType.Column,
-          },
-        ],
-        id: TEST_THIRD_ID,
-      },
-      type: MjmlNodeType.Section,
-    },
-  ],
-  root: { props: {} },
-});
+// An email's button, whose form edits its label
+const createEmailButtonDocument = (content: string): EmailDocument =>
+  createEmailLeafDocument({ props: { content, id: TEST_ID }, type: MjmlNodeType.Button });
 
 describe("pageBuilderContentPanel", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -171,7 +131,7 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
-    expect(component.findComponent(UiSchemaForm).exists()).toBe(true);
+    expect(component.getComponent(UiSchemaForm).props()).toMatchObject({ modelValue: { content: "a" } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { content: "b" });
 
@@ -187,9 +147,9 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailTextDocument());
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_NESTED_TEXT_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
     expect(component.findComponent(UiSchemaForm).exists()).toBe(false);

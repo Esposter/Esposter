@@ -21,6 +21,7 @@ import PageBuilderCanvasFrame from "@/components/PageBuilder/Canvas/Frame.vue";
 import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { findSheet } from "@/services/editor/findSheet.test";
 import {
   DEVICE_BREAKPOINT_MAP,
   WEBPAGE_NODE_TYPE_TITLE_MAP,
@@ -193,10 +194,7 @@ describe("pageBuilderEditor", () => {
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
-    // Every sheet of a compact window rises from the bottom, so the inspector's is the one named by its region
-    const inspector = component
-      .findAll<HTMLDialogElement>("dialog")
-      .find((dialog) => dialog.text().startsWith(PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]));
+    const inspector = findSheet(component, PAGE_BUILDER_REGION_NAME_MAP[PAGE_BUILDER_REGION_ID_MAP.Inspector]);
 
     expect(inspector?.element.open).toBe(false);
 
