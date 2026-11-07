@@ -1,7 +1,7 @@
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { checkSameFileNames } from "#src/services/genshinAssets/shared/checkSameFileNames";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
-import { exportBlockTextures } from "#src/services/genshinAssets/shared/exportBlockTextures";
+import { exportBlockByName } from "#src/services/genshinAssets/shared/exportBlockByName";
 import { readPngNames } from "#src/services/genshinAssets/shared/readPngNames";
 import { WEAPON_ICON_DIRECTORY } from "#src/services/genshinAssets/weapons/constants";
 import { getWeaponIconPlan } from "#src/services/genshinAssets/weapons/getWeaponIconPlan";
@@ -30,7 +30,8 @@ export const exportWeaponIcons = async (): Promise<string> => {
     return `${heldNames.length} weapon icons already match the index in ${WEAPON_ICON_DIRECTORY}${missingReport}`;
   rmSync(WEAPON_ICON_DIRECTORY, { force: true, recursive: true });
   mkdirSync(WEAPON_ICON_DIRECTORY, { recursive: true });
-  for (const [block, names] of blockNamesMap) exportBlockTextures(block, names, WEAPON_ICON_DIRECTORY);
+  for (const [block, names] of blockNamesMap)
+    exportBlockByName(block, AssetType.Texture2D, names, WEAPON_ICON_DIRECTORY);
   const exportedNames = new Set(readPngNames(WEAPON_ICON_DIRECTORY));
   const unexportedNames = heldNames.filter((name) => !exportedNames.has(name));
   return `${exportedNames.size} weapon icons exported into ${WEAPON_ICON_DIRECTORY}${missingReport}${describeNames("indexed icons no PNG came out of", unexportedNames)}`;

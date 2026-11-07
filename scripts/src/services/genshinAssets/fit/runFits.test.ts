@@ -67,6 +67,28 @@ describe(runFits, () => {
     expect(events).toStrictEqual(["sky start", "sky end", "clouds start", "clouds end"]);
   });
 
+  // An opt-in fit reads an export the install must make first, so a run of the component's fits leaves it out, and it runs
+  // only when it is named
+  test("runs an opt-in fit only when it is named", async () => {
+    expect.hasAssertions();
+
+    const optIn: [name: string, fit: () => Promise<GameDataBuild>, options: { isOptIn: boolean }] = [
+      "pictures",
+      () => Promise.resolve({ notes: ["pictures"], objects: { "character/pictures": 2 } }),
+      { isOptIn: true },
+    ];
+    const withOptIn = [...fits, optIn];
+
+    await expect(runFits(withOptIn, [], { isDryRun: false })).resolves.toStrictEqual({
+      notes: ["clouds", "sky"],
+      objects: { "login/clouds": 0, "login/sky": 1 },
+    });
+    await expect(runFits(withOptIn, ["pictures"], { isDryRun: false })).resolves.toStrictEqual({
+      notes: ["pictures"],
+      objects: { "character/pictures": 2 },
+    });
+  });
+
   test("refuses a name no fit has", async () => {
     expect.hasAssertions();
     await expect(runFits(fits, [""], { isDryRun: false })).rejects.toThrowErrorMatchingInlineSnapshot(

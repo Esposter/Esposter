@@ -1,3 +1,5 @@
+import type { Sharp } from "sharp";
+
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { resolveSource } from "#src/services/genshinParity/shared/resolveSource";
 import { traceMask } from "#src/services/genshinParity/shared/traceMask";
@@ -5,14 +7,11 @@ import { writeFile } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 import sharp from "sharp";
 
-// A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
-// Guessed: the region is split into ink and paper halfway between its faintest and strongest ink (a pale mark on a
-// Pale ground splits as well as a dark one), traced into curves, and the ink's paths kept. The SVG is written beside
-// The references, with the region and the trace side by side to check it against, and its path returned
-export const traceImage = async (
-  source: string,
-  x: number,
-  y: number,
+// The ink of a region as its paths, traced at the scale the region is enlarged to. Traced at the source's full resolution,
+// never reduced; a small mark is smoothly enlarged first, so its antialiased edge becomes a curve rather than a staircase of
+// Its pixels. The paths are in the enlarged pixels, which the caller divides by the scale for the reference's own
+export const traceInk = async (
+  region: Sharp,
   width: number,
   height: number,
   scale: number,
@@ -20,11 +19,7 @@ export const traceImage = async (
   // Outline, lower for a mark the game draws flat over one printed with lighter detail (a logo's sparkles), so that
   // Detail stays ink rather than notching the edge it touches
   inkShare: number,
-): Promise<string> => {
-  const path = await resolveSource(source);
-  const region = sharp(path).flatten({ background: "#fff" }).extract({ height, left: x, top: y, width });
-  // Traced at the source's full resolution, never reduced; a small mark is smoothly enlarged first, so its antialiased
-  // Edge becomes a curve rather than a staircase of its pixels
+): Promise<{ inkPaths: string[]; tracedHeight: number; tracedWidth: number }> => {
   const tracedWidth = Math.round(width * scale);
   const tracedHeight = Math.round(height * scale);
   const enlarged = await region.clone().resize(tracedWidth, tracedHeight, { kernel: "lanczos3" }).png().toBuffer();
@@ -53,6 +48,24 @@ export const traceImage = async (
     tracedWidth,
     tracedHeight,
   );
+  return { inkPaths, tracedHeight, tracedWidth };
+};
+
+// A glyph in a region of an image as one filled path, so a mark is derived from the game's own shape rather than
+// Guessed: the region is split into ink and paper (`traceInk`), and the ink's paths returned. The SVG is written beside
+// The references, with the region and the trace side by side to check it against
+export const traceImage = async (
+  source: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  scale: number,
+  inkShare: number,
+): Promise<string> => {
+  const path = await resolveSource(source);
+  const region = sharp(path).flatten({ background: "#fff" }).extract({ height, left: x, top: y, width });
+  const { inkPaths, tracedHeight, tracedWidth } = await traceInk(region, width, height, scale, inkShare);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${tracedWidth} ${tracedHeight}"><path fill-rule="evenodd" d="${inkPaths.join(" ")}"/></svg>`;
   const name = `${basename(path, extname(path))}-trace-${x}-${y}`;
   const svgPath = join(PARITY_DIRECTORY, `${name}.svg`);

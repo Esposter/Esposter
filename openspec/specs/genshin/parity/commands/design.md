@@ -115,7 +115,7 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help` 
 - `scripts/src/services/genshinParity/commands/viewCommand.ts`: `view`'s flags and defaults
 - `scripts/src/services/genshinParity/commands/partsCommand.ts`: `parts`'s flags and its numbered part lines
 - `scripts/src/services/genshinParity/commands/polarCommand.ts`: `polar`'s positionals
-- `scripts/src/services/genshinParity/commands/traceCommand.ts`: `trace`'s positionals and defaults
+- `scripts/src/services/genshinParity/commands/traceCommand.ts`: `trace`'s positionals and defaults, and its `--into` and `--key` write of one keyed entry, divided by the scale; a key without its map, or a map without its key, is refused before the trace runs
 - `scripts/src/services/genshinParity/commands/attacksCommand.ts`: `attacks`'s segment lines
 - `scripts/src/services/genshinParity/commands/calibrateCommand.ts`: `calibrate`'s flags, the refusal of `--haze` with `--write`, and the published light
 - `scripts/src/services/genshinParity/commands/decayCommand.ts`: `decay`'s span lines by onset age

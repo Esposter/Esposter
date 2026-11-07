@@ -15,6 +15,7 @@ export enum AssetType {
   RectTransform = "RectTransform",
   Shader = "Shader",
   SkinnedMeshRenderer = "SkinnedMeshRenderer",
+  Sprite = "Sprite",
   TerrainData = "TerrainData",
   Texture2D = "Texture2D",
   Transform = "Transform",

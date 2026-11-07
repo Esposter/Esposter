@@ -1,3 +1,4 @@
+import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { checkNamecardAsset } from "#src/services/genshinAssets/namecards/checkNamecardAsset";
 import {
   NAMECARD_ART_DIRECTORY,
@@ -7,7 +8,7 @@ import {
 import { getNamecardDirectory } from "#src/services/genshinAssets/namecards/getNamecardDirectory";
 import { checkSameFileNames } from "#src/services/genshinAssets/shared/checkSameFileNames";
 import { ASSET_INDEX_PATH, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
-import { exportBlockTextures } from "#src/services/genshinAssets/shared/exportBlockTextures";
+import { exportBlockByName } from "#src/services/genshinAssets/shared/exportBlockByName";
 import { readPngNames } from "#src/services/genshinAssets/shared/readPngNames";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -30,8 +31,9 @@ export const exportNamecards = async (): Promise<string> => {
   for (const directory of DIRECTORIES) mkdirSync(directory, { recursive: true });
   for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block))
     for (const [directory, directoryAssets] of Map.groupBy(blockAssets, ({ name }) => getNamecardDirectory(name)))
-      exportBlockTextures(
+      exportBlockByName(
         block,
+        AssetType.Texture2D,
         directoryAssets.map(({ name }) => name),
         directory,
       );

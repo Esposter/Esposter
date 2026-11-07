@@ -95,35 +95,35 @@ Each kind runs in the order the [derived assets](../../specs/genshin/derived-ass
 
 - **Find:** `pnpm -C scripts genshin:parity screens <title>` lists a wiki article's whole-screen stills, and `pnpm -C scripts genshin:parity recordings clip <url> --from <s> --to <s> --name <name>` cuts a section of a video.
 - **Trace:** `pnpm -C scripts genshin:parity probe <reference> <x> <y> <width> <height>` finds the box and the ink, then `pnpm -C scripts genshin:parity trace <reference or "File:Title"> <x> <y> <width> <height> <scale> [inkShare]` traces it. Scale 3 suits inner detail, as the glyph rules set; 8 for an ornament is this design's own choice, which the glyph rules do not state.
-- **Record:** dividing the path by the scale into the reference's pixels, and writing it into the component's keyed map, is **no command yet** (task 1.2). The path map's shape is the one `InterfaceIconPathMap` holds.
+- **Record:** `trace … --into <map> --key <key>` divides the path by the scale into the reference's pixels and writes it as the keyed entry of the map's source (`writeTracedPath`, task 1.2). The record is written back through the generated-source formatter, which lays a short record on one line, so the writer reads its entries back whatever layout they have. The path map's shape is the one `InterfaceIconPathMap` holds.
 - **Prove:** a reference is named in the parity reference map and written with `pnpm -C scripts genshin:parity references pack`, then `pnpm -C scripts genshin:parity compare <reference>` scores it and `pnpm -C scripts genshin:parity approve <screen>` writes its image.
 
 **Multi-tone icon (layers by share)**
 
 - **Find** and **Trace**: as above, once per layer with its share. The white share of a mark on a grey disc is read as `(luminance - disc) / (255 - disc)`, the rule the glyph page gives.
-- **Split:** the talent icons alone are split by their own histogram, `pnpm -C scripts genshin:assets skill-glyphs`. Splitting any other icon is **no command yet** (task 1.3).
+- **Split:** `traceToneLayers` splits an icon's tones by their own histogram, the split the talent icons run, so any icon takes it; `pnpm -C scripts genshin:assets skill-glyphs` runs it over every talent (task 1.3).
 - **Colour:** `pnpm -C scripts genshin:parity polar <image> <bands> <angles>` fills a multi-colour silhouette by angle and by radius.
-- **Record:** one entry per layer in the keyed map is **no command yet**, written with the single-layer step (task 1.2).
+- **Record:** one `--key` per layer in the keyed map, written with the single-layer step (task 1.2).
 - **Prove:** as the flat mark.
 
 **Named icon or texture (in the install, not whole in a still)**
 
-- **Find:** the name is searched with `grep -E` over the asset index. No command searches Sprite or Texture2D names, since `pnpm -C scripts genshin:assets ui-find` reads RectTransforms only, so the search is **no command yet** (task 1.1).
-- **Export:** `pnpm -C scripts genshin:assets namecards` exports the namecards and nothing else. Exporting any other icon by its exact name is **no command yet** (task 1.1).
-- **Read:** a Sprite's rectangle inside its texture is **no command yet**, since the tooling's asset types have no Sprite member (task 1.1).
+- **Find:** `pnpm -C scripts genshin:assets sprites <names> --dry-run [--block <block>]` finds each name in the asset index as a sprite or a texture, and lists the names it holds nowhere (task 1.1). `ui-find` reads RectTransforms only.
+- **Export:** `pnpm -C scripts genshin:assets sprites <names>` exports each found name into `{data-root}/genshin-parity/references/sprites/` (task 1.1). Each found name's PNG from an earlier run is removed first, so a name the run wrote nothing for fails rather than passing on the old file. `namecards` exports the namecards and nothing else, through the same block export.
+- **Read:** a sprite's rectangle inside its atlas is read from AnimeStudio's JSON dump of the sprite (`readSpriteRectangle`), which names the atlas by name, and the sprites an atlas holds are cut from it by their rectangles together, the atlas decoded once (`cutSprites`). A sprite packed rotated is refused, since its rectangle is not its pixels (task 1.1).
 - **Then:** the exported texture takes the flat-mark or multi-tone route above, traced from the export as it would be from a still.
 
 **Plate, gradient or mean colour (shippable)**
 
 - **Measure:** `pnpm -C scripts genshin:parity measure <image> <x,y>...` prints the colour under each point, and `pnpm -C scripts genshin:parity probe` reads a rectangle's ink and edges. Both read a still.
-- **Fit:** `pnpm -C scripts genshin:assets fit windrise --only surfaces` reads each face through its material's tint, and that reader serves surfaces alone. A picture's or an icon's mean colour is **no command yet** (task 1.4).
+- **Fit:** `pnpm -C scripts genshin:assets fit windrise --only surfaces` reads each face through its material's tint, which `tintMaterialTexture` now holds for every reader. A portrait's mean colour is `fitPictureColour`, recorded as `character/pictureColours` by `pnpm -C scripts genshin:assets fit character --only pictureColours`, an opt-in step that a default `fit character` leaves out. A texture folder that holds no portrait is refused, not written as an empty record (task 1.4).
 - **Record:** a gradient stays a constant in its own map beside the component (the rarity face map's shape), hand-kept. A fitted colour that is published is a record of the hosted game data, published by `pnpm -C scripts genshin:assets fit <component> --only <key>` and checked by `pnpm -C scripts genshin:data verify`.
 - **Prove:** `compare` over the plate's region.
 
 **Picture (portrait, card face, banner, hall picture): cannot ship**
 
-- **Export:** by name for measuring only, which is **no command yet** (task 1.1). The export stays under `{data-root}` and is never committed.
-- **Colour:** the picture's mean colour, which becomes the stand-in, is **no command yet** (task 1.4).
+- **Export:** by name for measuring only, `genshin:assets sprites` (task 1.1). The export stays under `{data-root}` and is never committed.
+- **Colour:** the picture's mean colour, which becomes the stand-in, is `fitPictureColour` (task 1.4).
 - **Stand-in:** the component keeps its disc or plate in that colour, as the character menu's portrait discs do.
 - **Record:** an `Asset:` line under the roadmap item that holds its screen, in the roadmap's own format. Lines the roadmap lacks are task 4.1.
 - **Prove:** `pnpm -C scripts genshin:parity compare <screen>` over the stand-in.
@@ -191,39 +191,55 @@ The font is outside this family. The game's face is not shippable, and the open 
 - **An item icon takes the same first route as a mark, and its compare decides.** Rejected: declaring every item icon a picture from its family name, because no item has been traced yet to show that one cannot reach its bar, and the trace is the cheap attempt.
 - **Roadmap lines are linked by their opening words, never copied.** Rejected: copying every `Asset:` line into this page, since a second copy drifts, and the roadmap is regrouped under phase headings while this page is read.
 - **A traced mark stays in a keyed code map, and only a roster is published.** The talent icons are published by `skill-glyphs` because they are a roster of hundreds. Rejected: publishing every traced mark as hosted data, since a mark drawn on first paint would wait for a read.
-- **One named-icon export serves every family.** Rejected: a sprite export per family, since `namecards` already holds the loop and a second would repeat it.
+- **One named-icon export serves every family.** `namecards` and the sprites command share one block export (`exportBlockByName`). Rejected: a sprite export per family, since a second loop would repeat it.
+- **A fit that reads an export the install must make first is opt-in.** A run naming no fit leaves it out, so a machine without the export keeps the component's other records as they were, and a named run that finds no export fails with its own message. Rejected: a silent skip inside the fit, since it would publish an empty record over the published one; rejected: failing the default run, which would stop every other record of the component on a machine without the export.
+- **A sprite is cut from its atlas by the rectangle its dump names.** AnimeStudio's own PNG of a sprite is the same cut for the sprites checked, except a non-atlas logo, whose colour differs on semi-transparent edge pixels. Rejected: taking AnimeStudio's PNG as it is, since a placement reads the rectangle and not the picture.
 - **The item tile gains one optional art place.** Rejected: a per-screen icon component, since each screen would repeat the rarity face.
 - **Stat icons are searched by candidate names before they are called missing.** The attribute prefixes hold no name, but a few sprites under other prefixes (`UI_Icon_HP`, `UI_Icon_Critical`, `UI_Icon_CriticalDamage`, `UI_Icon_Heal`) are unchecked candidates. Rejected: recording the stat icons as not in the install on the prefix search alone.
 - **This change's `x-phase` is 0.** Its recipe is the family's spec and recipe, which phase 0's gate requires, so the lowest gate that fails without it is phase 0. Its screen tasks carry their own phase markers. Rejected: phase 2 as `x-phase`, because most of its tasks serve screens, since the phases page sets a change by its lowest gate.
 
 ## Key files
 
-| File                                                                      | Role                                                                                  |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------ |
-| `scripts/src/services/genshinParity/commands/traceCommand.ts`             | the trace command; gains the write of its path into the reference's pixels (task 1.2) |
-| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`     | the registry of `genshin:assets` commands; gains the named export (task 1.1)          |
-| `scripts/src/services/genshinAssets/namecards/exportNamecards.ts`         | the named export the new one follows                                                  |
-| `scripts/src/models/genshinAssets/shared/AssetType.ts`                    | the asset types; gains a Sprite member (task 1.1)                                     |
-| `scripts/src/services/genshinAssets/skillGlyphs/traceTalentIcon.ts`       | the talent icons' tone split, generalised to any icon (task 1.3)                      |
-| `scripts/src/services/genshinAssets/fit/fitSurfaceColours.ts`             | the tint reader the picture colour reuses (task 1.4)                                  |
-| `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                 | a trace whose scale is divided by hand today                                          |
-| `packages/genshin-interface/src/services/InterfaceIconPathMap.ts`         | the keyed path map the trace writes into                                              |
-| `packages/genshin-interface/src/components/ItemTile/Index.vue`            | the item tile; gains its art place (task 3.1)                                         |
-| `packages/genshin-interface/src/services/ItemRarityFaceGradientMap.ts`    | the rarity faces; gains the two-star stops (task 3.2)                                 |
-| `packages/genshin-world/src/components/Map/Drawing/Mark/Index.vue`        | the landmark mark the pins replace (task 3.3)                                         |
-| `packages/genshin-world/src/components/Character/AttributeList/Index.vue` | the attribute list whose stars take their element colour (task 3.4)                   |
-| `packages/genshin-world/src/services/hud/constants.ts`                    | the Paimon emblem's layers, with the trace its comment names                          |
-| `packages/genshin-interface/src/services/constants.ts`                    | the ornament, check, flourish, server mark and back arrow paths                       |
-| `openspec/changes/genshin-roadmap/tasks.md`                               | the open work; gains the lines task 4.1 adds                                          |
+| File                                                                      | Role                                                                                   |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinParity/commands/traceCommand.ts`             | the trace command; `--into` and `--key` write its path into the map (task 1.2)         |
+| `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`     | the registry of `genshin:assets` commands; holds the `sprites` command (task 1.1)      |
+| `scripts/src/services/genshinAssets/namecards/exportNamecards.ts`         | the namecards export, whose block loop is `exportBlockByName`, shared with the sprites |
+| `scripts/src/models/genshinAssets/shared/AssetType.ts`                    | the asset types; gains a Sprite member (task 1.1)                                      |
+| `scripts/src/services/genshinAssets/skillGlyphs/traceToneLayers.ts`       | the talent icons' tone split, generalised to any icon (task 1.3)                       |
+| `scripts/src/services/genshinAssets/fit/tintMaterialTexture.ts`           | the tint reader the surface fit and the picture colour share (task 1.4)                |
+| `scripts/src/services/genshinAssets/fit/createCharacterFit.ts`            | the character fit: its interface rects and the opt-in portrait colours (task 1.4)      |
+| `scripts/src/services/genshinAssets/fit/runFits.ts`                       | runs a component's fits, leaving an opt-in fit out unless it is named (task 1.4)       |
+| `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`                 | a trace whose scale is divided by hand today                                           |
+| `packages/genshin-interface/src/services/InterfaceIconPathMap.ts`         | the keyed path map the trace writes into                                               |
+| `packages/genshin-interface/src/components/ItemTile/Index.vue`            | the item tile; gains its art place (task 3.1)                                          |
+| `packages/genshin-interface/src/services/ItemRarityFaceGradientMap.ts`    | the rarity faces; gains the two-star stops (task 3.2)                                  |
+| `packages/genshin-world/src/components/Map/Drawing/Mark/Index.vue`        | the landmark mark the pins replace (task 3.3)                                          |
+| `packages/genshin-world/src/components/Character/AttributeList/Index.vue` | the attribute list whose stars take their element colour (task 3.4)                    |
+| `packages/genshin-world/src/services/hud/constants.ts`                    | the Paimon emblem's layers, with the trace its comment names                           |
+| `packages/genshin-interface/src/services/constants.ts`                    | the ornament, check, flourish, server mark and back arrow paths                        |
+| `openspec/changes/genshin-roadmap/tasks.md`                               | the open work; gains the lines task 4.1 adds                                           |
 
 New files, which the tasks create, in plain text:
 
 ```text
 scripts/src/services/genshinAssets/sprites/exportSpritesByName.ts
 scripts/src/services/genshinAssets/sprites/readSpriteRectangle.ts
+scripts/src/services/genshinAssets/sprites/cutSprites.ts
+scripts/src/services/genshinAssets/sprites/chooseSpriteAssets.ts
+scripts/src/services/genshinAssets/sprites/checkSpriteAsset.ts
+scripts/src/services/genshinAssets/sprites/constants.ts
 scripts/src/services/genshinAssets/commands/spritesCommand.ts
+scripts/src/services/genshinAssets/shared/exportBlockByName.ts
 scripts/src/services/genshinParity/shared/writeTracedPath.ts
 scripts/src/services/genshinAssets/colours/fitPictureColour.ts
+scripts/src/services/genshinAssets/colours/createPictureColoursEntry.ts
+scripts/src/services/genshinAssets/fit/tintMaterialTexture.ts
+scripts/src/services/genshinAssets/fit/createCharacterFit.ts
+scripts/src/models/genshinAssets/fit/RunFitEntry.ts
+scripts/src/models/genshinAssets/sprites/SpriteRectangle.ts
+scripts/src/models/genshinAssets/sprites/SpriteAtlas.ts
+scripts/src/models/genshinAssets/sprites/SpriteCut.ts
 ```
 
 ## Sources

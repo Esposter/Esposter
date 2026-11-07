@@ -18,7 +18,7 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     },
     only: {
       description:
-        "The fits to run alone, comma-separated, each named for the record it publishes (paving, towers), or a group of them: ground runs every ground/<area> fit, and ground/<area> runs one",
+        "The fits to run alone, comma-separated, each named for the record it publishes (paving, towers), or a group of them: ground runs every ground/<area> fit, and ground/<area> runs one. A fit that reads an export the install must make first runs only when named",
       type: "string",
     },
     ...dryRunArgs,

@@ -33,9 +33,12 @@ export const fetchReferences = async (): Promise<void> => {
   );
   const lines = await Promise.all(
     missing.map(async ({ id, reference }): Promise<string> => {
-      const { placement, source, wikiTitle } = reference;
+      const { ownRender, placement, source, wikiTitle } = reference;
       if (source !== undefined)
         return `${id}: no screenshot, sampled from ${source}; save its cut at ${getScratchReferencePath(id)} and run genshin:parity references pack`;
+      // Our own render is shot by the parity page, never fetched, so a missing one is named with the shot to take
+      if (ownRender !== undefined)
+        return `${id}: no committed render of ${ownRender}; shoot it and run genshin:parity references pack`;
       const url = wikiTitle === undefined ? undefined : urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
       if (!file) return `${id}: not on the wiki as ${wikiTitle}`;

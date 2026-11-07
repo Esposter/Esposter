@@ -1,10 +1,10 @@
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
 import type { SkillGlyphs } from "genshin-world";
 
-import { SkillGlyphTonesMap } from "#src/services/genshinAssets/skillGlyphs/constants";
+import { SkillGlyphTonesMap, TALENT_ICON_TRACE_SCALE } from "#src/services/genshinAssets/skillGlyphs/constants";
 import { getSkillGlyphsLoaderMapSource } from "#src/services/genshinAssets/skillGlyphs/getSkillGlyphsLoaderMapSource";
 import { getTitles } from "#src/services/genshinAssets/skillGlyphs/getTitles";
-import { traceTalentIcon } from "#src/services/genshinAssets/skillGlyphs/traceTalentIcon";
+import { traceToneLayers } from "#src/services/genshinAssets/skillGlyphs/traceToneLayers";
 import { getCharacterSkillDepotRows } from "#src/services/genshinAssets/stats/getCharacterSkillDepotRows";
 import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
 import { readSkillDepotMap } from "#src/services/genshinAssets/stats/readSkillDepotMap";
@@ -19,7 +19,7 @@ import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
 const TALENT_TRACE_CONCURRENCY = 4;
 
 // Every playable character's skill and burst icons as the HUD's buttons carry them, each traced from the wiki's render
-// Of its talent (`File:Talent <Name>.png`) by `traceTalentIcon`, one entry a character of the hosted `skillGlyphs` index,
+// Of its talent (`File:Talent <Name>.png`) by `traceToneLayers`, one entry a character of the hosted `skillGlyphs` index,
 // And the loader map's source naming the characters it holds, written only once published. A talent is named in English
 // From the first of the character's skill Sets that names both (`getCharacterSkillDepotRows`), and the wiki files a
 // Name's colons as nothing or as a dash, so both titles are asked for. A character the wiki holds either icon of under
@@ -72,8 +72,8 @@ export const buildSkillGlyphs = async (): Promise<{
     traces.push(async () => [
       characterId,
       skillGlyphsSchema.parse({
-        burst: await traceTalentIcon(burstPath, SkillGlyphTonesMap[SkillGlyphTones.Burst]),
-        skill: await traceTalentIcon(skillPath, SkillGlyphTonesMap[SkillGlyphTones.Skill]),
+        burst: await traceToneLayers(burstPath, SkillGlyphTonesMap[SkillGlyphTones.Burst], TALENT_ICON_TRACE_SCALE),
+        skill: await traceToneLayers(skillPath, SkillGlyphTonesMap[SkillGlyphTones.Skill], TALENT_ICON_TRACE_SCALE),
       }),
     ]);
   }
