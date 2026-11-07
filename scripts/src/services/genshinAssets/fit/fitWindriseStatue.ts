@@ -4,22 +4,15 @@ import type { StatuePart } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { createNearestColourReader } from "#src/services/genshinAssets/fit/createNearestColourReader";
-import { fitStatueComponent } from "#src/services/genshinAssets/fit/fitStatueComponent";
+import { createFaceColourReader } from "#src/services/genshinAssets/fit/createFaceColourReader";
+import { fitMeshPieces } from "#src/services/genshinAssets/fit/fitMeshPieces";
 import { readTexture } from "#src/services/genshinAssets/fit/readTexture";
 import { roundStack } from "#src/services/genshinAssets/fit/roundStack";
-import { sampleMeshSurface } from "#src/services/genshinAssets/fit/sampleMeshSurface";
-import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
-import { splitMeshComponents } from "#src/services/genshinAssets/fit/splitMeshComponents";
 import { toMatrix } from "#src/services/genshinAssets/fit/toMatrix";
 import {
   MAIN_COLOUR_PROPERTY,
-  STATUE_COLOUR_NEAREST_COUNT,
   STATUE_FIGURE_MESH_REGEX,
-  STATUE_FIT_SAMPLE_COUNT,
-  STATUE_FIT_SEED,
   STATUE_MESH_REGEX,
-  STATUE_SCORE_SAMPLE_COUNT,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
@@ -29,12 +22,10 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { createSeededRandom } from "genshin-engine";
 import { GameDataset } from "genshin-world";
 import { join } from "node:path";
-import { Color, SRGBColorSpace, Vector3 } from "three";
+import { Vector3 } from "three";
 
 // The Statue of The Seven as the statue kit's stacks in its frame, its root at the origin and unturned, so the Landmark's
 // Place and turn set it down. Every statue mesh is taken into that frame by its placement and split into the pieces its
@@ -83,30 +74,11 @@ export const fitWindriseStatue = async (): Promise<GameDataBuild> => {
     const vertices = meshVertices.map((vertex): Vector =>
       new Vector3(...toRightHanded(vertex)).applyMatrix4(transform).toArray(),
     );
-    const colour = new Color();
-    const pieces = splitMeshComponents(vertices, faces).map((pieceFaceIndices) => {
-      const pieceFaces = pieceFaceIndices.map((face): Vector => faces[face] ?? [0, 0, 0]);
-      const random = createSeededRandom(STATUE_FIT_SEED);
-      const pointSamples = sampleMeshSurface(vertices, pieceFaces, STATUE_FIT_SAMPLE_COUNT, random);
-      const points = pointSamples.map(({ point }) => point);
-      // Each point's texel, read at its own place on its face, in linear light under the material's tint
-      const colours = pointSamples.map(({ face, weights }): Vector => {
-        const corners = (faceUvs[pieceFaceIndices[face] ?? 0] ?? [0, 0, 0]).map((uv) => uvs[uv] ?? [0, 0]);
-        const [u, v] = [0, 1].map((axis) =>
-          corners.reduce((sum, corner, index) => sum + (corner[axis] ?? 0) * (weights[index] ?? 0), 0),
-        );
-        const [red, green, blue] = sampleSurfaceTexture(texture, [u ?? 0, v ?? 0]).colour;
-        colour.setRGB(red / BYTE, green / BYTE, blue / BYTE, SRGBColorSpace);
-        return [colour.r * tintRed, colour.g * tintGreen, colour.b * tintBlue];
-      });
-      const samples = sampleMeshSurface(vertices, pieceFaces, STATUE_SCORE_SAMPLE_COUNT, random);
-      return fitStatueComponent(
-        points,
-        samples,
-        random,
-        createNearestColourReader(points, colours, STATUE_COLOUR_NEAREST_COUNT),
-      );
-    });
+    const pieces = fitMeshPieces(
+      vertices,
+      faces,
+      createFaceColourReader({ faceUvs, uvs }, texture, [tintRed, tintGreen, tintBlue]),
+    );
     for (const { stacks } of pieces)
       for (const stack of stacks) parts.push({ part: placement.mesh, ...roundStack(stack) });
     const meanScore = pieces.reduce((sum, { score }) => sum + score, 0) / pieces.length;
