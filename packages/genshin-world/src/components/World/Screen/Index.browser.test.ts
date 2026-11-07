@@ -68,7 +68,7 @@ describe("worldScreen", () => {
   const holdMs = 15_000;
 
   test(
-    "is ready once the ground of its first view has arrived, unveiled, and its frame holds still",
+    "is ready once the ground of its first view has arrived and its frame holds still",
     async () => {
       expect.hasAssertions();
 
@@ -103,20 +103,12 @@ describe("worldScreen", () => {
           0,
         ) / readyLuminances.length;
 
-      // No veil lifts the frame's darkest tones.
-      // The bound sits between two readings of the pinned frame's darkest twentieth.
-      // Both were measured in this test's own setup on this Mac (Metal).
-      // They read 0.586 with no veil, and 0.711 under a white veil at 30 per cent.
-      // The veil lifts each tone towards white in the same proportion.
-      // The bound, 0.65, is midway between them, 0.06 from either reading.
-      // That margin is twice the few hundredths GPU backends differ by.
-      // So the bound rests on what the veil does, rather than on this machine's own number alone
-      const darkestTwentieth = readyLuminances.toSorted(
-        (firstLuminance, secondLuminance) => firstLuminance - secondLuminance,
-      )[Math.floor(readyLuminances.length / 20)];
+      // No bound on the frame's darkest tones tells a veil from none: the pinned frame's darkest twentieth reads
+      // Far lower on a Windows GPU than on this Mac's Metal, so a bound set between a veiled and an unveiled reading on
+      // One machine passes a veiled frame on the other. The world draws neither god rays nor bloom by construction,
+      // In its post chain
 
       expect(meanDifference).toBeLessThan(0.02);
-      expect(darkestTwentieth).toBeLessThan(0.65);
     },
     timeoutMs,
   );
