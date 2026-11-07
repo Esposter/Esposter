@@ -25,4 +25,10 @@ describe(readShaderBlockNames, () => {
 
     await expect(readShaderBlockNames(directory)).resolves.toStrictEqual(["block"]);
   });
+
+  test("lists no block for a shaders folder no step has created", async () => {
+    expect.hasAssertions();
+
+    await expect(readShaderBlockNames(join(directory, "shaders"))).resolves.toStrictEqual([]);
+  });
 });
