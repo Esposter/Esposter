@@ -7,6 +7,8 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 ## Settled — do not re-propose
 
+- **Unpublishing a renamed or removed package from npm.** npm refuses past a short window or a few weekly downloads, a freed name is open to anyone, and every older version of a dependent stops installing: the old name is deprecated (`references/npm-lifecycle.md`).
+- **Publishing a `0.0.0-stage` version by hand, or reading lerna's "Successfully published" as proof a version landed.** The registry makes that placeholder itself and refuses the version, and lerna counts a rejected version as published; the registry's packument is the evidence (`references/npm-lifecycle.md`).
 - **A plugin for one function per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
 - **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
 - **Converting `apps/infra/src/azure/constants/` to named exports** — one PascalCase file per constant, each a default export, read that way at hundreds of sites; no rule names default exports either way, the tree is internally consistent, and the swap is dozens of files of churn.
@@ -47,7 +49,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 ## Packages and the repo's own layout
 
 - **A shared package is for code with ≥2 consuming packages** — name the second consumer or leave the code beside its sole one, and when a second appears move the implementation rather than writing another (`references/cross-package-placement.md`); `scripts/src/workspace/sharedExportConsumers.test.ts` holds `packages/shared` to it.
-- **A package is created by `pnpm ai:package:new`** — the manifest, configs, inventory rows and docs section are written there, and the invariant each one meets is the suite that reads it (`references/new-package.md`).
+- **A package is created by `pnpm ai:package:new`** — the manifest, configs, inventory rows and docs section are written there, and the invariant each one meets is the suite that reads it (`references/new-package.md`). **npm learns of a package, a rename or a removal by the owner's hand, in one order** — first publish, trust, a dispatched release; the old name deprecated, never unpublished (`references/npm-lifecycle.md`).
 - **`scripts/` is laid out by layer like the app, keyed by command** (`references/scripts-layout.md`).
 - **A symlink is made with PowerShell's `New-Item -ItemType SymbolicLink`, never `ln -s` on Windows**, which copies the file and commits duplicate content silently (`references/symlinks.md`).
 
@@ -78,6 +80,7 @@ Before writing a helper, grep for an existing one; before finishing a feature, g
 - `references/extraction-and-duplication.md` — when an extraction is about to be made, or argued for.
 - `references/cross-package-placement.md` — when adding a module or constant to a shared package, relocating one for symmetry, or implementing behaviour a second package needs.
 - `references/new-package.md` — when creating a package, or writing the purpose and docs prose the generator leaves open.
+- `references/npm-lifecycle.md` — when a package is created, renamed or removed and npm needs its first publish, a trust entry or a deprecation.
 - `references/scripts-layout.md` — when adding a command, a sub-command or a plugin under the repo-root `scripts/`.
 - `references/symlinks.md` — when creating or verifying a tracked symlink.
 - `references/constant-maps.md` — when adding a map keyed by an enum or discriminant, or deciding whether a second map may share its file.

@@ -6,3 +6,5 @@ Each invariant it satisfies is held by the suite that reads it, named in `script
 
 What the generator cannot decide is the package's purpose: write its `--description`, then its spec
 (`openspec/specs/<name>/`, the `openspec` skill) by hand. Then run plain `pnpm i` from the repository root to link it.
+
+A library is not on npm until its first publish, which the owner makes by hand before the nightly can: `references/npm-lifecycle.md`.

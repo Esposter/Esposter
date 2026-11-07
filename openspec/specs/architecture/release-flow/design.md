@@ -38,7 +38,7 @@ flowchart TD
 
 ## Notes
 
-- The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](../monorepo-tooling/design.md) gives the command and the 48-hour expiry of an entry that has not yet published. A package with no live trusted publisher for the calling workflow, whether none was ever registered or it lapsed, fails `packages` with a 404 for the whole tag, so the finish stops before the draft.
+- The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](../monorepo-tooling/design.md) gives the sequence, which ends in a dispatch of `Release.yaml`, and the 48-hour expiry of an entry that has not yet published. A package with no live trusted publisher for the calling workflow, whether none was ever registered or it lapsed, fails `packages` with a 404 for the whole tag, so the finish stops before the draft.
 - **npm matches the workflow that started the run, not the reusable `FinishRelease.yaml`.** `Release.yaml` is the only caller, so each published package has one trust entry, for `Release.yaml`, and the nightly and a dispatch both exchange their token under it ([monorepo tooling](../monorepo-tooling/design.md)).
 - A publish can hit a Sigstore transparency log conflict, `(409) an equivalent entry already exists`, on several packages at once. lerna-lite retries the signing three times, and when the run still fails, a re-run of the finish publishes what remains, since every finish is idempotent.
 - A finish does not run the gates or bump versions again: `forcePublish` versions every member.
