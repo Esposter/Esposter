@@ -1829,6 +1829,17 @@
       "width": 2560
     },
     {
+      "attribution": {},
+      "bytes": 148,
+      "capturedAt": "2026-11-07T06:03:57.622Z",
+      "height": 1080,
+      "id": "props-fixture",
+      "kind": "other",
+      "sha256": "171358c1937d6a1a4048b3e84d224e50efa05d5733812f162e81040396ea2f9e",
+      "sourceFormat": "png",
+      "width": 1920
+    },
+    {
       "attribution": { "recording": "session-2.mp4", "second": 1 },
       "bytes": 44360,
       "capturedAt": "2026-09-30T01:11:56.896Z",

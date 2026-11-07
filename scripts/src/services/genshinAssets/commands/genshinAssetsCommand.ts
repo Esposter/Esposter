@@ -2,6 +2,7 @@ import type { CommandDef } from "citty";
 
 import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
 import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
+import { assetFindCommand } from "#src/services/genshinAssets/commands/assetFindCommand";
 import { assetIndexCommand } from "#src/services/genshinAssets/commands/assetIndexCommand";
 import { avatarCommand } from "#src/services/genshinAssets/commands/avatarCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
@@ -19,6 +20,7 @@ import { domainLevelsCommand } from "#src/services/genshinAssets/commands/domain
 import { domainsCommand } from "#src/services/genshinAssets/commands/domainsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
 import { enemyCampsCommand } from "#src/services/genshinAssets/commands/enemyCampsCommand";
+import { enemyPagesCommand } from "#src/services/genshinAssets/commands/enemyPagesCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
@@ -42,6 +44,7 @@ import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
 import { measureCommand } from "#src/services/genshinAssets/commands/measureCommand";
 import { miningOutcropsCommand } from "#src/services/genshinAssets/commands/miningOutcropsCommand";
+import { monstersCommand } from "#src/services/genshinAssets/commands/monstersCommand";
 import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand";
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
@@ -65,6 +68,7 @@ import { shrineKeySourcesCommand } from "#src/services/genshinAssets/commands/sh
 import { skillGlyphsCommand } from "#src/services/genshinAssets/commands/skillGlyphsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
 import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralAbyssCommand";
+import { spritesCommand } from "#src/services/genshinAssets/commands/spritesCommand";
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
@@ -94,6 +98,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     inventory: inventoryCommand,
     interface: interfaceCommand,
     "ui-find": uiFindCommand,
+    "asset-find": assetFindCommand,
     "ui-tree": uiTreeCommand,
     clips: clipsCommand,
     locomotion: locomotionCommand,
@@ -124,9 +129,11 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     mail: mailCommand,
     stats: statsCommand,
     "skill-glyphs": skillGlyphsCommand,
+    sprites: spritesCommand,
     kits: kitsCommand,
     "character-packs": characterPacksCommand,
     enemies: enemiesCommand,
+    monsters: monstersCommand,
     items: itemsCommand,
     outcrops: leyLineCommand,
     chests: chestsCommand,
@@ -143,6 +150,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     waypoints: waypointsCommand,
     "outcrop-places": outcropPlacesCommand,
     "enemy-camps": enemyCampsCommand,
+    "enemy-pages": enemyPagesCommand,
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,

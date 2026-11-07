@@ -48,6 +48,7 @@ export enum GameDataset {
   OfferingPlaces = "offeringPlaces",
   Offerings = "offerings",
   Profile = "profile",
+  Props = "props",
   Puzzles = "puzzles",
   Quests = "quests",
   QuestText = "questText",

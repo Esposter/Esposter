@@ -100,6 +100,7 @@ export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<strin
   // Here (no parity page on localhost:3011)
   [DerivedAssetComponent.NodKrai]: {},
   [DerivedAssetComponent.PlayerGirl]: {},
+  [DerivedAssetComponent.Props]: {},
   // Snezhnograd's seven landmarks (ParityReferenceMap's everfrozen-earth-location: its spires and towers) name no mesh,
   // So all seven are dropped: the extraction holds five house pieces and three stair pieces 128 to 148 metres off the
   // Capital, none a spire or tower, and its layout dumps name sentry posts that no OBJ exports

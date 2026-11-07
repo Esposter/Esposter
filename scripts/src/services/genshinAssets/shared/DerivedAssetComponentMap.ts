@@ -85,6 +85,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [{ block: "00/02666572.blk", name: "Avatar_Girl_Sword_PlayerGirl_Model", pathId: "7275937277578795946" }],
     screen: "",
   },
+  // The props and gadgets the world places. It roots and names no pattern: the asset index has no GameObject rows, so a
+  // Prefab's name finds nothing there, and each kind's export names the assets of its own prefab
+  [DerivedAssetComponent.Props]: { roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Snezhnaya]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   [DerivedAssetComponent.Sumeru]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   // The Traveler's four locomotion clips, the standing, walk, run and sprint cycles of `Ani_Avatar_Girl_`, in the character

@@ -1303,6 +1303,10 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WorldScreen",
     wikiTitle: 'File:"People of the Springs".png',
   },
+  // The props fixture's box drawn from its camera. Its reference is our own render of that fixture, not a frame of the game,
+  // so the score guards the drawing and the camera a prop is judged through; a game frame of a prop with its camera solved
+  // is the prop-level reference that replaces it
+  "props-fixture": { ownRender: "the props fixture's box at its camera", screen: "PropsFixture" },
   "publisher-splash": { screen: "SplashPublisher", source: "session-2.mp4 at 1s" },
   // The English PC client's quest screen listing every quest in progress, the wiki's screenshot of it at 1080 high. The
   // World behind it is the still's own pixels, its interface filled from the world round it (QUEST_SCREEN_PLATE), so

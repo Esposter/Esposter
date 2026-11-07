@@ -128,6 +128,7 @@ export const DerivedAssetArrangementMap: Record<
   [DerivedAssetComponent.NodKrai]: { explainedOffsets: {}, families: [], ratios: {} },
   // Lumine is no world part, so she has no ratios or families to fit yet
   [DerivedAssetComponent.PlayerGirl]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Props]: { explainedOffsets: {}, families: [], ratios: {} },
   // Snezhnograd's parts stand where the world's own data places them, as Windrise's do
   [DerivedAssetComponent.Snezhnaya]: { explainedOffsets: {}, families: [], ratios: {} },
   // Sumeru City's parts stand where the world's own data places them, as Windrise's do

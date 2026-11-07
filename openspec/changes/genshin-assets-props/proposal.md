@@ -18,7 +18,7 @@ The world's props and gadgets are drawn as plain stand-ins: a box for a chest, a
 
 ## Waiting on
 
-None. The tasks that need the PC's game install are taken there, and the rest run on this Mac.
+Task 1.7 waits on task 3.1 of the [weapons](../genshin-assets-weapons/tasks.md) change, whose root primitive a PC session builds. The tasks that need the PC's game install are taken there, and the rest run on this Mac.
 
 ## Impact
 

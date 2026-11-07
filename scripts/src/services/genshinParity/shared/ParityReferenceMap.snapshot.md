@@ -90,6 +90,7 @@ committed.
 | `paimons-bargains-screen`              | `PaimonsBargainsScreen`     |                                                                          6.12% | 0.633 |  3.57% | 0.2770 |
 | `party-screen`                         | `PartyScreen`               |                                                                          4.26% | 0.366 |  2.51% | 0.1582 |
 | `people-of-the-springs-location`       | `WorldScreen`               |                                                                         22.30% | 0.222 | 17.64% | 0.7110 |
+| `props-fixture`                        | `PropsFixture`              |                                                                          0.00% | 1.000 |  0.00% | 0.0000 |
 | `publisher-splash`                     | `SplashPublisher`           |                                                                          0.07% | 1.000 |  0.01% | 0.0036 |
 | `quest-screen`                         | `QuestScreen`               |                                                                          2.11% | 0.941 |  1.02% | 0.1004 |
 | `quest-screen-details`                 | `QuestScreen`               |                                                                          1.34% | 0.963 |  0.70% | 0.0644 |

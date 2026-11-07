@@ -25,6 +25,8 @@ flowchart TD
 
 - **A reference's source is checked against its frame.** `genshin:parity verify`, run on a machine that holds the recordings, cuts each recorded reference's named frame and fails a reference that differs from it past tolerance, so a repointed `source` cannot name a picture its file does not show (`scripts/src/services/genshinParity/reference/verifyReferences.ts`).
 
+- **A fixture's own render stands in as a reference until a game frame of it is on disk.** A prop-level reference with no frame of the game is our render of its fixture, packed like any other and named by its entry's `ownRender`, a branch of the reference type that names no source (`props-fixture` in `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`). Its manifest row is kind `other`, so no recording backs it, and its compare reads no recording's blur. Its score guards the drawing and the camera a prop is judged through, and a game frame of that prop, its camera solved, replaces it.
+
 ## Key files
 
 | File                                                                       | Role                                                                                                                                                                |

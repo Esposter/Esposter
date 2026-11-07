@@ -22,6 +22,7 @@ export const DerivedAssetSoundEffectMap: Record<
   [DerivedAssetComponent.Natlan]: {},
   [DerivedAssetComponent.NodKrai]: {},
   [DerivedAssetComponent.PlayerGirl]: {},
+  [DerivedAssetComponent.Props]: {},
   [DerivedAssetComponent.Snezhnaya]: {},
   [DerivedAssetComponent.Sumeru]: {},
   [DerivedAssetComponent.Traveler]: {},
