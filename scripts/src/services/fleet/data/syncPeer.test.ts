@@ -183,6 +183,23 @@ describe(syncPeer, () => {
     expect(printed()).toStrictEqual(["pull 192.0.2.1 (dry run): 1 files, 10 bytes would move"]);
   });
 
+  test("a pull with changes but no stamp completes without reading the game version", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(readGameVersion).mockRejectedValue(new Error(" "));
+    vi.mocked(readRemoteManifest).mockResolvedValue({ [FOLDER]: "remote" });
+    vi.mocked(readRemoteListings).mockReturnValue(
+      streamListings([{ directory: FOLDER, files: [{ mtime: 1, name: "interface.json", size: 10 }] }]),
+    );
+    vi.mocked(readRemoteStamps).mockResolvedValue([]);
+
+    await syncPeer(TransferDirection.Pull, PEER, ["extracted"], localDirectory, PEER.parityDirectory, {
+      isDryRun: true,
+    });
+
+    expect(printed()).toStrictEqual(["pull 192.0.2.1 (dry run): 1 files, 10 bytes would move"]);
+  });
+
   test("a pull with no directory to compare completes without reading the game version", async () => {
     expect.hasAssertions();
 

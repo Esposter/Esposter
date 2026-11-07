@@ -64,8 +64,8 @@ export const syncPeer = async (
     stamps = isPull
       ? await readRemoteStamps(peer, remoteDirectory, candidates)
       : await readLocalStamps(localDirectory, candidates);
-  // The game version is read only when there are candidates to hold to it, so a copy with none never needs config.ini
-  const gameVersion = candidates.length > 0 ? await readGameVersion() : undefined;
+  // The game version is read only when a stamp is there to hold to it, so a copy with none never needs config.ini
+  const gameVersion = stamps.length > 0 ? await readGameVersion() : undefined;
   const sizes = new Map<string, number>();
   for (const { directory, source, target } of changed)
     for (const file of selectChangedFiles(source, target)) sizes.set(posix.join(directory, file.name), file.size);
