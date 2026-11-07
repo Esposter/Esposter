@@ -60,6 +60,7 @@ export const ANIMESTUDIO_TOOL: ProvenanceTool = { name: "AnimeStudio", path: ANI
 // Narrower list of their own
 export const GENSHIN_ASSETS_PRODUCER_PATHS: string[] = [
   "scripts/src/models/genshinAssets",
+  "scripts/src/models/recreation/animeStudio",
   "scripts/src/services/genshinAssets",
   "scripts/src/services/recreation/animeStudio",
 ];

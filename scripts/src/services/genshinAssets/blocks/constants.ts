@@ -5,6 +5,7 @@ import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStud
 export const EXTRACT_PRODUCER_PATHS: string[] = [
   "scripts/src/models/genshinAssets/shared",
   "scripts/src/models/genshinAssets/world",
+  "scripts/src/models/recreation/animeStudio",
   "scripts/src/services/genshinAssets/blocks",
   "scripts/src/services/genshinAssets/shared",
   "scripts/src/services/genshinAssets/world",
