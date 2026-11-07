@@ -7,7 +7,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 
 ## Settled — do not re-propose
 
-- **Unpublishing a renamed or removed package from npm.** npm refuses past a short window or a few weekly downloads, a freed name is open to anyone, and every older version of a dependent stops installing: the old name is deprecated (`references/npm-lifecycle.md`).
+- **Unpublishing a renamed or removed package from npm on a session's own judgement.** It cannot be undone, a freed name is open to anyone, and npm refuses a name any published version depends on: the old name is deprecated, and unpublished only when the owner says so (`references/npm-lifecycle.md`).
 - **Publishing a `0.0.0-stage` version by hand, or reading lerna's "Successfully published" as proof a version landed.** The registry makes that placeholder itself and refuses the version, and lerna counts a rejected version as published; the registry's packument is the evidence (`references/npm-lifecycle.md`).
 - **A plugin for one function per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
 - **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
