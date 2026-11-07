@@ -26,5 +26,6 @@ export const DerivedAssetSoundEffectMap: Record<
   [DerivedAssetComponent.Snezhnaya]: {},
   [DerivedAssetComponent.Sumeru]: {},
   [DerivedAssetComponent.Traveler]: {},
+  [DerivedAssetComponent.Weapons]: {},
   [DerivedAssetComponent.Windrise]: {},
 };

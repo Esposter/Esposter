@@ -134,6 +134,7 @@ export const DerivedAssetArrangementMap: Record<
   // Sumeru City's parts stand where the world's own data places them, as Windrise's do
   [DerivedAssetComponent.Sumeru]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.Traveler]: { explainedOffsets: {}, families: [], ratios: {} },
+  [DerivedAssetComponent.Weapons]: { explainedOffsets: {}, families: [], ratios: {} },
   // Windrise's parts stand where the world's own data places them, so its ratios wait on a fitted family to hold. Its plants
   // Are the families it fits, the grass and the trees, each beside the game's placements of it
   [DerivedAssetComponent.Windrise]: { explainedOffsets: {}, families: WindrisePlantArrangementFamilies, ratios: {} },

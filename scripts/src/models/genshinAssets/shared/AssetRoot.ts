@@ -8,7 +8,7 @@ export interface AssetRoot {
   pathId: string;
 }
 
-export const assetRootSchema = z.object({
+export const assetRootSchema: z.ZodType<AssetRoot> = z.object({
   block: z.string().min(1),
   name: z.string().min(1),
   pathId: z.string().min(1),

@@ -10,7 +10,7 @@ const { readProducerStaleness } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#src/services/producerStamp/readProducerStaleness"), () => ({ readProducerStaleness }));
-vi.mock(import("node:fs"), () => ({ existsSync: () => true }));
+vi.mock(import("node:fs"), async (importOriginal) => ({ ...(await importOriginal()), existsSync: () => true }));
 vi.mock(import("node:fs/promises"), () => ({
   readFile: (() => Promise.resolve("{}")) as unknown as typeof baseReadFile,
 }));

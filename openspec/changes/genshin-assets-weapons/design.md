@@ -90,7 +90,7 @@ flowchart LR
 
 **Icons (G6, G7).**
 
-- Extract: `pnpm -C scripts genshin:assets weapon-icons`, which exports the table's icon names into `{data-root}/genshin-parity/extracted/weapons/icons` through `exportBlockTextures`, the helper the namecards export shares. It reports each name the index does not hold, which are each kind's template icon and a few real names, and the PC runs it.
+- Extract: `pnpm -C scripts genshin:assets weapon-icons`, which exports the table's icon names into `{data-root}/genshin-parity/extracted/weapons/icons` through `exportBlockByName`, the helper the namecards export shares. It reports each name the index does not hold, which are each kind's template icon and a few real names, and the PC runs it.
 - Fit: `traceWeaponIcon` traces each icon's alpha into loops in its unit square, and `fitWeaponIcons` runs it over the exported icons, registered in the weapons' entry as the `icons` fit. Then `pnpm -C scripts genshin:assets fit weapons --only icons --dry-run`.
 
 **Trails (G5).** **No command yet:** `pnpm -C scripts genshin:parity trail`, which reads a claymore strike's frames from a capture and writes the trail's width, colour and fade. Then **no command yet:** a fit of those values under `weaponShapes/trails`, run by `pnpm -C scripts genshin:assets fit weapons --only trails --dry-run`.
