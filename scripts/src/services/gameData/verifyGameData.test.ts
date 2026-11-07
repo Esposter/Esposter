@@ -42,4 +42,21 @@ describe(verifyGameData, () => {
       expect.arrayContaining([entry.url, index.url, shared.url]),
     );
   });
+
+  test("An index that does not hash to its name is refused", async () => {
+    expect.hasAssertions();
+
+    const entry = createStoredRecord("profile/English", { name: "a" });
+    const index = createStoredRecord("profile/English", { "10000002": entry.hash });
+    // The account serves other content under the index's name
+    const fetch = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ "10000002": getGameDataHash("b") }))));
+
+    await expect(
+      verifyGameData(baseUrl, { indexes: { "profile/English": index.hash }, objects: {} }),
+    ).rejects.toThrowError(index.url);
+    // Only the index was fetched, so none of the entries it names was
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
 });

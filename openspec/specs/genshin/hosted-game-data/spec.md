@@ -291,3 +291,10 @@ A verification SHALL fetch every object the lock reaches from each account and S
 - **WHEN** verification runs
 - **THEN** each reached object is fetched from each account without credentials
 - **AND** each is checked against its name
+
+#### Scenario: An index that does not hash to its name is refused
+
+- **GIVEN** an index the lock names whose content does not hash to that name
+- **WHEN** verification runs
+- **THEN** verification fails, naming the index's URL
+- **AND** none of the entries the index names is fetched
