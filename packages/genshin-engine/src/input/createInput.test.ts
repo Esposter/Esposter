@@ -14,16 +14,15 @@ import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputAction } from "#src/models/input/InputAction";
 import { describe, expect, test } from "vitest";
 
-// An event target standing in for the window, with the gamepads it reports, the element holding its pointer lock and
-// The element holding its focus
-const createTarget = (
-  gamepads: (InputGamepad | null)[] = [],
-  pointerLockElement: null | object = null,
-  activeElement: null | { matches: (selectors: string) => boolean } = null,
-) =>
-  Object.assign(new EventTarget(), {
-    document: { activeElement, pointerLockElement },
-    navigator: { getGamepads: () => gamepads },
+// An event target standing in for the window, with the gamepads it reports and the element holding its pointer lock
+const createTarget = (gamepads: (InputGamepad | null)[] = [], pointerLockElement: null | object = null) =>
+  Object.assign(new EventTarget(), { document: { pointerLockElement }, navigator: { getGamepads: () => gamepads } });
+
+// A key event sent from an element, as a key typed into a field is: the target is that element, which a plain event
+// Target has none of, so the test sets it on the event
+const createKeyEventFrom = (element: object, code: string) =>
+  Object.defineProperty(Object.assign(new Event("keydown", { cancelable: true }), { code }), "target", {
+    value: element,
   });
 
 describe(createInput, () => {
@@ -170,9 +169,9 @@ describe(createInput, () => {
   test("leaves a key typed into a field to the field", () => {
     expect.hasAssertions();
 
-    const target = createTarget([], null, { matches: () => true });
+    const target = createTarget();
     const { readInput } = createInput(target);
-    const event = Object.assign(new Event("keydown", { cancelable: true }), { code: "KeyM" });
+    const event = createKeyEventFrom({ matches: () => true }, "KeyM");
     target.dispatchEvent(event);
 
     expect({ isDefaultPrevented: event.defaultPrevented, pressedActions: readInput(0).pressedActions }).toStrictEqual({

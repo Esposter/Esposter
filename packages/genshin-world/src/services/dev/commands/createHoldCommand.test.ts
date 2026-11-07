@@ -3,10 +3,11 @@ import { createHoldCommand } from "#src/services/dev/commands/createHoldCommand"
 import { createInput, InputAction } from "genshin-engine";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// An event target standing in for the window the input reads, which reports no gamepad and holds no focus
-const createTarget = () =>
+// An event target standing in for the window the input reads, which reports no gamepad and holds the focus on the
+// Element given, if any
+const createTarget = (activeElement: null | { matches: (selectors: string) => boolean } = null) =>
   Object.assign(new EventTarget(), {
-    document: { activeElement: null, pointerLockElement: null },
+    document: { activeElement, pointerLockElement: null },
     navigator: { getGamepads: () => [] },
   });
 
@@ -134,6 +135,18 @@ describe(createHoldCommand, () => {
       moveForwardAfterTick: 0,
       moveForwardBeforeTick: 1,
     });
+  });
+
+  test("a hold run from the console moves the Traveler while the console's field has focus", () => {
+    expect.hasAssertions();
+
+    // The console's field holds the focus while its line runs, and a hold's keys are sent on the window, not from it
+    const target = createTarget({ matches: () => true });
+    const { readInput } = createInput(target);
+    const frameClock = createFrameClock();
+    createHoldCommand({ onFrame: frameClock.onFrame, target }).run({ control: DevMoveDirection.Forward, seconds: 1 });
+
+    expect(readInput(FRAME_SECONDS).moveForward).toBe(1);
   });
 
   test("refuses a control that is neither a move direction nor an input action", () => {

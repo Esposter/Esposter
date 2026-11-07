@@ -27,6 +27,11 @@ import { toDeadzoned } from "#src/input/toDeadzoned";
 import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputActions } from "#src/models/input/InputAction";
 
+// Whether a key was sent from a field, the element it was typed into. A key a command dispatches on the window comes
+// From the window, which is no element and matches no selector, so it is the game's whatever field has the focus
+const checkIsFieldTarget = (eventTarget: EventTarget | null): boolean =>
+  (eventTarget as null | Partial<Pick<Element, "matches">>)?.matches?.(FIELD_SELECTOR) === true;
+
 // The keys and mouse buttons held, the pointer's movement while it is locked, and the first gamepad's sticks and
 // Buttons, all read through the window handed in, once a frame. The look is what the pointer moved since the last read,
 // The zoom the wheel's notches since then, and the move is the keys and the stick combined, a pair of opposite keys
@@ -65,7 +70,7 @@ export const createInput = (target: InputTarget): Input => {
   target.addEventListener(
     "keydown",
     (event) => {
-      if (target.document.activeElement?.matches(FIELD_SELECTOR)) return;
+      if (checkIsFieldTarget(event.target)) return;
       if (boundCodes.has(event.code) && !FOCUS_KEY_CODES.includes(event.code)) event.preventDefault();
       press(event.code);
     },
