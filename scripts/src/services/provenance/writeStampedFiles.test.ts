@@ -53,9 +53,9 @@ describe(writeStampedFiles, () => {
 
     await expect(
       writeStampedFiles([file], { command: COMMAND, producerPaths: [TEST_FILENAME] }, () => {
-        throw new Error("fails");
+        throw new Error(" ");
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: fails]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     expect(existsSync(getSidecarPath(file))).toBe(false);
   });
 
