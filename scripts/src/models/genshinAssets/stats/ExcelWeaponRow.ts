@@ -1,8 +1,9 @@
-// One row of the game's weapon table, of the fields its attributes, name, description, icon, EXP and refinement need, a
-// Destroy rule and an attribute left out where it is the first of its enum
+// One row of the game's weapon table, of the fields its attributes, name, description, icon, texture folder, EXP and
+// Refinement need, a destroy rule and an attribute left out where it is the first of its enum
 export interface ExcelWeaponRow {
   awakenCosts: number[];
   awakenMaterial: number;
+  awakenTexture: string;
   descTextMapHash?: number;
   destroyReturnMaterial: number[];
   destroyReturnMaterialCount: number[];
