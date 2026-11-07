@@ -10,11 +10,8 @@ import {
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
-import {
-  HELD_WEAPON_ANIMATOR_REGEX,
-  HELD_WEAPON_MESH_REGEX,
-  WEAPON_ROOTS_PATH,
-} from "#src/services/genshinAssets/weapons/constants";
+import { checkIsHeldWeaponMesh } from "#src/services/genshinAssets/weapons/checkIsHeldWeaponMesh";
+import { HELD_WEAPON_ANIMATOR_REGEX, WEAPON_ROOTS_PATH } from "#src/services/genshinAssets/weapons/constants";
 import { deriveWeaponRoots } from "#src/services/genshinAssets/weapons/deriveWeaponRoots";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
@@ -29,12 +26,12 @@ import { join } from "node:path";
 // Those layouts draws is reported in the result, since no root reaches it, and so is each block the install lacks
 export const exportWeaponRoots = async (): Promise<string> => {
   const assets = await readIndexedAssets(
-    ({ name, type }) =>
-      (type === AssetType.Mesh && HELD_WEAPON_MESH_REGEX.test(name)) ||
-      (type === AssetType.Animator && HELD_WEAPON_ANIMATOR_REGEX.test(name)),
+    (asset) =>
+      checkIsHeldWeaponMesh(asset) ||
+      (asset.type === AssetType.Animator && HELD_WEAPON_ANIMATOR_REGEX.test(asset.name)),
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  const heldMeshes = assets.filter(({ type }) => type === AssetType.Mesh);
+  const heldMeshes = assets.filter((asset) => checkIsHeldWeaponMesh(asset));
   const { layout } = getComponentDirectory(DerivedAssetComponent.Weapons);
   await rm(layout, { force: true, recursive: true });
   await mkdir(layout, { recursive: true });
