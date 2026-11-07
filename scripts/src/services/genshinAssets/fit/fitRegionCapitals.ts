@@ -12,6 +12,7 @@ import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
 import { WORLD_AREAS_TABLE_NAME, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readWorldBaseGrounds } from "#src/services/genshinAssets/shared/readWorldBaseGrounds";
+import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
@@ -23,7 +24,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { GameDataset } from "genshin-world";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // Each region's first landmark stood at its capital, round the world's origin at the oak's foot: the median place of
@@ -48,9 +48,7 @@ export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<Ga
       Object.entries(RegionCapitalMap).map(async ([region, capital]) => {
         const { landmarkId } = capital;
         const regionFile = join(GameDataset.Regions, `${region}.json`);
-        const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(
-          await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
-        );
+        const regionData = parseMachineJson<{ landmarks: { id: string }[] }>(await readWorldRecord(regionFile));
         if (!regionData.landmarks.some(({ id }) => id === landmarkId))
           throw new InvalidOperationError(Operation.Read, regionFile, `has no landmark ${landmarkId}`);
         const writeLandmark = (position: GroundPoint) => {
@@ -81,9 +79,7 @@ export const fitRegionCapitals = async ({ isDryRun }: DryRunOptions): Promise<Ga
         const landmarkPath = await writeLandmark(position);
         if (!existsSync(join(WORLD_DATA_DIRECTORY, groundFile)) || (await checkIsRegionGroundFitted(region)))
           return { notes: [landmarkPath], objects: {} };
-        const regionGround = parseMachineJson<RegionGround>(
-          await readFile(join(WORLD_DATA_DIRECTORY, groundFile), "utf8"),
-        );
+        const regionGround = parseMachineJson<RegionGround>(await readWorldRecord(groundFile));
         const features = regionGround.features.map((feature, index) =>
           index === 0 ? { ...feature, height, ...position } : feature,
         );

@@ -2,13 +2,19 @@
 
 ### Requirement: Every export, fit input and record carries a provenance stamp
 
-Every export, fit input and record the pipeline writes SHALL carry a provenance stamp beside it, naming the game version of the install it was read from, the tool that wrote it and its version, the operating system and the command that ran.
+Every export, fit input and record the pipeline writes SHALL carry a provenance stamp naming the game version of the install it was read from, the tool and its version, the operating system, the command and the sources it was built from. A folder output holds its stamp inside the folder, and a file output has its stamp as a sidecar beside the file, named as the design gives. The lock is not stamped.
 
 #### Scenario: A written export carries its stamp beside it
 
 - **GIVEN** an install whose game version is known
 - **WHEN** a component's extraction finishes
 - **THEN** the component's output folder holds a stamp naming that game version and the command that ran
+
+#### Scenario: A file output carries its stamp in a sidecar beside it
+
+- **GIVEN** a fit record written to the world-data folder
+- **WHEN** the fit writes the record
+- **THEN** a sidecar `<file name>.provenance.json` beside the record names that game version and the command that wrote it
 
 #### Scenario: A reader reports output made before a later change to its producer
 
@@ -18,7 +24,7 @@ Every export, fit input and record the pipeline writes SHALL carry a provenance 
 
 ### Requirement: A consumer refuses an input whose stamp names another game version
 
-A fit, the map and the fleet copy SHALL refuse an input whose stamp names another game version than the install's, or that carries no stamp.
+A fit SHALL refuse an input whose stamp names another game version than the install's, or that carries no stamp. The map SHALL be made again when its stamp names another game version. The fleet copy SHALL refuse each path a stamp of another game version covers, and SHALL copy every other path. A fit SHALL read a record only through its sidecar's refusal, and the fleet copy SHALL read a peer's stamps before it chooses the files a stamp covers.
 
 #### Scenario: A fit refuses an export stamped with another game version
 
@@ -32,6 +38,12 @@ A fit, the map and the fleet copy SHALL refuse an input whose stamp names anothe
 - **WHEN** a fit reads the export
 - **THEN** the fit stops and names the missing stamp
 
+#### Scenario: A fit refuses a record whose sidecar names another game version
+
+- **GIVEN** a fit record whose sidecar names a game version other than the install's
+- **WHEN** a fit reads the record
+- **THEN** the fit stops and names both game versions
+
 #### Scenario: The map is remade for another game version
 
 - **GIVEN** a map whose stamp names a game version other than the install's
@@ -44,15 +56,23 @@ A fit, the map and the fleet copy SHALL refuse an input whose stamp names anothe
 - **WHEN** the fleet copy runs
 - **THEN** it copies nothing from that folder
 
-### Requirement: One stamp form is written
+#### Scenario: The fleet copy refuses a file stamped with another game version
 
-The pipeline SHALL write one stamp form, and no writer SHALL leave an earlier stamp file beside its output.
+- **GIVEN** a peer's file whose sidecar names another game version than the install's
+- **WHEN** the fleet copy runs
+- **THEN** it copies neither that file nor its sidecar, and copies the other files that no stamp refuses
 
-#### Scenario: An extraction leaves no earlier stamp file
+#### Scenario: The fleet copy refuses a subtree whose folder above it is stamped with another game version
 
-- **GIVEN** an extraction folder holding a stamp written by an earlier form of the pipeline
-- **WHEN** the component is extracted again
-- **THEN** the folder holds the one stamp form and no earlier stamp file
+- **GIVEN** a peer's folder whose stamp names another game version than the install's, and a changed directory beneath it
+- **WHEN** the fleet copy runs
+- **THEN** it copies nothing from that directory, even though the directory's own digest changed alone
+
+#### Scenario: A machine with no install copies a stamped folder
+
+- **GIVEN** a machine with no game install, so no game version to hold a stamp to
+- **WHEN** the fleet copy pulls a folder stamped with a game version
+- **THEN** it copies the folder's files
 
 ### Requirement: A fetched source is pinned to a commit
 

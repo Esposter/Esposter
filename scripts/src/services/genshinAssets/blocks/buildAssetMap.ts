@@ -9,12 +9,16 @@ import { writeAssetIndex } from "#src/services/genshinAssets/blocks/writeAssetIn
 import { writeMergedAssetMap } from "#src/services/genshinAssets/blocks/writeMergedAssetMap";
 import {
   ANIMESTUDIO_MAPS_DIRECTORY,
+  ANIMESTUDIO_TOOL,
+  ASSET_INDEX_PATH,
   ASSET_MAP_PATH,
   ASSET_MAP_SHARDS_DIRECTORY,
   CAB_MAP_PATH,
+  GENSHIN_ASSETS_PRODUCER_PATHS,
   INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { getPerformanceCoreCount } from "#src/services/genshinAssets/shared/getPerformanceCoreCount";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -34,24 +38,30 @@ export const buildAssetMap = async (shardCount: number = getPerformanceCoreCount
   );
   if (failures.length > 0) throw new InvalidOperationError(Operation.Create, "AnimeStudio shards", failures.join("\n"));
 
-  // The CLI writes each shard's CAB map into its Maps folder, so that is where they are read and cleared from
-  const cabMaps = await Promise.all(
-    indices.map((index) => readFile(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`))),
-  );
-  await writeFile(CAB_MAP_PATH, mergeCabMaps(cabMaps, INSTALLED_BLOCKS_DIRECTORY));
-  placeCabMap();
-  await writeMergedAssetMap(
-    indices.map((index) => ({
-      path: join(getShardDirectory(index), `${getShardMapName(index)}.json`),
-      root: join(getShardDirectory(index), "blocks"),
-    })),
-    INSTALLED_BLOCKS_DIRECTORY,
-    ASSET_MAP_PATH,
-  );
-  await rm(ASSET_MAP_SHARDS_DIRECTORY, { force: true, recursive: true });
-  await Promise.all(
-    indices.map((index) => rm(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`), { force: true })),
-  );
-  const count = await writeAssetIndex();
+  // The CLI writes each shard's CAB map into its Maps folder, so that is where they are read and cleared from. The three
+  // Outputs are written inside one stamped write, so their earlier sidecars are gone before any of them changes
+  const stamp = { command: "map", producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS, tools: [ANIMESTUDIO_TOOL] };
+  let count = 0;
+  await writeStampedFiles([CAB_MAP_PATH, ASSET_MAP_PATH, ASSET_INDEX_PATH], stamp, async () => {
+    const cabMaps = await Promise.all(
+      indices.map((index) => readFile(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`))),
+    );
+    await writeFile(CAB_MAP_PATH, mergeCabMaps(cabMaps, INSTALLED_BLOCKS_DIRECTORY));
+    await writeMergedAssetMap(
+      indices.map((index) => ({
+        path: join(getShardDirectory(index), `${getShardMapName(index)}.json`),
+        root: join(getShardDirectory(index), "blocks"),
+      })),
+      INSTALLED_BLOCKS_DIRECTORY,
+      ASSET_MAP_PATH,
+    );
+    await rm(ASSET_MAP_SHARDS_DIRECTORY, { force: true, recursive: true });
+    await Promise.all(
+      indices.map((index) => rm(join(ANIMESTUDIO_MAPS_DIRECTORY, `${getShardMapName(index)}.bin`), { force: true })),
+    );
+    count = await writeAssetIndex();
+  });
+  // The copy AnimeStudio reads is made once the map's stamp exists, so the copy carries it
+  await placeCabMap();
   console.log(`${count} assets indexed`);
 };

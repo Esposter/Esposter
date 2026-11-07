@@ -15,12 +15,17 @@ import { readRendererBones } from "#src/services/genshinAssets/avatar/readRender
 import { readRendererRootBone } from "#src/services/genshinAssets/avatar/readRendererRootBone";
 import { readSkinnedRenderers } from "#src/services/genshinAssets/avatar/readSkinnedRenderers";
 import { writeMaterials } from "#src/services/genshinAssets/avatar/writeMaterials";
-import { CAB_MAP_PATH } from "#src/services/genshinAssets/shared/constants";
+import {
+  ANIMESTUDIO_TOOL,
+  CAB_MAP_PATH,
+  GENSHIN_ASSETS_PRODUCER_PATHS,
+} from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { readObjectNames } from "#src/services/genshinAssets/shared/readObjectNames";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { AVATAR_BINARY_FILE_NAME, AVATAR_MANIFEST_FILE_NAME } from "genshin-world/sceneExport";
@@ -139,8 +144,15 @@ export const writeAvatar = async (component: DerivedAssetComponent): Promise<str
       ),
     ),
   };
-  await writeFile(join(directory.root, AVATAR_BINARY_FILE_NAME), binary.toBuffer());
+  const binaryPath = join(directory.root, AVATAR_BINARY_FILE_NAME);
   const path = join(directory.root, AVATAR_MANIFEST_FILE_NAME);
-  await writeFile(path, JSON.stringify(manifest));
+  await writeStampedFiles(
+    [binaryPath, path],
+    { command: `avatar ${component}`, producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS, tools: [ANIMESTUDIO_TOOL] },
+    async () => {
+      await writeFile(binaryPath, binary.toBuffer());
+      await writeFile(path, JSON.stringify(manifest));
+    },
+  );
   return path;
 };

@@ -2,11 +2,13 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
 import { composeInterfaceTree } from "#src/services/genshinAssets/interface/composeInterfaceTree";
+import { GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { readUiBlockEntries } from "#src/services/genshinAssets/ui/readUiBlockEntries";
 import { readUiBlockIndex } from "#src/services/genshinAssets/ui/readUiBlockIndex";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
@@ -27,6 +29,8 @@ export const extractComponentInterface = async (component: DerivedAssetComponent
     entries.filter(({ container }) => container === root.container),
     root,
   );
-  writeJsonFile(join(getComponentDirectory(component).root, "interface", "interface.json"), tree);
+  const directory = join(getComponentDirectory(component).root, "interface");
+  writeJsonFile(join(directory, "interface.json"), tree);
+  await writeProvenance(directory, { command: `interface ${component}`, producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS });
   return tree;
 };

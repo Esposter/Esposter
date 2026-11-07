@@ -3,7 +3,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_CONFIG_FILE,
-  GCSIM_MAIN_BRANCH,
+  GCSIM_MAIN_COMMIT,
   GCSIM_RAW_URL,
 } from "#src/services/genshinAssets/kits/constants";
 import { GcsimFolderSubfoldersMap } from "#src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap";
@@ -15,12 +15,12 @@ import { posix } from "node:path";
 
 const FETCH_CONCURRENCY = 8;
 
-// The named character folders of gcsim's current branch that it has, each with the subfolders its files sit in, read
-// Only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file read
+// The named character folders gcsim's main branch holds at its pinned commit, each with the subfolders its files sit in,
+// Read only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file read
 // Through its raw URL into memory, never written anywhere
 export const readGcsimMainCharacters = async (folders: readonly string[]): Promise<Map<string, GcsimCharacter>> => {
   const { tree } = parseMachineJson<{ tree: { path: string; type: string }[] }>(
-    runGh(["api", `repos/genshinsim/gcsim/git/trees/${GCSIM_MAIN_BRANCH}?recursive=1`]),
+    runGh(["api", `repos/genshinsim/gcsim/git/trees/${GCSIM_MAIN_COMMIT}?recursive=1`]),
   );
   const subfolderPaths = new Set(
     folders.flatMap((folder) =>
@@ -44,7 +44,7 @@ export const readGcsimMainCharacters = async (folders: readonly string[]): Promi
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each batch starts once the last settles
     await Promise.all(
       filePaths.slice(start, start + FETCH_CONCURRENCY).map(async (path) => {
-        const response = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_BRANCH}/${path}`);
+        const response = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${path}`);
         sourceMap.set(path, await response.text());
       }),
     );

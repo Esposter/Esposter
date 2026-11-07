@@ -2,31 +2,31 @@
 
 ## Purpose
 
-The two defects in the AnimeStudio decoder found by the macOS build, drafted as upstream issues and kept here, not filed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`.
+The two defects in the AnimeStudio decoder, and the one gap in its export of an animator controller, found by the macOS build, drafted as upstream issues and kept here, not filed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`.
 
 ## Requirements
 
-### Requirement: Decoder defects are drafted and kept, never filed
+### Requirement: Decoder defects and export gaps are drafted and kept, never filed
 
-A decoder defect found by the macOS build SHALL be drafted as an upstream issue and kept in the repository, and SHALL NOT be filed or posted anywhere.
+A decoder defect or export gap found by the macOS build SHALL be drafted as an upstream issue and kept in the repository, and SHALL NOT be filed or posted anywhere.
 
 #### Scenario: A defect is drafted and kept
 
-- **GIVEN** a decoder defect found by the macOS build
+- **GIVEN** a decoder defect or export gap found by the macOS build
 - **WHEN** it is recorded
 - **THEN** its upstream issue is drafted and kept in the repository
 - **AND** nothing is filed or posted upstream
 
 ### Requirement: A defect draft gives its reproduction and the effect of its patch
 
-Each defect draft SHALL give a reproduction and the observed output before and after the patch.
+Each defect or gap draft SHALL give a reproduction and the observed output before and after the patch.
 
 #### Scenario: A draft shows the output before and after the patch
 
-- **GIVEN** a defect draft
+- **GIVEN** a defect or gap draft
 - **WHEN** it is read
 - **THEN** it names the game version and block that reproduce the defect
-- **AND** it gives the exception and texture counts before the patch and after it
+- **AND** it gives the counts its reproduction observes before the patch and after it, such as exception and texture counts or export keys
 
 ### Requirement: A cause the draft cannot confirm is marked as such
 

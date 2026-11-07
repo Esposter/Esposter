@@ -1,3 +1,5 @@
+import type { ProvenanceSource } from "#src/models/provenance/Provenance";
+
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { join } from "node:path";
 
@@ -22,9 +24,19 @@ export const WORLD_JSON_NAME = "world.json";
 export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 // The community's asset index (the one published per version up to 2.6, radioegor146/gi-asset-indexes, its mapped file for
 // 2.6.0), which names every asset by its path and so turns a placement's 64-bit path hash back into the prefab's name.
-// Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`)
-export const ASSET_PATH_INDEX_URL =
-  "https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/master/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json";
+// Read by the derivation alone, and fetched into its folder when missing (`ensureAssetPathIndex`). It is fetched at the
+// One commit that last changed the file, never at the branch, and the SHA-256 of the file at that commit is the one the
+// Derived names are recorded with
+export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";
+export const ASSET_PATH_INDEX_SHA256 = "108ea704b12389a76f547e459dfdfb1c938c111d99ad62524a80f3e02eb198c4";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal would otherwise infer
+export const ASSET_PATH_INDEX_URL: string = `https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/${ASSET_PATH_INDEX_COMMIT}/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json`;
+// The index as a source an output built from its derived names is stamped with: the commit it is fetched at and its SHA-256
+export const ASSET_PATH_INDEX_SOURCE: ProvenanceSource = {
+  commit: ASSET_PATH_INDEX_COMMIT,
+  name: "asset-path index",
+  sha256: ASSET_PATH_INDEX_SHA256,
+};
 // The index is about 92 MB, so its fetch is bounded by minutes rather than the requests' seconds
 export const ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS: number = Temporal.Duration.from({ minutes: 10 }).total(
   "milliseconds",

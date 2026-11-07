@@ -6,6 +6,7 @@ import { toPotCompanionTalkRows } from "#src/services/genshinAssets/friendship/t
 import { HOME_NPC_TABLE_NAME } from "#src/services/genshinAssets/home/constants";
 import { readHomeFavourRows } from "#src/services/genshinAssets/home/readHomeFavourRows";
 import { REGION_DATA_DIRECTORY } from "#src/services/genshinAssets/residents/constants";
+import { readRegionFilenames } from "#src/services/genshinAssets/shared/readRegionFilenames";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
 import { mapNpcStandingTalkIds } from "#src/services/genshinText/mapNpcStandingTalkIds";
@@ -17,7 +18,7 @@ import { skipWordlessTalkLines } from "#src/services/genshinText/skipWordlessTal
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { GameLanguage } from "genshin-text";
 import { GameDataset, potCompanionDialogueSchema, talkSchema } from "genshin-world";
-import { readdir, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The residents' standing talks, published with every word they show: each resident of a region's data whose talk is
@@ -26,7 +27,7 @@ import { join } from "node:path";
 // Same way, from the home event table, and published beside them with their words in the same chunks. The companions'
 // Serenitea Pot talks are read the same way too, each gated by the Friendship Level it opens at, and published as a record
 export const buildStandingTalks = async (): Promise<GameDataBuild> => {
-  const regionFileNames = await readdir(REGION_DATA_DIRECTORY);
+  const regionFileNames = await readRegionFilenames(REGION_DATA_DIRECTORY);
   const regionResidents = await Promise.all(
     regionFileNames.map(
       async (fileName) =>

@@ -12,7 +12,7 @@ export const listProducerCommits = (
   commit: string,
   producerPaths: string[],
   cwd?: string,
-): Except<ProducerStaleness, "stamp"> =>
+): Except<ProducerStaleness, "producer"> =>
   !checkIsKnown(commit, cwd) || !checkIsAncestor(commit, "HEAD", cwd)
     ? listRecentCommits(producerPaths, cwd)
     : { commits: readCommitLines([`${commit}..HEAD`, "--", ...producerPaths], cwd), isApproximate: false };

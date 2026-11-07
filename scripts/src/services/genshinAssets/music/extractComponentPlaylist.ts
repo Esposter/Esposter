@@ -5,9 +5,11 @@ import { decodeGameSounds } from "#src/services/genshinAssets/music/decodeGameSo
 import { readGameMixVolumes } from "#src/services/genshinAssets/music/readGameMixVolumes";
 import { readGameMusicHierarchy } from "#src/services/genshinAssets/music/readGameMusicHierarchy";
 import { resolveMusicPlaylistSegments } from "#src/services/genshinAssets/music/resolveMusicPlaylistSegments";
-import { MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
+import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
+import { GENSHIN_ASSETS_PRODUCER_PATHS, MUSIC_PACKAGE_PATTERN } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
@@ -64,5 +66,11 @@ export const extractComponentPlaylist = async (component: DerivedAssetComponent)
   writeJsonFile(join(music, "playlist.json"), componentPlaylist);
   const sourceIds = new Set(segments.flatMap(({ clips }) => clips.map(({ sourceId }) => sourceId)));
   await Array.fromAsync(decodeGameSounds(MUSIC_PACKAGE_PATTERN, (id) => sourceIds.has(id), music));
+  // Only a playlist that decodes a source runs vgmstream, so only that one names it
+  await writeProvenance(music, {
+    command: `playlist ${component}`,
+    producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
+    tools: sourceIds.size > 0 ? [{ name: "vgmstream", path: await resolveVgmstream() }] : [],
+  });
   return componentPlaylist;
 };

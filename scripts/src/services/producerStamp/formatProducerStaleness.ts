@@ -10,16 +10,16 @@ import {
 // Commit on the branch
 export const formatProducerStaleness = (
   label: string,
-  { commits, isApproximate, stamp }: ProducerStaleness,
+  { commits, isApproximate, producer }: ProducerStaleness,
 ): string => {
-  if (!stamp)
+  if (!producer)
     return `${label}: written before outputs recorded their producer, so whether its extractor changed since is unknown`;
-  if (!stamp.isDirty && !isApproximate && commits.length === 0) return "";
-  const source = stamp.isDirty ? ", from uncommitted changes" : "";
+  if (!producer.isDirty && !isApproximate && commits.length === 0) return "";
+  const source = producer.isDirty ? ", from uncommitted changes" : "";
   const listed = commits.slice(0, MAX_LISTED_PRODUCER_COMMITS).map((commit) => `  ${commit}`);
   const omitted = commits.length - MAX_LISTED_PRODUCER_COMMITS;
   return [
-    `${label}: written at ${stamp.commit.slice(0, SHORT_SHA_LENGTH)}${source}; ${commits.length} commits to its producer ${isApproximate ? `in the last ${PRODUCER_STALE_WINDOW_DAYS} days, since that commit is not on this branch` : "since"}`,
+    `${label}: written at ${producer.commit.slice(0, SHORT_SHA_LENGTH)}${source}; ${commits.length} commits to its producer ${isApproximate ? `in the last ${PRODUCER_STALE_WINDOW_DAYS} days, since that commit is not on this branch` : "since"}`,
     ...listed,
     ...(omitted > 0 ? [`  …and ${omitted} more`] : []),
   ].join("\n");

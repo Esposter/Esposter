@@ -8,7 +8,7 @@ The conversion pipeline from the installed game writes exports, fit inputs and r
 
 Every export, fit input and record carries a provenance stamp naming the game version, the tool and its hash, the operating system and the command. A fit, the map and the fleet copy refuse an input whose stamp names another version or has none. Every fetched source is pinned to a commit, and every tool a stage runs is installed from a pinned archive checked by its SHA-256 and found on no `PATH`.
 
-**BREAKING**: exports, fit inputs and records made before this change carry no stamp, so the fit, the map and the fleet copy refuse them until their writers run again. The old `producer.json` form is deleted rather than read beside the new one.
+**BREAKING**: exports, fit inputs and records made before this change carry no stamp, so the fit refuses them and the map is made again until their writers run again, and the fleet copy copies them, since it refuses only a stamp of another game version. The old `producer.json` form is deleted rather than read beside the new one.
 
 ## Capabilities
 

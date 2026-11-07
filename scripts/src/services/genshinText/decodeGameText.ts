@@ -4,6 +4,7 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import {
+  ANIMESTUDIO_TOOL,
   EXTRACTED_DIRECTORY,
   GENSHIN_ANIMESTUDIO_OPTIONS,
   INSTALLED_BLOCKS_DIRECTORY,
@@ -12,11 +13,13 @@ import { getPathHash } from "#src/services/genshinAssets/shared/getPathHash";
 import {
   EXCEL_BIN_OUTPUT_PATH,
   GameLanguageCodeMap,
+  GENSHIN_TEXT_PRODUCER_PATHS,
   TEXT_MAP_DIRECTORY,
   TextMapChunkRangeMap,
 } from "#src/services/genshinText/constants";
 import { decodeChunkCandidates } from "#src/services/genshinText/decodeChunkCandidates";
 import { decodeTextMap } from "#src/services/genshinText/decodeTextMap";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
@@ -99,6 +102,12 @@ export const decodeGameText = async (): Promise<string[]> => {
   mkdirSync(TEXT_MAP_DIRECTORY, { recursive: true });
   for (const { chunk, code, directory, textMap } of accepted)
     writeJsonFile(join(TEXT_MAP_DIRECTORY, `${directory}${code}_${chunk}.json`), Object.fromEntries(textMap));
+  // Decoded from the installed game and AnimeStudio alone, so the stamp names no source fetched at a commit
+  await writeProvenance(TEXT_MAP_DIRECTORY, {
+    command: "genshin:text decode",
+    producerPaths: GENSHIN_TEXT_PRODUCER_PATHS,
+    tools: [ANIMESTUDIO_TOOL],
+  });
 
   return languageCodes.map((code) => {
     const languageMaps = accepted.filter((chunk) => chunk.code === code);

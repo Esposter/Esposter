@@ -1,6 +1,8 @@
 import type { Dirent, readdirSync, readFileSync } from "node:fs";
 
 import {
+  GAME_TEXT_DIRECTORY,
+  GENSHIN_TEXT_SOURCE,
   MAIN_QUEST_TABLE_NAME,
   QUEST_BINARY_DIRECTORY,
   QUEST_BINARY_DIRECTORY_PATH,
@@ -8,8 +10,9 @@ import {
 import { fetchDump } from "#src/services/genshinText/fetchDump";
 import { getGitBlobSha } from "#src/services/genshinText/getGitBlobSha";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { fetchJson } from "#src/services/shared/fetchJson";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { CONTENT } = vi.hoisted(() => ({ CONTENT: "a" }));
 
@@ -18,6 +21,7 @@ vi.mock(import("genshin-world"), async (importOriginal) => {
   return { ...original, QuestIds: [original.QuestId.BirdsEyeView], ReputationRequestQuestIds: [] };
 });
 vi.mock(import("#src/services/genshinText/readExcelTable"));
+vi.mock(import("#src/services/provenance/writeProvenance"));
 vi.mock(import("#src/services/shared/fetchJson"));
 vi.mock(import("#src/services/shared/fetchOk"));
 vi.mock(import("#src/services/shared/publishFile"));
@@ -41,9 +45,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
 }));
 
 describe(fetchDump, () => {
-  test("a carried quest binary the dump already holds is counted once, as held", async () => {
-    expect.hasAssertions();
-
+  beforeEach(() => {
     vi.mocked(readExcelTable).mockImplementation((tableName) =>
       tableName === MAIN_QUEST_TABLE_NAME ? [{ id: 352 }] : [],
     );
@@ -55,7 +57,26 @@ describe(fetchDump, () => {
         truncated: false,
       }),
     );
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("a carried quest binary the dump already holds is counted once, as held", async () => {
+    expect.hasAssertions();
 
     await expect(fetchDump()).resolves.toStrictEqual(["0 dump files fetched, 1 already held"]);
+  });
+
+  test("the dump is stamped with the text source it was fetched from", async () => {
+    expect.hasAssertions();
+
+    await fetchDump();
+
+    expect(vi.mocked(writeProvenance)).toHaveBeenCalledExactlyOnceWith(
+      GAME_TEXT_DIRECTORY,
+      expect.objectContaining({ sources: [GENSHIN_TEXT_SOURCE] }),
+    );
   });
 });

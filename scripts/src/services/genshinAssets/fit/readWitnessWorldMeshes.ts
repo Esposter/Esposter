@@ -1,14 +1,11 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { readWitnessLayout } from "#src/services/genshinAssets/fit/readWitnessLayout";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Vector3 } from "three";
 
@@ -19,10 +16,10 @@ export const readWitnessWorldMeshes = async (
   component: DerivedAssetComponent,
   checkIsKept: (mesh: string) => boolean,
 ): Promise<Vector3[][]> => {
-  const { assets, root } = getComponentDirectory(component);
-  const layout = parseMachineJson<SceneLayout>(await readFile(join(root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
+  const { assets } = getComponentDirectory(component);
+  const { placements } = await readWitnessLayout(component);
   return Promise.all(
-    layout.placements
+    placements
       .filter(({ mesh }) => checkIsKept(mesh))
       .map(async (placement) => {
         const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${placement.mesh}.obj`));

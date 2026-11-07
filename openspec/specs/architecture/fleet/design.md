@@ -67,7 +67,7 @@ An agent lands its commits on `ai/queue` with its own loop, the explicit action 
 
 ## Game data is never shared through a service
 
-No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network gets its game exports the same way, from the CDN, so until it holds them it takes only the entries that need no game data. The copy's procedure and the folders it moves are `.agents/skills/throughput/references/fleet.md`.
+No export or recording is ever committed, published or sent to a hosted service. A machine's first route to the game data is the game itself, downloaded from HoYoverse's official CDN and extracted locally, so it needs no other machine. A copy between machines on the local network is the faster route, and it runs only over SSH, authenticated and encrypted. A machine off the network gets its game exports the same way, from the CDN, so until it holds them it takes only the entries that need no game data. A copy also refuses what a peer's provenance stamp says another game version wrote, read before the files are chosen ([genshin-pipeline-provenance](../../../changes/genshin-pipeline-provenance/tasks.md), task 1.3). The copy's procedure and the folders it moves are `.agents/skills/throughput/references/fleet.md`.
 
 ## Key files
 
@@ -79,7 +79,7 @@ No export or recording is ever committed, published or sent to a hosted service.
 | `scripts/src/fleet/release/index.ts`                  | Deletes an entry's claim, or with a miss keeps it as the holder's final word                             |
 | `scripts/src/fleet/next/index.ts`                     | Claims the first entry this worker may take and prints its id and worker                                 |
 | `scripts/src/fleet/status/index.ts`                   | Fetches every claim and heartbeat and prints the machines and the claims                                 |
-| `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, pull and push over ssh                                     |
+| `scripts/src/fleet/data/index.ts`                     | The `ai:fleet:data` command: manifest, files, stamps, pull and push over ssh                             |
 | `scripts/src/services/fleet/selectTakeableEntries.ts` | Selects the entries a machine may take from its profile and the live claims, lowest phase first          |
 | `scripts/src/services/fleet/claimFleetEntry.ts`       | Wins a claim with a plain push, adopts its own, or takes over a stale one with an explicit lease         |
 | `scripts/src/services/fleet/pushFleetRef.ts`          | Points a fleet ref at a commit under a lease, and reads a failed push by where the remote holds the ref  |

@@ -15,6 +15,8 @@ export const DATA_FOLDERS: readonly string[] = [
 export const EXCLUDED_FOLDERS: readonly string[] = ["frames", "tmp"];
 // The stats in flight at once, so a directory of any size holds one bounded batch of promises
 export const STAT_CONCURRENCY = 64;
+// The stamps read at once, so a list of paths of any length never holds a read open for each one
+export const STAMP_CONCURRENCY = 16;
 export const DEFAULT_PARITY_DIRECTORY: string = join(homedir(), SITE_NAME, "genshin-parity");
 export const PEERS_FILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase()}`, "peers.json");
 export const SUCCESS_EXIT_CODE = 0;

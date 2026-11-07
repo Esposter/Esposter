@@ -1,10 +1,14 @@
 import type { CityAreaFile } from "#src/models/genshinAssets/world/CityAreaFile";
 
+import { ANIMESTUDIO_TOOL, GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { readGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import { CITY_AREA_FILE_PATH } from "#src/services/genshinAssets/world/constants";
 import { extractCityAreas } from "#src/services/genshinAssets/world/extractCityAreas";
 import { readCityAreaCandidates } from "#src/services/genshinAssets/world/readCityAreaCandidates";
 import { readCityAreaFile } from "#src/services/genshinAssets/world/readCityAreaFile";
+import { checkIsVouchedBy } from "#src/services/provenance/checkIsVouchedBy";
+import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -14,7 +18,11 @@ import { dirname } from "node:path";
 export const buildCityAreas = async (): Promise<CityAreaFile> => {
   const gameVersion = await readGameVersion();
   const cached = await readCityAreaFile();
-  if (cached?.gameVersion === gameVersion) return cached;
+  if (
+    cached?.gameVersion === gameVersion &&
+    checkIsVouchedBy(await readFileProvenance(CITY_AREA_FILE_PATH), gameVersion)
+  )
+    return cached;
   const candidates = await readCityAreaCandidates();
   const file: CityAreaFile = {
     areas: await extractCityAreas(candidates),
@@ -22,6 +30,12 @@ export const buildCityAreas = async (): Promise<CityAreaFile> => {
     gameVersion,
   };
   await mkdir(dirname(CITY_AREA_FILE_PATH), { recursive: true });
-  writeJsonFile(CITY_AREA_FILE_PATH, file);
+  await writeStampedFiles(
+    [CITY_AREA_FILE_PATH],
+    { command: "city-areas", producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS, tools: [ANIMESTUDIO_TOOL] },
+    () => {
+      writeJsonFile(CITY_AREA_FILE_PATH, file);
+    },
+  );
   return file;
 };

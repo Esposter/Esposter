@@ -8,7 +8,9 @@ import { join } from "node:path";
 // The one gcsim tag the builder reads, its last MIT release. Every later tag is under gcsim's own licence, so its
 // Current branch is read only to classify a value a kit holds, never stored
 export const GCSIM_TAG = "v2.47.2";
-export const GCSIM_MAIN_BRANCH = "main";
+// The commit of gcsim's `main` branch its current kits are read at, the one the branch named when it was pinned. A
+// Branch moves and a commit does not, so a run reads the same files whatever the branch has taken since
+export const GCSIM_MAIN_COMMIT = "5dacbb4f0e27944a1409743342a7ad17998eae53";
 export const GCSIM_REPOSITORY_URL = "https://github.com/genshinsim/gcsim";
 export const GCSIM_RAW_URL = "https://raw.githubusercontent.com/genshinsim/gcsim";
 export const GCSIM_CHARACTERS_PATH = "internal/characters";

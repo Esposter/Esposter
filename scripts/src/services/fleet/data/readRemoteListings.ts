@@ -17,7 +17,7 @@ export const readRemoteListings = async function* (
   remoteDirectory: string,
   directories: string[],
 ): AsyncGenerator<DirectoryListing> {
-  const child = spawn("ssh", getSshArguments(peer, getFleetCommand(peer, "files", remoteDirectory, "")), {
+  const child = spawn("ssh", getSshArguments(peer, getFleetCommand(peer, "files", remoteDirectory, " --stdin")), {
     stdio: ["pipe", "pipe", "inherit"],
   });
   const exitCode = waitForExit(child);

@@ -9,5 +9,7 @@ export const MONDSTADT_GROUND_REGION = RegionId.Mondstadt;
 // The regions whose ground the world does not lay over Windrise's: Windrise's own base, read whole, and Mondstadt's
 // Plateau, measured to overlap the base
 export const UNLAID_GROUND_REGIONS: readonly string[] = [WINDRISE_GROUND_REGION, MONDSTADT_GROUND_REGION];
+// The colour a rock is drawn in: its record carries none, so a neutral stone grey stands in until a rock's colour is fitted
+export const ROCK_STAND_IN_COLOR = "#8c8a84";
 // Inazuma, whose permanent thunderstorm is lifted in its areas unless the player has restored it
 export const INAZUMA_REGION_ID = "inazuma";

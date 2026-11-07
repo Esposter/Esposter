@@ -1,6 +1,7 @@
 import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
 import { filesCommand } from "#src/services/fleet/data/commands/filesCommand";
 import { manifestCommand } from "#src/services/fleet/data/commands/manifestCommand";
+import { stampsCommand } from "#src/services/fleet/data/commands/stampsCommand";
 import { createTransferCommand } from "#src/services/fleet/data/commands/transferCommand";
 import { runCommand } from "#src/services/timing/runCommand";
 import { defineCommand } from "citty";
@@ -18,6 +19,7 @@ await runCommand(
       manifest: manifestCommand,
       pull: createTransferCommand(TransferDirection.Pull, "Copy the files this machine lacks from a peer"),
       push: createTransferCommand(TransferDirection.Push, "Copy the files a peer lacks from this machine"),
+      stamps: stampsCommand,
     },
   }),
 );

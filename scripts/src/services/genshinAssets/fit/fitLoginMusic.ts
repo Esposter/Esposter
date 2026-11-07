@@ -6,8 +6,10 @@ import { roundInstrument } from "#src/services/genshinAssets/fit/roundInstrument
 import { fitMusicSource } from "#src/services/genshinAssets/shared/fitMusicSource";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
+import { readGameVersion } from "#src/services/genshinAssets/shared/readGameVersion";
 import { roundMusic } from "#src/services/genshinAssets/shared/roundMusic";
 import { CHROMA_FRAME_LENGTH, CHROMA_HOP_LENGTH } from "#src/services/genshinParity/shared/constants";
+import { readVouchedProvenance } from "#src/services/provenance/readVouchedProvenance";
 import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";
@@ -21,6 +23,7 @@ import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 // And residuals
 export const fitLoginMusic = async (): Promise<{ music: Music; report: string[] }> => {
   const { music: directory } = getComponentDirectory(DerivedAssetComponent.Login);
+  await readVouchedProvenance(directory, await readGameVersion());
   const { isLooping, order, segments } = parseMachineJson<ComponentPlaylist>(
     await readFile(join(directory, "playlist.json"), "utf8"),
   );

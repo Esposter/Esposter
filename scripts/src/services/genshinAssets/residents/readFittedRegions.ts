@@ -6,10 +6,9 @@ import type { RegionMapPoint } from "#src/services/genshinAssets/residents/class
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { toFittedMapPoints } from "#src/services/genshinAssets/residents/toFittedMapPoints";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The regions the fit placed, each with its data file's path under the world package's data and the file as it holds it,
@@ -31,7 +30,7 @@ export const readFittedRegions = async (): Promise<{
   const regionFiles = await Promise.all(
     fittedRegions.map(async ({ region }) => {
       const file = join("regions", `${region}.json`);
-      const data = parseMachineJson<RegionDataFile>(await readFile(join(WORLD_DATA_DIRECTORY, file), "utf8"));
+      const data = parseMachineJson<RegionDataFile>(await readWorldRecord(file));
       return { data, file, region };
     }),
   );

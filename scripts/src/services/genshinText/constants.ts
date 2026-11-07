@@ -1,3 +1,5 @@
+import type { ProvenanceSource } from "#src/models/provenance/Provenance";
+
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { GameLanguage, GameLanguageTagMap } from "genshin-text";
@@ -165,13 +167,26 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseTraditional]: "zh-tw",
 };
 // The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them or holds them with
-// Other content, at its default
-// Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's git
-// Blob sha, which decides whether a file held is replaced, and list every file, where the contents API stops at a thousand
-export const ANIME_GAME_DATA_BRANCH = "main";
+// Other content, at the one commit the install's build is read from. A branch moves with each patch, so a run names a
+// Commit and never a branch. Its directories' trees give each file's git blob sha, which decides whether a file held is
+// Replaced, and list every file, where the contents API stops at a thousand
+export const ANIME_GAME_DATA_COMMIT = "792978e5503ecfba73dcb3562ed44a0d35a2abe2";
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
-export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_BRANCH}`;
+export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_COMMIT}`;
 export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
+// The text source as a provenance stamp names it, and the code the dump's outputs depend on, whose commits the stamp lists
+export const GENSHIN_TEXT_SOURCE: ProvenanceSource = { commit: ANIME_GAME_DATA_COMMIT, name: "text" };
+// The code a text output depends on, whose commits its stamp lists: the text's own folders, and the AnimeStudio exports and
+// Name hashes the decode reads its chunks through. The shared utilities and the stamp writer sit beside every producer's
+// Stamp, so no producer list names them
+export const GENSHIN_TEXT_PRODUCER_PATHS: string[] = [
+  "scripts/src/models/genshinAssets/shared",
+  "scripts/src/models/genshinText",
+  "scripts/src/models/recreation/animeStudio",
+  "scripts/src/services/genshinAssets/shared",
+  "scripts/src/services/genshinText",
+  "scripts/src/services/recreation/animeStudio",
+];
 // The dump's scene 3 files a reader names, the open world's, fetched like the tables: its NPC births, and its areas'
 // Outlines as the game draws them. Each one's directory and file name are split so the fetch can list the one and
 // Select the other

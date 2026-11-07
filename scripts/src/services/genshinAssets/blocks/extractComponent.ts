@@ -7,6 +7,7 @@ import { EXTRACT_PRODUCER_PATHS, GROUP_BY_TYPE } from "#src/services/genshinAsse
 import { exportResolvedAssets } from "#src/services/genshinAssets/blocks/exportResolvedAssets";
 import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetClosure";
 import {
+  ANIMESTUDIO_TOOL,
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
   GENSHIN_ANIMESTUDIO_OPTIONS,
@@ -22,12 +23,12 @@ import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolve
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toMaterialTextures } from "#src/services/genshinAssets/shared/toMaterialTextures";
 import { getLandmarkMeshes } from "#src/services/genshinAssets/witness/getLandmarkMeshes";
-import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
+import { ASSET_PATH_INDEX_SOURCE, WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
 import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapitalWorld";
 import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
 import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
-import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -131,7 +132,13 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   // A set-by-hand world is exported here; a derived one was exported by its derivation, which read the placements from it
   if (options.world) await exportWorld(options.world, directory.world);
   const worldLines = world ? await extractWorld(world, directory) : [];
-  writeProducerStamp(directory.root, EXTRACT_PRODUCER_PATHS);
+  // A derived world's names come from the asset-path index, so its stamp names the index's commit and SHA-256
+  await writeProvenance(directory.root, {
+    command: `extract ${component}`,
+    producerPaths: EXTRACT_PRODUCER_PATHS,
+    sources: derived ? [ASSET_PATH_INDEX_SOURCE] : [],
+    tools: [ANIMESTUDIO_TOOL],
+  });
   const unresolved = [...closure.unresolved, ...drawn.unresolved, ...sharedNames, ...sampled.unresolved];
   return [
     `${closure.objects.length} objects reached from ${roots.length} roots, ${drawn.assets.length} meshes and materials, ${sampled.assets.length} textures`,

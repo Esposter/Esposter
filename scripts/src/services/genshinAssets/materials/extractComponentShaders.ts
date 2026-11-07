@@ -4,13 +4,16 @@ import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStu
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { extractShader } from "#src/services/genshinAssets/materials/extractShader";
 import {
+  ANIMESTUDIO_TOOL,
   ANIMESTUDIO_UNPARSED_SUFFIX,
   DEFERRED_SHADING_BLOCK,
   GENSHIN_ANIMESTUDIO_OPTIONS,
+  GENSHIN_ASSETS_PRODUCER_PATHS,
   INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { existsSync, readdirSync } from "node:fs";
@@ -58,5 +61,10 @@ export const extractComponentShaders = async (component: DerivedAssetComponent):
       // oxlint-disable-next-line no-await-in-loop -- one shader's export, up to hundreds of megabytes, is read at a time
       summary.push(await extractShader(directory, blockName, shaderDirectory, file));
   }
+  await writeProvenance(directory, {
+    command: `shaders ${component}`,
+    producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
+    tools: [ANIMESTUDIO_TOOL],
+  });
   return summary;
 };

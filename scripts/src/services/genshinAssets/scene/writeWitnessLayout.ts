@@ -3,6 +3,7 @@ import type { SceneLayout } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import {
+  GENSHIN_ASSETS_PRODUCER_PATHS,
   MAIN_TEXTURE_SLOT,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_SIZE,
@@ -18,6 +19,7 @@ import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRigh
 import { parseTerrainTileName } from "#src/services/genshinAssets/world/parseTerrainTileName";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
@@ -106,6 +108,13 @@ export const writeWitnessLayout = async (
     });
   }
   const path = join(directory.root, WITNESS_LAYOUT_FILE_NAME);
-  await writeFile(path, JSON.stringify(layout));
+  await writeStampedFiles(
+    [path],
+    {
+      command: roots ? `witness ${component} --roots ${roots.join(",")}` : `witness ${component}`,
+      producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
+    },
+    () => writeFile(path, JSON.stringify(layout)),
+  );
   return path;
 };

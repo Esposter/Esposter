@@ -1,5 +1,6 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
+import type { ProvenanceTool } from "#src/models/provenance/ProvenanceOptions";
 import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -53,6 +54,15 @@ export const ANIMESTUDIO_CLI_PATH: string =
 // AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map.
 // The CLI reads the merged one from there on every export
 export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps");
+// AnimeStudio as a tool a provenance stamp names: the stamp keeps the SHA-256 of the binary at its path, never the path
+export const ANIMESTUDIO_TOOL: ProvenanceTool = { name: "AnimeStudio", path: ANIMESTUDIO_CLI_PATH };
+// The code a genshin assets output depends on, whose commits its provenance stamp lists, for the outputs with no
+// Narrower list of their own
+export const GENSHIN_ASSETS_PRODUCER_PATHS: string[] = [
+  "scripts/src/models/genshinAssets",
+  "scripts/src/services/genshinAssets",
+  "scripts/src/services/recreation/animeStudio",
+];
 // The CAB map `map` builds: every serialized file's block and the files it points into.
 // It lives in the parity folder, where every reader opens it.
 // `placeCabMap` copies it into the Maps folder the CLI reads
@@ -412,6 +422,8 @@ export const WALKWAY_RAISED_DECIMALS = 3;
 // A bridge's or a pillar's hull is carved on a grid of a unit of its own mesh, a tenth of a metre as the scene scales
 // It
 export const HULL_CELL_SIZE = 1;
+// How many meshes a hull fit reads at once
+export const HULL_MESH_READ_CONCURRENCY = 4;
 // How far a ratio's cross-ratio in the fitted data may stray from its reference's: a pixel off at each end of widths
 // About two hundred pixels across moves it by about a hundredth
 export const ARRANGEMENT_CROSS_RATIO_TOLERANCE = 0.01;

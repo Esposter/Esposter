@@ -14,4 +14,8 @@ x-touches:
     "scripts/src/services/recreation/video/**",
     "scripts/src/services/shared/**",
     "scripts/src/services/fleet/data/**",
+    "scripts/src/fleet/data/**",
+    "scripts/src/models/provenance/**",
+    "scripts/src/models/fleet/data/**",
+    "packages/genshin-world/src/data/**",
   ]

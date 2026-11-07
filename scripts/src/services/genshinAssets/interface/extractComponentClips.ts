@@ -8,12 +8,14 @@ import { collectScenePaths } from "#src/services/genshinAssets/interface/collect
 import { createClipNameResolver } from "#src/services/genshinAssets/interface/createClipNameResolver";
 import { decodeAnimationClip } from "#src/services/genshinAssets/interface/decodeAnimationClip";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
+import { ANIMESTUDIO_TOOL, GENSHIN_ASSETS_PRODUCER_PATHS } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { exportClipBlocks } from "#src/services/genshinAssets/shared/exportClipBlocks";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
 import { readComponentLayout } from "#src/services/genshinAssets/shared/readComponentLayout";
 import { readExportedClips } from "#src/services/genshinAssets/shared/readExportedClips";
+import { writeProvenance } from "#src/services/provenance/writeProvenance";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -49,5 +51,10 @@ export const extractComponentClips = async (component: DerivedAssetComponent): P
     Object.assign(decodeAnimationClip(clip, CLIP_SAMPLE_RATE, resolveName), { name: clip.m_Name }),
   );
   await writeFile(join(directory, "clips.json"), JSON.stringify(clips));
+  await writeProvenance(directory, {
+    command: `clips ${component}`,
+    producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS,
+    tools: [ANIMESTUDIO_TOOL],
+  });
   return clips;
 };

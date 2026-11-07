@@ -2,11 +2,16 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { readNames } from "#src/services/genshinAssets/materials/readNames";
+import { readShaderBlockNames } from "#src/services/genshinAssets/materials/readShaderBlockNames";
 import { readWorldTerrainSplats } from "#src/services/genshinAssets/materials/readWorldTerrainSplats";
-import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import {
+  GENSHIN_ANIMESTUDIO_OPTIONS,
+  GENSHIN_ASSETS_PRODUCER_PATHS,
+} from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 import { readdir, readFile, writeFile } from "node:fs/promises";
@@ -97,7 +102,7 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
       lines.push(`| ${name} | ${index} | ${diffuse} | ${kind} | ${tileSize} m | ${(100 * share).toFixed(1)}% |`);
     }
   lines.push("", "## Shaders", "");
-  for (const block of (await readNames(directory.shaders)).filter((name) => name !== "raw"))
+  for (const block of await readShaderBlockNames(directory.shaders))
     for (const shader of await readNames(join(directory.shaders, block))) {
       const shaderDirectory = join(directory.shaders, block, shader);
       // oxlint-disable-next-line no-await-in-loop -- one shader's folder is read at a time
@@ -114,6 +119,10 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
       }
     }
   const path = join(directory.root, "inventory.md");
-  await writeFile(path, `${lines.join("\n")}\n`);
+  await writeStampedFiles(
+    [path],
+    { command: `inventory ${component}`, producerPaths: GENSHIN_ASSETS_PRODUCER_PATHS },
+    () => writeFile(path, `${lines.join("\n")}\n`),
+  );
   return path;
 };
