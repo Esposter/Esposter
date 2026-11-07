@@ -18,21 +18,37 @@ const assertPinned = (name: string, checksum: string, sha256: string): void => {
     throw new InvalidOperationError(Operation.Read, name, `has SHA-256 ${checksum}, not the pinned one`);
 };
 
+// Each path's verdict against its pin, held for the process, so a 92 MB index is hashed once rather than at every read
+const verifications = new Map<string, Promise<void>>();
+
+const getVerificationKey = (indexPath: string, sha256: string): string => `${indexPath}\n${sha256}`;
+
+const verifyHeld = async (indexPath: string, sha256: string): Promise<void> => {
+  assertPinned(basename(indexPath), await getFileSha256(indexPath), sha256);
+};
+
 // The community's index at its path, fetched from its source when the path holds no file. A copy that brought it (the
 // `asset-index` folder is in the fleet's data) is checked against the pinned SHA-256 and refused when it differs, never
-// fetched over. A fetch hashes the bytes it downloads once, and publishes them only when they are the pinned ones, through
+// Fetched over. A fetch hashes the bytes it downloads once, and publishes them only when they are the pinned ones, through
 // A partial file of its own, so a fetch cut short leaves no file a later run reads as the index
 export const ensureAssetPathIndex = async (
   indexPath: string = ASSET_PATH_INDEX_PATH,
   sha256: string = ASSET_PATH_INDEX_SHA256,
 ): Promise<string> => {
+  const key = getVerificationKey(indexPath, sha256);
   if (existsSync(indexPath)) {
-    assertPinned(basename(indexPath), await getFileSha256(indexPath), sha256);
+    let verification = verifications.get(key);
+    if (verification === undefined) {
+      verification = verifyHeld(indexPath, sha256);
+      verifications.set(key, verification);
+    }
+    await verification;
     return indexPath;
   }
   const response = await fetchOk(ASSET_PATH_INDEX_URL, { timeoutMs: ASSET_PATH_INDEX_TIMEOUT_MILLISECONDS });
   const index = new Uint8Array(await response.arrayBuffer());
   assertPinned(ASSET_PATH_INDEX_URL, createHash("sha256").update(index).digest("hex"), sha256);
   await publishFile(indexPath, index);
+  verifications.set(key, Promise.resolve());
   return indexPath;
 };
