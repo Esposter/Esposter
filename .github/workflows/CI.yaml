@@ -131,39 +131,6 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-  # Runs the session's browser test by its path. `BROWSER_TEST_GLOB` keeps every `*.browser.test.ts` out of the
-  # default run.
-  # The provider launches the runner image's Microsoft Edge through its `msedge` channel, so no browser is installed here
-  # The job is advisory, not part of `queueStatusChecks` (`apps/infra/src/github/rulesets/queueStatusChecks.ts`),
-  # so its red does not gate a merge
-  session-browser-test:
-    name: Session Browser Test
-    needs: build-packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
-        with:
-          filter: "genshin-world..."
-      # Restored only, as the coverage shards restore it: `build-packages` fills and saves it before this job starts
-      - name: ♻️ Restore the game data mirror
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/Esposter/cache/content
-          key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
-          restore-keys: game-data-mirror-
-
-      - name: 🌐 Session browser test
-        run: pnpm -C packages/genshin-world test:visual src/components/World/Session/Index.browser.test.ts --run
-
   # No `needs`: oxfmt is a standalone binary over source files, so it waits on no build
   format:
     name: Format

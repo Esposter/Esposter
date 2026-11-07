@@ -16,7 +16,7 @@ Two mechanics make those selectors work. Vitest names a project after its neares
 ```mermaid
 flowchart LR
   P["packages/* — built once, cached, uploaded"] --> A[["package-builds artifact"]]
-  A --> CH["lint, typecheck, coverage shards, session browser test"]
+  A --> CH["lint, typecheck, coverage shards"]
   A --> W["apps/web — nuxt build, replayed by the task cache"]
   A --> F["apps/functions — tsdown, inside its deploy job"]
   A --> I["apps/infra — tsdown, inside the Pulumi job"]
@@ -132,12 +132,9 @@ flowchart LR
   BP --> T[typecheck]
   BP --> C["coverage (sharded)"] --> M[merge coverage]
   BP --> A[build app]
-  BP --> SB["session browser test"]
 ```
 
 `format` is the one check with no `needs`. oxfmt is a standalone binary over source files — no barrels and no package `dist` — so gating it on the package build only made the workflow's quickest check wait out its slowest job. It installs with `--filter "{.}" --ignore-scripts` for the same reason it skips `setup-packages`: it wants the lockfile-pinned binary, not the built artifact and not the app's `nuxt prepare`.
-
-`session-browser-test` runs the session's browser test and nothing else. A root run leaves out every `*.browser.test.ts` (`BROWSER_TEST_GLOB`, `packages/configuration/src/services/constants.ts`), so the job runs one of them directly, with `pnpm -C packages/genshin-world test:visual <file> --run`, after `build-packages` like the coverage shards. It installs only `genshin-world` and its dependencies, restores the game data mirror as the shards do, and installs no browser: its provider launches the runner image's Microsoft Edge through the `msedge` channel. The browser project's other suites, the visual screens and the other browser tests, run in no workflow. The job is advisory: it is not in `queueStatusChecks` (`apps/infra/src/github/rulesets/queueStatusChecks.ts`), so its red does not gate a merge. Its browser test config (`packages/genshin-world/vitest.browser.config.ts`) mounts `regionDataPlugin` (`packages/genshin-world/parity/regionDataPlugin.ts`), which serves `/regions/<id>.json` from the world's region data as the parity page serves it; the shared screen fixture's `regionDataBaseUrl` (`packages/genshin-world/src/components/World/Screen/Index.fixture.ts`) is `regions`, the prefix that route answers, and the session test's driver inherits it.
 
 Tests run through a single root `vitest.config.ts` whose `projects` are the globs `pnpm-workspace.yaml` declares — `apps/*`, `packages/*` and `scripts` — each member configuring its own project, the app as a Nuxt project via `defineVitestProject`. Nothing in the root config knows what any member contains, `scripts` included: it is a member like the rest, and the tooling it holds (the dependency graph, the outdated-dependency report, the oxlint plugins, the sweep scans) is named by its own config rather than by a hand-scoped entry here. So `coverage`/`test` are `vitest run` at the root, not a `pnpm -r` fan-out, and a coverage shard can land a tooling test as readily as a package one. The agent tree under `.agents/` holds no executable, so a check **about** it lives in `scripts` like any other.
 
