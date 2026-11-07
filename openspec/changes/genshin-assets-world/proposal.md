@@ -6,7 +6,7 @@ The game holds the whole scenery of its nine regions on the Mac that runs this r
 
 ## What Changes
 
-- Writes the scenery gaps that no open change owns as a short list of tasks: a plant fit and a rock fit for every region, the Sumeru stilt huts and desert ruins, each nation's Statue of the Seven, the cloud band spread, the sub-area derivation roots, and a roadmap record for the art the scenery cannot ship.
+- Writes the scenery gaps that no open change owns as a short list of tasks: a plant fit and a rock fit for every region, the Sumeru ruins, each nation's Statue of the Seven, the cloud band spread, the sub-area derivation roots, and a roadmap record for the art the scenery cannot ship.
 - Links every other scenery gap to the open change, roadmap item or compute page that already plans it, or to the change it waits on, and writes no task for it.
 - Adds the requirements the new placements and measures deliver, each stated as what a player sees.
 
