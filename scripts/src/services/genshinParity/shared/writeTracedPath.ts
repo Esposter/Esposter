@@ -22,6 +22,14 @@ export const writeTracedPath = async (mapPath: string, key: string, path: string
   const open = source.search(/= \{/u);
   const close = open < 0 ? -1 : source.indexOf("}", open);
   if (open < 0 || close < 0) throw new InvalidOperationError(Operation.Read, mapPath, "declares no keyed record");
+  // The body is rebuilt from its entries, so anything else in the braces, such as a comment, would be dropped
+  const residue = source.slice(open + "= {".length, close).replaceAll(ENTRY_REGEX, "");
+  if (residue.replaceAll(/[\s,]/gu, "") !== "")
+    throw new InvalidOperationError(
+      Operation.Update,
+      mapPath,
+      "holds content other than keyed entries, which a write drops",
+    );
   const entries = new Map(
     Array.from(
       source.slice(open, close).matchAll(ENTRY_REGEX),

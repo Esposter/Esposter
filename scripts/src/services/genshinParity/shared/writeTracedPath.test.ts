@@ -1,5 +1,6 @@
 import { traceInk } from "#src/services/genshinParity/shared/traceImage";
 import { writeTracedPath } from "#src/services/genshinParity/shared/writeTracedPath";
+import { InvalidOperationError } from "@esposter/shared";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -80,6 +81,20 @@ describe(writeTracedPath, () => {
     expect(await readFile(shortPath, "utf8")).toBe(
       'export const Short: Record<string, string> = { [First]: "m0 0h1v1z", [Second]: "m0 0h2v2z" };\n',
     );
+  });
+
+  test("refuses a record holding content other than its entries, and leaves the map as it was", async () => {
+    expect.hasAssertions();
+
+    const commentedPath = join(directory, "Commented.ts");
+    const commentedSource =
+      'export const Commented: Record<string, string> = {\n  // kept by hand\n  [First]: "m0 0h1v1z",\n};\n';
+    await writeFile(commentedPath, commentedSource);
+
+    await expect(writeTracedPath(commentedPath, "Second", "m0 0h2v2z", 1)).rejects.toMatchObject({
+      name: InvalidOperationError.name,
+    });
+    await expect(readFile(commentedPath, "utf8")).resolves.toBe(commentedSource);
   });
 
   test("replaces the entry of a key it has already written", async () => {
