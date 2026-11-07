@@ -34,6 +34,17 @@ describe(readProducerStaleness, () => {
     rmSync(directory, { force: true, recursive: true });
   });
 
+  const writeStamp = (producer: { commit: string; isDirty: boolean; producerPaths: string[] }) => {
+    writeJsonFile(join(directory, PROVENANCE_NAME), {
+      command: "a",
+      gameVersion: INSTALL_VERSION,
+      operatingSystem: { platform: "a", release: "a", version: "a" },
+      producer,
+      sources: [],
+      tools: [],
+    });
+  };
+
   test("reads no stamp and no commits from an output that has none", async () => {
     expect.hasAssertions();
 
@@ -55,14 +66,7 @@ describe(readProducerStaleness, () => {
   test("reads the recent window as an approximation when the stamp's commit is one git does not know", async () => {
     expect.hasAssertions();
 
-    writeJsonFile(join(directory, PROVENANCE_NAME), {
-      command: "a",
-      gameVersion: INSTALL_VERSION,
-      operatingSystem: { platform: "a", release: "a", version: "a" },
-      producer: { commit: unknownCommit, isDirty: false, producerPaths: [producerPath] },
-      sources: [],
-      tools: [],
-    });
+    writeStamp({ commit: unknownCommit, isDirty: false, producerPaths: [producerPath] });
 
     const { isApproximate } = await readProducerStaleness(directory);
 
@@ -76,14 +80,7 @@ describe(readProducerStaleness, () => {
     const laterCommit = commitFile(TEST_FILENAME, " ");
     const laterShortCommit = runGit(["rev-parse", "--short", laterCommit], getCwd()).trim();
     const producer = { commit: stampCommit, isDirty: false, producerPaths: [TEST_FILENAME] };
-    writeJsonFile(join(directory, PROVENANCE_NAME), {
-      command: "a",
-      gameVersion: INSTALL_VERSION,
-      operatingSystem: { platform: "a", release: "a", version: "a" },
-      producer,
-      sources: [],
-      tools: [],
-    });
+    writeStamp(producer);
 
     await expect(readProducerStaleness(directory, getCwd())).resolves.toStrictEqual({
       commits: [`${laterShortCommit} ${TEST_FILENAME}`],
