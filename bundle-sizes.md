@@ -4,19 +4,19 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 
 | Package                    | File                                                         |   Bytes |    KiB |
 | :------------------------- | :----------------------------------------------------------- | ------: | -----: |
-| @esposter/functions        | index.js                                                     | 5207038 | 5085.0 |
+| @esposter/functions        | index.js                                                     | 5248913 | 5125.9 |
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
-| genshin-world              | index.js                                                     | 2567763 | 2507.6 |
+| genshin-world              | index.js                                                     | 2567770 | 2507.6 |
 | @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
 | genshin-world              | index-[hash].d.ts                                            | 1677990 | 1638.7 |
-| genshin-world              | style.css                                                    |  306095 |  298.9 |
+| genshin-world              | style.css                                                    |  306112 |  298.9 |
 | genshin-engine             | index.js                                                     |  287996 |  281.2 |
 | @esposter/functions        | Arrow.node-[hash].js                                         |  255689 |  249.7 |
 | genshin-world              | index.d.ts                                                   |  254177 |  248.2 |
-| genshin-interface          | index.d.ts                                                   |  248466 |  242.6 |
-| vue-phaserjs               | index.d.ts                                                   |  246018 |  240.3 |
-| genshin-interface          | index.js                                                     |  232450 |  227.0 |
-| genshin-interface          | style.css                                                    |  192322 |  187.8 |
+| genshin-interface          | index.d.ts                                                   |  248335 |  242.5 |
+| vue-phaserjs               | index.d.ts                                                   |  245887 |  240.1 |
+| genshin-interface          | index.js                                                     |  232459 |  227.0 |
+| genshin-interface          | style.css                                                    |  192333 |  187.8 |
 | @esposter/infra            | index.js                                                     |  121664 |  118.8 |
 | @esposter/db-schema        | index.js                                                     |  120943 |  118.1 |
 | genshin-world              | save-[hash].js                                               |  116324 |  113.6 |
@@ -58,7 +58,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | survey-expression          | index.d.ts                                                   |   17174 |   16.8 |
 | genshin-world              | furinaKit-[hash].js                                          |   17118 |   16.7 |
 | genshin-world              | jahodaKit-[hash].js                                          |   16780 |   16.4 |
-| @esposter/functions        | tslib.es6-[hash].js                                          |   16139 |   15.8 |
+| @esposter/functions        | tslib.es6-[hash].js                                          |   16200 |   15.8 |
 | @esposter/functions        | open-[hash].js                                               |   15437 |   15.1 |
 | genshin-world              | columbinaKit-[hash].js                                       |   13804 |   13.5 |
 | genshin-world              | alhaithamKit-[hash].js                                       |   12944 |   12.6 |
@@ -338,6 +338,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | EnemyState-[hash].js                                         |     411 |    0.4 |
 | trpc-nuxt-module           | runtime/server/models/WebSocketServerAdapter.js              |     409 |    0.4 |
 | tresjs-nuxt                | runtime/TresCanvas.client.js                                 |     398 |    0.4 |
+| trpc-nuxt-module           | runtime/client/models/UseSubscriptionOptions.d.ts            |     398 |    0.4 |
 | genshin-world              | getPartyMember-[hash].js                                     |     397 |    0.4 |
 | trpc-nuxt-module           | runtime/server/createTRPCWebSocketHandler.d.ts               |     397 |    0.4 |
 | genshin-world              | sethosKit-[hash].js                                          |     393 |    0.4 |
@@ -394,7 +395,6 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-nuxt-module           | runtime/client/httpBatchLink.js                              |     282 |    0.3 |
 | tresjs-nuxt                | runtime/TresCanvas.server.js                                 |     281 |    0.3 |
 | nuxt-security-module       | runtime/services/serializePermissionsPolicy.js               |     279 |    0.3 |
-| trpc-nuxt-module           | runtime/client/models/UseSubscriptionOptions.d.ts            |     278 |    0.3 |
 | nuxt-security-module       | runtime/services/updateContentSecurityPolicy.d.ts            |     275 |    0.3 |
 | trpc-nuxt-module           | runtime/constants.d.ts                                       |     273 |    0.3 |
 | trpc-nuxt-module           | runtime/client/httpBatchLink.d.ts                            |     267 |    0.3 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21658393 bytes, 21150.8 KiB, 20.66 MiB
+**Total:** 569 files, 21700231 bytes, 21191.6 KiB, 20.69 MiB
