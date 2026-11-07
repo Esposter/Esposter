@@ -1,11 +1,30 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe("derived asset component map", () => {
   const windriseStreamedPrefabs =
     DerivedAssetComponentMap[DerivedAssetComponent.Windrise].world?.streams.flatMap(({ prefabs }) => prefabs) ?? [];
+
+  test("imports without the weapon roots record, so the command that rewrites it can still run", async () => {
+    expect.hasAssertions();
+
+    vi.resetModules();
+    vi.doMock(import("#src/services/genshinAssets/weapons/readWeaponRoots"), () => ({
+      readWeaponRoots: () => {
+        throw new Error("no weapon roots record");
+      },
+    }));
+    const { DerivedAssetComponentMap: lazyMap } =
+      await import("#src/services/genshinAssets/shared/DerivedAssetComponentMap");
+
+    expect(() => lazyMap[DerivedAssetComponent.Weapons].roots).toThrowErrorMatchingInlineSnapshot(
+      `[Error: no weapon roots record]`,
+    );
+    vi.doUnmock(import("#src/services/genshinAssets/weapons/readWeaponRoots"));
+    vi.resetModules();
+  });
 
   test("roots the player's girl at her model prefab in the block the animator reads", () => {
     expect.hasAssertions();
