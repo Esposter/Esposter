@@ -1,6 +1,6 @@
 import type { MaterialRow } from "#src/models/genshinAssets/shared/MaterialRow";
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
-import type { CookingRecipe } from "genshin-world";
+import type { CookingRecipe, EnemyDropFamilyRow } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { WEAPON_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
@@ -15,7 +15,6 @@ import {
   CookingFoodType,
   CookingQuality,
   DestroyRule,
-  EnemyDropFamilyDropTableMap,
   GadgetKind,
   GameDataset,
   MAX_ITEM_QUANTITY,
@@ -160,17 +159,30 @@ describe(buildItems, () => {
     },
   ] satisfies MaterialRow[];
 
+  // The published drop families whose materials the items table takes, the Hilichurls' among them
+  const dropFamilies = [
+    {
+      family: "Hilichurls",
+      materials: [
+        { expectedCount: 0.4202, itemId: 112005, tier: 0 },
+        { expectedCount: 0.112, itemId: 112006, tier: 1 },
+        { expectedCount: 0.028, itemId: 112007, tier: 2 },
+      ],
+      mora: 32,
+    },
+  ] satisfies EnemyDropFamilyRow[];
   let materialTable: MaterialRow[] = [];
   let itemTables: Record<string, unknown[]> = {};
 
   beforeEach(() => {
-    const dropItemRows = Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) =>
+    const dropItemRows = dropFamilies.flatMap(({ materials }) =>
       materials.map(({ itemId }) => ({ ...takeOne(materialRows, 0), id: itemId, nameTextMapHash: itemId })),
     );
     materialTable = [...materialRows, ...dropItemRows];
     itemTables = { [MATERIAL_TABLE_NAME]: materialTable };
     vi.mocked(readExcelTable).mockImplementation((tableName) => itemTables[tableName] ?? []);
     vi.mocked(readPublishedGameData).mockImplementation((key) => {
+      if (key === "enemies/dropFamilies") return Promise.resolve(dropFamilies);
       if (key === "offerings/frostbearingTree")
         return Promise.resolve([
           {

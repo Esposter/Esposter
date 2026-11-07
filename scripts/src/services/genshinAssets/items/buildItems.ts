@@ -18,7 +18,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
   CHARACTER_EXP_ITEM_ID,
   craftingRecipeSchema,
-  EnemyDropFamilyDropTableMap,
+  enemyDropFamilyRowSchema,
   ForgeRecipeKind,
   forgeRecipeSchema,
   gadgetRowSchema,
@@ -54,6 +54,9 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   ];
   const gadgetRows = z.array(gadgetRowSchema).parse(await readPublishedGameData("gadgets/gadgets"));
   const craftingRecipes = z.array(craftingRecipeSchema).parse(await readPublishedGameData("crafting/recipes"));
+  const enemyDropFamilies = z
+    .array(enemyDropFamilyRowSchema)
+    .parse(await readPublishedGameData("enemies/dropFamilies"));
   // The published levels' shape: the items each level takes, and the fixed rewards it pays under `reward`, as the offerings builder writes them
   const frostbearingTreeLevels = z
     .array(
@@ -88,7 +91,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   );
   const itemIds = [
     ...new Set([
-      ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
+      ...enemyDropFamilies.flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
       ...cookingRecipes.flatMap(({ resultItemIds }) => Object.values(resultItemIds)),
       ...cookingRecipes.flatMap(({ unlockItemIds }) => unlockItemIds),
       ...expeditionItemIds,

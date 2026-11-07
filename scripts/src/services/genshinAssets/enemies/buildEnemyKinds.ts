@@ -2,7 +2,6 @@ import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCod
 import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
-import type { RegionCampsData } from "#src/models/genshinAssets/enemies/RegionCampsData";
 
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
@@ -15,24 +14,20 @@ import {
   MONSTER_CURVE_TABLE_NAME,
   MONSTER_DESCRIBE_TABLE_NAME,
   MONSTER_TABLE_NAME,
-  REGIONS_DIRECTORY,
   WEEKLY_BOSS_KIND_IDS,
 } from "#src/services/genshinAssets/enemies/constants";
 import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMonsterCodexRow";
 import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
+import { readRegionCampsData } from "#src/services/genshinAssets/enemies/readRegionCampsData";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readAbyssDescribeIds } from "#src/services/genshinAssets/spiralAbyss/readAbyssDescribeIds";
 import { readAbyssFloors } from "#src/services/genshinAssets/spiralAbyss/readAbyssFloors";
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
-import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // The kinds every region's camps place and every Mondstadt bounty, weekly boss and Spiral Abyss chamber fights, each read
 // From the game's monster table with its family from the archive and its name's text id, and every level curve they name,
@@ -40,13 +35,7 @@ import { join } from "node:path";
 // Elements, spelt as the game's tables spell them, which the world's schema checks. Returns the records the kinds and
 // Curves publish under
 export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
-  const regionsDirectory = join(WORLD_DATA_DIRECTORY, REGIONS_DIRECTORY);
-  const regionFilenames = await readdir(regionsDirectory);
-  const regionDatas = await Promise.all(
-    regionFilenames.map(async (filename) =>
-      parseMachineJson<RegionCampsData>(await readFile(join(regionsDirectory, filename), "utf8")),
-    ),
-  );
+  const regionDatas = await readRegionCampsData();
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
   const monsterDescribeRows = readExcelTable<ExcelMonsterDescribeRow>(MONSTER_DESCRIBE_TABLE_NAME);
   const monsterCurveRows = readExcelTable<MonsterCurveRow>(MONSTER_CURVE_TABLE_NAME);

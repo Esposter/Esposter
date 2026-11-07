@@ -15,9 +15,9 @@ const TYPE_POISE_TYPE_MAP: Record<EnemyType, PoiseType> = {
   [EnemyType.Elite]: PoiseType.HumanoidDemiboss,
 };
 
-// A kind's traits: the ones the traits map writes for it, else defaults from its row. Its poise and the Mora and materials
-// It drops are its family's, the ones the kinds of its family and type share, the poise of its type where they share none.
-// Its element, its attack element and its energy drops are its own, so it has none of them, and no energy drops
+// A kind's traits: the ones the traits map writes for it, else defaults from its row. Its poise is its family's, the one the
+// Kinds of its family and type share, the poise of its type where they share none. Its element, its attack element and its
+// Energy drops are its own, so it has none of them, and no energy drops
 export const getEnemyKindTraits = (
   enemyKindMap: ReadonlyMap<number, EnemyKind>,
   enemyKindId: number,
@@ -30,12 +30,8 @@ export const getEnemyKindTraits = (
       : [],
   );
   const poiseTypes = new Set(familyTraits.map(({ poiseType }) => poiseType));
-  const enemyDropFamilies = new Set(
-    familyTraits.flatMap(({ enemyDropFamily }) => (enemyDropFamily === undefined ? [] : [enemyDropFamily])),
-  );
   return {
     energyDrops: [],
     poiseType: poiseTypes.size === 1 ? takeOne([...poiseTypes]) : TYPE_POISE_TYPE_MAP[enemyType],
-    ...(enemyDropFamilies.size === 1 ? { enemyDropFamily: takeOne([...enemyDropFamilies]) } : {}),
   };
 };

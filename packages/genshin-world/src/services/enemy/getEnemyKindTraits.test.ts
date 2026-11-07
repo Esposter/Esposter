@@ -1,6 +1,5 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyType } from "#src/models/enemy/EnemyType";
 import { PoiseType } from "#src/models/enemy/PoiseType";
@@ -26,7 +25,7 @@ describe(getEnemyKindTraits, () => {
     );
   });
 
-  test("a kind without hand-written traits takes the poise and drop family its family's kinds of its type share", () => {
+  test("a kind without hand-written traits takes the poise its family's kinds of its type share", () => {
     expect.hasAssertions();
     const unplacedKinds = new Map([
       ...enemyKindMap,
@@ -34,7 +33,6 @@ describe(getEnemyKindTraits, () => {
     ]);
 
     expect(getEnemyKindTraits(unplacedKinds, UNPLACED_ENEMY_KIND_ID)).toStrictEqual({
-      enemyDropFamily: EnemyDropFamily.Hilichurls,
       energyDrops: [],
       poiseType: PoiseType.Minion,
     });

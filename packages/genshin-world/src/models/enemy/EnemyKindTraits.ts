@@ -1,16 +1,13 @@
 import type { Element } from "#src/models/Element";
-import type { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 import type { PoiseType } from "#src/models/enemy/PoiseType";
 
-// What the wiki gives of a kind that the game's monster table does not: its poise, the energy it drops, and the
-// Family whose Mora and materials it drops, none for a boss, whose reward is claimed instead. Its element is the
-// Element its energy carries, none for an enemy whose energy is clear. Its attack element is the Element its attacks
+// What the wiki gives of a kind that the game's monster table does not: its poise and the energy it drops. Its element is
+// The Element its energy carries, none for an enemy whose energy is clear. Its attack element is the Element its attacks
 // Carry, none for an enemy whose attacks are all physical
 export interface EnemyKindTraits {
   attackElement?: Element;
   element?: Element;
-  enemyDropFamily?: EnemyDropFamily;
   energyDrops: EnergyDrop[];
   // Whether the kind is immune to Air staggers, so a launching hit that staggers it leaves it on the ground
   isAirStaggerImmune?: true;

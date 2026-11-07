@@ -1,7 +1,6 @@
 import type { EnemyKindTraits } from "#src/models/enemy/EnemyKindTraits";
 
 import { Element } from "#src/models/Element";
-import { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
@@ -72,18 +71,8 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
     energyDrops: createParticleDrops([75, 50, 25]),
     poiseType: PoiseType.Minion,
   },
-  [EnemyKindId.DendroSamachurl]: {
-    element: Element.Dendro,
-    enemyDropFamily: EnemyDropFamily.Hilichurls,
-    energyDrops: [],
-    poiseType: PoiseType.Minion,
-  },
-  [EnemyKindId.ElectroSamachurl]: {
-    element: Element.Electro,
-    enemyDropFamily: EnemyDropFamily.Hilichurls,
-    energyDrops: [],
-    poiseType: PoiseType.Minion,
-  },
+  [EnemyKindId.DendroSamachurl]: { element: Element.Dendro, energyDrops: [], poiseType: PoiseType.Minion },
+  [EnemyKindId.ElectroSamachurl]: { element: Element.Electro, energyDrops: [], poiseType: PoiseType.Minion },
   [EnemyKindId.EmperorOfFireAndIron]: { element: Element.Pyro, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.EremiteDaythunder]: { energyDrops: [], poiseType: PoiseType.Minion },
   [EnemyKindId.EremiteDesertClearwater]: { energyDrops: [], poiseType: PoiseType.Minion },
@@ -118,11 +107,7 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   [EnemyKindId.GroundedHydroshroom]: { element: Element.Hydro, energyDrops: [], poiseType: PoiseType.Minion },
   // Provisional: the wiki's Hilichurl Fighter page gives its damage type and every attack in its Attacks section as
   // Physical DMG, so the kind has no attack element
-  [EnemyKindId.HilichurlFighter]: {
-    enemyDropFamily: EnemyDropFamily.Hilichurls,
-    energyDrops: createParticleDrops([60, 0]),
-    poiseType: PoiseType.Minion,
-  },
+  [EnemyKindId.HilichurlFighter]: { energyDrops: createParticleDrops([60, 0]), poiseType: PoiseType.Minion },
   [EnemyKindId.HilichurlShooter]: { energyDrops: createParticleDrops([60, 0]), poiseType: PoiseType.Minion },
   [EnemyKindId.HydroTulpa]: { element: Element.Hydro, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.IceShieldwallMitachurl]: {
