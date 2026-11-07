@@ -9,11 +9,11 @@ import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces
 import { fitMapLabels } from "#src/services/genshinAssets/fit/fitMapLabels";
 import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
+import { fitRegionPlants } from "#src/services/genshinAssets/fit/fitRegionPlants";
+import { fitRegionStatue } from "#src/services/genshinAssets/fit/fitRegionStatue";
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";
 import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePaving";
-import { fitWindrisePlants } from "#src/services/genshinAssets/fit/fitWindrisePlants";
-import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { readGroundLayerCells } from "#src/services/genshinAssets/fit/readGroundLayerCells";
 import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -78,9 +78,12 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
       ],
       [
         "plants",
-        async () => ({ notes: [], objects: { [`${GameDataset.Windrise}/plants`]: await fitWindrisePlants() } }),
+        async () => ({
+          notes: [],
+          objects: { [`${GameDataset.Windrise}/plants`]: await fitRegionPlants(DerivedAssetComponent.Windrise) },
+        }),
       ],
-      ["statue", fitWindriseStatue],
+      ["statue", () => fitRegionStatue(DerivedAssetComponent.Windrise)],
       // The surfaces record holds the families its reader parses: the grass has no mesh in the exports to read. The
       // Ground's family also holds each of its layers' colours, which the tiles' own cells class
       [

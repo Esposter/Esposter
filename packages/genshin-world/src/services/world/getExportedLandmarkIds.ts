@@ -1,6 +1,7 @@
 import type { SceneExport } from "#src/models/scene/SceneExport";
 import type { Landmark } from "#src/models/world/Landmark";
 
+import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { LandmarkKindSceneExportFamilyMap } from "#src/services/world/LandmarkKindSceneExportFamilyMap";
 
 // The landmarks the game's exports draw in place of ours: each standing within the ground's extent of an exported family
@@ -11,11 +12,14 @@ export const getExportedLandmarkIds = (
 ): Set<string> => {
   const exportedLandmarkIds = new Set<string>();
   const familyBoundsList = Array.from(sceneExports, ({ familyBoundsMap }) => familyBoundsMap);
-  for (const {
-    id,
-    kind,
-    position: { x, z },
-  } of landmarks) {
+  for (const landmark of landmarks) {
+    // A rock is no family's landmark, since no export draws one in place of ours
+    if (!checkIsPlaceLandmark(landmark)) continue;
+    const {
+      id,
+      kind,
+      position: { x, z },
+    } = landmark;
     const family = LandmarkKindSceneExportFamilyMap[kind];
     if (
       family !== undefined &&

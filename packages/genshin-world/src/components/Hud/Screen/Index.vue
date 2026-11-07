@@ -12,7 +12,7 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { Input } from "genshin-engine";
 import type { GameText } from "genshin-text";
 import type { VNode } from "vue";
@@ -59,7 +59,7 @@ interface Props {
   // Whether the main pointer is a finger, which has no keys or mouse to move, look and act with, so the touch controls
   // And the touch layout's action buttons are drawn
   isTouch: boolean;
-  landmarks: Landmark[];
+  landmarks: PlaceLandmark[];
   // The party's stamina pool, which the meter's arc holds whole
   maxStamina: number;
   // The field member's HP, level and cooldowns, hidden until the character on the field is known

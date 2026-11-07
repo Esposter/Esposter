@@ -1,5 +1,5 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { computeDoneWeight } from "#src/services/exploration/computeDoneWeight";
 import { computeExplorationProgress } from "#src/services/exploration/computeExplorationProgress";
@@ -10,7 +10,7 @@ import { computeExploredDoingIds } from "#src/services/exploration/computeExplor
 // Holding every doing over their summed totals, so the done weight rounds down the way an area's own share does
 export const computeNationExplorationPercentage = (
   areas: readonly ExplorationArea[],
-  unlockedLandmarks: readonly Landmark[],
+  unlockedLandmarks: readonly PlaceLandmark[],
   recordedDoingIds: ReadonlySet<string>,
 ): number => {
   if (areas.every(({ reputationRatio }) => reputationRatio === 0))

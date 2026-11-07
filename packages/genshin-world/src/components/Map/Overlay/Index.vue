@@ -4,7 +4,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameText } from "genshin-text";
 
@@ -38,7 +38,7 @@ interface Props {
   explorationAreas: ExplorationArea[];
   // The game's words in the reader's language
   gameText: GameText;
-  landmarks: Landmark[];
+  landmarks: PlaceLandmark[];
   // The game's names by text id in the reader's language, which the subarea labels are named from
   nameText: Readonly<Record<string, string>>;
   // The world's clock as the map shows it, which the Original Resin the top bar counts is read at
@@ -70,8 +70,8 @@ const {
 const emit = defineEmits<{ close: []; jump: [pose: WorldJumpPose] }>();
 // The landmark chosen on the map or in the list, whose teleport panel names its area and jumps there on its Teleport
 // Button alone, so a stray click on the map never teleports
-const chosenLandmark = shallowRef<Landmark>();
-const chooseLandmark = (landmark: Landmark) => {
+const chosenLandmark = shallowRef<PlaceLandmark>();
+const chooseLandmark = (landmark: PlaceLandmark) => {
   chosenLandmark.value = landmark;
 };
 const map = useTemplateRef("map");

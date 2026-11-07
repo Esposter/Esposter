@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { GameText } from "genshin-text";
 
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
@@ -11,7 +11,7 @@ interface Props {
   // The game's words in the reader's language, the kind of place the row's second line names
   gameText: GameText;
   // The place the row jumps to
-  landmark: Landmark;
+  landmark: PlaceLandmark;
 }
 
 const { areaName, gameText, landmark } = defineProps<Props>();

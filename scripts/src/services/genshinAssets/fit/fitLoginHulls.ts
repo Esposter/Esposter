@@ -1,18 +1,17 @@
 import type { HullPlacement } from "#src/models/genshinAssets/fit/HullPlacement";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
-import { fitVisualHull } from "#src/services/genshinAssets/fit/fitVisualHull";
+import { fitMeshHulls } from "#src/services/genshinAssets/fit/fitMeshHulls";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { HULL_CELL_SIZE, ROTATION_DECIMALS, SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
-import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
+import { roundRotation } from "#src/services/genshinAssets/fit/roundRotation";
+import { SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
-import { ID_SEPARATOR, settleAll } from "@esposter/shared";
+import { ID_SEPARATOR } from "@esposter/shared";
 
 // A bridge's or a pillar's mesh at one level of detail, the part being its name without the level
 const HULL_MESH_REGEX = /^(?<part>LoginScene_(?:Bridge0[234]|Pillar03)(?:_\d+)?)_Lod(?<level>\d)$/u;
-const HULL_MESH_READ_CONCURRENCY = 4;
 // The login scene's bridges and pillars as hulls: each part's visual hull from its most detailed mesh, boxes in three's
 // Axes about its own origin, so the arches and the space under the decks the camera glides through stay open, and one
 // Instance wherever any level of detail of it stands, with its rotation turned into three's axes too
@@ -21,19 +20,7 @@ export const fitLoginHulls = async (
   meshDirectory: string,
 ): Promise<{ hulls: Record<string, number[][]>; placements: HullPlacement[] }> => {
   const { meshPathMap, partPlacements } = readLevelOfDetailParts(placements, HULL_MESH_REGEX, meshDirectory);
-  const fittedHulls = await settleAll(
-    Array.from(meshPathMap, ([part, meshPath]) => async () => {
-      const { faces, vertices } = await readObjMesh(meshPath);
-      const local = vertices.map((vertex) => toRightHanded(vertex));
-      return [
-        part,
-        fitVisualHull({ faces, vertices: local }, HULL_CELL_SIZE).map((box) => box.map((value) => roundFitted(value))),
-      ] as const;
-    }),
-    HULL_MESH_READ_CONCURRENCY,
-  );
-  const hulls: Record<string, number[][]> = {};
-  for (const [part, hull] of fittedHulls) hulls[part] = hull;
+  const hulls = await fitMeshHulls(meshPathMap);
   const keyInstanceMap = new Map<string, HullPlacement>();
   for (const { part, position, rotation, scale } of partPlacements) {
     if (!hulls[part]) continue;
@@ -41,9 +28,7 @@ export const fitLoginHulls = async (
     keyInstanceMap.set(`${part}${ID_SEPARATOR}${x},${y},${z}`, {
       hull: part,
       position: [x, y, z],
-      rotation: toRightHandedRotation(rotation).map(
-        (value) => Math.round(value * ROTATION_DECIMALS) / ROTATION_DECIMALS,
-      ),
+      rotation: toRightHandedRotation(rotation).map((value) => roundRotation(value)),
       scale: scale.map((value) => roundFitted(value, SCALE_DECIMALS)),
     });
   }

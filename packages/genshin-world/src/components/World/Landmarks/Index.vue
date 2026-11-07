@@ -4,13 +4,15 @@ import type { WindriseStatue } from "#src/models/windrise/WindriseStatue";
 import type { WindriseSurfaces } from "#src/models/windrise/WindriseSurfaces";
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { RegionPaletteMap } from "#src/models/world/RegionPaletteMap";
+import type { RockLandmark } from "#src/models/world/RockLandmark";
 import type { TreeImpostor } from "#src/models/world/TreeImpostor";
 import type { TreeSpecies } from "#src/models/world/TreeSpecies";
 import type { LandmarkCollider, LightUniforms, TreeOptions, WindUniforms } from "genshin-engine";
-import type { DataTexture } from "three";
+import type { BufferGeometry, DataTexture } from "three";
 
 import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
 import WorldLandmarkDomainEntrance from "#src/components/World/Landmark/DomainEntrance/Index.vue";
+import WorldLandmarkRock from "#src/components/World/Landmark/Rock/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -20,7 +22,13 @@ import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { getWindrisePartDetail } from "#src/services/windrise/getWindrisePartDetail";
 import { getExportedLandmarkIds } from "#src/services/world/getExportedLandmarkIds";
-import { createDitherFadeNode, createLeafMaterial, createObjectFadeNode, createToonMaterial } from "genshin-engine";
+import {
+  createBoxesGeometry,
+  createDitherFadeNode,
+  createLeafMaterial,
+  createObjectFadeNode,
+  createToonMaterial,
+} from "genshin-engine";
 import { Group } from "three";
 
 interface Props {
@@ -106,6 +114,17 @@ const leafMaterial = createLeafMaterial(
   treeMeshMask,
 );
 const treeImpostorMap = new Map<TreeSpecies, TreeImpostor>();
+// Each rock hull's geometry, built once from its boxes and shared by every place the hull stands in, in every load of
+// Every region: it is found by the hull's name, since a region read again makes its boxes anew
+const rockGeometryMap = new Map<string, BufferGeometry>();
+const getRockGeometry = ({ boxes, hull }: RockLandmark): BufferGeometry => {
+  let geometry = rockGeometryMap.get(hull);
+  if (!geometry) {
+    geometry = createBoxesGeometry(boxes);
+    rockGeometryMap.set(hull, geometry);
+  }
+  return geometry;
+};
 
 // Gives the collider the landmarks that arrived since the last sync, whose colliders it builds on the main thread, timed
 // As the load step `landmark-colliders`. The build is synchronous, so the measure is written as it returns
@@ -125,6 +144,7 @@ onUnmounted(() => {
   partMaterial.dispose();
   barkMaterial.dispose();
   leafMaterial.dispose();
+  for (const geometry of rockGeometryMap.values()) geometry.dispose();
   for (const { geometry, impostor, material } of treeImpostorMap.values()) {
     geometry.dispose();
     material.dispose();
@@ -172,6 +192,12 @@ onUnmounted(() => {
       <WorldLandmarkDomainEntrance
         v-else-if="landmark.kind === LandmarkKind.DomainEntrance"
         :get-ground-height
+        :landmark
+        :part-material
+      />
+      <WorldLandmarkRock
+        v-else-if="landmark.kind === LandmarkKind.Rock"
+        :geometry="getRockGeometry(landmark)"
         :landmark
         :part-material
       />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { GameText } from "genshin-text";
 
 import MapJumpListItem from "#src/components/Map/JumpList/Item/Index.vue";
@@ -12,11 +12,11 @@ interface Props {
   catalogue: Catalogue;
   // The game's words in the reader's language
   gameText: GameText;
-  landmarks: Landmark[];
+  landmarks: PlaceLandmark[];
 }
 
 const { catalogue, gameText, landmarks } = defineProps<Props>();
-const emit = defineEmits<{ jump: [landmark: Landmark] }>();
+const emit = defineEmits<{ jump: [landmark: PlaceLandmark] }>();
 // Every region with somewhere to jump to, in the catalogue's order, each landmark named by its area
 const regionJumps = computed(() =>
   catalogue.regions

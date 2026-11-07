@@ -1,15 +1,14 @@
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
-import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 import type { GameDataBuild } from "#src/models/shared/GameDataBuild";
 import type { SoundEffect } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { createInterfaceRectsEntry } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
 import { fitCloudLayerDome } from "#src/services/genshinAssets/fit/fitCloudLayerDome";
 import { fitCloudLayerTextures } from "#src/services/genshinAssets/fit/fitCloudLayerTextures";
 import { fitInterfaceClips } from "#src/services/genshinAssets/fit/fitInterfaceClips";
-import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
 import { fitLoginClouds } from "#src/services/genshinAssets/fit/fitLoginClouds";
 import { fitLoginDoor } from "#src/services/genshinAssets/fit/fitLoginDoor";
 import { fitLoginHulls } from "#src/services/genshinAssets/fit/fitLoginHulls";
@@ -51,7 +50,7 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
-  const fits: Record<string, () => Promise<GameDataBuild>> = {
+  const fits: Record<string, (options: DryRunOptions) => Promise<GameDataBuild>> = {
     // The cloud layer's textures as the statistics ours are synthesized from
     cloudLayerTextures: async () => ({
       notes: [],
@@ -84,13 +83,7 @@ export const fitLoginScene = async (only: readonly string[], options: DryRunOpti
         ),
       },
     }),
-    // The interface's tree as `genshin:assets interface` exported it
-    interfaceRects: async () => {
-      const interfaceTree = parseMachineJson<InterfaceNode>(
-        await readFile(join(directory.root, "interface", "interface.json"), "utf8"),
-      );
-      return { notes: [], objects: { [`${GameDataset.Login}/interfaceRects`]: fitInterfaceRects(interfaceTree) } };
-    },
+    interfaceRects: createInterfaceRectsEntry(DerivedAssetComponent.Login)[1],
     music: async () => {
       const { music, report } = await fitLoginMusic();
       return { notes: report, objects: { [`${GameDataset.Login}/music`]: music } };

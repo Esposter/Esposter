@@ -2,7 +2,8 @@ import type { ArrangementFamily } from "#src/models/genshinAssets/scene/Arrangem
 import type { FittedPlants } from "#src/models/genshinAssets/scene/FittedPlants";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { readWindrisePlantPlacements } from "#src/services/genshinAssets/fit/readWindrisePlantPlacements";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { readPlantPlacements } from "#src/services/genshinAssets/fit/readPlantPlacements";
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { toWorldQuaternion } from "#src/services/genshinAssets/world/toWorldQuaternion";
@@ -13,7 +14,7 @@ import { toWorldQuaternion } from "#src/services/genshinAssets/world/toWorldQuat
 export const createPlantFamily = (name: string, namePart: string): ArrangementFamily => ({
   name,
   readExpected: async () => {
-    const { origin, plants } = await readWindrisePlantPlacements();
+    const { origin, plants } = await readPlantPlacements(DerivedAssetComponent.Windrise);
     return plants
       .filter((plant) => plant.name.includes(namePart))
       .flatMap(({ places }) =>

@@ -2,6 +2,7 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 import type { GroundPoint } from "genshin-engine";
 
+import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { findGoToPlace } from "#src/services/quest/findGoToPlace";
 
 // Where an objective's target stands among the regions in reach, for the navigation marker to point at: a go-to place it
@@ -20,5 +21,7 @@ export const findQuestTargetPosition = (
     .flatMap(({ residents }) => residents)
     .find(({ id, talkId }) => id === targetId || talkId === targetId);
   if (resident) return residentSpots.get(resident.id)?.position;
-  return regionDatas.flatMap(({ landmarks }) => landmarks).find(({ id }) => id === targetId)?.position;
+  return regionDatas
+    .flatMap(({ landmarks }) => landmarks.filter((landmark) => checkIsPlaceLandmark(landmark)))
+    .find(({ id }) => id === targetId)?.position;
 };

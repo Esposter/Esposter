@@ -3,7 +3,7 @@ import type { HudInterfaceRects } from "#src/models/hud/HudInterfaceRects";
 import type { MapCamera } from "#src/models/map/MapCamera";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { CanvasRect } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
@@ -25,7 +25,7 @@ interface Props {
   gameText: GameText;
   // The HUD's fitted rects, the minimap's back and its marks among them
   interfaceRects: HudInterfaceRects;
-  landmarks: Landmark[];
+  landmarks: PlaceLandmark[];
   // The Oculi near the player that are not yet found, each marked on the minimap with a sound as it comes near
   nearOculusPlaces: OculusPlace[];
   // The resolved rect of `GrpMiniMap`, which the tree hangs the back and the marks under

@@ -5,7 +5,8 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitPavingStoneShape } from "#src/services/genshinAssets/fit/fitPavingStoneShape";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { ROTATION_DECIMALS, SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
+import { roundRotation } from "#src/services/genshinAssets/fit/roundRotation";
+import { SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
@@ -42,9 +43,7 @@ export const fitWindrisePaving = async (): Promise<{
       position: toRightHanded([position[0] - originX, position[1] - originY, position[2] - originZ]).map((value) =>
         roundFitted(value),
       ),
-      rotation: toRightHandedRotation(rotation).map(
-        (value) => Math.round(value * ROTATION_DECIMALS) / ROTATION_DECIMALS,
-      ),
+      rotation: toRightHandedRotation(rotation).map((value) => roundRotation(value)),
       scale: scale.map((value) => roundFitted(value, SCALE_DECIMALS)),
     })),
     shapes,

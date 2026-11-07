@@ -32,21 +32,21 @@ Each rock object the game places in a region SHALL stand at its placed position.
 - **WHEN** the player comes to that place
 - **THEN** no rock stands there
 
-### Requirement: Sumeru's stilt huts and desert ruins stand where the game places them
+### Requirement: Sumeru's ruins stand where the game places them
 
-Each stilt hut and desert ruin the game places in Sumeru SHALL stand at its placed position.
+Each ruin the game places in Sumeru SHALL stand at its placed position. A stilt hut is not claimed by this requirement, since no mesh of the game is named for one.
 
-#### Scenario: A desert ruin stands at its placed position
+#### Scenario: A ruin stands at its placed position
 
-- **GIVEN** Sumeru's ruin record places a desert ruin
-- **WHEN** the player comes to that place in the desert
+- **GIVEN** Sumeru's ruin record places a ruin
+- **WHEN** the player comes to that place in Sumeru
 - **THEN** the ruin stands there
 
-#### Scenario: A stilt hut stands at its placed position
+#### Scenario: A ruin the game does not place is not drawn
 
-- **GIVEN** Sumeru's hut record places a stilt hut
-- **WHEN** the player comes to that place in the rainforest
-- **THEN** the hut stands there on its stilts
+- **GIVEN** a place in Sumeru where the game places no ruin
+- **WHEN** the player comes to that place
+- **THEN** no ruin stands there
 
 ### Requirement: Each nation's Statue of the Seven stands in its region
 

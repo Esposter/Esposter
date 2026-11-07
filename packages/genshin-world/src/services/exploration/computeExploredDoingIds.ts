@@ -1,5 +1,5 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
@@ -9,7 +9,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 // Oculus found or a puzzle solved
 export const computeExploredDoingIds = (
   { areaId, doings }: ExplorationArea,
-  unlockedLandmarks: readonly Landmark[],
+  unlockedLandmarks: readonly PlaceLandmark[],
   recordedDoingIds: ReadonlySet<string>,
 ): ReadonlySet<string> => {
   const isStatueUnlocked = unlockedLandmarks.some(

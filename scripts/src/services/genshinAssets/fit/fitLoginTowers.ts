@@ -4,7 +4,8 @@ import type { TowerPlacement } from "#src/models/genshinAssets/shared/TowerPlace
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
 import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { ROTATION_DECIMALS, SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
+import { roundRotation } from "#src/services/genshinAssets/fit/roundRotation";
+import { SCALE_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
 import { ID_SEPARATOR } from "@esposter/shared";
 
@@ -20,9 +21,7 @@ export const fitLoginTowers = async (
     const [x = 0, y = 0, z = 0] = composeLatheAxisPoint(profile, placement, 0).map((value) => roundFitted(value));
     keyInstanceMap.set(`${placement.part}${ID_SEPARATOR}${x},${y},${z}`, {
       position: [x, y, z],
-      rotation: toRightHandedRotation(placement.rotation).map(
-        (value) => Math.round(value * ROTATION_DECIMALS) / ROTATION_DECIMALS,
-      ),
+      rotation: toRightHandedRotation(placement.rotation).map((value) => roundRotation(value)),
       scale: roundFitted(placement.scale[0], SCALE_DECIMALS),
       tower: placement.part,
     });

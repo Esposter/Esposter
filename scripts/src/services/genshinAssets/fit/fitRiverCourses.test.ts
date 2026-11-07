@@ -1,3 +1,5 @@
+import type { readVouchedFileProvenance } from "#src/services/provenance/readVouchedFileProvenance";
+
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
@@ -7,6 +9,12 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 vi.mock(import("#src/services/genshinAssets/shared/readObjMesh"), () => ({ readObjMesh: vi.fn<typeof readObjMesh>() }));
+vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({
+  readGameVersion: vi.fn<() => Promise<string>>().mockResolvedValue("a"),
+}));
+vi.mock(import("#src/services/provenance/readVouchedFileProvenance"), () => ({
+  readVouchedFileProvenance: vi.fn<typeof readVouchedFileProvenance>(),
+}));
 vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
   writeWorldData: vi.fn<typeof writeWorldData>(),
 }));

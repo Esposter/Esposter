@@ -1,13 +1,14 @@
 import type { MapSubareaLabel } from "#src/models/map/MapSubareaLabel";
 import type { TransPointUnlock } from "#src/models/transPoint/TransPointUnlock";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { Currency } from "#src/models/inventory/Currency";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { checkIsPlaceLandmark } from "#src/models/world/PlaceLandmark";
 import { checkIsWeeklyBossEntrance } from "#src/services/map/checkIsWeeklyBossEntrance";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
 import { JUMP_LANDMARK_KINDS } from "#src/services/map/constants";
@@ -38,7 +39,7 @@ export const useWorldMapStore = defineStore("world/map", () => {
   // Complete once every region has settled, read or failed, so isJumpLandmarksLoaded is the point a landmark can be
   // Counted in full. A domain entrance is a jump landmark like a statue or a waypoint, listed once the player has
   // Unlocked it. The map, the minimap, the jump list and a revive offer only the unlocked ones
-  const jumpLandmarks = shallowRef<Landmark[]>([]);
+  const jumpLandmarks = shallowRef<PlaceLandmark[]>([]);
   const unsettledRegionCount = shallowRef<number>();
   const isJumpLandmarksLoaded = computed(() => unsettledRegionCount.value === 0);
   // The subarea labels the open world publishes, each named by its text id in the world's names
@@ -90,7 +91,9 @@ export const useWorldMapStore = defineStore("world/map", () => {
             if (startedGeneration !== generation) return;
             jumpLandmarks.value = [
               ...jumpLandmarks.value,
-              ...landmarks.filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)),
+              ...landmarks
+                .filter((landmark) => checkIsPlaceLandmark(landmark))
+                .filter(({ kind }) => JUMP_LANDMARK_KINDS.includes(kind)),
             ];
             unsettledRegionCount.value = (unsettledRegionCount.value ?? 0) - 1;
           },

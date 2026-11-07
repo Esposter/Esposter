@@ -1,6 +1,6 @@
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { WorldInteractablesOptions } from "#src/models/interaction/WorldInteractablesOptions";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { useInteraction } from "#src/composables/useInteraction";
 import { computeViewpointInteractables } from "#src/services/archive/computeViewpointInteractables";
@@ -119,7 +119,7 @@ export const useWorldInteractables = ({
       position: { x, y: getGroundHeight(x, z), z },
     }));
     // A locked landmark is resonated with on the key, named by the game's text for its kind
-    const toLandmarkInteractable = ({ id, position: { x, z } }: Landmark, textKey: GameTextKey): Interactable => ({
+    const toLandmarkInteractable = ({ id, position: { x, z } }: PlaceLandmark, textKey: GameTextKey): Interactable => ({
       id,
       kind: InteractionKind.Activate,
       name: worldSessionStore.gameText[textKey],

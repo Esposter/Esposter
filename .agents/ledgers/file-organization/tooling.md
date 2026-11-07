@@ -440,6 +440,7 @@
 | `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionOutcrops.ts`                             | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/fit/fitRegionStatue.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitReliefLayers.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitRigidPieces.test.ts`                           | 2026-10-29 · Haiku 5.5  |       |
@@ -476,9 +477,7 @@
 | `scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts`                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitWindrisePaving.ts`                             | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitWindrisePlants.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`                              | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/fitWindriseStatue.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/foldPlanRepeats.test.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/getBox.ts`                                        | 2026-11-01 · Haiku 5.5  |       |
@@ -515,7 +514,6 @@
 | `scripts/src/services/genshinAssets/fit/readSurface.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readTexture.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts`                             | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/readWitnessWorldMeshes.ts`                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/rotateLeft.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/fit/roundFitted.ts`                                   | 2026-10-29 · Haiku 5.5  |       |

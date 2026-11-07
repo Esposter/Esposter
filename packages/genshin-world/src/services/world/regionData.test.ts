@@ -12,7 +12,8 @@ describe("regionData", () => {
   test("every region file parses against its schema", async () => {
     expect.hasAssertions();
 
-    const filenames = await readdir(REGION_DIRECTORY);
+    // A region file's provenance sidecar sits beside it in the folder and is no region
+    const filenames = (await readdir(REGION_DIRECTORY)).filter((filename) => /^[^.]+\.json$/u.test(filename));
     const regionIds = await Promise.all(
       filenames.map(async (filename) => {
         const regionJson: unknown = jsonDateParse(await readFile(join(REGION_DIRECTORY, filename), "utf8"));

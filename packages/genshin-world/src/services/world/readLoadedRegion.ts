@@ -1,6 +1,7 @@
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 
 import { readRegionData } from "#src/services/world/readRegionData";
+import { readRegionRockLandmarks } from "#src/services/world/readRegionRockLandmarks";
 import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
 
 // A region as it loads in reach: its data as the host serves it, then the palettes of the kits its buildings are built by,
@@ -12,6 +13,9 @@ export const readLoadedRegion = async (
   id: string,
 ): Promise<LoadedRegion> => {
   const regionData = await readRegionData(regionDataBaseUrl, id);
-  const regionPalettes = await readRegionPalettes(gameDataBaseUrl, regionData.landmarks);
-  return { ...regionData, regionPalettes };
+  const [regionPalettes, rockLandmarks] = await Promise.all([
+    readRegionPalettes(gameDataBaseUrl, regionData.landmarks),
+    readRegionRockLandmarks(gameDataBaseUrl, id),
+  ]);
+  return { ...regionData, landmarks: [...regionData.landmarks, ...rockLandmarks], regionPalettes };
 };

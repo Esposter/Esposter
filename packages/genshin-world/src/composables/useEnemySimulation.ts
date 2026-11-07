@@ -100,13 +100,14 @@ export const useEnemySimulation = ({
       if (enemyEvent === EnemyEvent.Strike) onStrike(enemy, taunt);
       else if (enemyEvent === EnemyEvent.Defeated) {
         isAnyDefeated = true;
-        const enemyKind = getEnemyKind(toValue(enemyTables).enemyKindMap, enemy.enemyKindId);
+        const { enemyDropTableMap, enemyKindMap } = toValue(enemyTables);
+        const enemyKind = getEnemyKind(enemyKindMap, enemy.enemyKindId);
         const spawnKey = getSpawnKey(enemy.campId, enemy.id);
         const defeatedAt = getWorldNow();
         spawnKeyDefeatedAtMap.set(spawnKey, defeatedAt);
         onDefeat(
           enemy,
-          computeEnemyDrops(enemyKind, enemy.traits, enemy.level, () => Math.random()),
+          computeEnemyDrops(enemyKind, enemyDropTableMap.get(enemy.enemyKindId), enemy.level, () => Math.random()),
         );
         // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
         const camp = getEnemyCamps().find(({ id }) => id === enemy.campId);

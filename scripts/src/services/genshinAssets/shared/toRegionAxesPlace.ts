@@ -1,7 +1,7 @@
 import type { GroundPoint } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { ROTATION_DECIMALS } from "#src/services/genshinAssets/shared/constants";
+import { roundRotation } from "#src/services/genshinAssets/fit/roundRotation";
 import { toRegionAxesPosition } from "#src/services/genshinAssets/shared/toRegionAxesPosition";
 import { MathUtils } from "three";
 
@@ -18,6 +18,6 @@ export const toRegionAxesPlace = (
   const axesPosition = toRegionAxesPosition(position, origin);
   return {
     position: { x: roundFitted(axesPosition.x), z: roundFitted(axesPosition.z) },
-    rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS || 0,
+    rotation: roundRotation(-turn) || 0,
   };
 };

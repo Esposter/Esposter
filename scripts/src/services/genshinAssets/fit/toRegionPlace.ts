@@ -2,7 +2,8 @@ import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/Worl
 import type { GroundPoint } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { ROTATION_DECIMALS, UNITY_EULER_ORDER } from "#src/services/genshinAssets/shared/constants";
+import { roundRotation } from "#src/services/genshinAssets/fit/roundRotation";
+import { UNITY_EULER_ORDER } from "#src/services/genshinAssets/shared/constants";
 import { Euler, Quaternion } from "three";
 
 // Where a place the world sets a prefab down stands in our region's axes round the origin's place: three's, x as the
@@ -12,8 +13,5 @@ export const toRegionPlace = (
   [originX, , originZ]: readonly [number, number, number],
 ): { position: GroundPoint; rotation: number } => {
   const { y: turn } = new Euler().setFromQuaternion(new Quaternion(...rotation), UNITY_EULER_ORDER);
-  return {
-    position: { x: roundFitted(x - originX), z: roundFitted(originZ - z) },
-    rotation: Math.round(-turn * ROTATION_DECIMALS) / ROTATION_DECIMALS,
-  };
+  return { position: { x: roundFitted(x - originX), z: roundFitted(originZ - z) }, rotation: roundRotation(-turn) };
 };

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NavigationMark } from "#src/models/map/NavigationMark";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { Camera } from "three";
 
 import { computeNavigationMark } from "#src/services/map/computeNavigationMark";
@@ -14,7 +14,7 @@ interface Props {
   // The world's ground at a point in its own coordinates, which the landmark stands on
   getGroundHeight: (x: number, z: number) => number;
   // The locked landmark the HUD points to, none while it points to none
-  landmark?: Landmark;
+  landmark?: PlaceLandmark;
   // The world coordinate the scene's origin stands on, taken off the landmark's place before it is projected through
   // The camera
   origin: Vector3;

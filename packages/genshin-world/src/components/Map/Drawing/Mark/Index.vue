@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { GAME_CREAM, INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface/constants";
 
 interface Props {
   // The landmark the mark stands on, drawn at its place in the catalogue's metres
-  landmark: Landmark;
+  landmark: PlaceLandmark;
   // How far the mark reaches from its point, in metres, so a mark is drawn one size at any view's scale
   markRadius: number;
 }

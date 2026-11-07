@@ -10,12 +10,11 @@ import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePart
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
 import { readSurface } from "#src/services/genshinAssets/fit/readSurface";
 import { readTexture } from "#src/services/genshinAssets/fit/readTexture";
-import { tintTexture } from "#src/services/genshinAssets/fit/tintTexture";
+import { tintMaterialTexture } from "#src/services/genshinAssets/fit/tintMaterialTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
 import { withDetail } from "#src/services/genshinAssets/fit/withDetail";
 import { withPartDetails } from "#src/services/genshinAssets/fit/withPartDetails";
 import {
-  MAIN_COLOUR_PROPERTY,
   TERRAIN_BASE_MAP_SUFFIX,
   TERRAIN_TILE_REGEX,
   TERRAIN_TILE_SIZE,
@@ -76,8 +75,7 @@ export const fitSurfaceColours = async <Family extends string>(
     const material = materialMap.get(pathIdNameMap.get(materialPathId) ?? "");
     const path = toDiffusePath(textureDirectory, material, pathIdNameMap);
     if (path === undefined) return undefined;
-    const [red = 1, green = 1, blue = 1] = material?.colors[MAIN_COLOUR_PROPERTY] ?? [];
-    return tintTexture(await getTexture(path), [red, green, blue]);
+    return tintMaterialTexture(await getTexture(path), material);
   };
   const getDiffuse = (materialPathId: string): Promise<Texture | undefined> => {
     const diffuse = materialPathDiffuseMap.get(materialPathId) ?? readDiffuse(materialPathId);

@@ -3,6 +3,7 @@
 export enum LandmarkKind {
   Building = "Building",
   DomainEntrance = "DomainEntrance",
+  Rock = "Rock",
   StatueOfTheSeven = "StatueOfTheSeven",
   TeleportWaypoint = "TeleportWaypoint",
   Tree = "Tree",
