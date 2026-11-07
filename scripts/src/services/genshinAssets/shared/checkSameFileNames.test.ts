@@ -1,4 +1,4 @@
-import { checkSameFileNames } from "#src/services/genshinAssets/namecards/checkSameFileNames";
+import { checkSameFileNames } from "#src/services/genshinAssets/shared/checkSameFileNames";
 import { describe, expect, test } from "vitest";
 
 describe(checkSameFileNames, () => {

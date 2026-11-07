@@ -5,9 +5,9 @@ import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStu
 import { existsSync, readdirSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
-// One block's namecard textures of a folder, read in one AnimeStudio run by their exact names. AnimeStudio writes each
-// Type into a folder of its own, which is moved up beside the others, and a block that yields none is left to the check
-export const exportBlockNamecards = (block: string, names: readonly string[], directory: string): void => {
+// One block's textures of a folder, read in one AnimeStudio run by their exact names. AnimeStudio writes each type into
+// A folder of its own, which is moved up beside the others, and a block that yields none is left to the check
+export const exportBlockTextures = (block: string, names: readonly string[], directory: string): void => {
   runAnimeStudio(
     [
       join(INSTALLED_BLOCKS_DIRECTORY, block),

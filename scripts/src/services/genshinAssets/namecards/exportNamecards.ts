@@ -1,14 +1,14 @@
 import { checkNamecardAsset } from "#src/services/genshinAssets/namecards/checkNamecardAsset";
-import { checkSameFileNames } from "#src/services/genshinAssets/namecards/checkSameFileNames";
 import {
   NAMECARD_ART_DIRECTORY,
   NAMECARD_DIRECTORY,
   NAMECARD_ICON_DIRECTORY,
 } from "#src/services/genshinAssets/namecards/constants";
-import { exportBlockNamecards } from "#src/services/genshinAssets/namecards/exportBlockNamecards";
 import { getNamecardDirectory } from "#src/services/genshinAssets/namecards/getNamecardDirectory";
-import { readNamecardNames } from "#src/services/genshinAssets/namecards/readNamecardNames";
+import { checkSameFileNames } from "#src/services/genshinAssets/shared/checkSameFileNames";
 import { ASSET_INDEX_PATH, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
+import { exportBlockTextures } from "#src/services/genshinAssets/shared/exportBlockTextures";
+import { readPngNames } from "#src/services/genshinAssets/shared/readPngNames";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync, rmSync } from "node:fs";
@@ -24,19 +24,19 @@ export const exportNamecards = async (): Promise<string> => {
   const assetsByDirectory = Map.groupBy(assets, ({ name }) => getNamecardDirectory(name));
   const expectedNamesOf = (directory: string): string[] =>
     (assetsByDirectory.get(directory) ?? []).map(({ name }) => name);
-  if (DIRECTORIES.every((directory) => checkSameFileNames(expectedNamesOf(directory), readNamecardNames(directory))))
+  if (DIRECTORIES.every((directory) => checkSameFileNames(expectedNamesOf(directory), readPngNames(directory))))
     return `${assets.length} namecards already match the index in ${NAMECARD_DIRECTORY}`;
   rmSync(NAMECARD_DIRECTORY, { force: true, recursive: true });
   for (const directory of DIRECTORIES) mkdirSync(directory, { recursive: true });
   for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block))
     for (const [directory, directoryAssets] of Map.groupBy(blockAssets, ({ name }) => getNamecardDirectory(name)))
-      exportBlockNamecards(
+      exportBlockTextures(
         block,
         directoryAssets.map(({ name }) => name),
         directory,
       );
   const missingNames = DIRECTORIES.flatMap((directory) => {
-    const exportedNames = readNamecardNames(directory);
+    const exportedNames = readPngNames(directory);
     return expectedNamesOf(directory).filter((name) => !exportedNames.includes(name));
   });
   if (missingNames.length > 0)
