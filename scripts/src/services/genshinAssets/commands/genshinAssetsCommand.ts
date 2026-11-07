@@ -75,6 +75,7 @@ import { uiFindCommand } from "#src/services/genshinAssets/commands/uiFindComman
 import { uiTreeCommand } from "#src/services/genshinAssets/commands/uiTreeCommand";
 import { waypointsCommand } from "#src/services/genshinAssets/commands/waypointsCommand";
 import { weaponIconsCommand } from "#src/services/genshinAssets/commands/weaponIconsCommand";
+import { weaponRootsCommand } from "#src/services/genshinAssets/commands/weaponRootsCommand";
 import { wildlifeCommand } from "#src/services/genshinAssets/commands/wildlifeCommand";
 import { wishScheduleCommand } from "#src/services/genshinAssets/commands/wishScheduleCommand";
 import { witnessCommand } from "#src/services/genshinAssets/commands/witnessCommand";
@@ -108,6 +109,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     playlist: playlistCommand,
     namecards: namecardsCommand,
     "weapon-icons": weaponIconsCommand,
+    "weapon-roots": weaponRootsCommand,
     points: pointsCommand,
     "points-fit": pointsFitCommand,
     profile: profileCommand,

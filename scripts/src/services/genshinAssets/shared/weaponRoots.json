@@ -1,0 +1,120 @@
+[
+  { "block": "00/00265660.blk", "name": "Eff_Quest_Equip_Sword_Youtou", "pathId": "8208529261463943755" },
+  {
+    "block": "00/00265660.blk",
+    "name": "Eff_Quest_Equip_Sword_YoutouEnchanted_State_01",
+    "pathId": "3166541365829217444"
+  },
+  {
+    "block": "00/00265660.blk",
+    "name": "Eff_Quest_Equip_Sword_YoutouEnchanted_State_01_Offset",
+    "pathId": "4128025061489189762"
+  },
+  {
+    "block": "00/00265660.blk",
+    "name": "Eff_Quest_Equip_Sword_YoutouEnchanted_State_02",
+    "pathId": "-4118117599915958098"
+  },
+  {
+    "block": "00/00265660.blk",
+    "name": "Eff_Quest_Equip_Sword_YoutouEnchanted_State_02_Offset",
+    "pathId": "3255014460129461091"
+  },
+  { "block": "00/00265660.blk", "name": "Eff_Quest_Equip_Sword_YoutouShattered", "pathId": "-2022629912324735814" },
+  {
+    "block": "00/00265660.blk",
+    "name": "Eff_Quest_Equip_Sword_YoutouShattered_Offset",
+    "pathId": "-68315216872713828"
+  },
+  { "block": "00/00824442.blk", "name": "Area_Cyg_Prop_YDG_Oldxizai_01_Lod0", "pathId": "-8385193827519129536" },
+  { "block": "00/02666572.blk", "name": "Cs_CYGY_YelanFirstSight", "pathId": "39183041233734347" },
+  { "block": "00/04803507.blk", "name": "Cs_MDAQ025_QinLisa_Convert", "pathId": "2107042770337987946" },
+  { "block": "00/04803507.blk", "name": "Equip_Bow_Mechanic", "pathId": "5296072513165068539" },
+  { "block": "00/04803507.blk", "name": "Equip_Bow_Pledge", "pathId": "2298133654715906371" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Apprentice_Model", "pathId": "-7893662805435166570" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Dvalin", "pathId": "8093251088650656390" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Fossil", "pathId": "8708825346349248582" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Iudex", "pathId": "5892165924964602998" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Ludiharpastum", "pathId": "1621409512714373715" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Vorpal", "pathId": "-1918042028489351477" },
+  { "block": "00/04803507.blk", "name": "Equip_Catalyst_Wheatley", "pathId": "1619574798854751688" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_CrystallineSword", "pathId": "4583450726969642876" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_EscapeWheel", "pathId": "-1199717134579722945" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_GlintstoneClaymore", "pathId": "8611927995256355358" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_GoldenVerdict", "pathId": "5186181136826209873" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_Mechanic", "pathId": "3118606374770073219" },
+  { "block": "00/04803507.blk", "name": "Equip_Claymore_Polilith", "pathId": "-2576338259457136077" },
+  { "block": "00/04803507.blk", "name": "Equip_Pole_FaesCrystalle", "pathId": "5558873945135009773" },
+  { "block": "00/04803507.blk", "name": "Equip_Pole_Mechanic", "pathId": "-5802814807551701867" },
+  { "block": "00/04803507.blk", "name": "Equip_Sword_GlintstoneSword", "pathId": "-3378120324381855143" },
+  { "block": "00/04803507.blk", "name": "Equip_Sword_Mechanic", "pathId": "2190187254604072928" },
+  { "block": "00/04803507.blk", "name": "Equip_Sword_Purewill", "pathId": "2692548986016311215" },
+  { "block": "00/04803507.blk", "name": "Equip_Sword_Regalis", "pathId": "-4280416278124106426" },
+  { "block": "00/04803507.blk", "name": "Equip_Sword_SpikedStake", "pathId": "-3566951824049755105" },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Fd_Property_Ani_Prop_Weapon_05",
+    "pathId": "391511734593464833"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Ljxs_Property_Prop_ChestClaymoreDragonfell_01",
+    "pathId": "-8641040002700074005"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Ljxs_Property_Prop_SwordMagnum_01",
+    "pathId": "2499381905627311369"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Nt_Property_Ani_Prop_GadgetSwordIsikhulu_01",
+    "pathId": "-7940544191779345020"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Nt_Property_Ani_Prop_SacrificialNgombe_01",
+    "pathId": "8435574187472904084"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Area_Nt_Property_Ani_Prop_SixHeroesEquip_05",
+    "pathId": "5054788860064390893"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Chest_Property_Prop_Calibur_Mitsurugi_01",
+    "pathId": "925466746542010305"
+  },
+  {
+    "block": "00/05532206.blk",
+    "name": "SceneObj_Chest_Property_Prop_Calibur_Noire_01",
+    "pathId": "4564393245462719245"
+  },
+  { "block": "00/12839532.blk", "name": "SceneObj_Chest_Calibur_Mitsurugi", "pathId": "751873099895530844" },
+  { "block": "00/12839532.blk", "name": "SceneObj_Chest_Carlibur_Noire", "pathId": "-7735478111454442917" },
+  {
+    "block": "00/12839532.blk",
+    "name": "SceneObj_Level_Common_Property_Ani_Prop_NPC_Avatar_Lady_Sword_QinCostumeWic",
+    "pathId": "9040451849834328701"
+  },
+  { "block": "00/12839532.blk", "name": "SkillObj_ChongyunTest_ClaymoreTrap1", "pathId": "8894675339708045300" },
+  { "block": "00/15424869.blk", "name": "Cs_Natlan_AQ50281002_SSU_Convert", "pathId": "6462081868836309606" },
+  { "block": "00/15424869.blk", "name": "Cs_Natlan_AQ50281003_SSU_Convert", "pathId": "1200175920498241232" },
+  { "block": "00/15424869.blk", "name": "Cs_Natlan_LQ150360301_CSN_Convert", "pathId": "-539095480933154774" },
+  { "block": "00/15424869.blk", "name": "Cs_NDKL_AQ_BSZDCYZ_Convert", "pathId": "72136797159119084" },
+  { "block": "00/15424869.blk", "name": "Cs_NDKL_AQ_SNDZBS_Convert", "pathId": "2991484595422832119" },
+  { "block": "00/15424869.blk", "name": "Cs_NDKL_AQ_SZDZ", "pathId": "-4605116546525604923" },
+  { "block": "00/15424869.blk", "name": "Cs_NDKL_AQ_SZDZ_Convert", "pathId": "3561368326736046594" },
+  { "block": "00/15424869.blk", "name": "Cs_NodKrai_AQ60120701_Varka_Enter_Convert", "pathId": "-3504983196674177439" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "-3028344594606444451" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "-7019914431462710574" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "1222311855255462960" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "8470903805745874133" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "8574956502178558012" },
+  { "block": "00/15424869.blk", "name": "Equip_Claymore_Wolfmound_Model", "pathId": "9021020794630325429" },
+  { "block": "00/15871610.blk", "name": "NPC_Item_ClaymoreAniki", "pathId": "-3049523084421341034" },
+  { "block": "00/15871610.blk", "name": "NPC_Item_CynoWeapon", "pathId": "-7355969748916441898" },
+  { "block": "00/15871610.blk", "name": "NPC_Item_SwordWooden", "pathId": "5916866187077231398" },
+  { "block": "00/15936081.blk", "name": "Eff_Quest_Equip_Sword_Blunt", "pathId": "-4543646344238668278" }
+]

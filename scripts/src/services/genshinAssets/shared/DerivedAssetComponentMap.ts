@@ -2,6 +2,7 @@ import type { DerivedAssetComponentOptions } from "#src/models/genshinAssets/sha
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { LOGIN_DOOR_MESH, SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
+import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 
 // Each component's roots, which `extract` follows every pointer from, and the assets no pointer from them reaches by
 // The name the game gives them, which the asset index turns into the blocks holding them. The login screen's roots are
@@ -93,9 +94,10 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "WorldScreen",
   },
-  // The weapons' screen. It roots nothing yet: the icons its fit traces are exported by `weapon-icons` from the weapon
-  // Table, and the held meshes' roots are named once the index's Mesh and Animator rows are read
-  [DerivedAssetComponent.Weapons]: { roots: [], screen: "WeaponScreen" },
+  // The weapons' screen. Its roots are the prefabs whose renderers draw the held weapons' meshes, which `weapon-roots`
+  // Derives from the layouts of the blocks the asset index puts those meshes in and writes to a record beside this map.
+  // The icons its fit traces are exported by `weapon-icons` from the weapon table
+  [DerivedAssetComponent.Weapons]: { roots: readWeaponRoots(), screen: "WeaponScreen" },
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
   // Four terrain tiles under the valley and the slopes north of it, with their base maps, and the windmill's tower and

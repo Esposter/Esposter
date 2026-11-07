@@ -1,5 +1,6 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
+import { readWeaponRoots } from "#src/services/genshinAssets/weapons/readWeaponRoots";
 import { describe, expect, test } from "vitest";
 
 describe("derived asset component map", () => {
@@ -12,6 +13,14 @@ describe("derived asset component map", () => {
     expect(DerivedAssetComponentMap[DerivedAssetComponent.PlayerGirl].roots).toStrictEqual([
       { block: "00/02666572.blk", name: "Avatar_Girl_Sword_PlayerGirl_Model", pathId: "7275937277578795946" },
     ]);
+  });
+
+  test("roots the weapons at the prefabs `weapon-roots` derived", () => {
+    expect.hasAssertions();
+
+    const { roots } = DerivedAssetComponentMap[DerivedAssetComponent.Weapons];
+
+    expect(roots).toStrictEqual(readWeaponRoots());
   });
 
   test("a streamed object stands where the game places it", () => {
