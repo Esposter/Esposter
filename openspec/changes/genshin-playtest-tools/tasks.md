@@ -1,7 +1,7 @@
 ## 1. Registry
 
 - [x] 1.1 Build the registry: register and remove handles, parse a line into a command and its zod-checked arguments, run it, and return `{ ok, value }` or `{ ok: false, error, usage }`. Verify: `createDevRegistry.test.ts` with tests named after the scenarios 'Valid line runs and reports', 'Bad argument runs nothing', 'Unknown name is refused', 'Command whose state is not mounted says so' and 'Failure returns its usage', seen failing first.
-- [ ] 1.2 Add variables (boolean, number, colour, choice; group, range) set through the registry, starting from the game's own value. Verify: tests named after the scenarios 'Control and console agree', 'Out of range is refused' and 'Reload restores the game's value', seen failing first.
+- [x] 1.2 Add variables (boolean, number, colour, choice; group, range) set through the registry, starting from the game's own value. Verify: tests named after the scenarios 'Control and console agree', 'Out of range is refused' and 'Reload restores the game's value', and one per kind (boolean, colour, choice) that refuses a value outside it; each fails when the check it names is removed.
 - [x] 1.3 Add scenarios as ordered command lines that stop at the first failure. Verify: tests named after the scenarios 'Scenario applies its commands in order' and 'Failure stops the scenario', seen failing first.
 - [x] 1.4 Expose the registry as `window.__dev.run(line)` in a browser driven by automation. Verify: a test named after the scenario 'Automation receives data', seen failing first.
 
@@ -9,7 +9,7 @@
 
 - [x] 2.1 Draw the console (backtick, history in local storage, results and errors) and take the keyboard from the controls while it is focused. Verify: component tests for 'Valid line runs and reports' and 'Bad argument runs nothing' through the console.
 - [x] 2.2 Draw the panel (F2): variable tabs generated from the registry, the scenarios as buttons and the stats. Verify: a fixture renders the panel with variables, scenarios and the stats.
-- [ ] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Development build offers the console and the panel', 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface'; `pnpm -C apps/web build` output holds no `createDevRegistry`.
+- [ ] 2.3 Mount both from the host behind the development flag and mount neither in a browser driven by automation. Verify: tests named after the scenarios 'Development build offers the console and the panel', 'Production build offers neither' and 'Browser driven by automation registers commands and mounts no surface' in `World.test.ts` pass. Observed when `pnpm -C apps/web build` was run: its output holds no `createDevRegistry` text, but still holds the developer surface's code (its shortcut titles, the console, the panel and the stats overlay) in five client chunks that no import reaches, which the service worker's precache manifest lists.
 
 ## 3. Handles
 
@@ -28,4 +28,4 @@
 
 ## 6. Held keys from the console
 
-- [ ] 6.1 Decide how a `hold` typed into the console reaches the controls while the console's field keeps focus. `createHoldCommand` dispatches its keys on the window, and `createInput` ignores every key while a field is focused (the design's "Keys do not reach the game while the console is focused"), so `hold forward 2` answers ok and the Traveler does not move. The options are: blur the console's field on submit, which takes focus from the console after each line; have `createInput` ignore only keys whose event target is a field, which changes the `InputTarget` seam; or leave `hold` out of the console's handles. Verify: a test that a `hold` run from the console moves the Traveler, seen failing first, in the file the chosen option changes.
+- [x] 6.1 A `hold` typed into the console reaches the controls while the console's field keeps the focus: the input ignores a key only when its event target is a field, so the keys a `hold` sends on the window move the Traveler and a key typed into a field moves nothing. Verify: 'a hold run from the console moves the Traveler while the console's field has focus' in `createHoldCommand.test.ts` and 'leaves a key typed into a field to the field' in `createInput.test.ts`, both seen failing first.

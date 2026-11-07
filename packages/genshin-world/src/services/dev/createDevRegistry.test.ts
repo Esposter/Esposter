@@ -131,6 +131,100 @@ describe(createDevRegistry, () => {
     expect(state.cloudCoverage).toBe(0);
   });
 
+  test("boolean takes only true or false", () => {
+    expect.hasAssertions();
+
+    const state = { isFogShown: false };
+    const registry = createDevRegistry();
+    registry.register({
+      commands: [],
+      variables: [
+        {
+          get: () => state.isFogShown,
+          group: "Look/Fog",
+          kind: DevVariableKind.Boolean,
+          name: "fog shown",
+          set: (value) => {
+            state.isFogShown = value === true;
+          },
+        },
+      ],
+    });
+
+    expect({
+      accepted: registry.run("set fog shown true"),
+      isFogShown: state.isFogShown,
+      refused: registry.run("set fog shown yes"),
+    }).toStrictEqual({
+      accepted: { ok: true, value: true },
+      isFogShown: true,
+      refused: { error: "expected true or false", ok: false, usage: "set <name> <value>" },
+    });
+  });
+
+  test("colour takes only a hex colour", () => {
+    expect.hasAssertions();
+
+    const state = { fogColour: "#000000" };
+    const registry = createDevRegistry();
+    registry.register({
+      commands: [],
+      variables: [
+        {
+          get: () => state.fogColour,
+          group: "Look/Fog",
+          kind: DevVariableKind.Colour,
+          name: "fog colour",
+          set: (value) => {
+            state.fogColour = String(value);
+          },
+        },
+      ],
+    });
+
+    expect({
+      accepted: registry.run("set fog colour #1a2b3c"),
+      fogColour: state.fogColour,
+      refused: registry.run("set fog colour red"),
+    }).toStrictEqual({
+      accepted: { ok: true, value: "#1a2b3c" },
+      fogColour: "#1a2b3c",
+      refused: { error: "expected a colour such as #1a2b3c", ok: false, usage: "set <name> <value>" },
+    });
+  });
+
+  test("choice takes only one of its choices", () => {
+    expect.hasAssertions();
+
+    const state = { mode: "first" };
+    const registry = createDevRegistry();
+    registry.register({
+      commands: [],
+      variables: [
+        {
+          choices: ["first", "second"],
+          get: () => state.mode,
+          group: "Look/Mode",
+          kind: DevVariableKind.Choice,
+          name: "mode",
+          set: (value) => {
+            state.mode = String(value);
+          },
+        },
+      ],
+    });
+
+    expect({
+      accepted: registry.run("set mode second"),
+      mode: state.mode,
+      refused: registry.run("set mode third"),
+    }).toStrictEqual({
+      accepted: { ok: true, value: "second" },
+      mode: "second",
+      refused: { error: "expected one of first, second", ok: false, usage: "set <name> <value>" },
+    });
+  });
+
   test("scenario applies its commands in order", () => {
     expect.hasAssertions();
 

@@ -1,5 +1,5 @@
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 
 import { createAreaNameMap } from "#src/services/dev/createAreaNameMap";
 
@@ -8,8 +8,8 @@ import { createAreaNameMap } from "#src/services/dev/createAreaNameMap";
 export const findTeleportLandmark = (
   place: string,
   catalogue: Catalogue,
-  landmarks: readonly Landmark[],
-): Landmark | undefined => {
+  landmarks: readonly PlaceLandmark[],
+): PlaceLandmark | undefined => {
   const lowerCasePlace = place.toLowerCase();
   const reachableLandmarks = landmarks.filter(({ arrival }) => arrival !== undefined);
   const areaNames = createAreaNameMap(catalogue);

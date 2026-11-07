@@ -8,7 +8,7 @@ import type { Quest } from "#src/models/quest/Quest";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { ScreenKind } from "#src/models/screen/ScreenKind";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GameClock, WeatherKind } from "genshin-engine";
 import type { Object3D } from "three";
@@ -22,7 +22,7 @@ export interface WorldDevHandleOptions {
   getGameClock: () => GameClock | undefined;
   getInventory: () => Inventory;
   getKills: () => ArchiveKills;
-  getLandmarks: () => readonly Landmark[];
+  getLandmarks: () => readonly PlaceLandmark[];
   getQuestProgressMap: () => ReadonlyMap<string, QuestProgress>;
   getQuests: () => readonly Quest[];
   getScreenKind: () => ScreenKind;

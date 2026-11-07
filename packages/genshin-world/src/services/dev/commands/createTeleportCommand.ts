@@ -1,6 +1,6 @@
 import type { DevCommand } from "#src/models/dev/DevCommand";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Landmark } from "#src/models/world/Landmark";
+import type { PlaceLandmark } from "#src/models/world/PlaceLandmark";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 import { findTeleportLandmark } from "#src/services/dev/findTeleportLandmark";
@@ -18,7 +18,7 @@ export const createTeleportCommand = ({
   jumpTo,
 }: {
   catalogue: Catalogue;
-  getLandmarks: () => readonly Landmark[];
+  getLandmarks: () => readonly PlaceLandmark[];
   jumpTo: (pose: WorldJumpPose) => void;
 }): DevCommand<typeof teleportArgs> => ({
   args: teleportArgs,

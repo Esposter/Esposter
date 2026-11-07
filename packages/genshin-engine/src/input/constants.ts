@@ -11,8 +11,10 @@ export const KEY_CODE_DOWN = "ShiftLeft";
 // The keys a page's focus moves and presses with, whose default stays the browser's even where a binding takes them,
 // So a screen's controls work from the keyboard
 export const FOCUS_KEY_CODES: readonly string[] = ["Enter", "Space", "Tab"];
-// What a key is typed into, whose keys are its own and reach no binding
-export const FIELD_SELECTOR = 'input, select, textarea, [contenteditable="true"]';
+// What a key is typed into, whose keys are its own and reach no binding: an input that takes text, not one a click sets,
+// Such as a colour swatch the developer panel leaves focused, which types nothing and so leaves the Traveler's keys alone
+export const FIELD_SELECTOR =
+  'input:not([type="button"], [type="checkbox"], [type="color"], [type="file"], [type="image"], [type="radio"], [type="range"], [type="reset"], [type="submit"]), select, textarea, [contenteditable="true"]';
 // A gamepad's buttons in the order the standard layout's `buttons` holds them
 export const GAMEPAD_BUTTONS: readonly GamepadButton[] = [
   GamepadButton.FaceBottom,

@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import type { GameLanguage, GameText } from "genshin-text";
+import type { DevRegistry } from "genshin-world";
 import type { GenshinSave } from "genshin-world/save";
 
 import { GENSHIN_REGION_DATA_BASE_URL, GENSHIN_SCENE_EXPORT_BASE_URL } from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
-import { GENSHIN_DEV_COMMAND_GROUP, GENSHIN_DEV_STATS_GROUP } from "@/services/genshin/dev/constants";
 import { RoutePath } from "@esposter/shared";
-import {
-  createBooleanVariable,
-  createDevRegistry,
-  createStatCommand,
-  exposeDevRegistry,
-  WorldScreen,
-} from "genshin-world";
+import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 
 interface Props {
@@ -36,12 +29,13 @@ interface Props {
 const { gameText, isHeld, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
+const gameDataBaseUrl = getGenshinGameDataBaseUrl(containerBaseUrl);
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
-// The developer registry is made in development alone, and the world's commands and variables register with it. A
-// Browser driven by automation takes it through `window.__dev` and mounts no surface, since a panel would cover the
-// Scene it shoots; a player's build has neither
-const devRegistry = IS_DEVELOPMENT ? createDevRegistry() : undefined;
+// The developer surface sits in a DevOnly block of the template, which a production build strips out, and its registry is
+// handed up before the world mounts, so the world waits for it in development
+const devRegistry = shallowRef<DevRegistry>();
+const isWorldReady = computed(() => !IS_DEVELOPMENT || devRegistry.value !== undefined);
 // The save the world last wrote, which the developer's save commands read. A change they make is handed back to the page
 // As the world's own save and applied by a reload, since a running world reads its save once, when it starts
 const latestSave = shallowRef(save);
@@ -49,87 +43,23 @@ const saveWorld = (newSave: GenshinSave) => {
   latestSave.value = newSave;
   emit("save", newSave);
 };
-if (devRegistry)
-  useGenshinDevSaveCommands({
-    applySave: (newSave) => {
-      saveWorld(newSave);
-      window.location.reload();
-    },
-    devRegistry,
-    gameDataBaseUrl: getGenshinGameDataBaseUrl(containerBaseUrl),
-    gameText,
-    getSave: () => latestSave.value,
-    language,
-    regionDataBaseUrl: GENSHIN_REGION_DATA_BASE_URL,
-  });
-const isDevSurfaceShown = ref(false);
-const isDevConsoleOpen = ref(false);
-const isDevPanelOpen = ref(false);
-const isStatShown = ref(false);
-// The stats overlay's switch, which the console's `stat` command and the panel's Stats tab both set
-if (devRegistry)
-  onScopeDispose(
-    devRegistry.register({
-      commands: [
-        createStatCommand({
-          setStatShown: (isShown) => {
-            isStatShown.value = isShown;
-          },
-        }),
-      ],
-      variables: [
-        createBooleanVariable({
-          get: () => isStatShown.value,
-          group: GENSHIN_DEV_STATS_GROUP,
-          name: "stat",
-          set: (isShown) => {
-            isStatShown.value = isShown;
-          },
-        }),
-      ],
-    }),
-  );
-useCommands(() =>
-  isDevSurfaceShown.value
-    ? [
-        {
-          group: GENSHIN_DEV_COMMAND_GROUP,
-          id: "open-dev-console",
-          meaning: UiIconMeaning.Command,
-          run: () => {
-            isDevConsoleOpen.value = true;
-          },
-          shortcut: "`",
-          title: "Open the developer console",
-        },
-        {
-          group: GENSHIN_DEV_COMMAND_GROUP,
-          id: "toggle-dev-panel",
-          meaning: UiIconMeaning.Settings,
-          run: () => {
-            isDevPanelOpen.value = !isDevPanelOpen.value;
-          },
-          shortcut: "f2",
-          title: "Show or hide the developer panel",
-        },
-      ]
-    : [],
-);
+const applyDevSave = (newSave: GenshinSave) => {
+  saveWorld(newSave);
+  window.location.reload();
+};
 onMounted(() => {
   emit("load");
-  if (!devRegistry) return;
-  if (window.navigator.webdriver) exposeDevRegistry(devRegistry, window);
-  else isDevSurfaceShown.value = true;
 });
 </script>
 
 <template>
   <WorldScreen
+    v-if="isWorldReady"
     :account-avatar-url="session.data?.user.image || ''"
     :account-name="session.data?.user.name || ''"
     :create-terrain-worker="() => new TerrainTileWorker()"
     :dev-registry
-    :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
+    :game-data-base-url
     :game-text
     :is-held
     :is-paused
@@ -145,9 +75,14 @@ onMounted(() => {
     @ready="emit('ready')"
     @save="(newSave) => saveWorld(newSave)"
   />
-  <template v-if="devRegistry && isDevSurfaceShown">
-    <GenshinDevConsole v-model="isDevConsoleOpen" :registry="devRegistry" />
-    <GenshinDevPanel v-model="isDevPanelOpen" :registry="devRegistry" />
-    <GenshinDevStats v-if="isStatShown" :registry="devRegistry" />
-  </template>
+  <DevOnly>
+    <GenshinDev
+      :apply-save="applyDevSave"
+      :game-data-base-url
+      :game-text
+      :get-save="() => latestSave"
+      :language
+      @registry="devRegistry = $event"
+    />
+  </DevOnly>
 </template>
