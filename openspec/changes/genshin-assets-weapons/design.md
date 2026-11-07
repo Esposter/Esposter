@@ -91,11 +91,11 @@ flowchart LR
 **Icons (G6, G7).**
 
 - Extract: `pnpm -C scripts genshin:assets weapon-icons`, which exports the table's icon names into `{data-root}/genshin-parity/extracted/weapons/icons` through `exportBlockTextures`, the helper the namecards export shares. It reports each name the index does not hold, which are each kind's template icon and a few real names, and the PC runs it.
-- Fit: **no command yet**, an outline fit that traces each icon's alpha into loops in its unit square, registered in the weapons' entry. Then `pnpm -C scripts genshin:assets fit weapons --only icons --dry-run`.
+- Fit: `traceWeaponIcon` traces each icon's alpha into loops in its unit square, and `fitWeaponIcons` runs it over the exported icons, registered in the weapons' entry as the `icons` fit. Then `pnpm -C scripts genshin:assets fit weapons --only icons --dry-run`.
 
 **Trails (G5).** **No command yet:** `pnpm -C scripts genshin:parity trail`, which reads a claymore strike's frames from a capture and writes the trail's width, colour and fade. Then **no command yet:** a fit of those values under `weaponShapes/trails`, run by `pnpm -C scripts genshin:assets fit weapons --only trails --dry-run`.
 
-**Publish (G8).** **No command yet:** the GameDataset member `weaponShapes` and its reader, because a fit's key must sit under a dataset. Then `pnpm -C scripts genshin:assets fit weapons --only icons` without `--dry-run` publishes the record under its key, and `pnpm -C scripts genshin:data verify` checks both accounts. The other fits publish the same way.
+**Publish (G8).** The GameDataset member `weaponShapes` exists, because a fit's key must sit under a dataset even in a dry run. **No reader yet:** the typed reader the weapon screen awaits. Then `pnpm -C scripts genshin:assets fit weapons --only icons` without `--dry-run` publishes the record under its key, and `pnpm -C scripts genshin:data verify` checks both accounts. The other fits publish the same way.
 
 **Attack clip (G9).** **No command yet:** one sword attack clip played through the clip retarget. The retarget is the roadmap item the change waits on.
 

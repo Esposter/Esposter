@@ -6,6 +6,7 @@ import { createRegionFit } from "#src/services/genshinAssets/fit/createRegionFit
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
+import { fitWeaponShapes } from "#src/services/genshinAssets/fit/fitWeaponShapes";
 import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseScene";
 
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
@@ -33,5 +34,6 @@ export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAs
   [DerivedAssetComponent.Sumeru]: createRegionFit(DerivedAssetComponent.Sumeru, {
     waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Sumeru, fitOptions),
   }),
+  [DerivedAssetComponent.Weapons]: fitWeaponShapes,
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };

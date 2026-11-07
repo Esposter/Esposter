@@ -8,7 +8,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
 | genshin-world              | index.js                                                     | 2559740 | 2499.7 |
 | @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
-| genshin-world              | index-[hash].d.ts                                            | 1669941 | 1630.8 |
+| genshin-world              | index-[hash].d.ts                                            | 1669974 | 1630.8 |
 | genshin-world              | style.css                                                    |  305928 |  298.8 |
 | genshin-engine             | index.js                                                     |  287794 |  281.0 |
 | @esposter/functions        | Arrow.node-[hash].js                                         |  255689 |  249.7 |
@@ -19,7 +19,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-interface          | style.css                                                    |  192322 |  187.8 |
 | @esposter/infra            | index.js                                                     |  121664 |  118.8 |
 | @esposter/db-schema        | index.js                                                     |  120943 |  118.1 |
-| genshin-world              | save-[hash].js                                               |  116244 |  113.5 |
+| genshin-world              | save-[hash].js                                               |  116291 |  113.6 |
 | @esposter/shared           | index.js                                                     |   97225 |   94.9 |
 | @esposter/shared           | index.d.ts                                                   |   94363 |   92.2 |
 | genshin-text               | index.js                                                     |   91030 |   88.9 |
@@ -574,4 +574,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21668609 bytes, 21160.8 KiB, 20.66 MiB
+**Total:** 569 files, 21668689 bytes, 21160.8 KiB, 20.66 MiB

@@ -93,6 +93,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "WorldScreen",
   },
+  // The weapons' screen. It roots nothing yet: the icons its fit traces are exported by `weapon-icons` from the weapon
+  // Table, and the held meshes' roots are named once the index's Mesh and Animator rows are read
+  [DerivedAssetComponent.Weapons]: { roots: [], screen: "WeaponScreen" },
   // Windrise is the open world's (World/Screen/Index.reference.ts): the statue's gadget prefab at its scene point, the
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
   // Four terrain tiles under the valley and the slopes north of it, with their base maps, and the windmill's tower and

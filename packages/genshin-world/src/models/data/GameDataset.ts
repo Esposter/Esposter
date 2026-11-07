@@ -69,6 +69,7 @@ export enum GameDataset {
   Tips = "tips",
   TipText = "tipText",
   TransPoints = "transPoints",
+  WeaponShapes = "weaponShapes",
   Wildlife = "wildlife",
   Windrise = "windrise",
   WishSchedule = "wishSchedule",

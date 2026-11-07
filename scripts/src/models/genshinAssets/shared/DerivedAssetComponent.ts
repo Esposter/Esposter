@@ -13,5 +13,6 @@ export enum DerivedAssetComponent {
   Snezhnaya = "snezhnaya",
   Sumeru = "sumeru",
   Traveler = "traveler",
+  Weapons = "weapons",
   Windrise = "windrise",
 }
