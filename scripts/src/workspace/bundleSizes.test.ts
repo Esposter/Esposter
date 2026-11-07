@@ -1,7 +1,6 @@
 import { BUNDLE_SIZES_FILENAME } from "#src/services/bundleSizes/constants";
 import { readBundleSizes } from "#src/services/bundleSizes/readBundleSizes";
 import { renderBundleSizes } from "#src/services/bundleSizes/renderBundleSizes";
-import { settleBundleSizes } from "#src/services/bundleSizes/settleBundleSizes";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -19,7 +18,7 @@ describe("bundleSizes", () => {
   test("the record is the size of every built file", () => {
     expect.hasAssertions();
 
-    expect(renderBundleSizes(settleBundleSizes(bundleSizes, record))).toBe(record);
+    expect(renderBundleSizes(bundleSizes)).toBe(record);
   });
 
   // The record's reach is the build's, so a build that found no package would pass the test above against nothing
