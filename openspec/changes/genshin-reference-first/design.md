@@ -27,6 +27,7 @@
 | Every subscreen names a reference of its own                     | 1. Construction, 4. Test | the `variant` field on the entry model, and `ParityReferenceMap.test.ts` with a new test                |
 | A fixture has a reference entry                                  | 4. Test                  | `ParityReferenceMap.test.ts`, already present                                                           |
 | Approved images have no platform segment                         | 4. Test                  | `packages/configuration/src/services/getVitestBrowserConfiguration.test.ts`, new, beside the resolver   |
+| A map edit that moves a committed reference is refused           | 4. Test                  | `planReferenceFiles.test.ts`, the refusal, fed the committed files by `readCommittedBeside`             |
 | A subscreen's image is written whatever its compare scores       | 4. Test                  | `decideApprovalStatus.test.ts`, which pins the status the command prints                                |
 | A reference is a committed screenshot or wiki file               | 1. Construction          | the entry model loses `capture`, `seconds` and `plateCapture`, and typecheck rejects one that keeps one |
 | The order reference, fixture, component, compare, approve, suite | 5. Remembered            | the genshin-parity skill's rules, read by review                                                        |
@@ -54,7 +55,8 @@ The order itself is not testable from the repository, since git does not record 
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`         | The reference entries, one per subscreen                                                              |
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.test.ts`    | Fixture to reference, and now variant to entry                                                        |
 | `scripts/src/services/genshinParity/reference/planReferenceFiles.ts`      | Refuses a map edit that would move a variant's committed reference, naming the `git mv` that moves it |
-| `scripts/src/services/genshinParity/reference/planReferenceFiles.test.ts` | The refusal, on a checkout holding only the committed file                                            |
+| `scripts/src/services/genshinParity/reference/planReferenceFiles.test.ts` | The refusal, on a variant whose committed file sits beside its snapshot with no flat file for it      |
+| `scripts/src/services/genshinParity/reference/readCommittedBeside.ts`     | Hashes each committed file beside a snapshot and names the manifest ids whose rows hold its bytes     |
 | `scripts/src/services/genshinParity/reference/approveReference.ts`        | Writes the approved image, which loses its platform segment                                           |
 | `packages/configuration/src/services/getVitestBrowserConfiguration.ts`    | The screenshot path resolver                                                                          |
 | `packages/genshin-interface/src/components/components.visual.ts`          | The interface's visual suite, with its own variant loop                                               |

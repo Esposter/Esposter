@@ -15,6 +15,7 @@ describe(planReferenceFiles, () => {
   const VARIANT = "artifacts";
   const REGION = { height: 0, width: 0, x: 0, y: 0 };
   const PROPS = {};
+  const NO_COMMITTED_BESIDE = new Map<string, string[]>();
   const createFixtureRow = (variant: string): FixtureScreenRow => ({
     bar: null,
     directory: SCREEN_DIRECTORY,
@@ -34,7 +35,7 @@ describe(planReferenceFiles, () => {
       "region-reference": { region: REGION, screen: SCREEN_NAME, source: " " },
       "second-whole-reference": { screen: SCREEN_NAME, source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY, NO_COMMITTED_BESIDE);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       {
@@ -53,7 +54,12 @@ describe(planReferenceFiles, () => {
       "other-variant-region-reference": { region: REGION, screen: SCREEN_NAME, source: " ", variant: VARIANT },
       "variant-region-reference": { region: REGION, screen: SCREEN_NAME, source: " ", variant: VARIANT },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow(VARIANT)], COMPONENTS_DIRECTORY);
+    const plan = planReferenceFiles(
+      referenceMap,
+      [createFixtureRow(VARIANT)],
+      COMPONENTS_DIRECTORY,
+      NO_COMMITTED_BESIDE,
+    );
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       {
@@ -71,7 +77,7 @@ describe(planReferenceFiles, () => {
       "pending-reference": { pending: " ", screen: SCREEN_NAME },
       "unfixtured-reference": { screen: "BarScreen", source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY, NO_COMMITTED_BESIDE);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       { id: "unfixtured-reference", path: join(REFERENCE_FILES_DIRECTORY, "unfixtured-reference.webp") },
@@ -86,11 +92,30 @@ describe(planReferenceFiles, () => {
       "a-props-reference": { props: PROPS, screen: SCREEN_NAME, source: " " },
       "plain-reference": { screen: SCREEN_NAME, source: " " },
     } satisfies Record<string, ParityReference>;
-    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY);
+    const plan = planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY, NO_COMMITTED_BESIDE);
 
     expect(plan.map(({ id, path }) => ({ id, path }))).toStrictEqual([
       { id: "a-props-reference", path: join(REFERENCE_FILES_DIRECTORY, "a-props-reference.webp") },
       { id: "plain-reference", path: getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, "Foo", "Screen"), "") },
     ]);
+  });
+
+  test("a map edit that moves a committed reference is refused with its git mv", () => {
+    expect.hasAssertions();
+
+    // Built from entries, not an object literal, since the lint's key sort would list the committed id first and undo the order
+    const referenceMap = Object.fromEntries<ParityReference>([
+      ["new-primary-reference", { screen: SCREEN_NAME, source: " " }],
+      ["committed-reference", { screen: SCREEN_NAME, source: " " }],
+    ]);
+    const committedBeside = new Map([
+      [getFixtureReferenceFilePath(join(COMPONENTS_DIRECTORY, SCREEN_DIRECTORY), ""), ["committed-reference"]],
+    ]);
+
+    expect(() =>
+      planReferenceFiles(referenceMap, [createFixtureRow("")], COMPONENTS_DIRECTORY, committedBeside),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: committed-reference, has its committed reference at packages/genshin-world/src/components/Foo/Screen/Index.reference.webp, which this map edit would move to packages/genshin-world/parity/references/committed-reference.webp: git mv packages/genshin-world/src/components/Foo/Screen/Index.reference.webp packages/genshin-world/parity/references/committed-reference.webp makes the move]`,
+    );
   });
 });

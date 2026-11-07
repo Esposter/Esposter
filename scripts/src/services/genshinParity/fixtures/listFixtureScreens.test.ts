@@ -88,7 +88,7 @@ describe(listFixtureScreens, () => {
     ]);
     const rows = await listFixtureScreens(componentsDirectory, referenceMap, new Map());
     const besideSnapshot = getFixtureReferenceFilePath(join(componentsDirectory, SCREEN_DIRECTORY), VARIANT);
-    const besideId = planReferenceFiles(referenceMap, rows, componentsDirectory).find(
+    const besideId = planReferenceFiles(referenceMap, rows, componentsDirectory, new Map()).find(
       ({ path }) => path === besideSnapshot,
     )?.id;
 
