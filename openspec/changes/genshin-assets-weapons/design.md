@@ -77,16 +77,16 @@ flowchart LR
 
 **Map (every gap).** The index is already on this Mac. Run `pnpm -C scripts genshin:assets map` once per install patch, and `pnpm -C scripts genshin:assets map --index` to rewrite the index alone when the map is kept. A run that logs an exception fails.
 
-**Name the component (G1, G2, G4, G6).** **No command yet:** add the weapons to the component enum and to the component map with the weapon screen as its screen and no roots, since a component may start with none. The roots come in task 3.1.
+**Name the component (G1, G2, G4, G6).** The weapons are a member of the component enum and of the component map, with the weapon screen as its screen and the roots `pnpm -C scripts genshin:assets weapon-roots` derives: it dumps the layouts of the blocks the index puts the held meshes and animators in, takes the top of each prefab whose renderer draws a held mesh and writes them to a record beside the map, reporting each held mesh no game object draws.
 
 **Held meshes and drops (G1, G3, G4).**
 
 - Extract: `pnpm -C scripts genshin:assets extract weapons` on the PC, then `pnpm -C scripts genshin:assets inventory weapons` and `pnpm -C scripts genshin:assets tree weapons`. The extract prints every mesh it reached and each pointer it could not resolve.
-- Map each row to its mesh: **no command yet**, a row-to-mesh map written beside the models fit, whose dry run prints the rows with a mesh and the rows with none.
+- Map each row to its mesh: `pnpm -C scripts genshin:assets fit weapons --only meshMap --dry-run`, whose notes print the rows with a mesh and the rows with none.
 - Fit the blades: **no command yet**, a fit beside the statue fit, registered in the weapons' fit entry. Then `pnpm -C scripts genshin:assets fit weapons --only models --dry-run`.
 - Fit the drops: **no command yet**, the same kind of fit over each gadget's prefab, registered under the same entry. Then `pnpm -C scripts genshin:assets fit weapons --only drops --dry-run`.
 
-**Grips (G2).** **No command yet:** a fit that reads the hand curves of each kind's standby clip from `{data-root}/genshin-parity/extracted/timings`, and fits the grip relative to WeaponR or WeaponL. Then `pnpm -C scripts genshin:assets fit weapons --only grips --dry-run`. The clips' stop times come from `pnpm -C scripts genshin:assets timings <pattern>`, which reads the game, so the PC runs it for a new export.
+**Grips (G2).** **No command yet:** a fit that reads the hand curves of each kind's standby clip from `{data-root}/genshin-parity/extracted/timings`, and fits the grip relative to WeaponR or WeaponL. Then `pnpm -C scripts genshin:assets fit weapons --only grips --dry-run`. The standby clips are stored in the clip's ACL form, which the clip decoder does not read, so the hand curves cannot be read until it does (task 3.4). The clips' stop times come from `pnpm -C scripts genshin:assets timings <pattern>`, which reads the game, so the PC runs it for a new export.
 
 **Icons (G6, G7).**
 
