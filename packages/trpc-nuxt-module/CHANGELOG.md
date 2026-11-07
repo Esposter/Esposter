@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **ci:** the trpc module takes 11.25's two subscription overloads ([337565c](https://github.com/Esposter/Esposter/commit/337565cdc4ed7a4e8dec4fd6b8357a2679b62825))
+
+### Features
+
+* **web:** the tRPC WebSocket client pings the server so an idle connection is not dropped ([ba3b4cf](https://github.com/Esposter/Esposter/commit/ba3b4cff6e896a79dae1b1914259920935c4a4fb))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes

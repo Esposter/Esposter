@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **ci:** the functions build allows its dependency's unreachable kerberos import ([266f326](https://github.com/Esposter/Esposter/commit/266f326a9ea2c68f3a09baafa1068e7eebf636c2))
+* **ci:** the search client mock is typed as the client it stands for, and the functions app lists the SDK it types against ([8e42aec](https://github.com/Esposter/Esposter/commit/8e42aec081907b7ed727d632aba5c4bea2bb895d))
+* **functions:** the account deletion handler test reaches the search index through the mock, as its siblings do ([0915922](https://github.com/Esposter/Esposter/commit/09159221128d7370b96641708a938069a584c469))
+* **functions:** the deploy manifest lists @azure/search-documents, which the account deletion now loads ([b2c10dc](https://github.com/Esposter/Esposter/commit/b2c10dc44a14767eaf6ee064209302f972d249e4))
+
+### Features
+
+* **functions:** an account deletion erases the text of its messages and removes an owned room's documents from the search index ([02fc7b1](https://github.com/Esposter/Esposter/commit/02fc7b17a442f7f29b131f6ade9db786aa2200c9))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes

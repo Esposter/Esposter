@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Features
+
+* **genshin-persona:** a fenced block that spans spoken pieces stays unspoken, the voice process carries the fence state ([3b887f8](https://github.com/Esposter/Esposter/commit/3b887f82346ffd3fbd0db9e598ae35d67d32b27b))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes

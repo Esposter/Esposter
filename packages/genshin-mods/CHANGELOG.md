@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **ci:** lint order in the ask dialog attributes and the state contract test imports ([4eef88a](https://github.com/Esposter/Esposter/commit/4eef88adf4ace19bf01cd1ce0d276710ba140f39))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes

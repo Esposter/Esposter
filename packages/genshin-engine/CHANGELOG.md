@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **genshin-engine:** a failed tile only drawn as a fallback stops counting as in flight ([22ff1f5](https://github.com/Esposter/Esposter/commit/22ff1f53ae6fac85d4d45110b4af9b0f1a084d00))
+* **genshin-engine:** a failed tile still in view stays counted until an update asks for it ([920c235](https://github.com/Esposter/Esposter/commit/920c23576d76f1edac9a40ac59f02ac113d2c6c7))
+* **genshin-engine:** a failed tile still wanted counts as in flight until it is asked for again ([f570f05](https://github.com/Esposter/Esposter/commit/f570f05fdc6349cefe03a7710a3fdf6f05034db1))
+* **genshin-engine:** the bloom node's renderer, state and shared context are typed ([dd0038e](https://github.com/Esposter/Esposter/commit/dd0038eaafd3bfd39127307294777f224c4239e2))
+* **genshin-parity:** the bloom reading reads only the screens that draw the bloom ([2587559](https://github.com/Esposter/Esposter/commit/2587559d77b92080437d198b939c6b5c13bb34e1))
+* **genshin:** test titles begin lowercase, as the repo's lint rule requires ([ea68e6f](https://github.com/Esposter/Esposter/commit/ea68e6fcc8db5d42fa1bfd8021fa3be819a35930))
+
+### Features
+
+* **genshin-engine:** the login scene draws the game's own bloom ([dcde3ea](https://github.com/Esposter/Esposter/commit/dcde3ea8ebcb57b6aa571298eccc43f9724a6f04))
+* **genshin-world:** the settled read reports tiles in flight ([ea6c1ba](https://github.com/Esposter/Esposter/commit/ea6c1bae097e7f58f682be7486cf160acdb84702))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes

@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **ci:** a suite's constants sit in its describe and four diagram labels fit a name and one qualifier ([d335227](https://github.com/Esposter/Esposter/commit/d335227fffc677cf2dbf090f61edf53453c99ec5))
+* **ci:** the search client mock is typed as the client it stands for, and the functions app lists the SDK it types against ([8e42aec](https://github.com/Esposter/Esposter/commit/8e42aec081907b7ed727d632aba5c4bea2bb895d))
+* **ci:** the type-only dependency check reuses the shared readers and counts only a whole-declaration type import ([f05bb6f](https://github.com/Esposter/Esposter/commit/f05bb6f60c39cc5ea57d4e47a9b8f20977bffd4b))
+* **genshin-parity:** the bloom reading reads only the screens that draw the bloom ([2587559](https://github.com/Esposter/Esposter/commit/2587559d77b92080437d198b939c6b5c13bb34e1))
+* **genshin-world:** scenes whose reference shows no bloom keep it off ([f7eba9c](https://github.com/Esposter/Esposter/commit/f7eba9c955676367693ee189ed51ef810b4b8783))
+* **genshin:** test titles begin lowercase, as the repo's lint rule requires ([ea68e6f](https://github.com/Esposter/Esposter/commit/ea68e6fcc8db5d42fa1bfd8021fa3be819a35930))
+* **resource:** a palette drag resolves its drop against the boxes read as the drag starts ([5bd6429](https://github.com/Esposter/Esposter/commit/5bd6429e5661433c3905c5de6184bfff0718cf29))
+* **review:** the fixer and settler checks run the bundle-size record, not per-package size tests ([7ed875e](https://github.com/Esposter/Esposter/commit/7ed875eaa506eb2b1d42bb1b9cdee3dd1513f967))
+* **scripts:** a cited file is external only when the repository does not track its path ([f85ed63](https://github.com/Esposter/Esposter/commit/f85ed632cf773ea895da9a6396346ce971f68798))
+* **scripts:** a comparator names the pair it compares ([9affc3a](https://github.com/Esposter/Esposter/commit/9affc3a7a00d5bd2e09f3184b1a9f307d3ffb20d))
+* **scripts:** a compute folder named by two Phases rows fails the read ([f11e255](https://github.com/Esposter/Esposter/commit/f11e2551bf69fe2ca05e7ddf803bc9e687e79ad5))
+* **scripts:** a compute page whose only open line has no id waits on that line, never reads as done ([0efc547](https://github.com/Esposter/Esposter/commit/0efc547efca7f34e1da471a88c7ff9c65e17e8f7))
+* **scripts:** a land's child processes are bounded and say what hung ([0204347](https://github.com/Esposter/Esposter/commit/02043472f58b3f3784e8efa80f969b2979faa8b5))
+* **scripts:** a package's dist build output is external to the citation check ([16860d5](https://github.com/Esposter/Esposter/commit/16860d5086743669f4f53dbcf8e0b9edaf3551a3))
+* **scripts:** a package's dist is an external file to a citation check ([29983bc](https://github.com/Esposter/Esposter/commit/29983bc414aa99fcb34e24932518fe634fff69ba))
+* **scripts:** a task's quote is read whole past a held title that ends inside it, and only a whole quote names a held title ([97634fb](https://github.com/Esposter/Esposter/commit/97634fbfebb372651e63110e6494c484bfb5edf5))
+* **scripts:** an empty game-data publication makes no request ([3a7a7ef](https://github.com/Esposter/Esposter/commit/3a7a7ef0c30e63453a7dda8a855cca8637bd8ad2))
+* **scripts:** an unused parameter is named behind its underscore ([387b901](https://github.com/Esposter/Esposter/commit/387b901ca2e611a4be58336862adb72e52ec91b7))
+* **scripts:** runGit's failure is a Result, not a try ([1e2ff93](https://github.com/Esposter/Esposter/commit/1e2ff938e77145cc3db4568713196b64259b73b3))
+* **scripts:** the citation file pattern is a String.raw template ([eec8dcf](https://github.com/Esposter/Esposter/commit/eec8dcf0188e9e43532834eb52dfc7987a8b94de))
+* **scripts:** the compute kinds are listed in their order by an explicit array, the enum sorted ([c4f8489](https://github.com/Esposter/Esposter/commit/c4f8489208d9797565faa1c778f89fa9dc3bd8b6))
+* **scripts:** the exported declarations carry the types isolated declarations need ([668fa33](https://github.com/Esposter/Esposter/commit/668fa33cac566b574ac949ab74147c9dc6e04fd4))
+* **scripts:** the format and git error tests assert inline snapshots, not toThrow ([afc82e4](https://github.com/Esposter/Esposter/commit/afc82e41da6f5bd213832db1196d1528486ba72e))
+* **scripts:** the helpers that capture nothing move to module scope ([90720ba](https://github.com/Esposter/Esposter/commit/90720ba33b178c9fa10989917d7771574beface8))
+* **scripts:** the land mask reads its world file through a schema and types its geometry as an enum ([84345d8](https://github.com/Esposter/Esposter/commit/84345d8e6568f13c6d3a557d86865a66fe80e245))
+* **scripts:** the land mask sorts with toSorted and reads through takeOne ([1ce43e5](https://github.com/Esposter/Esposter/commit/1ce43e5841de75e6aa3ad432f3b8d0f64b619f56))
+* **scripts:** the land mask's comparators name the pair they compare ([58d095f](https://github.com/Esposter/Esposter/commit/58d095fc5c169b7d541fe2deec8c44facefa1992))
+* **scripts:** the publish test's object literals are shorthand and sorted by key ([3b30d8e](https://github.com/Esposter/Esposter/commit/3b30d8ef50ade1e15dd34a1f91a1adfdbc974217))
+* **scripts:** the report's two phase-0 gate clauses read in the design's lowercase ([fd80fe1](https://github.com/Esposter/Esposter/commit/fd80fe1cb7ef479c65eaceebbb2dfb61540f185f))
+* **scripts:** the roadmap heading test uses startsWith ([214988b](https://github.com/Esposter/Esposter/commit/214988b10dd62a0f940f818e69dabc5ba804dd85))
+* **scripts:** the roadmap phase regex's type is inferred from its constructor ([31c491a](https://github.com/Esposter/Esposter/commit/31c491af65a49e928bbd3ff717c983af8418472d))
+* **scripts:** the scenario test spreads its set instead of Array.from ([28a128f](https://github.com/Esposter/Esposter/commit/28a128f2486a1424d516d3a2ad05ea397fad2a83))
+* **scripts:** the script quest regex names its quote group ([3a22ce2](https://github.com/Esposter/Esposter/commit/3a22ce2e77cc862c3eae727ed0518ecb4b438d19))
+* **scripts:** the text map decoder reads every row of a doubled chunk name and exports each block apart ([584cefe](https://github.com/Esposter/Esposter/commit/584cefe97970534958f35ec20aef7ce4b8fddc5d))
+* **scripts:** the timeout guard is named check* ([14cf331](https://github.com/Esposter/Esposter/commit/14cf33134336a0533bdf8f338a496f0b1a3398e8))
+* **scripts:** the type-only dependency check declares the tree-read timeout ([cda6899](https://github.com/Esposter/Esposter/commit/cda68999554414c0ad62f44f47f4ce6d401e8853))
+* **scripts:** the type-only dependency check reads .js and .mjs sources, and its helpers pass the lint ([3b3ca5f](https://github.com/Esposter/Esposter/commit/3b3ca5f5c03f49df236b3e0956964699cdf6f248))
+* the three workspace reds the fix passes left ([a730352](https://github.com/Esposter/Esposter/commit/a730352027a2d080cf3d6799f6a3ae5b992fe5c5))
+* three typechecks the window left red ([43ebda9](https://github.com/Esposter/Esposter/commit/43ebda92134b18987f54de276316dfcd1c97ebe9))
+
+### Features
+
+* **architecture:** the about globe is drawn by code of our own ([89afb77](https://github.com/Esposter/Esposter/commit/89afb773ce05f64c6b2c286e0492ffc338e66d96))
+* **genshin-engine:** the login scene draws the game's own bloom ([dcde3ea](https://github.com/Esposter/Esposter/commit/dcde3ea8ebcb57b6aa571298eccc43f9724a6f04))
+* **genshin-world:** the pot companions' talks open by Friendship Level ([6dbf5e9](https://github.com/Esposter/Esposter/commit/6dbf5e91ce707feba4217d4097be1311d0a18125))
+* **scripts:** a change names its phase in its metadata ([11c5fec](https://github.com/Esposter/Esposter/commit/11c5fec635f52fbbc37d68c7c5450a05de526d90))
+* **scripts:** a compute item takes its area's phase from one table ([3b9be6f](https://github.com/Esposter/Esposter/commit/3b9be6f4f37563ae2a205c0dec0cf28c8de19cc0))
+* **scripts:** a task names its phase and a change is picked at its lowest open task's ([3a75a5f](https://github.com/Esposter/Esposter/commit/3a75a5ff2fe227152004dca985448ebc18b938f0))
+* **scripts:** check a headless package's name, Vue peer, single entry and Pinia-free source ([b5dcbc9](https://github.com/Esposter/Esposter/commit/b5dcbc909da009bcf7a548fd6d468e1c37a37aeb))
+* **scripts:** every headless package is held to the shape, and only a package that ships a Vue abstraction carries the Vue name ([cf49f60](https://github.com/Esposter/Esposter/commit/cf49f608022ff41bd1c94134f5d955e7c56c2369))
+* **scripts:** the bloom reading closes where it brings the brightest pixels closer ([def8487](https://github.com/Esposter/Esposter/commit/def8487dcb8d776971bae748584ce641568c5c5e))
+* **scripts:** the fleet offers the lowest phase's first runnable unit and the report groups by phase ([09ed7d9](https://github.com/Esposter/Esposter/commit/09ed7d9fbdd9fd73d95e7bc996d1d86cdc4470e5))
+* **scripts:** the progress report counts each phase's units by kind and state ([0860222](https://github.com/Esposter/Esposter/commit/0860222a6e689f578ea910be919276d1f22fa75a))
+* **scripts:** the progress report names each quest it counts as scripted or not measurable ([1279b4a](https://github.com/Esposter/Esposter/commit/1279b4a0600d3e39b0010e2b1ff80cc7b94bc407))
+* **scripts:** the progress report prints a quest a script names as scripted ([197b9fa](https://github.com/Esposter/Esposter/commit/197b9fa42a2275addb0aa615c9fb6f4294888d7d))
+* **scripts:** the progress report reads the exit checks a command can read ([e3ec47c](https://github.com/Esposter/Esposter/commit/e3ec47c68cf5bbc2a11a3599be3c36d58f8c38d2))
+
+### Performance Improvements
+
+* **scripts:** the progress report reads its capabilities and units in parallel ([5581675](https://github.com/Esposter/Esposter/commit/5581675230af35f32732037af631a42e967ca32c))
+* **scripts:** the type-only dependency check lists once, links no parents and walks a source whole only when it writes import( ([a2d10ca](https://github.com/Esposter/Esposter/commit/a2d10ca86a0a5ee1a37898242d36d9371b0ccd59))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes
