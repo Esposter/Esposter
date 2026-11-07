@@ -1,6 +1,6 @@
 {
   "name": "survey-expression",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "description": "The survey's expression language — conditions, calculated values and validators over a survey's answers, checked against SurveyJS's recorded answers with every deliberate difference listed",
   "keywords": [
     "typescript"

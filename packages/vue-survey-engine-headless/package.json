@@ -1,6 +1,6 @@
 {
   "name": "vue-survey-engine-headless",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "description": "A headless Vue survey engine: the survey as a typed document on the headless block editor — its question kinds, the checks on a save, a runner of plain functions and the Vue composable over them, with no styling or DOM.",
   "keywords": [
     "headless",

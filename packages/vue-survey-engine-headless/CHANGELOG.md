@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
+
+### Bug Fixes
+
+* **vue-survey-engine-headless:** the panel, page and dynamic panel props schemas satisfy their interfaces ([9783885](https://github.com/Esposter/Esposter/commit/9783885490340c5fed90b9cae3a6e9c1293a20f0))
+
 # [4.5.0](https://github.com/Esposter/Esposter/compare/v4.4.0...v4.5.0) (2026-11-05)
 
 ### Bug Fixes
