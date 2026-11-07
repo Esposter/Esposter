@@ -1,5 +1,4 @@
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
+import { traceTextureCell } from "#src/services/genshinAssets/fit/traceTextureCell";
 import {
   WEAPON_ICON_COVERAGE_THRESHOLD,
   WEAPON_ICON_TRACE_TEXELS,
@@ -12,18 +11,10 @@ import sharp from "sharp";
 // The shape is kept, never a texel
 export const traceWeaponIcon = async (icon: Buffer | string): Promise<[number, number][][]> => {
   const { data, info } = await sharp(icon).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const width = Math.floor(info.width / WEAPON_ICON_TRACE_TEXELS);
-  const height = Math.floor(info.height / WEAPON_ICON_TRACE_TEXELS);
-  const covered = new Uint8Array(width * height);
-  for (let y = 0; y < height; y++)
-    for (let x = 0; x < width; x++) {
-      // A grid cell is sampled at its middle texel, counted from the icon's foot so y runs up
-      const texelX = x * WEAPON_ICON_TRACE_TEXELS + WEAPON_ICON_TRACE_TEXELS / 2;
-      const texelY = info.height - (y * WEAPON_ICON_TRACE_TEXELS + WEAPON_ICON_TRACE_TEXELS / 2);
-      const texel = (Math.floor(texelY) * info.width + Math.floor(texelX)) * info.channels;
-      covered[y * width + x] = (data[texel + 3] ?? 0) / BYTE > WEAPON_ICON_COVERAGE_THRESHOLD ? 1 : 0;
-    }
-  return traceCoveredGrid(covered, { height, tolerance: WEAPON_ICON_TRACE_TOLERANCE, width }).map((loop) =>
-    loop.map(([x, y]): [number, number] => [roundFitted(x / width), roundFitted(y / height)]),
-  );
+  return traceTextureCell(data, info, {
+    cell: { foot: info.height, height: info.height, left: 0, width: info.width },
+    checkPainted: (texel) => (data[texel + 3] ?? 0) / BYTE > WEAPON_ICON_COVERAGE_THRESHOLD,
+    texels: WEAPON_ICON_TRACE_TEXELS,
+    tolerance: WEAPON_ICON_TRACE_TOLERANCE,
+  });
 };

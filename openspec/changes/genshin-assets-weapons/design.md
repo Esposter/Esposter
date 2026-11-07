@@ -158,6 +158,7 @@ flowchart LR
 | `scripts/src/services/genshinAssets/fit/fitStatueComponent.ts`             | One piece as stacks or as blades, the fit the held blades reuse               |
 | `scripts/src/services/genshinAssets/fit/fitCloudSprites.ts`                | The alpha-to-loops fit the icon outline follows                               |
 | `scripts/src/services/genshinAssets/fit/traceCoveredGrid.ts`               | The loops round a grid's covered cells, shared by the outline fit             |
+| `scripts/src/services/genshinAssets/fit/traceTextureCell.ts`               | The cell walk the icon and cloud traces share, over traceCoveredGrid          |
 | `scripts/src/services/recreation/animeStudio/readIndexedAssets.ts`         | The indexed export the icon export reuses                                     |
 | `scripts/src/services/genshinAssets/namecards/exportNamecards.ts`          | The namecards export the icon export follows                                  |
 | `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`      | Where the icon export command registers                                       |

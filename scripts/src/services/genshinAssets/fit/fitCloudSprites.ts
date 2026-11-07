@@ -1,7 +1,7 @@
 import type { CloudAtlas } from "#src/models/genshinAssets/fit/CloudAtlas";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
+import { traceTextureCell } from "#src/services/genshinAssets/fit/traceTextureCell";
 import {
   CLOUD_ATLAS_COLUMNS,
   CLOUD_ATLAS_ROWS,
@@ -20,23 +20,14 @@ export const fitCloudSprites = async (atlas: Buffer | string): Promise<CloudAtla
   const { data, info } = await sharp(atlas).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const cellWidth = info.width / CLOUD_ATLAS_COLUMNS;
   const cellHeight = info.height / CLOUD_ATLAS_ROWS;
-  const width = Math.floor(cellWidth / CLOUD_TRACE_TEXELS);
-  const height = Math.floor(cellHeight / CLOUD_TRACE_TEXELS);
-  const traceChannel = (column: number, row: number, channel: number, threshold: number): [number, number][][] => {
-    const covered = new Uint8Array(width * height);
-    for (let y = 0; y < height; y++)
-      for (let x = 0; x < width; x++) {
-        // A grid cell is sampled at its middle texel, counted from the cell's foot so y runs up
-        const texelX = column * cellWidth + x * CLOUD_TRACE_TEXELS + CLOUD_TRACE_TEXELS / 2;
-        const texelY = (row + 1) * cellHeight - (y * CLOUD_TRACE_TEXELS + CLOUD_TRACE_TEXELS / 2);
-        const texel = (Math.floor(texelY) * info.width + Math.floor(texelX)) * info.channels;
-        const isCloud = (data[texel + 3] ?? 0) / BYTE > CLOUD_COVERAGE_THRESHOLD;
-        covered[y * width + x] = isCloud && (data[texel + channel] ?? 0) / BYTE > threshold ? 1 : 0;
-      }
-    return traceCoveredGrid(covered, { height, tolerance: CLOUD_TRACE_TOLERANCE, width }).map((loop) =>
-      loop.map(([x, y]): [number, number] => [roundFitted(x / width), roundFitted(y / height)]),
-    );
-  };
+  const traceChannel = (column: number, row: number, channel: number, threshold: number): [number, number][][] =>
+    traceTextureCell(data, info, {
+      cell: { foot: (row + 1) * cellHeight, height: cellHeight, left: column * cellWidth, width: cellWidth },
+      checkPainted: (texel) =>
+        (data[texel + 3] ?? 0) / BYTE > CLOUD_COVERAGE_THRESHOLD && (data[texel + channel] ?? 0) / BYTE > threshold,
+      texels: CLOUD_TRACE_TEXELS,
+      tolerance: CLOUD_TRACE_TOLERANCE,
+    });
   const sprites = Array.from({ length: CLOUD_ATLAS_COLUMNS * CLOUD_ATLAS_ROWS }, (_value, index) => {
     const column = index % CLOUD_ATLAS_COLUMNS;
     const row = Math.floor(index / CLOUD_ATLAS_COLUMNS);
