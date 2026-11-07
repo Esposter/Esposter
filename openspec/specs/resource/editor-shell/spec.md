@@ -162,7 +162,7 @@ On a compact window the shell SHALL draw each sheet's button in a strip below th
 
 ### Requirement: A compact window's sheet rises from the bottom
 
-On a compact window the shell SHALL open each sheet up from the bottom edge, to most of the window's height and no further, so the canvas stays in view above it. On a wider window a sheet SHALL stand at its region's own edge.
+On a compact window the shell SHALL open each sheet up from the bottom edge, to most of the window's height and no further, so the canvas stays in view above it. On a wider window a sheet SHALL slide in from its region's own side, and a sheet from the top or the bottom SHALL stand high or in the middle.
 
 #### Scenario: A compact window opens a sheet from the bottom
 

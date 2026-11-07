@@ -78,7 +78,7 @@ Two invariants cut across every package:
 
 ## Every bundle's externals are gated
 
-`deps.onlyImport` fails a build whose emitted chunks leave external anything the package's own manifest does not name, on for every package, published or not. For a published package it is an installability promise — a private sibling resolves on every machine in the workspace and on no stranger's. For any package it is the only thing that notices a specifier which resolved to nothing, since Rolldown treats an unresolvable `#src/…` as external and the error otherwise lands in a consumer at runtime, a phase and a package away from the typo. What the gate cannot see — a private sibling legitimately declared in `dependencies` — is `scripts/src/workspace/publishedDependencies.test.ts`'s. The failures and their reading are `.agents/skills/build/references/gates.md`.
+`deps.onlyImport` fails a build whose emitted chunks leave external anything the package's own manifest does not name, on for every package, published or not; a deploy artifact names in its own config the few externals its host provides or its code never reaches. For a published package it is an installability promise — a private sibling resolves on every machine in the workspace and on no stranger's. For any package it is the only thing that notices a specifier which resolved to nothing, since Rolldown treats an unresolvable `#src/…` as external and the error otherwise lands in a consumer at runtime, a phase and a package away from the typo. What the gate cannot see — a private sibling legitimately declared in `dependencies` — is `scripts/src/workspace/publishedDependencies.test.ts`'s. The failures and their reading are `.agents/skills/build/references/gates.md`.
 
 ## The published surface is gated further
 

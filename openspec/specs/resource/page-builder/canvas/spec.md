@@ -229,7 +229,7 @@ The Content panel SHALL show the fields of the selected node's type, and a chang
 
 #### Scenario: A block with no content fields says where to edit it
 
-- **GIVEN** a selected block whose type has no content fields, as a text block has none
+- **GIVEN** a selected block whose type has no content fields, as an email's text block has none
 - **WHEN** the Content panel is drawn
 - **THEN** it says the block has no content settings
 - **AND** it points to the canvas and the Style tab
