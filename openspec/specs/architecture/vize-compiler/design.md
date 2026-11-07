@@ -26,7 +26,7 @@ The module takes its TresJS elements as `compiler.customElements`, the list the 
 
 ## What it costs
 
-A clean production build takes longer with the module than without it. The client bundle takes as long as before; the extra time is in the server bundle, where the plugin's per-file component transform dominates the build's profile. The module claims no gain in build time. `@nuxt/vite-builder` depends on `@vitejs/plugin-vue` unconditionally and no Nuxt option turns it off, so the package stays in the lockfile until Nuxt drops the dependency, and the module keeps it for any component `compiler.exclude` names: that costs an install and changes no behaviour.
+A clean production build takes longer with the module than without it. The client bundle takes as long as before; the extra time is in the server bundle, where the plugin's per-file component transform dominates the build's profile. The module claims no gain in build time. The server bundle's cost is the transform hook compiling one component per native call, which `@vizejs/native` made slower from the release that resolves imported props types through the project's configuration; the plugin pre-compiles only the client environment in one batch, which is not affected ([Vize issue 12044](https://github.com/ubugeeei-prod/vize/issues/12044)). `@nuxt/vite-builder` depends on `@vitejs/plugin-vue` unconditionally and no Nuxt option turns it off, so the package stays in the lockfile until Nuxt drops the dependency, and the module keeps it for any component `compiler.exclude` names: that costs an install and changes no behaviour.
 
 ## Checking a bump
 
@@ -51,3 +51,4 @@ A clean production build takes longer with the module than without it. The clien
 - [Vize issue 11793](https://github.com/ubugeeei-prod/vize/issues/11793) — bare `vue` imports in the Nuxt 5 client, which the client check depends on. Closed as completed.
 - [Vize issue 11794](https://github.com/ubugeeei-prod/vize/issues/11794) — `defineProps` through a tsconfig alias, which the `/clicker` SVG group depends on. Closed as completed.
 - [Vize issue 11795](https://github.com/ubugeeei-prod/vize/issues/11795) — the `nitropack/runtime` import behind "NUXT_B9003", and the peer range. Closed as completed.
+- [Vize issue 12044](https://github.com/ubugeeei-prod/vize/issues/12044) — the per-file `compileSfc` cost behind "What it costs". Open.
