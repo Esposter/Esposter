@@ -6,8 +6,8 @@ import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
-// Measured: gcsim v2.47.2 (MIT) dori/burst.go line 43, the Connector's ticks each reaching the enemies in a circle of
-// radius 10 Five metres ahead of the body. The ticks run to the last past the table's 12 seconds, as gcsim runs them
+// Measured: gcsim v2.47.2 (MIT) dori/burst.go line 43, the Connector's ticks each reaching the enemies in a circle
+// Of radius 10, five metres ahead of the body. The ticks run to the last past the table's 12 seconds, as gcsim runs them
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/dori/burst.go
 const CONNECTOR_FIELD_RADIUS = 10;
 const CONNECTOR_AHEAD_METRES = 5;

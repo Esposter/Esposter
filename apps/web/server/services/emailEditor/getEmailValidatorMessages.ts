@@ -4,7 +4,7 @@ import { EmailValidationLevel } from "#shared/models/pageBuilder/EmailValidation
 import { z } from "zod";
 
 // The messages a refused compile carries. MJML throws its ValidationError with each message it found under strict
-// validation, so an error of any other kind carries none
+// Validation, so an error of any other kind carries none
 export const getEmailValidatorMessages = (error: Error): EmailValidatorMessage[] => {
   const validationErrorSchema = z.object({ errors: z.array(z.object({ message: z.string() })) });
   const parsedValidationError = validationErrorSchema.safeParse(error);

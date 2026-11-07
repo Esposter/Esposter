@@ -1,4 +1,3 @@
-import type { GlobeArc } from "@/models/visual/GlobeArc";
 import type { LandMask } from "@/models/visual/LandMask";
 
 import countries from "@/assets/about/countries.json";
@@ -183,7 +182,7 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
 
   // Every ring is the same shape, so the arcs share one geometry and differ only in colour, scale and opacity
   const ringGeometry = new RingGeometry(0.7, 1, 24);
-  const arcMeshes = (arcs as GlobeArc[]).map((arc) => {
+  const arcMeshes = arcs.map((arc) => {
     const arcColor = getRandomColor();
     const stroke = takeOne(ARC_STROKES, createRandomInteger(ARC_STROKES.length - 1));
     const tube = new Mesh(
@@ -214,7 +213,7 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
       tube.geometry.setDrawRange(startIndex, Math.max(0, endIndex - startIndex));
       ring.visible = pulseOpacity > 0;
       ring.scale.setScalar(Math.max(1e-4, pulseScale * pulseMaxRadius));
-      (ring.material as MeshBasicMaterial).opacity = pulseOpacity;
+      ring.material.opacity = pulseOpacity;
     }
     renderer.render(scene, camera);
   };
@@ -232,8 +231,8 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
     controls.dispose();
     for (const { ring, tube } of arcMeshes) {
       tube.geometry.dispose();
-      (tube.material as MeshBasicMaterial).dispose();
-      (ring.material as MeshBasicMaterial).dispose();
+      tube.material.dispose();
+      ring.material.dispose();
     }
     ringGeometry.dispose();
     dots?.geometry.dispose();
@@ -243,9 +242,9 @@ export const createGlobeScene = (canvas: HTMLCanvasElement, initialWidth: number
     points.dispose();
     pointMaterial.dispose();
     halo.geometry.dispose();
-    (halo.material as ShaderMaterial).dispose();
+    halo.material.dispose();
     sphere.geometry.dispose();
-    (sphere.material as MeshPhongMaterial).dispose();
+    sphere.material.dispose();
     renderer.dispose();
   };
 
