@@ -195,7 +195,7 @@ catalog:
   oxfmt: ^0.77.0
   oxlint: ^1.92.0
   oxlint-tsgolint: ^7.0.2006
-  parse5: ^8.1.0
+  parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
