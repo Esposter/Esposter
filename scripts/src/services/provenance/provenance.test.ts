@@ -3,8 +3,8 @@ import { PROVENANCE_SIDECAR_SUFFIX } from "#src/services/provenance/constants";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
 import { readProvenance } from "#src/services/provenance/readProvenance";
 import { readVouchedProvenance } from "#src/services/provenance/readVouchedProvenance";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
 import { writeProvenance } from "#src/services/provenance/writeProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { runGit } from "#src/services/shared/runGit";
 import { createHash } from "node:crypto";
@@ -70,7 +70,7 @@ describe(writeProvenance, () => {
     const file = join(directory, TEST_FILENAME);
     writeFileSync(file, COMMAND);
 
-    await writeFileProvenance(file, { command: COMMAND, producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([file], { command: COMMAND, producerPaths: [TEST_FILENAME] }, () => {});
 
     expect(existsSync(join(directory, `${TEST_FILENAME}${PROVENANCE_SIDECAR_SUFFIX}`))).toBe(true);
     expect((await readFileProvenance(file))?.command).toBe(COMMAND);

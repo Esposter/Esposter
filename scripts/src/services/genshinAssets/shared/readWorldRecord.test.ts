@@ -1,5 +1,5 @@
 import { readWorldRecord } from "#src/services/genshinAssets/shared/readWorldRecord";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { jsonDateParse } from "@esposter/shared";
 import { mkdirSync, rmSync } from "node:fs";
@@ -42,7 +42,7 @@ describe(readWorldRecord, () => {
     expect.hasAssertions();
 
     readGameVersion.mockResolvedValueOnce(OTHER_VERSION);
-    await writeFileProvenance(RECORD_PATH, { command: "a", producerPaths: [] });
+    await writeStampedFiles([RECORD_PATH], { command: "a", producerPaths: [] }, () => {});
 
     await expect(readWorldRecord(RECORD)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: liyue.json, is stamped with game b, not the install's a]`,
@@ -52,7 +52,7 @@ describe(readWorldRecord, () => {
   test("a fit reads a record whose sidecar names the install's game version", async () => {
     expect.hasAssertions();
 
-    await writeFileProvenance(RECORD_PATH, { command: "a", producerPaths: [] });
+    await writeStampedFiles([RECORD_PATH], { command: "a", producerPaths: [] }, () => {});
 
     expect(jsonDateParse(await readWorldRecord(RECORD))).toStrictEqual({ rivers: [] });
   });

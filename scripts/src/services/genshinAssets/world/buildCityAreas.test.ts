@@ -5,7 +5,7 @@ import type { readCityAreaCandidates as baseReadCityAreaCandidates } from "#src/
 import { buildCityAreas } from "#src/services/genshinAssets/world/buildCityAreas";
 import { checkIsVouchedBy } from "#src/services/provenance/checkIsVouchedBy";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { rmSync } from "node:fs";
@@ -66,7 +66,7 @@ describe(buildCityAreas, () => {
     expect.hasAssertions();
 
     writeJsonFile(CITY_AREA_FILE_PATH, CACHED);
-    await writeFileProvenance(CITY_AREA_FILE_PATH, { command: "city-areas", producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([CITY_AREA_FILE_PATH], { command: "city-areas", producerPaths: [TEST_FILENAME] }, () => {});
 
     await expect(buildCityAreas()).resolves.toStrictEqual(CACHED);
     expect(extractCityAreas).not.toHaveBeenCalled();

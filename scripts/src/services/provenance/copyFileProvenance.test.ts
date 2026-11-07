@@ -1,7 +1,7 @@
 import { copyFileProvenance } from "#src/services/provenance/copyFileProvenance";
 import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -38,7 +38,7 @@ describe(copyFileProvenance, () => {
   test("carries the source's sidecar beside the target", async () => {
     expect.hasAssertions();
 
-    await writeFileProvenance(source, { command: COMMAND, producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([source], { command: COMMAND, producerPaths: [TEST_FILENAME] }, () => {});
 
     await copyFileProvenance(source, target);
 
@@ -49,7 +49,7 @@ describe(copyFileProvenance, () => {
     expect.hasAssertions();
 
     writeFileSync(target, "t");
-    await writeFileProvenance(target, { command: "earlier", producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([target], { command: "earlier", producerPaths: [TEST_FILENAME] }, () => {});
 
     await copyFileProvenance(source, target);
 

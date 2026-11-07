@@ -1,6 +1,5 @@
 import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -35,7 +34,7 @@ describe(writeStampedFiles, () => {
   test("removes the sidecar an earlier write left beside the file before the file is written", async () => {
     expect.hasAssertions();
 
-    await writeFileProvenance(file, { command: "earlier", producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([file], { command: "earlier", producerPaths: [TEST_FILENAME] }, () => {});
     let hadSidecarWhenWritten = true;
 
     await writeStampedFiles([file], { command: COMMAND, producerPaths: [TEST_FILENAME] }, () => {
@@ -49,7 +48,7 @@ describe(writeStampedFiles, () => {
   test("a write that fails before its stamp leaves no sidecar beside the file", async () => {
     expect.hasAssertions();
 
-    await writeFileProvenance(file, { command: "earlier", producerPaths: [TEST_FILENAME] });
+    await writeStampedFiles([file], { command: "earlier", producerPaths: [TEST_FILENAME] }, () => {});
 
     await expect(
       writeStampedFiles([file], { command: COMMAND, producerPaths: [TEST_FILENAME] }, () => {

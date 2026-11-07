@@ -1,5 +1,5 @@
 import { readFittedRegions } from "#src/services/genshinAssets/residents/readFittedRegions";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -51,7 +51,7 @@ describe(readFittedRegions, () => {
     expect.hasAssertions();
 
     readGameVersion.mockResolvedValueOnce(OTHER_VERSION);
-    await writeFileProvenance(REGION_PATH, { command: "fixture", producerPaths: [] });
+    await writeStampedFiles([REGION_PATH], { command: "fixture", producerPaths: [] }, () => {});
 
     await expect(readFittedRegions()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: liyue.json, is stamped with game b, not the install's a]`,

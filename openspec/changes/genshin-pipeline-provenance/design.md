@@ -111,7 +111,7 @@ scripts/src/models/fleet/data/ChangedDirectory.ts       a directory whose digest
 scripts/src/services/provenance/
   buildProvenance.ts             the stamp a command's output is written with, read now
   writeProvenance.ts             a folder's stamp, provenance.json
-  writeFileProvenance.ts         a file's sidecar, <file name>.provenance.json
+  writeStampedFiles.ts           file outputs, each stamped with a sidecar <file name>.provenance.json beside it
   readStamp.ts                   the stamp at a path, parsed and checked, or none
   readProvenance.ts              a folder's stamp, or none
   readFileProvenance.ts          a file's sidecar, or none

@@ -2,7 +2,7 @@ import { adoptCabMap } from "#src/services/genshinAssets/blocks/adoptCabMap";
 import { checkIsVouchedBy } from "#src/services/provenance/checkIsVouchedBy";
 import { getSidecarPath } from "#src/services/provenance/getSidecarPath";
 import { readFileProvenance } from "#src/services/provenance/readFileProvenance";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -34,7 +34,7 @@ describe(adoptCabMap, () => {
 
   // The old Maps folder's map, stamped with the install's version and the tool's binary the way a map run stamps it
   const stampLegacy = async (): Promise<void> => {
-    await writeFileProvenance(legacyPath, { command: "a", producerPaths: [TEST_FILENAME], tools: [tool] });
+    await writeStampedFiles([legacyPath], { command: "a", producerPaths: [TEST_FILENAME], tools: [tool] }, () => {});
   };
 
   beforeEach(() => {

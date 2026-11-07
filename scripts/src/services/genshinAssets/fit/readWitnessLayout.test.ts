@@ -1,6 +1,6 @@
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { readWitnessLayout } from "#src/services/genshinAssets/fit/readWitnessLayout";
-import { writeFileProvenance } from "#src/services/provenance/writeFileProvenance";
+import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { mkdirSync, rmSync } from "node:fs";
@@ -52,7 +52,7 @@ describe(readWitnessLayout, () => {
     expect.hasAssertions();
 
     readGameVersion.mockResolvedValueOnce(OTHER_VERSION);
-    await writeFileProvenance(LAYOUT_PATH, { command: "witness inazuma", producerPaths: [] });
+    await writeStampedFiles([LAYOUT_PATH], { command: "witness inazuma", producerPaths: [] }, () => {});
 
     await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: witness.json, is stamped with game b, not the install's a]`,
@@ -70,7 +70,7 @@ describe(readWitnessLayout, () => {
   test("a witness layout whose sidecar names the install's game version is read", async () => {
     expect.hasAssertions();
 
-    await writeFileProvenance(LAYOUT_PATH, { command: "witness inazuma", producerPaths: [] });
+    await writeStampedFiles([LAYOUT_PATH], { command: "witness inazuma", producerPaths: [] }, () => {});
 
     await expect(readWitnessLayout(DerivedAssetComponent.Inazuma)).resolves.toStrictEqual(LAYOUT);
   });
