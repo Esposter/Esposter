@@ -10,20 +10,25 @@ const createHandlers = () => ({
   onStart: vi.fn<() => void>(),
 });
 
-const trackPress = (event: PointerEvent, handlers: ReturnType<typeof createHandlers>) => {
-  const { cancel, startPress } = usePressDrag();
-  startPress(event, handlers);
-  return cancel;
-};
-
 describe(usePressDrag, () => {
   const POINTER_ID = 1;
+  // A press a test leaves open keeps its window listeners until the environment's scope stops them, and by then the window
+  // Is gone, so each test's presses are cancelled behind it
+  const trackedCancels: (() => void)[] = [];
+  const trackPress = (event: PointerEvent, handlers: ReturnType<typeof createHandlers>) => {
+    const { cancel, startPress } = usePressDrag();
+    startPress(event, handlers);
+    trackedCancels.push(cancel);
+    return cancel;
+  };
   const createPress = (pointerType: string) =>
     new PointerEvent("pointerdown", { clientX: 100, clientY: 100, pointerId: POINTER_ID, pointerType });
   const dispatch = (type: string, init: PointerEventInit = {}) =>
     window.dispatchEvent(new PointerEvent(type, { pointerId: POINTER_ID, ...init }));
 
   afterEach(() => {
+    for (const cancel of trackedCancels) cancel();
+    trackedCancels.length = 0;
     vi.useRealTimers();
   });
 
