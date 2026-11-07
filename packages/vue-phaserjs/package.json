@@ -73,6 +73,6 @@
   },
   "inlinedDependencies": {
     "type-fest": "5.10.0",
-    "vize": "0.702.0"
+    "vize": "0.704.0"
   }
 }
