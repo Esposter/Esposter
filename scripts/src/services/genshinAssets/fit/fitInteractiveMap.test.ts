@@ -7,9 +7,10 @@ import {
   INTERACTIVE_MAP_STATUE_LABEL_ID,
   INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
 } from "#src/services/genshinAssets/points/constants";
+import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { readInteractiveMapPoints } from "#src/services/genshinAssets/points/readInteractiveMapPoints";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
-import { writeJsonFile } from "#src/services/shared/writeJsonFile";
+import type { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { OculusKind } from "genshin-world";
 import { describe, expect, test, vi } from "vitest";
 
@@ -28,7 +29,7 @@ vi.mock(import("node:fs/promises"), async (importOriginal) => ({
 describe(fitInteractiveMap, () => {
   const anemoculusLabelId = OculusKindLabelIdMap[OculusKind.Anemoculus];
   // Four of Mondstadt's statues and waypoints, with transport points on the same ground, so the fit is the identity
-  // and every one of them matches
+  // Every one of them matches
   const mondstadtPoints: InteractiveMapPoint[] = [
     { area_id: 1, id: 1, label_id: INTERACTIVE_MAP_STATUE_LABEL_ID, x_pos: 0, y_pos: 0, z_level: 0 },
     { area_id: 1, id: 2, label_id: INTERACTIVE_MAP_STATUE_LABEL_ID, x_pos: 100, y_pos: 0, z_level: 0 },
@@ -41,16 +42,11 @@ describe(fitInteractiveMap, () => {
     { height: 0, id: "windrise-c", position: { x: 0, z: 100 }, turnDegrees: 0 },
     { height: 0, id: "windrise-d", position: { x: 30, z: 70 }, turnDegrees: 0 },
   ];
+  const mondstadtOculiCount = InteractiveMapRegionMap.mondstadt?.oculus.count;
   // Every region but Mondstadt holds no matched point, and no Oculus of its kind is on the map in them
-  const unmatchedRegionLines = [
-    "fontaine: 0 matched, residual none, Oculi 0 of 271",
-    "inazuma: 0 matched, residual none, Oculi 0 of 181",
-    "liyue: 0 matched, residual none, Oculi 0 of 131",
-    "natlan: 0 matched, residual none, Oculi 0 of 271",
-    "nod-krai: 0 matched, residual none, Oculi 0 of 271",
-    "snezhnaya: 0 matched, residual none, Oculi 0 of 140",
-    "sumeru: 0 matched, residual none, Oculi 0 of 271",
-  ];
+  const unmatchedRegionLines = Object.entries(InteractiveMapRegionMap)
+    .filter(([region]) => region !== "mondstadt")
+    .map(([region, { oculus }]) => `${region}: 0 matched, residual none, Oculi 0 of ${oculus.count}`);
 
   test("mondstadt reported first", async () => {
     expect.hasAssertions();
@@ -64,7 +60,7 @@ describe(fitInteractiveMap, () => {
     expect(report).toBe(
       [
         "4 of 4 statues and waypoints matched, residual 0 game units (bar 20)",
-        "mondstadt: 4 matched, residual 0, Oculi 2 of 66",
+        `mondstadt: 4 matched, residual 0, Oculi 2 of ${mondstadtOculiCount}`,
         ...unmatchedRegionLines,
       ].join("\n"),
     );
@@ -81,7 +77,7 @@ describe(fitInteractiveMap, () => {
     expect(report).toBe(
       [
         "4 of 4 statues and waypoints matched, residual 0 game units (bar 20)",
-        "mondstadt: 4 matched, residual 0, Oculi 1 of 66",
+        `mondstadt: 4 matched, residual 0, Oculi 1 of ${mondstadtOculiCount}`,
         ...unmatchedRegionLines,
       ].join("\n"),
     );
@@ -99,7 +95,7 @@ describe(fitInteractiveMap, () => {
     expect(report).toBe(
       [
         "4 of 5 statues and waypoints matched, residual 0 game units (bar 20)",
-        "mondstadt: 4 matched, residual 0, Oculi 0 of 66",
+        `mondstadt: 4 matched, residual 0, Oculi 0 of ${mondstadtOculiCount}`,
         ...unmatchedRegionLines,
       ].join("\n"),
     );
