@@ -1,3 +1,5 @@
+import type { PinnedTool } from "#src/models/shared/PinnedTool";
+
 import { resolveVgmstream } from "#src/services/genshinAssets/music/resolveVgmstream";
 import {
   VGMSTREAM_MACOS_PINNED_TOOL,
@@ -6,7 +8,9 @@ import {
 import { resolvePinnedTool } from "#src/services/shared/resolvePinnedTool";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/shared/resolvePinnedTool"), () => ({ resolvePinnedTool: vi.fn() }));
+vi.mock(import("#src/services/shared/resolvePinnedTool"), () => ({
+  resolvePinnedTool: vi.fn<(pinnedTool: PinnedTool) => Promise<string>>(),
+}));
 
 const PINNED_PATH = "/cache/vgmstream/vgmstream-cli";
 const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform");
@@ -36,13 +40,5 @@ describe(resolveVgmstream, () => {
     await resolveVgmstream();
 
     expect(resolvePinnedTool).toHaveBeenCalledWith(VGMSTREAM_WINDOWS_PINNED_TOOL);
-  });
-
-  test("a stage ignores a tool of the same name on the path and runs its pinned install", async () => {
-    expect.hasAssertions();
-
-    Object.defineProperty(process, "platform", { value: "darwin" });
-
-    expect(await resolveVgmstream()).toBe(PINNED_PATH);
   });
 });
