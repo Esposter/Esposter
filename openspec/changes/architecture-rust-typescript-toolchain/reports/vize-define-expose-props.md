@@ -106,7 +106,6 @@ Proof that both compilers read the file: a `<div v-if />` in the template makes 
 - OS: Windows 10 Home 10.0.19045
 - Architecture: x64
 - Node.js: 26.13.0
-- Package manager: pnpm 12.18.0
 - Rust: not used. The packages come from npm.
 - Framework: Vite 8.3.6, Vue 3.5.45 (`@vue/compiler-sfc` from the same `vue` package)
 - Browser for the console output: Microsoft Edge 157.0.4341.42, headless
