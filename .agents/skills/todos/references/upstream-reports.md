@@ -16,16 +16,15 @@ A report is a small, checked experiment that someone else can run in a minute. I
 ## Section order
 
 1. **Summary.** One or two sentences: what fails, and which tool accepts the same input.
-2. **Context.** Under a `## Context` heading, for a set: the numbered steps of the migration, the step this issue is from, and the batch list ("A set found in one pass"). Nothing about this repository except the link in "Real occurrence".
-3. **Environment.** Exact versions, the operating system, and the source of truth (the tool that accepts the input today).
-4. **Reproduction.** The manifest, the configuration and each file in full, then the command.
-5. **Actual.** The error lines, verbatim. A position in generated code is said to be in generated code.
-6. **Expected.** What the source of truth does, and the proof that it reads the file.
-7. **Cause.** The function and line in the target's source that produce the wrong output, quoted, at the tag of the version tested, and the one-sentence change that would fix it. Written as "the cause is" only when a run confirmed it, as "likely" when the source was only read, and as "not known" when the source was searched and nothing was found.
-8. **Real occurrence.** A permalink to one line of the real code that has the bug, from a public repository, pinned to a pushed commit (`https://github.com/<owner>/<repo>/blob/<sha>/<path>#L<line>`), so the line stays where it was read. The reproduction shows the bug is minimal and the occurrence shows it is real. One link, no description of the repository.
-9. **Isolation.** Only when it shows which condition triggers the bug. A table: one change at a time from the reproduction, and the result of each. Leave it out when the reproduction is already the one condition.
-10. **Not known.** Only when something is. What does not match the claim, what was not checked, and any fix that was read and not applied. Leave it out when there is nothing to say.
-11. **Not a duplicate of.** The nearest issues and pull requests, and why each differs.
+2. **Environment.** Exact versions, the operating system, and the source of truth (the tool that accepts the input today).
+3. **Reproduction.** The manifest, the configuration and each file in full, then the command.
+4. **Actual.** The error lines, verbatim. A position in generated code is said to be in generated code.
+5. **Expected.** What the source of truth does, and the proof that it reads the file.
+6. **Cause.** The function and line in the target's source that produce the wrong output, quoted, at the tag of the version tested, and the one-sentence change that would fix it. Written as "the cause is" only when a run confirmed it, as "likely" when the source was only read, and as "not known" when the source was searched and nothing was found.
+7. **Real occurrence.** A permalink to one line of the real code that has the bug, from a public repository, pinned to a pushed commit (`https://github.com/<owner>/<repo>/blob/<sha>/<path>#L<line>`), so the line stays where it was read. The reproduction shows the bug is minimal and the occurrence shows it is real. One link, no description of the repository. Leave it out when the only line to link is a registration or a configuration line, which shows nothing about the bug.
+8. **Isolation.** Only when it shows which condition triggers the bug. A table: one change at a time from the reproduction, and the result of each. Leave it out when the reproduction is already the one condition.
+9. **Not known.** Only when something is. What does not match the claim, what was not checked, and any fix that was read and not applied. Leave it out when there is nothing to say.
+10. **Not a duplicate of.** The nearest issues and pull requests, and why each differs.
 
 ## Prove the report before writing it
 
@@ -49,26 +48,7 @@ A report that names the wrong trigger costs the maintainer a day. These steps ke
 Several gaps found by one migration are filed as one issue per bug, in one sitting, and nothing else. A maintainer fixes and closes one bug per issue, and a tracking or umbrella issue is one more item for them to triage, so there is none.
 
 - **Each issue is complete alone**: the reproduction, the output, the cause and the nearest issues are in the issue itself.
-- **The Context lists the migration as numbered steps**: one line per replaced tool ("`A` becomes `B`"), each with a short name, so a maintainer sees the whole migration in a few lines and not one tool of it. One line then says which step this issue is from, with at most two sentences specific to this bug, such as the count the "Keep out" rule allows. The versions and the result of the source of truth stay in Environment. The steps are the same in each issue and carry no number from this repository.
-- **A later batch opens its Context with one bold line of progress and thanks**: the count of diagnostics before and after the earlier batch's fixes, then one bullet per step that moved it, naming the steps that were changes in the project and not fixes. The count holds defects only. A configuration case is left out of it, and its entry in the batch list ends with ", closed as configuration".
-- **The Context lists the whole batch** so the set is tracked from any one issue: a line ("This issue is one of N filed together from this attempt:") and a bullet list of every issue of the batch by number, with `<-- you are here` after the issue's own entry. A closed issue stays in the list, because GitHub shows each one's state and the list is the record of the batch. N counts the issues in the list. GitHub renders each number as its title and state. The numbers exist only once the set is filed, so file in order, then edit each issue with `gh issue edit --body-file` to add the list.
-
-```md
-## Context
-
-I am moving the Vue tooling of a Nuxt monorepo to vize, in three steps:
-
-1. Type check: `vue-tsc` becomes `tsrs` running the vize content mapper.
-2. Library builds: `unplugin-vue` and `@vitejs/plugin-vue` become the vize rolldown and Vite plugins.
-3. App build: Nuxt's Vue integration becomes `@vizejs/nuxt`.
-
-This issue is from step 1. A first run of `vize` 0.637.0 on the app reported 103 diagnostics that `vue-tsc` does not report. A run of `vize` 0.652.0 on the app reports 15. This issue explains some of them.
-
-This issue is one of 14 filed together from this attempt:
-
-- #11445 a cast to a `.vue` component type (TS2352 and TS2590) <-- you are here
-- #11446 a generic component with `inheritAttrs: false` (TS2353)
-```
+- **There is no preamble.** An issue opens with the form's fields and its Summary. It names a sibling issue only under "Not a duplicate of", where a maintainer could mistake the two. It does not list the set, the migration or the other steps.
 
 - **Every issue is actionable**: it has a reproduction that fails, a source of truth that passes, a cause or the statement that it is not known, and a nearest-issues check. An issue missing any of these is not filed until it has them, or is not filed.
 - **Order by value to the maintainer**: a bug that hides other diagnostics, then one that reports false errors, then one that misses real errors, then the rest.
@@ -98,7 +78,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 
 ## Keep out
 
-- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink. The one count allowed is the batch's own before-and-after in the Context ("a first run on `<tool>` 0.637.0 reported 103 diagnostics, and a run on `<tool>` 0.652.0 reports 15 diagnostics that `<source of truth>` does not"), with the release it was run on, because it tells the maintainer what their earlier fixes already achieved.
-- **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
+- **Anything that is not about this bug**: another issue of the set, a measurement of another project, a platform or a version that nobody ran for this bug. Each line of the issue earns its place by describing this bug.
+- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink.- **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
 - **A date, a session or a link to a chat.**
 - **A request for more than the source of truth already does.** The ask is "no diagnostic, as with the source of truth".
