@@ -79,6 +79,7 @@ After: "The mapper reports TS7053 when a component calls both macros."
 ## Keep out
 
 - **Anything that is not about this bug**: another issue of the set, a measurement of another project, a platform or a version that nobody ran for this bug. Each line of the issue earns its place by describing this bug.
-- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink.- **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
+- **A count from this repository, or a path in prose.** Say "many components", never a number the next commit changes. The one allowed link to this repository is the "Real occurrence" permalink.
+- **A cause stated as fact when only the symptom is proven.** Quote the generated lines and write "the cause is not known" or "likely".
 - **A date, a session or a link to a chat.**
 - **A request for more than the source of truth already does.** The ask is "no diagnostic, as with the source of truth".
