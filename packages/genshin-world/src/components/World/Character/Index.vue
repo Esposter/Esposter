@@ -262,18 +262,21 @@ onBeforeUnmount(() => {
 useEventListener(renderer.domElement, "click", () => renderer.domElement.requestPointerLock());
 const placedPosition = new Vector3();
 // A jump stands the body on the ground at its pose's point, facing the pose's yaw, with the camera level behind it. A
-// Jump ends an action in progress. The party's stamina is read by the HUD's meter
+// Jump ends an action in progress
+// @TODO: no upstream issue — vize leaves a destructured prop bare inside the argument of defineExpose, so the jump is a constant the exposed object names, and this moves back inline once vize rewrites it
+const place = ({ point, yaw }: WorldJumpPose) => {
+  characterController.place(placedPosition.set(point.x, getGroundHeight(point.x, point.z), point.z), yaw);
+  kitState = createKitState();
+  emit("clearKitEffects");
+  followCamera?.reset(yaw);
+};
+// The party's stamina is read by the HUD's meter
 defineExpose({
   // The locomotion phase the Sheer Cold gauge reads its swimming off
   get phase() {
     return characterController.phase;
   },
-  place: ({ point, yaw }: WorldJumpPose) => {
-    characterController.place(placedPosition.set(point.x, getGroundHeight(point.x, point.z), point.z), yaw);
-    kitState = createKitState();
-    emit("clearKitEffects");
-    followCamera?.reset(yaw);
-  },
+  place,
   returnToDefaultDistance: () => followCamera?.returnToDefaultDistance(),
   stamina: characterController.stamina,
 });
