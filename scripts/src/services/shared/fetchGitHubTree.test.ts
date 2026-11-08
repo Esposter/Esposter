@@ -1,4 +1,4 @@
-import { fetchGitHubTree } from "#src/services/genshinText/fetchGitHubTree";
+import { fetchGitHubTree } from "#src/services/shared/fetchGitHubTree";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

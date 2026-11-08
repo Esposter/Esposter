@@ -1305,8 +1305,6 @@
 | `scripts/src/services/genshinText/exportSdkText.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fetchDump.test.ts`                                      | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fetchDump.ts`                                           | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinText/fetchGitHubTree.test.ts`                                | —                       |       |
-| `scripts/src/services/genshinText/fetchGitHubTree.ts`                                     | —                       |       |
 | `scripts/src/services/genshinText/fetchRemoteFiles.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
@@ -1342,8 +1340,6 @@
 | `scripts/src/services/genshinText/readCarriedQuestRewards.ts`                             | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/readDialogTable.ts`                                     | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/readExcelTable.ts`                                      | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinText/readGitHubHeaders.test.ts`                              | 2026-11-01 · Haiku 5.5  |       |
-| `scripts/src/services/genshinText/readGitHubHeaders.ts`                                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/readGivingObjectives.ts`                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/readManualTextMap.ts`                                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/readNameTextIds.ts`                                     | 2026-11-01 · Haiku 5.5  |       |
@@ -1518,6 +1514,8 @@
 | `scripts/src/services/shared/computeSymmetricEigen.ts`                                    | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/constants.test.ts`                                           | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/constants.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/shared/fetchGitHubTree.test.ts`                                     | —                       |       |
+| `scripts/src/services/shared/fetchGitHubTree.ts`                                          | —                       |       |
 | `scripts/src/services/shared/fetchJson.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/fetchOk.ts`                                                  | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/fetchRegistry.ts`                                            | 2026-10-29 · Haiku 5.5  |       |
@@ -1551,6 +1549,8 @@
 | `scripts/src/services/shared/publishFile.test.ts`                                         | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/publishFile.ts`                                              | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/readCrlfStoredPaths.ts`                                      | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/services/shared/readGitHubHeaders.test.ts`                                   | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/shared/readGitHubHeaders.ts`                                        | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/shared/readManifestFiles.ts`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/readNuxtModulePackagePaths.ts`                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/readWorkspacePackageDirectories.ts`                          | 2026-10-29 · Haiku 5.5  |       |

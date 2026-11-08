@@ -3,17 +3,17 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_CONFIG_FILE,
+  GCSIM_FETCH_CONCURRENCY,
   GCSIM_MAIN_COMMIT,
   GCSIM_RAW_URL,
   GCSIM_TREES_URL,
 } from "#src/services/genshinAssets/kits/constants";
 import { GcsimFolderSubfoldersMap } from "#src/services/genshinAssets/kits/gcsim/GcsimFolderSubfoldersMap";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
-import { fetchGitHubTree } from "#src/services/genshinText/fetchGitHubTree";
+import { fetchGitHubTree } from "#src/services/shared/fetchGitHubTree";
 import { fetchOk } from "#src/services/shared/fetchOk";
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { posix } from "node:path";
-
-const FETCH_CONCURRENCY = 8;
 
 // The named character folders gcsim's main branch holds at its pinned commit, each with the subfolders its files sit in,
 // Read only to classify a value a kit holds that the tag does not: the tree is listed through the API and each file read
@@ -38,14 +38,10 @@ export const readGcsimMainCharacters = async (folders: readonly string[]): Promi
     })
     .map(({ path }) => path);
   const sourceMap = new Map<string, string>();
-  for (let start = 0; start < filePaths.length; start += FETCH_CONCURRENCY)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each batch starts once the last settles
-    await Promise.all(
-      filePaths.slice(start, start + FETCH_CONCURRENCY).map(async (path) => {
-        const response = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${path}`);
-        sourceMap.set(path, await response.text());
-      }),
-    );
+  await forEachConcurrently(filePaths, GCSIM_FETCH_CONCURRENCY, async (path) => {
+    const response = await fetchOk(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${path}`);
+    sourceMap.set(path, await response.text());
+  });
   return new Map(
     folders.flatMap((folder) => {
       const prefix = `${GCSIM_CHARACTERS_PATH}/${folder}/`;

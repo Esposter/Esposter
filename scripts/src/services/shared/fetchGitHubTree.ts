@@ -1,8 +1,8 @@
 import type { Tree } from "#src/models/genshinText/Tree";
 import type { TreeEntry } from "#src/models/genshinText/TreeEntry";
 
-import { readGitHubHeaders } from "#src/services/genshinText/readGitHubHeaders";
 import { fetchJson } from "#src/services/shared/fetchJson";
+import { readGitHubHeaders } from "#src/services/shared/readGitHubHeaders";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A tree from the GitHub Git Trees API, authorized by GITHUB_TOKEN when one is set, since the API's anonymous limit is 60

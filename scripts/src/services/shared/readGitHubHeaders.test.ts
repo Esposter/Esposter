@@ -1,4 +1,4 @@
-import { readGitHubHeaders } from "#src/services/genshinText/readGitHubHeaders";
+import { readGitHubHeaders } from "#src/services/shared/readGitHubHeaders";
 import { describe, expect, test } from "vitest";
 
 describe(readGitHubHeaders, () => {

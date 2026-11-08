@@ -19,6 +19,7 @@ import {
 } from "#src/services/genshinText/constants";
 import {
   CLI_EXECUTABLE_NAME,
+  MAPS_DIRECTORY_NAME,
   PUBLISH_DIRECTORY_NAME,
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
@@ -53,7 +54,7 @@ export const ANIMESTUDIO_CLI_PATH: string =
     : join(homedir(), "Downloads", "AnimeStudio", "AnimeStudio.CLI.exe"));
 // AnimeStudio's Maps folder, beside its command line: where each shard of `map` writes its CAB map.
 // The CLI reads the merged one from there on every export
-export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), "Maps");
+export const ANIMESTUDIO_MAPS_DIRECTORY: string = join(dirname(ANIMESTUDIO_CLI_PATH), MAPS_DIRECTORY_NAME);
 // AnimeStudio as a tool a provenance stamp names: the stamp keeps the SHA-256 of the binary at its path, never the path
 export const ANIMESTUDIO_TOOL: ProvenanceTool = { name: "AnimeStudio", path: ANIMESTUDIO_CLI_PATH };
 // The code a genshin assets output depends on, whose commits its provenance stamp lists, for the outputs with no
@@ -440,9 +441,9 @@ export const ORIGIN_TOLERANCE_METRES = 0.001;
 export const REGION_MAX_DISTANCE = 100;
 // The regions whose Teleport Waypoints the waypoints command writes into their region data: Mondstadt, and the others as
 // Each one's map fit is checked
-export const WAYPOINT_REGIONS: readonly string[] = ["mondstadt"];
+export const WAYPOINT_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
 // The regions whose ley line blossoms are placed as their outcrop places, for now Mondstadt alone
-export const OUTCROP_REGIONS: readonly string[] = ["mondstadt"];
+export const OUTCROP_REGIONS: readonly string[] = [DerivedAssetComponent.Mondstadt];
 // A cloud atlas holds its painted clouds in two columns of four rows, each traced on a grid of four texels and kept
 // Within one grid cell of it; a texel is the cloud where its alpha passes half, and its lit crown where its red (the
 // Light the painter put on it) does
@@ -466,17 +467,6 @@ export const LOGIN_DOOR_SOUNDS: readonly SoundStart[] = [
   { id: 402_626_033, offsetSeconds: 0 },
   { id: 73_142_117, offsetSeconds: 0.075 },
 ];
-// The game's city ids a pool or a daily task is filed under, each mapped to the region the map's areas and the world's
-// Catalogue name. Nod-Krai's city is in no region, so its points draw from no stock and its tasks are left out
-export const CityIdRegionMap: Record<number, string> = {
-  1: "mondstadt",
-  2: "liyue",
-  3: "inazuma",
-  4: "sumeru",
-  5: "fontaine",
-  6: "natlan",
-  7: "snezhnaya",
-};
 
 export const COMPONENT_NAMES: readonly string[] = Object.values(DerivedAssetComponent);
 

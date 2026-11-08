@@ -17,7 +17,7 @@ import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFish
 import { toFishReward } from "#src/services/genshinAssets/fishing/toFishReward";
 import { toFishRod } from "#src/services/genshinAssets/fishing/toFishRod";
 import { toFishSkill } from "#src/services/genshinAssets/fishing/toFishSkill";
-import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
+import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegionMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 

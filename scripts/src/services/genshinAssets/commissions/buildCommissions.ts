@@ -8,7 +8,7 @@ import type { RewardItem } from "genshin-world";
 import { checkLevelBands } from "#src/services/genshinAssets/commissions/checkLevelBands";
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
-import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
+import { CityIdRegionMap } from "#src/services/genshinAssets/shared/CityIdRegionMap";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "genshin-world";

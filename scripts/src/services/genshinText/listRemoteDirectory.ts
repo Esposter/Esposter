@@ -1,7 +1,7 @@
 import type { DumpFile } from "#src/models/genshinText/DumpFile";
 
 import { ANIME_GAME_DATA_COMMIT, ANIME_GAME_DATA_TREES_URL } from "#src/services/genshinText/constants";
-import { fetchGitHubTree } from "#src/services/genshinText/fetchGitHubTree";
+import { fetchGitHubTree } from "#src/services/shared/fetchGitHubTree";
 
 // A directory of the AnimeGameData repository listed as its files, each with its path from the repository root and the
 // SHA-1 git names its content by
