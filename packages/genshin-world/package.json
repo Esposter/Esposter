@@ -54,8 +54,32 @@
       "default": "./dist/terrainTileWorker.js"
     },
     "./package.json": "./package.json",
-    "./parity/*": {
-      "source": "./parity/*.ts"
+    "./parity/models/LoadBench": {
+      "source": "./parity/models/LoadBench.ts"
+    },
+    "./parity/models/SceneBench": {
+      "source": "./parity/models/SceneBench.ts"
+    },
+    "./parity/models/SceneFog": {
+      "source": "./parity/models/SceneFog.ts"
+    },
+    "./parity/models/SceneLights": {
+      "source": "./parity/models/SceneLights.ts"
+    },
+    "./parity/models/SceneLightShares": {
+      "source": "./parity/models/SceneLightShares.ts"
+    },
+    "./parity/models/witness/WitnessClaim": {
+      "source": "./parity/models/witness/WitnessClaim.ts"
+    },
+    "./parity/models/witness/WitnessPart": {
+      "source": "./parity/models/witness/WitnessPart.ts"
+    },
+    "./parity/models/witness/WitnessView": {
+      "source": "./parity/models/witness/WitnessView.ts"
+    },
+    "./parity/setSceneCloudLayer": {
+      "source": "./parity/setSceneCloudLayer.ts"
     }
   },
   "publishConfig": {

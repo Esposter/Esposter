@@ -50,9 +50,29 @@
       "default": "./dist/save.js"
     },
     "./package.json": "./package.json",
-    "./styles/*.css": {
-      "source": "./src/styles/*.css",
-      "default": "./dist/styles/*.css"
+    "./styles/confirmDialog.css": {
+      "source": "./src/styles/confirmDialog.css",
+      "default": "./dist/styles/confirmDialog.css"
+    },
+    "./styles/creamPill.css": {
+      "source": "./src/styles/creamPill.css",
+      "default": "./dist/styles/creamPill.css"
+    },
+    "./styles/creamPillButton.css": {
+      "source": "./src/styles/creamPillButton.css",
+      "default": "./dist/styles/creamPillButton.css"
+    },
+    "./styles/ringButton.css": {
+      "source": "./src/styles/ringButton.css",
+      "default": "./dist/styles/ringButton.css"
+    },
+    "./styles/rowTint.css": {
+      "source": "./src/styles/rowTint.css",
+      "default": "./dist/styles/rowTint.css"
+    },
+    "./styles/shopScreen.css": {
+      "source": "./src/styles/shopScreen.css",
+      "default": "./dist/styles/shopScreen.css"
     }
   },
   "publishConfig": {
@@ -62,7 +82,12 @@
       "./getFixtureImageName": "./dist/getFixtureImageName.js",
       "./save": "./dist/save.js",
       "./package.json": "./package.json",
-      "./styles/*.css": "./dist/styles/*.css"
+      "./styles/confirmDialog.css": "./dist/styles/confirmDialog.css",
+      "./styles/creamPill.css": "./dist/styles/creamPill.css",
+      "./styles/creamPillButton.css": "./dist/styles/creamPillButton.css",
+      "./styles/ringButton.css": "./dist/styles/ringButton.css",
+      "./styles/rowTint.css": "./dist/styles/rowTint.css",
+      "./styles/shopScreen.css": "./dist/styles/shopScreen.css"
     },
     "access": "public"
   },

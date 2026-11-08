@@ -8,13 +8,26 @@ import { mergeConfig } from "tsdown";
 
 // `terrainTileWorker` is the terrain worker's own entry, which the app bundles as a worker, and `save`
 // And `sceneExport` are the app server's, which reach none of the world's components. The parity page's shapes are what
-// The tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/*`, and
-// The published map, which ships no page, never carries the arm
+// The tooling in `scripts` reads back off the page, so the workspace resolves them from source under `./parity/<name>`, and
+// The published map, which ships no page, never carries the arms
 // The `build:prepare` hook replaces the base's rather than joining it, so it writes the barrels the base writes, and
 // Writes the kit map first, so the barrel lists it on a fresh clone too. The barrel leaves the kit modules out, since
 // The kit map loads each through an `import()` of its own as its character joins the party
 // The Traveler's game model is loaded on demand in development, so the barrel leaves its modules out and they stay a chunk
 const AVATAR_MODULE_DIRECTORY = "services/character/avatar";
+// The parity page's modules the tooling in `scripts` imports as types. The page writes to `window` when it loads, so
+// No wildcard reaches its modules
+const PARITY_EXPORT_NAMES = [
+  "models/LoadBench",
+  "models/SceneBench",
+  "models/SceneFog",
+  "models/SceneLights",
+  "models/SceneLightShares",
+  "models/witness/WitnessClaim",
+  "models/witness/WitnessPart",
+  "models/witness/WitnessView",
+  "setSceneCloudLayer",
+];
 const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ customElements: tresCustomElements }), {
   entry: {
     index: "src/index.ts",
@@ -24,7 +37,14 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue({ 
   },
   exports: {
     customExports: (exports, { isPublish }) =>
-      isPublish ? exports : { ...exports, "./parity/*": { source: "./parity/*.ts" } },
+      isPublish
+        ? exports
+        : {
+            ...exports,
+            ...Object.fromEntries(
+              PARITY_EXPORT_NAMES.map((name) => [`./parity/${name}`, { source: `./parity/${name}.ts` }]),
+            ),
+          },
   },
   hooks: {
     "build:prepare": async ({ options: { cwd } }) => {

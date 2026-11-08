@@ -38,7 +38,7 @@
     },
     "./package.json": "./package.json",
     "./eslint/*": "./eslint/*",
-    "./types/*": "./types/*",
+    "./types/global.d.ts": "./types/global.d.ts",
     "./vitest/*": "./vitest/*"
   },
   "publishConfig": {
@@ -46,7 +46,7 @@
       ".": "./dist/index.js",
       "./package.json": "./package.json",
       "./eslint/*": "./eslint/*",
-      "./types/*": "./types/*",
+      "./types/global.d.ts": "./types/global.d.ts",
       "./vitest/*": "./vitest/*"
     }
   },

@@ -18,8 +18,14 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // Import — the shared flat config each package symlinks — the app's `types/global.d.ts` import and the Vue hook
   // Every Vitest worker imports all resolve to nothing. Every project under `packages/` picks the augmentation up
   // Through `tsconfig.base.json`'s own `include`; the app is the one consumer outside that tree, and a specifier is
-  // The only way it can name the file without counting directories.
-  exports: { customExports: { "./eslint/*": "./eslint/*", "./types/*": "./types/*", "./vitest/*": "./vitest/*" } },
+  // The only way it can name the file without counting directories, so that file is the only one exported.
+  exports: {
+    customExports: {
+      "./eslint/*": "./eslint/*",
+      "./types/global.d.ts": "./types/global.d.ts",
+      "./vitest/*": "./vitest/*",
+    },
+  },
 });
 
 export default tsdownConfiguration;
