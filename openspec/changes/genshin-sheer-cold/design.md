@@ -14,6 +14,8 @@ Dragonspine's Sheer Cold is the subzero climate's gauge. Standing in the climate
 - **Scarlet Quartz is not a source of warmth.** The wiki says so outright. Its pickup takes 5% of the gauge and halts accumulation for 25 seconds, and the world has no Scarlet Quartz to pick up, so that is named open rather than built.
 - **Damage is 1% of max HP plus 150 HP each second the gauge stays full, handed on in HP.** The step returns the HP its full seconds cost, from the character's max HP, and Windrise emits it as `coldDamage`. The session takes it the way a boar's charge is taken: the team's shields absorb it first, and the member loses the share of max HP left over (`hitPartyMember`, which the enemy strike and the charge share too).
 - **The bar shows no words, and its label is the game's own name.** The gauge's name is the game's text `694190546`, "Sheer Cold" in English and "严寒" in Chinese, held as `GameTextKey.SheerCold`. The bar labels itself with it for assistive technology, and draws no words.
+- **The bar's two scenarios are browser tests beside the bar.** `Hud/SheerCold/Index.browser.test.ts` runs them in the machine's Edge, as the Hud's other components' suites run, since the bar's show and its label are read off the DOM.
+- **The shield scenario runs the gauge's own step into the combat.** Its test takes a full gauge's interval through `stepSheerCold` and hands that damage to `coldDamageParty`, so the shield's share is proved on the path the gauge takes, where `hitPartyMember`'s own test proves it on a bare hit.
 
 ## Mechanism
 
