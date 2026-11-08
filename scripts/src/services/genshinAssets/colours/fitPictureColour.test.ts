@@ -20,12 +20,12 @@ describe(fitPictureColour, () => {
     textures: {},
   };
 
-  test("A card plate takes its art's measured colour", () => {
+  test("a card plate takes its art's measured colour", () => {
     expect.hasAssertions();
 
     expect(fitPictureColour(FIXTURE_TEXTURE)).toStrictEqual([100, 100, 100]);
     // Under the half main colour the art's texels are tinted in linear light first: 200 to 146 and 100 to 71, so the mean
-    // of the two visible texels is 73, 71 and 73
+    // Of the two visible texels is 73, 71 and 73
     expect(fitPictureColour(FIXTURE_TEXTURE, HALF_MAIN_COLOUR)).toStrictEqual([73, 71, 73]);
   });
 });

@@ -13,15 +13,17 @@ describe(fetchGitHubTree, () => {
     vi.resetAllMocks();
   });
 
-  test("A tree the API cut short throws", async () => {
+  test("a tree the API cut short throws", async () => {
     expect.hasAssertions();
 
     vi.mocked(fetchJson).mockResolvedValueOnce({ tree: [], truncated: true });
 
-    await expect(fetchGitHubTree(url, name)).rejects.toThrowError(name);
+    await expect(fetchGitHubTree(url, name)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a, its tree listing was truncated]`,
+    );
   });
 
-  test("A token authorizes the request", async () => {
+  test("a token authorizes the request", async () => {
     expect.hasAssertions();
 
     vi.stubEnv("GITHUB_TOKEN", "token");

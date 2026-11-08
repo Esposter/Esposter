@@ -5,6 +5,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const createPageResponse = (title: null | string) => ({
+  batchcomplete: true,
+  query: { pages: [{ ns: 0, pageid: 1, revisions: [{ slots: { main: { content: "" } } }], title }] },
+});
+const titleOf = (input: unknown) => new URL(String(input)).searchParams.get("titles");
+
 describe(fetchEnemyWikiPages, () => {
   let cacheDirectory: string;
 
@@ -17,24 +23,19 @@ describe(fetchEnemyWikiPages, () => {
     await rm(cacheDirectory, { force: true, recursive: true });
   });
 
-  test("A cached enemy page is not fetched again", async () => {
+  test("a cached enemy page is not fetched again", async () => {
     expect.hasAssertions();
     const titles = ["Automatons", "Hilichurls"];
-    const createPageResponse = (title: null | string) => ({
-      batchcomplete: true,
-      query: { pages: [{ ns: 0, pageid: 1, revisions: [{ slots: { main: { content: "" } } }], title }] },
-    });
-    const titleOf = (input: unknown) => new URL(String(input)).searchParams.get("titles");
     const cachedPath = toWikiPageCachePath(cacheDirectory, "Automatons");
     const cachedJson = JSON.stringify(createPageResponse("Automatons"));
     await writeFile(cachedPath, cachedJson);
     const fetchSpy = vi
       .spyOn(globalThis, "fetch")
-      .mockImplementation(async (input) => Response.json(createPageResponse(titleOf(input))));
+      .mockImplementation((input) => Promise.resolve(Response.json(createPageResponse(titleOf(input)))));
 
     await fetchEnemyWikiPages(titles, false, cacheDirectory);
 
     expect(fetchSpy.mock.calls.map(([input]) => titleOf(input))).toStrictEqual(["Hilichurls"]);
-    expect(await readFile(cachedPath, "utf8")).toBe(cachedJson);
+    await expect(readFile(cachedPath, "utf8")).resolves.toBe(cachedJson);
   });
 });

@@ -43,7 +43,7 @@ describe(cutSprites, () => {
       { outputPath: leftColumn, rectangle: { height: 2, width: 1, x: 0, y: 2 } },
     ]);
 
-    expect(await readGrey(bottomRow)).toStrictEqual([31, 32]);
-    expect(await readGrey(leftColumn)).toStrictEqual([0, 10]);
+    await expect(readGrey(bottomRow)).resolves.toStrictEqual([31, 32]);
+    await expect(readGrey(leftColumn)).resolves.toStrictEqual([0, 10]);
   });
 });

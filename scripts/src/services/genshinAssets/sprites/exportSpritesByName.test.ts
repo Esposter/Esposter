@@ -2,6 +2,7 @@ import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAss
 import type { exportBlockByName as baseExportBlockByName } from "#src/services/genshinAssets/shared/exportBlockByName";
 
 import { exportSpritesByName } from "#src/services/genshinAssets/sprites/exportSpritesByName";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -66,7 +67,9 @@ describe(exportSpritesByName, () => {
     const stalePath = join(spriteDirectory, "UI_FixtureIcon.png");
     writeFileSync(stalePath, PNG_BYTES);
 
-    await expect(exportSpritesByName(["UI_FixtureIcon"])).rejects.toThrowError("no PNG for UI_FixtureIcon");
+    await expect(exportSpritesByName(["UI_FixtureIcon"])).rejects.toStrictEqual(
+      new InvalidOperationError(Operation.Create, spriteDirectory, "no PNG for UI_FixtureIcon"),
+    );
     expect(existsSync(stalePath)).toBe(false);
   });
 

@@ -34,17 +34,17 @@ describe(fitPropKind, () => {
     await rm(assets, { force: true, recursive: true });
   });
 
-  test("A kind whose export is missing is named and skipped", async () => {
+  test("a kind whose export is missing is named and skipped", async () => {
     expect.hasAssertions();
 
     const kind: PropKind = { mesh: "b", name: "a", shape: PropShape.Hull };
-    expect(await fitPropKind(kind, missingAssets)).toStrictEqual({
+    await expect(fitPropKind(kind, missingAssets)).resolves.toStrictEqual({
       notes: ["a: export b.obj is not on disk, skipped"],
       objects: {},
     });
   });
 
-  test("A rerun over unchanged exports prints the same counts", async () => {
+  test("a rerun over unchanged exports prints the same counts", async () => {
     expect.hasAssertions();
 
     const kind: PropKind = { mesh: "b", name: "a", shape: PropShape.Hull };
@@ -55,10 +55,10 @@ describe(fitPropKind, () => {
     expect(Object.keys(second.objects)).toStrictEqual(["props/a"]);
   });
 
-  test("A round kind is fitted as a lathe", async () => {
+  test("a round kind is fitted as a lathe", async () => {
     expect.hasAssertions();
 
     const kind: PropKind = { bandHeight: 1, mesh: "b", name: "a", shape: PropShape.Lathe, tolerance: 0.1 };
-    expect(await fitPropKind(kind, assets)).toHaveProperty(["objects", "props/a", "shape"], PropShape.Lathe);
+    await expect(fitPropKind(kind, assets)).resolves.toHaveProperty(["objects", "props/a", "shape"], PropShape.Lathe);
   });
 });

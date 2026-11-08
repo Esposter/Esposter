@@ -74,9 +74,10 @@ describe(fetchDump, () => {
 
     await fetchDump();
 
-    expect(vi.mocked(writeProvenance)).toHaveBeenCalledExactlyOnceWith(
-      GAME_TEXT_DIRECTORY,
-      expect.objectContaining({ sources: [GENSHIN_TEXT_SOURCE] }),
-    );
+    const [call] = vi.mocked(writeProvenance).mock.calls;
+
+    expect(vi.mocked(writeProvenance)).toHaveBeenCalledTimes(1);
+    expect(call?.[0]).toBe(GAME_TEXT_DIRECTORY);
+    expect(call?.[1].sources).toStrictEqual([GENSHIN_TEXT_SOURCE]);
   });
 });

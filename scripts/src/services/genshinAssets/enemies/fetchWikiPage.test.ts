@@ -1,5 +1,4 @@
 import { fetchWikiPage } from "#src/services/genshinAssets/enemies/fetchWikiPage";
-import { InvalidOperationError } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -25,7 +24,9 @@ describe(fetchWikiPage, () => {
     );
     const cachePath = join(cacheDirectory, "Page_Slimes.json");
 
-    await expect(fetchWikiPage("Slimes", cachePath)).rejects.toThrow(InvalidOperationError);
+    await expect(fetchWikiPage("Slimes", cachePath)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Slimes, is not a page on the wiki]`,
+    );
     expect(existsSync(cachePath)).toBe(false);
   });
 });

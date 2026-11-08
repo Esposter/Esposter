@@ -7,7 +7,7 @@ describe(getWeaponIconPlan, () => {
   const HELD_NAME = "UI_EquipIcon_Sword_Blunt";
   const MISSING_NAME = "UI_EquipIcon_Sword_Silver";
 
-  test("A weapon icon the index does not name is reported, not skipped", () => {
+  test("a weapon icon the index does not name is reported, not skipped", () => {
     expect.hasAssertions();
 
     const { blockNamesMap, missingNames } = getWeaponIconPlan(

@@ -43,7 +43,7 @@ describe(ensureAssetPathIndex, () => {
     expect(vi.mocked(fetchOk)).not.toHaveBeenCalled();
   });
 
-  test("A held index whose SHA-256 differs from its pin is refused", async () => {
+  test("a held index whose SHA-256 differs from its pin is refused", async () => {
     expect.hasAssertions();
 
     const indexPath = join(directory, indexFileName);
@@ -57,7 +57,7 @@ describe(ensureAssetPathIndex, () => {
     expect(vi.mocked(fetchOk)).not.toHaveBeenCalled();
   });
 
-  test("A fetched source is pinned to a commit", async () => {
+  test("a fetched source is pinned to a commit", async () => {
     expect.hasAssertions();
 
     const indexPath = join(directory, "missing-index.json");
@@ -69,7 +69,7 @@ describe(ensureAssetPathIndex, () => {
     });
   });
 
-  test("A fetched source whose SHA-256 differs from its pin is refused", async () => {
+  test("a fetched source whose SHA-256 differs from its pin is refused", async () => {
     expect.hasAssertions();
 
     const indexPath = join(directory, "refused-index.json");

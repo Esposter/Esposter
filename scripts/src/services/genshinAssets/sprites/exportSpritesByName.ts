@@ -22,7 +22,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 // The index row each of the names is found in, within the block when one is named, and the names the index holds neither
-// a sprite nor a texture of
+// A sprite nor a texture of
 const findSpriteAssets = async (
   names: readonly string[],
   block?: string,
@@ -36,7 +36,7 @@ const findSpriteAssets = async (
 export const describeSpriteAssets = async (names: readonly string[], block?: string): Promise<string[]> => {
   const { assets, missing } = await findSpriteAssets(names, block);
   return [
-    ...assets.map(({ block, name, type }) => `found ${name}: ${type} in ${block}`),
+    ...assets.map(({ block: assetBlock, name, type }) => `found ${name}: ${type} in ${assetBlock}`),
     ...missing.map((name) => `missing ${name}: not in the asset index`),
     `${assets.length} of ${names.length} names found`,
   ];
@@ -50,8 +50,9 @@ const exportBlocksOf = async (
 ): Promise<void> => {
   for (const [block, blockAssets] of Map.groupBy(
     assets.filter((asset) => asset.type === type),
-    ({ block }) => block,
+    (asset) => asset.block,
   ))
+    // oxlint-disable-next-line no-await-in-loop -- One block at a time, in the order the index lists them
     await exportBlock(block, blockAssets);
 };
 
@@ -67,7 +68,7 @@ const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[
     return { name, ...readSpriteRectangle(parseMachineJson(readFileSync(dumpPath, "utf8"), reviveSourcePathId)) };
   });
   exportBlockByName(block, AssetType.Texture2D, [...new Set(cuts.map(({ atlas }) => atlas))], SPRITE_ATLAS_DIRECTORY);
-  for (const [atlas, atlasCuts] of Map.groupBy(cuts, ({ atlas }) => atlas)) {
+  for (const [atlas, atlasCuts] of Map.groupBy(cuts, (cut) => cut.atlas)) {
     const atlasPath = join(SPRITE_ATLAS_DIRECTORY, `${atlas}${PNG_EXTENSION}`);
     if (!existsSync(atlasPath))
       throw new InvalidOperationError(
@@ -75,6 +76,7 @@ const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[
         atlasPath,
         `AnimeStudio wrote no atlas for ${atlasCuts.map(({ name }) => name).join(", ")}`,
       );
+    // oxlint-disable-next-line no-await-in-loop -- One atlas at a time, each cut into all its sprites before the next
     await cutSprites(
       atlasPath,
       atlasCuts.map(({ name, rectangle }) => ({
@@ -94,14 +96,14 @@ export const exportSpritesByName = async (names: readonly string[], block?: stri
     mkdirSync(directory, { recursive: true });
   // A found name's PNG from an earlier run goes first, so the check below counts only what this run wrote
   for (const { name } of assets) rmSync(join(SPRITE_DIRECTORY, `${name}${PNG_EXTENSION}`), { force: true });
-  await exportBlocksOf(assets, AssetType.Texture2D, (block, blockAssets) =>
+  await exportBlocksOf(assets, AssetType.Texture2D, (assetBlock, blockAssets) => {
     exportBlockByName(
-      block,
+      assetBlock,
       AssetType.Texture2D,
       blockAssets.map(({ name }) => name),
       SPRITE_DIRECTORY,
-    ),
-  );
+    );
+  });
   await exportBlocksOf(assets, AssetType.Sprite, exportBlockSprites);
   const notExported = assets.filter(({ name }) => !existsSync(join(SPRITE_DIRECTORY, `${name}${PNG_EXTENSION}`)));
   if (notExported.length > 0)

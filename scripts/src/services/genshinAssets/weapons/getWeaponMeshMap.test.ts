@@ -15,7 +15,7 @@ describe(getWeaponMeshMap, () => {
     id: 11_102,
   };
 
-  test("A row whose folder names no mesh is recorded with none, not a guessed one", () => {
+  test("a row whose folder names no mesh is recorded with none, not a guessed one", () => {
     expect.hasAssertions();
 
     const { weaponIdMeshMap, weaponIdsWithoutMesh } = getWeaponMeshMap([heldRow, bareRow], meshNames);

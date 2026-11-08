@@ -19,7 +19,7 @@ const toRepositoryPath = (path: string): string => relative(REPOSITORY_ROOT, pat
 // The fixture rows were read from `componentsDirectory`.
 // `committedBeside` holds each committed file beside a snapshot, by its path, to the ids whose manifest rows hold its bytes.
 // A map edit that makes another id the variant's primary would move that file to a flat path, so it is refused here,
-// naming the one git mv that makes the move. Nothing is planned when it is refused.
+// Naming the one git mv that makes the move. Nothing is planned when it is refused.
 export const planReferenceFiles = (
   referenceMap: Record<string, ParityReference>,
   fixtureRows: FixtureScreenRow[],

@@ -53,7 +53,9 @@ describe(writeTracedPath, () => {
       const region = sharp(markPath)
         .flatten({ background: "#fff" })
         .extract({ height: MARK_SIZE, left: 0, top: 0, width: MARK_SIZE });
+      // oxlint-disable-next-line no-await-in-loop -- Each write reads the map the one before it wrote, so the scales go in turn
       const { inkPaths } = await traceInk(region, MARK_SIZE, MARK_SIZE, scale, 0.5);
+      // oxlint-disable-next-line no-await-in-loop -- Each write reads the map the one before it wrote, so the scales go in turn
       await writeTracedPath(mapPath, `Mark${scale}`, inkPaths.join(" "), scale);
     }
 
@@ -78,7 +80,7 @@ describe(writeTracedPath, () => {
     await writeTracedPath(shortPath, "First", "m0 0h1v1z", 1);
     await writeTracedPath(shortPath, "Second", "m0 0h2v2z", 1);
 
-    expect(await readFile(shortPath, "utf8")).toBe(
+    await expect(readFile(shortPath, "utf8")).resolves.toBe(
       'export const Short: Record<string, string> = { [First]: "m0 0h1v1z", [Second]: "m0 0h2v2z" };\n',
     );
   });

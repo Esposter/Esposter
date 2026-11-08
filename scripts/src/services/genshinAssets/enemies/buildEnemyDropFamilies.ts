@@ -40,7 +40,7 @@ type DropFamilyEntry = z.infer<typeof dropsModuleSchema>["Enemies"][number];
 type MatSet = z.infer<typeof matSetSchema>;
 
 // Each Drops Table an article lists, by the type it names, in the order the article lists them
-const DROPS_TABLE_TYPE_REGEX = /\{\{Drops Table\|type=([^|}]+)/gu;
+const DROPS_TABLE_TYPE_REGEX = /\{\{Drops Table\|type=(?<family>[^|}]+)/gu;
 
 const toItemId = (name: string, nameItemIdsMap: ReadonlyMap<string, number[]>): number => {
   const itemIds = nameItemIdsMap.get(name) ?? [];
@@ -116,8 +116,8 @@ export const buildEnemyDropFamilies = (
     if (enemyKind.enemyType === EnemyType.Boss) continue;
     const name = toEnemyKindName(enemyKind, englishTextMap);
     const [firstDropsTable] = readWikiPageContent(name, cacheDirectory).matchAll(DROPS_TABLE_TYPE_REGEX);
-    const family = firstDropsTable?.[1]?.trim();
-    const isFamilyless = FAMILYLESS_ENEMY_KIND_IDS.includes(enemyKind.id);
+    const family = firstDropsTable?.groups?.family?.trim();
+    const isFamilyless = FAMILYLESS_ENEMY_KIND_IDS.has(enemyKind.id);
     if (family === undefined) {
       if (!isFamilyless)
         throw new InvalidOperationError(Operation.Read, name, "has no Drops Table and is on no familyless list");

@@ -23,7 +23,7 @@ describe(readGcsimMainCharacters, () => {
     vi.resetAllMocks();
   });
 
-  test("A fetched source is pinned to a commit", async () => {
+  test("a fetched source is pinned to a commit", async () => {
     expect.hasAssertions();
 
     // An empty token is no token, so the listing's headers are absent and the call's arguments are the URL alone

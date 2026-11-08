@@ -3,7 +3,7 @@ import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAss
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 // One index row for each name the index holds, its sprite where it holds one, since a sprite is the picture the game
-// draws and its texture the whole atlas, and the first row of its kind otherwise. A name it holds neither of is missing
+// Draws and its texture the whole atlas, and the first row of its kind otherwise. A name it holds neither of is missing
 export const chooseSpriteAssets = (
   names: readonly string[],
   assets: readonly IndexedAsset[],

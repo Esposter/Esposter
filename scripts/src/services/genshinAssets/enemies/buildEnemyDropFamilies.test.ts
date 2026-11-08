@@ -1,7 +1,6 @@
 import { buildEnemyDropFamilies } from "#src/services/genshinAssets/enemies/buildEnemyDropFamilies";
 import { DROPS_TABLE_WIKI_MODULE_TITLE } from "#src/services/genshinAssets/enemies/constants";
 import { toWikiPageCachePath } from "#src/services/genshinAssets/enemies/toWikiPageCachePath";
-import { InvalidOperationError } from "@esposter/shared";
 import { EnemyKindId, EnemyType } from "genshin-world";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -176,7 +175,9 @@ describe(buildEnemyDropFamilies, () => {
     ).toStrictEqual({ dropFamilies: [], dropFamilyKinds: [] });
     expect(() =>
       buildEnemyDropFamilies([hilichurlFighter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toThrow(InvalidOperationError);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Hilichurl Fighter, has no Drops Table and is on no familyless list]`,
+    );
   });
 
   test("every non-boss kind is given a family or is on the familyless list, and a boss is given none", async () => {
@@ -213,6 +214,8 @@ describe(buildEnemyDropFamilies, () => {
 
     expect(() =>
       buildEnemyDropFamilies([hilichurlShooter], ENGLISH_TEXT_MAP, NAME_ITEM_IDS_MAP, cacheDirectory),
-    ).toThrow(InvalidOperationError);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: Sumpter Beast (Hilichurls), has a material of a fixed count, which no drop table models]`,
+    );
   });
 });

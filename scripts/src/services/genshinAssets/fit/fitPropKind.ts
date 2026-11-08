@@ -14,8 +14,8 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 // A prop kind's outline fitted from its mesh under the props' assets: the visual hull of a solid kind or the lathe of a
-// round one, in three's axes as the rocks' hulls are. A mesh that is not on disk is named and skipped, so the kinds beside
-// it still fit and no record is written for it
+// Round one, in three's axes as the rocks' hulls are. A mesh that is not on disk is named and skipped, so the kinds beside
+// It still fit and no record is written for it
 export const fitPropKind = async (kind: PropKind, assets: string): Promise<GameDataBuild> => {
   const path = join(assets, AssetType.Mesh, `${kind.mesh}.obj`);
   if (!existsSync(path))

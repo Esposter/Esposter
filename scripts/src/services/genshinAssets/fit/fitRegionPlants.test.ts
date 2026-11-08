@@ -14,10 +14,15 @@ const grass = (position: [number, number, number]): WorldPlacement => ({
 
 describe(toFittedPlants, () => {
   test("a region's grass stands where its plant record places it", () => {
+    expect.hasAssertions();
+
     const [plant] = toFittedPlants([{ name: "Stages_SGrass12_Vo", places: [grass([150, 5, 260])] }], [100, 0, 200]);
+    const places = plant?.places ?? [];
+
     // The game's x is ours, its z mirrored about the origin's, so the place is 50 east and 60 north of the origin
-    expect(plant?.places).toStrictEqual([
-      { position: { x: 50, z: -60 }, rotation: expect.any(Number), scale: [1, 1, 1] },
+    expect(places.map(({ position, scale }) => ({ position, scale }))).toStrictEqual([
+      { position: { x: 50, z: -60 }, scale: [1, 1, 1] },
     ]);
+    expect(places.map(({ rotation }) => typeof rotation)).toStrictEqual(["number"]);
   });
 });

@@ -20,8 +20,8 @@ interface Props {
 
 // The developer surface, loaded only in a development build: it makes the developer registry and hands it up before the
 // World mounts, since the world's parts take the registry as they set up. It registers the save commands, the stats switch
-// and the shortcuts, and draws the console, the panel and the stats overlay. A browser driven by automation takes the
-// registry through `window.__dev` and mounts no surface, since a panel would cover the scene it shoots
+// And the shortcuts, and draws the console, the panel and the stats overlay. A browser driven by automation takes the
+// Registry through `window.__dev` and mounts no surface, since a panel would cover the scene it shoots
 const { applySave, gameDataBaseUrl, gameText, getSave, language } = defineProps<Props>();
 const emit = defineEmits<{ registry: [registry: DevRegistry] }>();
 const devRegistry = createDevRegistry();

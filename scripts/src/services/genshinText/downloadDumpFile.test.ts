@@ -18,7 +18,7 @@ describe(downloadDumpFile, () => {
     vi.resetAllMocks();
   });
 
-  test("A fetched source is pinned to a commit", async () => {
+  test("a fetched source is pinned to a commit", async () => {
     expect.hasAssertions();
 
     vi.mocked(fetchOk).mockResolvedValueOnce(new Response(""));

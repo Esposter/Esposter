@@ -11,7 +11,9 @@ describe("traceCommand", () => {
 
     await expect(
       runCommand(genshinParityCommand, { rawArgs: ["trace", ...REGION_ARGS, "--key", "InterfaceIcon.Exit"] }),
-    ).rejects.toThrowError("needs --into");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: --key, needs --into, the map source its entry is written into]`,
+    );
   });
 
   test("refuses a map with no key before it traces anything", async () => {
@@ -19,6 +21,8 @@ describe("traceCommand", () => {
 
     await expect(
       runCommand(genshinParityCommand, { rawArgs: ["trace", ...REGION_ARGS, "--into", "TracedMarks.ts"] }),
-    ).rejects.toThrowError("takes a --key");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: TracedMarks.ts, takes a --key for the entry it writes]`,
+    );
   });
 });

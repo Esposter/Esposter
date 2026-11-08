@@ -32,12 +32,13 @@ const toBox = (width: number, length: number, thickness: number): { faces: Vecto
   ],
 });
 
+const readFaceColour = (): Vector => [1, 1, 1];
+
 describe(fitMeshPieces, () => {
-  const readFaceColour = (): Vector => [1, 1, 1];
   // A piece is read as twenty thousand surface points and every candidate fit is scored, which outruns the default
   const FIT_TIMEOUT_MS = Temporal.Duration.from({ seconds: 60 }).total("milliseconds");
 
-  test("A thin blade is fitted as blades, not one stack", { timeout: FIT_TIMEOUT_MS }, () => {
+  test("a thin blade is fitted as blades, not one stack", { timeout: FIT_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { faces, vertices } = toBox(0.04, 1, 0.004);

@@ -1,3 +1,4 @@
+import { LuaTokenKind } from "#src/models/genshinAssets/enemies/LuaTokenKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A value a Lua table literal holds: a string, a number or a table, which is an object when it names its fields and an
@@ -6,10 +7,11 @@ export type LuaValue = LuaValue[] | number | string | { [field: string]: LuaValu
 
 // One token of the literal: punctuation, a name, a number or a quoted string, each with its text. Comments and spaces
 // Are skipped
-const TOKEN_REGEX = /\s+|--[^\n]*|([{}=,;])|('[^']*'|"[^"]*")|(-?\d+(?:\.\d+)?)|([A-Za-z_]\w*)/gy;
+const TOKEN_REGEX =
+  /\s+|--[^\n]*|(?<punctuation>[{}=,;])|(?<quoted>'[^']*'|"[^"]*")|(?<number>-?\d+(?:\.\d+)?)|(?<name>[A-Za-z_]\w*)/guy;
 
 interface LuaToken {
-  kind: "name" | "number" | "punctuation" | "string";
+  kind: LuaTokenKind;
   text: string;
 }
 
@@ -22,18 +24,19 @@ const tokenize = (source: string): LuaToken[] => {
     if (!match)
       throw new InvalidOperationError(Operation.Read, "a Lua table", `has an unreadable character at ${position}`);
     position = TOKEN_REGEX.lastIndex;
-    const [text, punctuation, quoted, number, name] = match;
-    if (punctuation !== undefined) tokens.push({ kind: "punctuation", text: punctuation });
-    else if (quoted !== undefined) tokens.push({ kind: "string", text: quoted.slice(1, -1) });
-    else if (number !== undefined) tokens.push({ kind: "number", text: number });
-    else if (name !== undefined) tokens.push({ kind: "name", text });
+    const [text] = match;
+    const { name, number, punctuation, quoted } = match.groups ?? {};
+    if (punctuation !== undefined) tokens.push({ kind: LuaTokenKind.Punctuation, text: punctuation });
+    else if (quoted !== undefined) tokens.push({ kind: LuaTokenKind.String, text: quoted.slice(1, -1) });
+    else if (number !== undefined) tokens.push({ kind: LuaTokenKind.Number, text: number });
+    else if (name !== undefined) tokens.push({ kind: LuaTokenKind.Name, text });
   }
   return tokens;
 };
 
 // Whether a token is the punctuation the literal's syntax names at that point, so a string that spells it is not
 const checkIsPunctuation = (token: LuaToken | undefined, text: string): boolean =>
-  token?.kind === "punctuation" && token.text === text;
+  token?.kind === LuaTokenKind.Punctuation && token.text === text;
 
 // Reads a Lua table literal, as the wiki's data modules write it, into the values it holds: named fields as an object,
 // Listed values as an array, and nothing else. A table naming some fields and listing others is refused, as is an
@@ -43,8 +46,8 @@ export const parseLuaTable = (source: string): LuaValue => {
   let index = 0;
   const readValue = (): LuaValue => {
     const token = tokens[index++];
-    if (token?.kind === "number") return Number(token.text);
-    if (token?.kind === "string") {
+    if (token?.kind === LuaTokenKind.Number) return Number(token.text);
+    if (token?.kind === LuaTokenKind.String) {
       if (token.text.includes("\\")) throw new InvalidOperationError(Operation.Read, token.text, "has an escape");
       return token.text;
     }
@@ -54,7 +57,7 @@ export const parseLuaTable = (source: string): LuaValue => {
     const values: LuaValue[] = [];
     while (!checkIsPunctuation(tokens[index], "}")) {
       const next = tokens[index];
-      if (next?.kind === "name" && checkIsPunctuation(tokens[index + 1], "=")) {
+      if (next?.kind === LuaTokenKind.Name && checkIsPunctuation(tokens[index + 1], "=")) {
         index += 2;
         fields[next.text] = readValue();
       } else values.push(readValue());
@@ -67,7 +70,7 @@ export const parseLuaTable = (source: string): LuaValue => {
       throw new InvalidOperationError(Operation.Read, "a Lua table", "mixes named fields and positional values");
     return Object.keys(fields).length > 0 ? fields : values;
   };
-  if (tokens[0]?.kind === "name" && tokens[0].text === "return") index++;
+  if (tokens[0]?.kind === LuaTokenKind.Name && tokens[0].text === "return") index++;
   const value = readValue();
   if (index !== tokens.length)
     throw new InvalidOperationError(Operation.Read, "a Lua table", "has text after its closing brace");

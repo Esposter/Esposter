@@ -43,19 +43,19 @@ describe(verifyGameData, () => {
     );
   });
 
-  test("An index that does not hash to its name is refused", async () => {
+  test("an index that does not hash to its name is refused", async () => {
     expect.hasAssertions();
 
     const entry = createStoredRecord("profile/English", { name: "a" });
     const index = createStoredRecord("profile/English", { "10000002": entry.hash });
     // The account serves other content under the index's name
-    const fetch = vi
-      .spyOn(globalThis, "fetch")
-      .mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ "10000002": getGameDataHash("b") }))));
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ "10000002": getGameDataHash("b") }));
 
     await expect(
       verifyGameData(baseUrl, { indexes: { "profile/English": index.hash }, objects: {} }),
-    ).rejects.toThrowError(index.url);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: https://account.example/public-genshin-assets/profile/English/2709f82fb9bd4917c3e5f7617f1f22fa906116a4ae4447125391ff760f2ff17a.json, does not hash to its name]`,
+    );
     // Only the index was fetched, so none of the entries it names was
     expect(fetch).toHaveBeenCalledTimes(1);
   });

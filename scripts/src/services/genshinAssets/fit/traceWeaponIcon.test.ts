@@ -12,7 +12,7 @@ describe(traceWeaponIcon, () => {
   const iconWidth = 64;
   const iconHeight = 32;
 
-  test("A traced icon outline is loops in its own unit square", async () => {
+  test("a traced icon outline is loops in its own unit square", async () => {
     expect.hasAssertions();
 
     const data = Buffer.alloc(iconWidth * iconHeight * 4);
