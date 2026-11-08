@@ -2,7 +2,7 @@
 
 ## 1. The build
 
-- [x] 1.1 The base factory builds unbundled and names the vendor folder, and the Vue factory splits each component's stylesheet. Verify: `vp run build:packages` builds every package with `publint` and `attw` clean, and the workspace tests for the published files, the side effects and the subpaths pass.
+- [x] 1.1 The base factory builds unbundled and names the vendor folder, and the Vue factory keeps one `style.css`. Verify: `vp run build:packages` builds every package with `publint` and `attw` clean, and the workspace tests for the published files, the side effects and the subpaths pass.
 - [x] 1.2 The size record rolls the modules of one package and extension into one row. Verify: `rollUpBundleSizes.test.ts` passes, and `bundleSizes.test.ts` passes against the regenerated record.
 
 ## 2. The consumers
@@ -12,7 +12,7 @@
 
 ## 3. The Vue packages
 
-- [x] 3.1 The Vue packages build unbundled with each component's stylesheet beside its module, and the app's CSS list drops the two package sheets. Verify: `vp run build:genshin-interface` and `vp run build:genshin-world` pass with `publint` and `attw` clean and no `./style.css` in either manifest, and `pnpm -C apps/web build` succeeds.
+- [x] 3.1 The Vue packages build unbundled with one `style.css` and no module importing a stylesheet. Verify: `vp run build:genshin-interface` and `vp run build:genshin-world` pass with `publint` and `attw` clean and keep `./style.css` in each manifest, `unbundledBarrels.test.ts` passes its 'no built module imports a stylesheet' and 'a build writes no folder a tool skips as hidden' tests, and `pnpm -C apps/web build` succeeds.
 
 ## 4. The workarounds
 

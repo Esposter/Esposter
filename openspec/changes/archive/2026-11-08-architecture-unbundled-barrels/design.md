@@ -18,15 +18,19 @@ Rejected: per-file `exports` in the manifest. The `.` export is what every sibli
 
 ### Vendored files go under `vendor`
 
-An unbundled build writes a vendored dependency's files at the path they were read from, under a `node_modules` folder, which `npm pack` never ships: the published package would reference declaration files its tarball lacks. The factory renames that folder through the output's file-name sanitizer, which also has to keep the three characters the default sanitizer replaces, since a function replaces the default.
+An unbundled build writes a vendored dependency's files at the path they were read from, under a `node_modules` folder, which `npm pack` never ships: the published package would reference declaration files its tarball lacks. The factory renames that folder through the output's file-name sanitizer, which also has to keep the three characters the default sanitizer replaces, since a function replaces the default, and drops the leading dot of a folder, since pnpm keeps its packages under a hidden `.pnpm` folder and CI's artifact upload skips a hidden folder: the vendored files never reached the app build, which failed to resolve its import of one. A workspace test now fails a `dist` holding a hidden folder.
 
 Rejected: externalizing the vendored dependencies. They are vendored on purpose (`.agents/skills/build/references/dependency-placement.md`), and an external type package would split a consumer's types in two.
 
-### Vue stylesheets go per component
+### Vue stylesheets stay one file
 
-A Vue package used to merge its stylesheets into one `style.css`, which every consumer imported whole. Unbundled, the build emits each component's stylesheet beside its module and the module imports it (`css.inject`), with `splitting` set so the build writes no stylesheet subpath. The package answers `sideEffects` with `["**/*.css"]`, so a bundler keeps the stylesheets of the components an import reaches and drops the rest. A page that mounts one screen then loads that screen's styles, not the whole interface's, and the app's CSS list names no package stylesheet.
+A Vue package merges its stylesheets into one `style.css`, which a page imports once. An unbundled build splits CSS per module unless `css.splitting` is turned off, so the factory turns it off. The package answers `sideEffects` with `["**/*.css"]` so a bundler keeps the page's import of the sheet.
 
-Rejected: rebuilding one `style.css` from the split files. It keeps a package-wide sheet that loads every component's styles on any page, which is the weight this change removes.
+Rejected: a stylesheet beside each component, imported by its module (`css.inject`), so a page loads only the styles of the components it reaches. Node loads a Vue package's `dist` in the scripts and benchmarks that read its data and cannot load a `.css` file, so the benchmarks failed on the first import of the package; and the sheets are small and one page mounts nearly all of them, so the saving is small beside the cost every consumer pays to be CSS-aware.
+
+### Deploy artifacts and programs stay one file
+
+The Functions app is a deploy artifact the host opens cold and installs nothing for, so one vendored file beats a file per module. The infrastructure program is run once and imported by nothing. Each sets `unbundle: false`; the Functions bundle still shrinks, because it now vendors the unbundled packages and drops what nothing reaches.
 
 ### What stays heavy
 
@@ -59,7 +63,7 @@ The last row is the union of every name the client imports from the schema packa
 | File                                                                      | Role                                                                        |
 | :------------------------------------------------------------------------ | :-------------------------------------------------------------------------- |
 | `packages/configuration/src/services/getTsdownConfiguration.ts`           | the base factory: unbundled output and the vendor folder name               |
-| `packages/configuration/src/services/getTsdownConfigurationVue.ts`        | the Vue factory: per-component stylesheets imported by their modules        |
+| `packages/configuration/src/services/getTsdownConfigurationVue.ts`        | the Vue factory: one `style.css` and no module importing a stylesheet       |
 | `packages/configuration/src/services/getTsdownConfigurationNuxtModule.ts` | the Nuxt module factory, which already builds unbundled for its runtime     |
 | `scripts/src/services/bundleSizes/rollUpBundleSizes.ts`                   | the size record's roll-up of a package's modules into one row per extension |
 | `.agents/skills/build/references/barrels.md`                              | the barrel page, which states the one-file shape this change replaces       |

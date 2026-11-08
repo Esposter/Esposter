@@ -23,10 +23,10 @@ on `source` reaches the file itself, one on `default` gets the module's built fi
 (a package builds one output file per module, `references/barrels.md`), and a path matching neither leaves a
 bundler free to drop the call.
 
-A Vue package's side effects are its stylesheets: each component's module imports its own `.css` file, and the
-package answers `["**/*.css"]`, so a bundler keeps those imports for every component it reaches and drops the
-modules it does not. `sideEffects.test.ts` fails a package whose `.vue` files carry a style block and whose answer
-omits the stylesheets, since a bundler drops every such import and the components render unstyled with nothing failing.
+A Vue package's side effects are its stylesheet: a page imports the package's `style.css` for no binding, and the
+package answers `["**/*.css"]`, so a bundler honouring `sideEffects` keeps that import. `sideEffects.test.ts` fails a
+package whose `.vue` files carry a style block and whose answer omits the stylesheets, since a bundler drops the import
+and the components render unstyled with nothing failing.
 
 Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
 the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so

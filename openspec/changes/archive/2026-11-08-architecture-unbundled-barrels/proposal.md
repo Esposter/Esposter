@@ -8,13 +8,12 @@ The roadmap's answers to this are all entries added to dodge one cause: a client
 
 ## What changes
 
-Every package builds unbundled: one output file per source module, with the root export and the generated barrel unchanged. `sideEffects: false` then lets a consumer drop every module no import reaches, and the one-export-per-file rule makes the module the right grain. A vendored dependency's files are written under `vendor`, since `npm pack` never ships a folder named `node_modules`. A Vue package emits each component's stylesheet beside its module, imported by it, and answers `sideEffects` with its stylesheets, so a page loads the styles of the components it reaches and the app's CSS list names no package stylesheet. The bundle-size record rolls a package's modules into one row per extension.
+Every package builds unbundled: one output file per source module, with the root export and the generated barrel unchanged. `sideEffects: false` then lets a consumer drop every module no import reaches, and the one-export-per-file rule makes the module the right grain. A vendored dependency's files are written under `vendor` with no hidden folder in their path, since `npm pack` never ships a folder named `node_modules` and an artifact upload skips a hidden one. A Vue package keeps one `style.css` and no module imports a stylesheet, since Node loads the package's `dist` too, and answers `sideEffects` with the stylesheet glob. The Functions app and the infrastructure program stay one file, since nothing prunes them. The bundle-size record rolls a package's modules into one row per extension.
 
 The same probe over the unbundled schema package puts that enum under a kilobyte, and the shared helper under a kilobyte. What stays heavy is what needs drizzle at run time: the message entity classes and the schemas drizzle derives from a table. The roadmap's second-definition question narrows to those names.
 
 ## Impact
 
-- `@esposter/configuration`: the base factory builds unbundled and names the vendor folder; the Vue factory splits each component's stylesheet.
+- `@esposter/configuration`: the base factory builds unbundled and names the vendor folder; the Vue factory keeps one `style.css`.
 - Every package: `dist` holds one file per module, and the bundle-size record changes shape.
-- `genshin-interface` and `genshin-world`: the `./style.css` export is gone and the app imports no package stylesheet.
 - The roadmap item for the client bundle, and the subpaths that existed only to dodge the cause.
