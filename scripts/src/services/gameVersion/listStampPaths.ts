@@ -8,12 +8,14 @@ import { join } from "node:path";
 export const listStampPaths = async (directory: string): Promise<string[]> => {
   if (!existsSync(directory)) return [];
   const entries = await readdir(directory, { withFileTypes: true });
-  const paths = await Promise.all(
-    entries.map((entry) => {
-      const path = join(directory, entry.name);
-      if (entry.isDirectory()) return listStampPaths(path);
-      return entry.name === PROVENANCE_NAME || entry.name.endsWith(PROVENANCE_SIDECAR_SUFFIX) ? [path] : [];
-    }),
+  const nestedStampPaths = await Promise.all(
+    entries.filter((entry) => entry.isDirectory()).map((entry) => listStampPaths(join(directory, entry.name))),
   );
-  return paths.flat();
+  const stampPaths = entries
+    .filter(
+      (entry) =>
+        !entry.isDirectory() && (entry.name === PROVENANCE_NAME || entry.name.endsWith(PROVENANCE_SIDECAR_SUFFIX)),
+    )
+    .map((entry) => join(directory, entry.name));
+  return [...stampPaths, ...nestedStampPaths.flat()];
 };

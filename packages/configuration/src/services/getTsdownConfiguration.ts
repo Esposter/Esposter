@@ -103,7 +103,7 @@ export const getTsdownConfiguration = ({
           .replaceAll("*", "_")
           .replaceAll("node_modules", "vendor")
           .replace(HIDDEN_FOLDER_REGEX, "")
-          .replace(PNPM_PEER_SUFFIX_REGEX, "$1"),
+          .replace(PNPM_PEER_SUFFIX_REGEX, "$<folder>"),
     },
     platform: "neutral",
     unbundle: true,
