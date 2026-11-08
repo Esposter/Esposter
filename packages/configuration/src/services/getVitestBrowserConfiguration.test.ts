@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getVitestBrowserConfiguration, () => {
-  const TEST_FILENAME = "a";
+  const TEMP_DIRECTORY_PREFIX = "a";
   const resolveScreenshotPath = getVitestBrowserConfiguration({ height: 1, width: 1 }).browser.expect?.toMatchScreenshot
     ?.resolveScreenshotPath as (options: { arg: string; ext: string; platform: string; root: string }) => string;
   let screenshotRoot = "";
@@ -19,7 +19,7 @@ describe(getVitestBrowserConfiguration, () => {
   };
 
   beforeEach(() => {
-    screenshotRoot = mkdtempSync(join(tmpdir(), TEST_FILENAME));
+    screenshotRoot = mkdtempSync(join(tmpdir(), TEMP_DIRECTORY_PREFIX));
   });
 
   afterEach(() => {
