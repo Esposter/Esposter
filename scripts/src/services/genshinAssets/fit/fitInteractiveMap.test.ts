@@ -1,5 +1,6 @@
 import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/InteractiveMapPoint";
 import type { SceneTransportPoint } from "#src/models/genshinAssets/world/SceneTransportPoint";
+import type { writeJsonFile } from "#src/services/shared/writeJsonFile";
 
 import { fitInteractiveMap } from "#src/services/genshinAssets/fit/fitInteractiveMap";
 import { OculusKindLabelIdMap } from "#src/services/genshinAssets/oculi/OculusKindLabelIdMap";
@@ -10,7 +11,6 @@ import {
 import { InteractiveMapRegionMap } from "#src/services/genshinAssets/points/InteractiveMapRegionMap";
 import { readInteractiveMapPoints } from "#src/services/genshinAssets/points/readInteractiveMapPoints";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
-import type { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { OculusKind } from "genshin-world";
 import { describe, expect, test, vi } from "vitest";
 

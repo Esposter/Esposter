@@ -81,8 +81,8 @@ import { createParticleHealPassiveModule } from "#src/services/weapon/passives/c
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
-import { createPrincipleOfEquilibriumPassiveModule } from "#src/services/weapon/passives/createPrincipleOfEquilibriumPassiveModule";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
+import { createPrincipleOfEquilibriumPassiveModule } from "#src/services/weapon/passives/createPrincipleOfEquilibriumPassiveModule";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
 import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives/createPurifyingCrownPassiveModule";
 import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/passives/createRadianceOnTheWaterPassiveModule";
@@ -166,6 +166,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "486943795": createFrostBurialPassiveModule,
   // Bane of Water and Ice
   "523615731": createBaneOfWaterAndIcePassiveModule,
+  // Isshin Art Clarity (Kagotsurube Isshin)
+  "607067451": createIsshinArtClarityPassiveModule,
   // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
   "641137867": createSmokeAndMirrorMysteryPassiveModule,
   // Offering Unto Wind and Sun (Starcaller's Watch)
@@ -196,6 +198,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1054220683": createSunkenSongOfTheSandsPassiveModule,
   // Justice (The Black Sword)
   "1092738259": createJusticePassiveModule,
+  // Principle of Equilibrium (Dialogues of the Desert Sages)
+  "1092884699": createPrincipleOfEquilibriumPassiveModule,
   // Unreturning
   "1166144531": createUnreturningPassiveModule,
   // Busybody's Running Light (Tamayuratei no Ohanashi)
@@ -333,8 +337,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2664303051": createSeasonedSymphonyPassiveModule,
   // Iwakura Succession (Amenoma Kageuchi)
   "2700351571": createIwakuraSuccessionPassiveModule,
-  // Isshin Art Clarity (Kagotsurube Isshin)
-  "607067451": createIsshinArtClarityPassiveModule,
   // Sky-Piercing Fang (Skyward Blade)
   "2711925235": createSkyPiercingFangPassiveModule,
   // Labyrinth Lord's Instruction (King's Squire)
@@ -483,8 +485,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
     ),
   // Press the Advantage (Blackcliff Pole)
   "4236194011": createPressTheAdvantagePassiveModule,
-  // Principle of Equilibrium (Dialogues of the Desert Sages)
-  "1092884699": createPrincipleOfEquilibriumPassiveModule,
   // Composed (Sacrificial Greatsword)
   "4267154851": createComposedPassiveModule,
   // Secret Wisdom's Favor (Ibis Piercer)

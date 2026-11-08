@@ -1,8 +1,8 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
-import type { PinnedTool } from "#src/models/shared/PinnedTool";
 import type { ProvenanceTool } from "#src/models/provenance/ProvenanceOptions";
 import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
+import type { PinnedTool } from "#src/models/shared/PinnedTool";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";

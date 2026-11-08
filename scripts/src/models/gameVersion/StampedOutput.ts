@@ -4,5 +4,5 @@ import type { Provenance } from "#src/models/provenance/Provenance";
 // Stamp itself when one could be read
 export interface StampedOutput {
   command: string;
-  provenance: Provenance | undefined;
+  provenance?: Provenance;
 }
