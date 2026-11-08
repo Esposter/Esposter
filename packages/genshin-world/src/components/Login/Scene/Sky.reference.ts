@@ -6,8 +6,7 @@ import { InvestigationOutcome } from "genshin-interface";
 export const skyTopic: ReferenceTopic = {
   investigations: [
     {
-      method:
-        "genshin:parity clouds, sky and cover over login-door-recording, the cloud mask checked by eye on its sheet",
+      method: "genshin:parity clouds, sky and cover over login-door-recording, the cloud mask on its sheet",
       outcome: InvestigationOutcome.Found,
       result:
         "The mask read nine tenths of the door recording's sky as cloud, its clear lavender sky with it: the clear surface settles under the sky's wisps and its glow toward the sun, which then pass the fixed ratio. Split by Otsu's threshold over that surface the mask is the eye's, about two fifths cloud; the sky solved on its clear pixels scores the recording's FLIP a hundredth better and reads salmon for lavender; cover re-solved on it reads worse than the shipped shares by its own measure, each guess moving the threshold",
