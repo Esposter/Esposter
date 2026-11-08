@@ -16,6 +16,8 @@ Dragonspine's Sheer Cold is the subzero climate's gauge. Standing in the climate
 - **The bar shows no words, and its label is the game's own name.** The gauge's name is the game's text `694190546`, "Sheer Cold" in English and "严寒" in Chinese, held as `GameTextKey.SheerCold`. The bar labels itself with it for assistive technology, and draws no words.
 - **The bar's two scenarios are browser tests beside the bar.** `Hud/SheerCold/Index.browser.test.ts` runs them in the machine's Edge, as the Hud's other components' suites run, since the bar's show and its label are read off the DOM.
 - **The shield scenario runs the gauge's own step into the combat.** Its test takes a full gauge's interval through `stepSheerCold` and hands that damage to `coldDamageParty`, so the shield's share is proved on the path the gauge takes, where `hitPartyMember`'s own test proves it on a bare hit.
+- **The HUD write is proved by a scripted teleport into Dragonspine, read off the bar.** The frame is the session's own state, so `Session/Index.browser.test.ts` reads the bar's `aria-valuenow` once the character stands in the climate. The teleport is `teleport Dragonspine`, not coordinates: the area's first arrival landmark lands inside its outline, where the boss fight scenario's coordinates (`-1673.56`, `-2752.32`) lie outside Dragonspine's bounds.
+- **The landing is read off the state line, and the fill one scripted second after it.** The character's `place` in the `state` line marks the landing, which the teleport's fade carries. The gauge fills a percent a second, so one second of frames leaves the bar a value; a missing write then fails on the bar's own assertion, not the frame limit.
 
 ## Mechanism
 
