@@ -144,21 +144,22 @@ https://github.com/Esposter/Esposter/blob/a4d8f428a978129e9c55ba01630eacaab8a9dd
 
 A logging plugin that prints each id before the hook shows the trigger. In one Windows build, `App.vue?vue&vize` reaches the hook as `C:\…\App.vue?vue&vize`, and the hook compiles it again. `Child.vue?vue&vize` reaches the hook as `C:/…/Child.vue?vue&vize`, and the hook does not.
 
-| Change from the reproduction                                      | Result                                                                             |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| None, on Windows                                                  | `App.vue` (backslash id) is compiled again. `Child.vue` (forward-slash id) is not. |
-| The same project on Linux                                         | Both ids have forward slashes. Neither component is compiled again.                |
-| Windows, with `cache.get(realPath.replaceAll("\\", "/"))` patched | Neither component is compiled again.                                               |
-| Windows, `@vizejs/vite-plugin` 0.702.0 and 0.680.0                | The same as 0.713.0.                                                               |
-| Windows, `@vizejs/vite-plugin` 0.652.0 and 0.637.0                | `App.vue` has the backslash id. No `transform: compiling` line is printed.         |
+| Change from the reproduction                                                             | Result                                                                                                                                   |
+| :--------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| None, on Windows                                                                         | `App.vue` (backslash id) is compiled again. `Child.vue` (forward-slash id) is not.                                                       |
+| The same project on Linux                                                                | Both ids have forward slashes. Neither component is compiled again.                                                                      |
+| Windows, with `cache.get(realPath.replaceAll("\\", "/"))` patched                        | Neither component is compiled again.                                                                                                     |
+| Windows, a Nuxt application with many components, the three lookups patched the same way | The transform hook of the client build falls from most of the build time to a few seconds. The hook of the server build does not change. |
+| Windows, `@vizejs/vite-plugin` 0.702.0 and 0.680.0                                       | The same as 0.713.0.                                                                                                                     |
+| Windows, `@vizejs/vite-plugin` 0.652.0 and 0.637.0                                       | `App.vue` has the backslash id. No `transform: compiling` line is printed.                                                               |
 
 ## Not known
 
 - The source of the backslash id is not traced to a line. In the reproduction, the id of `./App.vue` (imported from `main.ts`) has backslashes, and the id of `./Child.vue` (imported from `App.vue`) has forward slashes.
 - Versions 0.652.0 and 0.637.0 print no `transform: compiling` line for the backslash id. Whether they compile the component again is not known.
-- The reproduction has two files, so its cost is small. In a Nuxt application with many components, every component id reaches the hook with backslashes on Windows, and nearly every component is compiled again. The client build there spends most of its time in the transform hook. The Linux build of the same application spends almost none. The two builds ran on different machines, so their times do not compare exactly.
-- The built `load` path has a second lookup, `cache.get(realPath) ?? state.cache.get(realPath) ?? state.ssrCache.get(realPath)`, which has the same key. It was read and not tested.
-- macOS was not tested. The server environment uses a separate cache and was not isolated here.
+- The reproduction has two files, so its cost is small. In a Nuxt application with many components, every component id reaches the hook with backslashes on Windows, and nearly every component is compiled again. With the three lookups patched in a copy of the plugin, the same Windows build takes the transform hook of the client build from most of the build time to a few seconds. Two builds of the unpatched plugin on the same machine differ by a few percent, so the drop is not noise. The Linux build of the application, on a different machine, spends a few seconds in that hook.
+- The patch changes the lookup in the transform hook and the two lookups that read the same key (`cache.get(realPath) ?? state.cache.get(realPath) ?? state.ssrCache.get(realPath)`). The application build has not been checked for a change in its output beyond the size of the output folder, which is the same to within a kilobyte.
+- macOS was not tested. The hook of the server build compiles each component again whatever the path spelling, because it reads a cache that the pre-compile never fills. That behavior is the one that #12044 describes, and it is not part of this report.
 
 ## Not a duplicate of
 
