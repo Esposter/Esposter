@@ -25,15 +25,15 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationNode()
   // Does not write. `legacy` hands the field to the build instead: with no CJS output the ESM chunk is written
   // Into "main". Pinned by `src/index.test.ts`, the only enforcer there is.
   exports: { legacy: true },
-  // The host loads `dist/index.js` cold and installs nothing, so one file is opened where an unbundled build would
-  // Open one per vendored module, thousands of them. Libraries are unbundled so a consumer's bundler can prune them;
-  // This is the consumer, and it prunes the unbundled packages it vendors into its one file.
-  unbundle: false,
   // The host parses this at every cold start and no human reads it, so compression is worth the ~30% it takes
   // Off. `mangle` stays off, which is why this is spelled out rather than `minify: true`: it would take a
   // Further ~25% and rename every identifier, and a handler's stack is the only diagnosis available for an
   // EventGrid delivery that already happened.
   minify: { compress: true, mangle: false },
+  // The host loads `dist/index.js` cold and installs nothing, so one file is opened where an unbundled build would
+  // Open one per vendored module, thousands of them. Libraries are unbundled so a consumer's bundler can prune them;
+  // This is the consumer, and it prunes the unbundled packages it vendors into its one file.
+  unbundle: false,
 });
 
 export default tsdownConfiguration;

@@ -50,6 +50,7 @@
       "default": "./dist/save.js"
     },
     "./package.json": "./package.json",
+    "./style.css": "./dist/style.css",
     "./styles/confirmDialog.css": {
       "source": "./src/styles/confirmDialog.css",
       "default": "./dist/styles/confirmDialog.css"
@@ -82,6 +83,7 @@
       "./getFixtureImageName": "./dist/getFixtureImageName.js",
       "./save": "./dist/save.js",
       "./package.json": "./package.json",
+      "./style.css": "./dist/style.css",
       "./styles/confirmDialog.css": "./dist/styles/confirmDialog.css",
       "./styles/creamPill.css": "./dist/styles/creamPill.css",
       "./styles/creamPillButton.css": "./dist/styles/creamPillButton.css",

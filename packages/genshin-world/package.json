@@ -54,6 +54,7 @@
       "default": "./dist/terrainTileWorker.js"
     },
     "./package.json": "./package.json",
+    "./style.css": "./dist/style.css",
     "./parity/models/LoadBench": {
       "source": "./parity/models/LoadBench.ts"
     },
@@ -88,7 +89,8 @@
       "./save": "./dist/save.js",
       "./sceneExport": "./dist/sceneExport.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./style.css": "./dist/style.css"
     },
     "access": "public"
   },

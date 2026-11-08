@@ -1,7 +1,7 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { SOURCE_CONDITION } from "#src/services/constants";
+import { HIDDEN_FOLDER_REGEX, SOURCE_CONDITION } from "#src/services/constants";
 import { generateExports } from "#src/services/generateExports";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
 import { readPackageManifest } from "#src/services/readPackageManifest";
@@ -89,11 +89,18 @@ export const getTsdownConfiguration = ({
     // Top-level call the file makes once any export is imported: a drizzle table, a schema derived from it, a
     // Helper that builds a parser. One output file per source module lets `sideEffects: false` drop each module no
     // Import reaches, with the barrel and the `.` export unchanged. A vendored dependency's files are written under
-    // `vendor` rather than `node_modules`, the one folder name `npm pack` never ships. A function replaces the
-    // Default sanitizer, so it keeps the three characters that one swaps for an underscore.
+    // `vendor` rather than `node_modules`, the one folder name `npm pack` never ships, and a folder loses its leading
+    // Dot (pnpm's `.pnpm`), since the tools that move a `dist` between machines skip a hidden folder: CI's artifact
+    // Upload dropped the vendored files and the app build then could not resolve them. A function replaces the default
+    // Sanitizer, so it keeps the three characters that one swaps for an underscore.
     outputOptions: {
       sanitizeFileName: (name: string) =>
-        name.replaceAll("\0", "_").replaceAll("?", "_").replaceAll("*", "_").replaceAll("node_modules", "vendor"),
+        name
+          .replaceAll("\0", "_")
+          .replaceAll("?", "_")
+          .replaceAll("*", "_")
+          .replaceAll("node_modules", "vendor")
+          .replace(HIDDEN_FOLDER_REGEX, ""),
     },
     platform: "neutral",
     unbundle: true,

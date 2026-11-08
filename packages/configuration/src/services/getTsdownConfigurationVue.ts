@@ -23,12 +23,12 @@ export const getTsdownConfigurationVue = (vizeOptions: VizeUnpluginOptions = {})
     ...(readPackageManifest().private
       ? {}
       : { dts: { generator: "tsrs", tsconfig: "tsconfig.build.json", tsrs: { runExternalCode: true } } }),
+    // The package's stylesheets are merged into its one `style.css`, which a page imports once, and no module imports a
+    // Stylesheet: Node loads this package's `dist` too, in the scripts and benchmarks that read its data, and cannot
+    // Load a `.css` file. An unbundled build splits CSS per module unless told not to
+    css: { splitting: false },
     // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
     plugins: [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vize({ ...vizeOptions, isProduction: true })],
-    // A component's stylesheet is emitted beside it and imported by its own module, so a consumer's bundler loads the
-    // Styles of the components it reaches, and the package declares those imports as its only side effects. Split, the
-    // Build writes no `./style.css`-shaped subpath for a stylesheet, which is reached through its module's import
-    css: { inject: true, splitting: true },
   });

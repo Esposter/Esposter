@@ -27,12 +27,12 @@ pnpm i genshin-interface vue
 
 1. Draw each screen inside `GameScreen`.
 2. Lay out each screen in `calc(var(--unit) * n)`.
-
-Each component brings its own stylesheet, so a bundler loads the styles of the components you import and no more.
+3. Import the styles once, as shown:
 
 ```vue
 <script setup lang="ts">
 import { GameScreen, InterfaceIcon, RoundButton } from "genshin-interface";
+import "genshin-interface/style.css";
 </script>
 
 <template>
