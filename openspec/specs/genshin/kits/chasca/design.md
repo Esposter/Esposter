@@ -44,3 +44,7 @@ flowchart LR
 - [gcsim skill.go and dash.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chasca), MIT: the Blessing's 80 points, its drain and its sprint drain.
 - [Hosted game data](../../hosted-game-data/design.md): the avatar's talent groups 10431, 10432 and 10439, read from the talent and skill kit tables. Checked here against the game's `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` at level 1.
 - The line numbers above are gcsim v2.47.2's files in `{data-root}/cache/gcsim-v2.47.2/internal/characters/chasca/`, and the wiki's Chasca talent page is `{data-root}/cache/genshin-wiki/Category_Chasca_Talents.json`.
+
+## Open
+
+- [ ] **Fully-charged Aimed Shot costs no stamina** — no source yet: a game value for her charged attack's stamina, since the wiki has no stamina row for her and the dump's 0 comes from the candidate builder's rule. Her skill rows in the parity, `11041`, `11043` and `11044` (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`), hold no "costStamina" but name no charged shot, and gcsim's chasca folder gives no stamina either.

@@ -32,3 +32,7 @@ flowchart LR
 - `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, id 10792: Molten Inferno's skill row, with a cooldown of 20 and no energy cost, grounding requirement "Molten Inferno initial hit".
 - `{data-root}/cache/genshin-wiki/Category_Dehya_Talents.json`: the wiki's Molten Inferno page, giving a CD of 20s, grounding requirement "Molten Inferno initial hit".
 - the design's Provisional constants, a pointer to this page's own section: the spin's timing and the circle's radius have no source, grounding requirement "Provisional charged attack".
+
+## Open
+
+- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: a source that gives the final hit's frame count, since the Sandstorm Assault page gives only its Max Duration of 5s (`{data-root}/cache/genshin-wiki/Category_Dehya_Talents.json`), so the 300 frames stay the repo's conversion of those 5 seconds; gcsim's dehya attack file has only a TODO for the charge (`{data-root}/cache/gcsim-v2.47.2/internal/characters/dehya/attack.go` line 79), so a recording of a full charge settles it.

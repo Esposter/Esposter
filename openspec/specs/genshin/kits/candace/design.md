@@ -47,3 +47,4 @@ flowchart LR
 ## Open
 
 - [ ] **a charged hold starts at half a second of holding** — contradicted by `{data-root}/cache/genshin-wiki/Category_Candace_Talents.json` line 1: the Heron's Sanctum page's Gameplay Notes say "The skill will finish charging after 1s of holding it", where the record holds 0.5 seconds for the hold's start.
+- [ ] **the Prayer's infusion lasts 1 second** — no source yet: the game's own duration; gcsim's 60-frame infusion (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/burst.go`) is a simulator's value, not the game's. The cached Wagtail's Tide text gives the Prayer's 9 seconds and no infusion time (`{data-root}/cache/genshin-wiki/Category_Candace_Talents.json`), and no game ability config for it is on disk.
