@@ -45,14 +45,14 @@ flowchart LR
 
 Each reading bundled a probe that imports names from the schema or shared package's built output through Vite, minified, once from the one-file build and once from the unbundled build.
 
-| Import                                  | One file              | Unbundled                               |
-| :-------------------------------------- | :-------------------- | :-------------------------------------- |
-| One enum from the schema package        | over a megabyte       | under a kilobyte                        |
-| `jsonDateParse` from the shared package | tens of kilobytes     | under a kilobyte                        |
-| `takeOne` from the shared package       | tens of kilobytes     | a few dozen bytes                       |
-| Every value name the app's client reads | hundreds of kilobytes | hundreds of kilobytes, from eight names |
+| Import                                  | One file              | Unbundled                                           |
+| :-------------------------------------- | :-------------------- | :-------------------------------------------------- |
+| One enum from the schema package        | over a megabyte       | under a kilobyte                                    |
+| `jsonDateParse` from the shared package | tens of kilobytes     | under a kilobyte                                    |
+| `takeOne` from the shared package       | tens of kilobytes     | a few dozen bytes                                   |
+| Every value name the app's client reads | hundreds of kilobytes | hundreds of kilobytes, from the drizzle-bound names |
 
-The last row is the union of every name the client imports from the schema package, so it shows the floor a route importing all of them pays, not what one route pays. Alone, most of those names are under a few kilobytes unbundled. The eight that stay heavy are the three message entity constructors and the five room, webhook, invite, emoji and call-session schemas derived from tables. A route's cost is the union of what its own files import, which is why the app's client chunk is measured after the change.
+The last row is the union of every name the client imports from the schema package, so it shows the floor a route importing all of them pays, not what one route pays. Alone, most of those names are under a few kilobytes unbundled. The names that stay heavy are the message entity constructors and the schemas derived from a table, which the client's input models build their forms and procedure inputs from, a few dozen in all. The app's own client bundle report after the change puts drizzle's core at tens of kilobytes gzipped in the entry chunk, and zod at over a hundred, every locale included, since `drizzle-orm/zod` uses the namespace as a value. Those are the cost of the drizzle-bound names, so the roadmap's question narrows to a second definition of those names alone.
 
 ## Key files
 

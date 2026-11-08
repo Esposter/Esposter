@@ -7,7 +7,7 @@
 
 ## 2. The consumers
 
-- [ ] 2.1 The Functions bundle and the web app build against the unbundled packages. Verify: `pnpm -C apps/functions build` and `pnpm -C apps/web build` succeed, and the regenerated record moves the apps' rows only by what tree-shaking dropped.
+- [x] 2.1 The Functions bundle and the web app build against the unbundled packages. Verify: `pnpm -C apps/functions build` and `pnpm -C apps/web build` succeed, and the regenerated record moves the apps' rows only by what tree-shaking dropped.
 - [x] 2.2 An import of one enum from the schema package loads no drizzle. Verify: the test 'an import of one enum loads no drizzle' in `scripts/src/workspace/unbundledBarrels.test.ts` passes against the unbundled build and fails against the schema package built into one file.
 
 ## 3. The Vue packages
@@ -16,9 +16,9 @@
 
 ## 4. The workarounds
 
-- [ ] 4.1 Measure the app's client chunk after this change with `pnpm ai:dependencies:score --sort bundle --analyze`, and settle the architecture roadmap's client bundle item: the second-definition question over the eight names that need drizzle, and no subpath for the rest. Verify: the roadmap item names the measured chunk and the decision.
+- [x] 4.1 Measure the app's client chunk after this change with `pnpm ai:dependencies:score --sort bundle --analyze`, and settle the architecture roadmap's client bundle item: the second-definition question over the drizzle-bound names, and no subpath for the rest. Verify: the roadmap item names the measured chunk and the decision.
 - [x] 4.2 Name the subpaths that exist only to dodge the one-file build, and remove them. Verify: the subpath audit test passes. None exists in a manifest: the roadmap's proposed client schema entry and `jsonDateParse` subpath are never added, and every kept subpath serves a consumer with no bundler or a load by path (`.agents/skills/build/references/subpaths.md`).
 
 ## 5. The pages
 
-- [ ] 5.1 The build pages state the unbundled shape: the barrels page, the dist-size page, the subpaths page and the build-pipeline design. Verify: no page says a package builds into one file, and the spec tests pass.
+- [x] 5.1 The build pages state the unbundled shape: the barrels page, the dist-size page, the subpaths page and the build-pipeline design. Verify: no page says a package builds into one file, and the spec tests pass.
