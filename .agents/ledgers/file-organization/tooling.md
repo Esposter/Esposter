@@ -1305,6 +1305,8 @@
 | `scripts/src/services/genshinText/exportSdkText.ts`                                       | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fetchDump.test.ts`                                      | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fetchDump.ts`                                           | 2026-11-01 · Haiku 5.5  |       |
+| `scripts/src/services/genshinText/fetchGitHubTree.test.ts`                                | —                       |       |
+| `scripts/src/services/genshinText/fetchGitHubTree.ts`                                     | —                       |       |
 | `scripts/src/services/genshinText/fetchRemoteFiles.ts`                                    | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | 2026-11-01 · Haiku 5.5  |       |

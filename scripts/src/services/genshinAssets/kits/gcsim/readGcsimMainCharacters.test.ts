@@ -39,12 +39,4 @@ describe(readGcsimMainCharacters, () => {
     );
     expect(vi.mocked(fetchOk)).toHaveBeenCalledExactlyOnceWith(`${GCSIM_RAW_URL}/${GCSIM_MAIN_COMMIT}/${configPath}`);
   });
-
-  test("A tree the API cut short throws", async () => {
-    expect.hasAssertions();
-
-    vi.mocked(fetchJson).mockResolvedValueOnce({ tree: [], truncated: true });
-
-    await expect(readGcsimMainCharacters([folder])).rejects.toThrowError(GCSIM_MAIN_COMMIT);
-  });
 });
