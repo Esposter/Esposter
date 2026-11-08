@@ -1,5 +1,6 @@
 import type { ViteUserConfig } from "vitest/config";
 
+import { readApprovedImageNames } from "#src/services/readApprovedImageNames";
 import { playwright } from "@vitest/browser-playwright";
 import { join } from "node:path";
 
@@ -32,7 +33,15 @@ export const getVitestBrowserConfiguration = (
     enabled: true,
     expect: {
       toMatchScreenshot: {
-        resolveScreenshotPath: ({ arg, ext, root }) => join(root, "src", "components", `${arg}${ext}`),
+        resolveScreenshotPath: ({ arg, ext, root }) => {
+          const screenshotPath = join(root, "src", "components", `${arg}${ext}`);
+          const approvedImageNames = readApprovedImageNames(screenshotPath);
+          // A screen has one approved image, so a second one, such as an earlier platform's, fails the run and names the screen
+          if (approvedImageNames.length > 1)
+            throw new Error(`${arg} has more than one approved image: ${approvedImageNames.join(", ")}`);
+
+          return screenshotPath;
+        },
       },
     },
     // The captures a suite takes for its own checks are not images, so they stay out of the suite's folders, in

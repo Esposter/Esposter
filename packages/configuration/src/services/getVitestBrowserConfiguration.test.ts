@@ -1,10 +1,30 @@
 import { getVitestBrowserConfiguration } from "#src/services/getVitestBrowserConfiguration";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getVitestBrowserConfiguration, () => {
+  const TEST_FILENAME = "a";
   const resolveScreenshotPath = getVitestBrowserConfiguration({ height: 1, width: 1 }).browser.expect?.toMatchScreenshot
     ?.resolveScreenshotPath as (options: { arg: string; ext: string; platform: string; root: string }) => string;
+  let screenshotRoot = "";
+
+  // The images of one screen sit in its folder under the components, the folder the suites' names resolve into
+  const writeScreenImages = (...imageNames: string[]) => {
+    const screenDirectory = join(screenshotRoot, "src", "components", "Screen");
+    mkdirSync(screenDirectory, { recursive: true });
+
+    for (const imageName of imageNames) writeFileSync(join(screenDirectory, imageName), "");
+  };
+
+  beforeEach(() => {
+    screenshotRoot = mkdtempSync(join(tmpdir(), TEST_FILENAME));
+  });
+
+  afterEach(() => {
+    rmSync(screenshotRoot, { force: true, recursive: true });
+  });
 
   test("compares every pixel exactly when the update variable it names is set", () => {
     expect.hasAssertions();
@@ -41,6 +61,28 @@ describe(getVitestBrowserConfiguration, () => {
 
     expect(resolveScreenshotPath({ arg: "Index", ext: ".png", platform, root: "/root" })).toBe(
       join("/root", "src", "components", "Index.png"),
+    );
+  });
+
+  test("two approved images for one screen fail the run and name the screen", () => {
+    expect.hasAssertions();
+
+    writeScreenImages("Index.png", "Index.win32.png");
+
+    expect(() =>
+      resolveScreenshotPath({ arg: "Screen/Index", ext: ".png", platform: "win32", root: screenshotRoot }),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[Error: Screen/Index has more than one approved image: Index.png, Index.win32.png]`,
+    );
+  });
+
+  test("a variant's image beside its base is not a second approved image", () => {
+    expect.hasAssertions();
+
+    writeScreenImages("Index.png", "Index-dusk.png");
+
+    expect(resolveScreenshotPath({ arg: "Screen/Index", ext: ".png", platform: "win32", root: screenshotRoot })).toBe(
+      join(screenshotRoot, "src", "components", "Screen", "Index.png"),
     );
   });
 });
