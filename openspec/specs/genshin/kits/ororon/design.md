@@ -44,7 +44,3 @@ flowchart TD
 - The cached Genshin wiki, `{data-root}/cache/genshin-wiki/Category_Ororon_Talents.json`: the three strike rows' poise (17.6, 15.48 and 24.35) and the constellation notes.
 - The proud skill groups 10531, 10532 and 10539 in the hosted game data: the multipliers' indices, the Spirit Orb's 15-second cooldown (group 10532's index 1, `{data-root}/cache/gcsim-v2.47.2/internal/characters/ororon/skill.go:68`), and the burst's 9 seconds, 15-second cooldown and 60 energy (group 10539's indices 2, 3 and 4).
 - No YouTube or Bilibili reference snapshot for Ororon is in the repo, so no claim here rests on video.
-
-## Open
-
-- [ ] The zero poise is provisional, since the wiki's poise figures for these hits are open: see the [design](design.md).
