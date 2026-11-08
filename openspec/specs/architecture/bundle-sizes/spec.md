@@ -6,7 +6,7 @@ Every file a workspace package's build emits has its exact size committed in one
 
 ### Requirement: The record holds the exact size of every built file
 
-The record SHALL list every file each built workspace package emits with its size in bytes, and the workspace test SHALL fail when a fresh build differs from it in any file's size, or in the files present.
+The record SHALL list the size in bytes of every file each built workspace package emits, the modules of an unbundled package as one row per extension, and the workspace test SHALL fail when a fresh build differs from it in any row's size, or in the rows present.
 
 #### Scenario: the record is the size of every built file
 

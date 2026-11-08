@@ -19,8 +19,14 @@ A package whose side effects each land in an exported binding — the infrastruc
 entry exists to run; an **array of module paths** where one module runs and the rest are ordinary exports — a
 package registering a plugin at module scope names that file rather than surrendering the whole package's
 tree-shaking to a blanket `true`. Name both arms when a package is resolved through both: a consumer
-on `source` reaches the file itself, one on `default` gets a single chunk that carries the registration with
-everything else, and a path matching neither leaves a bundler free to drop the call.
+on `source` reaches the file itself, one on `default` gets the module's built file at the same path under `dist`
+(a package builds one output file per module, `references/barrels.md`), and a path matching neither leaves a
+bundler free to drop the call.
+
+A Vue package's side effects are its stylesheets: each component's module imports its own `.css` file, and the
+package answers `["**/*.css"]`, so a bundler keeps those imports for every component it reaches and drops the
+modules it does not. `sideEffects.test.ts` fails a package whose `.vue` files carry a style block and whose answer
+omits the stylesheets, since a bundler drops every such import and the components render unstyled with nothing failing.
 
 Leaving the field off is not the safe middle — absent means _unknown_, so a consumer's bundler keeps everything,
 the same outcome as `true` while reading as nobody having considered it. Nothing can derive the value, so
