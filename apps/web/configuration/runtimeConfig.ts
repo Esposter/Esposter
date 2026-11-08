@@ -5,11 +5,7 @@ import type { NuxtConfig } from "nuxt/schema";
 export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
   public: {
     appEnv: process.env.APP_ENV,
-    azure: {
-      container: { baseUrl: process.env.AZURE_CONTAINER_BASE_URL },
-      eventGrid: { topic: { endpoint: process.env.AZURE_EVENT_GRID_TOPIC_ENDPOINT } },
-      function: { baseUrl: process.env.AZURE_FUNCTION_BASE_URL },
-    },
+    azure: { container: { baseUrl: process.env.AZURE_CONTAINER_BASE_URL } },
     baseUrl: process.env.BASE_URL,
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID },
     vapid: { publicKey: process.env.VAPID_PUBLIC_KEY },
