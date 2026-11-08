@@ -69,3 +69,7 @@ export const COMPONENTS_DIRECTORY = "components";
 // A leading dot on a folder name in an output path, such as the `.pnpm` folder pnpm keeps its packages in
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const HIDDEN_FOLDER_REGEX: RegExp = /(?<![^/])\.(?=\w)/gu;
+// The peer suffix of a vendored package's folder, such as `_vue@3.5.45_typescript@6.0.3` after `vize@0.715.0`, which
+// Pnpm keeps whole on Linux and shortens to a hash on Windows
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
+export const PNPM_PEER_SUFFIX_REGEX: RegExp = /(vendor\/pnpm\/@?[^/@]+@[^/_]+)_[^/]*/gu;

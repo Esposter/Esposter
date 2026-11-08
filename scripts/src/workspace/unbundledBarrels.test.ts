@@ -19,6 +19,8 @@ const readDistDirectory = (packagePath: string) => resolve(REPOSITORY_ROOT, pack
 describe("unbundledBarrels", () => {
   // Matches a module's import of a stylesheet, bare or with bindings, which a bundler resolves and Node cannot load
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
+  // Matches a pnpm store folder name that carries a peer suffix after its version, such as `vize@0.715.0_vue@3.5.45_…`
+  const PEER_SUFFIX_FOLDER_REGEX = /^@?[^@]+@[^_]+_/u;
   const PACKAGE_PATHS = readTsdownPackagePaths();
 
   const DB_SCHEMA_ENTRY = pathToFileURL(resolve(REPOSITORY_ROOT, "packages/db-schema/dist/index.js")).href;
@@ -65,6 +67,22 @@ describe("unbundledBarrels", () => {
     });
 
     expect(hiddenPaths).toStrictEqual([]);
+  });
+
+  // Pnpm keeps a package's folder name whole on Linux and shortens it to a hash on Windows, and a declaration imports
+  // The vendored file by that name, so the size record differed between CI's build and a checkout on Windows
+  test("a vendored package's folder is named by its version alone", () => {
+    expect.hasAssertions();
+
+    const suffixedPaths = PACKAGE_PATHS.flatMap((packagePath) => {
+      const vendorDirectory = resolve(readDistDirectory(packagePath), "vendor", "pnpm");
+      if (!existsSync(vendorDirectory)) return [];
+      return readdirSync(vendorDirectory)
+        .filter((name) => PEER_SUFFIX_FOLDER_REGEX.test(name))
+        .map((name) => `${packagePath}: ${name}`);
+    });
+
+    expect(suffixedPaths).toStrictEqual([]);
   });
 
   // The scripts and benchmarks read a Vue package's data through its `dist` under plain Node, which fails on a `.css`

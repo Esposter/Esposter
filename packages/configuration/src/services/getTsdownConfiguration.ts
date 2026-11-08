@@ -1,7 +1,7 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { HIDDEN_FOLDER_REGEX, SOURCE_CONDITION } from "#src/services/constants";
+import { HIDDEN_FOLDER_REGEX, PNPM_PEER_SUFFIX_REGEX, SOURCE_CONDITION } from "#src/services/constants";
 import { generateExports } from "#src/services/generateExports";
 import { getPackagePatterns } from "#src/services/getPackagePatterns";
 import { readPackageManifest } from "#src/services/readPackageManifest";
@@ -91,8 +91,10 @@ export const getTsdownConfiguration = ({
     // Import reaches, with the barrel and the `.` export unchanged. A vendored dependency's files are written under
     // `vendor` rather than `node_modules`, the one folder name `npm pack` never ships, and a folder loses its leading
     // Dot (pnpm's `.pnpm`), since the tools that move a `dist` between machines skip a hidden folder: CI's artifact
-    // Upload dropped the vendored files and the app build then could not resolve them. A function replaces the default
-    // Sanitizer, so it keeps the three characters that one swaps for an underscore.
+    // Upload dropped the vendored files and the app build then could not resolve them. That folder keeps the package
+    // And its version and drops pnpm's peer suffix, which pnpm shortens to a hash on Windows, so the declarations that
+    // Import a vendored file name the same path, and measure the same size, on every machine. A function replaces the
+    // Default sanitizer, so it keeps the three characters that one swaps for an underscore.
     outputOptions: {
       sanitizeFileName: (name: string) =>
         name
@@ -100,7 +102,8 @@ export const getTsdownConfiguration = ({
           .replaceAll("?", "_")
           .replaceAll("*", "_")
           .replaceAll("node_modules", "vendor")
-          .replace(HIDDEN_FOLDER_REGEX, ""),
+          .replace(HIDDEN_FOLDER_REGEX, "")
+          .replace(PNPM_PEER_SUFFIX_REGEX, "$1"),
     },
     platform: "neutral",
     unbundle: true,

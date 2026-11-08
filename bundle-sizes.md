@@ -8,15 +8,15 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/db-mock          | snapshot.tar.gz          | 5081004 | 4961.9 |
 | genshin-world              | **/*.js                  | 3957367 | 3864.6 |
 | @esposter/db               | **/*.js                  | 2069494 | 2021.0 |
-| genshin-world              | **/*.d.ts                | 1988357 | 1941.8 |
+| genshin-world              | **/*.d.ts                | 1981877 | 1935.4 |
 | genshin-text               | **/*.js                  |  699964 |  683.6 |
 | genshin-world              | index.d.ts               |  425077 |  415.1 |
 | genshin-world              | index.js                 |  376039 |  367.2 |
 | genshin-engine             | **/*.js                  |  344609 |  336.5 |
 | genshin-world              | style.css                |  306306 |  299.1 |
-| vue-phaserjs               | **/*.d.ts                |  298331 |  291.3 |
-| genshin-interface          | **/*.d.ts                |  267882 |  261.6 |
+| vue-phaserjs               | **/*.d.ts                |  297131 |  290.2 |
 | genshin-interface          | **/*.js                  |  265059 |  258.8 |
+| genshin-interface          | **/*.d.ts                |  264858 |  258.7 |
 | @esposter/functions        | Arrow.node-[hash].js     |  255689 |  249.7 |
 | genshin-interface          | style.css                |  192333 |  187.8 |
 | @esposter/db-schema        | **/*.js                  |  170464 |  166.5 |
@@ -55,8 +55,8 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | math-expression-compiler   | index.js                 |   19240 |   18.8 |
 | trpc-nuxt-module           | **/*.js                  |   17636 |   17.2 |
 | pitch-transcription        | **/*.js                  |   17265 |   16.9 |
+| @esposter/configuration    | **/*.js                  |   16587 |   16.2 |
 | genshin-interface          | index.js                 |   16569 |   16.2 |
-| @esposter/configuration    | **/*.js                  |   16427 |   16.0 |
 | @esposter/functions        | tslib.es6-[hash].js      |   16200 |   15.8 |
 | survey-expression          | index.d.ts               |   15635 |   15.3 |
 | trpc-nuxt-module           | **/*.d.ts                |   15459 |   15.1 |
@@ -93,8 +93,8 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | pitch-transcription        | index.js                 |    3722 |    3.6 |
 | vue-pdfjs-headless         | index.d.ts               |    3577 |    3.5 |
 | vue-editor-layout-headless | index.d.ts               |    3477 |    3.4 |
+| @esposter/configuration    | index.js                 |    3221 |    3.1 |
 | trpc-msw                   | createTRPCMsw.js         |    3196 |    3.1 |
-| @esposter/configuration    | index.js                 |    3173 |    3.1 |
 | @esposter/azure            | index.d.ts               |    3151 |    3.1 |
 | tresjs-nuxt                | **/*.js                  |    3107 |    3.0 |
 | @esposter/azure            | index.js                 |    3054 |    3.0 |
@@ -164,4 +164,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 159 files, 24092335 bytes, 23527.7 KiB, 22.98 MiB
+**Total:** 159 files, 24081839 bytes, 23517.4 KiB, 22.97 MiB
