@@ -61,6 +61,7 @@ import { createInfusionNeedlePassiveModule } from "#src/services/weapon/passives
 import { createInfusionScrollPassiveModule } from "#src/services/weapon/passives/createInfusionScrollPassiveModule";
 import { createInfusionStingerPassiveModule } from "#src/services/weapon/passives/createInfusionStingerPassiveModule";
 import { createIronbonePassiveModule } from "#src/services/weapon/passives/createIronbonePassiveModule";
+import { createIsshinArtClarityPassiveModule } from "#src/services/weapon/passives/createIsshinArtClarityPassiveModule";
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
@@ -80,6 +81,7 @@ import { createParticleHealPassiveModule } from "#src/services/weapon/passives/c
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
+import { createPrincipleOfEquilibriumPassiveModule } from "#src/services/weapon/passives/createPrincipleOfEquilibriumPassiveModule";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
 import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives/createPurifyingCrownPassiveModule";
@@ -331,6 +333,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2664303051": createSeasonedSymphonyPassiveModule,
   // Iwakura Succession (Amenoma Kageuchi)
   "2700351571": createIwakuraSuccessionPassiveModule,
+  // Isshin Art Clarity (Kagotsurube Isshin)
+  "607067451": createIsshinArtClarityPassiveModule,
   // Sky-Piercing Fang (Skyward Blade)
   "2711925235": createSkyPiercingFangPassiveModule,
   // Labyrinth Lord's Instruction (King's Squire)
@@ -479,6 +483,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
     ),
   // Press the Advantage (Blackcliff Pole)
   "4236194011": createPressTheAdvantagePassiveModule,
+  // Principle of Equilibrium (Dialogues of the Desert Sages)
+  "1092884699": createPrincipleOfEquilibriumPassiveModule,
   // Composed (Sacrificial Greatsword)
   "4267154851": createComposedPassiveModule,
   // Secret Wisdom's Favor (Ibis Piercer)
