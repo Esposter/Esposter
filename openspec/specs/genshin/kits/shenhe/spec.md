@@ -48,13 +48,13 @@ Divine Maiden's Deliverance SHALL deal an initial hit and leave a field 2 metres
 
 ### Requirement: Divine Maiden's Deliverance field RES Decrease
 
-Each field tick SHALL hold an RES Decrease on the enemies within the field for one tick interval, 117 frames (see Open).
+Each field tick SHALL hold an RES Decrease on the enemies within the field for one tick interval, 117 frames (open: see the design's Open list).
 
 #### Scenario: DoT tick holds the RES Decrease
 
 - **GIVEN** Divine Maiden's Deliverance's field is standing
 - **WHEN** a DoT tick strikes an enemy
-- **THEN** that enemy's RES is decreased for one tick interval, 117 frames (see Open)
+- **THEN** that enemy's RES is decreased for one tick interval, 117 frames (open: see the design's Open list)
 
 ### Requirement: Ascension 1 Cryo DMG Bonus in the field
 
@@ -181,7 +181,7 @@ Each Icy Quill trigger SHALL give Shenhe a Skyfrost Mantra stack from Constellat
 
 ### Requirement: Constellation 4 Skyfrost Mantra consumed by Spring Spirit Summoning
 
-Shenhe's Spring Spirit Summoning SHALL consume all of her stacks as it starts, adding 5% DMG to each of its hits for each stack consumed, for the seconds the summoning plays. The window is the press action's length, flagged rather than read: no source gives it (see Open).
+Shenhe's Spring Spirit Summoning SHALL consume all of her stacks as it starts, adding 5% DMG to each of its hits for each stack consumed, for the seconds the summoning plays. The window is the press action's length, flagged rather than read: no source gives it (open: see the design's Open list).
 
 #### Scenario: Spring Spirit Summoning consumes the stacks
 
