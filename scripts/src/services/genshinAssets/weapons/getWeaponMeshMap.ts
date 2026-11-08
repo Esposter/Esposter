@@ -10,13 +10,13 @@ export const getWeaponMeshMap = (
   rows: readonly Pick<ExcelWeaponRow, "awakenTexture" | "id">[],
   meshNames: ReadonlySet<string>,
 ): WeaponMeshMap => {
-  const meshByWeaponId: Record<string, string> = {};
+  const weaponIdMeshMap: Record<string, string> = {};
   const weaponIdsWithoutMesh: number[] = [];
   for (const { awakenTexture, id } of rows) {
     const folder = TEXTURE_FOLDER_REGEX.exec(awakenTexture)?.groups?.folder;
     const meshName = folder ? `${folder}_Model` : "";
-    if (meshNames.has(meshName)) meshByWeaponId[id] = meshName;
+    if (meshNames.has(meshName)) weaponIdMeshMap[id] = meshName;
     else weaponIdsWithoutMesh.push(id);
   }
-  return { meshByWeaponId, weaponIdsWithoutMesh };
+  return { weaponIdMeshMap, weaponIdsWithoutMesh };
 };

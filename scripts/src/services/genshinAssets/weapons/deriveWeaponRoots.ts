@@ -22,7 +22,7 @@ export const deriveWeaponRoots = <THeldMesh extends HeldMesh>(
   cabMap: ReadonlyMap<string, CabEntry>,
   heldMeshes: readonly THeldMesh[],
 ): WeaponRootDerivation<THeldMesh> => {
-  const heldKeys = new Set(heldMeshes.map(toMeshKey));
+  const heldKeys = new Set(heldMeshes.map((mesh) => toMeshKey(mesh)));
   const objectMap = new Map(objects.map((object) => [toObjectKey(object.file, object.transformId), object]));
   const findRootOf = (object: SceneObject): SceneObject => {
     let current = object;
@@ -46,10 +46,10 @@ export const deriveWeaponRoots = <THeldMesh extends HeldMesh>(
     }
   return {
     roots: [...rootMap.values()].toSorted(
-      (first, second) =>
-        first.block.localeCompare(second.block) ||
-        first.name.localeCompare(second.name) ||
-        first.pathId.localeCompare(second.pathId),
+      (firstRoot, secondRoot) =>
+        firstRoot.block.localeCompare(secondRoot.block) ||
+        firstRoot.name.localeCompare(secondRoot.name) ||
+        firstRoot.pathId.localeCompare(secondRoot.pathId),
     ),
     unreachedMeshes: heldMeshes.filter((mesh) => !reachedKeys.has(toMeshKey(mesh))),
   };

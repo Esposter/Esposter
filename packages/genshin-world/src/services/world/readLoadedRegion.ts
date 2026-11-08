@@ -1,8 +1,8 @@
 import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 
 import { readRegionData } from "#src/services/world/readRegionData";
-import { readRegionRockLandmarks } from "#src/services/world/readRegionRockLandmarks";
 import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
+import { readRegionRockLandmarks } from "#src/services/world/readRegionRockLandmarks";
 
 // A region as it loads in reach: its data as the host serves it, then the palettes of the kits its buildings are built by,
 // So each hosted record a region draws with is read only once the region comes within reach. Its ground pieces are read

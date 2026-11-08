@@ -9,12 +9,12 @@ import { readGroundPieceAreas } from "#src/services/genshinAssets/fit/readGround
 import { GENSHIN_ANIMESTUDIO_OPTIONS, TERRAIN_TILE_SIZE } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
+import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import {
   ARCHITECTURE_VIEW_METRES,
   STREAM_INDEX_SUFFIX,
   TERRAIN_NAME_PREFIX,
 } from "#src/services/genshinAssets/world/constants";
-import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerrainTiles";
 import { exportWorldStreams } from "#src/services/genshinAssets/world/exportWorldStreams";
 import { getCityStreamName } from "#src/services/genshinAssets/world/getCityStreamName";

@@ -18,7 +18,7 @@ export const fitWeaponMeshMap = async (): Promise<GameDataBuild> => {
   const weaponMeshMap = getWeaponMeshMap(rows, meshNames);
   return {
     notes: [
-      `${Object.keys(weaponMeshMap.meshByWeaponId).length} weapon rows pair with a held mesh, ${weaponMeshMap.weaponIdsWithoutMesh.length} have none`,
+      `${Object.keys(weaponMeshMap.weaponIdMeshMap).length} weapon rows pair with a held mesh, ${weaponMeshMap.weaponIdsWithoutMesh.length} have none`,
     ],
     objects: { [`${GameDataset.WeaponShapes}/meshMap`]: weaponMeshMap },
   };
