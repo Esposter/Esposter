@@ -8,17 +8,20 @@ import { readFileProvenance } from "#src/services/provenance/readFileProvenance"
 import { writeStampedFiles } from "#src/services/provenance/writeStampedFiles";
 import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { rmSync } from "node:fs";
+import { rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The city areas file is a temporary one, so no file of the repository's parity folder is read or written
-const { CITY_AREA_FILE_PATH } = await vi.hoisted(async () => {
+// The city areas file and the tool the stamp hashes are temporary ones, so no file of the repository's parity folder is
+// Read or written, and a machine with no install, CI's, stamps the same
+const { ANIMESTUDIO_TOOL_PATH, CITY_AREA_FILE_PATH } = await vi.hoisted(async () => {
   const { mkdtempSync: makeDirectory } = await import("node:fs");
   const { tmpdir: temporaryDirectory } = await import("node:os");
   const { join: joinPath } = await import("node:path");
+  const directory = makeDirectory(joinPath(temporaryDirectory(), "city-areas-"));
   return {
-    CITY_AREA_FILE_PATH: joinPath(makeDirectory(joinPath(temporaryDirectory(), "city-areas-")), "city-areas.json"),
+    ANIMESTUDIO_TOOL_PATH: joinPath(directory, "AnimeStudio.CLI"),
+    CITY_AREA_FILE_PATH: joinPath(directory, "city-areas.json"),
   };
 });
 
@@ -28,6 +31,10 @@ const { extractCityAreas, readCityAreaCandidates, readGameVersion } = vi.hoisted
   readGameVersion: vi.fn<() => Promise<string>>(),
 }));
 
+vi.mock(import("#src/services/genshinAssets/shared/constants"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  ANIMESTUDIO_TOOL: { name: "AnimeStudio", path: ANIMESTUDIO_TOOL_PATH },
+}));
 vi.mock(import("#src/services/genshinAssets/shared/readGameVersion"), () => ({ readGameVersion }));
 vi.mock(import("#src/services/genshinAssets/world/constants"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -56,6 +63,7 @@ describe(buildCityAreas, () => {
     expect.hasAssertions();
 
     writeJsonFile(CITY_AREA_FILE_PATH, CACHED);
+    writeFileSync(ANIMESTUDIO_TOOL_PATH, "");
 
     await expect(buildCityAreas()).resolves.toStrictEqual(CACHED);
     expect(extractCityAreas).toHaveBeenCalledExactlyOnceWith([]);
