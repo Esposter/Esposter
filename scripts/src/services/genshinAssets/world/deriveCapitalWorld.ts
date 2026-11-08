@@ -14,6 +14,7 @@ import {
   STREAM_INDEX_SUFFIX,
   TERRAIN_NAME_PREFIX,
 } from "#src/services/genshinAssets/world/constants";
+import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import { exportTerrainTiles } from "#src/services/genshinAssets/world/exportTerrainTiles";
 import { exportWorldStreams } from "#src/services/genshinAssets/world/exportWorldStreams";
 import { getCityStreamName } from "#src/services/genshinAssets/world/getCityStreamName";
@@ -129,7 +130,7 @@ export const deriveCapitalWorld = async (
     ({ name, type }) => type === AssetType.Mesh && indexedNames.has(name),
     GENSHIN_ANIMESTUDIO_OPTIONS,
   );
-  const nameBlocksMap = await readPrefabBlocks(prefabMeshes, cabMap);
+  const nameBlocksMap = await readPrefabBlocks(prefabMeshes, cabMap, ({ name }) => checkIsArchitectureName(name));
   const dumpedBlocks = [...new Set([...nameBlocksMap.values()].flat())];
   const meshBlocks = new Set(prefabMeshes.map(({ block }) => block));
   lines.push(
