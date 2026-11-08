@@ -114,6 +114,20 @@ const ascendInventory: Inventory = {
   quickSwapItemIds: [],
 };
 
+// The bag holding the open weapon, the ores and eight fodder weapons, one more than the Enhance strip's seven slots hold in view
+const MANY_FODDER_COUNT = 8;
+const manyFodderBag: Inventory = {
+  items: [
+    toWeaponEntry(openWeapon, OPEN_ENTRY_ID),
+    ...oreItems,
+    ...Array.from({ length: MANY_FODDER_COUNT }, (_value, index) =>
+      toWeaponEntry(fodderWeapon, FODDER_ENTRY_ID + index),
+    ),
+  ],
+  nextId: FODDER_ENTRY_ID + MANY_FODDER_COUNT,
+  quickSwapItemIds: [],
+};
+
 export const variants = {
   ascend: {
     adventureRank: nextPhase?.requiredPlayerLevel ?? 0,
@@ -122,6 +136,8 @@ export const variants = {
     wallet: { ...EMPTY_WALLET, [Currency.Mora]: nextPhase?.coinCost ?? 0 },
   },
   atCap: { inventory: atCapBag },
+  // The Enhance tab with eight fodder weapons in the bag, whose candidates run past the strip's seventh slot
+  manyFodder: { inventory: manyFodderBag },
   // A weapon at rank five, which no Refine tab is offered for
   rankFive: { inventory: createBag({ ...openWeapon, refinement: 5 }) },
   // The Refine tab open on the weapon at its cap, which offers Ascend in place of Enhance, with the copy in the bag to pick

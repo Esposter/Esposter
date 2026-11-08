@@ -20,7 +20,7 @@ import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
@@ -128,6 +128,34 @@ describe("weaponScreen", () => {
     expect(getBagWeapon(writtenInventory?.items ?? [], OPEN_ENTRY_ID).level).toBeGreaterThan(1);
     expect(onUpdateWallet).toHaveBeenCalledTimes(1);
     expect(onUpdateWallet.mock.calls[0]?.[0][Currency.Mora]).toBeLessThan(props.wallet[Currency.Mora]);
+  });
+
+  // The Enhance strip holds seven candidates in view, so the eighth fodder weapon scrolls into reach inside the strip and is picked there
+  test("the Enhance strip scrolls to a candidate past the seventh", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, { props: { ...props, ...variants.manyFodder } });
+
+    const strip = container.querySelector<HTMLElement>(".enhance-cells");
+    const lastCandidate = Array.from(container.querySelectorAll<HTMLElement>(".enhance-cells .cell")).at(-1);
+    assert.exists(strip);
+    assert.exists(lastCandidate);
+
+    expect(getComputedStyle(strip).overflowX).toBe("auto");
+
+    strip.scrollLeft = strip.scrollWidth;
+    const stripRect = strip.getBoundingClientRect();
+    const candidateRect = lastCandidate.getBoundingClientRect();
+
+    expect(candidateRect.left).toBeGreaterThanOrEqual(stripRect.left);
+    expect(candidateRect.right).toBeLessThanOrEqual(stripRect.right);
+
+    const lastPick = lastCandidate.querySelector<HTMLElement>(".pick");
+    assert.exists(lastPick);
+
+    await page.elementLocator(lastPick).click();
+
+    await expect.element(page.elementLocator(lastPick)).toHaveAttribute("aria-pressed", "true");
   });
 
   // Ascend is absent below the level cap and offered at it

@@ -87,12 +87,15 @@ const emptySlotCount = computed(() =>
   overflow: hidden;
 }
 
+/* The candidates past the strip's seventh slot scroll into reach along its width, with the scrollbar hidden */
 .enhance-cells {
   top: calc(var(--reference-pixel) * 600);
   left: calc(var(--reference-pixel) * 1104);
   width: calc(var(--reference-pixel) * 714);
   height: calc(var(--reference-pixel) * 122);
   gap: calc(var(--reference-pixel) * 13);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .refine-cells {
