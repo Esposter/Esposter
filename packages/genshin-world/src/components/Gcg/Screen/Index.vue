@@ -134,6 +134,7 @@ const battleLabel = computed(() =>
     <GcgScreenHand
       :armed-hand-index
       :cards="playerHandCards"
+      :game-text
       :reroll-hand-index
       :switched-hand-indices
       :text-map

@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { GcgCard } from "#src/models/gcg/GcgCard";
+import type { GameText } from "genshin-text";
 
 import GcgScreenCard from "#src/components/Gcg/Screen/Card/Index.vue";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The hand card the player has armed to play onto a Character, by its hand index
   armedHandIndex?: number;
   // The side's hand, its cards in the order it holds them
   cards: GcgCard[];
+  // The game's words in the reader's language
+  gameText: GameText;
   // The Toss-Up card being played, by its hand index
   rerollHandIndex?: number;
   // The cards the player has picked to switch away in preparation, by their hand index
@@ -16,18 +20,17 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { armedHandIndex, cards, rerollHandIndex, switchedHandIndices, textMap } = defineProps<Props>();
+const { armedHandIndex, cards, gameText, rerollHandIndex, switchedHandIndices, textMap } = defineProps<Props>();
 const emit = defineEmits<{ select: [handIndex: number] }>();
 </script>
 
 <template>
-  <!-- The hand fanned along the bottom of the board, each card lit as the choice it stands for is. The dice cost has no
-       GameTextKey yet, so its number is read alone -->
+  <!-- The hand fanned along the bottom of the board, each card lit as the choice it stands for is -->
   <div class="hand">
     <GcgScreenCard
       v-for="(card, index) in cards"
       :key="index"
-      cost-label=""
+      :cost-label="gameText[GameTextKey.GcgCost]"
       :costs="card.costs"
       :is-selected="armedHandIndex === index || rerollHandIndex === index || switchedHandIndices.includes(index)"
       :name="textMap[card.nameTextId] ?? ''"

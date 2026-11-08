@@ -21,8 +21,7 @@ const emit = defineEmits<{ select: [characterIndex: number] }>();
 </script>
 
 <template>
-  <!-- A side's characters across the board, the active one raised by its class. Energy and shield have no GameTextKey yet,
-       so their numbers are read alone -->
+  <!-- A side's characters across the board, the active one raised by its class -->
   <div class="row">
     <GcgScreenCharacter
       v-for="(item, index) in characters"
@@ -30,14 +29,14 @@ const emit = defineEmits<{ select: [characterIndex: number] }>();
       :aura="item.character.aura"
       :class="{ active: index === activeIndex }"
       :energy="item.character.energy"
-      energy-label=""
+      :energy-label="gameText[GameTextKey.GcgEnergy]"
       :hp="item.character.hp"
       :hp-label="gameText[GameTextKey.Health]"
       :is-choosable="item.isChoosable"
       :max-energy="item.character.character.maxEnergy"
       :name="textMap[item.character.character.nameTextId] ?? ''"
       :shield="item.character.shield"
-      shield-label=""
+      :shield-label="gameText[GameTextKey.GcgShield]"
       @select="emit('select', index)"
     />
   </div>
