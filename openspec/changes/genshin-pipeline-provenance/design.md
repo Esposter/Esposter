@@ -16,7 +16,20 @@ Every export, fit input and record the conversion pipeline writes carries one pr
 - **An archive is saved as `archive`, not `archive.zip`.** The system's tar reads a zip or a tar.xz by its contents, so the saved name changes nothing and should not claim a format.
 - **The media-engine probe and the setup check still read `ffmpeg` on the PATH.** They ask a machine what it has rather than run a stage, so the rule that no stage reads the PATH does not reach `checkHasMediaEngine` or the setup tool list.
 - **The system-path scenario is asserted beside its callers.** `resolveFfmpeg` runs neither tool, so `resolveFfmpeg.test.ts` covers the PATH and the platform choice, and each caller's own test asserts its system path (`getSystemTarPath.test.ts`, `readMemoryStatusGigabytes.test.ts`, `getPerformanceCoreCount.test.ts`, `getTransferCommands.test.ts`).
-
+- **The status scans the folders the stamp writers name.** `readInstallStaleRows` imports the three folders and the city area file from the constants the writers use, and types no path of its own.
+- **Each stamp is read through `readStamp`**, the one reader the folder and file readers wrap, so a folder's stamp and a sidecar are read the same way.
+- **A stamp no reader can parse is listed under its own path as its command, with no game version**, so the scan lists it rather than halting.
+- **An output with no stamp at all is not found by the scan**, since no stamp names it; the fit's refusal names it when it is read.
+- **A command kind is the first whose pattern matches the stamped command**, and a command no kind lists is planned last under its own heading.
+- **A status row counts the stale outputs of its command**, and names the game version of each stale one, `none` for one that no reader could parse.
+- **The plan prints the stamped command, not a runnable line**, since a `record` stamp names no fit; the runbook maps each verb to its script.
+- **Status exits 1 while any row is stale and plan exits 0**, and neither writes anything.
+- **The lock's version is read from an optional `gameVersion` field**, and `not recorded` is printed while it holds none, which is the lock as it stands.
+- **The decoder line is a literal `not pinned`** while the decoder constants are pinned to no commit, and the pin that lands replaces that line.
+- **The scan does not follow a symbolic link**, since the installed blocks folder holds links to the game's own block files.
+- **The runbook runs `genshin:data verify` after the fits publish**, since verify follows every publish; the task's order named it before the publish.
+- **A record's fit runs once per component**, without `--only`, since a fit publishes its records as it runs and one run covers its component's records.
+>
 ## How it works
 
 The pins gate what is fetched, the tool installs gate what runs, and the stamp gates what a consumer reads. One reader serves the fit, the map and the fleet copy, so a refusal names both versions the same way in each of them, and no consumer keeps a check of its own.
@@ -137,6 +150,16 @@ scripts/src/services/fleet/data/
   selectVouchedPaths.ts          the paths no stamp of another version refuses
   parseStampEntry.ts, checkIsStampPath.ts     a peer's stamp line, and a path that names a stamp
   commands/printStamps.ts, commands/readStdinLines.ts     the stamps verb's print and its stdin
+scripts/src/gameVersion/index.ts                            the `genshin:version` entry, which runs its command
+scripts/src/models/gameVersion/                             the command kind, the stamped output, the stale row and the plan section
+scripts/src/services/gameVersion/
+  commands/gameVersionCommand.ts, statusCommand.ts, planCommand.ts   the `status` and `plan` verbs
+  constants.ts                   the command kinds in plan order, the unlisted heading and the label for no version
+  readInstallStaleRows.ts        the install's stale rows, under the folders the stamp writers name
+  readStaleRows.ts               the stale rows of the stamps under given folders and beside given files
+  listStampPaths.ts, readStampedOutput.ts, groupStaleOutputs.ts   the walk, the read of one stamp, and the rows
+  planStaleRows.ts, findCommandHeading.ts, formatStaleRow.ts      the plan's sections, a command's heading and a row's line
+  readLockGameVersion.ts         the game version the hosted lock records, empty when it records none
 ```
 
 ## Sources

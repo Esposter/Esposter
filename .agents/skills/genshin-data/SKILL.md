@@ -35,4 +35,5 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 - `references/publish-scopes.md` — when a publish replaces one key, or an authored world file is edited and published.
 - `references/readers-and-boundaries.md` — when a record is awaited at a boundary, or a worker is posted the records it needs.
 - `references/verify-and-retirement.md` — when a key or a dataset is retired, or `verify` and `prune` run.
+- `references/game-version-update.md` — when the installed game's version changes and the outputs stamped with the old one are made again.
 - `references/settled-directions.md` — when a proposal matches a Settled line and its full statement is needed.
