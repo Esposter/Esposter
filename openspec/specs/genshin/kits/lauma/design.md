@@ -58,3 +58,7 @@ Two differences from gcsim are named here. The kit spends one stack for each rea
 - The game data, `{data-root}/genshin-parity/text/ExcelBinOutput/`: the skill rows 11192 and 11195 in `AvatarSkillExcelConfigData` (cooldowns 12 and 15, the burst's energy cost 60), and the groups 11922 (her Ascension 4) and 11932 and 11939 in `ProudSkillExcelConfigData`, whose parameters the multiplier check matched at every talent level.
 - The cached wiki, `{data-root}/cache/genshin-wiki/Category_Lauma_Talents.json`: the plunges' and strikes' poise, the press's and hold's poise, the 152% a Dew and the Cleansing for the Spring text.
 - [Peregrination of Linnunrata](https://genshin-impact.fandom.com/wiki/Peregrination_of_Linnunrata) and [Runo: Dawnless Rest of Karsikko](https://genshin-impact.fandom.com/wiki/Runo:_Dawnless_Rest_of_Karsikko), Genshin Impact Wiki: the poise of her strikes, collision, plunges, press, hold and Frostgrove Sanctuary's ticks.
+
+## Open
+
+- [ ] The charged attack's stamina is unsourced, so the no-stamina requirement is open: see [the design's provisional constants](design.md#provisional-constants).

@@ -51,7 +51,3 @@ Linnea's Lumi duration SHALL NOT take effect, so her skill leaves no timed field
 
 - **WHEN** the player uses Linnea's skill
 - **THEN** no timed field of Lumi appears afterwards
-
-## Open
-
-The charged shot's stamina and the timings of the strikes, charged shot and skill are unsourced, so the requirements above are provisional: see the [design](design.md).

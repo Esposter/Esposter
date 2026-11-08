@@ -182,7 +182,3 @@ Jean's collision and two plunges SHALL keep provisional reaches until a recordin
 - **WHEN** the player plunges
 - **THEN** the plunge deals its hit within its provisional reach
 - **AND** the reach stays provisional until a recording settles it
-
-## Open
-
-- [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — contradicted by {data-root}/cache/genshin-wiki/Category_Jean_Talents.json: Dandelion Field deals Anemo DMG to opponents entering or exiting.

@@ -136,7 +136,3 @@ From constellation 4, the Bloom reaction DMG of each Dendro Core Kaveh's Bloom l
 - **GIVEN** Kaveh is at constellation 4
 - **WHEN** an Overloaded's damage is priced for him
 - **THEN** it is raised by nothing
-
-## Open
-
-The open items are held once, in [design.md](design.md#open).

@@ -201,7 +201,3 @@ Lauma's Spirit Envoy state, her other passives, and Constellation 6 SHALL NOT ta
 - **GIVEN** Lauma has the Spirit Envoy state, another passive, or Constellation 6 unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect
-
-## Open
-
-The charged attack's stamina is unsourced, so the no-stamina requirement is open: see [the design's provisional constants](design.md#provisional-constants).
