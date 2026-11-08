@@ -163,7 +163,7 @@ catalog:
   h3: ^2.0.8
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
-  jscpd: ^5.4.2
+  jscpd: ^5.4.3
   knip: ^6.44.2
   link-preview-js: ^5.0.1
   linkifyjs: ^4.4.0
