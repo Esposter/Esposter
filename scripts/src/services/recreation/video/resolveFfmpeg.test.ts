@@ -39,6 +39,15 @@ describe(resolveFfmpeg, () => {
     expect(resolvePinnedTool).toHaveBeenCalledExactlyOnceWith(FFMPEG_WINDOWS_PINNED_TOOL);
   });
 
+  test("a linux run takes the ffmpeg on the PATH, never a windows archive its tar cannot unpack", async () => {
+    expect.hasAssertions();
+
+    Object.defineProperty(process, "platform", { value: "linux" });
+
+    await expect(resolveFfmpeg()).resolves.toBe("ffmpeg");
+    expect(resolvePinnedTool).not.toHaveBeenCalled();
+  });
+
   test("a stage ignores a tool of the same name on the PATH", async () => {
     expect.hasAssertions();
 

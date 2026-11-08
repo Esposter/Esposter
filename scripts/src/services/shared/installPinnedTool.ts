@@ -31,7 +31,7 @@ export const installPinnedTool = async ({
   if (isArchive) {
     const archivePath = join(partialDirectory, "archive");
     await writeFile(archivePath, archive);
-    // The system's tar reads a zip or a tar.xz by its contents, so the file's name says nothing to it
+    // The system's tar reads a zip or a tar.xz by its contents on Windows and macOS, so the file's name says nothing to it
     execFileSync(getSystemTarPath(), ["-xf", archivePath, "-C", partialDirectory]);
     await rm(archivePath);
   } else await writeFile(join(partialDirectory, executablePattern), archive);
