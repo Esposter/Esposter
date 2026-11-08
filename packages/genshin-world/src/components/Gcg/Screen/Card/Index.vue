@@ -6,10 +6,10 @@ import { formatGcgNumberLabel } from "#src/services/gcg/formatGcgNumberLabel";
 import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
-  // The costs the card takes to play, whose dice its corner shows
-  costs: GcgCost[];
   // The game's label for the dice cost, or "" where it has no text id yet
   costLabel: string;
+  // The costs the card takes to play, whose dice its corner shows
+  costs: GcgCost[];
   isSelected: boolean;
   // The card's name in the reader's language
   name: string;
@@ -17,10 +17,8 @@ interface Props {
 
 const { costLabel, costs, isSelected, name } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
-const accessibleName = computed(() => {
-  const cost = countGcgDiceCost(costs);
-  return [name, formatGcgNumberLabel(costLabel, cost)].join(", ");
-});
+const diceCost = computed(() => countGcgDiceCost(costs));
+const accessibleName = computed(() => [name, formatGcgNumberLabel(costLabel, diceCost.value)].join(", "));
 </script>
 
 <template>
@@ -33,7 +31,7 @@ const accessibleName = computed(() => {
     type="button"
     @click="emit('select')"
   >
-    <span class="cost">{{ countGcgDiceCost(costs) }}</span>
+    <span class="cost">{{ diceCost }}</span>
   </button>
 </template>
 
