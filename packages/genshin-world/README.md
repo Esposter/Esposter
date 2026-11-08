@@ -25,7 +25,8 @@ pnpm i genshin-world genshin-engine genshin-interface genshin-text @esposter/sha
 
 1. Mount `WorldScreen`. It brings its own canvas.
 2. Pass in only the values that your bundler and server decide.
-3. Import the styles once, as shown:
+
+Each component brings its own stylesheet, so a bundler loads the styles of the components you import and no more.
 
 ```vue
 <script setup lang="ts">
@@ -33,8 +34,6 @@ import { WorldScreen } from "genshin-world";
 import TerrainTileWorker from "genshin-world/terrainTileWorker?worker";
 import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
-import "genshin-interface/style.css";
-import "genshin-world/style.css";
 
 const isDevelopment = import.meta.env.DEV;
 const qualityTier = QualityTier.High;

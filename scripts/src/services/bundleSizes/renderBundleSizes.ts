@@ -18,7 +18,7 @@ export const renderBundleSizes = (bundleSizes: BundleSize[]): string => {
   const source = [
     "# Bundle sizes",
     "",
-    `Every file a workspace package's build emits, largest first, as \`pnpm bundle-sizes:gen\` writes \`${BUNDLE_SIZES_FILENAME}\`. A size that moves shows up here as a diff.`,
+    `Every file a workspace package's build emits, largest first, as \`pnpm bundle-sizes:gen\` writes \`${BUNDLE_SIZES_FILENAME}\`. The modules of an unbundled package share one row per extension, named \`**/*\` and the extension. A size that moves shows up here as a diff.`,
     "",
     "| Package | File | Bytes | KiB |",
     "| :------ | :--- | ----: | --: |",

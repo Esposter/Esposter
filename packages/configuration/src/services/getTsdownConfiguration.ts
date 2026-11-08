@@ -85,7 +85,18 @@ export const getTsdownConfiguration = ({
         generateExports(cwd, exportsGeneration);
       },
     },
+    // A consumer's bundler treats one file as one module, so a package built into one `dist/index.js` keeps every
+    // Top-level call the file makes once any export is imported: a drizzle table, a schema derived from it, a
+    // Helper that builds a parser. One output file per source module lets `sideEffects: false` drop each module no
+    // Import reaches, with the barrel and the `.` export unchanged. A vendored dependency's files are written under
+    // `vendor` rather than `node_modules`, the one folder name `npm pack` never ships. A function replaces the
+    // Default sanitizer, so it keeps the three characters that one swaps for an underscore.
+    outputOptions: {
+      sanitizeFileName: (name: string) =>
+        name.replaceAll("\0", "_").replaceAll("?", "_").replaceAll("*", "_").replaceAll("node_modules", "vendor"),
+    },
     platform: "neutral",
+    unbundle: true,
   } satisfies UserConfig;
   return isPrivate
     ? // No declarations. A private package's `dist` is only ever reached through the `default` arm, by something

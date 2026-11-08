@@ -24,7 +24,9 @@
     "dist"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "dist/index.d.ts",
   "imports": {
     "#src/*": "./src/*.ts",
@@ -48,7 +50,6 @@
       "default": "./dist/save.js"
     },
     "./package.json": "./package.json",
-    "./style.css": "./dist/style.css",
     "./styles/*.css": {
       "source": "./src/styles/*.css",
       "default": "./dist/styles/*.css"
@@ -61,7 +62,6 @@
       "./getFixtureImageName": "./dist/getFixtureImageName.js",
       "./save": "./dist/save.js",
       "./package.json": "./package.json",
-      "./style.css": "./dist/style.css",
       "./styles/*.css": "./dist/styles/*.css"
     },
     "access": "public"

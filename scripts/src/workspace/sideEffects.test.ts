@@ -1,8 +1,11 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
+
+const STYLESHEET_GLOB = "**/*.css";
 
 /**
  * What a package declares about its own side effects is the one build input no factory can derive: deciding it
@@ -37,6 +40,30 @@ describe("sideEffects", () => {
     );
 
     expect(undeclaredPackagePaths).toStrictEqual([]);
+  });
+
+  // A component's stylesheet is imported by its own module for no binding, so a package answering `false` has every
+  // Stylesheet dropped by a consumer's bundler and ships components that render unstyled, with nothing failing
+  test("keep the stylesheets of a package whose components carry styles", () => {
+    expect.hasAssertions();
+
+    const droppedStylesheetPackagePaths = PACKAGE_PATHS.filter((packagePath) => {
+      const sideEffects = readSideEffects(packagePath);
+      if (Array.isArray(sideEffects) && sideEffects.includes(STYLESHEET_GLOB)) return false;
+
+      const sourceDirectory = resolve(REPOSITORY_ROOT, packagePath, "src");
+      return (
+        existsSync(sourceDirectory) &&
+        readdirSync(sourceDirectory, { recursive: true }).some(
+          (file) =>
+            typeof file === "string" &&
+            file.endsWith(".vue") &&
+            readFileSync(resolve(sourceDirectory, file), "utf8").includes("<style"),
+        )
+      );
+    });
+
+    expect(droppedStylesheetPackagePaths).toStrictEqual([]);
   });
 
   test("are claimed wholesale only by the package whose entry exists to run", () => {

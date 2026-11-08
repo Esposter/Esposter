@@ -25,7 +25,9 @@
     "dist"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "types": "dist/index.d.ts",
   "imports": {
     "#parity/*": "./parity/*.ts",
@@ -52,7 +54,6 @@
       "default": "./dist/terrainTileWorker.js"
     },
     "./package.json": "./package.json",
-    "./style.css": "./dist/style.css",
     "./parity/*": {
       "source": "./parity/*.ts"
     }
@@ -63,8 +64,7 @@
       "./save": "./dist/save.js",
       "./sceneExport": "./dist/sceneExport.js",
       "./terrainTileWorker": "./dist/terrainTileWorker.js",
-      "./package.json": "./package.json",
-      "./style.css": "./dist/style.css"
+      "./package.json": "./package.json"
     },
     "access": "public"
   },
