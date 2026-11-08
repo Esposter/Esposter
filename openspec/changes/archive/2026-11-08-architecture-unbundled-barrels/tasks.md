@@ -17,7 +17,7 @@
 ## 4. The workarounds
 
 - [x] 4.1 Measure the app's client chunk after this change with `pnpm ai:dependencies:score --sort bundle --analyze`, and settle the architecture roadmap's client bundle item: the second-definition question over the drizzle-bound names, and no subpath for the rest. Verify: the roadmap item names the measured chunk and the decision.
-- [x] 4.2 Name the subpaths that exist only to dodge the one-file build, and remove them. Verify: the subpath audit test passes. None exists in a manifest: the roadmap's proposed client schema entry and `jsonDateParse` subpath are never added, and every kept subpath serves a consumer with no bundler or a load by path (`.agents/skills/build/references/subpaths.md`).
+- [x] 4.2 Audit every package's subpaths against the two rules, and narrow the wildcards that exported more than a consumer names. Verify: the subpath audit test passes. The roadmap's proposed client schema entry and `jsonDateParse` subpath are never added. `configuration` exports only `types/global.d.ts`, `genshin-interface` only the six stylesheets another package names, and `genshin-world` only the nine parity shapes the scripts import as types. Every other subpath serves a consumer with no bundler or a load by path (`.agents/skills/build/references/subpaths.md`, "Worked decisions").
 
 ## 5. The pages
 

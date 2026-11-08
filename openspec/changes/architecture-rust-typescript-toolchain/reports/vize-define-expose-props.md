@@ -6,7 +6,7 @@ Vite plugin
 
 ### Version
 
-`@vizejs/vite-plugin` 0.713.0 with `@vizejs/native` 0.713.0. The same output on 0.1.0, 0.390.0 and 0.714.0.
+`@vizejs/vite-plugin` 0.715.0 with `@vizejs/native` 0.715.0. The same output on 0.1.0, 0.390.0, 0.713.0 and 0.714.0.
 
 ### Summary
 
@@ -27,7 +27,7 @@ Create the five files in an empty directory.
   "engines": { "node": "26.13.0" },
   "scripts": { "build": "vite build" },
   "dependencies": { "vue": "3.5.45" },
-  "devDependencies": { "@vizejs/vite-plugin": "0.713.0", "vite": "8.3.6" }
+  "devDependencies": { "@vizejs/vite-plugin": "0.715.0", "vite": "8.3.6" }
 }
 ```
 
@@ -165,7 +165,7 @@ One change at a time from the reproduction. The native compiler output comes fro
 | No `<template>` block                                                                                | bare                                                 | `__props.foo`   |
 | Renamed to `Foo` and `Bar`                                                                           | bare                                                 | `__props.Foo`   |
 | Plugin option `features.propsDestructure` set to `false` or `"error"`                                | bare in both                                         | not compared    |
-| `@vizejs/vite-plugin` 0.1.0, 0.390.0 and 0.714.0                                                     | bare in the built chunk of each                      | not compared    |
+| `@vizejs/vite-plugin` 0.1.0, 0.390.0, 0.713.0 and 0.714.0                                            | bare in the built chunk of each                      | not compared    |
 
 ### Not known
 
