@@ -1,6 +1,6 @@
 {
   "name": "vue-editor-layout-headless",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "A headless editor layout: the regions and panels of an editor held as data, resolved for the mode, tool, selection and window size, with the reader's sizes and open regions kept apart from it.",
   "keywords": [
     "editor",

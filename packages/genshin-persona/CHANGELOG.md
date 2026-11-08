@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Features
+
+* **genshin-world:** the duel board names a character's energy and shield and a card's cost by the game's own words ([976e089](https://github.com/Esposter/Esposter/commit/976e0892d707db35f07e71e4b1fc4624ffd5be0e))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Features

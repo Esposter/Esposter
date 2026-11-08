@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **ci:** a vendored package's folder is named by its version, so the declarations and the size record are the same on Windows and Linux ([304ce2c](https://github.com/Esposter/Esposter/commit/304ce2cb590886cc1a741967a59415eafbd9588b))
+* **ci:** the lint findings and the three reds of a queue tip that carried a new parity variant ([43a45e1](https://github.com/Esposter/Esposter/commit/43a45e1f176d993e100eaf5c678b1a60491f6351))
+* **ci:** the two lint findings the previous fix left, a named capture group and a stamp walk that awaits only promises ([1d08064](https://github.com/Esposter/Esposter/commit/1d080649f1c771c6a9250846c891cbf2ed3488a0))
+* **ci:** vendored files carry no hidden folder and a Vue package's modules import no stylesheet ([e747b8a](https://github.com/Esposter/Esposter/commit/e747b8a66187c18dde33947858d2c799caa41c3f))
+
+### Features
+
+* **configuration:** a screen with a second approved image fails its resolve, naming the screen ([ba5a956](https://github.com/Esposter/Esposter/commit/ba5a95622dafad8984a13c1b4452ff914deeba95))
+* **configuration:** packages build one file per module so a bundler loads only what an import reaches ([70581ec](https://github.com/Esposter/Esposter/commit/70581ec25ab5b4912841d2e7c7e0210e288a9670))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 **Note:** Version bump only for package @esposter/configuration

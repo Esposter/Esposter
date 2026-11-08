@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **ci:** vendored files carry no hidden folder and a Vue package's modules import no stylesheet ([e747b8a](https://github.com/Esposter/Esposter/commit/e747b8a66187c18dde33947858d2c799caa41c3f))
+* **scripts:** the lint reds the queue carried are cleared, in the files that held them ([f852903](https://github.com/Esposter/Esposter/commit/f8529034ff35546f0b22c045e854b5d3aa65794b))
+
+### Features
+
+* **configuration:** packages build one file per module so a bundler loads only what an import reaches ([70581ec](https://github.com/Esposter/Esposter/commit/70581ec25ab5b4912841d2e7c7e0210e288a9670))
+* **genshin-world:** the developer surface is a host component of its own, and a colour swatch no longer takes the Traveler's keys ([45980d3](https://github.com/Esposter/Esposter/commit/45980d3228bbf9568c39d3d4e6f3979c45414e86))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Bug Fixes

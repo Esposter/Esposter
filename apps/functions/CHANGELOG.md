@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **ci:** vendored files carry no hidden folder and a Vue package's modules import no stylesheet ([e747b8a](https://github.com/Esposter/Esposter/commit/e747b8a66187c18dde33947858d2c799caa41c3f))
+* **configuration:** the Functions deploy artifact and the Pulumi program stay one file ([72d693d](https://github.com/Esposter/Esposter/commit/72d693d07d36e40d881a75901dc8928991461d00))
+
+### Features
+
+* **configuration:** packages build one file per module so a bundler loads only what an import reaches ([70581ec](https://github.com/Esposter/Esposter/commit/70581ec25ab5b4912841d2e7c7e0210e288a9670))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Bug Fixes

@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **ci:** the lint findings and the three reds of a queue tip that carried a new parity variant ([43a45e1](https://github.com/Esposter/Esposter/commit/43a45e1f176d993e100eaf5c678b1a60491f6351))
+* **ci:** the lint findings on the queue's tip ([5f30b7c](https://github.com/Esposter/Esposter/commit/5f30b7c2b1de7cf243f0dfda63c829357abbe1c3))
+* **ci:** vendored files carry no hidden folder and a Vue package's modules import no stylesheet ([e747b8a](https://github.com/Esposter/Esposter/commit/e747b8a66187c18dde33947858d2c799caa41c3f))
+* **genshin-engine:** the input ignores only keys typed into a field, so a console hold moves the Traveler ([e2752f6](https://github.com/Esposter/Esposter/commit/e2752f6ed9db2396753ae2ecb64fc578291522d2))
+* **genshin-world:** a duel with no winner concedes once round 15 would begin ([3ba0c3a](https://github.com/Esposter/Esposter/commit/3ba0c3a724490646a9ccc9191d2e80754f774677))
+* **genshin-world:** a jump places the body again, since the exposed place no longer reads a destructured prop inside defineExpose ([64abd4d](https://github.com/Esposter/Esposter/commit/64abd4d6fa0b30ab9e553902d189ddc0cfef7925))
+* **genshin-world:** the Enhance strip scrolls to a candidate past the seventh ([87ed06d](https://github.com/Esposter/Esposter/commit/87ed06df4aa9c010010ff9fb8b76ca3713f38628))
+* **scripts:** the weapon maps are named for their key, a callback is wrapped and two import lists are in order ([cefa9e3](https://github.com/Esposter/Esposter/commit/cefa9e3bc8280a959b4cadcf488deb06d80831e9))
+
+### Features
+
+* **configuration:** packages build one file per module so a bundler loads only what an import reaches ([70581ec](https://github.com/Esposter/Esposter/commit/70581ec25ab5b4912841d2e7c7e0210e288a9670))
+* **genshin-assets:** enemy kinds join their drop family from each kind's own wiki article, and the families publish as hosted data ([18c68bc](https://github.com/Esposter/Esposter/commit/18c68bc909335f860b30ed720b8d1359a6e182e9))
+* **genshin-assets:** plants, rocks and ruins are fitted for every region and drawn from their records, and the statue fit takes any region's prefab ([681bbea](https://github.com/Esposter/Esposter/commit/681bbeabc1bb2cef43dfde982bee9544d4690ab0))
+* **genshin-assets:** the props component, its mesh lookup and fit entry, and a prop-level compare fixture ([8410bd9](https://github.com/Esposter/Esposter/commit/8410bd92a9812d5b7e99976bee7364c3dba26368))
+* **genshin-assets:** the weapons' icon outlines are fitted from the exported icons ([d248759](https://github.com/Esposter/Esposter/commit/d248759411ef27d1a014fc8aea37245336098ea3))
+* **genshin-world:** a duel board's character and card are read with their numbers ([a318987](https://github.com/Esposter/Esposter/commit/a3189875fcea2270637078d6c370fde2cabae374))
+* **genshin-world:** the developer surface is a host component of its own, and a colour swatch no longer takes the Traveler's keys ([45980d3](https://github.com/Esposter/Esposter/commit/45980d3228bbf9568c39d3d4e6f3979c45414e86))
+* **genshin-world:** the duel board names a character's energy and shield and a card's cost by the game's own words ([976e089](https://github.com/Esposter/Esposter/commit/976e0892d707db35f07e71e4b1fc4624ffd5be0e))
+* **genshin-world:** two more weapon passives act, and the heal passives share one primitive ([89f4272](https://github.com/Esposter/Esposter/commit/89f42725de9708cceda57789b24ad963fb9ba141))
+* **scripts:** every export, fit record and fetched source carries one provenance stamp, and the fleet copy refuses another game version's ([1fcea3a](https://github.com/Esposter/Esposter/commit/1fcea3a0b1be61de696450773c88b3ab18236de6))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Bug Fixes

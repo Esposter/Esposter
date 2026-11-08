@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **configuration:** the Functions deploy artifact and the Pulumi program stay one file ([72d693d](https://github.com/Esposter/Esposter/commit/72d693d07d36e40d881a75901dc8928991461d00))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Features

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **genshin-engine:** the input ignores only keys typed into a field, so a console hold moves the Traveler ([e2752f6](https://github.com/Esposter/Esposter/commit/e2752f6ed9db2396753ae2ecb64fc578291522d2))
+
+### Features
+
+* **genshin-world:** the developer surface is a host component of its own, and a colour swatch no longer takes the Traveler's keys ([45980d3](https://github.com/Esposter/Esposter/commit/45980d3228bbf9568c39d3d4e6f3979c45414e86))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Bug Fixes

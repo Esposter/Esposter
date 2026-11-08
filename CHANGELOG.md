@@ -3,6 +3,64 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
+
+### Bug Fixes
+
+* **ci:** a vendored package's folder is named by its version, so the declarations and the size record are the same on Windows and Linux ([304ce2c](https://github.com/Esposter/Esposter/commit/304ce2cb590886cc1a741967a59415eafbd9588b))
+* **ci:** the comments ledger no longer lists the nuxt declaration file that was deleted ([534f558](https://github.com/Esposter/Esposter/commit/534f558ea350baccb11064be1dde06217352a534))
+* **ci:** the lint findings and the three reds of a queue tip that carried a new parity variant ([43a45e1](https://github.com/Esposter/Esposter/commit/43a45e1f176d993e100eaf5c678b1a60491f6351))
+* **ci:** the lint findings on the queue's tip ([5f30b7c](https://github.com/Esposter/Esposter/commit/5f30b7c2b1de7cf243f0dfda63c829357abbe1c3))
+* **ci:** the size record follows the configuration package's named capture group, and the scripts suite gets the web app's headroom for a slow runner ([0ffce64](https://github.com/Esposter/Esposter/commit/0ffce645bd36b636712311b7da210d9b486d963b))
+* **ci:** the two lint findings the previous fix left, a named capture group and a stamp walk that awaits only promises ([1d08064](https://github.com/Esposter/Esposter/commit/1d080649f1c771c6a9250846c891cbf2ed3488a0))
+* **ci:** vendored files carry no hidden folder and a Vue package's modules import no stylesheet ([e747b8a](https://github.com/Esposter/Esposter/commit/e747b8a66187c18dde33947858d2c799caa41c3f))
+* **configuration:** the Functions deploy artifact and the Pulumi program stay one file ([72d693d](https://github.com/Esposter/Esposter/commit/72d693d07d36e40d881a75901dc8928991461d00))
+* **genshin-assets:** the weapon roots are read on access, so a missing or invalid record no longer fails every genshin:assets command at import ([f684e5a](https://github.com/Esposter/Esposter/commit/f684e5a93325def1d9b37f7487651b86184164f2))
+* **genshin-engine:** the input ignores only keys typed into a field, so a console hold moves the Traveler ([e2752f6](https://github.com/Esposter/Esposter/commit/e2752f6ed9db2396753ae2ecb64fc578291522d2))
+* **genshin-world:** a duel with no winner concedes once round 15 would begin ([3ba0c3a](https://github.com/Esposter/Esposter/commit/3ba0c3a724490646a9ccc9191d2e80754f774677))
+* **genshin-world:** a jump places the body again, since the exposed place no longer reads a destructured prop inside defineExpose ([64abd4d](https://github.com/Esposter/Esposter/commit/64abd4d6fa0b30ab9e553902d189ddc0cfef7925))
+* **genshin-world:** the Enhance strip scrolls to a candidate past the seventh ([87ed06d](https://github.com/Esposter/Esposter/commit/87ed06df4aa9c010010ff9fb8b76ca3713f38628))
+* **scripts:** a linux run takes the ffmpeg on the PATH again ([1c298f0](https://github.com/Esposter/Esposter/commit/1c298f047d10e9628dd3224d24a256081cffa0b4))
+* **scripts:** a shaders folder no step has created inventories as empty, not as an error ([e793c68](https://github.com/Esposter/Esposter/commit/e793c68069a86b19d917cdff8e9252b6161247c2))
+* **scripts:** an extraction's and an asset output's stamp lists the AnimeStudio models they read ([5484723](https://github.com/Esposter/Esposter/commit/548472340b7b5a640f18a538b3aad56627504c21))
+* **scripts:** name the system's tar and sysctl by their paths ([561c054](https://github.com/Esposter/Esposter/commit/561c054ad40d3ec8e5aa0d022d59869fb4cc6673))
+* **scripts:** the city-areas test stamps through a stand-in tool, so a machine with no install passes it ([4ed8b56](https://github.com/Esposter/Esposter/commit/4ed8b565449c805ee965d6a4859f0b95e4b36daf))
+* **scripts:** the fit report lists Mondstadt first ([e037532](https://github.com/Esposter/Esposter/commit/e037532a4a4c1042653bb6fb0e5eb08a75d54ee7))
+* **scripts:** the fleet copy reads stamps a bounded number at a time and needs config.ini only for a stamp ([b195e37](https://github.com/Esposter/Esposter/commit/b195e37310085261e47ab889f39da9cdad652e29))
+* **scripts:** the gcsim kit's tree is listed through the Git Trees API, not the GitHub CLI ([4f377fe](https://github.com/Esposter/Esposter/commit/4f377fe58095e437c9618e2dedd7e73af5c0cecf))
+* **scripts:** the lint reds the queue carried are cleared, in the files that held them ([f852903](https://github.com/Esposter/Esposter/commit/f8529034ff35546f0b22c045e854b5d3aa65794b))
+* **scripts:** the merged tree typechecks, the weapons component has its entries in the full-record maps, and the size record is the merged build's ([dd6a69d](https://github.com/Esposter/Esposter/commit/dd6a69d8c60f1611de50e87854b37de0a2ef78ae))
+* **scripts:** the traced-path writer refuses a record it would drop content from ([c21eb1b](https://github.com/Esposter/Esposter/commit/c21eb1bd24b9897aee1c7853086c040045af2a37))
+* **scripts:** the weapon maps are named for their key, a callback is wrapped and two import lists are in order ([cefa9e3](https://github.com/Esposter/Esposter/commit/cefa9e3bc8280a959b4cadcf488deb06d80831e9))
+
+### Features
+
+* **configuration:** a screen with a second approved image fails its resolve, naming the screen ([ba5a956](https://github.com/Esposter/Esposter/commit/ba5a95622dafad8984a13c1b4452ff914deeba95))
+* **configuration:** packages build one file per module so a bundler loads only what an import reaches ([70581ec](https://github.com/Esposter/Esposter/commit/70581ec25ab5b4912841d2e7c7e0210e288a9670))
+* **genshin-assets:** enemy kinds join their drop family from each kind's own wiki article, and the families publish as hosted data ([18c68bc](https://github.com/Esposter/Esposter/commit/18c68bc909335f860b30ed720b8d1359a6e182e9))
+* **genshin-assets:** plants, rocks and ruins are fitted for every region and drawn from their records, and the statue fit takes any region's prefab ([681bbea](https://github.com/Esposter/Esposter/commit/681bbeabc1bb2cef43dfde982bee9544d4690ab0))
+* **genshin-assets:** sprites are cut by name, portrait colours run only when named, and the trace writer formats through the repo's formatter ([cf8693c](https://github.com/Esposter/Esposter/commit/cf8693c93cce0efa73b0573cc644a32abbce43c0))
+* **genshin-assets:** the props component, its mesh lookup and fit entry, and a prop-level compare fixture ([8410bd9](https://github.com/Esposter/Esposter/commit/8410bd92a9812d5b7e99976bee7364c3dba26368))
+* **genshin-assets:** the weapon roots come from the prefab files too, and the change records the reach it left ([a4d8f42](https://github.com/Esposter/Esposter/commit/a4d8f428a978129e9c55ba01630eacaab8a9dd80))
+* **genshin-assets:** the weapon rows are paired with their held meshes, and a row with none is recorded as having none ([fbb574e](https://github.com/Esposter/Esposter/commit/fbb574ef3cd620f6db16ffe135f0ff4ea4b32a2a))
+* **genshin-assets:** the weapons' icon outlines are fitted from the exported icons ([d248759](https://github.com/Esposter/Esposter/commit/d248759411ef27d1a014fc8aea37245336098ea3))
+* **genshin-assets:** weapon-icons exports the table's icons and reports each name the index lacks ([14389f0](https://github.com/Esposter/Esposter/commit/14389f0503e3c415378fecc7f8b484c46e3b77db))
+* **genshin-assets:** weapon-roots derives the prefabs that draw the held weapons' meshes, and the weapons component roots at them ([718c730](https://github.com/Esposter/Esposter/commit/718c730af9dbadcc362478e0ea7b46a4e77a6443))
+* **genshin-world:** a duel board's character and card are read with their numbers ([a318987](https://github.com/Esposter/Esposter/commit/a3189875fcea2270637078d6c370fde2cabae374))
+* **genshin-world:** the developer surface is a host component of its own, and a colour swatch no longer takes the Traveler's keys ([45980d3](https://github.com/Esposter/Esposter/commit/45980d3228bbf9568c39d3d4e6f3979c45414e86))
+* **genshin-world:** the duel board names a character's energy and shield and a card's cost by the game's own words ([976e089](https://github.com/Esposter/Esposter/commit/976e0892d707db35f07e71e4b1fc4624ffd5be0e))
+* **genshin-world:** two more weapon passives act, and the heal passives share one primitive ([89f4272](https://github.com/Esposter/Esposter/commit/89f42725de9708cceda57789b24ad963fb9ba141))
+* **scripts:** a fixture map edit that would move a committed reference is refused with its git mv ([a98139e](https://github.com/Esposter/Esposter/commit/a98139e0a62ff9aef7293869076442f5fb6b53b2))
+* **scripts:** every export, fit record and fetched source carries one provenance stamp, and the fleet copy refuses another game version's ([1fcea3a](https://github.com/Esposter/Esposter/commit/1fcea3a0b1be61de696450773c88b3ab18236de6))
+* **scripts:** genshin:version lists and plans the outputs a new game version leaves stale ([768e711](https://github.com/Esposter/Esposter/commit/768e7113f3b76b499c5b7419521f3722e6c476af))
+* **scripts:** pin the macOS ffmpeg archive beside Gyan's build ([277c2b9](https://github.com/Esposter/Esposter/commit/277c2b952430f90e899aa4e73cb4a74c2b125f4a))
+* **scripts:** the weapon roots also dump the blocks of the prefab files that draw the held meshes ([50113af](https://github.com/Esposter/Esposter/commit/50113aff21bbff87dd91f25301230d41f9b1815d))
+* **scripts:** vgmstream's macOS archive is pinned beside the Windows one and chosen by platform ([4ebde33](https://github.com/Esposter/Esposter/commit/4ebde33a55c78e7f795588ab1976edfe173e6a74))
+
+### Performance Improvements
+
+* **scripts:** a held asset index is hashed once per process, not at every read ([9663eac](https://github.com/Esposter/Esposter/commit/9663eac87d3516c1026d529a9e3136001148b776))
+
 # [4.6.0](https://github.com/Esposter/Esposter/compare/v4.5.0...v4.6.0) (2026-11-07)
 
 ### Bug Fixes
