@@ -2,7 +2,7 @@
 
 - [x] 1.1 Set the meadows' base wind and its gusts so they roll across the grass. Verify: a test named after the scenario 'Gusts roll across the meadows', written first and seen failing.
 - [ ] 1.2 Build the windmill with sails that turn in the wind. Verify: a test named after the scenario 'A windmill's sails turn in a gust'.
-      Blocked until the windmill's prefab meshes and its reference come from the PC's export: the tower and the sails are not built yet.
+      Blocked until the windmills' world places are read from the export and the windmill's reference is found: the tower and the sails are not built yet. Its two meshes are already in the Windrise export (see the design's Decisions).
 - [ ] 1.3 Raise the wind at Stormterror's Lair to gale strength. Verify: a test named after the scenario 'Stormterror's Lair blows at gale strength'.
       Blocked until the Lair's approach reference gives the gale's strength, and the Lair's weather area outline comes from the PC's export so the wind switches on entry.
 

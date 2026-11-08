@@ -14,6 +14,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 - **Species.** Broad oaks, with Windrise's great oak as a landmark, apple trees, pines on the slopes, grape rows at Dawn Winery, and dense old forest in Wolvendom and Whispering Woods.
 - **Windrise stays in Galesong Hill.** The game's own area table files Windrise under Galesong Hill, and the catalogue does too, so its oak and statue stay that area's landmarks; Mondstadt City's buildings are Starfell Valley's.
 - **Dragonspine is a snow biome with ruins.** It has snow ground, ice, frozen falls, snow and snowstorm weather, and the Entombed City's ruins. Skyfrost Nail is a landmark-tier spike mesh, and Starglow Cavern and Wyrmrest Valley are surface caves and hollows.
+- **The windmill's tower and blade are the Windrise export's meshes.** The derived component names `Property_Build_Windmill02_Bottom_Vo` and `Property_Build_Windmill02_Blade_Lod0`, which the export writes as OBJ files, so the windmill is built from them rather than from its prefab, whose pointers are null. Its world places are not yet read from the export.
 
 ## Areas
 
