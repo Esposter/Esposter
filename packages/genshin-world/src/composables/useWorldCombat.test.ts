@@ -1,4 +1,5 @@
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { SheerCold } from "#src/models/sheerCold/SheerCold";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
@@ -12,12 +13,15 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER, REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { SHEER_COLD_DAMAGE_INTERVAL_SECONDS, SHEER_COLD_MAXIMUM } from "#src/services/sheerCold/constants";
+import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
 import { useWorldPartyStore } from "#src/store/party";
 import { useWorldSessionStore } from "#src/store/session";
 import { startTestWorldSession } from "#src/store/session.fixture";
@@ -174,5 +178,27 @@ describe(useWorldCombat, () => {
     strikeParty(enemy, taunt);
 
     expect(TAUNT_HEALTH - taunt.health).toBeLessThan(unbuffedLoss);
+  });
+
+  test("lose the share of max HP each interval, after the team's shield takes the damage first", () => {
+    expect.hasAssertions();
+    const SHIELD_HEALTH = 50;
+    const { coldDamageParty, hudMember, kitContext, worldPartyStore } = createCombat();
+    const maxHealth = hudMember.value?.maxHealth;
+    assert(maxHealth !== undefined);
+    castKitShield(kitContext, TRAVELER_CHARACTER_ID, { health: SHIELD_HEALTH, secondsRemaining: 10 });
+    // A full gauge's one interval, as the gauge steps it: still full, and dealing the interval's damage
+    const sheerCold: SheerCold = { damageSeconds: 0, value: SHEER_COLD_MAXIMUM };
+    const damage = stepSheerCold(
+      sheerCold,
+      { antiColdRatio: 0, isHeated: false, isInCold: true, isSnowstorm: false, isSwimming: false, maxHealth },
+      SHEER_COLD_DAMAGE_INTERVAL_SECONDS,
+    );
+
+    coldDamageParty(damage);
+
+    expect(getPartyMember(worldPartyStore.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(
+      1 - (damage - SHIELD_HEALTH) / maxHealth,
+    );
   });
 });
