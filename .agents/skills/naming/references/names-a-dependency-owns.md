@@ -30,7 +30,7 @@ our own key sitting beside a foreign one is named the way any other identifier i
   name, or a type declared field-for-field against one of theirs, keeps that library's spelling — `is*` prefix
   included, or omitted.
 - **A key the dependency looks up.** A declaration file augmenting a dependency's interface —
-  `apps/web/shared/types/nuxt.d.ts` adds `env` to Nitro's `ImportMeta` — declares keys on the dependency's own
+  `apps/web/shared/types/zod.d.ts` adds `layout` to zod's `GlobalMeta` — declares keys on the dependency's own
   type, so they are its names, not ours. The tell is a file whose comment says to keep it in sync with the
   dependency's source — a declaration file restating a dependency's interface, or any object literal a dependency
   reads, is out of scope for a naming pass entirely.
