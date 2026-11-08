@@ -183,7 +183,6 @@ catalog:
   msw: ^3.0.4
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
-  # @TODO: no upstream issue — nuxt/nuxt: Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
   nitro: npm:nitro-nightly@latest
   node-html-parser: ^9.0.7
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to a range once Nuxt 5 reaches `latest`
@@ -225,9 +224,6 @@ catalog:
   unicode-emoji-json: ^0.9.0
   unocss: ^66.12.0
   unplugin-auto-import: ^21.1.0
-  # @TODO: no upstream issue — Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options become,
-  # Needing 2 where the app's modules install 1. Remove this dependency when Nitro takes Nuxt's own copy (nuxt/nuxt)
-  unstorage: ^2.0.0-beta.0
   vite: ^8.3.6
   vite-plugin-glsl: ^1.6.2
   vite-plus: ^1.5.0
@@ -260,8 +256,9 @@ overrides:
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
   oxc-parser: "catalog:"
-  # @TODO: no upstream issue — phaser4-rex-plugins 4.2.0 still declares i18next-http-backend `^3.0.5`, below the patched 4.0.2
-  # of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it once rexrainbow/phaser3-rex-notes declares a patched range
+  # @TODO: https://github.com/rexrainbow/phaser3-rex-notes/pull/603 — phaser4-rex-plugins 4.2.0 still declares
+  # i18next-http-backend `^3.0.5`, below the patched 4.0.2 of GHSA-xvq9-wjp8-hwqf, so this override holds it on 4.x: drop it
+  # once rexrainbow/phaser3-rex-notes declares a patched range
   phaser4-rex-plugins>i18next-http-backend: ^4.0.10
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   vite: "catalog:"

@@ -198,7 +198,6 @@
     "type-fest": "catalog:",
     "unocss": "catalog:",
     "unplugin-pwa-nuxt": "workspace:*",
-    "unstorage": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-router": "catalog:"

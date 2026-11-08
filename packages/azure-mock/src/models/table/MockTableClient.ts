@@ -103,8 +103,6 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
       for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
     })(resultTableEntities);
     return {
-      // @TODO: no upstream issue — tsrs reports TS7031 on the unannotated destructured default here, which
-      // `tsc` and stock TypeScript accept; back to `({ maxPageSize } = {})` once tsrs accepts it
       byPage: ({ maxPageSize }: PageSettings = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
           if (maxPageSize !== undefined && maxPageSize <= 0)
