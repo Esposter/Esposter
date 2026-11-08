@@ -2,31 +2,45 @@
 import type { GcgCost } from "#src/models/gcg/GcgCost";
 
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
+import { formatGcgNumberLabel } from "#src/services/gcg/formatGcgNumberLabel";
 import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
   // The costs the card takes to play, whose dice its corner shows
   costs: GcgCost[];
+  // The game's label for the dice cost, or "" where it has no text id yet
+  costLabel: string;
   isSelected: boolean;
   // The card's name in the reader's language
   name: string;
 }
 
-const { costs, isSelected, name } = defineProps<Props>();
+const { costLabel, costs, isSelected, name } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+const accessibleName = computed(() => {
+  const cost = countGcgDiceCost(costs);
+  return [name, formatGcgNumberLabel(costLabel, cost)].join(", ");
+});
 </script>
 
 <template>
   <!-- A card of a side's hand, fanned along the bottom of the board by its hand's row, its dice cost in the corner. A
        chosen card lifts -->
-  <button class="card" :aria-label="name" :class="{ selected: isSelected }" type="button" @click="emit('select')">
+  <button
+    class="card"
+    :aria-label="accessibleName"
+    :class="{ selected: isSelected }"
+    type="button"
+    @click="emit('select')"
+  >
     <span class="cost">{{ countGcgDiceCost(costs) }}</span>
   </button>
 </template>
 
 <style scoped>
 /* A card's frame is measured off the game's frame at 1080 high: its cream border, and its plate the mean of the hand's
-   visible art down the card's top half. Its cost is the game's hexagon, and its name is only the button's label */
+   visible art down the card's top half. Its cost is the game's hexagon, and its name is the button's label, read with
+   its dice cost */
 .card {
   --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: relative;

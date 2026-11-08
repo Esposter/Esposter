@@ -1,23 +1,28 @@
 <script setup lang="ts">
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { GameText } from "genshin-text";
 
 import GcgScreenCharacter from "#src/components/Gcg/Screen/Character/Index.vue";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The side's active character, by its index
   activeIndex: number;
   // The side's characters in the order it holds them, each with whether a click on it does something for the player now
   characters: { character: GcgCharacterState; isChoosable: boolean }[];
+  // The game's words in the reader's language
+  gameText: GameText;
   // The characters' names in the reader's language, by their game text ids
   textMap: Readonly<Record<string, string>>;
 }
 
-const { activeIndex, characters, textMap } = defineProps<Props>();
+const { activeIndex, characters, gameText, textMap } = defineProps<Props>();
 const emit = defineEmits<{ select: [characterIndex: number] }>();
 </script>
 
 <template>
-  <!-- A side's characters across the board, the active one raised by its class -->
+  <!-- A side's characters across the board, the active one raised by its class. Energy and shield have no GameTextKey yet,
+       so their numbers are read alone -->
   <div class="row">
     <GcgScreenCharacter
       v-for="(item, index) in characters"
@@ -25,11 +30,14 @@ const emit = defineEmits<{ select: [characterIndex: number] }>();
       :aura="item.character.aura"
       :class="{ active: index === activeIndex }"
       :energy="item.character.energy"
+      energy-label=""
       :hp="item.character.hp"
+      :hp-label="gameText[GameTextKey.Health]"
       :is-choosable="item.isChoosable"
       :max-energy="item.character.character.maxEnergy"
       :name="textMap[item.character.character.nameTextId] ?? ''"
       :shield="item.character.shield"
+      shield-label=""
       @select="emit('select', index)"
     />
   </div>

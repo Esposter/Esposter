@@ -21,11 +21,13 @@ const emit = defineEmits<{ select: [handIndex: number] }>();
 </script>
 
 <template>
-  <!-- The hand fanned along the bottom of the board, each card lit as the choice it stands for is -->
+  <!-- The hand fanned along the bottom of the board, each card lit as the choice it stands for is. The dice cost has no
+       GameTextKey yet, so its number is read alone -->
   <div class="hand">
     <GcgScreenCard
       v-for="(card, index) in cards"
       :key="index"
+      cost-label=""
       :costs="card.costs"
       :is-selected="armedHandIndex === index || rerollHandIndex === index || switchedHandIndices.includes(index)"
       :name="textMap[card.nameTextId] ?? ''"

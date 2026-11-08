@@ -2,6 +2,7 @@
 import type { Element } from "#src/models/Element";
 import type { GcgAura } from "#src/models/gcg/GcgAura";
 
+import { formatGcgNumberLabel } from "#src/services/gcg/formatGcgNumberLabel";
 import { INTERACTION_HOVER_DURATION, INTERACTION_REST_DURATION } from "genshin-interface";
 
 interface Props {
@@ -9,26 +10,41 @@ interface Props {
   aura: Element | GcgAura;
   // The energy it holds toward its burst, and the most it can hold
   energy: number;
+  // The game's label for the energy, or "" where it has no text id yet
+  energyLabel: string;
   hp: number;
+  // The game's label for the HP, or "" where it has no text id yet
+  hpLabel: string;
   // Whether a click on it does something for the player at this moment
   isChoosable: boolean;
-  // The character's name in the reader's language
   maxEnergy: number;
+  // The character's name in the reader's language
   name: string;
   // The shield points it holds
   shield: number;
+  // The game's label for the shield, or "" where it has no text id yet
+  shieldLabel: string;
 }
 
-const { aura, energy, hp, isChoosable, maxEnergy, name, shield } = defineProps<Props>();
+const { aura, energy, energyLabel, hp, hpLabel, isChoosable, maxEnergy, name, shield, shieldLabel } =
+  defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
+const accessibleName = computed(() =>
+  [
+    name,
+    formatGcgNumberLabel(hpLabel, hp),
+    formatGcgNumberLabel(energyLabel, energy),
+    formatGcgNumberLabel(shieldLabel, shield),
+  ].join(", "),
+);
 </script>
 
 <template>
   <!-- A character card on the board: its HP in the corner, its energy as pips down its right edge, its aura and shield
-       beside it. Its name is only the button's label. A defeated one is greyed; the board raises the active one by its class -->
+       beside it. Its name is read with its HP, energy and shield. A defeated one is greyed; the board raises the active one by its class -->
   <button
     class="character"
-    :aria-label="name"
+    :aria-label="accessibleName"
     :class="{ choosable: isChoosable, defeated: hp <= 0 }"
     type="button"
     @click="emit('select')"
@@ -45,7 +61,7 @@ const emit = defineEmits<{ select: [] }>();
 <style scoped>
 /* The card's art is not drawn: its plate is the mean colour of the six cards' art in the frame at each height (the top
    quarter's, then down the card), and its frame is the cream border the game draws. The game shows no name on a card in
-   this frame, so the name is only the button's label */
+   this frame, so the name is the button's label, read with its numbers */
 .character {
   --state-duration: v-bind(INTERACTION_REST_DURATION);
   position: absolute;

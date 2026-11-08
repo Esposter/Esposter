@@ -113,6 +113,7 @@ const battleLabel = computed(() =>
       class="opponent-row"
       :active-index="opponentSide.activeIndex"
       :characters="opponentCharacters"
+      :game-text
       :text-map
     />
     <GcgScreenBand :label="gameText[bandTextKey]" />
@@ -120,6 +121,7 @@ const battleLabel = computed(() =>
       class="player-row"
       :active-index="playerSide.activeIndex"
       :characters="playerCharacters"
+      :game-text
       :text-map
       @select="(characterIndex) => selectCharacter(characterIndex)"
     />
