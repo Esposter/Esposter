@@ -45,7 +45,6 @@
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "dev": "vp run -w build:packages && pnpm --filter @esposter/db-schema db:migrate && nuxt dev --no-tui",
-    "env:gen": "vpx --tsconfig tsconfig.root.json scripts/env/index.ts",
     "flow-map:gen": "vpx --tsconfig tsconfig.root.json scripts/flowMap/index.ts",
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpm dlx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f",

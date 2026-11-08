@@ -1,15 +1,9 @@
 import { definePlugin } from "nitro";
-import { useRuntimeConfig } from "nuxt/server";
 import * as webpush from "web-push";
 
 export default definePlugin(() => {
-  const runtimeConfig = useRuntimeConfig();
-  // BASE_URL is unavailable during prerender and may be malformed when misconfigured
-  if (!URL.canParse(runtimeConfig.public.baseUrl) || new URL(runtimeConfig.public.baseUrl).hostname === "localhost")
-    return;
-  webpush.setVapidDetails(
-    runtimeConfig.public.baseUrl,
-    runtimeConfig.public.vapid.publicKey,
-    runtimeConfig.vapid.privateKey,
-  );
+  // A prerender runs at build time without the deployment's environment, and a local server has no public origin to
+  // Register with push services
+  if (import.meta.prerender || new URL(process.env.BASE_URL).hostname === "localhost") return;
+  webpush.setVapidDetails(process.env.BASE_URL, process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 });

@@ -1,24 +1,8 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+// Only what the browser needs — everything under `public` is serialised into the client payload. Server code reads its
+// Secrets straight off the environment under their own names, checked at startup by the environment plugin
 export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
-  auth: { secret: process.env.BETTER_AUTH_SECRET },
-  azure: {
-    eventGrid: { topic: { key: process.env.AZURE_EVENT_GRID_TOPIC_KEY } },
-    function: { key: process.env.AZURE_FUNCTION_KEY },
-    search: { apiKey: process.env.AZURE_SEARCH_API_KEY, baseUrl: process.env.AZURE_SEARCH_BASE_URL },
-    serviceBus: { connectionString: process.env.AZURE_SERVICE_BUS_CONNECTION_STRING },
-    storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
-    webPubSub: { connectionString: process.env.AZURE_WEB_PUBSUB_CONNECTION_STRING },
-  },
-  database: { url: process.env.DATABASE_URL },
-  facebook: { clientSecret: process.env.FACEBOOK_CLIENT_SECRET },
-  github: { clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET },
-  google: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET },
-  livekit: {
-    apiKey: process.env.LIVEKIT_API_KEY,
-    apiSecret: process.env.LIVEKIT_API_SECRET,
-    url: process.env.LIVEKIT_URL,
-  },
   public: {
     appEnv: process.env.APP_ENV,
     azure: {
@@ -30,5 +14,4 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID },
     vapid: { publicKey: process.env.VAPID_PUBLIC_KEY },
   },
-  vapid: { privateKey: process.env.VAPID_PRIVATE_KEY },
 };

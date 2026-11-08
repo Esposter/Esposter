@@ -106,9 +106,6 @@ vi.mock("nuxt/server", async (importOriginal) => ({
     // Nuxt's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
-    // A build without the secret, which Nuxt bakes as "" — what signs then is the env fallback the config sets.
-    // No `livekit` key is a deployment without LiveKit, so a call answers from the participant map alone
-    auth: { secret: "" },
     public: { appEnv: Environment.Development, azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
   }),
 }));

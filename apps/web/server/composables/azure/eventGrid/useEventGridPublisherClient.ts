@@ -1,11 +1,9 @@
 import { AzureKeyCredential, EventGridPublisherClient } from "@azure/eventgrid";
-import { useRuntimeConfig } from "nuxt/server";
 
 export const useEventGridPublisherClient = () => {
-  const runtimeConfig = useRuntimeConfig();
   return new EventGridPublisherClient(
-    runtimeConfig.public.azure.eventGrid.topic.endpoint,
+    process.env.AZURE_EVENT_GRID_TOPIC_ENDPOINT,
     "EventGrid",
-    new AzureKeyCredential(runtimeConfig.azure.eventGrid.topic.key),
+    new AzureKeyCredential(process.env.AZURE_EVENT_GRID_TOPIC_KEY),
   );
 };

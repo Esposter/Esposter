@@ -5,7 +5,7 @@ import { getIpAddress } from "#server/services/request/getIpAddress";
 import { MimeType } from "#shared/models/file/MimeType";
 import { selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-import { defineEventHandler, getRequestIP, getRouterParams, useRuntimeConfig } from "nuxt/server";
+import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
@@ -17,7 +17,6 @@ export default defineEventHandler(async (event) => {
     return { message: "Invalid parameters." };
   }
 
-  const runtimeConfig = useRuntimeConfig();
   // Passed through as it arrived, since the function validates the payload and answers its own 400
   const body = await event.req.text();
   return getResultAsync(async () => {
@@ -28,9 +27,9 @@ export default defineEventHandler(async (event) => {
     // This route is a thin proxy for the function that owns the webhook: it answers 404 for an unknown id or a
     // Wrong token and 400 for an invalid payload, and its response is returned as it came back so the sender
     // Can tell a bad credential from an Esposter outage
-    return fetch(`${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`, {
+    return fetch(`${process.env.AZURE_FUNCTION_BASE_URL}/api/webhooks/${id}/${token}`, {
       body,
-      headers: { "Content-Type": MimeType.Json, "x-functions-key": runtimeConfig.azure.function.key },
+      headers: { "Content-Type": MimeType.Json, "x-functions-key": process.env.AZURE_FUNCTION_KEY },
       method: "POST",
     });
   }).match(

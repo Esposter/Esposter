@@ -11,9 +11,8 @@ import { getNuxtEnvironmentOptions } from "./configuration/nuxtEnvironmentOption
 // Its `resolve` is not taken: how the app reaches its siblings is the Nuxt wiring's, which `defineVitestProject`
 // Resolves
 const { test } = getVitestConfiguration(import.meta.dirname, {
-  // Anything that signs with the app secret refuses to run without one, rather than quietly signing with an
-  // Empty key — Nuxt coerces an unset runtimeConfig value to "", which `createHmac` accepts, so the failure
-  // Would otherwise be a forgeable token in production and nothing at all in a test.
+  // A deployment is held to having the app secret by the start-up check, which a test never runs, so a test that
+  // Signs is given one here rather than quietly signing with an empty key.
   env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
   environmentOptions: getNuxtEnvironmentOptions(import.meta.dirname),
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes

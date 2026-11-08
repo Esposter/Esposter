@@ -8,18 +8,17 @@ import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallA
 import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { getResultAsync } from "@esposter/shared";
 import { WebhookReceiver } from "livekit-server-sdk";
-import { defineEventHandler, useRuntimeConfig } from "nuxt/server";
+import { defineEventHandler } from "nuxt/server";
 
 export default defineEventHandler(async (event) => {
-  const { livekit } = useRuntimeConfig();
   const body = await event.req.text();
   const getInvalidWebhookResponse = () => {
     event.res.status = 400;
     return { message: "Invalid LiveKit webhook." };
   };
-  if (!body || !livekit?.apiKey || !livekit.apiSecret) return getInvalidWebhookResponse();
+  if (!body || !process.env.LIVEKIT_API_KEY || !process.env.LIVEKIT_API_SECRET) return getInvalidWebhookResponse();
 
-  const webhookReceiver = new WebhookReceiver(livekit.apiKey, livekit.apiSecret);
+  const webhookReceiver = new WebhookReceiver(process.env.LIVEKIT_API_KEY, process.env.LIVEKIT_API_SECRET);
   return getResultAsync(() => webhookReceiver.receive(body, event.req.headers.get("authorization") ?? undefined)).match(
     async (webhookEvent) => {
       const callSessionId = webhookEvent.room?.name ?? "";

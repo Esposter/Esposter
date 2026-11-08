@@ -1,9 +1,7 @@
 import type { AzureQueue } from "@esposter/db-schema";
 
 import { getServiceBusSender } from "@esposter/db";
-import { useRuntimeConfig } from "nuxt/server";
 
 export const useServiceBusSender = (azureQueue: AzureQueue) => {
-  const runtimeConfig = useRuntimeConfig();
-  return getServiceBusSender(runtimeConfig.azure.serviceBus.connectionString, azureQueue);
+  return getServiceBusSender(process.env.AZURE_SERVICE_BUS_CONNECTION_STRING, azureQueue);
 };
