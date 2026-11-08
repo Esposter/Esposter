@@ -7,7 +7,9 @@ import { Currency } from "#src/models/inventory/Currency";
 import { questSchema } from "#src/models/quest/Quest";
 import { QuestId } from "#src/models/quest/QuestId";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
+import { SCRIPTED_FRAME_MS } from "#src/services/dev/constants";
 import { createDevRegistry } from "#src/services/dev/createDevRegistry";
+import { stepFramesUntil } from "#src/services/dev/stepFramesUntil";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { QuestLoaderMap } from "#src/services/quest/QuestLoaderMap";
 import { EMPTY_GENSHIN_SAVE, MAX_TRAVELER_NAME_LENGTH } from "#src/services/save/constants";
@@ -20,6 +22,19 @@ const readHolds = (devRegistry: DevRegistry) => ({
   mora: devRegistry.run(`bag ${Currency.Mora}`),
   questStep: devRegistry.run(`quest ${QuestId.WanderersTrail}`),
 });
+// The value the HUD's Sheer Cold bar reads, which the session writes from the gauge's value each time it changes
+const readSheerColdValue = (): number => {
+  const bar = document.querySelector<HTMLElement>(".sheer-cold");
+  assert.exists(bar);
+
+  return Number(bar.getAttribute("aria-valuenow"));
+};
+// Whether the character's state line names the area it stands in, the same reading a console line gives
+const checkIsStandingIn = (devRegistry: DevRegistry, area: string): boolean => {
+  const state = devRegistry.run("state");
+
+  return state.ok && String(state.value).includes(` place=${area} `);
+};
 
 describe("worldSession", () => {
   test("a load restores what the save holds", async () => {
@@ -90,5 +105,28 @@ describe("worldSession", () => {
     expect(saved).toStrictEqual({ error: " ", ok: false });
     // The world's commands leave the registry only once its screen unmounts, so a command still answering here means it did not
     expect(kills).toStrictEqual({ error: "not available here", ok: false, usage: "kills" });
+  });
+
+  test("write the gauge's value into the HUD bar once the character stands in the subzero climate", async () => {
+    expect.hasAssertions();
+
+    // The one area the subzero climate covers, which a teleport names and the character's state line reads back
+    const CLIMATE_AREA = "Dragonspine";
+    // The gauge fills a point a second in the climate, so a second's frames after the landing leave the bar a value
+    const SECOND_FRAMES = Math.round(1000 / SCRIPTED_FRAME_MS);
+    const devRegistry = createDevRegistry();
+    const sessionDriver = createSessionDriver(devRegistry);
+    onTestFinished(() => sessionDriver.dispose());
+    const mounted = await sessionDriver.mount();
+    const teleported = devRegistry.run(`teleport ${CLIMATE_AREA}`);
+    const landed = await stepFramesUntil(sessionDriver.frame, () =>
+      checkIsStandingIn(devRegistry, CLIMATE_AREA) ? true : undefined,
+    );
+    const sheerCold = await stepFramesUntil(sessionDriver.frame, readSheerColdValue, SECOND_FRAMES);
+
+    expect(mounted).toStrictEqual({ ok: true });
+    expect(teleported).toStrictEqual({ ok: true, value: CLIMATE_AREA });
+    expect(landed).toBe(true);
+    expect(sheerCold).toBeGreaterThan(0);
   });
 });
