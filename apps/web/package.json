@@ -175,6 +175,7 @@
     "@types/web-push": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/workbox-swkit": "catalog:",
+    "@vite-pwa/workbox-window": "catalog:",
     "@vizejs/nuxt": "catalog:",
     "@vue/compiler-core": "catalog:",
     "@vue/test-utils": "catalog:",

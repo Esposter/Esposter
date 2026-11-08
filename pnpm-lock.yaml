@@ -1266,6 +1266,9 @@ importers:
       '@vite-pwa/workbox-swkit':
         specifier: 'catalog:'
         version: 8.0.14
+      '@vite-pwa/workbox-window':
+        specifier: 'catalog:'
+        version: 8.0.14
       '@vizejs/nuxt':
         specifier: 'catalog:'
         version: 0.713.0(482fa4829e76d562f5676c4838f4d1f1)
@@ -2203,9 +2206,6 @@ importers:
       '@vite-pwa/workbox-build':
         specifier: 'catalog:'
         version: 8.0.14(magicast@0.5.5)(rolldown@1.3.0)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(webpack@5.112.2(cssnano@7.1.9(postcss@8.5.32))(csso@5.0.5)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@26.6.6))(svgo@4.1.0)(uglify-js@3.19.3))
-      '@vite-pwa/workbox-window':
-        specifier: 'catalog:'
-        version: 8.0.14
       nitro:
         specifier: 'catalog:'
         version: nitro-nightly@3.0.1-20261106-171351-0317e652
@@ -2229,6 +2229,9 @@ importers:
         specifier: 'catalog:'
         version: 26.6.6
       '@vite-pwa/workbox-swkit':
+        specifier: 'catalog:'
+        version: 8.0.14
+      '@vite-pwa/workbox-window':
         specifier: 'catalog:'
         version: 8.0.14
       tsdown:

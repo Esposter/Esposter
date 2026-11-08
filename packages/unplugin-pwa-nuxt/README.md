@@ -21,8 +21,10 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i unplugin-pwa-nuxt
+pnpm i unplugin-pwa-nuxt @vite-pwa/workbox-window
 ```
+
+The engine's register code is a virtual module whose imports Vite resolves from your app's root, so the app installs `@vite-pwa/workbox-window` itself.
 
 ```ts
 // nuxt.config.ts

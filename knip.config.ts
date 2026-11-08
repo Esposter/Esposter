@@ -37,6 +37,9 @@ const knipConfiguration: KnipConfig = {
         // `tresjs-nuxt` registers the components of every `@tresjs` package the app declares, so the templates name
         // Cientos's components and nothing imports the package
         "@tresjs/cientos",
+        // The PWA engine's register code is a virtual module that imports it, which Vite resolves from the app's root, so
+        // The app declares it and nothing in the app imports it (vite-pwa/unplugin-pwa#48)
+        "@vite-pwa/workbox-window",
         "@vueuse/router",
         // @TODO: no upstream issue — unstorage 2's fs driver loads `chokidar` without declaring it, so the app declares
         // It for Nitro 3's server bundle and nothing in the app imports it (nitrojs/nitro)
@@ -108,7 +111,7 @@ const knipConfiguration: KnipConfig = {
         "test/fixture/server/api/hello.get.ts",
         "test/fixture/service-worker/sw.ts",
       ],
-      // `createWorkboxWindowPlugin` resolves the package from a set of specifier strings, so nothing imports it
+      // The fixture app builds the engine's register code, a virtual module that imports it, so nothing here does
       ignoreDependencies: ["@vite-pwa/workbox-window"],
     },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone

@@ -256,7 +256,6 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | nuxt-security-module       | services/getDefaultModuleOptions.js                          |     814 |    0.8 |
 | pitch-transcription        | notes.js                                                     |     801 |    0.8 |
 | @esposter/shared-node      | execSync-[hash].js                                           |     800 |    0.8 |
-| unplugin-pwa-nuxt          | services/getVitePlugins.js                                   |     799 |    0.8 |
 | trpc-nuxt-module           | runtime/client/models/DecoratedRouterRecord.d.ts             |     783 |    0.8 |
 | @esposter/db-mock          | index.js                                                     |     763 |    0.7 |
 | vue-canvas-frame-headless  | index.d.ts                                                   |     756 |    0.7 |
@@ -269,6 +268,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-world              | getDeployedCombatants-[hash].js                              |     705 |    0.7 |
 | nuxt-security-module       | services/getTypeTemplate.js                                  |     701 |    0.7 |
 | nuxt-security-module       | runtime/server/middleware/corsHandler.js                     |     696 |    0.7 |
+| unplugin-pwa-nuxt          | services/getVitePlugins.js                                   |     693 |    0.7 |
 | genshin-interface          | styles/creamPillLit.css                                      |     692 |    0.7 |
 | nuxt-security-module       | runtime/services/getBasicAuthOptions.js                      |     689 |    0.7 |
 | trpc-nuxt-module           | runtime/server/models/WebSocketClientAdapter.js              |     678 |    0.7 |
@@ -306,7 +306,6 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-nuxt-module           | runtime/client/models/DecoratedProcedure.d.ts                |     532 |    0.5 |
 | trpc-nuxt-module           | runtime/server/models/TRPCEventHandlerOptions.d.ts           |     531 |    0.5 |
 | trpc-nuxt-module           | runtime/server/models/WebSocketClientAdapter.d.ts            |     527 |    0.5 |
-| unplugin-pwa-nuxt          | services/createWorkboxWindowPlugin.js                        |     525 |    0.5 |
 | trpc-nuxt-module           | runtime/server/models/PeerWebSocketAdapter.js                |     523 |    0.5 |
 | genshin-world              | spendKitResource-[hash].js                                   |     511 |    0.5 |
 | nuxt-security-module       | services/getStaticResourceHeaders.js                         |     510 |    0.5 |
@@ -574,4 +573,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 569 files, 21700231 bytes, 21191.6 KiB, 20.69 MiB
+**Total:** 568 files, 21699600 bytes, 21191.0 KiB, 20.69 MiB

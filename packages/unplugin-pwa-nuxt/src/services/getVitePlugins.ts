@@ -1,6 +1,5 @@
 import type { Plugin } from "vite";
 
-import { createWorkboxWindowPlugin } from "#src/services/createWorkboxWindowPlugin";
 import { BuildPwaAssetsPlugin } from "@unplugin-pwa/vite/plugins/build-pwa-assets";
 import { DevPlugin } from "@unplugin-pwa/vite/plugins/dev";
 import { DevMiddlewarePlugin } from "@unplugin-pwa/vite/plugins/dev-middleware";
@@ -21,5 +20,4 @@ export const getVitePlugins = (context: PwaContext): Plugin[] => [
   DevPlugin(context),
   DevMiddlewarePlugin(context),
   BuildPwaAssetsPlugin(context),
-  createWorkboxWindowPlugin(),
 ];
