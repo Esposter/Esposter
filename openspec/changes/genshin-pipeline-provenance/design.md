@@ -29,7 +29,7 @@ Every export, fit input and record the conversion pipeline writes carries one pr
 - **The scan does not follow a symbolic link**, since the installed blocks folder holds links to the game's own block files.
 - **The runbook runs `genshin:data verify` after the fits publish**, since verify follows every publish; the task's order named it before the publish.
 - **A record's fit runs once per component**, without `--only`, since a fit publishes its records as it runs and one run covers its component's records.
->
+
 ## How it works
 
 The pins gate what is fetched, the tool installs gate what runs, and the stamp gates what a consumer reads. One reader serves the fit, the map and the fleet copy, so a refusal names both versions the same way in each of them, and no consumer keeps a check of its own.
