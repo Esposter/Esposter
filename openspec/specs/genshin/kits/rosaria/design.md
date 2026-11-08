@@ -13,7 +13,7 @@ Rosaria's kit is its record and one behaviour module, `createRosariaKitBehaviour
 ## Provisional constants
 
 - **The plunges' frames are provisional.** `rosaria.json` carries no plunge entry, so the plunges' timings are not read from gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go`, whose hitmarks are 42 and 43 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:21`, `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:22`) and whose animations are 78 and 80 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:38`, `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/plunge.go:47`). Their poise is the wiki's, 100 and 150 for the low and high plunges and 25 for the collision, from the Spear of the Church page (`{data-root}/cache/genshin-wiki/Category_Rosaria_Talents.json`).
-- The tick's shape is open: [the spec's Open list](spec.md#open) holds the question.
+- The tick's shape is open: [the design's Open list](#open) holds the question.
 
 ## Key files
 
@@ -27,3 +27,7 @@ Rosaria's kit is its record and one behaviour module, `createRosariaKitBehaviour
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/rosaria), MIT: the kit's hitmarks, cancel frames and areas, the field's ticks and their offset, the burst's extension by Constellation 2, Ascension 4's share and Regina Probationum's gate in `asc.go`, and Constellations 1, 4 and 6 in `cons.go`. The snapshot is on disk at `{data-root}/cache/gcsim-v2.47.2/internal/characters/rosaria/`, and the line numbers above read it.
 - Rows of groups 4531, 4532 and 4539 at levels 1 to 15, from the table [Razor's page](../razor/design.md) cites.
 - Requirement "Rites of Termination's field": the reach of gcsim's circle of radius 6.5 three metres ahead of her.
+
+## Open
+
+- [ ] **Each Rites of Termination tick is a 9.5-metre circle round her body** — no source yet: gcsim's tick is a radius-6.5 circle three metres ahead, and no source settles which shape the game draws. The burst's row gives a lock circle of 8 metres, "CircleLockEnemyR8H6HC" (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json` line 8845), which names the lock and not a tick, so a recording of a tick's outline would settle it.

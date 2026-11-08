@@ -78,3 +78,9 @@ flowchart TD
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 31: grounds scenario "No stack below Constellation 4".
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 186 and 205 to 206: grounds scenario "A skill still spends the quota".
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` lines 38 and 42: grounds scenario "Spring Spirit Summoning consumes the stacks".
+
+## Open
+
+- [ ] **Each tick's RES Decrease lasts one tick interval** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the RES mod lasts 36 frames, two 18-frame field ticks.
+- [ ] **Holding Spring Spirit Summoning past half a second releases its hold** — no source yet: gcsim reads hold as a flag (`{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 50 to 53), and no recording of the threshold is on disk; a capture of a held Spring Spirit Summoning released either side of half a second would settle it, and none is in `{data-root}/genshin-parity/captures`.
+- [ ] **The Skyfrost Mantra bonus lasts the press action's length** — no source yet: the wiki gives the stacks' 60 seconds and their use by the next Spring Spirit Summoning (`{data-root}/cache/genshin-wiki/Category_Shenhe_Talents.json` line 1), not a window for the press, and gcsim applies the bonus once to the summoning's damage snapshot (`{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136) with no length stated; a recording of the bonus's end would settle it.

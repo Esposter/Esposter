@@ -79,7 +79,3 @@ Xinyan's Ascension 1, Ascension 4 and her Constellations 2 and 4 SHALL take effe
 - **WHEN** Sweeping Fervor sets her shield
 - **THEN** every deployed member deals 15% more Physical DMG while the shield stands
 - **AND** the bonus ends as the shield breaks
-
-## Open
-
-- [ ] **The shield is set at the press when none stands** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/xinyan/skill.go`: sets the level-1 shield 28 frames after the press (`skillShieldStart = 28`).
