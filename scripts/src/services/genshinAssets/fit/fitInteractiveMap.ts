@@ -1,6 +1,7 @@
 import type { InteractiveMapFitFile } from "#src/models/genshinAssets/points/InteractiveMapFitFile";
 import type { InteractiveMapRegionFit } from "#src/models/genshinAssets/points/InteractiveMapRegionFit";
 
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { OculusKindLabelIdMap } from "#src/services/genshinAssets/oculi/OculusKindLabelIdMap";
 import { computeResidual } from "#src/services/genshinAssets/points/computeResidual";
@@ -41,20 +42,24 @@ export const fitInteractiveMap = async (): Promise<string> => {
       "interactive map",
       `fits at a residual of ${residual} game units, over its bar of ${INTERACTIVE_MAP_FIT_BAR}; nothing written`,
     );
-  const regions: InteractiveMapRegionFit[] = Object.entries(InteractiveMapRegionMap).map(
-    ([region, { areaId, oculus }]) => {
-      const pairs = fit.pairs.filter(({ fromIndex }) => anchors[fromIndex]?.area_id === areaId);
-      return {
-        matched: pairs.length,
-        oculusCount: points.filter(
-          ({ area_id, label_id }) => area_id === areaId && label_id === OculusKindLabelIdMap[oculus.kind],
-        ).length,
-        oculusWikiCount: oculus.count,
-        region,
-        residual: pairs.length > 0 ? roundFitted(computeResidual(pairs)) : undefined,
-      };
-    },
+  // Mondstadt is reported first, as the fit is checked against it, and the other regions follow in the map's order
+  const regionEntries = Object.entries(InteractiveMapRegionMap).toSorted(
+    ([firstRegion], [secondRegion]) =>
+      Number(firstRegion !== DerivedAssetComponent.Mondstadt) -
+      Number(secondRegion !== DerivedAssetComponent.Mondstadt),
   );
+  const regions: InteractiveMapRegionFit[] = regionEntries.map(([region, { areaId, oculus }]) => {
+    const pairs = fit.pairs.filter(({ fromIndex }) => anchors[fromIndex]?.area_id === areaId);
+    return {
+      matched: pairs.length,
+      oculusCount: points.filter(
+        ({ area_id, label_id }) => area_id === areaId && label_id === OculusKindLabelIdMap[oculus.kind],
+      ).length,
+      oculusWikiCount: oculus.count,
+      region,
+      residual: pairs.length > 0 ? roundFitted(computeResidual(pairs)) : undefined,
+    };
+  });
   const file: InteractiveMapFitFile = { regions, residual, transform: fit.transform };
   await mkdir(INTERACTIVE_MAP_DIRECTORY, { recursive: true });
   writeJsonFile(INTERACTIVE_MAP_FIT_PATH, file);
