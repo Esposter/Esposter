@@ -78,6 +78,7 @@
     "genshin:data": "vpx src/gameData/index.ts",
     "genshin:parity": "vpx src/genshinParity/index.ts",
     "genshin:text": "vpx src/genshinText/index.ts",
+    "genshin:version": "vpx src/gameVersion/index.ts",
     "recreation": "vpx src/recreation/index.ts",
     "globe:gen": "vpx src/globeLandMask/index.ts",
     "bundle-sizes:gen": "vpx src/bundleSizes/index.ts",
