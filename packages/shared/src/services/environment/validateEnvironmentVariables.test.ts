@@ -1,5 +1,3 @@
-import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
-import { Operation } from "#src/models/shared/Operation";
 import { validateEnvironmentVariables } from "#src/services/environment/validateEnvironmentVariables";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -18,12 +16,8 @@ describe(validateEnvironmentVariables, () => {
     expect.hasAssertions();
     expect(() => {
       validateEnvironmentVariables(schema, {});
-    }).toThrow(
-      new InvalidOperationError(
-        Operation.Read,
-        "environment variables",
-        "SECRET: Invalid input: expected string, received undefined; URL: Invalid input: expected string, received undefined",
-      ),
+    }).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: environment variables, SECRET: Invalid input: expected string, received undefined; URL: Invalid input: expected string, received undefined]`,
     );
   });
 
@@ -31,6 +25,8 @@ describe(validateEnvironmentVariables, () => {
     expect.hasAssertions();
     expect(() => {
       validateEnvironmentVariables(schema, { SECRET: "a", URL: "not-a-url-secret" });
-    }).toThrow(new InvalidOperationError(Operation.Read, "environment variables", "URL: Invalid URL"));
+    }).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: environment variables, URL: Invalid URL]`,
+    );
   });
 });

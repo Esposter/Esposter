@@ -13,8 +13,7 @@ export const createUploadFileToken = (
   roomId: string,
   id: string,
   expiresAt: number = Date.now() + WRITE_SAS_DURATION_MS,
-): string => {
-  return `${expiresAt}${ID_SEPARATOR}${createHmac("sha256", process.env.BETTER_AUTH_SECRET)
+): string =>
+  `${expiresAt}${ID_SEPARATOR}${createHmac("sha256", process.env.BETTER_AUTH_SECRET)
     .update([userId, roomId, id, expiresAt].join(ID_SEPARATOR))
     .digest("base64url")}`;
-};

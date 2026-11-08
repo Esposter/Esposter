@@ -1,6 +1,7 @@
 import type { Pinia } from "pinia";
 
 import { Environment } from "#shared/models/environment/Environment";
+import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
@@ -151,6 +152,13 @@ if (!checkIsServer()) {
   const { enableAutoUnmount } = await import("@vue/test-utils");
   enableAutoUnmount(afterEach);
 }
+
+// Stubbed before every test rather than once, since the config restores every stubbed variable after each one. A test
+// That needs a variable different, or absent, stubs it itself after this runs
+// oxlint-disable-next-line vitest/no-duplicate-hooks -- the nuxt environment's hook above is registered only inside its own guard, so this one cannot join it
+beforeEach(() => {
+  for (const [name, value] of Object.entries(MOCK_ENVIRONMENT_VARIABLES)) vi.stubEnv(name, value);
+});
 
 afterEach(() => {
   globalThis.localStorage.clear();

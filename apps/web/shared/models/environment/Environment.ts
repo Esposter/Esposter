@@ -8,4 +8,4 @@ export enum Environment {
   Test = "test",
 }
 
-export const environmentSchema = z.enum(Environment);
+export const environmentSchema = z.enum(Environment) satisfies z.ZodType<Environment>;

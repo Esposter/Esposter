@@ -1,4 +1,6 @@
-import { Environment, environmentSchema } from "#shared/models/environment/Environment";
+import type { Environment } from "#shared/models/environment/Environment";
+
+import { environmentSchema } from "#shared/models/environment/Environment";
 import { z } from "zod";
 
 // LiveKit is optional — a deployment without it runs calls with no media server — so its three variables may be
