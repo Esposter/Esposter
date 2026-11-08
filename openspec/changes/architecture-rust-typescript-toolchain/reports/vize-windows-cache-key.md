@@ -2,7 +2,7 @@ vite-plugin: on Windows the transform hook compiles a component again when its i
 
 ## Summary
 
-On Windows, the transform hook of `@vizejs/vite-plugin` compiles a component that the pre-compile already compiled. The cache lookup misses when the module id has backslashes, because the pre-compile stores the path with forward slashes. The same project on Linux has no such miss.
+On Windows, the transform hook of `@vizejs/vite-plugin` compiles again a component that the pre-compile already compiled, because the cache lookup misses when the module id has backslashes. The same project on Linux has no such miss.
 
 ## Environment
 
