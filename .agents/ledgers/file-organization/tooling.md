@@ -34,6 +34,7 @@
 | `scripts/src/models/genshinAssets/crafting`                                               | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/domains`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/enemies`                                                | 2026-10-29 · Haiku 5.5  |       |
+| `scripts/src/models/genshinAssets/enemies/LuaTokenKind.ts`                                | —                       |       |
 | `scripts/src/models/genshinAssets/expeditions`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/exploration`                                            | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/models/genshinAssets/fishing`                                                | 2026-10-29 · Haiku 5.5  |       |
@@ -796,6 +797,7 @@
 | `scripts/src/services/genshinAssets/scene`                                                | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5  |       |
+| `scripts/src/services/genshinAssets/shared/CityIdRegionMap.ts`                            | —                       |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | 2026-11-01 · Haiku 5.5  |       |
