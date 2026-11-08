@@ -6,13 +6,13 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | :------------------------- | :----------------------------------------------------------- | ------: | -----: |
 | @esposter/functions        | index.js                                                     | 5248913 | 5125.9 |
 | @esposter/db-mock          | snapshot.tar.gz                                              | 5081004 | 4961.9 |
-| genshin-world              | index.js                                                     | 2567770 | 2507.6 |
+| genshin-world              | index.js                                                     | 2568715 | 2508.5 |
 | @esposter/db               | index.js                                                     | 1990966 | 1944.3 |
-| genshin-world              | index-[hash].d.ts                                            | 1677990 | 1638.7 |
-| genshin-world              | style.css                                                    |  306112 |  298.9 |
+| genshin-world              | index-[hash].d.ts                                            | 1678205 | 1638.9 |
+| genshin-world              | style.css                                                    |  306150 |  299.0 |
 | genshin-engine             | index.js                                                     |  287996 |  281.2 |
 | @esposter/functions        | Arrow.node-[hash].js                                         |  255689 |  249.7 |
-| genshin-world              | index.d.ts                                                   |  254177 |  248.2 |
+| genshin-world              | index.d.ts                                                   |  254228 |  248.3 |
 | genshin-interface          | index.d.ts                                                   |  248335 |  242.5 |
 | vue-phaserjs               | index.d.ts                                                   |  245887 |  240.1 |
 | genshin-interface          | index.js                                                     |  232459 |  227.0 |
@@ -61,10 +61,10 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | @esposter/functions        | tslib.es6-[hash].js                                          |   16200 |   15.8 |
 | @esposter/functions        | open-[hash].js                                               |   15437 |   15.1 |
 | genshin-world              | columbinaKit-[hash].js                                       |   13804 |   13.5 |
+| @esposter/configuration    | index.js                                                     |   13395 |   13.1 |
 | genshin-world              | alhaithamKit-[hash].js                                       |   12944 |   12.6 |
 | genshin-world              | nicoleKit-[hash].js                                          |   12717 |   12.4 |
 | pitch-transcription        | notes-[hash].js                                              |   12695 |   12.4 |
-| @esposter/configuration    | index.js                                                     |   12465 |   12.2 |
 | genshin-world              | iansanKit-[hash].js                                          |   11660 |   11.4 |
 | genshin-world              | readCharacterAvatar-[hash].js                                |   11461 |   11.2 |
 | genshin-world              | laylaKit-[hash].js                                           |   11309 |   11.0 |
@@ -573,4 +573,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | unplugin-pwa-nuxt          | runtime/models/UseRegisterSW.js                              |      11 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts                                       |       9 |    0.0 |
 
-**Total:** 568 files, 21699600 bytes, 21191.0 KiB, 20.69 MiB
+**Total:** 568 files, 21701779 bytes, 21193.1 KiB, 20.70 MiB
