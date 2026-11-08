@@ -15,4 +15,4 @@
       (`reportKindCount`, called by `buildOculusPlaces.ts` and `buildChestPlaces.ts`). Enemy kinds are not checked, since
       the wiki gives no per-region count for them. Verify: tests named after 'A kind short of the wiki's count is reported'
       and 'A kind matching the wiki's count reports nothing'.
-- [ ] 3.2 Hold the built fit report's three scenarios with a test each: 'Mondstadt reported first', 'Shortfall kept as it stands' and 'Snezhnaya with no matched points'. Verify: a test named after each scenario passes as first written, since the report is built.
+- [x] 3.2 Hold the built fit report's three scenarios with a test each: 'Mondstadt reported first', 'Shortfall kept as it stands' and 'Snezhnaya with no matched points'. Verify: a test named after each scenario passes as first written, since the report is built. As built, the report listed Fontaine first, so all three tests failed first on that order; the report now sorts Mondstadt to the front (see Decisions).
