@@ -1,5 +1,6 @@
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
+import type { PinnedTool } from "#src/models/shared/PinnedTool";
 import type { ProvenanceTool } from "#src/models/provenance/ProvenanceOptions";
 import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
 
@@ -23,7 +24,7 @@ import {
   PUBLISH_DIRECTORY_NAME,
   TOOLS_DIRECTORY,
 } from "#src/services/recreation/animeStudio/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { PINNED_TOOL_DOWNLOAD_TIMEOUT_MS, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
 import { GameDataset } from "genshin-world";
 import { homedir } from "node:os";
@@ -294,11 +295,25 @@ export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
   { library: SampleLibrary.OsirisPiano, mapping: "Programs/01-natural.sfz" },
 ];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
-// FFmpeg is, into the shared tool cache
-export const VGMSTREAM_ARCHIVE_URL =
-  "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-win64.zip";
-export const VGMSTREAM_ARCHIVE_SHA256 = "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c";
+// FFmpeg is, into the shared tool cache. Its Windows and macOS archives are pinned beside each other, and the one a
+// machine takes is chosen by its platform
 export const VGMSTREAM_DIRECTORY: string = join(CACHE_ROOT, "vgmstream");
+export const VGMSTREAM_WINDOWS_PINNED_TOOL: PinnedTool = {
+  archiveSha256: "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c",
+  archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-win64.zip",
+  directory: VGMSTREAM_DIRECTORY,
+  downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
+  executablePattern: "vgmstream-cli.exe",
+  isArchive: true,
+};
+export const VGMSTREAM_MACOS_PINNED_TOOL: PinnedTool = {
+  archiveSha256: "cdabf633231a4556feb0048a71990c768e862f3695dd9458ae28e4d94aa50a99",
+  archiveUrl: "https://github.com/vgmstream/vgmstream/releases/download/r2117/vgmstream-mac.zip",
+  directory: VGMSTREAM_DIRECTORY,
+  downloadTimeoutMs: PINNED_TOOL_DOWNLOAD_TIMEOUT_MS,
+  executablePattern: "vgmstream-cli",
+  isArchive: true,
+};
 // 3Dmigoto's command-line decompiler (github.com/bo3b/3Dmigoto), which writes a compiled DXBC program as HLSL: its last
 // Release to ship it on its own, pinned and checked as FFmpeg is, into the shared tool cache
 export const DECOMPILER_ARCHIVE_URL =
