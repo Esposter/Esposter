@@ -30,6 +30,8 @@ flowchart LR
 
 - **Ascension 1's Retribution is not built, and its counter window is a recording owed.** The passive grants the greatest DMG Bonus to a counterattack with Tidecaller at the precise moment Beidou is hit. Its counter needs Tidecaller's hold, which the kit does not build, and no source gives the window: gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/beidou/asc.go` line 11 to line 12 leaves Ascension 1 unimplemented under the same "precise moment" TODO, and the wiki says only "the precise moment". The window has to be measured in frames, from the hit to the press that counters it, in a recording of the game, before the bonus's hit can be timed. Until then, the passive is not built and no window is guessed.
 
+- **A kit's gap list lives in its design's Open list, never in its spec.** A spec states what exists, so a kit spec has no Open section, and a gap a spec carried moves to its design's Open list. This kit's two pages are the pattern for every kit.
+
 ## Provisional constants
 
 - **Beidou's charged attack and plunges are provisional.** gcsim models neither and the wiki gives no frames, so the charged attack's slashes are priced at half a second and a second, and the charge closes at a second and a fifth, draining the table's 40 stamina a second as it plays, and its reaches are gcsim's unimplemented 3.3 and 3.5 metres. Each plunge hits from its action's start to 0.4 seconds later, reaching 1, 3 and 5 metres. Their damage is the table's; the charged attack's poise is 60 and 120, the low plunge's is the wiki's 150, the high plunge's is the wiki's 200 (the Oceanborne page's advanced properties, `{data-root}/cache/genshin-wiki/Category_Beidou_Talents.json` line 1), and the collision's is the wiki's Oceanborne 35.
