@@ -4,4 +4,4 @@ x-phase: 6
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches: ["scripts/src/services/genshinAssets/stats/**", "scripts/src/models/genshinAssets/stats/**"]
-x-waiting: "the game names publish carrying each passive's name and rank text ids (genshin:text names, run by the main session); the passives without a module wait on no change, they are written one by one"
+x-waiting: "the passives without a module wait on no change, they are written one by one"

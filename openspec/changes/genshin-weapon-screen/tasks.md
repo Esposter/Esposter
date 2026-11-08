@@ -15,7 +15,7 @@
 
 ## 4. Passive
 
-- [ ] 4.1 [phase 6] Show each passive on the screen once the weapon enhancement's passive data lands and the layout beneath the fodder grid is measured against the game reference, with a weapon that has none showing nothing. The list is drawn on the Refine tab now (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until that change's data task lands and the layout is measured; the passive's effect waits on the character kits. The Refine tab mounts `getWeaponPassive` (`packages/genshin-world/src/components/Weapon/Screen/Refine/Index.vue`), which the screen mounts, so the service has a production caller; no screen test mounts the passive yet, so this task stays open.
+- [ ] 4.1 [phase 6] Show each passive on the screen once the weapon enhancement's passive data lands and the layout beneath the fodder grid is measured against the game reference, with a weapon that has none showing nothing. The list is drawn on the Refine tab now (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until the layout is measured; the passive's effect waits on the character kits. The Refine tab mounts `getWeaponPassive` (`packages/genshin-world/src/components/Weapon/Screen/Refine/Index.vue`), which the screen mounts, so the service has a production caller; no screen test mounts the passive yet, so this task stays open.
 
 ## 5. The Enhance strip
 
