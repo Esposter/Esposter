@@ -44,7 +44,3 @@ Nefer's Phantasm Performance SHALL NOT take effect.
 
 - **WHEN** the player uses Nefer's skill or burst during Shadow Dance
 - **THEN** no Phantasm Performance hit lands
-
-## Open
-
-The skill's two hits and the burst's four hits are unsourced, so the requirements above are provisional: see the [design](design.md).

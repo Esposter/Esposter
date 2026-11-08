@@ -101,7 +101,3 @@ The Eye's bonus to another member's burst, the Musou Isshin plunges and her skil
 - **GIVEN** another member casts a burst while the Eye stands
 - **WHEN** that burst hits
 - **THEN** the Eye's bonus does not apply to it
-
-## Open
-
-The open items are held once, in [design.md](design.md#open).

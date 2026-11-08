@@ -42,3 +42,5 @@ flowchart TD
 - No YouTube or Bilibili reference snapshot for Qiqi is in the repo, so no claim here rests on video.
 
 ## Open
+
+- [ ] **Rite of Resurrection revives on the step after the burst starts** — no source yet: gcsim leaves the revival unbuilt (`{data-root}/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go` lines 21 to 22), and the game's text gives no timing for it: it says only that using the burst revives fallen party members nearby (`{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` line 172190). No Qiqi capture is in `{data-root}/genshin-parity/captures`, so a capture of a burst's revive would settle the step.

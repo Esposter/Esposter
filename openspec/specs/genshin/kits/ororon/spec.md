@@ -90,7 +90,3 @@ Hypersense, the Spirit Orb's bounce, Constellation 4's energy on the burst's hit
 - **GIVEN** Ororon has one of these effects unlocked
 - **WHEN** the player fights with Ororon
 - **THEN** that effect has no effect
-
-## Open
-
-The zero poise is provisional, since the wiki's poise figures for these hits are open: see the [design](design.md).

@@ -80,3 +80,4 @@ Her third and fifth constellations raise her skill and burst levels from the con
 ## Open
 
 - [ ] **The burst's projections round a 21.5-metre area of the targeting zone** — contradicted by `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json` line 26530: her burst's row, 11315, gives "CircleLockEnemyR15H10HC", a 15-metre targeting circle where the page says 21.5 (the parity copy of that row has the same shape).
+- [ ] **Nicole's plunge collision and hits land on the enemies within reach** — no source yet: gcsim's nicole package has no plunge frames or hitbox, and no Nicole plunge recording is in the parity captures, so a capture of her plunge's collision would settle it.

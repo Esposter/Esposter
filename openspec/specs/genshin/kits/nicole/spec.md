@@ -326,7 +326,3 @@ Her sixth constellation SHALL hold her upgrades for as long as her skill's buff 
 - **GIVEN** Nicole is at least constellation 6 and a character holds her first ascension's buff
 - **WHEN** she swaps away from that character
 - **THEN** the character keeps the buff
-
-## Open
-
-- [ ] **Nicole's plunge collision and hits land on the enemies within reach** — no source yet: gcsim's nicole package has no plunge frames or hitbox, and no Nicole plunge recording is in the parity captures, so a capture of her plunge's collision would settle it.
