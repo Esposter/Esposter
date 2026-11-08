@@ -16,7 +16,7 @@ export const GCG_DICE_LIMIT = 16;
 export const GCG_STARTING_HAND_COUNT = 5;
 // The die a switch of character costs, of any face
 export const GCG_SWITCH_DICE_COUNT = 1;
-// The round a duel concedes after: once its end phase closes the fifteenth round, neither side wins
+// The round a duel may not begin: once the round before it closes with no winner, neither side wins
 export const GCG_ROUND_LIMIT = 15;
 // The shield a character holds at most, and the points one Crystallize grants to its user's active character
 export const GCG_SHIELD_LIMIT = 2;

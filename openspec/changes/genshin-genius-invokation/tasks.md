@@ -20,7 +20,7 @@
 
 ## 5. The round limit
 
-- [ ] 5.1 Concede a duel with no winner at the start of Round 15 in `endGcgRound`, before its roll, instead of after the fifteenth round's end phase. Verify: a test named after the scenario "A duel with no winner concedes once Round 15 begins", written first and seen failing, replaces the end-phase test in `declareGcgRoundEnd.test.ts`.
+- [x] 5.1 Concede a duel with no winner at the start of Round 15 in `endGcgRound`, before its roll, instead of after the fifteenth round's end phase. Verify: a test named after the scenario "A duel with no winner concedes once Round 15 begins", written first and seen failing, replaces the end-phase test in `declareGcgRoundEnd.test.ts`.
 
 ## 6. Screen-reader names on the board
 

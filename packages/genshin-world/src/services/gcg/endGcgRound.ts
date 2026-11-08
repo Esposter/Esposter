@@ -10,8 +10,8 @@ import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 
 // The end phase once both sides have declared their round's end: a Frozen status and a switch-in lapse, each side draws its cards from
-// The first side on, and the next round begins with its roll, the side that declared first going first. The fifteenth
-// Round's end concedes the duel to both sides
+// The first side on, and the next round begins with its roll, the side that declared first going first. A duel whose next
+// Round is the limit concedes to both sides before that round's roll, as the Round Limit gives it
 export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
   runGcgEndPhase(duel);
   if (duel.phase === GcgPhase.Ended) return;
@@ -28,7 +28,7 @@ export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
   }
   for (const sideIndex of [duel.firstSideIndex, 1 - duel.firstSideIndex])
     drawGcgCards(takeOne(duel.sides, sideIndex), rule.drawCount, rule.handCardLimit);
-  if (duel.round >= GCG_ROUND_LIMIT) {
+  if (duel.round + 1 >= GCG_ROUND_LIMIT) {
     duel.phase = GcgPhase.Ended;
     duel.outcome = GcgOutcome.Conceded;
     duel.winnerSideIndex = undefined;

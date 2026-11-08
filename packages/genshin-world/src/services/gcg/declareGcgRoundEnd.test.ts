@@ -20,6 +20,7 @@ const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 describe(declareGcgRoundEnd, () => {
   const SEED = 7;
   const HAND_CARD_COUNT = 1;
+  const ROUND_BEFORE_LIMIT = GCG_ROUND_LIMIT - 1;
   const DRAW_PILE_CARD_IDS = [201, 202, 203];
   const createSideState = (): GcgSideState => ({
     activeIndex: 0,
@@ -89,16 +90,22 @@ describe(declareGcgRoundEnd, () => {
     }).toStrictEqual({ handSizes: [HAND_CARD_COUNT + 2, HAND_CARD_COUNT + 2], phase: GcgPhase.Roll, round: 2 });
   });
 
-  test("should concede the duel to both sides once the fifteenth round's end phase closes", () => {
+  test("should concede a duel with no winner once round 15 would begin", () => {
     expect.hasAssertions();
 
-    const duel = createDuel(GCG_ROUND_LIMIT);
+    const duel = createDuel(ROUND_BEFORE_LIMIT);
     declareGcgRoundEnd(duel, 0, TEST_RULE);
     declareGcgRoundEnd(duel, 1, TEST_RULE);
 
-    expect({ outcome: duel.outcome, phase: duel.phase, winnerSideIndex: duel.winnerSideIndex }).toStrictEqual({
+    expect({
+      outcome: duel.outcome,
+      phase: duel.phase,
+      round: duel.round,
+      winnerSideIndex: duel.winnerSideIndex,
+    }).toStrictEqual({
       outcome: GcgOutcome.Conceded,
       phase: GcgPhase.Ended,
+      round: ROUND_BEFORE_LIMIT,
       winnerSideIndex: undefined,
     });
   });
