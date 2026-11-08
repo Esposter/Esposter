@@ -10,7 +10,8 @@ import { page } from "vitest/browser";
 const frame: HudFrame = { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: 0 };
 
 describe("hudSheerCold", () => {
-  test("show the bar while the gauge holds cold, filled by its share of the full scale", async () => {
+  // The bar is filled by the gauge's share of its full scale: a quarter of the gauge fills a quarter of the bar
+  test("show the bar while the gauge holds cold", async () => {
     expect.hasAssertions();
     const SHEER_COLD_VALUE = SHEER_COLD_MAXIMUM / 4;
 

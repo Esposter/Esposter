@@ -180,7 +180,8 @@ describe(useWorldCombat, () => {
     expect(TAUNT_HEALTH - taunt.health).toBeLessThan(unbuffedLoss);
   });
 
-  test("lose the share of max HP each interval, after the team's shield takes the damage first", () => {
+  // After the team's shield takes the interval's damage first, so only the damage it does not absorb costs the share
+  test("lose the share of max HP each interval", () => {
     expect.hasAssertions();
     const SHIELD_HEALTH = 50;
     const { coldDamageParty, hudMember, kitContext, worldPartyStore } = createCombat();

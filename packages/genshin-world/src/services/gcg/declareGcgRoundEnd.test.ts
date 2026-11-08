@@ -90,7 +90,7 @@ describe(declareGcgRoundEnd, () => {
     }).toStrictEqual({ handSizes: [HAND_CARD_COUNT + 2, HAND_CARD_COUNT + 2], phase: GcgPhase.Roll, round: 2 });
   });
 
-  test("should concede a duel with no winner once round 15 would begin", () => {
+  test("a duel with no winner concedes once Round 15 begins", () => {
     expect.hasAssertions();
 
     const duel = createDuel(ROUND_BEFORE_LIMIT);
