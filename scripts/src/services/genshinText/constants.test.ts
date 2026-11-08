@@ -1,7 +1,7 @@
 import { ANIME_GAME_DATA_COMMIT } from "#src/services/genshinText/constants";
 import { describe, expect, test } from "vitest";
 
-describe("aNIME_GAME_DATA_COMMIT", () => {
+describe("animeGameDataCommit", () => {
   test("a moved branch does not change a run", () => {
     expect.hasAssertions();
 
