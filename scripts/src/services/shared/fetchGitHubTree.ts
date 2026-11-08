@@ -1,5 +1,5 @@
-import type { Tree } from "#src/models/genshinText/Tree";
-import type { TreeEntry } from "#src/models/genshinText/TreeEntry";
+import type { Tree } from "#src/models/shared/Tree";
+import type { TreeEntry } from "#src/models/shared/TreeEntry";
 
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { readGitHubHeaders } from "#src/services/shared/readGitHubHeaders";
