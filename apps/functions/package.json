@@ -96,7 +96,7 @@
     "@azure/core-lro": "2.7.2",
     "@azure/core-paging": "1.7.0",
     "@azure/core-process": "1.0.0",
-    "@azure/core-rest-pipeline": "1.25.0",
+    "@azure/core-rest-pipeline": "1.25.1",
     "@azure/core-tracing": "1.4.0",
     "@azure/core-util": "1.14.0",
     "@azure/core-xml": "1.6.1",
