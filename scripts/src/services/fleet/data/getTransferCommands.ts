@@ -6,6 +6,7 @@ import { TransferDirection } from "#src/models/fleet/data/TransferDirection";
 import { getRemoteTarCommand } from "#src/services/fleet/data/getRemoteTarCommand";
 import { getSshArguments } from "#src/services/fleet/data/getSshArguments";
 import { getTarArguments } from "#src/services/fleet/data/getTarArguments";
+import { getSystemTarPath } from "#src/services/shared/getSystemTarPath";
 
 // The two processes of a transfer, the one that archives the listed files first and the one that unpacks them second:
 // A pull archives on the peer over ssh and unpacks here, a push archives here and unpacks on the peer over ssh
@@ -15,8 +16,14 @@ export const getTransferCommands = (
   localDirectory: string,
   remoteDirectory: string,
 ): [TransferCommand, TransferCommand] => {
-  const localCreate: TransferCommand = { args: getTarArguments(TarOperation.Create, localDirectory), file: "tar" };
-  const localExtract: TransferCommand = { args: getTarArguments(TarOperation.Extract, localDirectory), file: "tar" };
+  const localCreate: TransferCommand = {
+    args: getTarArguments(TarOperation.Create, localDirectory),
+    file: getSystemTarPath(),
+  };
+  const localExtract: TransferCommand = {
+    args: getTarArguments(TarOperation.Extract, localDirectory),
+    file: getSystemTarPath(),
+  };
   const remoteCreate: TransferCommand = {
     args: getSshArguments(peer, getRemoteTarCommand(TarOperation.Create, remoteDirectory)),
     file: "ssh",

@@ -2,6 +2,7 @@ import type { PinnedTool } from "#src/models/shared/PinnedTool";
 
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { findExecutable } from "#src/services/shared/findExecutable";
+import { getSystemTarPath } from "#src/services/shared/getSystemTarPath";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { createHash } from "node:crypto";
@@ -28,11 +29,10 @@ export const installPinnedTool = async ({
   await mkdir(dirname(directory), { recursive: true });
   const partialDirectory = await mkdtemp(`${directory}.partial-`);
   if (isArchive) {
-    const archivePath = join(partialDirectory, "archive.zip");
+    const archivePath = join(partialDirectory, "archive");
     await writeFile(archivePath, archive);
-    // Windows' own tar unpacks a zip; elsewhere the tar on the PATH does, as bsdtar and GNU tar both read one
-    const tarPath = process.env.SystemRoot ? join(process.env.SystemRoot, "System32", "tar.exe") : "tar";
-    execFileSync(tarPath, ["-xf", archivePath, "-C", partialDirectory]);
+    // The system's tar reads a zip or a tar.xz by its contents, so the file's name says nothing to it
+    execFileSync(getSystemTarPath(), ["-xf", archivePath, "-C", partialDirectory]);
     await rm(archivePath);
   } else await writeFile(join(partialDirectory, executablePattern), archive);
   const isPublished = await getResultAsync(() => rename(partialDirectory, directory)).match(

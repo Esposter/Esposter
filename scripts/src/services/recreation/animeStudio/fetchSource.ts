@@ -1,5 +1,6 @@
 import { run } from "#src/services/recreation/animeStudio/run";
 import { fetchOk } from "#src/services/shared/fetchOk";
+import { getSystemTarPath } from "#src/services/shared/getSystemTarPath";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -15,6 +16,6 @@ export const fetchSource = async (
   const destination = join(workDirectory, name);
   writeFileSync(archive, Buffer.from(await response.arrayBuffer()));
   mkdirSync(destination, { recursive: true });
-  run("tar", ["-xzf", archive, "-C", destination, "--strip-components=1"]);
+  run(getSystemTarPath(), ["-xzf", archive, "-C", destination, "--strip-components=1"]);
   return destination;
 };

@@ -1,3 +1,4 @@
+import { SYSCTL_PATH } from "#src/services/shared/constants";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { availableParallelism, platform } from "node:os";
 
@@ -5,7 +6,7 @@ import { availableParallelism, platform } from "node:os";
 // Read, so half the logical processors stand in for the physical cores, each of which runs two
 export const getPerformanceCoreCount = (): number => {
   if (platform() === "darwin") {
-    const { status, stdout } = spawnSync("sysctl", ["-n", "hw.perflevel0.physicalcpu"], { encoding: "utf8" });
+    const { status, stdout } = spawnSync(SYSCTL_PATH, ["-n", "hw.perflevel0.physicalcpu"], { encoding: "utf8" });
     const count = Number(stdout);
     if (status === 0 && Number.isInteger(count) && count > 0) return count;
   }
