@@ -8,6 +8,7 @@ x-touches:
     "scripts/src/models/genshinParity/**",
     "scripts/src/services/genshinParity/**",
     "packages/configuration/src/services/getVitestBrowserConfiguration*.ts",
+    "packages/configuration/src/services/readApprovedImageNames.ts",
     "packages/genshin-world/src/components/**/Index.fixture.ts",
     "packages/genshin-world/src/components/**/*.png",
     "packages/genshin-interface/src/components/**/*.png",
