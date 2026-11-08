@@ -14,5 +14,5 @@ export const planStaleRows = (rows: readonly StaleRow[]): StalePlanSection[] => 
       commands: commands.filter((command) => findCommandHeading(command) === heading).toSorted(),
       heading,
     }))
-    .filter(({ commands }) => commands.length > 0);
+    .filter(({ commands: sectionCommands }) => sectionCommands.length > 0);
 };

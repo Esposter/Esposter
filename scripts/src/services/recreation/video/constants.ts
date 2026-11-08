@@ -17,7 +17,7 @@ export const FFMPEG_WINDOWS_PINNED_TOOL: PinnedTool = {
   executablePattern: "*/bin/ffmpeg.exe",
   isArchive: true,
 };
-// jellyfin's portable FFmpeg for Apple silicon, whose archive holds `ffmpeg` at its root beside `ffprobe`
+// Jellyfin's portable FFmpeg for Apple silicon, whose archive holds `ffmpeg` at its root beside `ffprobe`
 export const FFMPEG_MACOS_PINNED_TOOL: PinnedTool = {
   archiveSha256: "d898cc819e7c4e9219d6410ddbdaada0838f14bec6ff89e283639915394cb43f",
   archiveUrl:

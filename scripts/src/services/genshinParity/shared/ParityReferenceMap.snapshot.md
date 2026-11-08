@@ -114,6 +114,7 @@ committed.
 | `weapon-screen`                        | `WeaponScreen`              |                                                                          2.00% | 0.897 |  0.94% | 0.0832 |
 | `weapon-screen-ascend`                 | `WeaponScreen`              |                                                                          1.86% | 0.827 |  0.85% | 0.0741 |
 | `weapon-screen-at-cap`                 | `WeaponScreen`              | pending: the recording zooms over the state, so no whole-screen frame shows it |       |        |        |
+| `weapon-screen-many-fodder`            | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-rank-five`              | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |
 | `weapon-screen-refine`                 | `WeaponScreen`              |                                                                          2.40% | 0.941 |  0.59% | 0.0875 |
 | `weapon-screen-two-star`               | `WeaponScreen`              |                                     pending: no screenshot of this variant yet |       |        |        |

@@ -7,9 +7,9 @@ import { assert, describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-const frame: HudFrame = { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: 0 };
-
 describe("hudSheerCold", () => {
+  const frame: HudFrame = { gadgetCooldown: 0, pivotX: 0.5, pivotY: 0.5, seconds: 0, sheerCold: 0, stamina: 0 };
+
   // The bar is filled by the gauge's share of its full scale: a quarter of the gauge fills a quarter of the bar
   test("show the bar while the gauge holds cold", async () => {
     expect.hasAssertions();

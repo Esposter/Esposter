@@ -1,7 +1,7 @@
 import type { GameVersionCommandKind } from "#src/models/gameVersion/GameVersionCommandKind";
 
 // The kinds of command an update reruns, in the order it runs them: the extractions the fits read, the map, the fits and
-// the publishes. A stamped command no kind lists is planned last, under its own heading
+// The publishes. A stamped command no kind lists is planned last, under its own heading
 export const GAME_VERSION_COMMAND_KINDS: readonly GameVersionCommandKind[] = [
   {
     heading: "Extractions",

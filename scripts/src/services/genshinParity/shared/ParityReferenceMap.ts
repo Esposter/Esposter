@@ -1574,6 +1574,7 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "WeaponScreen",
     variant: "atCap",
   },
+  "weapon-screen-many-fodder": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "manyFodder" },
   "weapon-screen-rank-five": { pending: NO_VARIANT_SCREENSHOT, screen: "WeaponScreen", variant: "rankFive" },
   // The Refine tab from the same recording at 91 seconds: Rank 1 with the four refinement slots empty. The tab shows no level, so the
   // Fixture's level is not on the screen

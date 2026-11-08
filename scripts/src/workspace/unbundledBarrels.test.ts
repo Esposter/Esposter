@@ -7,6 +7,8 @@ import { pathToFileURL } from "node:url";
 import { build } from "vite";
 import { describe, expect, onTestFinished, test } from "vitest";
 
+const readDistDirectory = (packagePath: string) => resolve(REPOSITORY_ROOT, packagePath, "dist");
+
 /**
  * A package builds one file per module, so a consumer's bundler drops every module an import does not reach. The
  * schema package is the one that matters: its barrel holds drizzle tables and the schemas derived from them, and
@@ -18,7 +20,6 @@ describe("unbundledBarrels", () => {
   // Matches a module's import of a stylesheet, bare or with bindings, which a bundler resolves and Node cannot load
   const STYLESHEET_IMPORT_REGEX = /^import\s+(?:[^;]*?\sfrom\s+)?["'][^"']+\.css["']/mu;
   const PACKAGE_PATHS = readTsdownPackagePaths();
-  const readDistDirectory = (packagePath: string) => resolve(REPOSITORY_ROOT, packagePath, "dist");
 
   const DB_SCHEMA_ENTRY = pathToFileURL(resolve(REPOSITORY_ROOT, "packages/db-schema/dist/index.js")).href;
 
@@ -35,7 +36,7 @@ describe("unbundledBarrels", () => {
       `import { MessageType } from ${JSON.stringify(DB_SCHEMA_ENTRY)};\nconsole.log(MessageType);\n`,
     );
     const output = await build({
-      build: { minify: false, rollupOptions: { input: entry }, write: false },
+      build: { minify: false, rolldownOptions: { input: entry }, write: false },
       configFile: false,
       logLevel: "silent",
       root: directory,
@@ -51,7 +52,7 @@ describe("unbundledBarrels", () => {
   }, 60_000);
 
   // CI uploads each package's `dist` as an artifact that skips a hidden folder by default, so a vendored file under
-  // pnpm's `.pnpm` was missing from the app build and its import of the file failed to resolve
+  // Pnpm's `.pnpm` was missing from the app build and its import of the file failed to resolve
   test("a build writes no folder a tool skips as hidden", () => {
     expect.hasAssertions();
 

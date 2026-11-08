@@ -12,10 +12,10 @@ vi.mock(import("#src/services/shared/resolvePinnedTool"), () => ({
   resolvePinnedTool: vi.fn<(pinnedTool: PinnedTool) => Promise<string>>(),
 }));
 
-const PINNED_PATH = "/cache/vgmstream/vgmstream-cli";
-const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform");
-
 describe(resolveVgmstream, () => {
+  const PINNED_PATH = "/cache/vgmstream/vgmstream-cli";
+  const originalPlatform = Object.getOwnPropertyDescriptor(process, "platform");
+
   beforeEach(() => {
     vi.mocked(resolvePinnedTool).mockResolvedValue(PINNED_PATH);
   });

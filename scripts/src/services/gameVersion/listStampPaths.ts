@@ -9,7 +9,7 @@ export const listStampPaths = async (directory: string): Promise<string[]> => {
   if (!existsSync(directory)) return [];
   const entries = await readdir(directory, { withFileTypes: true });
   const paths = await Promise.all(
-    entries.map(async (entry) => {
+    entries.map((entry) => {
       const path = join(directory, entry.name);
       if (entry.isDirectory()) return listStampPaths(path);
       return entry.name === PROVENANCE_NAME || entry.name.endsWith(PROVENANCE_SIDECAR_SUFFIX) ? [path] : [];

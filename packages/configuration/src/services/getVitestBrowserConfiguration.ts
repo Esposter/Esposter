@@ -38,6 +38,7 @@ export const getVitestBrowserConfiguration = (
           const approvedImageNames = readApprovedImageNames(screenshotPath);
           // A screen has one approved image, so a second one, such as an earlier platform's, fails the run and names the screen
           if (approvedImageNames.length > 1)
+            // oxlint-disable-next-line error-handling/no-bare-error -- this package builds before `@esposter/shared`, so it cannot import its error
             throw new Error(`${arg} has more than one approved image: ${approvedImageNames.join(", ")}`);
 
           return screenshotPath;

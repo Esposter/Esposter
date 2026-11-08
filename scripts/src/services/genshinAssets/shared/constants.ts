@@ -296,7 +296,7 @@ export const SAMPLED_INSTRUMENTS: SampledInstrument[] = [
 ];
 // Vgmstream's command line (github.com/vgmstream/vgmstream), which decodes Wwise's own Vorbis, pinned and checked as
 // FFmpeg is, into the shared tool cache. Its Windows and macOS archives are pinned beside each other, and the one a
-// machine takes is chosen by its platform
+// Machine takes is chosen by its platform
 export const VGMSTREAM_DIRECTORY: string = join(CACHE_ROOT, "vgmstream");
 export const VGMSTREAM_WINDOWS_PINNED_TOOL: PinnedTool = {
   archiveSha256: "6c4a8a3813864fefed081bbd337dbc0ad93bf88e0b92f5db98d7ab258b22dc6c",

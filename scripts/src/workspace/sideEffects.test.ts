@@ -5,8 +5,6 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const STYLESHEET_GLOB = "**/*.css";
-
 /**
  * What a package declares about its own side effects is the one build input no factory can derive: deciding it
  * statically is undecidable in general, and packages here genuinely have them. Leaving the field off is not the
@@ -24,6 +22,7 @@ const readSideEffects = (packagePath: string): unknown =>
 
 describe("sideEffects", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();
+  const STYLESHEET_GLOB = "**/*.css";
   // The Functions app registers each handler with a bare `app.eventGrid(...)` call in a module whose only export
   // Is `export default {}`, which the barrel does not re-export. Told it has no side effects, rolldown drops
   // Every registration and the deployed app reports Running while running no trigger — so it is the one package

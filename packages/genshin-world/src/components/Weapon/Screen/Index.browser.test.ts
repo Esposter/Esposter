@@ -137,7 +137,7 @@ describe("weaponScreen", () => {
     const { container } = await render(WeaponScreenContainer, { props: { ...props, ...variants.manyFodder } });
 
     const strip = container.querySelector<HTMLElement>(".enhance-cells");
-    const lastCandidate = Array.from(container.querySelectorAll<HTMLElement>(".enhance-cells .cell")).at(-1);
+    const lastCandidate = [...container.querySelectorAll<HTMLElement>(".enhance-cells .cell")].at(-1);
     assert.exists(strip);
     assert.exists(lastCandidate);
 
