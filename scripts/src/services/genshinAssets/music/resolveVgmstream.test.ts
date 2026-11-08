@@ -41,4 +41,12 @@ describe(resolveVgmstream, () => {
 
     expect(resolvePinnedTool).toHaveBeenCalledWith(VGMSTREAM_WINDOWS_PINNED_TOOL);
   });
+
+  test("a stage ignores a tool of the same name on the PATH", async () => {
+    expect.hasAssertions();
+
+    Object.defineProperty(process, "platform", { value: "darwin" });
+
+    await expect(resolveVgmstream()).resolves.toBe(PINNED_PATH);
+  });
 });
