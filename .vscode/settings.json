@@ -25,5 +25,10 @@
   "js/ts.tsserver.maxMemory": 16384,
   "js/ts.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
-  "search.followSymlinks": false
+  "search.followSymlinks": false,
+  "vize.ecosystem.enable": true,
+  "vize.editor.enable": true,
+  "vize.enable": true,
+  "vize.lint.enable": false,
+  "vize.typecheck.enable": true
 }
