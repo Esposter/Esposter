@@ -57,12 +57,10 @@ const isOpen = ref(false);
       />
     </ul>
     <UiDialog v-model="isOpen" title="Achievements" w="[min(64rem,90vw)]">
-      <div p-3 min-h-0 of-y-auto>
-        <AchievementGrid
-          :achievement-definitions="unlockedAchievementDefinitions"
-          :user-achievements="unlockedUserAchievements"
-        />
-      </div>
+      <AchievementGrid
+        :achievement-definitions="unlockedAchievementDefinitions"
+        :user-achievements="unlockedUserAchievements"
+      />
     </UiDialog>
   </section>
 </template>

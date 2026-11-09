@@ -111,7 +111,7 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
 </script>
 
 <template>
-  <UiDialog v-model="isCommandPaletteOpen" title="Command palette" is-title-hidden max-w-150 w-full>
+  <UiDialog v-model="isCommandPaletteOpen" title="Command palette" is-title-hidden is-body-bare max-w-150 w-full>
     <!-- Client-only, as the recent pages among its commands live in this browser's storage. Backspace on an empty
       Query steps out of a surface's search into the whole app's -->
     <ClientOnly>

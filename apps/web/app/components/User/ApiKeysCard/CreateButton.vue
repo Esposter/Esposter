@@ -21,6 +21,7 @@ const name = ref("");
 // What the key reaches, and nothing until the owner ticks it: a key is made for one kind of work
 const mcpScopes = ref<McpScope[]>([]);
 const isValid = ref(true);
+const formId = useId();
 // Shown once, on the dialog that created it, and gone with the dialog
 const createdKey = ref("");
 const nameRules = [UiRules.required(), UiRules.maxLength(API_KEY_NAME_MAX_LENGTH)];
@@ -43,21 +44,18 @@ const { answer } = useDialogAnswer(isOpen);
     Create key
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create API key" w="[min(32rem,90vw)]">
-    <div v-if="createdKey" p-3 flex flex-col gap-3>
+    <template v-if="createdKey">
       <p>Copy the key now. It is shown only once; a lost key is deleted and replaced.</p>
       <div px-3 py-2 flex gap-2 items-center ui-field>
         <code flex-1 break-all>{{ createdKey }}</code>
         <UiCopyButton label="Copy API key" :source="createdKey" />
       </div>
-      <footer flex justify-end>
-        <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
-      </footer>
-    </div>
+    </template>
     <!-- The dialog stays open on a created key, which is shown in its place rather than closed over -->
     <UiForm
       v-else
+      :id="formId"
       v-model:is-valid="isValid"
-      p-3
       flex
       flex-col
       gap-3
@@ -95,12 +93,21 @@ const { answer } = useDialogAnswer(isOpen);
           "
         />
       </div>
-      <footer flex gap-2 justify-end>
+    </UiForm>
+    <template #footer>
+      <UiButton v-if="createdKey" :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
+      <template v-else>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!isValid || mcpScopes.length === 0" type="submit" :variant="UiButtonVariant.Accent">
+        <!-- Outside the form it submits, named by its id, so the form scrolls with the body and this does not -->
+        <UiButton
+          :disabled="!isValid || mcpScopes.length === 0"
+          :form="formId"
+          type="submit"
+          :variant="UiButtonVariant.Accent"
+        >
           Create
         </UiButton>
-      </footer>
-    </UiForm>
+      </template>
+    </template>
   </UiDialog>
 </template>

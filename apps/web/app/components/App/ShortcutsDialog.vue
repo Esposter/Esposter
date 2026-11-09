@@ -14,13 +14,11 @@ const groupShortcutCommandsMap = computed(() =>
 
 <template>
   <UiDialog v-model="isShortcutsDialogOpen" title="Keyboard shortcuts" max-w-120 w-full>
-    <div p-3 flex flex-col gap-4 of-y-auto>
-      <section v-for="[group, groupCommands] of groupShortcutCommandsMap" :key="group" flex flex-col gap-1>
-        <h3 text-sm text-muted>{{ group }}</h3>
-        <div v-for="{ icon, id, image, meaning, shortcut, title } of groupCommands" :key="id" ui-row>
-          <UiItemContent :icon :image :meaning :shortcut :title />
-        </div>
-      </section>
-    </div>
+    <section v-for="[group, groupCommands] of groupShortcutCommandsMap" :key="group" flex flex-col gap-1>
+      <h3 text-sm text-muted>{{ group }}</h3>
+      <div v-for="{ icon, id, image, meaning, shortcut, title } of groupCommands" :key="id" ui-row>
+        <UiItemContent :icon :image :meaning :shortcut :title />
+      </div>
+    </section>
   </UiDialog>
 </template>

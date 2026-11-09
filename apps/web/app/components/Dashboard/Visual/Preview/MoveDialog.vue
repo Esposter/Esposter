@@ -24,16 +24,14 @@ const moveTo = (targetGroupId: string) => {
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Move to" w="[min(24rem,90vw)]">
-    <div p-3 flex flex-col gap-3>
-      <UiRadioGroup
-        label="Move to"
-        :items="targets"
-        @update:model-value="
-          (targetGroupId) => {
-            if (targetGroupId !== undefined) moveTo(targetGroupId);
-          }
-        "
-      />
-    </div>
+    <UiRadioGroup
+      label="Move to"
+      :items="targets"
+      @update:model-value="
+        (targetGroupId) => {
+          if (targetGroupId !== undefined) moveTo(targetGroupId);
+        }
+      "
+    />
   </UiDialog>
 </template>

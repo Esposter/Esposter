@@ -54,4 +54,16 @@ describe("dashboardVisualPreviewMoveDialog", () => {
       ],
     ]);
   });
+
+  // The choices are the dialog's body itself, which pads them and holds them in the frame, not a wrapper of their own
+  test("the choices are the dialog's body, with no wrapper of their own", async () => {
+    expect.hasAssertions();
+
+    const visual = new Visual({ type: VisualType.Card });
+    const group = new Visual({ type: VisualType.Group, visuals: [] });
+    loadDashboard([visual, group]);
+    const wrapper = await mountSuspended(DashboardVisualPreviewMoveDialog, { props: { modelValue: true, visual } });
+
+    expect(wrapper.get("[ui-item]").element.parentElement?.parentElement).toBe(wrapper.get("[ui-region-body]").element);
+  });
 });

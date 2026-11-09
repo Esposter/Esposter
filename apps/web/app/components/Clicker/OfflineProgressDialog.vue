@@ -26,17 +26,15 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Welcome back!" w="[min(32rem,90vw)]">
-    <div p-3 flex flex-col gap-3>
-      <p>
-        <!-- The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out -->
-        While you were away for {{ displayElapsedDuration }}, your buildings produced
-        <span :style="{ color: clickerItemProperties.color }">{{ displayAwardedPoints }}</span>
-        {{ clickerItemProperties.pluralName
-        }}<template v-if="isCapped"> (production is capped at {{ displayOfflineCap }})</template>.
-      </p>
-      <footer flex justify-end>
-        <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Collect</UiButton>
-      </footer>
-    </div>
+    <p>
+      <!-- The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out -->
+      While you were away for {{ displayElapsedDuration }}, your buildings produced
+      <span :style="{ color: clickerItemProperties.color }">{{ displayAwardedPoints }}</span>
+      {{ clickerItemProperties.pluralName
+      }}<template v-if="isCapped"> (production is capped at {{ displayOfflineCap }})</template>.
+    </p>
+    <template #footer>
+      <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Collect</UiButton>
+    </template>
   </UiDialog>
 </template>

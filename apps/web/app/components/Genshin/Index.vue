@@ -97,12 +97,10 @@ const progress = computed(() =>
       title="Logged in elsewhere"
       w="[min(32rem,90vw)]"
     >
-      <div p-3 flex flex-col gap-3>
-        <p>This game was started in another session, which now holds your save.</p>
-        <footer flex justify-end>
-          <UiButton :variant="UiButtonVariant.Accent" @click="takeBack()">Take back</UiButton>
-        </footer>
-      </div>
+      <p>This game was started in another session, which now holds your save.</p>
+      <template #footer>
+        <UiButton :variant="UiButtonVariant.Accent" @click="takeBack()">Take back</UiButton>
+      </template>
     </UiDialog>
     <!-- A start that could not take the lease is retried with backoff, and the page's retry asks for it at once -->
     <UiDialog
@@ -111,12 +109,10 @@ const progress = computed(() =>
       title="Save not loaded"
       w="[min(32rem,90vw)]"
     >
-      <div p-3 flex flex-col gap-3>
-        <p>Your save could not be loaded. The game waits here and tries again.</p>
-        <footer flex justify-end>
-          <UiButton :variant="UiButtonVariant.Accent" @click="retryStart()">Retry</UiButton>
-        </footer>
-      </div>
+      <p>Your save could not be loaded. The game waits here and tries again.</p>
+      <template #footer>
+        <UiButton :variant="UiButtonVariant.Accent" @click="retryStart()">Retry</UiButton>
+      </template>
     </UiDialog>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening

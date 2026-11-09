@@ -49,6 +49,7 @@ const overlayInsetStyle = computed(() => {
   <UiDialog
     v-if="region.presentation === RegionPresentation.Sheet"
     :model-value="region.isOpen"
+    is-body-bare
     :placement="sheetPlacement"
     :title="name"
     is-title-hidden

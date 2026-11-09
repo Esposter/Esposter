@@ -88,10 +88,14 @@ onMounted(() => {
           <slot name="left" />
         </div>
       </aside>
-      <UiDialog v-else v-model="isLeftDrawerOpen" :placement="UiDialogPlacement.DrawerStart" :title="leftTitle">
-        <div flex flex-1 flex-col min-h-0>
-          <slot name="left" />
-        </div>
+      <UiDialog
+        v-else
+        v-model="isLeftDrawerOpen"
+        is-body-bare
+        :placement="UiDialogPlacement.DrawerStart"
+        :title="leftTitle"
+      >
+        <slot name="left" />
       </UiDialog>
     </template>
     <main col-start-2 row-start-1 min-h-0 min-w-0>
@@ -120,13 +124,12 @@ onMounted(() => {
       <UiDialog
         v-else
         v-model="isRightDrawerOpen"
+        is-body-bare
         :is-title-hidden="isRightTitleHidden"
         :placement="UiDialogPlacement.DrawerEnd"
         :title="rightTitle"
       >
-        <div flex flex-1 flex-col min-h-0>
-          <slot name="right" />
-        </div>
+        <slot name="right" />
       </UiDialog>
     </template>
   </div>
