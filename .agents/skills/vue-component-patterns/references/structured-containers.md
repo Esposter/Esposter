@@ -37,7 +37,7 @@ A body that is a single full-bleed child — a listbox, a canvas — opts out of
 
 ## Regions are shared by shortcut, not copied
 
-Containers that look alike share one UnoCSS shortcut for the region (the dialog's body and the popover's panel take the same one), so they scroll and pad alike and a change lands in one place. That shortcut is the target of `architecture-dialog-regions` tasks 2.1 and 2.2; no shared body or panel shortcut exists yet, and `Ui/Dialog.vue` draws its body with inline classes. A copied class list in each container is the drift this page exists to prevent.
+Containers that look alike share one UnoCSS shortcut for the region (the dialog's body and the popover's panel take the same one), so they scroll and pad alike and a change lands in one place. A copied class list in each container is the drift this page exists to prevent.
 
 ## The container's state reaches content as slot props
 
@@ -49,7 +49,7 @@ A region scrolls inside a frame only when each flex ancestor down to it can shri
 
 ## Enforced by construction
 
-The container makes the right shape the only shape, and a scan test fails a call site whose default slot root draws a scroll class, a `<footer>` or a fixed height. That scan is `architecture-dialog-regions` task 4.2 and does not exist yet; until it does, nothing mechanical fails a call site like this. A review is the wrong enforcer, since nothing mechanical fails when a body overflows on one screen size.
+The container makes the right shape the only shape, and a scan test fails a call site whose default slot root draws a scroll class, a `<footer>` or a fixed height. A review is the wrong enforcer, since nothing mechanical fails when a body overflows on one screen size.
 
 ## The sweep
 
