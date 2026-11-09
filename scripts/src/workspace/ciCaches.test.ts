@@ -48,4 +48,19 @@ describe("ciCaches", () => {
 
     expect(offenders).toStrictEqual([]);
   });
+
+  // A task run that replayed only some of its sub-tasks still produced a new result, so it saves; only a summary that
+  // reads every task hit is a replay
+  test("a cached task run counts as replayed only when its summary reads every task hit", () => {
+    expect.hasAssertions();
+
+    const action = readFileSync(join(REPOSITORY_ROOT, ".github", "actions", "run-cached-task", "action.yaml"), "utf8");
+    const [, pattern = ""] = /grep -qE '([^']+)' "\$RUNNER_TEMP\/vp-run\.log"/u.exec(action) ?? [];
+    const replayedRegex = new RegExp(pattern, "u");
+
+    expect(replayedRegex.test("vp run: 30/30 cache hit (100%), 31/31 successful")).toBe(true);
+    expect(replayedRegex.test("vp run: 29/30 cache hit (97%), 31/31 successful")).toBe(false);
+    expect(replayedRegex.test("vp run: 0/30 cache hit (0%), 31/31 successful")).toBe(false);
+    expect(replayedRegex.test("~/packages/azure$ pnpm run build ◉ cache hit, replaying")).toBe(false);
+  });
 });
