@@ -54,6 +54,23 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     });
   });
 
+  // The save sits in the footer, outside the form it submits, so a click on it has to reach the form through its id
+  test("saves the typed name from the footer's Save", async () => {
+    expect.hasAssertions();
+
+    const { readBack, updateUserToRoom } = setupUpdate();
+    const component = await mountDialog();
+    await component.get("input").setValue(newDisplayName);
+    await component.get('button[type="submit"]').trigger("click");
+    await readBack;
+
+    expect(updateUserToRoom).toHaveBeenCalledExactlyOnceWith({
+      displayName: newDisplayName,
+      roomId,
+      targetUserId: user.id,
+    });
+  });
+
   test("clears the member's display name on an empty save", async () => {
     expect.hasAssertions();
 

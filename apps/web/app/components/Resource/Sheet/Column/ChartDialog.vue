@@ -20,12 +20,6 @@ const chartData = computed(() => (columnStatistics ? computeColumnChartData(colu
     :title="`${columnStatistics?.columnName} — Chart`"
     w="[min(48rem,90vw)]"
   >
-    <StyledApexChart
-      v-if="chartData"
-      :options="chartData.options"
-      :series="chartData.series"
-      :type="chartData.type"
-      p-3
-    />
+    <StyledApexChart v-if="chartData" :options="chartData.options" :series="chartData.series" :type="chartData.type" />
   </UiDialog>
 </template>

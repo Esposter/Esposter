@@ -31,6 +31,8 @@ const shareMessage = computed(() =>
   getShareMessage(note.value, `${origin}${RoutePath.View(resource.type, resource.id)}`),
 );
 const isValid = ref(true);
+// The footer sits outside the form, so its Share submits the form by this id
+const formId = useId();
 const noteRules = computed(() => [
   () =>
     shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
@@ -78,7 +80,7 @@ const share = async () => {
     :title="`Share “${resource.name}”`"
     w="[min(36rem,90vw)]"
   >
-    <div v-if="isLoadingRooms" p-3 flex flex-col gap-2>
+    <div v-if="isLoadingRooms" flex flex-col gap-2>
       <UiSkeleton h-8 />
       <UiSkeleton h-20 />
     </div>
@@ -91,7 +93,7 @@ const share = async () => {
     >
       <UiButtonLink :to="RoutePath.MessagesIndex">Go to esbabbler</UiButtonLink>
     </UiEmptyState>
-    <UiForm v-else v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="answer(share)">
+    <UiForm v-else :id="formId" v-model:is-valid="isValid" flex flex-col gap-3 @submit="answer(share)">
       <div flex flex-col gap-1>
         <span text-muted>Room</span>
         <UiSelect v-model="roomId" :items="roomItems" label="Room" />
@@ -104,12 +106,18 @@ const share = async () => {
         :rules="noteRules"
       />
       <p text-muted>The public link is posted as your own message in the room.</p>
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton :disabled="!roomId || !isValid" :is-pending type="submit" :variant="UiButtonVariant.Accent">
-          Share
-        </UiButton>
-      </footer>
     </UiForm>
+    <template v-if="!isLoadingRooms && roomItems.length > 0" #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+      <UiButton
+        :disabled="!roomId || !isValid"
+        :form="formId"
+        :is-pending
+        type="submit"
+        :variant="UiButtonVariant.Accent"
+      >
+        Share
+      </UiButton>
+    </template>
   </UiDialog>
 </template>

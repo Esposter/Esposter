@@ -15,16 +15,18 @@ const isOpen = defineModel<boolean>({ default: false });
 const { getInput, submitLabel, submitVariant, title } = defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 const { answer, isPending } = useDialogAnswer(isOpen);
+// The submit sits in the footer, beside the form it submits, so it names the form by id
+const formId = useId();
 </script>
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title w="[min(32rem,90vw)]">
-    <UiForm p-3 flex flex-col gap-3 min-h-0 of-y-auto @submit="answer(() => executeAdminAction(getInput))">
+    <UiForm :id="formId" flex flex-col gap-3 @submit="answer(() => executeAdminAction(getInput))">
       <slot />
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
-        <UiButton :is-pending type="submit" :variant="submitVariant">{{ submitLabel }}</UiButton>
-      </footer>
     </UiForm>
+    <template #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+      <UiButton :is-pending :form="formId" type="submit" :variant="submitVariant">{{ submitLabel }}</UiButton>
+    </template>
   </UiDialog>
 </template>

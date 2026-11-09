@@ -27,27 +27,27 @@ const html = computed(() => (previewDoc.value ? renderNoteHtml(previewDoc.value)
     revision first, and the import does not proceed when that revision did not land, because the revision is the way
     back -->
   <UiDialog v-model="isPreviewOpen" :placement="UiDialogPlacement.Middle" title="Import Markdown" w="[min(48rem,90vw)]">
-    <div p-3 min-h-0 of-y-auto>
-      <!-- eslint-disable-next-line vue/no-v-html -- the imported note's sanitized HTML -->
-      <div class="rich-text-content" v-html="html" />
-    </div>
-    <ResourceImportPreviewFooter
-      :is-pending="isImporting"
-      @cancel="isPreviewOpen = false"
-      @confirm="
-        answer(async () => {
-          // The import awaits a revision before it writes, so the note it lands in is named when it is confirmed
-          importingResourceId = currentResourceId;
-          const doc = previewDoc;
-          const writeContent = getContentWriter();
-          if (!doc || !(await saveResourceRevision())) return false;
-          if (!writeContent({ doc })) return false;
+    <!-- eslint-disable-next-line vue/no-v-html -- the imported note's sanitized HTML -->
+    <div class="rich-text-content" v-html="html" />
+    <template #footer>
+      <ResourceImportPreviewFooter
+        :is-pending="isImporting"
+        @cancel="isPreviewOpen = false"
+        @confirm="
+          answer(async () => {
+            // The import awaits a revision before it writes, so the note it lands in is named when it is confirmed
+            importingResourceId = currentResourceId;
+            const doc = previewDoc;
+            const writeContent = getContentWriter();
+            if (!doc || !(await saveResourceRevision())) return false;
+            if (!writeContent({ doc })) return false;
 
-          await saveNote();
-          // The editor holds its own copy of the document, which would write the replaced one back on its next edit
-          await ResourceContentHookMap.Adopt.run(ResourceType.Note);
-        })
-      "
-    />
+            await saveNote();
+            // The editor holds its own copy of the document, which would write the replaced one back on its next edit
+            await ResourceContentHookMap.Adopt.run(ResourceType.Note);
+          })
+        "
+      />
+    </template>
   </UiDialog>
 </template>

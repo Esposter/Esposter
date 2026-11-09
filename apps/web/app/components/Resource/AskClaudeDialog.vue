@@ -32,27 +32,25 @@ const prompt = computed(() => getAssistantPrompt(resource, line.value));
      person's own key, so the one step shown first is that key, and the prompt is offered once there is a line -->
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Ask Claude" w="[min(36rem,90vw)]">
-    <div p-3 flex flex-col gap-3>
-      <ol v-if="!hasResourcesKey" pl-6 list-decimal flex flex-col gap-2>
-        <li>
-          Create an API key with the Resources scope for the agent to edit with, and keep it for its connection.
-          <div mt-2>
-            <UiButtonLink :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }">
-              API keys
-            </UiButtonLink>
-          </div>
-        </li>
-      </ol>
-      <template v-else>
-        <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />
-        <div v-if="line" py-1 pl-3 pr-1 flex gap-2 items-center ui-field>
-          <code flex-1 break-all>{{ prompt }}</code>
-          <UiCopyButton label="Copy prompt" :source="prompt" />
+    <ol v-if="!hasResourcesKey" pl-6 list-decimal flex flex-col gap-2>
+      <li>
+        Create an API key with the Resources scope for the agent to edit with, and keep it for its connection.
+        <div mt-2>
+          <UiButtonLink :to="{ hash: `#${UserSettingsPageSection.ApiKeys}`, path: RoutePath.UserSettings }">
+            API keys
+          </UiButtonLink>
         </div>
-        <footer flex justify-end>
-          <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Close</UiButton>
-        </footer>
-      </template>
-    </div>
+      </li>
+    </ol>
+    <template v-else>
+      <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />
+      <div v-if="line" py-1 pl-3 pr-1 flex gap-2 items-center ui-field>
+        <code flex-1 break-all>{{ prompt }}</code>
+        <UiCopyButton label="Copy prompt" :source="prompt" />
+      </div>
+    </template>
+    <template v-if="hasResourcesKey" #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Close</UiButton>
+    </template>
   </UiDialog>
 </template>

@@ -30,18 +30,17 @@ const restoringSnapshotVersionTitle = computed(() =>
 const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
+<!-- Raw rather than StyledDialog: this Cancel takes focus when the dialog opens, the safe answer to a restore, and the
+     styled shell's Cancel does not -->
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Restore version" w="[min(32rem,90vw)]">
-    <div p-3 flex flex-col gap-3>
-      <p>
-        Restore <strong>{{ restoringSnapshotVersionTitle }}</strong> into the working draft? The draft it replaces
-        becomes a version of its own first, so this can be undone — and the published version stays live until you
-        re-publish.
-      </p>
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
-        <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore)"> Restore </UiButton>
-      </footer>
-    </div>
+    <p>
+      Restore <strong>{{ restoringSnapshotVersionTitle }}</strong> into the working draft? The draft it replaces becomes
+      a version of its own first, so this can be undone — and the published version stays live until you re-publish.
+    </p>
+    <template #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
+      <UiButton :is-pending :variant="UiButtonVariant.Accent" @click="answer(restore)"> Restore </UiButton>
+    </template>
   </UiDialog>
 </template>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiRules } from "@/services/ui/UiRules";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
@@ -14,16 +13,18 @@ const isOpen = defineModel<boolean>({ default: false });
 const { rename, resource } = defineProps<Props>();
 // The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);
-const isValid = ref(true);
 const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGTH)];
-const { answer } = useDialogAnswer(isOpen);
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Rename resource" w="[min(32rem,90vw)]">
-    <UiForm v-model:is-valid="isValid" p-3 flex flex-col gap-3 @submit="answer(() => rename(editedName), true)">
-      <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
-      <UiFormDialogFooter v-model="isOpen" :is-valid />
-    </UiForm>
-  </UiDialog>
+  <StyledFormDialog
+    v-model="isOpen"
+    confirm-label="Save"
+    is-optimistic
+    :submit="() => rename(editedName)"
+    title="Rename resource"
+    w="[min(32rem,90vw)]"
+  >
+    <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
+  </StyledFormDialog>
 </template>

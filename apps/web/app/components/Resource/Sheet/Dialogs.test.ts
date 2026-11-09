@@ -40,4 +40,23 @@ describe("resourceSheetDialogs", () => {
 
     expect(isPreviewOpen.value).toBe(true);
   });
+
+  // The preview's table is the body, and the import's actions are the footer beneath it
+  test("draws the preview in the body and its actions in the footer", async () => {
+    expect.hasAssertions();
+
+    setupWithDataSource();
+    const resourceStore = useResourceStore();
+    const { currentResourceId } = storeToRefs(resourceStore);
+    const sheetPortableDialogStore = useSheetPortableDialogStore();
+    const { openPreview } = sheetPortableDialogStore;
+    const wrapper = await mountSuspended(ResourceSheetDialogs);
+    openPreview(currentResourceId.value, createDataSource(), "");
+    await flushPromises();
+    const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
+    assert.exists(importButton);
+
+    expect(wrapper.get("[ui-region-body]").find("table").exists()).toBe(true);
+    expect(importButton.element.closest("[ui-region-footer]")).not.toBeNull();
+  });
 });

@@ -22,12 +22,8 @@ describe("messageModelMemberActionDialogShell", () => {
       setActivePinia(createPinia());
     });
 
-    // `happy-dom` does not apply autofocus, so the attribute is what holds the focus: Dialog.vue leaves the dialog
-    // Unfocused for a control that asks for it, and the browser then focuses Cancel rather than the submit
-    test("asks for Cancel's focus, so a keypress right away does not submit", async () => {
-      expect.hasAssertions();
-
-      const component = mount(Shell, {
+    const mountShell = () =>
+      mount(Shell, {
         attachTo: document.body,
         props: {
           getInput: () => ({ roomId: "", targetUserId: "", type: AdminActionType.Warn }),
@@ -37,11 +33,28 @@ describe("messageModelMemberActionDialogShell", () => {
           title: "Timeout user",
         },
       });
+
+    // `happy-dom` does not apply autofocus, so the attribute is what holds the focus: Dialog.vue leaves the dialog
+    // Unfocused for a control that asks for it, and the browser then focuses Cancel rather than the submit
+    test("asks for Cancel's focus, so a keypress right away does not submit", async () => {
+      expect.hasAssertions();
+
+      const component = mountShell();
       await flushPromises();
 
       const cancelButton = component.findAll("button").find((button) => button.text() === "Cancel");
       expect(cancelButton?.attributes("autofocus")).toBe("");
       expect(document.activeElement).not.toBe(component.get("dialog").element);
+    });
+
+    // The submit sits in the footer, outside the form it submits, so it reaches the form through its id
+    test("submits the body's form from the footer", async () => {
+      expect.hasAssertions();
+
+      const component = mountShell();
+      await flushPromises();
+
+      expect(component.get('button[type="submit"]').element.form).toBe(component.get("form").element);
     });
   });
 });

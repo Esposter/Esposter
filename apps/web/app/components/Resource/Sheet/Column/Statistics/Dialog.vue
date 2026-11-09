@@ -17,9 +17,6 @@ const selectedStatistics = ref<ColumnStatistics>();
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Column statistics" w="[min(64rem,90vw)]">
     <template v-if="isOpen">
       <UiDataTable
-        p-3
-        min-h-0
-        of-y-auto
         :columns="ColumnStatisticsHeaders"
         :get-item-title="({ column }) => column.name"
         :items="columnStatistics"

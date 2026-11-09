@@ -47,4 +47,19 @@ describe("resourceAskClaudeDialog", () => {
 
     expect(document.body.querySelector("code")?.textContent).toBe(getAssistantPrompt(resource, "a"));
   });
+
+  test("the close control is drawn in the footer, outside the body", async () => {
+    expect.hasAssertions();
+
+    apiKeyList.mockResolvedValue({ data: { apiKeys: [{ permissions: { mcp: [McpScope.Resources] } }] }, error: null });
+    await mountSuspended(ResourceAskClaudeDialog, {
+      attachTo: document.body,
+      props: { modelValue: true, resource: createResourceListItem() },
+    });
+    await flushPromises();
+    const footer = document.body.querySelector("footer");
+
+    expect(footer?.textContent).toBe("Close");
+    expect(footer?.closest("[ui-region-body]")).toBeNull();
+  });
 });

@@ -32,6 +32,8 @@ const isUnchanged = computed(
     editedImage.value === room.image,
 );
 const { executeMutation } = useMutation();
+// The save sits in the footer, beside the form it submits, so it names the form by id
+const formId = useId();
 const updateRoom = async () => {
   const { id } = room;
   const name = editedName.value;
@@ -60,7 +62,7 @@ const updateRoom = async () => {
     w="[min(28rem,90vw)]"
   >
     <UiForm
-      p-3
+      :id="formId"
       flex
       flex-col
       gap-3
@@ -80,10 +82,10 @@ const updateRoom = async () => {
         :placeholder
         :rules="nameRules"
       />
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isEditRoomDialogOpen = false">Cancel</UiButton>
-        <UiButton :disabled="isUnchanged" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
-      </footer>
     </UiForm>
+    <template #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="isEditRoomDialogOpen = false">Cancel</UiButton>
+      <UiButton :disabled="isUnchanged" :form="formId" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
+    </template>
   </UiDialog>
 </template>

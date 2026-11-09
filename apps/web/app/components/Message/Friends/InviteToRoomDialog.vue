@@ -31,8 +31,6 @@ const roomItems = computed<UiListItem<string>[]>(() =>
       v-if="roomItems.length > 0"
       label="Rooms"
       :items="roomItems"
-      max-h="[40dvh]"
-      of-y-auto
       @select="
         async (roomId) => {
           const room = invitableRooms.find(({ id }) => id === roomId);

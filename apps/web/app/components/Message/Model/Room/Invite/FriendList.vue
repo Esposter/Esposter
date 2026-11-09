@@ -52,7 +52,7 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
 <template>
   <div flex flex-col gap-2>
     <UiTextField v-model="searchQuery" label="Search friends" :type="UiTextFieldType.Search" />
-    <ul v-if="recipientItems.length > 0" max-h="[40dvh]" flex flex-col of-y-auto>
+    <ul v-if="recipientItems.length > 0" flex flex-col>
       <MessageModelRoomInviteFriendListItem
         v-for="recipient of recipientItems"
         :key="recipient.id"

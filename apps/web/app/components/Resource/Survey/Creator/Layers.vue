@@ -204,15 +204,13 @@ watch(selectedPointer, async (pointer) => {
       </template>
     </UiList>
     <UiDialog v-model="isMoveOpen" title="Move to">
-      <div p-3 flex flex-col min-h-0 of-y-auto>
-        <UiList
-          v-if="moveItems.length > 0"
-          :items="moveItems"
-          label="Places it can move to"
-          @select="(value) => moveTo(value)"
-        />
-        <p v-else text-muted>Nothing else in the survey takes it</p>
-      </div>
+      <UiList
+        v-if="moveItems.length > 0"
+        :items="moveItems"
+        label="Places it can move to"
+        @select="(value) => moveTo(value)"
+      />
+      <p v-else text-muted>Nothing else in the survey takes it</p>
     </UiDialog>
     <UiConfirmDialog
       v-model="isRemoveOpen"

@@ -66,8 +66,6 @@ await readFriends();
       :items="friendItems"
       label="Friends"
       :model-value="selectedUserIds"
-      max-h="[40dvh]"
-      of-y-auto
       @select="(id) => toggleFriend(id)"
     />
     <UiEmptyState

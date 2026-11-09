@@ -29,6 +29,8 @@ const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);
 const parameterValues = ref<Record<string, string>>({});
 const deployments = ref<BlueprintDeployment[]>([]);
+// The footer sits outside the form, so its Deploy submits the form by this id
+const formId = useId();
 // Each open starts fresh: fields prefilled from their defaults, previous results cleared
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) return;
@@ -68,7 +70,7 @@ const deploy = async () => {
     Deploy
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" w="[min(32rem,90vw)]">
-    <UiForm v-if="deployments.length === 0" p-3 flex flex-col gap-3 @submit="deploy()">
+    <UiForm v-if="deployments.length === 0" :id="formId" flex flex-col gap-3 @submit="deploy()">
       <p v-if="blueprint.parameters.length === 0" text-muted>
         This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
       </p>
@@ -89,19 +91,8 @@ const deploy = async () => {
           </li>
         </ul>
       </div>
-      <footer flex gap-2 justify-end>
-        <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-        <UiButton
-          :disabled="isDeployBlocked"
-          :is-pending="isDeployPending"
-          type="submit"
-          :variant="UiButtonVariant.Accent"
-        >
-          Deploy
-        </UiButton>
-      </footer>
     </UiForm>
-    <div v-else p-3 flex flex-col gap-3>
+    <div v-else flex flex-col gap-3>
       <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
       <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
       <ul flex flex-col>
@@ -115,9 +106,21 @@ const deploy = async () => {
           </NuxtLink>
         </li>
       </ul>
-      <footer flex justify-end>
-        <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
-      </footer>
     </div>
+    <template v-if="deployments.length === 0" #footer>
+      <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
+      <UiButton
+        :disabled="isDeployBlocked"
+        :form="formId"
+        :is-pending="isDeployPending"
+        type="submit"
+        :variant="UiButtonVariant.Accent"
+      >
+        Deploy
+      </UiButton>
+    </template>
+    <template v-else #footer>
+      <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
+    </template>
   </UiDialog>
 </template>

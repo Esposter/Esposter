@@ -27,23 +27,23 @@ const { answer, importingResourceId, isImporting, saveResourceRevision } = useIm
     :title="`Preview: ${previewName}`"
     w="[min(64rem,90vw)]"
   >
-    <div p-3 min-h-0 of-y-auto>
-      <ResourceSheetPreviewTable v-if="previewDataSource" :data-source="previewDataSource" />
-    </div>
-    <ResourceImportPreviewFooter
-      :is-pending="isImporting"
-      @cancel="isPreviewOpen = false"
-      @confirm="
-        answer(async () => {
-          // The import awaits a revision before it writes, so the sheet it lands in is named when it is confirmed
-          importingResourceId = currentResourceId;
-          const dataSource = previewDataSource;
-          const setDataSource = getDataSourceSetter();
-          if (!dataSource || !(await saveResourceRevision())) return false;
-          await setDataSource(dataSource);
-        })
-      "
-    />
+    <ResourceSheetPreviewTable v-if="previewDataSource" :data-source="previewDataSource" />
+    <template #footer>
+      <ResourceImportPreviewFooter
+        :is-pending="isImporting"
+        @cancel="isPreviewOpen = false"
+        @confirm="
+          answer(async () => {
+            // The import awaits a revision before it writes, so the sheet it lands in is named when it is confirmed
+            importingResourceId = currentResourceId;
+            const dataSource = previewDataSource;
+            const setDataSource = getDataSourceSetter();
+            if (!dataSource || !(await saveResourceRevision())) return false;
+            await setDataSource(dataSource);
+          })
+        "
+      />
+    </template>
   </UiDialog>
   <ResourceSheetExportDialog v-model="isExportOpen" :data-source-type="exportDataSourceType" />
   <ResourceSheetImportDatasetDialog v-model="isSurveyImportOpen" />

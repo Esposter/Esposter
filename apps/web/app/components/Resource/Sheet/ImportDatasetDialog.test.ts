@@ -42,6 +42,16 @@ describe("resourceSheetImportDatasetDialog", () => {
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
 
+  test("draws its actions in the footer beneath the survey choice", async () => {
+    expect.hasAssertions();
+
+    const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: true } });
+    const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
+    assert.exists(importButton);
+
+    expect(importButton.element.closest("[ui-region-footer]")).not.toBeNull();
+  });
+
   // A survey deleted after it was picked leaves the list on the next open, so its choice is dropped rather than left to
   // Import nothing and close as though it had landed
   test("drops a picked survey the list no longer holds, so there is nothing left to import", async () => {

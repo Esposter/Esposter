@@ -49,6 +49,26 @@ describe("resourceNoteDialogs", () => {
     expect(noteStore.note.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
+  // The preview is the body, and the import's actions are the footer beneath it, so the confirm stays in view on a long note
+  test("an import's preview sits in the body and its actions in the footer", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
+    const noteStore = useNoteStore();
+    await noteStore.loadContent();
+    const notePortableDialogStore = useNotePortableDialogStore();
+    const { openPreview } = notePortableDialogStore;
+    const wrapper = await mountSuspended(ResourceNoteDialogs);
+    openPreview(resourceId, importedDoc);
+    await flushPromises();
+    const importButton = wrapper.findAll("button").find((button) => button.text() === "Import");
+    assert.exists(importButton);
+
+    expect(wrapper.get("[ui-region-body]").text()).toContain("imported");
+    expect(importButton.element.closest("[ui-region-footer]")).not.toBeNull();
+  });
+
   test("cancelling an import keeps the note as it was", async () => {
     expect.hasAssertions();
 

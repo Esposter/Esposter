@@ -90,4 +90,29 @@ describe("resourceSurveyCreatorLayers", () => {
 
     component.unmount();
   });
+
+  // The places a node can move to are the move dialog's body, so the list is what the dialog scrolls
+  test("Move to lists the places the node can go in the dialog's body", async () => {
+    expect.hasAssertions();
+
+    const surveyCreatorStore = useSurveyCreatorStore();
+    surveyCreatorStore.load(
+      createSurveyTestDocument([
+        createSurveyTestPage([createSurveyTestQuestion("question1"), createSurveyTestQuestion("question2")]),
+      ]),
+    );
+    const { select } = useSurveyCreatorCommands();
+    select("/content/0/props/children/1");
+    const component = await mountSuspended(ResourceSurveyCreatorLayers);
+    await component.get('[aria-label="question2 actions"]').trigger("keydown", { key: "ArrowDown" });
+    await flushPromises();
+    const moveTo = component.findAll('[role="menuitem"]').find((item) => item.text().startsWith("Move to"));
+    assert.exists(moveTo);
+    await moveTo.trigger("click");
+    await flushPromises();
+
+    expect(component.get('[aria-label="Places it can move to"]').element.closest("[ui-region-body]")).not.toBeNull();
+
+    component.unmount();
+  });
 });

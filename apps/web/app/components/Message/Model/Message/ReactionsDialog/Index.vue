@@ -26,13 +26,13 @@ const selectedEmoji = computed(
 <template>
   <!-- High, as a dialog whose rail swaps panels of other lengths stands, so the rail never moves under the pointer -->
   <UiDialog v-model="isOpen" title="Reactions" w="[min(36rem,90vw)]">
-    <div v-if="selectedEmoji" p-3 flex gap-3 min-h-64 of-hidden>
+    <div v-if="selectedEmoji" flex gap-3>
       <MessageModelMessageReactionsDialogRail
         :emojis="displayEmojis"
         :model-value="selectedEmoji.emojiTag"
         @update:model-value="selectedEmojiTag = $event"
       />
-      <div aria-label="Reacted by" role="list" flex flex-1 flex-col min-w-0 of-y-auto>
+      <div aria-label="Reacted by" role="list" flex flex-1 flex-col min-w-0>
         <MessageModelMessageReactionsDialogUserListItem
           v-for="userId of selectedEmoji.userIds"
           :key="userId"

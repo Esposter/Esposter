@@ -26,6 +26,8 @@ const isNoteValid = computed(() => createModerationNoteInputSchema.shape.note.sa
 currentTargetUserId.value = user.id;
 const { isPending } = useQuery(readModerationNotes);
 const { executeMutation, isPending: isCreatePending } = useMutation();
+// The add-note submit sits in the footer, beside the form it submits, so it names the form by id
+const formId = useId();
 </script>
 
 <template>
@@ -35,64 +37,64 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
     :title="`Notes for ${displayName}`"
     w="[min(36rem,90vw)]"
   >
-    <div p-3 flex flex-col gap-3 min-h-0>
-      <ul v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-3>
-        <li v-for="index of 3" :key="index" flex flex-col gap-1>
-          <UiSkeleton h-4 w="2/3" />
-          <UiSkeleton h-4 w="1/3" />
-        </li>
+    <ul v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-3>
+      <li v-for="index of 3" :key="index" flex flex-col gap-1>
+        <UiSkeleton h-4 w="2/3" />
+        <UiSkeleton h-4 w="1/3" />
+      </li>
+    </ul>
+    <div v-else-if="items.length > 0">
+      <ul flex flex-col gap-3>
+        <MessageModelMemberActionDialogNoteListItem v-for="item of items" :key="item.rowKey" :note="item" />
       </ul>
-      <div v-else-if="items.length > 0" max-h="[40dvh]" of-y-auto>
-        <ul flex flex-col gap-3>
-          <MessageModelMemberActionDialogNoteListItem v-for="item of items" :key="item.rowKey" :note="item" />
-        </ul>
-        <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationNotes(onComplete)" />
-      </div>
-      <UiEmptyState
-        v-else
-        description="Add one below to keep track of this member."
-        :meaning="UiIconMeaning.Comment"
-        title="No notes yet"
-      />
-      <!-- Adding a note keeps the dialog open, so a moderator can keep reviewing while writing -->
-      <UiForm
-        flex
-        flex-col
-        gap-3
-        @submit="
-          executeMutation(
-            () => $trpc.message.moderation.createModerationNote.mutate({ note, roomId, targetUserId: user.id }),
-            {
-              key: Symbol('createModerationNote'),
-              onError: (error) => {
-                createErrorAlert(error);
-              },
-              onSuccess: async () => {
-                note = '';
-                await readModerationNotes();
-              },
-            },
-          )
-        "
-      >
-        <UiTextField
-          v-model="note"
-          :counter="MODERATION_NOTE_MAX_LENGTH"
-          label="Add a note"
-          :rows="2"
-          :rules="noteRules"
-        />
-        <footer flex gap-2 justify-end>
-          <UiButton
-            :disabled="!isNoteValid"
-            :is-pending="isCreatePending"
-            type="submit"
-            :variant="UiButtonVariant.Accent"
-          >
-            Add note
-          </UiButton>
-        </footer>
-      </UiForm>
+      <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationNotes(onComplete)" />
     </div>
+    <UiEmptyState
+      v-else
+      description="Add one below to keep track of this member."
+      :meaning="UiIconMeaning.Comment"
+      title="No notes yet"
+    />
+    <!-- Adding a note keeps the dialog open, so a moderator can keep reviewing while writing -->
+    <UiForm
+      :id="formId"
+      flex
+      flex-col
+      gap-3
+      @submit="
+        executeMutation(
+          () => $trpc.message.moderation.createModerationNote.mutate({ note, roomId, targetUserId: user.id }),
+          {
+            key: Symbol('createModerationNote'),
+            onError: (error) => {
+              createErrorAlert(error);
+            },
+            onSuccess: async () => {
+              note = '';
+              await readModerationNotes();
+            },
+          },
+        )
+      "
+    >
+      <UiTextField
+        v-model="note"
+        :counter="MODERATION_NOTE_MAX_LENGTH"
+        label="Add a note"
+        :rows="2"
+        :rules="noteRules"
+      />
+    </UiForm>
+    <template #footer>
+      <UiButton
+        :disabled="!isNoteValid"
+        :form="formId"
+        :is-pending="isCreatePending"
+        type="submit"
+        :variant="UiButtonVariant.Accent"
+      >
+        Add note
+      </UiButton>
+    </template>
   </UiDialog>
 </template>

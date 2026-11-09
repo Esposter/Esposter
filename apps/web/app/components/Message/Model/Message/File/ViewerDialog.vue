@@ -94,10 +94,8 @@ useCommands(() =>
   >
     <div
       :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"
-      p-3
       flex
       flex-1
-      min-h-0
       items-center
       justify-center
       of-hidden
@@ -116,7 +114,7 @@ useCommands(() =>
         <NuxtImg :class="mediaHeightClass" max-w-full :src="url" :alt="file.filename" />
       </div>
     </div>
-    <footer p-3 flex gap-2 items-center>
+    <template #footer>
       <span text-sm text-muted flex-1>{{ index + 1 }} of {{ viewableFiles.length }}</span>
       <UiIconButton label="Previous" :meaning="UiIconMeaning.Previous" :disabled="index === 0" @click="view(-1)" />
       <UiIconButton
@@ -126,6 +124,6 @@ useCommands(() =>
         @click="view(1)"
       />
       <UiIconButton label="Download" :meaning="UiIconMeaning.Download" @click="downloadUrl(url, file.filename)" />
-    </footer>
+    </template>
   </UiDialog>
 </template>

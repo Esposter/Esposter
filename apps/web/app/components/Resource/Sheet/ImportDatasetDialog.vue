@@ -71,21 +71,19 @@ watch(isOpen, async (newIsOpen) => {
     title="Import survey responses"
     w="[min(32rem,90vw)]"
   >
-    <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
-      <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
-      <!-- The surveys are a read: the field's own shape until it settles, then the reason it failed, the reader's
-        surveys, or a line on where one comes from -->
-      <UiSkeleton v-if="!surveys && checkIsPending('survey/readResources')" h-8 />
-      <UiErrorState v-else-if="readError" :error="readError" @retry="readSurveys()" />
-      <UiEmptyState
-        v-else-if="surveys?.length === 0"
-        description="Create a survey and collect responses to import them here"
-        :meaning="UiIconMeaning.Survey"
-        title="No surveys yet"
-      />
-      <UiSelect v-else-if="surveys" v-model="selectedSurveyId" :items="surveyItems" label="Survey" />
-    </div>
-    <footer p-3 flex gap-2 justify-end>
+    <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
+    <!-- The surveys are a read: the field's own shape until it settles, then the reason it failed, the reader's
+      surveys, or a line on where one comes from -->
+    <UiSkeleton v-if="!surveys && checkIsPending('survey/readResources')" h-8 />
+    <UiErrorState v-else-if="readError" :error="readError" @retry="readSurveys()" />
+    <UiEmptyState
+      v-else-if="surveys?.length === 0"
+      description="Create a survey and collect responses to import them here"
+      :meaning="UiIconMeaning.Survey"
+      title="No surveys yet"
+    />
+    <UiSelect v-else-if="surveys" v-model="selectedSurveyId" :items="surveyItems" label="Survey" />
+    <template #footer>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="!selectedSurveyId"
@@ -119,6 +117,6 @@ watch(isOpen, async (newIsOpen) => {
       >
         Import
       </UiButton>
-    </footer>
+    </template>
   </UiDialog>
 </template>
