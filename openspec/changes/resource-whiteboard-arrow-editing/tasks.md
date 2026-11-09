@@ -19,4 +19,4 @@
 
 ## 4. The record
 
-- [ ] 4.1 Update the whiteboard design's arrow rows, decisions and Key files to the built shape. Verify: `pnpm exec openspec validate resource-whiteboard-arrow-editing --strict --no-interactive` passes.
+- [ ] 4.1 Record the head kinds and the two handles in the whiteboard design's Features and Key files. Verify: `pnpm exec openspec validate resource-whiteboard-arrow-editing --strict --no-interactive` passes.

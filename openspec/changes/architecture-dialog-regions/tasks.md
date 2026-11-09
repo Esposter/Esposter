@@ -8,7 +8,7 @@
 
 ## 2. The shells
 
-- [ ] 2.1 Fill the footer slot from the styled dialog, the form dialog, the edit-form dialog's actions and the confirm dialog, keeping their props. Verify: the existing shell tests pass unchanged.
+- [ ] 2.1 Fill the footer slot from the styled dialog, the form dialog, the edit-form dialog's actions and the confirm dialog, keeping their props. Verify: the existing shell tests pass unchanged, and the tests named after the scenarios 'A dialog shows its title with a close control' and 'A long body scrolls inside the dialog' pass.
 
 ## 3. The call sites
 

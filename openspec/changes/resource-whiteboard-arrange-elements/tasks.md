@@ -12,4 +12,4 @@
 
 ## 3. The record
 
-- [ ] 3.1 Update the whiteboard design's Features, Decisions, Not built and Key files to the built shape, and drop the selection's stacking from its Not built list. Verify: `pnpm exec openspec validate resource-whiteboard-arrange-elements --strict --no-interactive` passes.
+- [ ] 3.1 Record align, distribute and the selection's stacking in the whiteboard design's Features, and remove the selection stacking gap from its Not built list. Verify: `pnpm exec openspec validate resource-whiteboard-arrange-elements --strict --no-interactive` passes.

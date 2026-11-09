@@ -15,4 +15,4 @@
 
 ## 4. The record
 
-- [ ] 4.1 Update the whiteboard design's Features, Decisions, Not built and Key files to the built shape. Verify: `pnpm exec openspec validate resource-whiteboard-canvas-input --strict --no-interactive` passes.
+- [ ] 4.1 Record the image drop, the alt text and the Q key in the whiteboard design's Features and Not built. Verify: `pnpm exec openspec validate resource-whiteboard-canvas-input --strict --no-interactive` passes.

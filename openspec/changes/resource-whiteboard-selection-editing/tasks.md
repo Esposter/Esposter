@@ -18,4 +18,4 @@
 
 ## 4. The record
 
-- [ ] 4.1 Update the whiteboard design's Features, Decisions, Not built and Key files to the built shape. Verify: `pnpm exec openspec validate resource-whiteboard-selection-editing --strict --no-interactive` passes.
+- [ ] 4.1 Record the edge handles, the several-element resize and the Alt copy in the whiteboard design's Features and Decisions. Verify: `pnpm exec openspec validate resource-whiteboard-selection-editing --strict --no-interactive` passes.
