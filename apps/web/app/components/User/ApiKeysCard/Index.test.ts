@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import UserApiKeysCard from "@/components/User/ApiKeysCard/Index.vue";
-import UserApiKeysCardRow from "@/components/User/ApiKeysCard/Row.vue";
 import UiEmptyState from "@/components/Ui/EmptyState.vue";
 import UiErrorState from "@/components/Ui/ErrorState.vue";
+import UserApiKeysCard from "@/components/User/ApiKeysCard/Index.vue";
+import UserApiKeysCardRow from "@/components/User/ApiKeysCard/Row.vue";
 import UserSettingsListSkeleton from "@/components/User/Settings/ListSkeleton.vue";
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 import { apiKeyList } from "@/services/auth/authClient.test";

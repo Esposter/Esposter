@@ -28,7 +28,7 @@ const emptyState = { description: "", meaning: UiIconMeaning.Comment, title: "Th
 
 <template>
   <UiAsyncBody
-    :empty-state="emptyState"
+    :empty-state
     error=""
     :is-empty="comments?.length === 0 ? true : undefined"
     :is-pending="comments === undefined ? true : undefined"

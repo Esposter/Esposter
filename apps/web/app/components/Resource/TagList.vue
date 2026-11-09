@@ -24,7 +24,7 @@ const emptyState = {
 <template>
   <div p-2 flex flex-col h-full min-w-0 of-y-auto ui-body>
     <UiAsyncBody
-      :empty-state="emptyState"
+      :empty-state
       :error
       :is-empty="counts.length === 0 ? true : undefined"
       :is-pending="isPending ? true : undefined"

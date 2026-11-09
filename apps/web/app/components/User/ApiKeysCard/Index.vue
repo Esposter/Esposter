@@ -52,7 +52,7 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
       />
     </template>
     <UiAsyncBody
-      :empty-state="emptyState"
+      :empty-state
       :error
       :is-empty="apiKeys.length === 0 ? true : undefined"
       :is-pending="data ? undefined : true"

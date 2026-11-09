@@ -23,7 +23,7 @@ const emptyState = computed(() => ({
      column of them -->
 <template>
   <UiAsyncBody
-    :empty-state="emptyState"
+    :empty-state
     error=""
     :is-empty="resources.length === 0 ? true : undefined"
     :is-pending="isPending ? true : undefined"

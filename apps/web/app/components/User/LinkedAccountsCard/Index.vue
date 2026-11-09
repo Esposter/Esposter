@@ -58,7 +58,7 @@ if (typeof linkError === "string") {
           :="loginButtonProps"
           :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
           :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
-          :linked-account-count="linkedAccountCount"
+          :linked-account-count
           @link="
             async () => {
               await executeProviderMutation(

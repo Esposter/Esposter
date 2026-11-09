@@ -17,8 +17,8 @@ interface Props {
 // Since a caller's pending flag may be derived from the data alone, which a failed read leaves unset. Retry is an emit,
 // So the default error state can ask again; a custom one asks through the caller's own read
 defineSlots<{ default: () => VNode; empty?: () => VNode; error?: () => VNode; loading: () => VNode }>();
-const emit = defineEmits<{ retry: [] }>();
 const { emptyState, error, isEmpty, isPending } = defineProps<Props>();
+const emit = defineEmits<{ retry: [] }>();
 </script>
 
 <template>

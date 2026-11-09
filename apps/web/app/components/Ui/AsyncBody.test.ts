@@ -29,7 +29,7 @@ describe("uiAsyncBody", () => {
     test("A failed read draws the error slot with a retry", async () => {
       expect.hasAssertions();
 
-      const component = mount(UiAsyncBody, { props: { emptyState, error: " " }, slots });
+      const component = mount(UiAsyncBody, { props: { error: " " }, slots });
 
       expect(component.findComponent(UiErrorState).exists()).toBe(true);
 
@@ -68,7 +68,7 @@ describe("uiAsyncBody", () => {
     test("A read that holds rows draws its content", () => {
       expect.hasAssertions();
 
-      const component = mount(UiAsyncBody, { props: { emptyState, error: "" }, slots });
+      const component = mount(UiAsyncBody, { props: { error: "" }, slots });
 
       expect(component.text()).toBe(content);
     });

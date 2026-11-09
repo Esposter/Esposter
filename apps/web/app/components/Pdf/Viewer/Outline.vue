@@ -39,7 +39,7 @@ const emptyState = { description: "", meaning: UiIconMeaning.Bookmark, title: "T
 
 <template>
   <UiAsyncBody
-    :empty-state="emptyState"
+    :empty-state
     error=""
     :is-empty="outline?.length === 0 ? true : undefined"
     :is-pending="outline === undefined ? true : undefined"

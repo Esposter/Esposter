@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { SessionSummary } from "#server/models/session/SessionSummary";
 
+import UiErrorState from "@/components/Ui/ErrorState.vue";
 import UserSessionsCard from "@/components/User/SessionsCard/Index.vue";
 import UserSessionsCardRow from "@/components/User/SessionsCard/Row.vue";
-import UiErrorState from "@/components/Ui/ErrorState.vue";
 import UserSettingsListSkeleton from "@/components/User/Settings/ListSkeleton.vue";
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";

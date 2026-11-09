@@ -27,7 +27,7 @@ const emptyState = {
     <!-- Loading only while there is nothing to show: a filter change keeps the last read's cards while the next is out.
          The grouped count only returns types the filter actually matched, so an empty summary means an empty list -->
     <UiAsyncBody
-      :empty-state="emptyState"
+      :empty-state
       :error
       :is-empty="counts.length === 0 ? true : undefined"
       :is-pending="isPending && counts.length === 0 ? true : undefined"
