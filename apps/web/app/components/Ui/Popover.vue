@@ -92,7 +92,7 @@ defineExpose({ triggerElement });
     ui-popover-motion
     @keydown.esc.prevent.stop="closeToTrigger()"
   >
-    <div max-h="[70dvh]" ui-region-body ui-lifted>
+    <div max-h="[70dvh]" p-3 ui-region-body ui-lifted>
       <slot :close="closeToTrigger" />
     </div>
   </div>

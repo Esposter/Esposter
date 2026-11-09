@@ -4,7 +4,9 @@ import type { VueWrapper } from "@vue/test-utils";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -49,6 +51,20 @@ describe("uiConfirmDialog", () => {
       expect(component.get("dialog").attributes("role")).toBe("alertdialog");
       // The browser's dialog focusing steps take the autofocus element, which happy-dom does not run
       expect(component.get("button[autofocus]").text()).toBe("Cancel");
+    });
+
+    test.each([
+      { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
+      { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
+    ])("A named size sets the width, $description", async ({ expected, props }) => {
+      expect.hasAssertions();
+
+      const component = await mountDialog(props);
+      const dialogClasses = component.get("dialog").classes();
+
+      expect(
+        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
+      ).toStrictEqual([UiDialogSizeClassMap[expected]]);
     });
 
     test("holds its answer pending until it settles, then closes", async () => {

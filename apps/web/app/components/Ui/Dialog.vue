@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
+import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
@@ -18,6 +20,8 @@ interface Props {
   // What kind of thing the title names, drawn small above it: an editor's "Todo" over the todo's name
   overline?: string;
   placement?: UiDialogPlacement;
+  // How wide it stands, for a placement that stands in the page; a drawer and the full screen keep their own width
+  size?: UiDialogSize;
   title: string;
 }
 // A modal in the browser's top layer, so everything outside it is inert while it is open. Only for content that is
@@ -35,9 +39,15 @@ const {
   isTitleHidden,
   overline,
   placement = UiDialogPlacement.High,
+  size,
   title,
 } = defineProps<Props>();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
+const sizeClass = computed(() => {
+  const isStandingInPage =
+    displayPlacement.value === UiDialogPlacement.High || displayPlacement.value === UiDialogPlacement.Middle;
+  return size && isStandingInPage ? UiDialogSizeClassMap[size] : undefined;
+});
 const frame = useTemplateRef("frame");
 // Opening moves focus into the dialog, and the browser gives it to the first control when nothing asks for it — the
 // Close button. The dialog takes it itself instead, so nothing reads as chosen until the reader moves, and a control
@@ -57,7 +67,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
     <Dialog.Content
       :="$attrs"
       class="ui-dialog"
-      :class="UiDialogPlacementClassMap[displayPlacement]"
+      :class="[UiDialogPlacementClassMap[displayPlacement], sizeClass]"
       :data-placement="displayPlacement"
       tabindex="-1"
       text-inherit
@@ -96,7 +106,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
             />
           </div>
         </header>
-        <div v-if="$slots.default" ui-region-body :class="isBodyBare ? 'p-0' : undefined">
+        <div v-if="$slots.default" ui-region-body :class="isBodyBare ? undefined : 'p-3'">
           <slot />
         </div>
         <footer v-if="$slots.footer" ui-region-footer>

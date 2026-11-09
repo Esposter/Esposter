@@ -3,6 +3,8 @@ import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTextField from "@/components/Ui/TextField.vue";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
+import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -88,6 +90,20 @@ describe("styledDialog", () => {
     expect(document.body.querySelector("dialog p")?.textContent).toBe("a");
   });
 
+  test.each([
+    { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
+    { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
+  ])("A named size sets the width, $description", async ({ expected, props }) => {
+    expect.hasAssertions();
+
+    const component = await mountDialog(props);
+    const dialogClasses = component.get("dialog").classes();
+
+    expect(Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass))).toStrictEqual([
+      UiDialogSizeClassMap[expected],
+    ]);
+  });
+
   test("closes once the confirm settles", async () => {
     expect.hasAssertions();
 
@@ -108,6 +124,25 @@ describe("styledFormDialog", () => {
 
   const confirmLabel = "confirmLabel";
   const title = "title";
+
+  test.each([
+    { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
+    { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
+  ])("A named size sets the width, $description", async ({ expected, props }) => {
+    expect.hasAssertions();
+
+    const component = mount(StyledFormDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, submit: noop, title, ...props },
+      slots: { default: "<p>a</p>" },
+    });
+    await flushPromises();
+    const dialogClasses = component.get("dialog").classes();
+
+    expect(Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass))).toStrictEqual([
+      UiDialogSizeClassMap[expected],
+    ]);
+  });
 
   // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
   // Dialog open over the draft

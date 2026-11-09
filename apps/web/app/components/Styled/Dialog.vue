@@ -3,6 +3,7 @@ import type { Promisable } from "type-fest";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { DIALOG_BODY_TRANSITION_DURATION } from "@/services/ui/constants";
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
   isConfirmDisabled?: true;
   isConfirmPending?: true;
   isOptimistic?: true;
+  // How wide the dialog stands, Medium when none is named
+  size?: UiDialogSize;
   title: string;
 }
 // What a call site passes goes to the dialog element, which it sizes
@@ -28,8 +31,16 @@ const slots = defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirm, confirmLabel, formId, isConfirmDisabled, isConfirmPending, isOptimistic, title } =
-  defineProps<Props>();
+const {
+  confirm,
+  confirmLabel,
+  formId,
+  isConfirmDisabled,
+  isConfirmPending,
+  isOptimistic,
+  size = UiDialogSize.Medium,
+  title,
+} = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions"] || slots["prepend-confirm"]));
 </script>
@@ -37,7 +48,7 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
 <template>
   <!-- One decision about one thing, so it stands in the middle. The body mounts with each open, so a dialog closed
     Holds nothing and every open starts from what its model says -->
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title w="[min(36rem,90vw)]" :="$attrs">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title :="$attrs">
     <template v-if="$slots.default" #default>
       <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
       <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">

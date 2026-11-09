@@ -2,7 +2,9 @@
 import UiDialog from "@/components/Ui/Dialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -55,6 +57,59 @@ describe("uiDialog", () => {
 
       expect(component.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.FullScreen);
       expect(component.get('[aria-label="Full screen"]').attributes("aria-pressed")).toBe("true");
+    });
+
+    // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the
+    // Class is what is checked
+    test.each(Object.values(UiDialogSize))("A named size sets the width: %s", async (size) => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, placement: UiDialogPlacement.Middle, size, title },
+      });
+      await flushPromises();
+      const dialogClasses = component.get("dialog").classes();
+
+      expect(
+        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
+      ).toStrictEqual([UiDialogSizeClassMap[size]]);
+    });
+
+    test("A named size sets the width, and no size class when none is given", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, placement: UiDialogPlacement.Middle, title },
+      });
+      await flushPromises();
+      const dialogClasses = component.get("dialog").classes();
+
+      expect(
+        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
+      ).toStrictEqual([]);
+    });
+
+    // A drawer takes its width from its edge and the full screen from the page, so a size given to one leaves it be
+    test.each([
+      UiDialogPlacement.DrawerBottom,
+      UiDialogPlacement.DrawerEnd,
+      UiDialogPlacement.DrawerStart,
+      UiDialogPlacement.FullScreen,
+    ])("A named size leaves a drawer or the full screen to its own width: %s", async (placement) => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, placement, size: UiDialogSize.Large, title },
+      });
+      await flushPromises();
+      const dialogClasses = component.get("dialog").classes();
+
+      expect(
+        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
+      ).toStrictEqual([]);
     });
 
     // An editor's close is the title bar's, so the dialog holds open while its caller asks about unsaved changes
@@ -121,7 +176,7 @@ describe("uiDialog", () => {
       });
       await flushPromises();
 
-      expect(component.get("[ui-region-body]").classes()).toStrictEqual([]);
+      expect(component.get("[ui-region-body]").classes()).toStrictEqual(["p-3"]);
     });
 
     test("A bare body keeps the scroll without the padding", async () => {
@@ -134,7 +189,7 @@ describe("uiDialog", () => {
       });
       await flushPromises();
 
-      expect(component.get("[ui-region-body]").classes()).toStrictEqual(["p-0"]);
+      expect(component.get("[ui-region-body]").classes()).toStrictEqual([]);
     });
 
     // The footer is drawn after the body rather than inside it, so a long body scrolls above the actions and not over them

@@ -3,6 +3,7 @@ import type { Promisable } from "type-fest";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 
 interface Props {
   // What answering does, awaited unless the write is optimistic (useDialogAnswer)
@@ -14,6 +15,8 @@ interface Props {
   // The write shows on screen before the server answers, so waiting for it would only hold a dialog over a change
   // Already made; a rejection is answered by its rollback and toast
   isOptimistic?: true;
+  // How wide the dialog stands, Medium when none is named
+  size?: UiDialogSize;
   title: string;
 }
 // A question before something that cannot be undone: what it acts on, Cancel, and the one destructive answer. An alert
@@ -21,7 +24,14 @@ interface Props {
 // Guarded one asks the name in
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirm, confirmLabel, confirmName = "", isOptimistic, title } = defineProps<Props>();
+const {
+  confirm,
+  confirmLabel,
+  confirmName = "",
+  isOptimistic,
+  size = UiDialogSize.Medium,
+  title,
+} = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const typedName = ref("");
 
@@ -31,7 +41,7 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title role="alertdialog" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title role="alertdialog">
     <slot />
     <template v-if="confirmName">
       <div px-2 py-1 flex gap-2 items-center ui-field>

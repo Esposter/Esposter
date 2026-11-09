@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Promisable } from "type-fest";
 
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
+
 interface Props {
   confirmLabel: string;
   isConfirmDisabled?: true;
@@ -8,13 +10,15 @@ interface Props {
   // What the valid form's submit does, awaited unless the write is optimistic (useDialogAnswer): a failed one keeps
   // The dialog open so the user can retry without losing their draft
   submit: () => Promisable<unknown>;
+  // How wide the dialog stands, Medium when none is named: the base shell holds that default
+  size?: UiDialogSize;
   title: string;
 }
 // What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode; "prepend-actions"?: () => VNode; "prepend-confirm"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, isConfirmDisabled, isOptimistic, submit, title } = defineProps<Props>();
+const { confirmLabel, isConfirmDisabled, isOptimistic, size, submit, title } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isValid = ref(true);
 const formId = useId();
@@ -33,6 +37,7 @@ defineExpose({ isValid });
     :form-id
     :is-confirm-disabled="isConfirmDisabled || !isValid || undefined"
     :is-confirm-pending="isPending || undefined"
+    :size
     :title
     :="$attrs"
   >
