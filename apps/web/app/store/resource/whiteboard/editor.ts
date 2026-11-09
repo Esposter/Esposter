@@ -14,7 +14,6 @@ import { ShapeKind } from "vue-block-editor-headless";
 export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
   const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
   const gesture = shallowRef<WhiteboardGesture>();
-  const isSnapEnabled = ref(true);
   const isToolLocked = ref(false);
   const preview = shallowRef<PositionedDocument>();
   const selectedIds = ref<string[]>([]);
@@ -30,9 +29,6 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const selectElement = (id: string) => {
     selectedIds.value = [id];
   };
-  const toggleSnap = () => {
-    isSnapEnabled.value = !isSnapEnabled.value;
-  };
   const toggleToolLock = () => {
     isToolLocked.value = !isToolLocked.value;
   };
@@ -47,14 +43,12 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
     fitTo,
     gesture,
     getCentrePoint,
-    isSnapEnabled,
     isToolLocked,
     preview,
     selectedIds,
     selectElement,
     setCanvasRect,
     shapeKind,
-    toggleSnap,
     toggleToolLock,
     tool,
     viewport,

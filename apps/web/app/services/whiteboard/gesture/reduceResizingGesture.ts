@@ -13,11 +13,8 @@ export const reduceResizingGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePointerGesture(state, event, (point) =>
-    getResizeOperations(
-      state.document,
-      gesture.elementId,
-      gesture.handle,
-      { x: point.x - gesture.origin.x, y: point.y - gesture.origin.y },
-      state.isSnapEnabled,
-    ),
+    getResizeOperations(state.document, gesture.elementId, gesture.handle, {
+      x: point.x - gesture.origin.x,
+      y: point.y - gesture.origin.y,
+    }),
   );

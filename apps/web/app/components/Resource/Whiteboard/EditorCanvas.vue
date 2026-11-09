@@ -6,7 +6,6 @@ import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhi
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { GRID_SIZE } from "vue-block-editor-headless";
 
 // The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place. Its overlay slot is drawn
 // Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.
@@ -63,27 +62,7 @@ const emitPointer = (action: GesturePointerAction, event: PointerEvent) => {
     @paste="(event) => insertImages([...(event.clipboardData?.files ?? [])])"
   >
     <svg text-text size-full block>
-      <defs>
-        <pattern
-          id="whiteboard-grid"
-          :width="GRID_SIZE"
-          :height="GRID_SIZE"
-          x="-1.5"
-          y="-1.5"
-          patternUnits="userSpaceOnUse"
-          text-muted
-        >
-          <circle cx="1.5" cy="1.5" r="1.5" fill="currentColor" />
-        </pattern>
-      </defs>
       <g :transform>
-        <rect
-          :x="viewport.x"
-          :y="viewport.y"
-          :width="width / viewport.scale"
-          :height="height / viewport.scale"
-          fill="url(#whiteboard-grid)"
-        />
         <ResourceWhiteboardElement v-for="element in displayedDocument.elements" :key="element.id" :element />
         <slot name="overlay" />
       </g>

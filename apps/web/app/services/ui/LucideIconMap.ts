@@ -154,7 +154,6 @@ export const LucideIconMap = {
   [UiIconMeaning.SmileyUnhappy]: "i-lucide:frown",
   [UiIconMeaning.SmileyVeryHappy]: "i-lucide:laugh",
   [UiIconMeaning.SmileyVeryUnhappy]: "i-lucide:angry",
-  [UiIconMeaning.Snap]: "i-lucide:magnet",
   [UiIconMeaning.SoftBan]: "i-lucide:user-x",
   [UiIconMeaning.SortAscending]: "i-lucide:arrow-up-narrow-wide",
   [UiIconMeaning.SortDescending]: "i-lucide:arrow-down-wide-narrow",

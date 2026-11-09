@@ -13,10 +13,8 @@ export const reduceMovingGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePointerGesture(state, event, (point) =>
-    getMoveOperations(
-      state.document,
-      state.selectedIds,
-      { x: point.x - gesture.origin.x, y: point.y - gesture.origin.y },
-      state.isSnapEnabled,
-    ),
+    getMoveOperations(state.document, state.selectedIds, {
+      x: point.x - gesture.origin.x,
+      y: point.y - gesture.origin.y,
+    }),
   );

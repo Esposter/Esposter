@@ -71,7 +71,6 @@ describe(reduceWhiteboardGesture, () => {
   ): WhiteboardGestureState => ({
     createId: () => STROKE_ID,
     document,
-    isSnapEnabled: false,
     isToolLocked: false,
     selectedIds: [],
     shapeKind: ShapeKind.Rectangle,
@@ -115,63 +114,33 @@ describe(reduceWhiteboardGesture, () => {
     });
   });
 
-  test("a moved shape lands on the grid", () => {
+  test("a moved shape lands where the pointer puts it", () => {
     expect.hasAssertions();
 
-    const state = createState(
-      { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
-      { isSnapEnabled: true, selectedIds: [PROCESS_ID] },
-    );
+    const state = createState({ elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] }, { selectedIds: [PROCESS_ID] });
 
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
     const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 198, y: 152 }));
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 198, y: 152 }));
 
     expect(up.operations).toStrictEqual([
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/x", value: 140 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/y", value: 120 },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/x", value: 148 },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/y", value: 127 },
     ]);
   });
 
-  test.each([
-    { height: 70, isSnapEnabled: false, pointer: { x: 230, y: 170 }, width: 130 },
-    { height: 80, isSnapEnabled: true, pointer: { x: 233, y: 171 }, width: 140 },
-  ])(
-    "a resized shape's edges follow the pointer, and land on the grid when snapping (snap $isSnapEnabled)",
-    ({ height, isSnapEnabled, pointer, width }) => {
-      expect.hasAssertions();
-
-      const state = createState(
-        { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
-        { isSnapEnabled, selectedIds: [PROCESS_ID] },
-      );
-
-      const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
-      const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, pointer));
-      const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, pointer));
-
-      expect(up.operations).toStrictEqual([
-        { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: width },
-        { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: height },
-      ]);
-    },
-  );
-
-  test("a resize held at the minimum size keeps its edges on the grid", () => {
+  test("a resized shape's edges follow the pointer", () => {
     expect.hasAssertions();
 
-    const state = createState(
-      { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] },
-      { isSnapEnabled: true, selectedIds: [PROCESS_ID] },
-    );
+    const state = createState({ elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] }, { selectedIds: [PROCESS_ID] });
 
     const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 150 }));
-    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 105, y: 101 }));
-    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 105, y: 101 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 230, y: 170 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 230, y: 170 }));
 
     expect(up.operations).toStrictEqual([
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 20 },
-      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 20 },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: 130 },
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: 70 },
     ]);
   });
 

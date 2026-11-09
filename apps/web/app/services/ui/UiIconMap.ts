@@ -158,7 +158,6 @@ export const UiIconMap = {
     [UiIconMeaning.SmileyUnhappy]: "i-pixelarticons:frown",
     [UiIconMeaning.SmileyVeryHappy]: "i-pixelarticons:laugh",
     [UiIconMeaning.SmileyVeryUnhappy]: "i-pixelarticons:angry",
-    [UiIconMeaning.Snap]: "i-pixelarticons:grid-3x3",
     [UiIconMeaning.SoftBan]: "i-pixelarticons:user-x",
     [UiIconMeaning.SortAscending]: "i-pixelarticons:arrow-up",
     [UiIconMeaning.SortDescending]: "i-pixelarticons:arrow-down",

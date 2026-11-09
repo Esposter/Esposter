@@ -12,15 +12,13 @@ export const useWhiteboardGesture = () => {
   const { commitOperations } = whiteboardStore;
   const { editState } = storeToRefs(whiteboardStore);
   const whiteboardEditorStore = useWhiteboardEditorStore();
-  const { gesture, isSnapEnabled, isToolLocked, preview, selectedIds, shapeKind, tool, viewport } =
-    storeToRefs(whiteboardEditorStore);
+  const { gesture, isToolLocked, preview, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
   const onPointer = (event: GesturePointerEvent) => {
     const result = reduceWhiteboardGesture(
       {
         createId: () => crypto.randomUUID(),
         document: editState.value.document,
         gesture: gesture.value,
-        isSnapEnabled: isSnapEnabled.value,
         isToolLocked: isToolLocked.value,
         preview: preview.value,
         selectedIds: selectedIds.value,

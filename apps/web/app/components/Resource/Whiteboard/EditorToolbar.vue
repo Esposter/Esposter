@@ -11,12 +11,12 @@ import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardTool
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
 // Every tool a whiteboard is drawn with, in one toolbar: the select and hand tools, the shape slot, the drawing tools and the image picker.
-// The lock that keeps a tool in hand and the grid snap sit here too.
+// The lock that keeps a tool in hand sits here too.
 // The toolbar holds one value for the tool in hand, and a shape tool's value is the kind it places.
 // The slot draws that kind, and a choice in it or by a key sets both
 const whiteboardEditorStore = useWhiteboardEditorStore();
-const { isSnapEnabled, isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
-const { toggleSnap, toggleToolLock } = whiteboardEditorStore;
+const { isToolLocked, shapeKind, tool } = storeToRefs(whiteboardEditorStore);
+const { toggleToolLock } = whiteboardEditorStore;
 const insertImages = useInsertWhiteboardImages();
 const imageInput = useTemplateRef("imageInput");
 const toolbarValue = computed({
@@ -70,16 +70,9 @@ const groups = computed<EditorToolbarGroup[]>(() => [
         title: "Lock the tool",
         value: "lock",
       },
-      {
-        isPressed: isSnapEnabled.value,
-        meaning: UiIconMeaning.Snap,
-        onClick: toggleSnap,
-        title: "Snap to grid",
-        value: "snap",
-      },
     ],
     kind: EditorToolbarGroupKind.Command,
-    label: "Lock and snap",
+    label: "Lock",
   },
 ]);
 </script>

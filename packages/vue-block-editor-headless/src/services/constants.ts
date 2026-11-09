@@ -2,8 +2,6 @@
 export const CONNECTION_POINT_COUNT = 4;
 // The straight run an arrow makes out of a bound end, along the end's direction, before it turns
 export const ARROW_STUB_LENGTH = 16;
-// The spacing of a whiteboard's dot grid, and the step its elements snap to, in document units
-export const GRID_SIZE = 20;
 // The width an arrow's label wraps at, in document units. An arrow has no box of its own to wrap a label at, so the width is a constant
 export const ARROW_LABEL_WIDTH = 120;
 // The straight pieces a curved arrow is sampled into

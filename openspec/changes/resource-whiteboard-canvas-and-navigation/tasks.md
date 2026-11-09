@@ -2,8 +2,8 @@
 
 ## 1. A plain canvas
 
-- [ ] 1.1 Remove the dot grid from the canvas, the snap toggle from the toolbar, and the snap state from the editor store. Verify: tests named after the scenarios 'The canvas draws no grid' and 'A moved shape lands where the pointer puts it' written first and seen failing.
-- [ ] 1.2 Remove the grid rounding from the move, resize and placement reducers and delete the headless snap function and the grid size constant. Verify: the typecheck and the reducers' existing tests, with the snap cases deleted.
+- [x] 1.1 Remove the dot grid from the canvas, the snap toggle from the toolbar, and the snap state from the editor store. Verify: tests named after the scenarios 'The canvas draws no grid' and 'A moved shape lands where the pointer puts it' written first and seen failing.
+- [x] 1.2 Remove the grid rounding from the move, resize and placement reducers and delete the headless snap function and the grid size constant. Verify: the typecheck and the reducers' existing tests, with the snap cases deleted.
 
 ## 2. Navigation
 

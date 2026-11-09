@@ -94,7 +94,7 @@ describe("resourceWhiteboardEditor", () => {
     await flushPromises();
     await drag(getCanvas(component), { x: 50, y: 50 }, { x: 80, y: 70 });
 
-    expect(whiteboard.value.elements).toStrictEqual([{ ...WHITEBOARD_PROCESS, x: 40, y: 20 }]);
+    expect(whiteboard.value.elements).toStrictEqual([{ ...WHITEBOARD_PROCESS, x: 30, y: 20 }]);
   });
 
   test("double clicking a shape edits its text in place in the editor", async () => {

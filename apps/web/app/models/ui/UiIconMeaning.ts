@@ -150,7 +150,6 @@ export enum UiIconMeaning {
   SmileyUnhappy = "SmileyUnhappy",
   SmileyVeryHappy = "SmileyVeryHappy",
   SmileyVeryUnhappy = "SmileyVeryUnhappy",
-  Snap = "Snap",
   SoftBan = "SoftBan",
   SortAscending = "SortAscending",
   SortDescending = "SortDescending",

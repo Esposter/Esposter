@@ -10,7 +10,6 @@ import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardE
 import { getDraggedBounds } from "@/services/whiteboard/gesture/getDraggedBounds";
 import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
-import { getSnappedPoint } from "@/services/whiteboard/gesture/getSnappedPoint";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { reducePreviewOrCommitGesture } from "@/services/whiteboard/gesture/reducePreviewOrCommitGesture";
 import { getPlacedBounds } from "@/services/whiteboard/getPlacedBounds";
@@ -29,8 +28,7 @@ export const reducePlacingGesture = (
     // Nothing is previewed before a drag, so a click's element does not appear at one size and then change to another
     if (!isDragged && action === GesturePointerAction.Move) return { operations: [], state };
 
-    const worldPoint = getWorldPoint(event.screen, state.viewport);
-    const point = getSnappedPoint(worldPoint, state.isSnapEnabled);
+    const point = getWorldPoint(event.screen, state.viewport);
     const bounds = isDragged
       ? getDraggedBounds(gesture.origin, point)
       : getPlacedBounds(gesture.placement, gesture.origin);

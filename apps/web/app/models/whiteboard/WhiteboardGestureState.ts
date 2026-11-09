@@ -10,8 +10,6 @@ export interface WhiteboardGestureState {
   createId: () => string;
   document: PositionedDocument;
   gesture?: WhiteboardGesture;
-  // Whether a move or a resize lands its edges on the grid
-  isSnapEnabled: boolean;
   // Whether the tool stays in hand after a placement, rather than returning to select
   isToolLocked: boolean;
   // The document as the gesture in progress would leave it, drawn in place of the document while the gesture lasts
