@@ -14,6 +14,7 @@ How an individual component is written, typed and named. Assembling a page or li
 - `references/shared-shell.md` — when a page needs chrome, or a new product or editor is added.
 - `references/async-components.md` — when a map dispatches a heavy component, or a component awaits in setup behind a `v-if`.
 - `references/slots.md` — when a component declares a slot, forwards an optional slot into a library component, or a named slot's content has grown non-trivial.
+- `references/structured-containers.md` — when a component frames other content (a dialog, popover, drawer, card, panel or editor region), or a call site of one writes its own padding, scroll wrapper or footer in the slot.
 - `references/abstraction-levels.md` — when a script setup mixes a composable with a hand-built block for one concept.
 - `references/normal-form.md` — when a `.vue` is past the file-length target, a script has grown long, or a feature's wiring is about to be added to a component that already wires several.
 - `references/splitting-a-component.md` — when a `.vue` several times past the file-length target is about to be cut, by a session or a delegated agent.
@@ -64,6 +65,10 @@ A component that gains a folder moves into it as `Index.vue`, never beside the f
 ## File Length
 
 The line-count target and its exception are the `file-organization` skill's, "File Length". What a `.vue` over it is split into, and the shape a component in normal form has, is `references/normal-form.md`. How an extracted slot is named and where it lives is `references/slots.md`.
+
+## Containers — `references/structured-containers.md`
+
+A component that frames other content owns its regions (header, body, footer), their scroll, padding and pinning, and a call site supplies content to the default and named slots and never writes a body wrapper, a footer in the default slot or a fixed body height.
 
 ## Slots
 

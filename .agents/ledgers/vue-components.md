@@ -13,6 +13,7 @@ on that date, and the pass resumes from the files changed since.
 | The folder path is the prefix, and a prefix group folds              | `vue-component-patterns`, `references/component-naming.md`      |
 | The normal form — nothing left to remove, merge or move              | `vue-component-patterns`, `references/normal-form.md`           |
 | A component several times past the file-length target is cut by role | `vue-component-patterns`, `references/splitting-a-component.md` |
+| A container owns its regions, and a call site supplies content only  | `vue-component-patterns`, `references/structured-containers.md` |
 
 **The first two meet at the `v-for` item body, which is why they are one ledger.** A loop variable has no script scope, so
 an expression over it cannot become a `computed` however expensive it is. Extracting the item body into a
