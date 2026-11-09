@@ -61,7 +61,7 @@ catalog:
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
-  "@kjanat/actionlint": ^1.17.0
+  "@kjanat/actionlint": ^1.17.1
   "@lerna-lite/cli": ^5.8.0
   "@lerna-lite/publish": ^5.8.0
   "@lezer/highlight": ^1.2.5
