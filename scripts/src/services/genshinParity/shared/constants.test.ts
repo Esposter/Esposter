@@ -11,7 +11,7 @@ describe("parity build directory name", () => {
   test("the root cache exclusion names the folder the scripts read", () => {
     expect.hasAssertions();
 
-    expect(readFileSync(join(REPOSITORY_ROOT, "vite.config.ts"), "utf8")).toContain(
+    expect(readFileSync(join(REPOSITORY_ROOT, "vite/constants.ts"), "utf8")).toContain(
       `"${PARITY_BUILD_DIRECTORY_NAME}/**"`,
     );
   });
