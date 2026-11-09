@@ -19,7 +19,7 @@ export const TEST_TASKS: RunTasks = {
       input: [{ auto: true }, ...PNPM_STATE_PATTERNS, ...COVERAGE_REWRITTEN_PATTERNS.map((pattern) => `!${pattern}`)],
       output: [".vitest/blob/**"],
     },
-    command: "pnpm exec vitest run --coverage --reporter=default --reporter=blob",
+    command: "pnpm coverage --reporter=default --reporter=blob",
   },
   // The members' tests as a set: the per-member tasks do the caching, so this one only orders them
   "test:all": {
