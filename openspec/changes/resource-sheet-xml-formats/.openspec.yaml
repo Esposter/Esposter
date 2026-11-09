@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/shared/models/resource/sheet/datasource/DataSourceType.ts",
+    "apps/web/shared/models/resource/sheet/xml/**",
+    "apps/web/app/services/resource/sheet/xml/**",
+    "apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts",
+    "apps/web/app/services/resource/PortableFormatMap.ts",
+  ]
