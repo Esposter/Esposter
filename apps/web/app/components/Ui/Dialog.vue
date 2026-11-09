@@ -7,6 +7,8 @@ import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassM
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
+  // A body that is one full-bleed child, such as a listbox, drops the body's padding and keeps its scroll
+  isBodyBare?: true;
   // A button beside the close one takes it over the whole page and back, for content that wants all the room the
   // Reader can give it
   isExpandable?: true;
@@ -22,11 +24,19 @@ interface Props {
 // The library's alone: a menu, select or tooltip that portals itself to the body would render outside it, underneath
 // And inert. What a call site passes goes to the dialog element, which it sizes
 defineOptions({ inheritAttrs: false });
-// The content's own commands stand in the title bar before the dialog's, as an editor's save and delete do
-defineSlots<{ actions?: () => VNode; default: () => VNode }>();
+// The content's own commands stand in the title bar before the dialog's, as an editor's save and delete do. The default
+// Slot is the body, which scrolls inside the frame; the footer slot is the row drawn under it, which never does
+defineSlots<{ actions?: () => VNode; default: () => VNode; footer?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const isExpanded = defineModel<boolean>("isExpanded", { default: false });
-const { isExpandable, isTitleHidden, overline, placement = UiDialogPlacement.High, title } = defineProps<Props>();
+const {
+  isBodyBare,
+  isExpandable,
+  isTitleHidden,
+  overline,
+  placement = UiDialogPlacement.High,
+  title,
+} = defineProps<Props>();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
 const frame = useTemplateRef("frame");
 // Opening moves focus into the dialog, and the browser gives it to the first control when nothing asks for it — the
@@ -86,7 +96,12 @@ watchImmediate(isOpen, async (newIsOpen) => {
             />
           </div>
         </header>
-        <slot />
+        <div v-if="$slots.default" ui-region-body :class="isBodyBare ? 'p-0' : undefined">
+          <slot />
+        </div>
+        <footer v-if="$slots.footer" ui-region-footer>
+          <slot name="footer" />
+        </footer>
       </section>
     </Dialog.Content>
   </Dialog.Root>

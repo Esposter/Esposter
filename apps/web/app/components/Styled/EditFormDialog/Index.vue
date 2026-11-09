@@ -95,11 +95,9 @@ watch(isOpen, (newIsOpen) => {
     <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
     <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
       <div v-if="isOpen" contents>
-        <div p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-          <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="answer(save)">
-            <slot />
-          </UiForm>
-        </div>
+        <UiForm :id="formId" v-model:is-valid="isEditFormValid" @submit="answer(save)">
+          <slot />
+        </UiForm>
         <StyledEditFormDialogConfirmCloseDialog
           v-model="isConfirmCloseDialogOpen"
           :is-savable

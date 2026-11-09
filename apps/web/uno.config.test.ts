@@ -180,6 +180,8 @@ describe("unoConfig", () => {
           "ui-guide": "shadow-[inset_var(--ui-border-width)_0_0_0_var(--ui-divider)]",
           "ui-header-trigger": "data-[variant=Header]:aria-[expanded=true]:text-text data-[variant=Header]:aria-[expanded=true]:shadow-[inset_0_calc(var(--ui-indicator-width)*-2)_0_0_var(--ui-accent)]",
           "ui-item": "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+          "ui-region-body": "p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto",
+          "ui-region-footer": "p-3 flex gap-2 items-center justify-end shrink-0",
           "ui-ring-outside": "focus-visible:outline-offset-[var(--ui-focus-width)]",
           "ui-row": "px-2 py-1 text-left flex gap-2 w-full min-h-8 items-center rd-[var(--ui-control-radius)] focus-visible:outline-offset-[var(--ui-focus-inset)]",
           "ui-selected": "shadow-[inset_0_0_0_var(--ui-indicator-width)_var(--ui-accent)]",

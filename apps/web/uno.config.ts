@@ -290,6 +290,12 @@ export default defineConfig({
     // Current or focused one. A focused row rings as `ui-row` does. Under a finger, eleven steps tall, as a button is
     "ui-item":
       "ui-row [@media(pointer:coarse)]:min-h-11 cursor-pointer hover:bg-[color-mix(in_srgb,var(--ui-tint)_10%,transparent)] aria-selected:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=page]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] aria-[current=true]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] data-[highlighted]:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ui-tint)_20%,transparent)]",
+    // The body of a dialog or a popover's panel: padded, a column of its content, and the one region that scrolls once it
+    // Is taller than the frame or panel holding it. Its flex column shrinks it to the room under the title bar and above
+    // The footer, so a short body keeps its content's height and a long one scrolls inside its own edges
+    "ui-region-body": "p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto",
+    // The row of actions under a dialog's body: padded, laid out in a row and pinned, so it never scrolls with the body
+    "ui-region-footer": "p-3 flex gap-2 items-center justify-end shrink-0",
     // The document's ring drawn just outside a control, a focus width off its edge, as a tight group of them needs
     // Its selection is inside, so the ring has no neighbour's edge to cut it off
     "ui-ring-outside": "focus-visible:outline-offset-[var(--ui-focus-width)]",

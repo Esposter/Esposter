@@ -69,5 +69,21 @@ describe("uiPopover", () => {
 
       expect(component.find("button").exists()).toBe(false);
     });
+
+    // The panel's limit is the body's own, so a list taller than it scrolls inside the panel rather than past it
+    test("A long list scrolls inside the popover", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiPopover, {
+        props: { label },
+        slots: { ...slots, default: () => h("ul", [h("li", "a")]) },
+      });
+      const panel = component.get('[role="dialog"]');
+      const body = panel.get("[ui-region-body]");
+
+      expect(body.element.parentElement).toBe(panel.element);
+      expect(body.element.contains(component.get("ul").element)).toBe(true);
+      expect(body.attributes("max-h")).toBe("[70dvh]");
+    });
   });
 });

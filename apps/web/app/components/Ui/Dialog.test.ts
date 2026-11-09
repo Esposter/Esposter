@@ -91,5 +91,81 @@ describe("uiDialog", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
       expect(dialog.open).toBe(true);
     });
+
+    // The body is the one region the frame's flex column scrolls, so a list taller than the frame is held inside it.
+    // jsdom measures no layout, so the overflow itself is proven in a driven browser; this pins the structure it needs
+    test("A long list scrolls inside the body", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: { default: () => h("ul", [h("li", "a")]) },
+      });
+      await flushPromises();
+      const body = component.get("[ui-region-body]");
+
+      expect(body.element.parentElement).toBe(component.get("section").element);
+      expect(body.element.contains(component.get("ul").element)).toBe(true);
+    });
+
+    // A body draws no height of its own, so the frame sizes it to its content and only its maximum limits it. Whether a
+    // Short one shows a scrollbar is the layout the browser decides, which the driven browser run proves
+    test("A short body does not scroll", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: { default: () => h("p", "a") },
+      });
+      await flushPromises();
+
+      expect(component.get("[ui-region-body]").classes()).toStrictEqual([]);
+    });
+
+    test("A bare body keeps the scroll without the padding", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { isBodyBare: true, modelValue: true, title },
+        slots: { default: () => h("ul", [h("li", "a")]) },
+      });
+      await flushPromises();
+
+      expect(component.get("[ui-region-body]").classes()).toStrictEqual(["p-0"]);
+    });
+
+    // The footer is drawn after the body rather than inside it, so a long body scrolls above the actions and not over them
+    test("The footer stays in view", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: { default: () => h("p", "a"), footer: () => h("button", { type: "button" }) },
+      });
+      await flushPromises();
+      const footer = component.get("footer");
+
+      expect(footer.element.parentElement).toBe(component.get("section").element);
+      expect(component.get("[ui-region-body]").element.nextElementSibling).toBe(footer.element);
+    });
+
+    // The body is there either way, so the footer's absence is what is checked rather than a dialog with no body at all
+    test("No footer content draws no region", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: { default: () => h("p", "a") },
+      });
+      await flushPromises();
+
+      expect(component.find("[ui-region-body]").exists()).toBe(true);
+      expect(component.find("footer").exists()).toBe(false);
+    });
   });
 });

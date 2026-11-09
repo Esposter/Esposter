@@ -2,6 +2,7 @@
 import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import UiTextField from "@/components/Ui/TextField.vue";
 import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -129,5 +130,38 @@ describe("styledFormDialog", () => {
 
     expect(submit).toHaveBeenCalledTimes(1);
     expect(component.emitted("update:modelValue")).toBeUndefined();
+  });
+
+  // A field the rule rejects reports to the form, and the form's verdict holds the footer's submit disabled
+  test("The submit is disabled while a field fails", async () => {
+    expect.hasAssertions();
+
+    const label = "label";
+    const message = "message";
+    const fieldValue = ref("");
+    const component = mount(StyledFormDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, submit: noop, title },
+      slots: {
+        default: () =>
+          h(UiTextField, {
+            label,
+            modelValue: fieldValue.value,
+            "onUpdate:modelValue": (value: string) => {
+              fieldValue.value = value;
+            },
+            rules: [(value: unknown) => value !== " " || message],
+          }),
+      },
+    });
+    await flushPromises();
+    const submitButton = component.get("footer button:last-child");
+
+    expect(submitButton.attributes("disabled")).toBeUndefined();
+
+    await component.get("input").setValue(" ");
+    await flushPromises();
+
+    expect(submitButton.attributes("disabled")).toBe("");
   });
 });

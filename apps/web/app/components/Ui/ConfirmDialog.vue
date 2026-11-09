@@ -32,17 +32,15 @@ watch(isOpen, (newIsOpen) => {
 
 <template>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title role="alertdialog" w="[min(32rem,90vw)]">
-    <div p-3 flex flex-col gap-3 min-h-0 of-y-auto>
-      <slot />
-      <template v-if="confirmName">
-        <div px-2 py-1 flex gap-2 items-center ui-field>
-          <code flex-1 truncate>{{ confirmName }}</code>
-          <UiCopyButton :source="confirmName" />
-        </div>
-        <UiTextField v-model="typedName" is-autofocus :label="`Type '${confirmName}' to confirm`" />
-      </template>
-    </div>
-    <footer p-3 flex gap-2 justify-end>
+    <slot />
+    <template v-if="confirmName">
+      <div px-2 py-1 flex gap-2 items-center ui-field>
+        <code flex-1 truncate>{{ confirmName }}</code>
+        <UiCopyButton :source="confirmName" />
+      </div>
+      <UiTextField v-model="typedName" is-autofocus :label="`Type '${confirmName}' to confirm`" />
+    </template>
+    <template #footer>
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="typedName !== confirmName"
@@ -52,6 +50,6 @@ watch(isOpen, (newIsOpen) => {
       >
         {{ confirmLabel }}
       </UiButton>
-    </footer>
+    </template>
   </UiDialog>
 </template>

@@ -38,13 +38,18 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
   <!-- One decision about one thing, so it stands in the middle. The body mounts with each open, so a dialog closed
     Holds nothing and every open starts from what its model says -->
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title w="[min(36rem,90vw)]" :="$attrs">
-    <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
-    <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
-      <div v-if="isOpen" contents>
-        <div v-if="$slots.default" p-3 flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
+    <template v-if="$slots.default" #default>
+      <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
+      <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
+        <div v-if="isOpen" contents>
           <slot />
         </div>
-        <footer v-if="hasActions" p-3 flex gap-2 items-center>
+      </Transition>
+    </template>
+    <template v-if="hasActions" #footer>
+      <!-- The actions row is the dialog's footer, held through its leave as the body is -->
+      <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">
+        <div v-if="isOpen" contents>
           <slot name="prepend-actions" />
           <div flex-1 />
           <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
@@ -66,8 +71,8 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
           >
             {{ confirmLabel }}
           </UiButton>
-        </footer>
-      </div>
-    </Transition>
+        </div>
+      </Transition>
+    </template>
   </UiDialog>
 </template>
