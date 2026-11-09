@@ -6,7 +6,7 @@ The Creator's preview draws the runner on the current document, and passes it a 
 
 **The defect.** The listener is a no-op and the completed flag has no reader, so a completed preview shows no end state. The public page differs: `View.vue` draws its end state only after the save succeeds, and shows the submit error when the save fails.
 
-The answers a completion passes are the payload a save stores, so the preview can show exactly what the Responses blade will later read. The Responses blade's cells come from three builders under `apps/web/server/services/dataset/surveyResponses/`, which import no server code.
+The answers a completion passes are the payload a save stores, so the preview can show exactly what the Responses blade will later read. The Responses blade's cells come from three builders under `apps/web/server/services/dataset/surveyResponses/`. Two import only shared code and the headless package. `toSurveyResponseDatasetRow.ts` imports the third through the server alias, so the move re-points that one import.
 
 ## Gap analysis
 

@@ -1,0 +1,10 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/vue-survey-engine-headless/src/models/SurveyRootProps.ts",
+    "apps/web/app/components/Resource/Survey/**",
+    "apps/web/app/services/resource/survey/**",
+    "apps/web/app/composables/survey/**",
+  ]
