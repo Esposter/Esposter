@@ -1,0 +1,13 @@
+schema: spec-driven
+affected_areas: [architecture]
+x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/app/components/Ui/Frame.vue",
+    "apps/web/app/components/Ui/Dialog.vue",
+    "apps/web/app/components/Resource/Blade/**",
+    "apps/web/app/components/Editor/**",
+    "apps/web/app/layouts/default.vue",
+    "apps/web/app/components/Message/RightSideBar/**",
+    "apps/web/app/components/Message/Model/Settings/**",
+  ]
