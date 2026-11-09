@@ -1,3 +1,4 @@
+import { sharedEnvironmentVariablesShape } from "@esposter/shared";
 import { z } from "zod";
 
 export interface FunctionsEnvironmentVariables {
@@ -13,18 +14,7 @@ export interface FunctionsEnvironmentVariables {
   VAPID_PUBLIC_KEY: string;
 }
 
-// The variables the other app also declares, written twice on purpose, so the duplicate-code gate skips the schema
-// `jscpd:ignore-start`
-export const functionsEnvironmentVariablesSchema = z.object({
-  AZURE_EVENT_GRID_TOPIC_ENDPOINT: z.url(),
-  AZURE_EVENT_GRID_TOPIC_KEY: z.string().min(1),
-  AZURE_SEARCH_BASE_URL: z.url(),
-  AZURE_SERVICE_BUS_CONNECTION_STRING: z.string().min(1),
-  AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: z.string().min(1),
-  AZURE_WEB_PUBSUB_CONNECTION_STRING: z.string().min(1),
-  BASE_URL: z.url(),
-  DATABASE_URL: z.url(),
-  VAPID_PRIVATE_KEY: z.string().min(1),
-  VAPID_PUBLIC_KEY: z.string().min(1),
-}) satisfies z.ZodType<FunctionsEnvironmentVariables>;
-// `jscpd:ignore-end`
+// Every variable this app declares is one the web app declares with the same validator, so the schema is the shared shape
+export const functionsEnvironmentVariablesSchema = z.object(
+  sharedEnvironmentVariablesShape,
+) satisfies z.ZodType<FunctionsEnvironmentVariables>;
