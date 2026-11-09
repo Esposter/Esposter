@@ -1,0 +1,48 @@
+// The repository root, which every task's patterns and `cwd` are relative to. Read from this file's own location, since
+// `vp run -w` from a package (the app's `pnpm dev`) loads the config with that package as the working directory
+export const ROOT_URL: URL = new URL("../", import.meta.url);
+
+export const PACKAGES_DIRECTORY = "packages";
+
+// The state pnpm writes on every install and every run, which no build's result depends on: the dependencies
+// Themselves are traced file by file
+export const PNPM_STATE_PATTERNS: string[] = [
+  "!**/node_modules/.pnpm-task-run-state-v1/**",
+  "!node_modules/.pnpm-workspace-state-v1.json",
+];
+
+// The files a package's build rewrites, or another task writes into the package, relative to the package
+export const PACKAGE_REWRITTEN_PATTERNS: string[] = [
+  "auto-imports.d.ts",
+  "dist/**",
+  // The atomic write the manifest rewrite goes through, which Windows reads back before the rename
+  "_tmp_*",
+  "src/components/index.ts",
+  "src/index.ts",
+  // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
+  "node_modules/.cache/**",
+  // The parity page's production build, written into the world package by `build:parity`
+  "parity-build/**",
+];
+
+// The generated sources a package's own build hook rewrites: db-schema's registry and genshin-world's kit map
+// Only the package build excludes them, since the parity page reads the kit map and the committed game-data lock beside it
+export const BUILD_HOOK_GENERATED_PATTERNS: string[] = [
+  "src/generated/characterKitMap/**",
+  "src/generated/relations.ts",
+  "src/generated/schema.ts",
+];
+
+// The directories whose members' manifests may carry a `test` script, besides the root-level `scripts` package
+export const TEST_ROOT_DIRECTORIES: string[] = ["apps", PACKAGES_DIRECTORY];
+
+// What a member's own test run writes into the member: the app's generated Nuxt and data directories, the coverage
+// Report, and the caches Vitest and the tools under it keep in `node_modules`. None is an input of the next run
+export const TEST_REWRITTEN_PATTERNS: string[] = [
+  ".data/**",
+  ".nuxt/**",
+  "coverage/**",
+  "node_modules/.cache/**",
+  "node_modules/.vite/**",
+  "node_modules/.vitest-cache/**",
+];

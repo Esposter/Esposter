@@ -34,6 +34,10 @@
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
   "type": "module",
+  "imports": {
+    "#oxlint/*": "./oxlint/*.ts",
+    "#vite/*": "./vite/*.ts"
+  },
   "scripts": {
     "ai:ci:watch": "pnpm -C scripts ai:ci:watch",
     "ai:citations:sync": "pnpm -C scripts ai:citations:sync",

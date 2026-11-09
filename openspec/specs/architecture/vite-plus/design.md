@@ -4,7 +4,7 @@
 
 ## The task cache
 
-The builds, the format check and the whole-repository checks run as tasks of the root `vite.config.ts` — `build:app`, `format:check`, `lint`, `typecheck` and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+The builds, the format check, the whole-repository checks and each member's tests run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `build:app`, `format:check`, `lint`, `typecheck`, one `build:<directory>` per package, which `build:packages` orders, and one `test:<member>` per workspace member with a test script, which `test:all` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
 
 ```mermaid
 flowchart TD
@@ -55,14 +55,19 @@ The persona plugin runs its TypeScript under plain `node`: its enums are `const`
 - **`vp dev`, `vp build` and `vp migrate` for the app** — [deferred](../../../deferred/architecture/vite-plus-app-commands/design.md) while Nuxt owns the module graph.
 - **A remote cache** — [deferred](../../../deferred/architecture/vite-plus-remote-cache/design.md) until a release carries the client and there is a server to point it at.
 
+### The test tasks are not CI's gate
+
+A `test:<member>` task runs `vitest run` in the member's directory, and it replays the last green run while nothing that run read has changed. Reading a file, a built dependency's `dist` or a shared setup file is an input, so an edit to any of them misses, and an edit to something the run never read does not. It is a local tool: CI's coverage job still runs the sharded suite from the root, and nothing replaces it until three things are settled. The cache keeps one entry per task, so a replay compares against the last saved run only. A variable the task does not list under `env` reaches the test process without being part of the key. And the merge job reads one blob per shard, so a replayed member would have to restore its own blob as a declared output, and `apps/web`, most of the suite, would have to be cached per shard. Wiring them in waits on a measured saving, and `main`, the production gate, keeps the full run whatever is decided.
+
 ## Key files
 
-| File                                          | Role                                                                                        |
-| :-------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `vite.config.ts`                              | the `run` block — each cached build and check a task, with the files it rewrites subtracted |
-| `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool            |
-| `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed                    |
-| `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                            |
+| File                                          | Role                                                                                   |
+| :-------------------------------------------- | :------------------------------------------------------------------------------------- |
+| `vite.config.ts`                              | composes the formatter, linter and `run` settings; the tasks themselves are in `vite/` |
+| `vite/*Tasks.ts`, `vite/services/`            | each cached build, check and test a task, with the files it rewrites subtracted        |
+| `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool       |
+| `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed               |
+| `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                       |
 
 ## Sources
 

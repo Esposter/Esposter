@@ -38,5 +38,5 @@ Delete every `*.tsbuildinfo` afterwards; they are ignored by git but are state t
 | `packages/configuration/tsconfig.vue.json`               | the Vue packages' base: carries the content mapper and no `composite`         |
 | `packages/configuration/tsconfig.library.json`           | sets `composite` and `isolatedDeclarations`, the setting a reference requires |
 | `apps/web/tsconfig.json`                                 | the one solution file today                                                   |
-| `vite.config.ts`                                         | the typecheck tasks, where a per-package script is run in parallel            |
+| `vite/checkTasks.ts`                                     | the typecheck tasks, where a per-package script is run in parallel            |
 | `openspec/specs/architecture/monorepo-tooling/design.md` | the spec that states the decision and points here for the rationale           |

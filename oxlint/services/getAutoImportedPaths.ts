@@ -1,7 +1,7 @@
+import type { RestrictedImportPath } from "#oxlint/models/RestrictedImportPath";
+
 import { ok } from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-
-import type { RestrictedImportPath } from "../models/RestrictedImportPath.ts";
 
 // What a tree has auto-imported is written by the tool that does it, as `const name: typeof import('module').name` and its
 // Types as `export type { … }` followed by the module they come from. Reading that file makes the ban follow the tool, so a

@@ -2,13 +2,12 @@ import type { KnipConfig } from "knip";
 
 const knipConfiguration: KnipConfig = {
   exclude: ["types"],
-  // `typecheck:workspace` in `vite.config.ts` names `typecheck` as the first word of its command, which knip reads as a binary
-  ignoreBinaries: ["pwsh", "typecheck"],
+  ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
     ".": {
-      // The `lint:workflows` task in `vite.config.ts` runs this package's binary, which no script names
+      // The `lint:workflows` task in `vite/checkTasks.ts` runs this package's binary, which no script names
       // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
       ignoreDependencies: [
         "@esposter/shared-node",

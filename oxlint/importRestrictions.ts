@@ -1,8 +1,8 @@
-import type { RestrictedImportPath } from "./models/RestrictedImportPath.ts";
-import type { RestrictedImportPattern } from "./models/RestrictedImportPattern.ts";
+import type { RestrictedImportPath } from "#oxlint/models/RestrictedImportPath";
+import type { RestrictedImportPattern } from "#oxlint/models/RestrictedImportPattern";
 
-import { CONTEXT_MESSAGE, USE_ROUTE_MESSAGE, VUETIFY_MESSAGE } from "./messages.ts";
-import { getAutoImportedPaths } from "./services/getAutoImportedPaths.ts";
+import { CONTEXT_MESSAGE, USE_ROUTE_MESSAGE, VUETIFY_MESSAGE } from "#oxlint/messages";
+import { getAutoImportedPaths } from "#oxlint/services/getAutoImportedPaths";
 
 // Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the packages
 export const OTHER_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
@@ -59,7 +59,7 @@ const PACKAGE_ALIAS_IMPORT_PATTERN: RestrictedImportPattern = {
 const PACKAGE_RELATIVE_IMPORT_PATTERN: RestrictedImportPattern = {
   group: ["./*", "./**", "../*", "../**"],
   message:
-    "A package addresses its own source through `#src/*`, never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
+    "A package addresses its own source through `#src/*` (the root config's folders through `#oxlint/*` and `#vite/*`), never a relative specifier — a relative path breaks the moment the file moves, and `#src` is resolved from the importing file's own package.json so it survives being compiled by a sibling. See openspec/specs/architecture/build-pipeline/design.md.",
 };
 export const PACKAGE_IMPORT_PATTERNS: RestrictedImportPattern[] = [
   PACKAGE_ALIAS_IMPORT_PATTERN,

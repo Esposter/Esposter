@@ -1,15 +1,13 @@
 import type { OxlintConfig } from "oxlint";
 
-import { defineConfig } from "oxlint";
-
-import { AUTO_IMPORT_PACKAGE_OVERRIDES } from "./oxlint/autoImportPackageOverrides.ts";
+import { AUTO_IMPORT_PACKAGE_OVERRIDES } from "#oxlint/autoImportPackageOverrides";
 import {
   BROWSER_GLOBALS,
   FETCH_GLOBAL,
   RESTRICTED_GLOBALS,
   USE_ROUTE_GLOBAL,
   USE_UI_STYLE_GLOBAL,
-} from "./oxlint/globals.ts";
+} from "#oxlint/globals";
 import {
   APP_RESTRICTED_IMPORT_PATHS,
   MOD_IMPORT_PATTERN,
@@ -20,9 +18,10 @@ import {
   VUETIFY_IMPORT_PATH,
   VUETIFY_IMPORT_PATTERN,
   WORKSPACE_LIBRARY_IMPORT_PATTERN,
-} from "./oxlint/importRestrictions.ts";
-import { JS_PLUGINS } from "./oxlint/jsPlugins.ts";
-import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "./oxlint/messages.ts";
+} from "#oxlint/importRestrictions";
+import { JS_PLUGINS } from "#oxlint/jsPlugins";
+import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
+import { defineConfig } from "oxlint";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.
@@ -174,8 +173,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     {
       // Every source file of a package or the scripts, not only its `src`: a harness beside it (a parity page, a root
-      // Config) reaches its own files through a subpath import too, such as `#parity/*`
-      files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts"],
+      // Config) reaches its own files through a subpath import too, such as `#parity/*`. The root config's own folders
+      // Do the same through the root manifest's `#oxlint/*` and `#vite/*`
+      files: ["apps/*/src/**", "packages/*/**/*.{ts,vue}", "scripts/**/*.ts", "oxlint/**/*.ts", "vite/**/*.ts"],
       rules: {
         "no-restricted-imports": ["error", { paths: RESTRICTED_IMPORT_PATHS, patterns: PACKAGE_IMPORT_PATTERNS }],
       },

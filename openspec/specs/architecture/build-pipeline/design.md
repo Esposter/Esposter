@@ -120,7 +120,7 @@ tsdown cleans `outDir` before each build. Every emitted chunk carries a content 
 
 ## A package builds as a task of the root
 
-Each package with a `build` script is one `vp` task, `build:<directory>`, which the root `vite.config.ts` generates from the manifest, so a new package gains its task without an edit there. The task runs `pnpm run build` in the package's directory, after the build tasks of every workspace package the manifest names in `dependencies`, `devDependencies`, `optionalDependencies` or `peerDependencies`. An edit rebuilds its package and every package downstream of it, and the rest replay. `build:packages` orders the set and caches nothing itself, since each package's task answers for its own.
+Each package with a `build` script is one `vp` task, `build:<directory>`, which `vite/services/readPackageBuildTasks.ts` generates from the manifest for the root `vite.config.ts`, so a new package gains its task without an edit there. The task runs `pnpm run build` in the package's directory, after the build tasks of every workspace package the manifest names in `dependencies`, `devDependencies`, `optionalDependencies` or `peerDependencies`. An edit rebuilds its package and every package downstream of it, and the rest replay. `build:packages` orders the set and caches nothing itself, since each package's task answers for its own.
 
 ```mermaid
 flowchart TD
@@ -170,7 +170,7 @@ A package keeps the flat `.` export by default. A subpath export or entry is add
 
 | File                                                            | Role                                                                                                                                |
 | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `vite.config.ts`                                                | Generates each package's `build:<directory>` task from its manifest, and orders them as `build:packages`                            |
+| `vite/services/readPackageBuildTasks.ts`                        | Generates each package's `build:<directory>` task from its manifest, and orders them as `build:packages`                            |
 | `packages/configuration/src/services/getTsdownConfiguration.ts` | The base every config composes onto                                                                                                 |
 | `packages/configuration/src/services/getPackagePatterns.ts`     | Turns package names into subpath-aware patterns                                                                                     |
 | `packages/configuration/src/services/readPackageManifest.ts`    | Reads the manifest every derivation starts from                                                                                     |

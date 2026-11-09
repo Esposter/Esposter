@@ -1,6 +1,6 @@
-import type { RestrictedGlobal } from "./models/RestrictedGlobal.ts";
+import type { RestrictedGlobal } from "#oxlint/models/RestrictedGlobal";
 
-import { BROWSER_GLOBAL_MESSAGE, CONTEXT_MESSAGE, POLLING_MESSAGE, USE_ROUTE_MESSAGE } from "./messages.ts";
+import { BROWSER_GLOBAL_MESSAGE, CONTEXT_MESSAGE, POLLING_MESSAGE, USE_ROUTE_MESSAGE } from "#oxlint/messages";
 
 // An override replaces a rule's options wholesale, so each scope's list is the root's entries with its own lifted or
 // Added by identity, and a ban added here reaches every scope that does not lift it
