@@ -26,7 +26,8 @@ const createRegion = (edge: RegionEdge): ResolvedRegion => ({
 const registry: EditorRegistry = { [panelId]: defineComponent(() => () => h("p", "content")) };
 
 describe("editorRegion", () => {
-  // A bar is one row that draws its own padding, so its body is full-bleed, while a column's body pads its content
+  // A region's body is full-bleed in every orientation, a bar and a column alike: each panel pads what it draws, so the
+  // Body that holds the panel adds no padding of its own
   test("A full-bleed region opts out of the padding", () => {
     expect.hasAssertions();
 
@@ -37,7 +38,7 @@ describe("editorRegion", () => {
       props: { name: "Column", panelNameMap: {}, region: createRegion(RegionEdge.Start), registry },
     });
 
-    expect(bar.get(".ui-region-body").classes()).not.toContain("p-3");
-    expect(column.get(".ui-region-body").classes()).toContain("p-3");
+    expect(bar.get(".ui-region-body").classes()).toStrictEqual(["ui-region-body"]);
+    expect(column.get(".ui-region-body").classes()).toStrictEqual(["ui-region-body"]);
   });
 });

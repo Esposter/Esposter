@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiRules } from "@/services/ui/UiRules";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
@@ -33,8 +30,6 @@ const isUnchanged = computed(
     editedImage.value === room.image,
 );
 const { executeMutation } = useMutation();
-// The save sits in the footer, beside the form it submits, so it names the form by id
-const formId = useId();
 const updateRoom = async () => {
   const { id } = room;
   const name = editedName.value;
@@ -56,37 +51,22 @@ const updateRoom = async () => {
 </script>
 
 <template>
-  <UiDialog
+  <StyledFormDialog
     v-model="isEditRoomDialogOpen"
-    :placement="UiDialogPlacement.Middle"
+    confirm-label="Save"
+    :is-confirm-disabled="isUnchanged || undefined"
+    is-optimistic
+    :submit="updateRoom"
     title="Edit Room"
-    :size="UiDialogSize.Medium"
   >
-    <UiForm
-      :id="formId"
-      flex
-      flex-col
-      gap-3
-      @submit="
-        async () => {
-          isEditRoomDialogOpen = false;
-          await updateRoom();
-        }
-      "
-    >
-      <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="room.id" />
-      <UiTextField
-        v-model="editedName"
-        :counter="ROOM_NAME_MAX_LENGTH"
-        is-autofocus
-        label="Name"
-        :placeholder
-        :rules="nameRules"
-      />
-    </UiForm>
-    <template #footer>
-      <UiButton :variant="UiButtonVariant.Quiet" @click="isEditRoomDialogOpen = false">Cancel</UiButton>
-      <UiButton :disabled="isUnchanged" :form="formId" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
-    </template>
-  </UiDialog>
+    <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="room.id" />
+    <UiTextField
+      v-model="editedName"
+      :counter="ROOM_NAME_MAX_LENGTH"
+      is-autofocus
+      label="Name"
+      :placeholder
+      :rules="nameRules"
+    />
+  </StyledFormDialog>
 </template>

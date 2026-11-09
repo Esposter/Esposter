@@ -17,7 +17,7 @@ const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
 <template>
   <MessageRightSideBarPane title="Pinned Messages" is-body-bare @close="isRightDrawerOpen = false">
     <template v-if="isPending">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" px-2 />
     </template>
     <UiErrorState v-else-if="!isLoaded" error="The pinned messages could not be loaded." @retry="refresh()" />
     <MessageModelMessageSearchList v-else :messages="displayMessages">

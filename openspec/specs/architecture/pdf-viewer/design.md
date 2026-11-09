@@ -70,7 +70,7 @@ The viewer draws a primary bar, a search row, the password form when the documen
 
 ### Layout at desktop width
 
-From `md` the sidebar is a column of 14rem at the start of the row, beside the pages. The viewer is the dialog's full width, `min(64rem, 96vw)`, which the dialog expands with its own control. The primary bar is one row: the sidebar toggle and the page controls at the start, the zoom controls in the middle, and More at the end. The search row sits under it at full width. Nothing wraps; the page count is the one control that gives way first, below `sm`.
+From `md` the sidebar is a column of 14rem at the start of the row, beside the pages. The viewer fills the dialog's `ExtraLarge` size, which `UiDialogSizeClassMap` holds, and the dialog expands with its own control. The primary bar is one row: the sidebar toggle and the page controls at the start, the zoom controls in the middle, and More at the end. The search row sits under it at full width. Nothing wraps; the page count is the one control that gives way first, below `sm`.
 
 ### Layout at phone width
 

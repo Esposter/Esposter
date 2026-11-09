@@ -6,6 +6,5 @@ x-touches:
     "apps/web/app/components/Ui/Dialog.vue",
     "apps/web/app/components/Ui/Popover.vue",
     "apps/web/app/components/Styled/Dialog.vue",
-    "apps/web/app/components/Ui/FormDialogFooter.vue",
     "apps/web/app/services/ui/UiDialogFrameClassMap.ts",
   ]

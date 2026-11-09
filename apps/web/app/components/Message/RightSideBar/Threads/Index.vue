@@ -18,8 +18,11 @@ const { error, isPending, refresh } = useQuery(
 </script>
 
 <template>
-  <MessageRightSideBarPane title="Followed Threads" @close="isRightDrawerOpen = false">
-    <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.rowKey" :thread />
+  <MessageRightSideBarPane title="Followed Threads" is-body-bare @close="isRightDrawerOpen = false">
+    <!-- Each row pads itself, so the rows sit in a plain wrapper that takes neither the body's padding nor its gap -->
+    <div>
+      <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.rowKey" :thread />
+    </div>
     <template v-if="followedThreads.length === 0">
       <UiErrorState v-if="error" :error @retry="refresh()" />
       <div v-else-if="isPending" aria-busy="true">

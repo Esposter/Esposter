@@ -48,6 +48,10 @@ A map dispatching a component by type puts every entry in its importer's chunk, 
 - **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — the `naming` skill, "Booleans"). The same applies to `defineModel` / emit payloads.
 - **Type as the non-default literal, not `boolean`**, so passing the default is impossible: defaults-false → `?: true` (caller opts in with the bare attribute), defaults-true → `?: false` with a destructure default `= true`. Derived values, and the genuinely two-way boolean, are in `references/props-and-generics.md`.
 
+## A Prop, Slot Or Emit Earns Its Place By A Caller
+
+A prop, slot or emit no call site passes or listens to is deleted with the test that pinned it, the day it is found unused: a flag added "so a future caller can opt out" is a switch nothing needs, and a spec that asks for one waits until a caller does (the `over-engineering` skill's catalogue row on flags, `file-organization` `references/extraction-and-duplication.md`). Before adding one, name the call site that passes it; before keeping one in review, grep its callers.
+
 ## Emits — Present-Tense Event Names
 
 Emit names are **present-tense verbs**: `delete`, `update`, `create`, `save`, `submit` — never past tense (`deleted`, `updated`, `copied`). The event names the action the parent should handle, not a completed fact; past-tense names also drift from Vue/DOM convention (`click`, `submit`, `change`).

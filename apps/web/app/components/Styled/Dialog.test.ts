@@ -3,6 +3,7 @@ import StyledDialog from "@/components/Styled/Dialog.vue";
 import StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTextField from "@/components/Ui/TextField.vue";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { DEFAULT_UI_STYLE } from "@@/configuration/constants";
@@ -104,6 +105,21 @@ describe("styledDialog", () => {
     ]);
   });
 
+  test.each([
+    { description: "Accent when none is given", expected: UiButtonVariant.Accent, props: {} },
+    {
+      description: "the variant it is given",
+      expected: UiButtonVariant.Danger,
+      props: { confirmVariant: UiButtonVariant.Danger },
+    },
+  ])("A confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
+    expect.hasAssertions();
+
+    const component = await mountDialog({ confirmLabel, ...props });
+
+    expect(component.get("footer button:last-child").attributes("data-variant")).toBe(expected);
+  });
+
   test("closes once the confirm settles", async () => {
     expect.hasAssertions();
 
@@ -144,6 +160,26 @@ describe("styledFormDialog", () => {
     ]);
   });
 
+  test.each([
+    { description: "Accent when none is given", expected: UiButtonVariant.Accent, props: {} },
+    {
+      description: "the variant it is given",
+      expected: UiButtonVariant.Danger,
+      props: { confirmVariant: UiButtonVariant.Danger },
+    },
+  ])("A confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
+    expect.hasAssertions();
+
+    const component = mount(StyledFormDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, submit: noop, title, ...props },
+      slots: { default: "<p>a</p>" },
+    });
+    await flushPromises();
+
+    expect(component.get("footer button:last-child").attributes("data-variant")).toBe(expected);
+  });
+
   // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
   // Dialog open over the draft
   test("submits through its form and stays open when the submit fails", async () => {
@@ -160,7 +196,7 @@ describe("styledFormDialog", () => {
 
     expect(confirmButton.attributes("type")).toBe("submit");
 
-    await component.get("form").trigger("submit");
+    confirmButton.element.click();
     await flushPromises();
 
     expect(submit).toHaveBeenCalledTimes(1);

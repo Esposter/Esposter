@@ -2,7 +2,7 @@
 
 Read when writing or changing a component that frames other content — a dialog, popover, drawer, card, panel, sheet or editor region — or when a call site of one writes its own padding, scroll wrapper or footer inside the container's slot. `references/slots.md` is how a slot is declared and forwarded; this page is what a container's slots are _for_.
 
-> **Status:** the dialog's body and footer regions, the `#footer` slot, the shared region shortcut and the scan test are the target of the open `architecture-dialog-regions` change (its tasks 2.1, 2.2 and 4.2), not yet built. Until it lands, `UiDialog` declares only the `actions` and default slots and draws its body with inline classes, so the `#footer` example and the enforcement below describe the target.
+> **Status:** the dialog's body and footer regions, the `#footer` slot and the shared region shortcut are built. The scan test that fails a call site drawing its own region is not: it is task 3.2 of the open `architecture-dialog-regions` change, so the call-site rule below is held by review until it lands.
 
 ## A container owns its regions, and a slot carries content
 
@@ -33,11 +33,11 @@ The default slot is the body. A region that not every call site has is a named s
 
 ## One flag for the exception, never a second slot
 
-A body that is a single full-bleed child — a listbox, a canvas — opts out of the padding with one boolean prop and keeps the scroll. A second slot for bare content is a region one call site wants, and a slot earns its place by a second consumer (the `file-organization` skill, "Never Duplicate Similar Logic").
+A body that is a single full-bleed child — a listbox, a canvas — opts out of the padding with one boolean prop and keeps the scroll. The prop exists on a container only while a call site passes it: a container nothing draws bare has no such prop, and a content panel that pads itself is the cue to make its region bare rather than to pad twice. A second slot for bare content is a region one call site wants, and a slot earns its place by a second consumer (the `file-organization` skill, "Never Duplicate Similar Logic").
 
 ## Regions are shared by shortcut, not copied
 
-Containers that look alike share one UnoCSS shortcut for the region (the dialog's body and the popover's panel take the same one), so they scroll and pad alike and a change lands in one place. A copied class list in each container is the drift this page exists to prevent.
+Containers that look alike share one UnoCSS shortcut for the region: a dialog's body, a popover's panel, a settings panel and a blade's body all take the body shortcut, so they scroll and gap alike and a change lands in one place. The shortcut carries the scroll and the gap, and the container adds the padding, which a bare body leaves out; a footer's shortcut carries its own padding. A copied class list in each container is the drift this page exists to prevent.
 
 ## The container's state reaches content as slot props
 
@@ -45,11 +45,11 @@ State only the container owns — whether it is open, expanded or pending, the i
 
 ## A flex chain scrolls only if every link shrinks
 
-A region scrolls inside a frame only when each flex ancestor down to it can shrink, which is `min-h-0` on every column in the chain. Three elements break the chain without saying so: a `<fieldset>` as a flex item (use a `div` with `role="group"`), a child that sets its own height, and a `display: grid` ancestor with an implicit row. A container's own test measures that a body taller than its frame scrolls and the frame does not grow.
+A region scrolls inside a frame only when each flex ancestor down to it can shrink, which is `min-h-0` on every column in the chain. Three elements break the chain without saying so: a `<fieldset>` as a flex item (use a `div` with `role="group"`), a child that sets its own height, and a `display: grid` ancestor with an implicit row. A container's own test pins the structure that makes a body scroll inside its frame, and the overflow itself is proven in a driven browser, since a unit test measures no layout.
 
 ## Enforced by construction
 
-The container makes the right shape the only shape, and a scan test fails a call site whose default slot root draws a scroll class, a `<footer>` or a fixed height. A review is the wrong enforcer, since nothing mechanical fails when a body overflows on one screen size.
+The container makes the right shape the only shape. The scan test that would fail a call site whose default slot root draws a scroll class, a `<footer>` or a fixed height is task 3.2 of the open `architecture-dialog-regions` change, and it is not written yet. Until it lands the sweep below is the only check, and a review is the weaker enforcer: nothing mechanical fails when a body overflows on one screen size.
 
 ## The sweep
 

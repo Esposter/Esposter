@@ -61,4 +61,4 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 | `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts` | Sheet table editor chart/edit/delete targets                                                    |
 | `app/components/Post/ConfirmDeleteDialog.vue`                                       | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)                         |
 | `app/components/Resource/Sheet/Row/EditDialog.vue`                                  | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)                     |
-| `app/components/Message/Model/Room/Settings/Dialog.vue`                             | Fullscreen settings dialog driven by `settingsRoomId`                                           |
+| `app/components/Message/Model/Room/Settings/Dialog.vue`                             | Room settings dialog driven by `settingsRoomId`                                                 |

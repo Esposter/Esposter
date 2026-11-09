@@ -79,7 +79,7 @@ const share = async () => {
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Share “${resource.name}”`"
-    :size="UiDialogSize.Large"
+    :size="UiDialogSize.Medium"
   >
     <div v-if="isLoadingRooms" flex flex-col gap-2>
       <UiSkeleton h-8 />

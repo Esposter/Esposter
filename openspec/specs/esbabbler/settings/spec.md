@@ -1,6 +1,6 @@
 ## Purpose
 
-The message-scoped fullscreen settings dialog and its database-backed communication settings. Covers which preferences follow a member across devices, which stay on one device, how changes apply and revert, the allowed ranges, and how the dialog is navigated.
+The message-scoped settings dialog and its database-backed communication settings. Covers which preferences follow a member across devices, which stay on one device, how changes apply and revert, the allowed ranges, and how the dialog is navigated.
 
 ## Requirements
 

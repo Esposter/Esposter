@@ -28,7 +28,7 @@ const installCommands = [
     :variant="UiButtonVariant.Quiet"
     @click="isOpen = true"
   />
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Connect an agent" :size="UiDialogSize.Large">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Connect an agent" :size="UiDialogSize.Medium">
     <ol list-decimal list-inside flex flex-col gap-4>
       <li>
         Create an API key for the agent with the Follow-ups scope, and keep it for the last step.

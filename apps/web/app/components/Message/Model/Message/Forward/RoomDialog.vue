@@ -36,7 +36,7 @@ const {
 
 <template>
   <!-- High, as a dialog whose list changes length under its search stands, so the field never moves -->
-  <UiDialog v-if="forward && creator" v-model="isOpen" title="Forward To" :size="UiDialogSize.Large">
+  <UiDialog v-if="forward && creator" v-model="isOpen" title="Forward To" :size="UiDialogSize.Medium">
     <p text-muted>Select where you want to share this message.</p>
     <UiTextField v-model="searchQuery" label="Search rooms" :type="UiTextFieldType.Search" />
     <!-- Loading until a search settles: rows in the list's own shape while one is out with nothing on screen, the

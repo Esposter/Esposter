@@ -18,6 +18,25 @@ describe("messageRightSideBarPane", () => {
     expect(body.classes()).toStrictEqual(["p-3"]);
   });
 
+  // A footer is the row a pane pins under its body, so the body scrolls above it and the footer never scrolls with it
+  test("A pane's footer stays under the scrolling body", () => {
+    expect.hasAssertions();
+
+    const component = mount(MessageRightSideBarPane, {
+      props: { title: "title" },
+      slots: { default: () => h("p", "a"), footer: () => h("output", "footer") },
+    });
+    const body = component.get("[ui-region-body]");
+    const footer = component.get("output").element.parentElement;
+
+    expect(Array.from(component.element.children)).toStrictEqual([
+      component.get("header").element,
+      body.element,
+      footer,
+    ]);
+    expect(body.element.contains(component.get("output").element)).toBe(false);
+  });
+
   // A list that pads and scrolls itself is drawn in a bare body, so the pane adds no second padding around it
   test("A bare pane body keeps the scroll without the padding", () => {
     expect.hasAssertions();

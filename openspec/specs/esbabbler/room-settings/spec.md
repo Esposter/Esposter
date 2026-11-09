@@ -1,6 +1,6 @@
 ## Purpose
 
-The fullscreen room settings dialog — Discord Server Settings categories, panels, and per-panel permission gating. Covers which member can open it, which panels each member sees, how destructive actions are labelled and confirmed, how a panel saves, and how the dialog behaves on a narrow screen.
+The room settings dialog — Discord Server Settings categories, panels, and per-panel permission gating. Covers which member can open it, which panels each member sees, how destructive actions are labelled and confirmed, how a panel saves, and how the dialog behaves on a narrow screen.
 
 ## Requirements
 

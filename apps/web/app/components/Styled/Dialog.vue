@@ -10,10 +10,12 @@ interface Props {
   // What confirming does, awaited unless the write is optimistic (useDialogAnswer). A dialog whose confirm submits a
   // Form leaves it to the form's own submit
   confirm?: () => Promisable<unknown>;
-  // What confirming does, in the accent: "Save". Absent when the dialog has nothing to confirm — a reference sheet.
-  // The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and the
-  // Title bar's close button is the way out
+  // What confirming does, in the confirm variant: "Save". Absent when the dialog has nothing to confirm — a reference
+  // Sheet. The whole actions row goes with it, cancel included: there is no pending change for cancel to abandon, and
+  // The title bar's close button is the way out
   confirmLabel?: string;
+  // The look of the confirm button, the accent when none is named, and danger for a confirm that destroys something
+  confirmVariant?: UiButtonVariant;
   // The form the confirm button submits, which makes it the form's submit rather than a click the shell answers
   formId?: string;
   isConfirmDisabled?: true;
@@ -34,6 +36,7 @@ const isOpen = defineModel<boolean>({ default: false });
 const {
   confirm,
   confirmLabel,
+  confirmVariant = UiButtonVariant.Accent,
   formId,
   isConfirmDisabled,
   isConfirmPending,
@@ -73,7 +76,7 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
             :is-pending="isConfirmPending || isPending"
             :form="formId"
             :type="formId ? 'submit' : 'button'"
-            :variant="UiButtonVariant.Accent"
+            :variant="confirmVariant"
             @click="
               async () => {
                 if (!formId && confirm) await answer(confirm, isOptimistic);

@@ -36,7 +36,7 @@ const formId = useId();
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Notes for ${displayName}`"
-    :size="UiDialogSize.Large"
+    :size="UiDialogSize.Medium"
   >
     <ul v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-3>
       <li v-for="index of 3" :key="index" flex flex-col gap-1>

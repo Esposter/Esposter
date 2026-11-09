@@ -38,11 +38,8 @@ const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
 );
 // A region tabbed by its panels scrolls inside the panel it shows, so its wrapper only clips. Any other region's wrapper is
-// Its body: a bar is one row that draws its own padding, so its body is full-bleed, and a column's body pads what it draws
-const regionBodyClass = computed(() => {
-  if (region.panels.length > 1) return "of-hidden";
-  return ["ui-region-body", isVertical.value ? undefined : "p-3"];
-});
+// Its body, full-bleed in every orientation: each panel pads what it draws, so the body that holds it adds no padding
+const regionBodyClass = computed(() => (region.panels.length > 1 ? "of-hidden" : "ui-region-body"));
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
 // An inline inset beats the `inset-y-0` class the overlay map gives a column, so that map stays as it is
 const overlayInsetStyle = computed(() => {

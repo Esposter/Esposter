@@ -36,23 +36,11 @@ describe("uiFrame", () => {
     expect(component.find("[ui-region-body]").exists()).toBe(true);
   });
 
-  // A body that is one full-bleed child, such as a listbox, keeps the scroll and gives up the padding the frame adds
-  test("A bare frame body keeps the scroll without the padding", () => {
-    expect.hasAssertions();
-
-    const component = mount(UiFrame, {
-      props: { isBodyBare: true, title: "title" },
-      slots: { default: () => h("ul", [h("li", "a")]) },
-    });
-
-    expect(component.get("[ui-region-body]").classes()).toStrictEqual([]);
-  });
-
-  test("A frame body is padded unless it is bare", () => {
+  test("A frame body is padded", () => {
     expect.hasAssertions();
 
     const component = mount(UiFrame, { props: { title: "title" }, slots: { default: () => h("p", "a") } });
 
-    expect(component.get("[ui-region-body]").classes()).toStrictEqual(["p-3"]);
+    expect(component.get("[ui-region-body]").element.hasAttribute("p-3")).toBe(true);
   });
 });

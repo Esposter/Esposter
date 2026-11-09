@@ -32,7 +32,7 @@ const prompt = computed(() => getAssistantPrompt(resource, line.value));
 <!-- Ask Claude composes the line for whichever agent the person already runs, which edits the resource with the
      person's own key, so the one step shown first is that key, and the prompt is offered once there is a line -->
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Ask Claude" :size="UiDialogSize.Large">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Ask Claude" :size="UiDialogSize.Medium">
     <ol v-if="!hasResourcesKey" pl-6 list-decimal flex flex-col gap-2>
       <li>
         Create an API key with the Resources scope for the agent to edit with, and keep it for its connection.
