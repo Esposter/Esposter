@@ -1,0 +1,12 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/Resource/Whiteboard/**",
+    "apps/web/app/composables/whiteboard/**",
+    "apps/web/app/services/whiteboard/**",
+    "apps/web/app/store/resource/whiteboard/**",
+    "packages/vue-block-editor-headless/src/models/**",
+    "packages/vue-block-editor-headless/src/services/**",
+  ]

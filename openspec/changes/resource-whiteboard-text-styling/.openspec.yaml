@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches: ["apps/web/app/components/Resource/Whiteboard/EditorProperties*.vue"]

@@ -19,7 +19,7 @@
 
 ## 4. The defects
 
-- [ ] 4.1 Fix the defects in the design's table. Verify: each is measured in the driven browser before and after.
+- [ ] 4.1 Fix the defects in the design's table. Verify: each is measured once in the driven browser after the fix.
 
 ## 5. The record
 

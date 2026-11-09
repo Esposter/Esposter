@@ -17,7 +17,7 @@ A read of every call site, with the shape each takes.
 | A single child component fills the dialog  | 4     | the palette, the editor region and two chart dialogs                        |
 | A multi-state body                         | 6     | loading, empty, error and form states in one dialog                         |
 
-Two causes of overflow follow from this and are the ones to prove in a driven browser before the fix is called done. A fieldset as a flex item does not shrink below its content in every engine, so a column list in a fieldset overflows its frame. A body whose scroll sits on a grandchild leaves the direct child to size to its content.
+Two causes of overflow follow from this and are the causes the regions remove by construction, so the fix is checked once after the edits in a driven browser and no before-measurement is taken. A fieldset as a flex item does not shrink below its content in every engine, so a column list in a fieldset overflows its frame. A body whose scroll sits on a grandchild leaves the direct child to size to its content.
 
 ## Decisions
 

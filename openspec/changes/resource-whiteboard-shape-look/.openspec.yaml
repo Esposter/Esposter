@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/Resource/Whiteboard/EditorProperties*.vue",
+    "packages/vue-block-editor-headless/src/services/export/toRoundedPathData.ts",
+    "packages/vue-block-editor-headless/src/services/export/toSmoothedPathData.ts",
+  ]
