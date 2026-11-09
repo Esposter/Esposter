@@ -2,6 +2,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import ResourceBladeOutlet from "@/components/Resource/Blade/Outlet.vue";
+import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
@@ -10,13 +11,16 @@ import { describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/resource/ResourceBladeDefinitionMap"), async (importOriginal) => {
   const { ResourceBladeDefinitionMap } = await importOriginal();
   const { ResourceType: MockedResourceType } = await import("@esposter/db-schema");
+  const { ResourceBladeSlug: MockedResourceBladeSlug } = await import("@/models/resource/ResourceBladeSlug");
   const { defineComponent, h } = await import("vue");
   const StubBlade = defineComponent(() => () => h("p", "stub blade"));
 
   return {
     ResourceBladeDefinitionMap: {
       ...ResourceBladeDefinitionMap,
-      [MockedResourceType.Sheet]: [{ component: StubBlade, icon: "", slug: "stub", title: "Stub" }],
+      [MockedResourceType.Sheet]: [
+        { component: StubBlade, icon: "", slug: MockedResourceBladeSlug.Data, title: "Stub" },
+      ],
     },
   };
 });
@@ -29,7 +33,7 @@ describe("resourceBladeOutlet", () => {
   test("A blade's content is padded and scrolls", async () => {
     expect.hasAssertions();
 
-    const component = mount(ResourceBladeOutlet, { props: { activeBlade: "stub", resource } });
+    const component = mount(ResourceBladeOutlet, { props: { activeBlade: ResourceBladeSlug.Data, resource } });
     await flushPromises();
     const body = component.get(".ui-region-body");
 
