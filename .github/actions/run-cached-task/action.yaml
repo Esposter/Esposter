@@ -79,4 +79,4 @@ runs:
         path: |
           node_modules/.vite/task-cache
           ${{ inputs.paths }}
-        key: vp-${{ inputs.task }}-${{ github.run_id }}-${{ github.run_attempt }}
+        key: vp-${{ inputs.task }}${{ inputs.scope }}-${{ github.run_id }}-${{ github.run_attempt }}
