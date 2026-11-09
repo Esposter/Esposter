@@ -14,6 +14,7 @@ import { ShapeKind } from "vue-block-editor-headless";
 export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
   const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
   const gesture = shallowRef<WhiteboardGesture>();
+  const isSpaceHeld = ref(false);
   const isToolLocked = ref(false);
   const preview = shallowRef<PositionedDocument>();
   const selectedIds = ref<string[]>([]);
@@ -32,8 +33,11 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const toggleToolLock = () => {
     isToolLocked.value = !isToolLocked.value;
   };
+  const zoomTo = (scale: number) => {
+    viewport.value = getZoomedViewport(viewport.value, scale, getCentreScreen());
+  };
   const zoomBy = (factor: number) => {
-    viewport.value = getZoomedViewport(viewport.value, factor, getCentreScreen());
+    zoomTo(viewport.value.scale * factor);
   };
   const fitTo = (bounds: Bounds) => {
     viewport.value = getFitViewport(bounds, canvasRect.value);
@@ -43,6 +47,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
     fitTo,
     gesture,
     getCentrePoint,
+    isSpaceHeld,
     isToolLocked,
     preview,
     selectedIds,
@@ -53,5 +58,6 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
     tool,
     viewport,
     zoomBy,
+    zoomTo,
   };
 });

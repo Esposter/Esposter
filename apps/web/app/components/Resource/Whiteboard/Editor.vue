@@ -5,6 +5,7 @@ import type { Context } from "vue-editor-layout-headless";
 import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
 import { useWhiteboardTextEdit } from "@/composables/whiteboard/useWhiteboardTextEdit";
+import { useWhiteboardViewportKeyboard } from "@/composables/whiteboard/useWhiteboardViewportKeyboard";
 import { EditorType } from "@/models/editor/EditorType";
 import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
 import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
@@ -27,10 +28,17 @@ watchAutosave(whiteboard, saveWhiteboard);
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { canvasRect, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
 const { fitTo } = whiteboardEditorStore;
-const { onPointer } = useWhiteboardGesture();
+const { onPointer, onWheel } = useWhiteboardGesture();
+useWhiteboardViewportKeyboard();
 const whiteboardDialogStore = useWhiteboardDialogStore();
 const { deletingIds } = storeToRefs(whiteboardDialogStore);
-const { confirmDelete, isDeleteOpen } = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind);
+const { confirmDelete, isDeleteOpen, pasteClipboardText } = useWhiteboardKeyboard(
+  editState,
+  selectedIds,
+  deletingIds,
+  tool,
+  shapeKind,
+);
 const {
   draft,
   onBlur,
@@ -87,7 +95,9 @@ if (editState.value.document.elements.length > 0)
             if (elementId !== undefined) startTextEdit(elementId);
           }
         "
+        @paste="(text) => pasteClipboardText(text)"
         @pointer="(event) => onPointer(event)"
+        @wheel="(event) => onWheel(event)"
       >
         <template #overlay>
           <ResourceWhiteboardEditorSelection />

@@ -17,16 +17,16 @@ import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingG
 import { applyPatches, exhaustiveGuard, takeOne } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// An idle canvas takes a press. The middle button and the hand tool pan, the freehand tool starts a stroke, and the arrow tool starts an arrow
-// From the press. A shape, sticky note or text tool starts a placement at the press. The select tool takes the press on a resize handle, an
-// Element or the canvas. Any other event changes nothing
+// An idle canvas takes a press. The middle button, the hand tool and Space held pan, the freehand tool starts a stroke, and the arrow tool
+// Starts an arrow from the press. A shape, sticky note or text tool starts a placement at the press. The select tool takes the press on a
+// Resize handle, an element or the canvas. Any other event changes nothing
 export const startWhiteboardGesture = (
   state: WhiteboardGestureState,
   event: GesturePointerEvent,
 ): WhiteboardGestureResult => {
   if (event.action !== GesturePointerAction.Down) return { operations: [], state };
 
-  if (event.button === MIDDLE_BUTTON || state.tool === GestureTool.Hand)
+  if (event.button === MIDDLE_BUTTON || state.tool === GestureTool.Hand || state.isSpaceHeld)
     return {
       operations: [],
       state: {

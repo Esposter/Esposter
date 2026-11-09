@@ -71,6 +71,7 @@ describe(reduceWhiteboardGesture, () => {
   ): WhiteboardGestureState => ({
     createId: () => STROKE_ID,
     document,
+    isSpaceHeld: false,
     isToolLocked: false,
     selectedIds: [],
     shapeKind: ShapeKind.Rectangle,
@@ -233,6 +234,22 @@ describe(reduceWhiteboardGesture, () => {
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 30, y: 50 }));
 
     expect(up.state.viewport).toStrictEqual({ scale: 2, x: -10, y: -20 });
+  });
+
+  test("Space and a drag pan", () => {
+    expect.hasAssertions();
+
+    // The press lands on the process, which a Select drag would move. With Space held the same drag pans the view and leaves the document alone
+    const document: PositionedDocument = { elements: [createProcess(PROCESS_ID, PROCESS_BOUNDS)] };
+    const state = createState(document, { isSpaceHeld: true });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 151, y: 126 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 151, y: 126 }));
+
+    expect(up.state.viewport).toStrictEqual({ scale: 1, x: -1, y: -1 });
+    expect(up.operations).toStrictEqual([]);
+    expect(up.state.document).toStrictEqual(document);
   });
 
   test("a cancelled move changes nothing", () => {

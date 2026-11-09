@@ -12,11 +12,14 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import UiPalette from "@/components/Ui/Palette/Index.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { pressKey, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
+import { serializeClipboardElements } from "@/services/whiteboard/serializeClipboardElements";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { useResourceStore } from "@/store/resource";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { ResourceType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
@@ -137,6 +140,27 @@ describe("resourceWhiteboardEditor", () => {
 
     expect(whiteboard.value.elements).toStrictEqual([WHITEBOARD_PROCESS]);
     expect(uploadResourceFileMock).not.toHaveBeenCalled();
+  });
+
+  // A paste on the canvas reads its clipboard text, which lands as copies of the elements when the text carries the marker
+  test("pasting marked text on the canvas adds its elements as copies", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([]);
+    const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    await flushPromises();
+    const paste = new Event("paste", { bubbles: true, cancelable: true });
+    Object.defineProperty(paste, "clipboardData", {
+      value: { files: [], getData: () => serializeClipboardElements([WHITEBOARD_PROCESS]) },
+    });
+    getCanvas(component).element.dispatchEvent(paste);
+    await flushPromises();
+    const copy = takeOne(whiteboard.value.elements, 0);
+
+    expect(whiteboard.value.elements).toStrictEqual([
+      { ...WHITEBOARD_PROCESS, id: copy.id, x: WHITEBOARD_DUPLICATE_OFFSET, y: WHITEBOARD_DUPLICATE_OFFSET },
+    ]);
   });
 
   test("the canvas Delete opens the confirmation instead of deleting in the editor", async () => {

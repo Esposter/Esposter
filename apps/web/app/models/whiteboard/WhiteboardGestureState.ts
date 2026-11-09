@@ -10,6 +10,8 @@ export interface WhiteboardGestureState {
   createId: () => string;
   document: PositionedDocument;
   gesture?: WhiteboardGesture;
+  // Whether Space is held, which makes a press pan the canvas whatever the tool
+  isSpaceHeld: boolean;
   // Whether the tool stays in hand after a placement, rather than returning to select
   isToolLocked: boolean;
   // The document as the gesture in progress would leave it, drawn in place of the document while the gesture lasts

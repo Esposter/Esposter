@@ -7,6 +7,7 @@ import {
   createWhiteboardEditState,
   pressKey,
   WHITEBOARD_ARROW,
+  WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
 } from "@/services/whiteboard/constants.test";
@@ -16,7 +17,8 @@ import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperatio
 import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, onTestFinished, test } from "vitest";
+import { flushPromises } from "@vue/test-utils";
+import { afterEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { ShapeKind } from "vue-block-editor-headless";
 
 // The keyboard mounted as a surface, so its commands are bound for as long as the mount lasts and unbound when it unmounts
@@ -34,7 +36,25 @@ const mountKeyboard = (
     }),
   );
 
+// A clipboard held in memory, so the text a cut writes is the text the paste reads
+const stubClipboard = () => {
+  const clipboard = { text: "" };
+  vi.stubGlobal("navigator", {
+    clipboard: {
+      writeText: (text: string) => {
+        clipboard.text = text;
+        return Promise.resolve();
+      },
+    },
+  });
+  return clipboard;
+};
+
 describe(useWhiteboardKeyboard, () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   test.each(["Delete", "Backspace"])(
     "deleting a shape from the canvas asks first and then removes its arrows, with the %s key",
     async (key) => {
@@ -270,5 +290,65 @@ describe(useWhiteboardKeyboard, () => {
     pressKey({ bubbles: true, key: "a" }, textarea);
 
     expect(tool.value).toBe(GestureTool.Select);
+  });
+
+  test("Select all selects every element", async () => {
+    expect.hasAssertions();
+
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] }));
+    const selectedIds = ref<string[]>([]);
+    const deletingIds = ref<string[]>([]);
+    await mountKeyboard(editState, selectedIds, deletingIds);
+
+    pressKey({ bubbles: true, ctrlKey: true, key: "a" });
+
+    expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID, WHITEBOARD_ARROW_ID]);
+  });
+
+  // The same key selects every element off a field, and is left to the field while one has focus, so the element selection
+  // Stays where it was while the text is being edited
+  test("Select all while editing text selects the text", async () => {
+    expect.hasAssertions();
+
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] }));
+    const selectedIds = ref<string[]>([]);
+    const deletingIds = ref<string[]>([]);
+    await mountKeyboard(editState, selectedIds, deletingIds);
+    const textarea = document.createElement("textarea");
+    document.body.append(textarea);
+    onTestFinished(() => {
+      textarea.remove();
+    });
+
+    pressKey({ bubbles: true, ctrlKey: true, key: "a" });
+
+    expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID, WHITEBOARD_ARROW_ID]);
+
+    selectedIds.value = [WHITEBOARD_PROCESS_ID];
+    textarea.focus();
+    pressKey({ bubbles: true, ctrlKey: true, key: "a" }, textarea);
+
+    expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
+  });
+
+  test("Cut and its paste undo separately", async () => {
+    expect.hasAssertions();
+
+    const clipboard = stubClipboard();
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
+    const deletingIds = ref<string[]>([]);
+    const keyboard = await mountKeyboard(editState, selectedIds, deletingIds);
+
+    pressKey({ bubbles: true, ctrlKey: true, key: "x" });
+    await flushPromises();
+    keyboard.vm.pasteClipboardText(clipboard.text);
+    pressKey({ bubbles: true, ctrlKey: true, key: "z" });
+
+    expect(editState.value.document).toStrictEqual({ elements: [] });
+
+    pressKey({ bubbles: true, ctrlKey: true, key: "z" });
+
+    expect(editState.value.document).toStrictEqual({ elements: [WHITEBOARD_PROCESS] });
   });
 });

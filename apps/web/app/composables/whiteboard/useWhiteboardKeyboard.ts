@@ -7,6 +7,7 @@ import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
+import { pasteWhiteboardElements } from "@/services/whiteboard/edit/pasteWhiteboardElements";
 import { redoWhiteboardEdit } from "@/services/whiteboard/edit/redoWhiteboardEdit";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
@@ -16,7 +17,11 @@ import {
   WHITEBOARD_NUDGE_LARGE_STEP,
   WHITEBOARD_NUDGE_STEP,
 } from "@/services/whiteboard/keyboard/constants";
-import { copySelection, requestSelectionDelete } from "@/services/whiteboard/keyboard/selectionActions";
+import {
+  copySelection,
+  requestSelectionDelete,
+  writeSelectionToClipboard,
+} from "@/services/whiteboard/keyboard/selectionActions";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
 
@@ -40,10 +45,21 @@ export const useWhiteboardKeyboard = (
     tool.value = GestureTool.Shape;
     shapeKind.value = nextShapeKind;
   };
+  // Deletes the elements as one edit, and drops them from the selection
+  const removeElements = (elementIds: string[]) => {
+    editState.value = deleteWhiteboardElements(editState.value, elementIds);
+    selectedIds.value = selectedIds.value.filter((id) => !elementIds.includes(id));
+  };
   const confirmDelete = () => {
-    const deletedIds = deletingIds.value;
-    editState.value = deleteWhiteboardElements(editState.value, deletedIds);
-    selectedIds.value = selectedIds.value.filter((id) => !deletedIds.includes(id));
+    removeElements(deletingIds.value);
+  };
+  const copySelectionToClipboard = async () => {
+    await writeSelectionToClipboard(editState.value.document, selectedIds.value);
+  };
+  // A cut deletes only once the clipboard has taken the elements, so a refused write leaves the board as it was
+  const cutSelection = async () => {
+    const cutIds = selectedIds.value;
+    if (await writeSelectionToClipboard(editState.value.document, cutIds)) removeElements(cutIds);
   };
   const deleteSelection = () => {
     requestSelectionDelete(deletingIds, selectedIds);
@@ -53,6 +69,17 @@ export const useWhiteboardKeyboard = (
   };
   const duplicateSelection = () => {
     copySelection(editState, selectedIds);
+  };
+  // The clipboard text the canvas's paste event hands over. Text without the marker pastes nothing, so the selection is left as it was
+  const pasteClipboardText = (text: string) => {
+    const pasted = pasteWhiteboardElements(editState.value, text);
+    if (pasted === undefined) return;
+
+    editState.value = pasted.state;
+    selectedIds.value = pasted.copiedIds;
+  };
+  const selectAll = () => {
+    selectedIds.value = editState.value.document.elements.map(({ id }) => id);
   };
   const nudgeSelection = (direction: Point, step: number) => {
     editState.value = applyWhiteboardEdit(
@@ -80,7 +107,42 @@ export const useWhiteboardKeyboard = (
     undo,
     undoTitle: "Undo",
   });
+  // Select all is bound with or without a selection, and the paste is listed with its shortcut but never bound: the canvas's paste
+  // Event takes it, since a bound key would prevent the native paste the image handler also reads
+  const editCommands: UiCommand[] = [
+    {
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: "whiteboard-select-all",
+      meaning: UiIconMeaning.SelectAll,
+      run: selectAll,
+      shortcut: "cmd+a",
+      title: "Select every element",
+    },
+    {
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: "whiteboard-paste",
+      meaning: UiIconMeaning.Paste,
+      shortcut: "cmd+v",
+      title: "Paste the elements",
+    },
+  ];
   const selectionCommands: UiCommand[] = [
+    {
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: "whiteboard-copy",
+      meaning: UiIconMeaning.Copy,
+      run: copySelectionToClipboard,
+      shortcut: "cmd+c",
+      title: "Copy the selection",
+    },
+    {
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: "whiteboard-cut",
+      meaning: UiIconMeaning.Delete,
+      run: cutSelection,
+      shortcut: "cmd+x",
+      title: "Cut the selection",
+    },
     {
       group: WHITEBOARD_COMMAND_GROUP,
       id: "whiteboard-delete",
@@ -164,10 +226,10 @@ export const useWhiteboardKeyboard = (
 
   useCommands((): UiCommand[] => {
     if (isDeleteOpen.value) return [];
-    if (selectedIds.value.length === 0) return [...historyCommands, ...toolCommands];
+    if (selectedIds.value.length === 0) return [...historyCommands, ...editCommands, ...toolCommands];
 
-    return [...historyCommands, ...toolCommands, ...selectionCommands];
+    return [...historyCommands, ...editCommands, ...toolCommands, ...selectionCommands];
   });
 
-  return { confirmDelete, isDeleteOpen };
+  return { confirmDelete, isDeleteOpen, pasteClipboardText };
 };
